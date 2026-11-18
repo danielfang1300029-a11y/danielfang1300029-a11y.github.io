@@ -1,0 +1,1347 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MATH1853 L5 · Eigenvalues and eigenvectors</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MATH1853 revision bundle · house style from MATH1851: one 46rem reading column, sticky contents rail on wide screens, dark mode through CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+.tcard{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:10px 14px;margin:10px 0;font-size:.95rem}
+.tcard h3{margin:0 0 4px;font-size:1rem;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.tcard h3 a{font-family:var(--mono);font-size:.85rem;text-decoration:none}
+.tcard h3 .cnt{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400}
+.tcard p{margin:3px 0}
+.tcard .k{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:6px}
+.tcard .k.w{color:var(--warn)}
+
+.typehead{display:grid;gap:10px}
+.cue{border-left:4px solid var(--accent)} .cue>.tag{color:var(--accent)}
+.also{font-size:.88rem;color:var(--muted);margin:2px 0 8px}
+.also b{color:var(--ink);font-weight:500}
+.mark{font-size:.9rem;color:var(--muted);border-left:3px solid var(--c3);padding-left:10px;margin:8px 0}
+.mark b{color:var(--c3);font-weight:600}
+.final{background:var(--accent-soft);border-radius:6px;padding:6px 12px;margin:10px 0}
+.equiv{font-size:.93rem}
+.glance td:first-child{font-family:var(--mono);font-size:.85rem;white-space:nowrap}
+.glance td.num{text-align:right}
+.todo{border:1px dashed var(--axis);background:transparent;color:var(--muted);font-size:.93rem}
+.todo>.tag{color:var(--muted)}
+/* calculus additions */
+.proc{border-left:4px solid var(--c3)} .proc>.tag{color:var(--c3)}
+.proc ol{padding-left:1.4rem;margin:6px 0}
+.proc li{margin:8px 0}
+.proc li::marker{font-family:var(--mono);font-weight:500;color:var(--c3)}
+.proc .sub{list-style:none;padding-left:0;margin:4px 0}
+.proc .sub li{margin:4px 0;padding-left:1.1rem;position:relative}
+.proc .sub li::before{content:"→";position:absolute;left:0;color:var(--muted)}
+.start td:first-child{min-width:9rem}
+.start td:nth-child(3){min-width:12rem}
+.start td:nth-child(2){font-family:var(--mono);font-size:.85rem;white-space:nowrap}
+.start td.cnt{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.st{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;padding:1px 7px;border-radius:4px;border:1px solid var(--c3);color:var(--c3);margin-right:4px;vertical-align:1px;white-space:nowrap}
+.worked{border-left:4px solid var(--accent)}
+.worked .why{font-size:.88rem;color:var(--muted);margin:2px 0 10px 0;padding-left:10px;border-left:2px dotted var(--line)}
+.cov td:first-child{white-space:nowrap}
+.proc .ex{font-size:.85rem;color:var(--muted)}
+
+/* ---- MATH1853 additions ---- */
+.muted{font-size:.92rem;color:var(--muted)}
+.crumbs{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;display:flex;flex-wrap:wrap;gap:4px 14px}
+.crumbs a{color:var(--muted);text-decoration:none}
+.crumbs a:hover{color:var(--accent);text-decoration:underline}
+/* earlier-syllabus content (past-paper topics not in the 2026 handouts) */
+.earlier{background:var(--warm-soft);border:1px dashed var(--warm);font-size:.95rem} .earlier>.tag{color:var(--warm)}
+/* reading of a slide that looks wrong */
+.slidefix{font-size:.92rem;color:var(--muted);border-left:3px solid var(--warn);padding:2px 0 2px 12px;margin:10px 0}
+.slidefix b{color:var(--warn);font-weight:600}
+/* row-reduction player */
+.rr{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.rr .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+.rr .stage{display:flex;justify-content:center;overflow-x:auto;padding:6px 0}
+.rr .op{font-family:var(--mono);font-size:.85rem;text-align:center;min-height:2.6em;color:var(--accent);margin:4px 0}
+.rr .why{font-size:.9rem;color:var(--muted);text-align:center;min-height:1.6em;margin:2px 0 6px}
+.rr .bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.rr button,.btn{font:inherit;font-size:.88rem;padding:5px 12px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+.rr button:hover:not(:disabled),.btn:hover{border-color:var(--accent);color:var(--accent)}
+.rr button:disabled{opacity:.4;cursor:default}
+.rr .count{font-family:var(--mono);font-size:.8rem;color:var(--muted);min-width:5.5em;text-align:center}
+table.mat{border-collapse:separate;border-spacing:0;width:auto;font-family:var(--mono);font-size:.95rem;font-variant-numeric:tabular-nums;border-left:2px solid var(--ink);border-right:2px solid var(--ink);border-radius:5px;padding:2px 2px}
+table.mat td{border:0;padding:3px 9px;text-align:right;transition:background .25s}
+table.mat td.aug{border-left:1.5px solid var(--axis)}
+table.mat tr.hl td{background:var(--accent-soft)}
+table.mat tr.hl2 td{background:var(--warm-soft)}
+table.mat td.piv{color:var(--accent);font-weight:600;box-shadow:inset 0 0 0 1.5px var(--accent);border-radius:3px}
+table.mat td.zero{color:var(--muted)}
+@media (max-width:480px){table.mat{font-size:.82rem} table.mat td{padding:2px 6px}}
+canvas.plot3d{width:100%;display:block;border-radius:4px;touch-action:none;cursor:grab}
+canvas.plot3d:active{cursor:grabbing}
+svg.diag{width:100%;height:auto;display:block}
+svg.diag text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+svg.diag .m{fill:var(--muted)}
+.kbd{font-family:var(--mono);font-size:.85em;padding:0 5px;border:1px solid var(--line);border-radius:4px;background:var(--paper)}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{R:'\\mathbb{R}',vb:['\\mathbf{#1}',1]}},svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/es5/tex-svg.js"></script>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Chapter L5</p>
+  <ol>
+    <li><a href="#s0">0 · Where this chapter sits</a></li>
+    <li><a href="#s1">1 · Fields and vector spaces</a></li>
+    <li><a href="#s2">2 · Linear maps</a></li>
+    <li><a href="#s3">3 · Eigenvalues and eigenvectors</a></li>
+    <li><a href="#s4">4 · The characteristic polynomial</a></li>
+    <li><a href="#s5">5 · Three 3 × 3 examples</a></li>
+    <li><a href="#s6">6 · Distinct eigenvalues, independent eigenvectors</a></li>
+    <li><a href="#s7">7 · Diagonalization</a></li>
+    <li><a href="#s8">8 · Powers of a matrix</a></li>
+    <li><a href="#s9">9 · Similar matrices</a></li>
+    <li><a href="#s10">10 · Eigenvalue rules the exam uses</a></li>
+    <li><a href="#s11">11 · Real symmetric matrices: real eigenvalues</a></li>
+    <li><a href="#s12">12 · Orthonormal eigenvectors and A = QDQᵀ</a></li>
+    <li><a href="#s13">13 · The Cayley–Hamilton theorem</a></li>
+    <li><a href="#s14">14 · Summary</a></li>
+    <li><a href="#s15">15 · Common mistakes</a></li>
+    <li><a href="#s16">16 · Find the mistake</a></li>
+    <li><a href="#s17">17 · Concept checks</a></li>
+    <li><a href="#s18">18 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <nav class="crumbs" aria-label="Bundle"><a href="index.html">← Start Here</a><a href="guide-L5.html">Exam guide · L5</a><a href="note-L6.html">Next: L6 Applications of eigenvalues →</a></nav>
+  <span class="course">MATH1853 · Part IB · Linear algebra · Chapter L5</span>
+  <h1>Eigenvalues and eigenvectors</h1>
+  <p class="lede">Every slide of the Part IB handout on eigenvalues explained from scratch: fields, vector spaces and linear maps, the eigenvalue equation Av = λv, the characteristic polynomial, why distinct eigenvalues give independent eigenvectors, diagonalization and powers Aⁿ, similar matrices, real symmetric matrices and A = QDQᵀ, and the Cayley–Hamilton theorem. Every worked example is solved in full, the figures let you hunt for eigenvectors yourself, and the exam taster at the end shows how the exam asks about this chapter.</p>
+</header>
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>MATH1853 (Linear Algebra, Probability and Statistics) has two halves. <b>Part I</b> is linear algebra: Part IA (chapters L1 to L4: linear systems, vectors, matrices, determinants) and Part IB (L5 to L7: eigenvalues, their applications, orthogonality and least squares). <b>Part II</b> is complex numbers, probability and statistics (P1 to P4). This is chapter L5, the first chapter of Part IB.</p>
+<p>In <a href="note-L3.html#s8">L3</a> a matrix became a <b>map</b>: it takes a vector \(\mathbf v\) and returns a new vector \(A\mathbf v\). Most vectors are turned to a new direction as well as stretched. This chapter looks for the special vectors that are <b>not</b> turned: \(A\mathbf v\) points along the same line as \(\mathbf v\), so \(A\mathbf v=\lambda\mathbf v\) for some number \(\lambda\). These are the <b>eigenvectors</b>, and the stretch factors \(\lambda\) are the <b>eigenvalues</b> ("eigen" is German for "own": the matrix's own directions and own numbers).</p>
+<p>Why care? Along an eigenvector a matrix is just multiplication by a number, and numbers are easy. If a matrix has enough eigenvectors, we can rewrite it as a diagonal matrix (diagonalization), and then powers \(A^n\), long-run behaviour, differential equations and quadratic forms all become simple. Chapter L6 is entirely about those applications. To find eigenvalues you need determinants, so this chapter uses <a href="note-L4.html">L4</a> all the time; to find eigenvectors you row reduce, as in <a href="note-L1.html#s6">L1</a>.</p>
+<p>The chapter answers five questions:</p>
+<ul class="list">
+  <li><b>What are the objects?</b> Fields, vector spaces and linear maps: the general setting the handout uses (sections 1 and 2).</li>
+  <li><b>What is an eigenvector and how do we find one?</b> The equation \(A\mathbf v=\lambda\mathbf v\) and the characteristic polynomial \(\det(\lambda I-A)=0\) (sections 3 to 5).</li>
+  <li><b>When can a matrix be made diagonal?</b> Independent eigenvectors, \(Q^{-1}AQ=D\), powers \(A^n\), similar matrices (sections 6 to 10).</li>
+  <li><b>What is special about symmetric matrices?</b> Real eigenvalues, perpendicular eigenvectors and \(A=QDQ^T\) (sections 11 and 12).</li>
+  <li><b>What equation does every matrix satisfy?</b> The Cayley–Hamilton theorem (section 13).</li>
+</ul>
+
+<h3>The handout (slide 1)</h3>
+<ul class="list">
+  <li><b>Slide 1:</b> MATH1853 Linear Algebra, Probability and Statistics (Part 1B), "Eigenvalues and Eigenvectors", by Joseph Sai Hung Cheung, Department of Civil Engineering, Faculty of Engineering, The University of Hong Kong (jhcheung@hku.hk). The handout has 20 slides and no contents slide; sections 1 to 13 of this note follow the slides in order.</li>
+</ul>
+<p>Background you need: \(2\times2\) and \(3\times3\) determinants and the fact that a square matrix is invertible exactly when its determinant is non-zero (<a href="note-L4.html">L4</a>; <a href="note-L3.html#s9">L3 section 9</a> for the \(2\times2\) case); linear independence and basis (<a href="note-L2.html#s7">L2 sections 7</a> and <a href="note-L2.html#s9">9</a>); solving \(A\mathbf x=\mathbf 0\) with a free variable (<a href="note-L1.html#s9">L1 section 9</a>); the inverse and transpose (<a href="note-L3.html#s6">L3 sections 6</a> and <a href="note-L3.html#s9">9</a>). Complex numbers (\(i^2=-1\), the conjugate \(\bar z\)) appear briefly in section 11; they are HKDSE M2 material and are covered properly in P1.</p>
+<p class="muted">How this note is laid out: grey-bordered boxes are definitions and examples from the slides, blue boxes are theorems and methods, red boxes are warnings, and orange boxes marked <span class="pill">Beyond the handouts</span> add material that is not on the slides but that the exam uses or that makes the slides easier to follow. A dashed orange box marked "Earlier syllabus" teaches a topic that older past papers ask about but the 2026 handout does not cover. The "In words" lines under a formula say what it means in plain language.</p>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Fields and vector spaces</h2>
+<p>Slides 2 to 4 set up the language. Until now "vector" meant a column of real numbers. The handout widens this: a <b>vector</b> is anything you can add and scale by numbers, following the usual rules, and the "numbers" come from a <b>field</b>. You will not be asked to prove these axioms in the exam, but the words (field \(K\), vector space \(V\), subspace, scalar) appear in every theorem of the chapter, so it pays to know what they mean.</p>
+
+<div class="box def"><span class="tag">Definition: field (slide 2)</span>
+<p>\(K\) is a <b>field</b> (think: "a system of numbers") if it satisfies the following conditions:</p>
+<ol class="steps">
+<li><b>Closure:</b> if \(\alpha,\beta\in K\), then \(\alpha+\beta\in K\) and \(\alpha\beta\in K\).</li>
+<li><b>Identity:</b> \(0,1\in K\), with \(0+\alpha=\alpha\) and \(1\alpha=\alpha\) for all \(\alpha\in K\).</li>
+<li><b>Inverse:</b> if \(\alpha\in K\), then \(-\alpha\in K\). If \(\alpha\ne0\), then \(\alpha^{-1}\in K\).</li>
+<li>The operations \(+\) and \(\times\) obey the <b>commutative</b> law (the result does not depend on the order: \(a+b=b+a\), \(ab=ba\)), the <b>associative</b> law (the result is not affected by rearranging brackets: \((a+b)+c=a+(b+c)\), \((ab)c=a(bc)\)) and the <b>distributive</b> law \(a\times(b+c)=a\times b+a\times c\).</li>
+</ol>
+<p class="word"><b>In words:</b> a field is a set of numbers in which you can add, subtract, multiply and divide (except by 0) without ever leaving the set, and the familiar rules of algebra hold.</p>
+</div>
+<p>The symbols: \(\in\) means "is an element of" (belongs to), and \(\forall\) means "for all".</p>
+<div class="box eg"><span class="tag">Examples (slide 2)</span>
+<ul class="list">
+<li>The real numbers \(\mathbb R\), the complex numbers \(\mathbb C\), and the rational numbers</li>
+</ul>
+\[ \mathbb Q=\Big\{\tfrac pq:\ p,q\in\mathbb Z,\ q\ne0\Big\} \]
+<p>(fractions of integers) are fields.</p>
+<ul class="list">
+<li>The set of integers \(\mathbb Z=\{\dots,-2,-1,0,1,2,\dots\}\) is <b>not</b> a field, as \(n^{-1}=\frac1n\) is not an integer (for example \(2^{-1}=\frac12\notin\mathbb Z\)): rule (iii) fails.</li>
+</ul>
+</div>
+<p>In this course the field is almost always \(\mathbb R\). Section 11 needs \(\mathbb C\), because a real matrix can have complex eigenvalues.</p>
+
+<div class="box eg"><span class="tag">Examples of vectors (slide 3)</span>
+<ul class="list">
+<li>An \(n\)-dimensional vector \(\mathbf v=\begin{bmatrix}v_1\\ \vdots\\ v_n\end{bmatrix}\in\mathbb R^n\) (\(n\) a positive integer). The vector space \(V=\mathbb R^n\) is the set of \(n\)-dimensional vectors.</li>
+<li>An \(n\) by \(n\) matrix \(A=\begin{bmatrix}a_{11}&\cdots&a_{1n}\\ \vdots&\ddots&\vdots\\ a_{n1}&\cdots&a_{nn}\end{bmatrix}\in\mathbb R^{n\times n}\). The vector space \(V=\mathbb R^{n\times n}\) is the set of \(n\) by \(n\) matrices: matrices can be added and scaled, so they too are "vectors" in this wider sense.</li>
+<li>A polynomial of degree up to 2, for example \(x^2+2x+1\). The vector space \(V\) over \(\mathbb R\) is the set of all polynomials of degree up to 2 with real coefficients:</li>
+</ul>
+\[ V=\{f(x)=ax^2+bx+c:\ a,b,c\in\mathbb R\}. \]
+<p class="word"><b>In words:</b> columns of numbers, square matrices and quadratic polynomials can all be added together and multiplied by real numbers, and the answer is the same kind of object. That is all "vector" will mean.</p>
+</div>
+
+<div class="box def"><span class="tag">Definition: vector space (slide 4)</span>
+<p>A <b>vector space \(V\) over a field \(K\)</b> is a set of objects which can be added and multiplied by the elements of \(K\), with the following properties. The elements of \(V\) are called <b>vectors</b> and those of \(K\) are called <b>scalars</b>.</p>
+<ul class="list">
+<li><b>VS0.</b> For all \(\mathbf u,\mathbf v\in V\) and \(\alpha\in K\): \(\mathbf u+\mathbf v\in V\) and \(\alpha\mathbf u\in V\) (closure).</li>
+<li><b>VS1.</b> For \(\mathbf u,\mathbf v,\mathbf w\in V\): \((\mathbf u+\mathbf v)+\mathbf w=\mathbf u+(\mathbf v+\mathbf w)\).</li>
+<li><b>VS2.</b> There is an element of \(V\), denoted by \(\mathbf 0\), such that \(\mathbf 0+\mathbf u=\mathbf u+\mathbf 0=\mathbf u\) for all \(\mathbf u\in V\).</li>
+<li><b>VS3.</b> For every \(\mathbf u\in V\) there is \((-\mathbf u)\in V\) such that \(\mathbf u+(-\mathbf u)=\mathbf 0\).</li>
+<li><b>VS4.</b> For all \(\mathbf u,\mathbf v\in V\): \(\mathbf u+\mathbf v=\mathbf v+\mathbf u\).</li>
+<li><b>VS5.</b> For all \(\mathbf u,\mathbf v\in V\), \(\alpha\in K\): \(\alpha(\mathbf u+\mathbf v)=\alpha\mathbf u+\alpha\mathbf v\).</li>
+<li><b>VS6.</b> For all \(\mathbf u\in V\), \(\alpha,\beta\in K\): \((\alpha+\beta)\mathbf u=\alpha\mathbf u+\beta\mathbf u\).</li>
+<li><b>VS7.</b> For all \(\mathbf u\in V\), \(\alpha,\beta\in K\): \((\alpha\beta)\mathbf u=\alpha(\beta\mathbf u)=\beta(\alpha\mathbf u)\).</li>
+<li><b>VS8.</b> For all \(\mathbf u\in V\): \(1\mathbf u=\mathbf u\), where \(1\in K\) is the multiplicative identity.</li>
+</ul>
+<p>If a vector space \(W\) is a subset of \(V\) (with the same addition and scaling), \(W\) is called a <b>subspace</b> of \(V\).</p>
+<p class="word"><b>In words:</b> a vector space is a collection you can add in and scale in, where the usual rules of arithmetic hold. A subspace is a smaller vector space sitting inside a bigger one.</p>
+</div>
+<p class="slidefix"><b>Note on slide 4.</b> The slide's example says "\(W=\mathbb R^2\) is a subspace of \(V=\mathbb R^3\)". Strictly, \(\mathbb R^2\) (pairs of numbers) is not a subset of \(\mathbb R^3\) (triples). The intended meaning: the plane \(\{(x,y,0):x,y\in\mathbb R\}\) inside \(\mathbb R^3\), which is a copy of \(\mathbb R^2\), is a subspace of \(\mathbb R^3\). That is the reading used here.</p>
+<p>A quick test for a subspace: \(W\) must contain \(\mathbf 0\) and be closed under addition and scaling (VS0); the other rules are then inherited from \(V\). For example, every line or plane through the origin in \(\mathbb R^3\) is a subspace; a line <b>not</b> through the origin is not (it misses \(\mathbf 0\)). The <b>span</b> of some vectors (<a href="note-L2.html#s5">L2 section 5</a>) is always a subspace, and so is the set of solutions of \(A\mathbf x=\mathbf 0\). Section 3's eigenspaces are subspaces of this kind.</p>
+</section>
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Linear maps</h2>
+<div class="box def"><span class="tag">Definition: linear map (slide 5)</span>
+<p>A map \(L:V\to W\) from a vector space \(V\) to a vector space \(W\) (both over \(K\)) is <b>linear</b> if</p>
+\[ \begin{aligned} L(\mathbf u+\mathbf v)&=L(\mathbf u)+L(\mathbf v),\\ L(\alpha\mathbf u)&=\alpha L(\mathbf u) \end{aligned} \]
+<p>for all \(\mathbf u,\mathbf v\in V\) and \(\alpha\in K\). Together these give, for \(\mathbf u,\mathbf v\in V\) and \(\alpha,\beta\in K\),</p>
+\[ \begin{aligned} L(\alpha\mathbf u+\beta\mathbf v)&=L(\alpha\mathbf u)+L(\beta\mathbf v)\\ &=\alpha L(\mathbf u)+\beta L(\mathbf v). \end{aligned} \]
+<p class="word"><b>In words:</b> a linear map respects adding and scaling. It does not matter whether you combine first and then apply \(L\), or apply \(L\) first and then combine.</p>
+</div>
+<div class="box eg"><span class="tag">Examples of linear maps (slide 5)</span>
+<ol class="steps">
+<li><b>Matrix multiplication:</b> \(L(\mathbf v)=A\mathbf v\). Linear because \(A(\mathbf u+\mathbf v)=A\mathbf u+A\mathbf v\) and \(A(\alpha\mathbf u)=\alpha A\mathbf u\) (<a href="note-L3.html#s4">L3 section 4</a>).</li>
+<li><b>Differentiation</b> of differentiable functions: \(L(f)=\dfrac{df}{dt}\). Linear because \((f+g)'=f'+g'\) and \((\alpha f)'=\alpha f'\).</li>
+<li><b>Definite integrals:</b> \(L(f)=\displaystyle\int_a^b f\,dx\). Linear because the integral of a sum is the sum of the integrals and constants come out.</li>
+</ol>
+</div>
+<p>Examples 2 and 3 act on <b>functions</b>, which are vectors in the sense of section 1 (functions can be added and scaled). So the eigenvalue ideas below apply to calculus too, and slide 6 gives one such example. An example of a map that is <b>not</b> linear: \(L(x)=x+1\) on \(\mathbb R\), since \(L(0+0)=1\) but \(L(0)+L(0)=2\). A linear map always sends \(\mathbf 0\) to \(\mathbf 0\).</p>
+<p>Every linear map from \(\mathbb R^n\) to \(\mathbb R^m\) is multiplication by some \(m\times n\) matrix (its columns are the images of \(\mathbf e_1,\dots,\mathbf e_n\)), so for column vectors "linear map" and "matrix" are the same thing. From now on \(A\) is an \(n\times n\) matrix, mapping \(\mathbb R^n\) to itself, unless the slide says otherwise.</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Eigenvalues and eigenvectors</h2>
+<div class="box def"><span class="tag">Definition (slide 6)</span>
+<p>Let \(V\) be a vector space over \(K\) and let \(A:V\to V\) be a linear map mapping \(V\) to itself. An element \(\mathbf v\ne\mathbf 0\) of \(V\) is called an <b>eigenvector</b> of \(A\) if there exists \(\lambda\in K\) such that</p>
+\[ A\mathbf v=\lambda\mathbf v, \]
+<p>and \(\lambda\) is called the <b>eigenvalue</b> corresponding to \(\mathbf v\).</p>
+<p class="word"><b>In words:</b> an eigenvector is a non-zero vector that \(A\) does not turn: \(A\mathbf v\) lies on the same line through the origin as \(\mathbf v\). The eigenvalue is the factor by which it is stretched (\(\lambda\gt1\)), shrunk (\(0\lt\lambda\lt1\)), flipped (\(\lambda\lt0\)) or flattened to \(\mathbf 0\) (\(\lambda=0\)).</p>
+</div>
+<p>Two details in the definition matter in the exam:</p>
+<ul class="list">
+<li><b>\(\mathbf v\ne\mathbf 0\).</b> The zero vector always satisfies \(A\mathbf 0=\lambda\mathbf 0\), for every \(\lambda\), so it would tell us nothing. An eigenvector is never \(\mathbf 0\). An eigen<b>value</b>, on the other hand, may be 0.</li>
+<li>\(A\) must map \(V\) to <b>itself</b>, so for matrices only <b>square</b> matrices have eigenvalues: \(A\mathbf v\) and \(\lambda\mathbf v\) must be the same size.</li>
+</ul>
+
+<div class="box eg"><span class="tag">Example 1 (slide 6)</span>
+<p>Show that \(\lambda_1=25\) and \(\mathbf v_1=\begin{bmatrix}-3\\4\end{bmatrix}\) are an eigenvalue and eigenvector of the matrix \(A=\begin{bmatrix}41&12\\12&34\end{bmatrix}\), respectively.</p>
+\[ \begin{aligned} A\mathbf v_1&=\begin{bmatrix}41&12\\12&34\end{bmatrix}\begin{bmatrix}-3\\4\end{bmatrix}=\begin{bmatrix}-123+48\\-36+136\end{bmatrix}\\ &=\begin{bmatrix}-75\\100\end{bmatrix}=25\begin{bmatrix}-3\\4\end{bmatrix}=\lambda_1\mathbf v_1. \end{aligned} \]
+<p class="word"><b>In words:</b> to <b>check</b> a claimed eigenvector, just multiply. If \(A\mathbf v\) comes out as a multiple of \(\mathbf v\), it is an eigenvector and the multiple is its eigenvalue. No determinant is needed.</p>
+</div>
+<p>This "multiply and compare" check is the first part of many exam questions (type L5.1: "Show that \(\mathbf v\) is an eigenvector of \(A\) and find the corresponding eigenvalue"). Compare one non-zero entry to get \(\lambda\), then confirm the other entries give the same \(\lambda\).</p>
+
+<div class="box eg"><span class="tag">Example 2 (slide 6)</span>
+<p>Let \(V\) be the vector space of differentiable functions over \(\mathbb R\). Show that the function \(f(t)=e^{\lambda t}\) is an eigenvector of the linear map \(A=\dfrac{d}{dt}:V\to V\), with eigenvalue equal to \(\lambda\).</p>
+\[ Af=\frac{df}{dt}=\lambda e^{\lambda t}=\lambda f. \]
+<p class="word"><b>In words:</b> differentiating \(e^{\lambda t}\) gives back the same function times \(\lambda\), so the exponentials are the "eigenvectors" (eigenfunctions) of differentiation. This is why exponentials solve differential equations, the topic of L6.</p>
+</div>
+
+<div class="box thm"><span class="tag">Remarks (slide 6)</span>
+<ol class="steps">
+<li>\(A(\alpha\mathbf v)=\alpha A\mathbf v=\alpha\lambda\mathbf v=\lambda(\alpha\mathbf v)\) shows that \(\alpha\mathbf v\) (for any scalar \(\alpha\ne0\)) is also an eigenvector of \(A\), with the same eigenvalue.</li>
+<li>Let \(E_\lambda\) be the subspace of \(V\) generated by the eigenvectors of \(A\) with eigenvalue \(\lambda\). The subspace \(E_\lambda\) is called the <b>eigenspace</b> of \(A\) associated with eigenvalue \(\lambda\). Two different eigenvectors may have equal eigenvalue.</li>
+</ol>
+<p class="word"><b>In words:</b> eigenvectors come in whole lines (or planes, or bigger subspaces), never alone. The eigenspace \(E_\lambda\) is all the eigenvectors for \(\lambda\) together with \(\mathbf 0\); equivalently, all solutions of \((A-\lambda I)\mathbf v=\mathbf 0\).</p>
+</div>
+<p>So "the" eigenvector is only fixed up to a non-zero multiple: \(\begin{bmatrix}-3\\4\end{bmatrix}\), \(\begin{bmatrix}3\\-4\end{bmatrix}\) and \(\begin{bmatrix}-0.6\\0.8\end{bmatrix}\) are all correct answers for \(\lambda=25\) above. Any of them earns the marks unless the question asks for a particular scaling (for example "normalized", meaning length 1).</p>
+
+<div class="figure"><p class="ttl">Hunt for eigenvectors: turn v and watch Av</p>
+<canvas class="plot" id="fEig" style="height:340px" aria-label="Unit vector v, its image Av, the unit circle and its image under A"></canvas>
+<div class="ctrl"><label>matrix <select id="fEig-m">
+<option value="41,12,12,34">slide 6: [41 12; 12 34]</option>
+<option value="1,2,2,-2">[1 2; 2 −2]</option>
+<option value="1,0,1,0">slide 15: [1 0; 1 0]</option>
+<option value="1,1,0,1">shear [1 1; 0 1]</option>
+<option value="0,-1,1,0">slide 16: [0 −1; 1 0]</option>
+</select></label>
+<label>angle of v <input type="range" id="fEig-t" min="0" max="180" step="0.5" value="20"></label>
+<label><input type="checkbox" id="fEig-e"> show eigen-lines</label></div>
+<div class="legend"><span style="--k:var(--accent)">v (length 1)</span><span style="--k:var(--c2)">Av (scaled)</span><span style="--k:var(--warm)">image of the circle</span><span style="--k:var(--c3)">eigen-lines</span></div>
+<div class="readout" id="fEig-out"></div>
+<p class="cap">Both \(A\mathbf v\) and the image of the unit circle are shrunk by the same factor so they fit. Turn \(\mathbf v\) until \(A\mathbf v\) lies along the same line: that \(\mathbf v\) is an eigenvector. For slide 6's matrix try about 36.9° and 126.9° (the directions of \((4,3)\) and \((-3,4)\)). The shear has only one eigen-line, and the rotation has none: \(A\mathbf v\) is always perpendicular to \(\mathbf v\) (section 11).</p>
+</div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>The characteristic polynomial</h2>
+<p>Checking a given eigenvector is easy. But how do we <b>find</b> eigenvalues when none are given? Rewrite \(A\mathbf v=\lambda\mathbf v\) as \(\lambda\mathbf v-A\mathbf v=\mathbf 0\). To factor out \(\mathbf v\) we must write \(\lambda\mathbf v=\lambda I\mathbf v\) (a number minus a matrix makes no sense, but \(\lambda I-A\) is a matrix):</p>
+\[ A\mathbf v=\lambda\mathbf v\iff(\lambda I-A)\mathbf v=\mathbf 0. \]
+<p>We want a <b>non-zero</b> solution \(\mathbf v\) of this homogeneous system. By L3 and L4, a square system \(M\mathbf v=\mathbf 0\) has a non-zero solution exactly when \(M\) is singular, that is, \(\det M=0\).</p>
+
+<div class="box thm"><span class="tag">Theorem (slide 7)</span>
+<p>Let \(A\) be an \(n\times n\) matrix over a field \(K\). An element \(\lambda\in K\) is an eigenvalue of \(A\) if and only if \(\lambda\) is a root of the <b>characteristic polynomial</b> \(\det(\lambda I-A)\) of \(A\), that is,</p>
+\[ \det(\lambda I-A)=0. \]
+<p class="word"><b>In words:</b> the eigenvalues are exactly the numbers \(\lambda\) that make \(\lambda I-A\) singular. Writing out \(\det(\lambda I-A)\) gives a polynomial of degree \(n\) in \(\lambda\); its roots are the eigenvalues.</p>
+</div>
+<div class="box thm"><span class="tag">Proof (slide 7)</span>
+<p><b>(\(\Rightarrow\))</b> Assume that \(\lambda\) is an eigenvalue of \(A\). Then \(A\mathbf v=\lambda\mathbf v\) for some \(\mathbf v\ne\mathbf 0\), so \((\lambda I-A)\mathbf v=\mathbf 0\) with \(\mathbf v\ne\mathbf 0\). Hence \(\lambda I-A\) is singular (an invertible matrix would give \(\mathbf v=(\lambda I-A)^{-1}\mathbf 0=\mathbf 0\)), so \(P(\lambda)=\det(\lambda I-A)=0\): \(\lambda\) is a root of the characteristic polynomial.</p>
+<p><b>(\(\Leftarrow\))</b> Conversely, let \(\lambda\) be a root of the characteristic polynomial, \(\det(\lambda I-A)=0\). Then the rank of \(\lambda I-A\) is some \(r\lt n\), so the dimension of the solution space of \((\lambda I-A)\mathbf v=\mathbf 0\) is \(s=n-r\ge1\) (there is at least one free variable). So there exists \(\mathbf v\ne\mathbf 0\) in \(V\) with \((\lambda I-A)\mathbf v=\mathbf 0\), that is, \(A\mathbf v=\lambda\mathbf v\): \(\lambda\) is an eigenvalue of \(A\).</p>
+</div>
+<p>"Dimension of the solution space \(=n-r\)" is the count from <a href="note-L1.html#s10">L1</a> and <a href="note-L3.html#s13">L3</a>: \(n\) unknowns minus \(r\) pivots leaves \(n-r\) free variables, and each free variable gives one independent solution.</p>
+
+<div class="box eg"><span class="tag">Example (slide 7): find the eigenvalues and eigenvectors of \(A=\begin{bmatrix}41&12\\12&34\end{bmatrix}\)</span>
+<p><b>Step 1: the characteristic equation.</b></p>
+\[ \begin{aligned} A\mathbf v=\lambda\mathbf v\ &\Rightarrow\ (\lambda I-A)\mathbf v=\mathbf 0\\ &\Rightarrow\ \begin{bmatrix}\lambda-41&-12\\-12&\lambda-34\end{bmatrix}\mathbf v=\begin{bmatrix}0\\0\end{bmatrix} \end{aligned} \]
+<p>Since \(\mathbf v\ne\mathbf 0\), the matrix must be singular:</p>
+\[ \det(\lambda I-A)=\det\begin{bmatrix}\lambda-41&-12\\-12&\lambda-34\end{bmatrix}=0. \]
+\[ \begin{aligned} &(\lambda-41)(\lambda-34)-(-12)(-12)=0\\ \Rightarrow\ &\lambda^2-75\lambda+1394-144=0\\ \Rightarrow\ &\lambda^2-75\lambda+1250=0\\ \Rightarrow\ &(\lambda-25)(\lambda-50)=0. \end{aligned} \]
+<p>Eigenvalues: \(\lambda_1=25\), \(\lambda_2=50\).</p>
+<p><b>Step 2: an eigenvector for each eigenvalue.</b> For \(\lambda_1=25\), solve \((25I-A)\mathbf v_1=\mathbf 0\):</p>
+\[ \begin{bmatrix}-16&-12\\-12&-9\end{bmatrix}\mathbf v_1=\begin{bmatrix}0\\0\end{bmatrix}. \]
+<p>Both rows are multiples of \((4,\ 3)\) (row 1 \(=-4\times(4,3)\), row 2 \(=-3\times(4,3)\)), so the system is the single equation \(4v_1+3v_2=0\). Take \(v_1=-3\): then \(v_2=4\).</p>
+\[ \text{eigenvector }\mathbf v_1=\begin{bmatrix}-3\\4\end{bmatrix}. \]
+<p>For \(\lambda_2=50\), solve \((50I-A)\mathbf v_2=\mathbf 0\):</p>
+\[ \begin{bmatrix}9&-12\\-12&16\end{bmatrix}\mathbf v_2=\begin{bmatrix}0\\0\end{bmatrix}. \]
+<p>Row 1 \(=3\times(3,-4)\), row 2 \(=-4\times(3,-4)\): the single equation \(3v_1-4v_2=0\). Take \(v_1=4\): then \(v_2=3\).</p>
+\[ \text{eigenvector }\mathbf v_2=\begin{bmatrix}4\\3\end{bmatrix}. \]
+<p><b>Check:</b> \(A\mathbf v_2=\begin{bmatrix}164+36\\48+102\end{bmatrix}=\begin{bmatrix}200\\150\end{bmatrix}=50\mathbf v_2\ \checkmark\) (and \(A\mathbf v_1=25\mathbf v_1\) was checked in section 3).</p>
+</div>
+<p>Notice in step 2 that the two rows of \(\lambda I-A\) were always multiples of each other. That is not luck: \(\lambda\) was chosen to make \(\lambda I-A\) singular, so for a \(2\times2\) matrix one row is always a multiple of the other. If your rows come out independent, the eigenvalue is wrong. A handy shortcut for \(2\times2\): if a row of \(\lambda I-A\) is \((p,\ q)\ne(0,0)\), then \(\mathbf v=(q,\,-p)\) is an eigenvector (it makes \(pv_1+qv_2=0\)). From row 1 of \(25I-A\), \((-16,-12)\), it gives \((-12,16)=4(-3,4)\ \checkmark\)</p>
+
+<div class="box thm"><span class="tag">Method: eigenvalues and eigenvectors of a square matrix</span>
+<ol class="steps">
+<li>Write \(\lambda I-A\): put \(\lambda-a_{ii}\) on the diagonal and \(-a_{ij}\) elsewhere.</li>
+<li>Expand \(\det(\lambda I-A)\) (L4: cofactor expansion; use a row or column with zeros) and <b>factorise</b> it. Its roots \(\lambda_1,\dots,\lambda_n\) are the eigenvalues (some may repeat).</li>
+<li>For each different eigenvalue \(\lambda\), row reduce \(\lambda I-A\) (the right-hand side is \(\mathbf 0\), so no augmented column is needed) and solve for \(\mathbf v\) in terms of the free variables. You must get at least one free variable; if not, recheck the eigenvalue.</li>
+<li>Write the eigenvectors as the free variables times fixed vectors; those fixed vectors span the eigenspace \(E_\lambda\).</li>
+<li><b>Check</b> each answer with \(A\mathbf v=\lambda\mathbf v\).</li>
+</ol>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts: the 2 × 2 shortcut, and the sign convention</span>
+<p>For \(A=\begin{bmatrix}a&b\\c&d\end{bmatrix}\),</p>
+\[ \begin{aligned} \det(\lambda I-A)&=(\lambda-a)(\lambda-d)-bc\\ &=\lambda^2-(a+d)\lambda+(ad-bc)\\ &=\lambda^2-(\operatorname{tr}A)\lambda+\det A, \end{aligned} \]
+<p>where the <b>trace</b> \(\operatorname{tr}A=a+d\) is the sum of the diagonal entries. For slide 7's matrix: \(\operatorname{tr}A=75\), \(\det A=1394-144=1250\), giving \(\lambda^2-75\lambda+1250\) at once. Since the polynomial also equals</p>
+\[ \begin{aligned} &(\lambda-\lambda_1)(\lambda-\lambda_2)\\ &=\lambda^2-(\lambda_1+\lambda_2)\lambda+\lambda_1\lambda_2: \end{aligned} \]
+\[ \lambda_1+\lambda_2=\operatorname{tr}A,\qquad\lambda_1\lambda_2=\det A. \]
+<p>(Check: \(25+50=75\), \(25\times50=1250\).) Section 10 extends this to \(n\times n\).</p>
+<p>Many books (and some exam papers) use \(\det(A-\lambda I)=0\) instead. For an \(n\times n\) matrix, \(\det(A-\lambda I)=(-1)^n\det(\lambda I-A)\), so the two equations have exactly the same roots. Use whichever you like, but keep one convention through a calculation.</p>
+</div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Three 3 × 3 examples</h2>
+<p>Slides 8 to 10 use three <b>upper triangular</b> matrices (all entries below the diagonal are 0). Then \(\lambda I-A\) is upper triangular too, and by L4 the determinant of a triangular matrix is the product of its diagonal entries. So the eigenvalues of a triangular matrix are simply its <b>diagonal entries</b>. The three matrices differ in only a few entries, but their eigenvectors behave very differently.</p>
+
+<div class="box eg"><span class="tag">Example (slide 8): \(A=\begin{bmatrix}1&-1&2\\0&2&-1\\0&0&3\end{bmatrix}\)</span>
+\[ \begin{aligned} &A\mathbf v=\lambda\mathbf v\ \Rightarrow\ (\lambda I-A)\mathbf v=\mathbf 0\\ &\Rightarrow\ \begin{bmatrix}\lambda-1&1&-2\\0&\lambda-2&1\\0&0&\lambda-3\end{bmatrix}\mathbf v=\mathbf 0 \end{aligned} \]
+\[ \begin{aligned} &\det(\lambda I-A)\\ &=\det\begin{bmatrix}\lambda-1&1&-2\\0&\lambda-2&1\\0&0&\lambda-3\end{bmatrix}=0 \end{aligned} \]
+<p>(it must be 0, since \(\mathbf v\ne\mathbf 0\)).</p>
+<p>\(\Rightarrow(\lambda-1)(\lambda-2)(\lambda-3)=0\Rightarrow\) eigenvalues \(\lambda_1=1\), \(\lambda_2=2\), \(\lambda_3=3\).</p>
+<p><b>For \(\lambda_1=1\):</b></p>
+\[ \begin{bmatrix}0&1&-2\\0&-1&1\\0&0&-2\end{bmatrix}\mathbf v_1=\begin{bmatrix}0\\0\\0\end{bmatrix} \]
+<p>Row 3: \(-2v_3=0\), so \(v_3=0\). Row 2: \(-v_2+v_3=0\), so \(v_2=0\). Row 1 is then satisfied, and \(v_1\) is free. Taking \(v_1=1\): eigenvector \(\mathbf v_1=\begin{bmatrix}1\\0\\0\end{bmatrix}\).</p>
+<p><b>For \(\lambda_2=2\):</b></p>
+\[ \begin{bmatrix}1&1&-2\\0&0&1\\0&0&-1\end{bmatrix}\mathbf v_2=\begin{bmatrix}0\\0\\0\end{bmatrix} \]
+<p>Rows 2 and 3: \(v_3=0\). Row 1: \(v_1+v_2=0\), with \(v_2\) free. Taking \(v_2=-1\): eigenvector \(\mathbf v_2=\begin{bmatrix}1\\-1\\0\end{bmatrix}\).</p>
+<p><b>For \(\lambda_3=3\):</b></p>
+\[ \begin{bmatrix}2&1&-2\\0&1&1\\0&0&0\end{bmatrix}\mathbf v_3=\begin{bmatrix}0\\0\\0\end{bmatrix} \]
+<p>\(v_3\) is free. Row 2: \(v_2=-v_3\). Row 1: \(2v_1+v_2-2v_3=0\), so \(2v_1=v_3+2v_3=3v_3\). Taking \(v_3=2\) (to avoid fractions): \(v_2=-2\), \(v_1=3\), eigenvector \(\mathbf v_3=\begin{bmatrix}3\\-2\\2\end{bmatrix}\).</p>
+<p><b>Check \(\mathbf v_3\):</b> \(A\mathbf v_3=\begin{bmatrix}3+2+4\\-4-2\\6\end{bmatrix}=\begin{bmatrix}9\\-6\\6\end{bmatrix}=3\mathbf v_3\ \checkmark\)</p>
+</div>
+
+<div class="box eg"><span class="tag">Example (slide 9): \(A=\begin{bmatrix}1&-1&2\\0&1&0\\0&0&1\end{bmatrix}\)</span>
+\[ \begin{aligned} &A\mathbf v=\lambda\mathbf v\ \Rightarrow\ (\lambda I-A)\mathbf v=\mathbf 0\\ &\Rightarrow\ \begin{bmatrix}\lambda-1&1&-2\\0&\lambda-1&0\\0&0&\lambda-1\end{bmatrix}\mathbf v=\mathbf 0 \end{aligned} \]
+<p>\(\det(\lambda I-A)=(\lambda-1)^3=0\Rightarrow\) eigenvalues \(\lambda_1=\lambda_2=\lambda_3=1\): one eigenvalue, repeated three times.</p>
+<p><b>For \(\lambda=1\):</b></p>
+\[ \begin{bmatrix}0&1&-2\\0&0&0\\0&0&0\end{bmatrix}\mathbf v=\begin{bmatrix}0\\0\\0\end{bmatrix} \]
+<p>Only one equation is left: \(v_2-2v_3=0\). Two variables are free: \(v_1=s\) and \(v_3=t\), and then \(v_2=2t\). So the eigenvectors are</p>
+\[ \mathbf v=\begin{bmatrix}s\\2t\\t\end{bmatrix}=s\begin{bmatrix}1\\0\\0\end{bmatrix}+t\begin{bmatrix}0\\2\\1\end{bmatrix} \]
+<p>with \(s,t\) not both 0.</p>
+<p>The eigenspace \(E_1\) is a <b>plane</b>, spanned by two independent eigenvectors \((1,0,0)\) and \((0,2,1)\).</p>
+</div>
+<p class="slidefix"><b>Note on slide 9.</b> The slide ends "where \(s,t\ne0\)". That would wrongly exclude, for example, \(s=1,t=0\), which gives the eigenvector \((1,0,0)\). The correct condition is "\(s\) and \(t\) not both zero" (only \(\mathbf v=\mathbf 0\) is excluded). That reading is used here.</p>
+
+<div class="box eg"><span class="tag">Example (slide 10): \(A=\begin{bmatrix}1&-1&2\\0&1&-1\\0&0&1\end{bmatrix}\)</span>
+\[ \begin{aligned} &A\mathbf v=\lambda\mathbf v\ \Rightarrow\ (\lambda I-A)\mathbf v=\mathbf 0\\ &\Rightarrow\ \begin{bmatrix}\lambda-1&1&-2\\0&\lambda-1&1\\0&0&\lambda-1\end{bmatrix}\mathbf v=\mathbf 0 \end{aligned} \]
+<p>\(\det(\lambda I-A)=(\lambda-1)^3=0\Rightarrow\) eigenvalues \(\lambda_1=\lambda_2=\lambda_3=1\), as in slide 9.</p>
+<p><b>For \(\lambda=1\):</b></p>
+\[ \begin{bmatrix}0&1&-2\\0&0&1\\0&0&0\end{bmatrix}\mathbf v=\begin{bmatrix}0\\0\\0\end{bmatrix} \]
+<p>Row 2: \(v_3=0\). Row 1: \(v_2-2v_3=0\), so \(v_2=0\). Only \(v_1=s\) is free:</p>
+\[ \mathbf v=\begin{bmatrix}s\\0\\0\end{bmatrix}=s\begin{bmatrix}1\\0\\0\end{bmatrix},\quad s\ne0. \]
+<p>This time the eigenspace \(E_1\) is only a <b>line</b>: one independent eigenvector, although the eigenvalue is repeated three times.</p>
+</div>
+<p>Slides 9 and 10 have the same characteristic polynomial \((\lambda-1)^3\), but the single entry \(a_{23}\) (0 or \(-1\)) changes the number of independent eigenvectors from two to one. The figure shows the three eigenspace pictures.</p>
+
+<div class="figure"><p class="ttl">Eigenspaces of slides 8, 9 and 10</p>
+<canvas class="plot3d" id="fES" style="height:320px" aria-label="Eigenspaces drawn in three dimensions"></canvas>
+<div class="ctrl"><label>matrix <select id="fES-m"><option value="8">slide 8: eigenvalues 1, 2, 3</option><option value="9">slide 9: eigenvalue 1 (three times), plane</option><option value="10">slide 10: eigenvalue 1 (three times), line</option></select></label></div>
+<div class="readout" id="fES-out"></div>
+<p class="cap">Drag to turn. Slide 8: three different eigen-lines, one per eigenvalue. Slide 9: every vector in the shaded plane is an eigenvector for \(\lambda=1\). Slide 10: only the \(x_1\)-axis.</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts: algebraic and geometric multiplicity</span>
+<p>The exam (for example Dec 2025 Q14) asks you to "comment on the algebraic and geometric multiplicities". For an eigenvalue \(\lambda\) of an \(n\times n\) matrix \(A\):</p>
+<ul class="list">
+<li>its <b>algebraic multiplicity</b> is the number of times \(\lambda\) is a root of the characteristic polynomial (the power of \((\lambda-\lambda_i)\) in the factorised polynomial);</li>
+<li>its <b>geometric multiplicity</b> is the number of independent eigenvectors for \(\lambda\), that is, \(\dim E_\lambda=n-\operatorname{rank}(\lambda I-A)\) (the number of free variables).</li>
+</ul>
+<p>Always \(1\le\text{geometric}\le\text{algebraic}\). In the slides:</p>
+<div class="scroll"><table>
+<tr><th>slide</th><th>eigenvalue</th><th>algebraic</th><th>geometric</th></tr>
+<tr><td>8</td><td>1, 2, 3</td><td>1 each</td><td>1 each</td></tr>
+<tr><td>9</td><td>1</td><td>3</td><td>2 (a plane)</td></tr>
+<tr><td>10</td><td>1</td><td>3</td><td>1 (a line)</td></tr>
+</table></div>
+<p class="word"><b>In words:</b> algebraic counts the root, geometric counts the free variables. When geometric is smaller than algebraic, the matrix is "missing" eigenvectors, and section 7 shows it then cannot be diagonalized.</p>
+</div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Distinct eigenvalues, independent eigenvectors</h2>
+<div class="box thm"><span class="tag">Theorem (slide 11)</span>
+<p>Let \(V\) be a vector space over \(K\) and \(A:V\to V\) a linear map. Let \(\mathbf v_1,\mathbf v_2,\dots,\mathbf v_m\) be eigenvectors of \(A\) with eigenvalues \(\lambda_1,\lambda_2,\dots,\lambda_m\) respectively. Assume that these eigenvalues are <b>distinct</b>, that is, \(\lambda_i\ne\lambda_j\) if \(i\ne j\). Then \(\mathbf v_1,\mathbf v_2,\dots,\mathbf v_m\) are <b>linearly independent</b>.</p>
+<p class="word"><b>In words:</b> eigenvectors belonging to different eigenvalues can never be combined to give \(\mathbf 0\) (except trivially). Different stretch factors force different directions, in a strong sense.</p>
+</div>
+<p>Recall (<a href="note-L2.html#s7">L2 section 7</a>): vectors are linearly independent if \(\alpha_1\mathbf v_1+\dots+\alpha_m\mathbf v_m=\mathbf 0\) is only possible with every \(\alpha_i=0\). The proof uses a neat trick: from one equation make two, one by multiplying by an eigenvalue and one by applying \(A\), then subtract.</p>
+<div class="box thm"><span class="tag">Proof (slide 11)</span>
+<p><b>For \(m=2\).</b> Suppose \(\alpha_1\mathbf v_1+\alpha_2\mathbf v_2=\mathbf 0\). Multiply by \(\lambda_2\):</p>
+\[ \lambda_2\alpha_1\mathbf v_1+\lambda_2\alpha_2\mathbf v_2=\mathbf 0. \]
+<p>Apply \(A\) instead (using \(A\mathbf v_i=\lambda_i\mathbf v_i\)):</p>
+\[ A(\alpha_1\mathbf v_1+\alpha_2\mathbf v_2)=\alpha_1\lambda_1\mathbf v_1+\alpha_2\lambda_2\mathbf v_2=\mathbf 0. \]
+<p>Subtract the first from the second: the \(\mathbf v_2\) terms cancel and \((\lambda_1-\lambda_2)\alpha_1\mathbf v_1=\mathbf 0\). Since \(\lambda_1\ne\lambda_2\) and \(\mathbf v_1\ne\mathbf 0\), \(\alpha_1=0\). Then \(\alpha_2\mathbf v_2=\mathbf 0\) with \(\mathbf v_2\ne\mathbf 0\), so \(\alpha_2=0\).</p>
+<p><b>By induction.</b> Assume \(\mathbf v_1,\dots,\mathbf v_k\) are linearly independent, and let \(\mathbf v_{k+1}\ne\mathbf 0\) be an eigenvector with eigenvalue \(\lambda_{k+1}\) different from the others. Suppose</p>
+\[ \alpha_1\mathbf v_1+\dots+\alpha_k\mathbf v_k+\alpha_{k+1}\mathbf v_{k+1}=\mathbf 0. \]
+<p>Multiply by \(\lambda_{k+1}\):</p>
+\[ \begin{aligned} &\lambda_{k+1}\alpha_1\mathbf v_1+\dots+\lambda_{k+1}\alpha_k\mathbf v_k\\ &\quad+\lambda_{k+1}\alpha_{k+1}\mathbf v_{k+1}=\mathbf 0. \end{aligned} \]
+<p>Apply \(A\):</p>
+\[ \begin{aligned} &\lambda_1\alpha_1\mathbf v_1+\dots+\lambda_k\alpha_k\mathbf v_k\\ &\quad+\lambda_{k+1}\alpha_{k+1}\mathbf v_{k+1}=\mathbf 0. \end{aligned} \]
+<p>Subtracting, the \(\mathbf v_{k+1}\) terms cancel:</p>
+\[ \begin{aligned} &(\lambda_1-\lambda_{k+1})\alpha_1\mathbf v_1+\dots\\ &\quad+(\lambda_k-\lambda_{k+1})\alpha_k\mathbf v_k=\mathbf 0. \end{aligned} \]
+<p>Since \(\mathbf v_1,\dots,\mathbf v_k\) are independent, every coefficient is 0; since \(\lambda_i-\lambda_{k+1}\ne0\), this gives \(\alpha_1=\dots=\alpha_k=0\). The original equation then reads \(\alpha_{k+1}\mathbf v_{k+1}=\mathbf 0\), and \(\mathbf v_{k+1}\ne\mathbf 0\) gives \(\alpha_{k+1}=0\). So \(\mathbf v_1,\dots,\mathbf v_k,\mathbf v_{k+1}\) are linearly independent. Starting from \(m=2\), this proves the theorem for every \(m\).</p>
+</div>
+
+<div class="box eg"><span class="tag">Examples (slide 12)</span>
+<ol class="steps">
+<li>\(\{\mathbf v_1,\mathbf v_2\}=\left\{\begin{bmatrix}-3\\4\end{bmatrix},\begin{bmatrix}4\\3\end{bmatrix}\right\}\) are eigenvectors of \(A=\begin{bmatrix}41&12\\12&34\end{bmatrix}\) with respective eigenvalues 25 and 50 (section 4). Since \(25\ne50\), they are linearly independent. (Directly: neither is a multiple of the other.)</li>
+<li>\(\{e^t,e^{2t},e^{3t}\}\) are eigenvectors of \(A=\dfrac{d}{dt}\) with the respective eigenvalues 1, 2 and 3 (slide 6, example 2). So \(\{e^t,e^{2t},e^{3t}\}\) are linearly independent: no combination \(\alpha_1e^t+\alpha_2e^{2t}+\alpha_3e^{3t}\) is the zero function unless all \(\alpha_i=0\).</li>
+</ol>
+</div>
+<p>Slide 8's three eigenvectors \((1,0,0)\), \((1,-1,0)\), \((3,-2,2)\) have eigenvalues 1, 2, 3, so they too are independent, with no row reduction needed.</p>
+
+<div class="box thm"><span class="tag">Corollary (slide 12)</span>
+<p>Let \(V\) be a vector space over \(K\) and \(A:V\to V\) a linear map (with \(V\) of dimension \(n\)). If the eigenvalues of \(A\) are all distinct, \(V\) has a <b>basis consisting of eigenvectors</b> of \(A\).</p>
+<p class="word"><b>In words:</b> an \(n\times n\) matrix with \(n\) different eigenvalues has \(n\) independent eigenvectors, one per eigenvalue, and \(n\) independent vectors in \(\mathbb R^n\) form a basis (<a href="note-L2.html#s9">L2 section 9</a>).</p>
+</div>
+<div class="box warn"><span class="tag">Trap</span>
+<p>The corollary only works one way. Distinct eigenvalues guarantee a basis of eigenvectors, but repeated eigenvalues do <b>not</b> rule one out. Slide 9 (eigenvalue 1 three times) has two independent eigenvectors, slide 10 only one, and the identity matrix \(I_3\) (eigenvalue 1 three times) has three: every non-zero vector is an eigenvector of \(I\). With a repeated eigenvalue you must count the free variables.</p>
+</div>
+</section>
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Diagonalization</h2>
+<p>A <b>diagonal</b> matrix \(D=\begin{bmatrix}\lambda_1&&\\&\ddots&\\&&\lambda_n\end{bmatrix}\) (zeros off the diagonal) is the simplest kind of matrix: it just scales the \(i\)-th coordinate by \(\lambda_i\). Diagonalization rewrites \(A\) as a diagonal matrix by using its eigenvectors as the new coordinate directions.</p>
+<div class="box thm"><span class="tag">Theorem (slide 13)</span>
+<p>Assume there exists a basis \(\{\mathbf v_1,\mathbf v_2,\dots,\mathbf v_n\}\) of eigenvectors of an \(n\times n\) matrix \(A\), with \(A\mathbf v_i=\lambda_i\mathbf v_i\). Then \(A\) can be <b>diagonalized</b>:</p>
+\[ Q^{-1}AQ=D=\begin{bmatrix}\lambda_1&&\\&\ddots&\\&&\lambda_n\end{bmatrix} \]
+<p>for</p>
+\[ Q=[\,\mathbf v_1\ \mathbf v_2\ \cdots\ \mathbf v_n\,]. \]
+<p>(One of the applications: computing the matrix power of \(A\); see section 8.)</p>
+<p class="word"><b>In words:</b> put the eigenvectors side by side as the columns of \(Q\); then \(Q^{-1}AQ\) is diagonal, with the eigenvalues on the diagonal <b>in the same order</b> as the eigenvectors in \(Q\).</p>
+</div>
+<div class="box thm"><span class="tag">Proof (slide 13)</span>
+<p>Construct a matrix \(Q\) by putting the vectors \(\mathbf v_1,\dots,\mathbf v_n\) as its columns: \(Q=[\,\mathbf v_1\ \mathbf v_2\ \cdots\ \mathbf v_n\,]\). By the column rule for products (<a href="note-L3.html#s3">L3 section 3</a>),</p>
+\[ \begin{aligned} AQ&=[\,A\mathbf v_1\ A\mathbf v_2\ \cdots\ A\mathbf v_n\,]\\ &=[\,\lambda_1\mathbf v_1\ \lambda_2\mathbf v_2\ \cdots\ \lambda_n\mathbf v_n\,]\\ &=[\,\mathbf v_1\ \mathbf v_2\ \cdots\ \mathbf v_n\,]\begin{bmatrix}\lambda_1&&\\&\ddots&\\&&\lambda_n\end{bmatrix}. \end{aligned} \]
+<p>(The last step: \(QD\) multiplies column \(i\) of \(Q\) by \(\lambda_i\).) So \(AQ=QD\). The columns of \(Q\) are a basis, hence independent, so \(Q\) is invertible (L3's invertible matrix theorem); multiplying on the left by \(Q^{-1}\):</p>
+\[ AQ=QD\ \Rightarrow\ Q^{-1}AQ=D. \]
+</div>
+<p>Equivalently, multiplying \(AQ=QD\) on the right by \(Q^{-1}\):</p>
+\[ A=QDQ^{-1}. \]
+<p class="word"><b>In words:</b> to apply \(A\), first change to eigenvector coordinates (\(Q^{-1}\)), then scale each coordinate by its eigenvalue (\(D\)), then change back (\(Q\)).</p>
+
+<div class="box eg"><span class="tag">Example (slide 14)</span>
+<p>There exists a basis \(\{\mathbf v_1,\mathbf v_2\}=\left\{\begin{bmatrix}-3\\4\end{bmatrix},\begin{bmatrix}4\\3\end{bmatrix}\right\}\) of eigenvectors of \(A=\begin{bmatrix}41&12\\12&34\end{bmatrix}\), so \(A\) can be diagonalized.</p>
+\[ Q=[\,\mathbf v_1\ \mathbf v_2\,]=\begin{bmatrix}-3&4\\4&3\end{bmatrix}. \]
+<p>By the \(2\times2\) inverse formula, with \(\det Q=-9-16=-25\):</p>
+\[ Q^{-1}=\frac{-1}{25}\begin{bmatrix}3&-4\\-4&-3\end{bmatrix}. \]
+<p>Then</p>
+\[ \begin{aligned} Q^{-1}A&=\frac{-1}{25}\begin{bmatrix}3&-4\\-4&-3\end{bmatrix}\begin{bmatrix}41&12\\12&34\end{bmatrix}\\ &=\frac{-1}{25}\begin{bmatrix}75&-100\\-200&-150\end{bmatrix}\\ &=\begin{bmatrix}-3&4\\8&6\end{bmatrix}, \end{aligned} \]
+\[ \begin{aligned} Q^{-1}AQ&=\begin{bmatrix}-3&4\\8&6\end{bmatrix}\begin{bmatrix}-3&4\\4&3\end{bmatrix}\\ &=\begin{bmatrix}25&0\\0&50\end{bmatrix}=D. \end{aligned} \]
+<p>The middle steps: \(3(41)-4(12)=75\), \(3(12)-4(34)=-100\), \(-4(41)-3(12)=-200\), \(-4(12)-3(34)=-150\); then \(\frac{-1}{25}\) times these. Last product: \((-3)(-3)+4(4)=25\), \((-3)(4)+4(3)=0\), \(8(-3)+6(4)=0\), \(8(4)+6(3)=50\).</p>
+</div>
+<p>In practice you do not need to multiply out \(Q^{-1}AQ\): the theorem guarantees the answer \(D\). The calculation is a check. What you <b>must</b> get right is the order: \(\mathbf v_1\) (eigenvalue 25) is column 1 of \(Q\), so 25 is the \((1,1)\) entry of \(D\). With \(Q=[\,\mathbf v_2\ \mathbf v_1\,]\) you would get \(D=\operatorname{diag}(50,25)\) instead; both are correct diagonalizations, as long as \(Q\) and \(D\) match.</p>
+
+<div class="box thm"><span class="tag">Method: diagonalize A (or show it cannot be done)</span>
+<ol class="steps">
+<li>Find the eigenvalues (roots of \(\det(\lambda I-A)\)).</li>
+<li>For each eigenvalue find a basis of its eigenspace (one vector per free variable).</li>
+<li>If you have \(n\) eigenvectors in total, \(A\) is diagonalizable: \(Q=[\,\mathbf v_1\cdots\mathbf v_n\,]\), \(D=\operatorname{diag}(\lambda_1,\dots,\lambda_n)\) in the same order, and \(A=QDQ^{-1}\).</li>
+<li>If you have fewer than \(n\) (some eigenvalue has geometric multiplicity smaller than its algebraic multiplicity), \(A\) is <b>not diagonalizable</b>.</li>
+</ol>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts: when is A diagonalizable?</span>
+<p>The converse of slide 13 also holds: if \(Q^{-1}AQ=D\) for an invertible \(Q\), then \(AQ=QD\) says column by column that \(A\mathbf q_i=d_i\mathbf q_i\), so the columns of \(Q\) are \(n\) independent eigenvectors. Hence</p>
+\[ \begin{aligned} &A\text{ is diagonalizable}\\ \iff\ &A\text{ has }n\text{ independent eigenvectors}. \end{aligned} \]
+<p>Equivalently: for every eigenvalue, geometric multiplicity \(=\) algebraic multiplicity (section 5). Distinct eigenvalues are enough (slide 12's corollary).</p>
+<ul class="list">
+<li>Slide 8: eigenvalues 1, 2, 3 distinct, so diagonalizable with \(Q=\begin{bmatrix}1&1&3\\0&-1&-2\\0&0&2\end{bmatrix}\), \(D=\operatorname{diag}(1,2,3)\).</li>
+<li>Slide 9: eigenvalue 1 has algebraic multiplicity 3 but only 2 independent eigenvectors: <b>not</b> diagonalizable. Slide 10: only 1: not diagonalizable.</li>
+<li>The shear \(\begin{bmatrix}1&1\\0&1\end{bmatrix}\): \((\lambda-1)^2\), and \(I-A=\begin{bmatrix}0&-1\\0&0\end{bmatrix}\) gives only \(v_2=0\), one free variable. Not diagonalizable, even though it is invertible (\(\det=1\)).</li>
+</ul>
+<p class="word"><b>In words:</b> "invertible" (no eigenvalue 0) and "diagonalizable" (enough eigenvectors) are different questions. A matrix can be one without the other.</p>
+</div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Powers of a matrix</h2>
+<p>Slide 13 names "computing the matrix power of \(A\)" as one application of diagonalization but gives no details. Here they are; exam type L5.2 asks for \(A^n\), \(A^{100}\) or \(\lim_{n\to\infty}A^n\) this way.</p>
+<div class="box thm"><span class="tag">Powers by diagonalization (slide 13's application)</span>
+<p>If \(A=QDQ^{-1}\) with \(D=\operatorname{diag}(\lambda_1,\dots,\lambda_n)\), then for every positive integer \(k\)</p>
+\[ A^k=QD^kQ^{-1}, \]
+<p>where</p>
+\[ D^k=\begin{bmatrix}\lambda_1^k&&\\&\ddots&\\&&\lambda_n^k\end{bmatrix}. \]
+<p><b>Why:</b> in the product \(A^k=(QDQ^{-1})(QDQ^{-1})\cdots(QDQ^{-1})\), each inner \(Q^{-1}Q\) is \(I\) and drops out:</p>
+\[ \begin{aligned} A^2&=QD\underbrace{Q^{-1}Q}_{I}DQ^{-1}\\ &=QD^2Q^{-1}, \end{aligned} \]
+<p>and so on.</p>
+<p>And a diagonal matrix is powered entry by entry, because \(D\) just scales each coordinate.</p>
+<p class="word"><b>In words:</b> instead of multiplying \(A\) by itself \(k\) times, raise the eigenvalues to the \(k\)-th power and sandwich between \(Q\) and \(Q^{-1}\). Three matrix products, whatever \(k\) is.</p>
+</div>
+<p>Similarly, if no eigenvalue is 0, \(A^{-1}=QD^{-1}Q^{-1}\) with \(D^{-1}=\operatorname{diag}(\frac1{\lambda_1},\dots,\frac1{\lambda_n})\): check \(QDQ^{-1}\cdot QD^{-1}Q^{-1}=QDD^{-1}Q^{-1}=I\). So \(A^{-k}=QD^{-k}Q^{-1}\) too.</p>
+
+<div class="box eg"><span class="tag">Example: \(A^n\) for slide 14's matrix</span>
+<p>From section 7, \(A=\begin{bmatrix}41&12\\12&34\end{bmatrix}=QDQ^{-1}\) with \(Q=\begin{bmatrix}-3&4\\4&3\end{bmatrix}\), \(D=\operatorname{diag}(25,50)\) and</p>
+\[ \begin{aligned} Q^{-1}&=\frac{-1}{25}\begin{bmatrix}3&-4\\-4&-3\end{bmatrix}\\ &=\frac1{25}\begin{bmatrix}-3&4\\4&3\end{bmatrix}=\frac1{25}Q. \end{aligned} \]
+<p>So</p>
+\[ \begin{aligned} A^n&=QD^n\cdot\tfrac1{25}Q\\ &=\frac1{25}\begin{bmatrix}-3\cdot25^n&4\cdot50^n\\4\cdot25^n&3\cdot50^n\end{bmatrix}\begin{bmatrix}-3&4\\4&3\end{bmatrix}. \end{aligned} \]
+<p>The \((1,1)\) entry of the product is \(9\cdot25^n+16\cdot50^n=25^n(9+16\cdot2^n)\), using \(50^n=2^n\cdot25^n\); the others are similar. Taking out \(\frac{25^n}{25}=25^{n-1}\):</p>
+\[ A^n=25^{n-1}\begin{bmatrix}9+16\cdot2^n&12(2^n-1)\\12(2^n-1)&16+9\cdot2^n\end{bmatrix}. \]
+<p><b>Check \(n=1\):</b> \(25^0\begin{bmatrix}9+32&12\\12&16+18\end{bmatrix}=\begin{bmatrix}41&12\\12&34\end{bmatrix}\ \checkmark\)</p>
+<p><b>Check \(n=2\):</b> \(25\begin{bmatrix}73&36\\36&52\end{bmatrix}=\begin{bmatrix}1825&900\\900&1300\end{bmatrix}\), which is \(A^2\) multiplied out directly (\(41^2+12^2=1825\), \(41(12)+12(34)=900\), \(12^2+34^2=1300\)) \(\checkmark\)</p>
+</div>
+
+<h3>Long-run behaviour: the population model again</h3>
+<p><a href="note-L3.html#s14">L3 section 14</a> followed people between a city and its suburbs with \(\mathbf x_{n}=M^n\mathbf x_0\), \(M=\begin{bmatrix}0.95&0.03\\0.05&0.97\end{bmatrix}\), and saw the populations settle at 375,000 and 625,000. Eigenvalues explain why.</p>
+<div class="box eg"><span class="tag">Example: \(M^n\mathbf x_0\) through eigenvectors</span>
+<p><b>Eigenvalues.</b> \(\operatorname{tr}M=1.92\), \(\det M=0.9215-0.0015=0.92\), so \(\lambda^2-1.92\lambda+0.92=(\lambda-1)(\lambda-0.92)=0\): \(\lambda_1=1\), \(\lambda_2=0.92\).</p>
+<p><b>Eigenvectors.</b> \(\lambda_1=1\): \(I-M=\begin{bmatrix}0.05&-0.03\\-0.05&0.03\end{bmatrix}\) gives \(0.05v_1=0.03v_2\), so \(\mathbf v_1=\begin{bmatrix}3\\5\end{bmatrix}\). \(\lambda_2=0.92\): \(0.92I-M=\begin{bmatrix}-0.03&-0.03\\-0.05&-0.05\end{bmatrix}\) gives \(v_1+v_2=0\), so \(\mathbf v_2=\begin{bmatrix}1\\-1\end{bmatrix}\).</p>
+<p><b>Write \(\mathbf x_0\) in eigenvectors.</b> \(\mathbf x_0=\begin{bmatrix}600{,}000\\400{,}000\end{bmatrix}=a\mathbf v_1+b\mathbf v_2\): \(3a+b=600{,}000\) and \(5a-b=400{,}000\). Adding, \(8a=1{,}000{,}000\), so \(a=125{,}000\) and \(b=225{,}000\).</p>
+<p><b>Apply \(M^n\).</b> Each eigenvector is just scaled: \(M^n\mathbf v_i=\lambda_i^n\mathbf v_i\). So</p>
+\[ \begin{aligned} \mathbf x_n&=M^n\mathbf x_0\\ &=125{,}000(1)^n\begin{bmatrix}3\\5\end{bmatrix}\\ &\quad+225{,}000(0.92)^n\begin{bmatrix}1\\-1\end{bmatrix}. \end{aligned} \]
+<p>So, as \(n\to\infty\),</p>
+\[ \mathbf x_n\longrightarrow\begin{bmatrix}375{,}000\\625{,}000\end{bmatrix}, \]
+<p>because \((0.92)^n\to0\). <b>Check \(n=1\):</b> \(375{,}000+225{,}000(0.92)=582{,}000\) and \(625{,}000-207{,}000=418{,}000\), as in L3 \(\checkmark\)</p>
+<p class="word"><b>In words:</b> the part of the population along the eigenvalue-1 eigenvector stays forever; the part along the eigenvalue-0.92 eigenvector dies away by 8% a year. In the long run only the eigenvector with the largest eigenvalue survives.</p>
+</div>
+<p>This "write \(\mathbf x_0\) in eigenvectors, then scale each by \(\lambda_i^n\)" method is often quicker than finding \(Q^{-1}\), and it shows the behaviour at once: terms with \(|\lambda|\lt1\) die out, \(\lambda=1\) terms stay, \(|\lambda|\gt1\) terms grow. Chapter L6 uses it for difference and differential equations.</p>
+<div class="figure"><p class="ttl">x<sub>n</sub> = M<sup>n</sup>x<sub>0</sub> slides along the λ = 0.92 eigen-direction towards the λ = 1 eigenvector</p>
+<canvas class="plot" id="fPow" style="height:340px" aria-label="Population vectors x0 to xn in the city-suburb plane, in thousands"></canvas>
+<div class="ctrl"><label>year \(n\) <input type="range" id="fPow-n" min="0" max="60" step="1" value="5"></label>
+<label>city at the start (thousands) <input type="range" id="fPow-r" min="0" max="1000" step="50" value="600"></label></div>
+<div class="legend"><span style="--k:var(--accent)">x₀, x₁, …, xₙ</span><span style="--k:var(--c3)">eigen-line of λ = 1, direction (3, 5)</span><span style="--k:var(--warm)">total = 1,000 thousand</span></div>
+<div class="readout" id="fPow-out"></div>
+<p class="cap">Axes: city (horizontal) and suburbs (vertical), in thousands. Every start lies on the line \(r+s=1000\), which is parallel to \(\mathbf v_2=(1,-1)\). Each year the distance to the steady state \((375,625)\) shrinks by the factor 0.92.</p>
+</div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Similar matrices</h2>
+<div class="box thm"><span class="tag">Theorem (slide 15)</span>
+<p>Let \(A\), \(B\) be two \(n\times n\) matrices, in which \(B\) is invertible. Then the characteristic polynomial of \(A\) is equal to the characteristic polynomial of \(B^{-1}AB\).</p>
+</div>
+<div class="box thm"><span class="tag">Proof (slide 15)</span>
+\[ \begin{aligned} P(\lambda)&=\det(\lambda I-A)\\ &=\det(B^{-1})\det(\lambda I-A)\det(B)\\ &=\det\big(B^{-1}(\lambda I-A)B\big)\\ &=\det(\lambda I-B^{-1}AB). \end{aligned} \]
+<p>Line 2 inserts \(\det(B^{-1})\det(B)=\det(B^{-1}B)=\det I=1\). Line 3 uses the product rule \(\det(XY)=\det X\det Y\) (<a href="note-L4.html">L4</a>) backwards. Line 4 multiplies out: \(B^{-1}(\lambda I)B=\lambda B^{-1}B=\lambda I\) and \(B^{-1}(-A)B=-B^{-1}AB\).</p>
+</div>
+<div class="box def"><span class="tag">Definition: similar matrices (slide 15)</span>
+<p>Matrices \(A\) and \(C\) are <b>similar</b> if</p>
+\[ C=P^{-1}AP \]
+<p>for some non-singular matrix \(P\).</p>
+<p>By the above theorem, similar matrices \(A\) and \(C\) have the same characteristic polynomial, and so the <b>same eigenvalues</b>.</p>
+<p class="word"><b>In words:</b> similar matrices are the same linear map written in two different coordinate systems (\(P\) converts between them). Changing coordinates cannot change the stretch factors, so the eigenvalues agree. The eigenvectors do change: if \(A\mathbf v=\lambda\mathbf v\), then \(C(P^{-1}\mathbf v)=P^{-1}AP P^{-1}\mathbf v=\lambda P^{-1}\mathbf v\).</p>
+</div>
+<div class="box eg"><span class="tag">Example (slide 15)</span>
+<p>\(A=\begin{bmatrix}1&0\\1&0\end{bmatrix}\), \(C=\begin{bmatrix}0&0\\1&1\end{bmatrix}\), \(P=\begin{bmatrix}1&-1\\-3&1\end{bmatrix}\).</p>
+<p>The slide gives only the three matrices. Here is the working. The characteristic polynomials are</p>
+\[ \begin{aligned} \det(\lambda I-A)&=\det\begin{bmatrix}\lambda-1&0\\-1&\lambda\end{bmatrix}\\ &=\lambda(\lambda-1),\\ \det(\lambda I-C)&=\det\begin{bmatrix}\lambda&0\\-1&\lambda-1\end{bmatrix}\\ &=\lambda(\lambda-1). \end{aligned} \]
+<p>Both have eigenvalues 0 and 1, as similar matrices must. To see the similarity: \(\det P=1-3=-2\), so \(P^{-1}=\frac{-1}{2}\begin{bmatrix}1&1\\3&1\end{bmatrix}\). Then</p>
+\[ \begin{aligned} PAP^{-1}&=\begin{bmatrix}0&0\\-2&0\end{bmatrix}\cdot\frac{-1}{2}\begin{bmatrix}1&1\\3&1\end{bmatrix}\\ &=\begin{bmatrix}0&0\\1&1\end{bmatrix}=C, \end{aligned} \]
+<p>using \(PA=\begin{bmatrix}1-1&0\\-3+1&0\end{bmatrix}=\begin{bmatrix}0&0\\-2&0\end{bmatrix}\). So \(C=(P^{-1})^{-1}A(P^{-1})\): \(A\) and \(C\) are similar, with \(P^{-1}\) playing the role of "\(P\)" in the definition.</p>
+</div>
+<p class="slidefix"><b>Note on slide 15.</b> With the definition's order \(C=P^{-1}AP\) and the slide's \(P\), the product is \(P^{-1}AP=\begin{bmatrix}-1&1\\-2&2\end{bmatrix}\), not \(C\). The slide's \(P\) works the other way round: \(C=PAP^{-1}\) (equivalently \(A=P^{-1}CP\)). Either way \(A\) and \(C\) are similar, which is the point of the example; this note uses \(C=PAP^{-1}\).</p>
+<p>Diagonalization (section 7) is a special case: \(Q^{-1}AQ=D\) says \(A\) is similar to the diagonal matrix \(D\). That is why the eigenvalues of \(A\) can be read off the diagonal of \(D\).</p>
+<div class="box warn"><span class="tag">Trap</span>
+<p>Same eigenvalues do <b>not</b> make two matrices similar. \(\begin{bmatrix}1&1\\0&1\end{bmatrix}\) and \(I_2\) both have eigenvalue 1 twice, but \(P^{-1}IP=I\) for every \(P\), so the only matrix similar to \(I\) is \(I\) itself. Similar matrices share the characteristic polynomial, the determinant (product of the eigenvalues) and the trace (their sum), but the converse fails.</p>
+</div>
+<p>Exam proofs of type L5.3 (for example May 2014 Q3(b), "if \(B=P^{-1}AP\), prove \(\det(tI-B)=\det(tI-A)\)", or Dec 2012 Q3(a), "prove \(\det(PAP^{-1})=\det A\)") are exactly slide 15's proof.</p>
+</section>
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Eigenvalue rules the exam uses</h2>
+<p>The handout does not list these, but past papers (type L5.3) ask for them again and again, usually as short proofs. Each follows in one or two lines from \(A\mathbf v=\lambda\mathbf v\) or from the characteristic polynomial.</p>
+<div class="box beyond"><span class="tag">Beyond the handouts: eigenvalues of related matrices</span>
+<p>Let \(A\mathbf v=\lambda\mathbf v\) with \(\mathbf v\ne\mathbf 0\).</p>
+<ol class="steps">
+<li><b>Powers:</b> \(A^k\mathbf v=\lambda^k\mathbf v\). Proof: \(A^2\mathbf v=A(\lambda\mathbf v)=\lambda A\mathbf v=\lambda^2\mathbf v\), and so on.</li>
+<li><b>Shifts:</b> \((A+cI)\mathbf v=(\lambda+c)\mathbf v\). Proof: \(A\mathbf v+c\mathbf v=\lambda\mathbf v+c\mathbf v\). More generally, for a polynomial \(p\), \(p(A)\mathbf v=p(\lambda)\mathbf v\).</li>
+<li><b>Inverse:</b> if \(A\) is invertible then \(\lambda\ne0\) and \(A^{-1}\mathbf v=\frac1\lambda\mathbf v\). Proof: apply \(A^{-1}\) to \(A\mathbf v=\lambda\mathbf v\): \(\mathbf v=\lambda A^{-1}\mathbf v\); divide by \(\lambda\) (\(\lambda=0\) would give \(\mathbf v=\mathbf 0\)).</li>
+<li><b>Zero eigenvalue:</b> \(0\) is an eigenvalue of \(A\) \(\iff\) \(\det A=0\) \(\iff\) \(A\) is singular (put \(\lambda=0\) in \(\det(\lambda I-A)=0\)).</li>
+<li><b>Transpose:</b> \(A^T\) has the same eigenvalues as \(A\), since \(\lambda I-A^T=(\lambda I-A)^T\) and \(\det X^T=\det X\) (L4). The eigenvectors are usually different.</li>
+<li><b>Trace and determinant:</b> if \(\lambda_1,\dots,\lambda_n\) are the eigenvalues (repeated as often as their algebraic multiplicity, complex ones included), then</li>
+</ol>
+\[ \lambda_1+\dots+\lambda_n=\operatorname{tr}A, \]
+\[ \lambda_1\lambda_2\cdots\lambda_n=\det A. \]
+<p>Proof of the determinant rule: \(\det(\lambda I-A)=(\lambda-\lambda_1)\cdots(\lambda-\lambda_n)\); put \(\lambda=0\): \(\det(-A)=(-1)^n\lambda_1\cdots\lambda_n\), and \(\det(-A)=(-1)^n\det A\). The trace rule compares the \(\lambda^{n-1}\) coefficients (only the diagonal product \((\lambda-a_{11})\cdots(\lambda-a_{nn})\) contributes to it). For a diagonalizable \(A\) there is a quicker proof: \(\det A=\det(QDQ^{-1})=\det D\).</p>
+<p class="word"><b>In words:</b> do to \(\lambda\) whatever you do to \(A\) (square it, add \(c\), invert it); the eigenvector stays the same. And the eigenvalues add up to the trace and multiply to the determinant.</p>
+</div>
+<div class="box eg"><span class="tag">Example: slide 7's matrix</span>
+<p>\(A=\begin{bmatrix}41&12\\12&34\end{bmatrix}\) has eigenvalues 25 and 50, eigenvectors \((-3,4)\) and \((4,3)\). Without any new calculation:</p>
+<ul class="list">
+<li>\(A^2\) has eigenvalues \(625\) and \(2500\); \(A+3I\) has \(28\) and \(53\); \(A^{-1}\) has \(\frac1{25}\) and \(\frac1{50}\); all with the same eigenvectors.</li>
+<li>\(\operatorname{tr}A=41+34=75=25+50\) and \(\det A=1394-144=1250=25\times50\) \(\checkmark\)</li>
+</ul>
+</div>
+<div class="box eg"><span class="tag">Example (Dec 2023 Q2(b), 3 marks)</span>
+<p>\(A\in\mathbb R^{3\times3}\) and \(|A-I|=|A-2I|=|A-3I|=0\). Find \(\det A\).</p>
+<p>\(|A-\lambda I|=0\) means \(\lambda\) is an eigenvalue (section 4, either sign convention). So 1, 2 and 3 are eigenvalues of the \(3\times3\) matrix \(A\); a cubic has at most three roots, so these are all of them. Hence \(\det A=1\times2\times3=6\).</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts: \(A^TA\) and \(AA^T\)</span>
+<p>For any \(m\times n\) matrix \(A\), the square matrices \(A^TA\) (\(n\times n\)) and \(AA^T\) (\(m\times m\)) have the <b>same non-zero eigenvalues</b> (the exam taster asks you to prove this). They can differ in how many zeros they have. Example: \(B=\begin{bmatrix}1&2&0\\0&1&1\end{bmatrix}\) gives \(BB^T=\begin{bmatrix}5&2\\2&2\end{bmatrix}\) with eigenvalues 1 and 6 (trace 7, determinant 6), while the \(3\times3\) matrix \(B^TB\) has eigenvalues 0, 1 and 6.</p>
+</div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Real symmetric matrices: real eigenvalues</h2>
+<p>A matrix is <b>symmetric</b> if \(A^T=A\) (<a href="note-L3.html#s6">L3 section 6</a>): the entry in row \(i\), column \(j\) equals the entry in row \(j\), column \(i\). Slide 7's matrix \(\begin{bmatrix}41&12\\12&34\end{bmatrix}\) is symmetric. Slides 16 to 18 show that symmetric matrices behave especially well. Most exam matrices of type L5.4 and L6.1 are symmetric.</p>
+<p>A real matrix can have complex eigenvalues (slide 16's example below), so the proofs work in \(\mathbb C\). Two facts about complex numbers are needed. The <b>conjugate</b> of \(z=x+iy\) is \(\bar z=x-iy\); \(z\) is real exactly when \(z=\bar z\); and conjugation respects sums and products (\(\overline{zw}=\bar z\,\bar w\)). For a complex vector \(\mathbf v\), \(\bar{\mathbf v}\) conjugates each entry, and</p>
+\[ \begin{aligned} \bar{\mathbf v}^T\mathbf v&=\bar v_1v_1+\dots+\bar v_nv_n\\ &=|v_1|^2+\dots+|v_n|^2\gt0 \end{aligned} \]
+<p>if \(\mathbf v\ne\mathbf 0\).</p>
+<div class="box thm"><span class="tag">Theorem (slide 16)</span>
+<p>The eigenvalues of a real symmetric matrix are <b>real</b>.</p>
+</div>
+<div class="box thm"><span class="tag">Proof (slide 16)</span>
+<p>Let \(\lambda\) be an eigenvalue of the real symmetric matrix \(A\), so that \(A\mathbf v=\lambda\mathbf v\) with \(\lambda\in\mathbb C\), \(\mathbf v\in\mathbb C^n\), \(\mathbf v\ne\mathbf 0\). Taking the complex conjugate of both sides (\(A\) is real, so \(\bar A=A\)):</p>
+\[ \bar A\bar{\mathbf v}=\bar\lambda\bar{\mathbf v}\ \Rightarrow\ A\bar{\mathbf v}=\bar\lambda\bar{\mathbf v}. \]
+<p>Now compute the number \(\bar{\mathbf v}^TA\mathbf v\) in two ways. First,</p>
+\[ \bar{\mathbf v}^TA\mathbf v=\bar{\mathbf v}^T(\lambda\mathbf v)=\lambda\,\bar{\mathbf v}^T\mathbf v. \]
+<p>Second, using \(A=A^T\) and \((XY)^T=Y^TX^T\):</p>
+\[ \begin{aligned} \bar{\mathbf v}^TA\mathbf v=\bar{\mathbf v}^TA^T\mathbf v&=(A\bar{\mathbf v})^T\mathbf v\\ &=(\bar\lambda\bar{\mathbf v})^T\mathbf v=\bar\lambda\,\bar{\mathbf v}^T\mathbf v. \end{aligned} \]
+<p>So \(\lambda\,\bar{\mathbf v}^T\mathbf v=\bar\lambda\,\bar{\mathbf v}^T\mathbf v\). Since \(\bar{\mathbf v}^T\mathbf v\gt0\), we can divide: \(\lambda=\bar\lambda\), so \(\lambda\) is real.</p>
+<p class="word"><b>In words:</b> symmetry lets \(A\) be moved from one side of \(\bar{\mathbf v}^T(\cdot)\mathbf v\) to the other; doing so turns \(\lambda\) into \(\bar\lambda\), so \(\lambda\) must equal its own conjugate.</p>
+</div>
+
+<div class="box thm"><span class="tag">Theorem (slide 16)</span>
+<p>A real symmetric matrix has a <b>real</b> eigenvector.</p>
+<p><b>Proof.</b> Let \(\mathbf z=\mathbf x+i\mathbf y\), with \(\mathbf x,\mathbf y\in\mathbb R^n\), be an eigenvector of the real symmetric matrix \(A\), so \(A\mathbf z=\lambda\mathbf z\). By the first theorem \(\lambda\) is real, so conjugating gives \(A\bar{\mathbf z}=\lambda\bar{\mathbf z}\). Adding:</p>
+\[ \begin{aligned} &A(\mathbf z+\bar{\mathbf z})=\lambda(\mathbf z+\bar{\mathbf z})\\ \Rightarrow\ &A(\operatorname{Re}\mathbf z)=\lambda(\operatorname{Re}\mathbf z), \end{aligned} \]
+<p>since \(\mathbf z+\bar{\mathbf z}=2\mathbf x=2\operatorname{Re}\mathbf z\). So \(A\) has a real eigenvector.</p>
+</div>
+<p>One gap in the slide's proof: if \(\operatorname{Re}\mathbf z=\mathbf 0\) it is not an eigenvector. Then subtract instead: \(A(\mathbf z-\bar{\mathbf z})=\lambda(\mathbf z-\bar{\mathbf z})\), and \(\mathbf z-\bar{\mathbf z}=2i\mathbf y\) with \(\mathbf y\ne\mathbf 0\), so \(\operatorname{Im}\mathbf z=\mathbf y\) is a real eigenvector. In practice this theorem means you never need complex numbers for a real symmetric matrix: \(\lambda I-A\) is real, so row reduction gives real eigenvectors.</p>
+
+<div class="box eg"><span class="tag">Example (slide 16): a real matrix that is not symmetric</span>
+<p>\(B=\begin{bmatrix}0&-1\\1&0\end{bmatrix}\). Then</p>
+\[ \begin{aligned} \det(\lambda I-B)&=\det\begin{bmatrix}\lambda&1\\-1&\lambda\end{bmatrix}\\ &=\lambda^2+1=0, \end{aligned} \]
+<p>which has complex eigenvalues \(\lambda_1=i\), \(\lambda_2=-i\).</p>
+<p>\(B\) rotates every vector by \(90^\circ\) (it sends \((1,0)\) to \((0,1)\)), so no real direction is kept: no real eigenvector. With complex vectors there are eigenvectors, for example \(B\begin{bmatrix}1\\-i\end{bmatrix}=\begin{bmatrix}i\\1\end{bmatrix}=i\begin{bmatrix}1\\-i\end{bmatrix}\). \(B^T=\begin{bmatrix}0&1\\-1&0\end{bmatrix}\ne B\), so the theorem does not apply. (Pick the rotation in section 3's figure to see it.)</p>
+</div>
+<p>The rotation matrix \(\begin{bmatrix}\cos\theta&-\sin\theta\\ \sin\theta&\cos\theta\end{bmatrix}\) (Dec 2014 Q2(a)) works the same way: \(\lambda^2-2\cos\theta\,\lambda+1=0\), so \(\lambda=\cos\theta\pm i\sin\theta\), real only when \(\sin\theta=0\).</p>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Orthonormal eigenvectors and A = QDQᵀ</h2>
+<p>Words used below (they are covered fully in L7). Two vectors \(\mathbf u,\mathbf w\in\mathbb R^n\) are <b>orthogonal</b> (perpendicular) if their dot product is zero: \(\mathbf u^T\mathbf w=u_1w_1+\dots+u_nw_n=0\). The <b>length</b> of \(\mathbf u\) is \(\|\mathbf u\|=\sqrt{\mathbf u^T\mathbf u}\); \(\mathbf u\) is a <b>unit vector</b> if \(\|\mathbf u\|=1\), and dividing a non-zero vector by its length <b>normalizes</b> it. A set of vectors is <b>orthonormal</b> if they are unit vectors and pairwise orthogonal.</p>
+<div class="box thm"><span class="tag">Theorem (slide 17)</span>
+<p>Let \(A\) be an \(n\times n\) real symmetric matrix over \(\mathbb R\). An <b>orthonormal basis</b> of eigenvectors of \(A\) exists.</p>
+<p class="word"><b>In words:</b> a symmetric matrix always has \(n\) eigenvectors that are mutually perpendicular unit vectors. In particular every real symmetric matrix is diagonalizable.</p>
+</div>
+<div class="box thm"><span class="tag">Proof (slide 17)</span>
+<p>Let \(\mathbf v_i,\mathbf v_j\) be eigenvectors of \(A\), \(A\mathbf v_i=\lambda_i\mathbf v_i\), \(A\mathbf v_j=\lambda_j\mathbf v_j\). Compute \((A\mathbf v_i)^T\mathbf v_j\) in two ways:</p>
+\[ \begin{aligned} (A\mathbf v_i)^T\mathbf v_j&=\lambda_i\mathbf v_i^T\mathbf v_j,\\ (A\mathbf v_i)^T\mathbf v_j&=\mathbf v_i^TA^T\mathbf v_j=\mathbf v_i^TA\mathbf v_j\\ &=\mathbf v_i^T(\lambda_j\mathbf v_j)=\lambda_j\mathbf v_i^T\mathbf v_j. \end{aligned} \]
+<p>Subtracting: \((\lambda_i-\lambda_j)\mathbf v_i^T\mathbf v_j=0\).</p>
+<ul class="list">
+<li>If \(\lambda_i\ne\lambda_j\): \(\mathbf v_i^T\mathbf v_j=0\), so \(\mathbf v_i,\mathbf v_j\) are <b>orthogonal</b>.</li>
+<li>If \(\lambda_i=\lambda_j\): \(\mathbf v_i,\mathbf v_j\) are in the same eigenspace \(E_{\lambda_i}\), and we <b>choose</b> \(\mathbf v_i,\mathbf v_j\in E_{\lambda_i}\) normal (perpendicular) to each other.</li>
+</ul>
+<p>Eigenvectors can be normalized by being divided by their own length, to obtain unit vectors.</p>
+</div>
+<p>The proof above shows the key fact, <b>eigenvectors of a symmetric matrix for different eigenvalues are automatically perpendicular</b>, and says how to handle a repeated eigenvalue: inside its eigenspace, pick perpendicular eigenvectors. (That each eigenspace of a symmetric matrix is big enough, geometric = algebraic multiplicity, is the hard part of the theorem; the slide takes it for granted, and so may you.) Check with slide 7: \((-3,4)\cdot(4,3)=-12+12=0\ \checkmark\)</p>
+
+<div class="box thm"><span class="tag">Corollary (slide 18)</span>
+<p>Let \(A\) be an \(n\times n\) symmetric matrix over \(\mathbb R\). Then there exists an <b>orthogonal matrix</b> \(Q\) for the diagonalization of \(A\), such that</p>
+\[ Q^TAQ=D\iff A=QDQ^T, \]
+<p>where \(D\) is a diagonal matrix.</p>
+</div>
+<div class="box thm"><span class="tag">Proof (slide 18)</span>
+<p>\(A\) is symmetric, so an orthonormal basis \(\{\mathbf u_1,\mathbf u_2,\dots,\mathbf u_n\}\) of eigenvectors exists (slide 17), and with \(Q=[\,\mathbf u_1\ \mathbf u_2\ \cdots\ \mathbf u_n\,]\) we have \(Q^{-1}AQ=D\) (slide 13). Now</p>
+\[ \begin{aligned} Q^TQ&=\begin{bmatrix}\mathbf u_1^T\\ \vdots\\ \mathbf u_n^T\end{bmatrix}[\,\mathbf u_1\ \cdots\ \mathbf u_n\,]\\ &=\begin{bmatrix}\mathbf u_1^T\mathbf u_1&\cdots&\mathbf u_1^T\mathbf u_n\\ \vdots&\ddots&\vdots\\ \mathbf u_n^T\mathbf u_1&\cdots&\mathbf u_n^T\mathbf u_n\end{bmatrix}=I, \end{aligned} \]
+<p>since \(\mathbf u_i^T\mathbf u_i=1\) (unit vectors) and \(\mathbf u_i^T\mathbf u_j=0\) for \(i\ne j\) (orthogonal). So \(Q^T=Q^{-1}\), and</p>
+\[ Q^TAQ=D\iff A=QDQ^T. \]
+<p class="word"><b>In words:</b> a square matrix whose columns are orthonormal is called <b>orthogonal</b>; its inverse is just its transpose, so no inverse needs to be computed. For a symmetric \(A\), normalize perpendicular eigenvectors, use them as the columns of \(Q\), and \(A=QDQ^T\).</p>
+</div>
+
+<div class="box eg"><span class="tag">Example (slide 18)</span>
+<p>\(A=\begin{bmatrix}41&12\\12&34\end{bmatrix}\), \(\mathbf v_1=\begin{bmatrix}-3\\4\end{bmatrix}\), \(\mathbf v_2=\begin{bmatrix}4\\3\end{bmatrix}\). Both have length \(\sqrt{9+16}=5\), so</p>
+\[ \mathbf u_1=\frac15\begin{bmatrix}-3\\4\end{bmatrix},\quad\mathbf u_2=\frac15\begin{bmatrix}4\\3\end{bmatrix}, \]
+\[ Q=\frac15\begin{bmatrix}-3&4\\4&3\end{bmatrix}. \]
+<p>Then (here \(Q^T=Q\), as \(Q\) happens to be symmetric)</p>
+\[ \begin{aligned} Q^TAQ&=\frac1{25}\begin{bmatrix}-3&4\\4&3\end{bmatrix}\begin{bmatrix}41&12\\12&34\end{bmatrix}\begin{bmatrix}-3&4\\4&3\end{bmatrix}\\ &=\frac1{25}\begin{bmatrix}-75&100\\200&150\end{bmatrix}\begin{bmatrix}-3&4\\4&3\end{bmatrix}\\ &=\begin{bmatrix}-3&4\\8&6\end{bmatrix}\begin{bmatrix}-3&4\\4&3\end{bmatrix}=\begin{bmatrix}25&0\\0&50\end{bmatrix}. \end{aligned} \]
+<p>Compare section 7: the same \(D\), but now no inverse was needed, only a transpose.</p>
+</div>
+
+<div class="figure"><p class="ttl">A symmetric matrix stretches along two perpendicular eigen-axes</p>
+<canvas class="plot" id="fSym" style="height:340px" aria-label="Unit circle and its image ellipse under a symmetric 2 by 2 matrix, with eigenvectors"></canvas>
+<div class="ctrl"><label>\(a\) <input type="range" id="fSym-a" min="-3" max="3" step="0.5" value="2"></label>
+<label>\(b\) <input type="range" id="fSym-b" min="-3" max="3" step="0.5" value="1"></label>
+<label>\(c\) <input type="range" id="fSym-c" min="-3" max="3" step="0.5" value="2"></label></div>
+<div class="legend"><span style="--k:var(--axis)">unit circle</span><span style="--k:var(--warm)">image of the circle</span><span style="--k:var(--accent)">u₁ and λ₁u₁</span><span style="--k:var(--c2)">u₂ and λ₂u₂</span></div>
+<div class="readout" id="fSym-out"></div>
+<p class="cap">\(A=\begin{bmatrix}a&b\\b&c\end{bmatrix}\). Whatever the sliders, the eigenvalues are real and the two eigenvectors are perpendicular: the circle becomes an ellipse (possibly flattened or flipped) whose axes are the eigen-directions, with half-lengths \(|\lambda_1|\) and \(|\lambda_2|\).</p>
+</div>
+
+<h3>Rebuilding A from its eigenpairs</h3>
+<div class="box beyond"><span class="tag">Beyond the handouts: \(A=\lambda_1\mathbf u_1\mathbf u_1^T+\dots+\lambda_n\mathbf u_n\mathbf u_n^T\)</span>
+<p>Multiplying out \(A=QDQ^T\) column by row gives the <b>spectral decomposition</b></p>
+\[ A=\lambda_1\mathbf u_1\mathbf u_1^T+\lambda_2\mathbf u_2\mathbf u_2^T+\dots+\lambda_n\mathbf u_n\mathbf u_n^T, \]
+<p>where each \(\mathbf u_i\mathbf u_i^T\) is an \(n\times n\) matrix (column times row). For slide 18's matrix:</p>
+\[ \begin{aligned} &25\cdot\frac1{25}\begin{bmatrix}9&-12\\-12&16\end{bmatrix}+50\cdot\frac1{25}\begin{bmatrix}16&12\\12&9\end{bmatrix}\\ &=\begin{bmatrix}9+32&-12+24\\-12+24&16+18\end{bmatrix}=\begin{bmatrix}41&12\\12&34\end{bmatrix}\ \checkmark \end{aligned} \]
+<p class="word"><b>In words:</b> a symmetric matrix is a sum of "stretch along \(\mathbf u_i\) by \(\lambda_i\)" pieces. Exam questions (type L5.4) give some eigenpairs, or facts such as "symmetric, rank 2", and ask you to rebuild \(A\) this way. Use the facts: missing eigenvectors must be perpendicular to the given ones, and rank \(r\) means exactly \(n-r\) eigenvalues are 0 (for a symmetric matrix). A zero eigenvalue contributes nothing to the sum.</p>
+</div>
+
+<div class="box eg"><span class="tag">Example: a symmetric matrix with a repeated eigenvalue (written for these notes)</span>
+<p>Find an orthogonal \(Q\) and diagonal \(D\) with \(A=QDQ^T\) for \(A=\begin{bmatrix}2&1&1\\1&2&1\\1&1&2\end{bmatrix}\).</p>
+<p><b>Eigenvalues.</b> In \(\det(\lambda I-A)\), add columns 2 and 3 to column 1 (this does not change the determinant, L4); every entry of column 1 becomes \(\lambda-4\), which factors out:</p>
+\[ \begin{aligned} &\det(\lambda I-A)\\ &=\det\begin{bmatrix}\lambda-2&-1&-1\\-1&\lambda-2&-1\\-1&-1&\lambda-2\end{bmatrix}\\ &=(\lambda-4)\det\begin{bmatrix}1&-1&-1\\1&\lambda-2&-1\\1&-1&\lambda-2\end{bmatrix}\\ &=(\lambda-4)\det\begin{bmatrix}1&-1&-1\\0&\lambda-1&0\\0&0&\lambda-1\end{bmatrix}\\ &=(\lambda-4)(\lambda-1)^2 \end{aligned} \]
+<p>(third line: \(R_2-R_1\), \(R_3-R_1\)). Eigenvalues: 4, and 1 twice.</p>
+<p><b>\(\lambda=4\):</b> each row of \(A\) sums to 4, so \(A\begin{bmatrix}1\\1\\1\end{bmatrix}=\begin{bmatrix}4\\4\\4\end{bmatrix}\): eigenvector \((1,1,1)\).</p>
+<p><b>\(\lambda=1\):</b> \(I-A=\begin{bmatrix}-1&-1&-1\\-1&-1&-1\\-1&-1&-1\end{bmatrix}\): one equation \(x+y+z=0\), two free variables, so \(E_1\) is a plane (geometric multiplicity 2). Choose two <b>perpendicular</b> vectors in it: \((1,-1,0)\), then a second one satisfying both \(x+y+z=0\) and \(x-y=0\) (perpendicular to the first): \((1,1,-2)\). Both are automatically perpendicular to \((1,1,1)\), which has a different eigenvalue.</p>
+<p><b>Normalize</b> (lengths \(\sqrt2\), \(\sqrt6\), \(\sqrt3\)):</p>
+\[ \mathbf u_1=\frac1{\sqrt2}\begin{bmatrix}1\\-1\\0\end{bmatrix},\ \ \mathbf u_2=\frac1{\sqrt6}\begin{bmatrix}1\\1\\-2\end{bmatrix}, \]
+\[ \mathbf u_3=\frac1{\sqrt3}\begin{bmatrix}1\\1\\1\end{bmatrix}, \]
+\[ Q=[\,\mathbf u_1\ \mathbf u_2\ \mathbf u_3\,]=\begin{bmatrix}\tfrac1{\sqrt2}&\tfrac1{\sqrt6}&\tfrac1{\sqrt3}\\-\tfrac1{\sqrt2}&\tfrac1{\sqrt6}&\tfrac1{\sqrt3}\\0&-\tfrac2{\sqrt6}&\tfrac1{\sqrt3}\end{bmatrix}, \]
+\[ D=\begin{bmatrix}1&0&0\\0&1&0\\0&0&4\end{bmatrix}. \]
+<p>If you had picked a non-perpendicular pair in \(E_1\), say \(\mathbf v=(1,0,-1)\) and \(\mathbf w=(1,-1,0)\), replace \(\mathbf w\) by</p>
+\[ \begin{aligned} &\mathbf w-\frac{\mathbf w^T\mathbf v}{\mathbf v^T\mathbf v}\mathbf v\\ &=(1,-1,0)-\tfrac12(1,0,-1)\\ &=(\tfrac12,-1,\tfrac12), \end{aligned} \]
+<p>which is still in \(E_1\) and perpendicular to \(\mathbf v\) (the Gram–Schmidt step of L7).</p>
+<p><b>Check by rebuilding:</b> \(\mathbf u_1\mathbf u_1^T+\mathbf u_2\mathbf u_2^T+\mathbf u_3\mathbf u_3^T=QQ^T=I\), so</p>
+\[ \begin{aligned} A&=1\cdot(\mathbf u_1\mathbf u_1^T+\mathbf u_2\mathbf u_2^T)+4\mathbf u_3\mathbf u_3^T\\ &=I+3\mathbf u_3\mathbf u_3^T, \end{aligned} \]
+<p>and \(3\mathbf u_3\mathbf u_3^T\) is the all-ones matrix. \(I+\)(all ones) \(=A\ \checkmark\)</p>
+</div>
+
+<div class="box earlier"><span class="tag">Earlier syllabus — not in the 2026 handouts</span>
+<p><b>Definiteness of a symmetric matrix.</b> Older papers (type L5.4, for example May 2018 Q1(a), Dec 2017 Q4(a), Dec 2015 Q3(c),(d), Dec 2025 Q9) ask whether a matrix is "positive definite, negative definite or indefinite". This is taught here because those papers ask it; all such questions are solved on <a href="guide-beyond.html#B-L5-4">the earlier-syllabus page</a>.</p>
+<p>For a real symmetric \(A\), the <b>quadratic form</b> is the number \(q(\mathbf x)=\mathbf x^TA\mathbf x\). For slide 7's matrix, \(\mathbf x^TA\mathbf x=41x^2+24xy+34y^2\) (the off-diagonal 12 appears twice). \(A\) is called</p>
+<ul class="list">
+<li><b>positive definite</b> if \(\mathbf x^TA\mathbf x\gt0\) for every \(\mathbf x\ne\mathbf 0\); <b>positive semidefinite</b> if \(\mathbf x^TA\mathbf x\ge0\) for every \(\mathbf x\);</li>
+<li><b>negative definite</b> if \(\mathbf x^TA\mathbf x\lt0\) for every \(\mathbf x\ne\mathbf 0\); <b>negative semidefinite</b> if \(\mathbf x^TA\mathbf x\le0\) for every \(\mathbf x\);</li>
+<li><b>indefinite</b> if \(\mathbf x^TA\mathbf x\) takes both positive and negative values.</li>
+</ul>
+<p><b>Eigenvalue test.</b> With \(A=QDQ^T\) and \(\mathbf y=Q^T\mathbf x\) (so \(\mathbf y\ne\mathbf 0\iff\mathbf x\ne\mathbf 0\)):</p>
+\[ \mathbf x^TA\mathbf x=\mathbf y^TD\mathbf y=\lambda_1y_1^2+\dots+\lambda_ny_n^2. \]
+<p>So \(A\) is positive definite \(\iff\) all \(\lambda_i\gt0\); positive semidefinite \(\iff\) all \(\lambda_i\ge0\); negative (semi)definite \(\iff\) all \(\lambda_i\lt0\) (\(\le0\)); indefinite \(\iff\) some \(\lambda_i\gt0\) and some \(\lambda_j\lt0\).</p>
+<ul class="list">
+<li>Slide 7's matrix: eigenvalues 25, 50, so positive definite. Indeed
+\[ \begin{aligned} &41x^2+24xy+34y^2\\ &=25\big(\tfrac{-3x+4y}5\big)^2+50\big(\tfrac{4x+3y}5\big)^2. \end{aligned} \]</li>
+<li>\(\begin{bmatrix}1&2\\2&1\end{bmatrix}\): eigenvalues 3 and \(-1\), indefinite: \(\mathbf x=(1,1)\) gives \(6\gt0\), \(\mathbf x=(1,-1)\) gives \(-2\lt0\).</li>
+<li>For any vector \(\mathbf a\), \(\mathbf a\mathbf a^T\) is positive semidefinite: \(\mathbf x^T\mathbf a\mathbf a^T\mathbf x=(\mathbf a^T\mathbf x)^2\ge0\). Likewise \(BB^T\) for any \(B\): \(\mathbf x^TBB^T\mathbf x=\|B^T\mathbf x\|^2\ge0\).</li>
+<li>\(2\times2\) shortcut: \(\begin{bmatrix}a&b\\b&c\end{bmatrix}\) is positive definite \(\iff a\gt0\) and \(ac-b^2\gt0\) (both eigenvalues positive \(\iff\) their product \(\det\) and sum \(\operatorname{tr}\) are positive).</li>
+<li>For a non-symmetric \(M\), \(\mathbf x^TM\mathbf x=\mathbf x^T\big(\tfrac12(M+M^T)\big)\mathbf x\): test the symmetric matrix \(\frac12(M+M^T)\) instead.</li>
+</ul>
+<p class="word"><b>In words:</b> in eigenvector coordinates the quadratic form is a weighted sum of squares, the weights being the eigenvalues; their signs decide the sign of the form.</p>
+</div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>The Cayley–Hamilton theorem</h2>
+<p>A polynomial can be evaluated at a square matrix: replace \(\lambda\) by \(A\) and a constant \(c\) by \(cI\). For example, if \(P(\lambda)=\lambda^2-75\lambda+1250\) then \(P(A)=A^2-75A+1250I\), a matrix.</p>
+<div class="box def"><span class="tag">Setting (slide 19)</span>
+<p>Let \(V\) be a finite-dimensional vector space over \(K\) and \(A:V\to V\) a linear map. Let \(\{\mathbf v_1,\mathbf v_2,\dots,\mathbf v_n\}\) be a basis consisting of eigenvectors of \(A\), with \(\{\lambda_1,\lambda_2,\dots,\lambda_n\}\) as the corresponding eigenvalues. Then the characteristic polynomial, in \(\lambda\) and in \(A\), is given respectively by</p>
+\[ \begin{aligned} P(\lambda)&=(\lambda-\lambda_1)(\lambda-\lambda_2)\cdots(\lambda-\lambda_n),\\ P(A)&=(A-\lambda_1I)(A-\lambda_2I)\\ &\qquad\cdots(A-\lambda_nI). \end{aligned} \]
+</div>
+<div class="box thm"><span class="tag">Cayley–Hamilton theorem (slide 19)</span>
+<p>Let \(V\) be a finite-dimensional vector space over \(\mathbb R\) and \(A\) an \(n\times n\) matrix. Let \(P\) be its characteristic polynomial. Then</p>
+\[ P(A)=0\quad(\text{the zero matrix}). \]
+<p class="word"><b>In words:</b> every square matrix satisfies its own characteristic equation. Substitute \(A\) for \(\lambda\) in \(\det(\lambda I-A)\) and you get the zero matrix.</p>
+</div>
+<div class="box thm"><span class="tag">Proof (slide 19)</span>
+<p>Let \(\{\mathbf v_1,\dots,\mathbf v_n\}\) be a basis of \(V\) consisting of eigenvectors of \(A\), with eigenvalues \(\lambda_1,\dots,\lambda_n\). Every \(\mathbf v\in V\) is a combination \(\mathbf v=\alpha_1\mathbf v_1+\alpha_2\mathbf v_2+\dots+\alpha_n\mathbf v_n\). The factors \(A-\lambda_iI\) commute with each other, and \((A-\lambda_nI)\mathbf v_i=(\lambda_i-\lambda_n)\mathbf v_i\). So the last factor gives</p>
+\[ \begin{aligned} P(A)\mathbf v&=(A-\lambda_1I)\cdots(A-\lambda_nI)\\ &\qquad(\alpha_1\mathbf v_1+\dots+\alpha_n\mathbf v_n) \end{aligned} \]
+<p>and the last factor gives</p>
+\[ \begin{aligned} &(A-\lambda_nI)(\alpha_1\mathbf v_1+\dots+\alpha_n\mathbf v_n)\\ &=\alpha_1(\lambda_1-\lambda_n)\mathbf v_1+\dots\\ &\quad+\alpha_{n-1}(\lambda_{n-1}-\lambda_n)\mathbf v_{n-1}, \end{aligned} \]
+<p>so \(P(A)\mathbf v\) is \((A-\lambda_1I)\cdots(A-\lambda_{n-1}I)\) applied to this shorter combination.</p>
+<p>\(\mathbf v_n\) is killed by \(A-\lambda_nI\) (its coefficient is \(\lambda_n-\lambda_n=0\)), so the combination is shortened by one term. The process continues, and after \(k\) steps</p>
+\[ \begin{aligned} P(A)\mathbf v&=(A-\lambda_1I)\cdots(A-\lambda_{n-k}I)\\ &\qquad(\beta_1\mathbf v_1+\dots+\beta_{n-k}\mathbf v_{n-k}). \end{aligned} \]
+<p>In the last step</p>
+\[ \begin{aligned} P(A)\mathbf v&=(A-\lambda_1I)\gamma_1\mathbf v_1\\ &=\gamma_1(A\mathbf v_1-\lambda_1\mathbf v_1)\\ &=\gamma_1(\lambda_1\mathbf v_1-\lambda_1\mathbf v_1)=\mathbf 0. \end{aligned} \]
+<p>Since \(P(A)\) operates on any vector \(\mathbf v\in V\) and returns zero, by definition \(P(A)=0\) (a matrix that sends every vector, in particular \(\mathbf e_1,\dots,\mathbf e_n\), to \(\mathbf 0\) has every column zero).</p>
+</div>
+<p class="slidefix"><b>Note on slide 19.</b> In the second line of the proof the slide writes the last term as "\(\alpha_n(\lambda_{n-1}-\lambda_n)\mathbf v_{n-1}\)". The coefficient of \(\mathbf v_{n-1}\) is \(\alpha_{n-1}\), so it should read \(\alpha_{n-1}(\lambda_{n-1}-\lambda_n)\mathbf v_{n-1}\), as written above.</p>
+<div class="box beyond"><span class="tag">Beyond the handouts: it holds for every square matrix</span>
+<p>The slide's proof needs a basis of eigenvectors, so it covers diagonalizable matrices only, but the theorem is true for <b>every</b> square matrix. Example: the shear \(A=\begin{bmatrix}1&1\\0&1\end{bmatrix}\) (not diagonalizable, section 7) has \(P(\lambda)=(\lambda-1)^2\), and indeed \((A-I)^2=\begin{bmatrix}0&1\\0&0\end{bmatrix}^2=\begin{bmatrix}0&0\\0&0\end{bmatrix}\). The general proof is beyond this course; you may quote the theorem for any square matrix.</p>
+</div>
+
+<div class="box eg"><span class="tag">Example (slide 20)</span>
+<p>There exists a basis \(\{\mathbf v_1,\mathbf v_2\}=\left\{\begin{bmatrix}-3\\4\end{bmatrix},\begin{bmatrix}4\\3\end{bmatrix}\right\}\) of eigenvectors of \(A=\begin{bmatrix}41&12\\12&34\end{bmatrix}\), with eigenvalues 25 and 50. Then</p>
+\[ \begin{aligned} P(A)&=(A-25I)(A-50I)\\ &=\begin{bmatrix}16&12\\12&9\end{bmatrix}\begin{bmatrix}-9&12\\12&-16\end{bmatrix}\\ &=\begin{bmatrix}0&0\\0&0\end{bmatrix}=0. \end{aligned} \]
+<p>Entries: \(16(-9)+12(12)=0\), \(16(12)+12(-16)=0\), \(12(-9)+9(12)=0\), \(12(12)+9(-16)=0\).</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts: what Cayley–Hamilton is good for</span>
+<p>For slide 20's matrix, \(P(A)=A^2-75A+1250I=0\).</p>
+<ul class="list">
+<li><b>The inverse without row reduction.</b> Rearrange: \(A(75I-A)=1250I\), so</li>
+</ul>
+\[ \begin{aligned} A^{-1}&=\frac1{1250}(75I-A)\\ &=\frac1{1250}\begin{bmatrix}34&-12\\-12&41\end{bmatrix}, \end{aligned} \]
+<p>which matches the \(2\times2\) formula (\(\det A=1250\)).</p>
+<ul class="list">
+<li><b>High powers as low powers.</b> \(A^2=75A-1250I\), so</li>
+</ul>
+\[ \begin{aligned} A^3&=75A^2-1250A\\ &=75(75A-1250I)-1250A\\ &=4375A-93750I\\ &=\begin{bmatrix}85625&52500\\52500&55000\end{bmatrix}. \end{aligned} \]
+<p>This is the same as section 8's formula with \(n=3\). The same trick appeared in <a href="note-L3.html#s10">L3 section 10</a>: from a matrix equation such as \(A^2-A-7I=0\), factor out \(A\) to read off \(A^{-1}\).</p>
+</div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Summary</h2>
+<ul class="list">
+<li>A <b>field</b> is a number system closed under \(+,-,\times,\div\) (\(\mathbb R,\mathbb C,\mathbb Q\); not \(\mathbb Z\)). A <b>vector space</b> is a set you can add in and scale in (columns, matrices, polynomials, functions); a <b>subspace</b> is a vector space inside another. A <b>linear map</b> satisfies \(L(\alpha\mathbf u+\beta\mathbf v)=\alpha L(\mathbf u)+\beta L(\mathbf v)\).</li>
+<li>\(\mathbf v\ne\mathbf 0\) is an <b>eigenvector</b> of square \(A\) with <b>eigenvalue</b> \(\lambda\) if \(A\mathbf v=\lambda\mathbf v\). Non-zero multiples of an eigenvector are eigenvectors; the eigenspace \(E_\lambda\) = all solutions of \((\lambda I-A)\mathbf v=\mathbf 0\).</li>
+<li>The eigenvalues are the roots of the <b>characteristic polynomial</b> \(\det(\lambda I-A)\) (degree \(n\)). For triangular matrices they are the diagonal entries. For \(2\times2\): \(\lambda^2-(\operatorname{tr}A)\lambda+\det A\).</li>
+<li>Algebraic multiplicity = how often \(\lambda\) is a root; geometric multiplicity = \(\dim E_\lambda\) = number of free variables; \(1\le\) geometric \(\le\) algebraic.</li>
+<li>Eigenvectors for <b>distinct</b> eigenvalues are linearly independent; \(n\) distinct eigenvalues give a basis of eigenvectors.</li>
+<li><b>Diagonalization:</b> with \(n\) independent eigenvectors, \(Q=[\,\mathbf v_1\cdots\mathbf v_n\,]\), \(Q^{-1}AQ=D=\operatorname{diag}(\lambda_1,\dots,\lambda_n)\) (same order), \(A=QDQ^{-1}\). Fewer than \(n\) independent eigenvectors: not diagonalizable.</li>
+<li><b>Powers:</b> \(A^k=QD^kQ^{-1}\); or write \(\mathbf x_0=\sum c_i\mathbf v_i\), then \(A^k\mathbf x_0=\sum c_i\lambda_i^k\mathbf v_i\).</li>
+<li><b>Similar</b> matrices (\(C=P^{-1}AP\)) have the same characteristic polynomial, eigenvalues, trace and determinant.</li>
+<li>\(A^k\), \(A+cI\), \(A^{-1}\) have eigenvalues \(\lambda^k\), \(\lambda+c\), \(\frac1\lambda\) (same eigenvectors); \(A^T\) has the same eigenvalues; \(\sum\lambda_i=\operatorname{tr}A\), \(\prod\lambda_i=\det A\); 0 is an eigenvalue iff \(A\) is singular.</li>
+<li>A <b>real symmetric</b> matrix has real eigenvalues, eigenvectors for different eigenvalues are perpendicular, and an orthonormal basis of eigenvectors exists: \(A=QDQ^T\) with \(Q^TQ=I\), and \(A=\sum\lambda_i\mathbf u_i\mathbf u_i^T\).</li>
+<li><b>Cayley–Hamilton:</b> \(P(A)=0\) for the characteristic polynomial \(P\). Use it for \(A^{-1}\) and to reduce high powers.</li>
+</ul>
+<div class="box thm"><span class="tag">Method: a typical eigen question, start to finish</span>
+<ol class="steps">
+<li>Given a vector? Multiply \(A\mathbf v\) and compare with \(\mathbf v\) to get \(\lambda\). Given nothing? Expand and factorise \(\det(\lambda I-A)\). (Use known eigenvalues, \(\operatorname{tr}A\) and \(\det A\) to find the rest quickly.)</li>
+<li>For each eigenvalue, row reduce \(\lambda I-A\) and read off the eigenvectors from the free variables.</li>
+<li>Diagonalize: \(Q\) from eigenvectors, \(D\) from eigenvalues in the same order. If \(A\) is symmetric, make the eigenvectors perpendicular (inside a repeated eigenspace too), normalize, and use \(Q^T\) for \(Q^{-1}\).</li>
+<li>For \(A^n\) or \(\lim A^n\): \(QD^nQ^{-1}\); eigenvalues with \(|\lambda|\lt1\) disappear in the limit.</li>
+<li>Check: \(A\mathbf v=\lambda\mathbf v\) for each pair, and \(\sum\lambda_i=\operatorname{tr}A\).</li>
+</ol>
+</div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Common mistakes</h2>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Writing \(\det(A-\lambda)\), subtracting \(\lambda\) from every entry.</span>
+<span class="ok">✔</span><span>\(\lambda I-A\) (or \(A-\lambda I\)): \(\lambda\) goes on the <b>diagonal only</b>; off-diagonal entries just change sign (or stay).</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Row reducing \(A\) first and reading the eigenvalues off the diagonal of the echelon form.</span>
+<span class="ok">✔</span><span>Row operations change the eigenvalues. Only the diagonal of a matrix that is <b>already</b> triangular gives its eigenvalues. Otherwise expand \(\det(\lambda I-A)\).</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Giving \(\mathbf v=\mathbf 0\) as an eigenvector, or getting only \(\mathbf v=\mathbf 0\) from \((\lambda I-A)\mathbf v=\mathbf 0\) and carrying on.</span>
+<span class="ok">✔</span><span>An eigenvector is never \(\mathbf 0\). If \(\lambda I-A\) has no free variable, \(\lambda\) is not an eigenvalue: recheck the characteristic polynomial.</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Putting the eigenvectors in \(Q\) in one order and the eigenvalues in \(D\) in another; or writing \(A=Q^{-1}DQ\).</span>
+<span class="ok">✔</span><span>Column \(i\) of \(Q\) goes with entry \(i\) of \(D\), and \(A=QDQ^{-1}\) (eigenvectors on the <b>left</b>). Check: \(AQ=QD\).</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Claiming a matrix with a repeated eigenvalue is never diagonalizable, or that every invertible matrix is.</span>
+<span class="ok">✔</span><span>Count independent eigenvectors: \(I\) is diagonalizable (repeated eigenvalue); the shear \(\begin{bmatrix}1&1\\0&1\end{bmatrix}\) is invertible but not diagonalizable.</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>For a symmetric matrix with a repeated eigenvalue, taking any two eigenvectors from the eigenspace and normalizing them for \(Q\), then using \(Q^{-1}=Q^T\).</span>
+<span class="ok">✔</span><span>\(Q^T=Q^{-1}\) needs orthonormal columns. Inside a repeated eigenspace choose (or Gram–Schmidt) perpendicular vectors first, then normalize.</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>\(A^n=QD^nQ\) or \(A^n=Q^nD^nQ^{-n}\).</span>
+<span class="ok">✔</span><span>\(A^n=QD^nQ^{-1}\): only \(D\) is powered. (For slide 14's \(Q\), \(Q^{-1}=\frac1{25}Q\), not \(Q\).)</span>
+</div></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span>Find the mistake</h2>
+<p class="muted">Written for these notes (the handout has no exercises of this kind).</p>
+<div class="q"><p class="qh">1. A student finds the eigenvalues of \(A=\begin{bmatrix}1&2\\3&4\end{bmatrix}\):</p>
+<div class="handwork">
+\[ \begin{bmatrix}1&2\\3&4\end{bmatrix} \]
+\[ \xrightarrow{R_2-3R_1}\begin{bmatrix}1&2\\0&-2\end{bmatrix} \]
+<p>"Now it is triangular, so the eigenvalues are the diagonal entries 1 and \(-2\)."</p>
+</div>
+<details><summary>Hint</summary><div><p>Is \(A\begin{bmatrix}1\\0\end{bmatrix}\) a multiple of \((1,0)\)? Is \(\operatorname{tr}A\) equal to \(1+(-2)\)?</p></div></details>
+<details><summary>Answer</summary><div>
+<p>Row operations do not preserve eigenvalues (they preserve the solution set of \(A\mathbf x=\mathbf b\), not \(A\mathbf v=\lambda\mathbf v\)). The trace check fails at once: \(\operatorname{tr}A=5\ne-1\). Correct:</p>
+\[ \begin{aligned} \det(\lambda I-A)&=(\lambda-1)(\lambda-4)-6\\ &=\lambda^2-5\lambda-2=0, \end{aligned} \]
+<p>so \(\lambda=\frac{5\pm\sqrt{33}}2\).</p>
+</div></details></div>
+
+<div class="q"><p class="qh">2. A student diagonalizes slide 14's matrix \(A=\begin{bmatrix}41&12\\12&34\end{bmatrix}\):</p>
+<div class="handwork">
+<p>"Eigenvalues 25 and 50, eigenvectors \((-3,4)\) and \((4,3)\). Listing the eigenvalues from largest to smallest:"</p>
+\[ Q=\begin{bmatrix}-3&4\\4&3\end{bmatrix},\quad D=\begin{bmatrix}50&0\\0&25\end{bmatrix}, \]
+\[ A=QDQ^{-1}. \]
+</div>
+<details><summary>Hint</summary><div><p>Compute the first column of \(AQ\) and of \(QD\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>Column 1 of \(Q\) is \((-3,4)\), whose eigenvalue is 25, but the student put 50 first in \(D\). Then \(QDQ^{-1}\ne A\): column 1 of \(QD\) is \(50(-3,4)\), while column 1 of \(AQ\) is \(25(-3,4)\). Either \(D=\operatorname{diag}(25,50)\) with this \(Q\), or keep \(D=\operatorname{diag}(50,25)\) and swap the columns: \(Q=\begin{bmatrix}4&-3\\3&4\end{bmatrix}\).</p>
+</div></details></div>
+
+<div class="q"><p class="qh">3. A student is asked whether \(A=\begin{bmatrix}2&1&0\\0&2&0\\0&0&3\end{bmatrix}\) is diagonalizable:</p>
+<div class="handwork">
+<p>"Eigenvalues 2, 2, 3. For \(\lambda=2\): \(2I-A=\begin{bmatrix}0&-1&0\\0&0&0\\0&0&-1\end{bmatrix}\), giving \(v_2=0\), \(v_3=0\), eigenvector \((1,0,0)\). For \(\lambda=3\): eigenvector \((0,0,1)\). The eigenvalue 2 appears twice, so I use \((1,0,0)\) twice: \(Q=\begin{bmatrix}1&1&0\\0&0&0\\0&0&1\end{bmatrix}\), \(D=\operatorname{diag}(2,2,3)\)."</p>
+</div>
+<details><summary>Hint</summary><div><p>Can a matrix with two equal columns be inverted? How many free variables did \(\lambda=2\) give?</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(\lambda=2\) has algebraic multiplicity 2 but only one free variable (geometric multiplicity 1). Repeating an eigenvector does not make a new one: this \(Q\) has \(\det Q=0\), so \(Q^{-1}\) does not exist. \(A\) has only two independent eigenvectors, so it is <b>not diagonalizable</b>.</p>
+</div></details></div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17"><h2><span class="n">17</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1. What are the eigenvalues of \(\begin{bmatrix}2&5&7\\0&-1&3\\0&0&4\end{bmatrix}\)? Is it diagonalizable?</p>
+<details><summary>Answer</summary><div><p>Triangular, so the eigenvalues are the diagonal entries 2, \(-1\), 4. They are distinct, so (slide 12) there are three independent eigenvectors: diagonalizable.</p></div></details></div>
+<div class="q"><p class="qh">2. A \(2\times2\) matrix has trace 7 and determinant 10. Find its eigenvalues. Is it invertible?</p>
+<details><summary>Answer</summary><div><p>\(\lambda^2-7\lambda+10=(\lambda-2)(\lambda-5)\): eigenvalues 2 and 5. Invertible, since 0 is not an eigenvalue (\(\det=10\ne0\)).</p></div></details></div>
+<div class="q"><p class="qh">3. \(A\mathbf v=3\mathbf v\). Find an eigenvalue of \(A^2-2A+I\) and of \((A+I)^{-1}\), with an eigenvector.</p>
+<details><summary>Answer</summary><div><p>Both have eigenvector \(\mathbf v\). \((A^2-2A+I)\mathbf v=(9-6+1)\mathbf v=4\mathbf v\); \((A+I)\mathbf v=4\mathbf v\), so \((A+I)^{-1}\mathbf v=\frac14\mathbf v\).</p></div></details></div>
+<div class="q"><p class="qh">4. A \(3\times3\) matrix has eigenvalues 1, 2, 2. Must it be diagonalizable? Give an example either way.</p>
+<details><summary>Answer</summary><div><p>Not necessarily: it depends on whether \(\lambda=2\) has two independent eigenvectors. \(\begin{bmatrix}2&0&0\\0&2&1\\0&0&1\end{bmatrix}\) is diagonalizable (\(2I-A\) has rank 1), \(\begin{bmatrix}1&0&0\\0&2&1\\0&0&2\end{bmatrix}\) is not (\(2I-A\) has rank 2, one free variable).</p></div></details></div>
+<div class="q"><p class="qh">5. A symmetric \(2\times2\) matrix has eigenvalue 3 with eigenvector \((1,1)\) and eigenvalue 1. Find an eigenvector for 1, and the matrix.</p>
+<details><summary>Answer</summary><div><p>It must be perpendicular to \((1,1)\): \((1,-1)\). Then</p>
+\[ \begin{aligned} A&=3\cdot\tfrac12\begin{bmatrix}1&1\\1&1\end{bmatrix}+1\cdot\tfrac12\begin{bmatrix}1&-1\\-1&1\end{bmatrix}\\ &=\begin{bmatrix}2&1\\1&2\end{bmatrix}. \end{aligned} \]</div></details></div>
+<div class="q"><p class="qh">6. \(A\) and \(B\) are similar and \(A\) has eigenvalues 0 and 4. What are \(\det B\) and \(\operatorname{tr}B\)? Is \(B\) invertible?</p>
+<details><summary>Answer</summary><div><p>Similar matrices share eigenvalues, so \(B\) has 0 and 4: \(\det B=0\), \(\operatorname{tr}B=4\), and \(B\) is not invertible.</p></div></details></div>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="s18"><h2><span class="n">18</span>Exam taster</h2>
+<p>Real past-paper questions, about one per question type of this chapter, newest first, so you can see how the exam asks about it. Each has a hint and the final answer; the full working and the standard method for each type are in the <a href="guide-L5.html">L5 exam guide</a>.</p>
+<p class="muted">This chapter's four question types (find eigenvalues and eigenvectors; diagonalize and powers; eigen theory and proofs; symmetric matrices and \(A=QDQ^T\)) account for 54 question parts in 37 questions of the past papers (Dec 2012 to May 2026). Almost every paper opens its eigen question with "show that \(\mathbf v\) is an eigenvector", and the eigenvalues then feed L6's applications in the same question. Definiteness questions are earlier syllabus: see the <a href="guide-beyond.html#B-L5-4">earlier-syllabus page</a>.</p>
+
+<div class="q" id="t1"><p class="src"><b>May 2026 Q6(a)</b><span>2 marks</span><a class="guide" href="guide-L5.html#L5-1">Guide · L5.1 Find eigenvalues and eigenvectors</a></p>
+<p class="qh">Matrix</p>
+\[ A=\begin{bmatrix}2&-1&-1\\-1&3&-1\\-1&-1&2\end{bmatrix}. \]
+<p class="qh">Show that \(\begin{bmatrix}-1\\0\\1\end{bmatrix}\) is an eigenvector of \(A\) and find the corresponding eigenvalue.</p>
+<details><summary>Hint</summary><div><p>No determinant needed: multiply \(A\mathbf v\) and compare with \(\mathbf v\) (section 3, example 1). Show that every entry gives the same multiple.</p></div></details>
+<details><summary>Answer</summary><div>
+\[ A\begin{bmatrix}-1\\0\\1\end{bmatrix}=\begin{bmatrix}-3\\0\\3\end{bmatrix}=3\begin{bmatrix}-1\\0\\1\end{bmatrix}, \]
+<p>so it is an eigenvector, with eigenvalue \(3\).</p>
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t2"><p class="src"><b>Dec 2025 Q8</b><span>2 marks · multiple choice</span><a class="guide" href="guide-L5.html#L5-3">Guide · L5.3 Eigen theory and proofs</a></p>
+<p class="qh">Which statement is false?</p>
+<p>(A) If \(A\) is symmetric and \(A^2=0\), then \(A=0\).<br>(B) Swapping rows does not alter the rank.<br>(C) If \(A\) is invertible then \(A\) is diagonalizable.<br>(D) If \(A,B\) are symmetric then \((AB)^mA\) is symmetric for every positive integer \(m\).</p>
+<details><summary>Hint</summary><div><p>Look for a counterexample among the matrices of sections 7 and 13: is there an invertible matrix without enough eigenvectors? For (D), take the transpose using \((XY)^T=Y^TX^T\). For (A), \(A^2=A^TA\); look at its diagonal entries.</p></div></details>
+<details><summary>Answer</summary><div><p><b>(C)</b> is false: \(\begin{bmatrix}1&1\\0&1\end{bmatrix}\) is invertible but not diagonalizable.</p><p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t3"><p class="src"><b>Dec 2025 Q14(i), (ii)</b><span>parts of a 6-mark question</span><a class="guide" href="guide-L5.html#L5-1">Guide · L5.1 (part i)</a><a class="guide" href="guide-L5.html#L5-4">L5.4 (part ii)</a></p>
+\[ A=\begin{bmatrix}0&0&1\\0&1&0\\1&0&0\end{bmatrix}. \]
+<p>(i) Find the eigenvalues of \(A\), and comment on the algebraic and geometric multiplicities.<br>(ii) Can \(A\) be diagonalized? If yes, give orthonormalized eigenvectors in order of minimum to maximum eigenvalue.</p>
+<details><summary>Hint</summary><div><p>(i) Expand \(\det(\lambda I-A)\) along row 2 (it has only one non-zero entry), then count free variables in \(\lambda I-A\) for each eigenvalue (section 5's Beyond box). (ii) \(A\) is symmetric (section 12). For the repeated eigenvalue, pick two perpendicular eigenvectors; one of them can be \(\mathbf e_2\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(i) \(\det(\lambda I-A)=(\lambda-1)^2(\lambda+1)\). Eigenvalue \(-1\): algebraic and geometric multiplicity 1. Eigenvalue \(1\): algebraic and geometric multiplicity 2.</p>
+<p>(ii) Yes (symmetric; geometric = algebraic multiplicities). For example</p>
+\[ \lambda=-1:\ \tfrac1{\sqrt2}\begin{bmatrix}1\\0\\-1\end{bmatrix}; \]
+\[ \lambda=1:\ \tfrac1{\sqrt2}\begin{bmatrix}1\\0\\1\end{bmatrix},\ \begin{bmatrix}0\\1\\0\end{bmatrix}. \]
+<p class="muted">Part (iii), a minimum of \(\mathbf x^TA\mathbf x\), is L6 material. Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t4"><p class="src"><b>Dec 2024 Q11</b><span>5 marks</span><a class="guide" href="guide-L5.html#L5-3">Guide · L5.3 Eigen theory and proofs</a></p>
+<p class="qh">Show that for any \(A\in\mathbb R^{m\times n}\), the matrices \(A^TA\) and \(AA^T\) have the same nonzero eigenvalues.</p>
+<details><summary>Hint</summary><div><p>Start from \(A^TA\mathbf v=\lambda\mathbf v\) with \(\mathbf v\ne\mathbf 0\), \(\lambda\ne0\). Multiply both sides on the left by \(A\). Which vector is then an eigenvector of \(AA^T\)? Why is it not \(\mathbf 0\)? Then swap the roles of \(A\) and \(A^T\).</p></div></details>
+<details><summary>Answer</summary><div><p>If \(A^TA\mathbf v=\lambda\mathbf v\) (\(\mathbf v\ne\mathbf 0\), \(\lambda\ne0\)), then \(A\mathbf v\ne\mathbf 0\) and \(AA^T(A\mathbf v)=\lambda(A\mathbf v)\), so \(\lambda\) is an eigenvalue of \(AA^T\); the same argument with \(A^T\) in place of \(A\) gives the converse.</p><p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t5"><p class="src"><b>Dec 2023 Q3(a)</b><span>4 marks</span><a class="guide" href="guide-L5.html#L5-2">Guide · L5.2 Diagonalize; powers</a></p>
+<p class="qh">Diagonalize</p>
+\[ A=\begin{bmatrix}3&5\\8&6\end{bmatrix}. \]
+<details><summary>Hint</summary><div><p>Use \(\lambda^2-(\operatorname{tr}A)\lambda+\det A=0\) (section 4). For each eigenvalue use the \(2\times2\) shortcut: from a row \((p,q)\) of \(\lambda I-A\), take \(\mathbf v=(q,-p)\). Then \(Q\) and \(D\) in matching order, and give \(Q^{-1}\) (section 7).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>Eigenvalues \(11\) and \(-2\), eigenvectors \((5,8)\) and \((1,-1)\):</p>
+\[ A=QDQ^{-1},\quad Q=\begin{bmatrix}5&1\\8&-1\end{bmatrix}, \]
+\[ D=\begin{bmatrix}11&0\\0&-2\end{bmatrix}, \]
+\[ Q^{-1}=\frac1{13}\begin{bmatrix}1&1\\8&-5\end{bmatrix}. \]
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t6"><p class="src"><b>Dec 2023 Q4(a), (b)</b><span>3 + 9 marks</span><a class="guide" href="guide-L5.html#L5-1">Guide · L5.1 (part a)</a><a class="guide" href="guide-L5.html#L5-4">L5.4 (part b)</a></p>
+<p class="qh">\(A\in\mathbb R^{3\times3}\) is symmetric, of rank 2, and</p>
+\[ A\begin{bmatrix}1&1\\0&0\\-1&1\end{bmatrix}=\begin{bmatrix}-1&1\\0&0\\1&1\end{bmatrix}. \]
+<p>(a) Find all eigenpairs of \(A\). (Hint: inspect each column.)<br>(b) Find \(A\).</p>
+<details><summary>Hint</summary><div><p>(a) By the column rule, the equation says \(A\) times column 1 equals column 1 of the right-hand side, and the same for column 2. Compare each output with its input. Rank 2 for a \(3\times3\) symmetric matrix means one eigenvalue is 0; its eigenvector is perpendicular to the other two (section 12). (b) Rebuild \(A=\sum\lambda_i\mathbf u_i\mathbf u_i^T\) with unit eigenvectors.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) \(\big(-1,\,(1,0,-1)\big)\), \(\big(1,\,(1,0,1)\big)\), \(\big(0,\,(0,1,0)\big)\) (eigenvectors up to non-zero multiples).</p>
+\[ \text{(b)}\quad A=\begin{bmatrix}0&0&1\\0&0&0\\1&0&0\end{bmatrix}. \]
+<p class="muted">Part (c) is L6 material. Full working: see this question in the exam guide.</p></div></details></div>
+</section>
+
+</main>
+</div>
+<script>
+(function(){
+/* ===== MATH1853 shared helpers (TEMPLATE, frozen after the L1 pilot) ===== */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const PI=Math.PI;
+const $=id=>document.getElementById(id);
+
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+const piTicks=(lo,hi)=>{const out=[];const L={'-4':'−2π','-3':'−3π/2','-2':'−π','-1':'−π/2','0':'0','1':'π/2','2':'π','3':'3π/2','4':'2π','5':'5π/2'};for(let k=Math.ceil(lo/(PI/2));k<=Math.floor(hi/(PI/2));k++)out.push([k*PI/2,L[k]||'']);return out;};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+
+/* ---------- exact fractions for readouts: frac(0.75) -> "3/4" ---------- */
+function frac(v,maxDen=60){
+  if(!isFinite(v))return '∞';
+  const s=v<0?'−':'';v=Math.abs(v);
+  for(let d=1;d<=maxDen;d++){const n=Math.round(v*d);if(Math.abs(n/d-v)<1e-9)return s+(d===1?String(n):n+'/'+d);}
+  return s+fmt(v,4);
+}
+/* entry formatter for matrices: numbers, or strings such as "3/2", "λ−5" */
+const ent=v=>typeof v==='number'?frac(v):String(v).replace(/-/g,'−');
+
+
+/* matrix as an HTML table: matHTML(M,{aug:true, hl:[rows], hl2:[rows], piv:[[r,c]]}) */
+function matHTML(M,o={}){
+  const nc=M[0].length, aug=o.aug!==false, pv=new Set((o.piv||[]).map(p=>p[0]+','+p[1]));
+  let h='<table class="mat"><tbody>';
+  M.forEach((row,r)=>{
+    const cls=(o.hl||[]).includes(r)?' class="hl"':(o.hl2||[]).includes(r)?' class="hl2"':'';
+    h+=`<tr${cls}>`+row.map((v,c)=>{
+      const cl=[]; if(aug&&c===nc-1)cl.push('aug'); if(pv.has(r+','+c))cl.push('piv'); if(v===0||v==='0')cl.push('zero');
+      return `<td${cl.length?' class="'+cl.join(' ')+'"':''}>${ent(v)}</td>`;}).join('')+'</tr>';
+  });
+  return h+'</tbody></table>';
+}
+
+/* ---------- row-reduction player ----------
+   rrPlayer('id',{title, aug:true, steps:[{M:[[..]], op:'R₂ ← R₂ − 5R₁', why:'...', hl:[1], hl2:[2], piv:[[0,0]]}]})
+   aug: last column is the right-hand side (drawn after a bar). Rows/cols in hl/piv are 0-based. */
+function rrPlayer(id,cfg){
+  const host=$(id); if(!host) return;
+  host.classList.add('rr');
+  host.innerHTML=(cfg.title?`<p class="ttl">${cfg.title}</p>`:'')+
+    `<div class="op" aria-live="polite"></div><div class="stage"></div><p class="why"></p>`+
+    `<div class="bar"><button type="button" data-a="first" aria-label="Back to the start">⟲ Start</button>`+
+    `<button type="button" data-a="prev" aria-label="Previous step">◀ Back</button><span class="count"></span>`+
+    `<button type="button" data-a="next" aria-label="Next step">Next ▶</button></div>`;
+  let k=0; const S=cfg.steps, aug=cfg.aug!==false;
+  function render(){
+    const st=S[k], h=matHTML(st.M,{aug,hl:st.hl,hl2:st.hl2,piv:st.piv});
+    host.querySelector('.stage').innerHTML=h;
+    host.querySelector('.op').textContent=st.op||(k===0?'Start':'');
+    host.querySelector('.why').innerHTML=st.why||'';
+    host.querySelector('.count').textContent=`step ${k} of ${S.length-1}`;
+    host.querySelector('[data-a=prev]').disabled=k===0;
+    host.querySelector('[data-a=first]').disabled=k===0;
+    host.querySelector('[data-a=next]').disabled=k===S.length-1;
+  }
+  host.addEventListener('click',e=>{const a=e.target.closest('button');if(!a)return;
+    const t=a.dataset.a; if(t==='next')k=Math.min(S.length-1,k+1); if(t==='prev')k=Math.max(0,k-1); if(t==='first')k=0; render();});
+  render();
+}
+
+/* ---------- 3D view with drag-to-rotate ----------
+   view3d('canvasId',{scale, yaw, pitch, draw:(V)=>{ V.axes(L,labels); V.line(p,q,color,w,dash); V.poly([p..],color,alpha); V.point(p,color,label) }})
+   Points are [x,y,z]; z is drawn upwards. Primitives are depth-sorted (painter's algorithm). Returns {redraw}. */
+function view3d(id,o){
+  const cv=$(id); if(!cv) return {redraw(){},setView(){}};
+  let yaw=o.yaw??-0.9, pitch=o.pitch??0.45, drag=null;
+  function redraw(){
+    const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight; if(!W||!H)return;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+    g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+    const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+    const s=(o.scale||1)*Math.min(W,H)/2.2, c=(typeof o.center==='function'?o.center():o.center)||[0,0,0];
+    const P=p=>{const x=p[0]-c[0],y=p[1]-c[1],z=p[2]-c[2];
+      const X1=x*cy-y*sy, Y1=x*sy+y*cy;            /* turn about the vertical axis */
+      const Y2=Y1*cp-z*sp, Z2=Y1*sp+z*cp;           /* tilt towards the viewer */
+      return [W/2+X1*s, H/2-Z2*s, Y2];};
+    const prims=[];
+    const V={
+      P,
+      line(p,q,color,w=2,dash){const a=P(p),b=P(q);prims.push({d:(a[2]+b[2])/2,f(){g.strokeStyle=color;g.lineWidth=w;g.setLineDash(dash||[]);g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.stroke();g.setLineDash([]);}});},
+      poly(pts,color,alpha=.25){const q=pts.map(P),d=q.reduce((t,v)=>t+v[2],0)/q.length;prims.push({d,f(){g.globalAlpha=alpha;g.fillStyle=color;g.beginPath();q.forEach((v,i)=>i?g.lineTo(v[0],v[1]):g.moveTo(v[0],v[1]));g.closePath();g.fill();g.globalAlpha=1;}});},
+      point(p,color,label,r=5){const a=P(p);prims.push({d:a[2]-1e3,f(){g.beginPath();g.arc(a[0],a[1],r,0,7);g.fillStyle=color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();
+        if(label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=color;g.textAlign='left';g.textBaseline='bottom';g.fillText(label,a[0]+8,a[1]-6);}}});},
+      text(p,str,color){const a=P(p);prims.push({d:a[2]-1e3,f(){g.font='12px Inter, system-ui, sans-serif';g.fillStyle=color||css('--muted');g.textAlign='center';g.textBaseline='middle';g.fillText(str,a[0],a[1]);}});},
+      axes(L=3,lab=['x₁','x₂','x₃']){const A=css('--axis');
+        [[L,0,0],[0,L,0],[0,0,L]].forEach((e,i)=>{V.line([-e[0],-e[1],-e[2]].map((v,j)=>v+c[j]*0),e,A,1.2);V.text(e.map(v=>v*1.1),lab[i],A);});}
+    };
+    o.draw(V);
+    prims.sort((a,b)=>b.d-a.d).forEach(p=>p.f());
+    g.font='11px Inter, system-ui, sans-serif';g.fillStyle=css('--muted');g.textAlign='right';g.textBaseline='bottom';g.fillText('drag to turn',W-8,H-6);
+  }
+  const pos=e=>e.touches?[e.touches[0].clientX,e.touches[0].clientY]:[e.clientX,e.clientY];
+  cv.addEventListener('pointerdown',e=>{drag=pos(e);cv.setPointerCapture&&cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!drag)return;const p=pos(e);yaw+=(p[0]-drag[0])*0.01;pitch=Math.max(-1.45,Math.min(1.45,pitch+(p[1]-drag[1])*0.01));drag=p;redraw();});
+  ['pointerup','pointercancel','pointerleave'].forEach(t=>cv.addEventListener(t,()=>drag=null));
+  redraws.push(redraw);
+  return {redraw,setView(y,p){yaw=y;pitch=p;redraw();}};
+}
+
+/* plane a·x = b drawn as a square patch around point p0 (half-width h), tiled so depth sorting works */
+function planePatch(V,a,b,p0,h,color,alpha=.22,n=6){
+  const nn=Math.hypot(...a), u0=Math.abs(a[2])<0.9*nn?[0,0,1]:[1,0,0];
+  const cr=(x,y)=>[x[1]*y[2]-x[2]*y[1],x[2]*y[0]-x[0]*y[2],x[0]*y[1]-x[1]*y[0]];
+  const nz=v=>{const L=Math.hypot(...v);return v.map(t=>t/L);};
+  const u=nz(cr(a,u0)), w=nz(cr(a,u));
+  const t=(b-a.reduce((s,ai,i)=>s+ai*p0[i],0))/(nn*nn), c=p0.map((v,i)=>v+t*a[i]);
+  const at=(i,j)=>c.map((v,k)=>v+(-h+2*h*i/n)*u[k]+(-h+2*h*j/n)*w[k]);
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++)V.poly([at(i,j),at(i+1,j),at(i+1,j+1),at(i,j+1)],color,alpha);
+  [[0,0,n,0],[n,0,n,n],[n,n,0,n],[0,n,0,0]].forEach(e=>V.line(at(e[0],e[1]),at(e[2],e[3]),color,1.2));
+}
+
+/* ===== page figures ===== */
+/* ===== L5 Eigenvalues and eigenvectors: figures ===== */
+/* plot window with equal scales on both axes, centred at (cx, cy), half-range at least R */
+function eqBox(cv,cx,cy,R){const W=cv.clientWidth,H=cv.clientHeight,w=Math.max(W-46,1),h=Math.max(H-38,1);
+  let rx=R,ry=R; if(w/h>1)rx=R*w/h; else ry=R*h/w; return {xmin:cx-rx,xmax:cx+rx,ymin:cy-ry,ymax:cy+ry};}
+const mv=(M,v)=>[M[0]*v[0]+M[1]*v[1],M[2]*v[0]+M[3]*v[1]];
+const unit=v=>{const L=Math.hypot(v[0],v[1]);return L?[v[0]/L,v[1]/L]:v;};
+const vfmt=(v,d=2)=>'('+v.map(t=>fmt(t,d)).join(', ')+')';
+/* real eigenpairs of a 2x2 matrix [a b; c d] (M = [a,b,c,d]) */
+function eig2(M){const [a,b,c,d]=M,tr=a+d,dt=a*d-b*c,disc=tr*tr-4*dt;
+  if(disc<-1e-12)return {complex:true,re:tr/2,im:Math.sqrt(-disc)/2};
+  const s=Math.sqrt(Math.max(disc,0)), ls=disc<1e-12?[tr/2]:[(tr+s)/2,(tr-s)/2];
+  if(Math.abs(b)<1e-12&&Math.abs(c)<1e-12){ if(Math.abs(a-d)<1e-12) return {all:true,ls:[a]}; return {pairs:[[a,[1,0]],[d,[0,1]]]}; }
+  return {pairs:ls.map(l=>[l,unit(Math.abs(b)>1e-12?[b,l-a]:[l-d,c])])};}
+
+/* ---------- Fig: hunt for eigenvectors (section 3) ---------- */
+function drawEig(){
+  const M=$('fEig-m').value.split(',').map(Number), th=+$('fEig-t').value*PI/180, cv=$('fEig');
+  const A=css('--accent'),C2=css('--c2'),Wm=css('--warm'),C3=css('--c3'),Ax=css('--axis');
+  let s=0; for(let k=0;k<360;k++){const w=mv(M,[Math.cos(k*PI/180),Math.sin(k*PI/180)]);s=Math.max(s,Math.hypot(w[0],w[1]));}
+  const segs=[], N=120;
+  for(let k=0;k<N;k++){const p=[Math.cos(2*PI*k/N),Math.sin(2*PI*k/N)],q=[Math.cos(2*PI*(k+1)/N),Math.sin(2*PI*(k+1)/N)];
+    segs.push({x1:p[0],y1:p[1],x2:q[0],y2:q[1],color:Ax,width:1.2,dash:[4,4]});
+    const P=mv(M,p),Q=mv(M,q);segs.push({x1:P[0]/s,y1:P[1]/s,x2:Q[0]/s,y2:Q[1]/s,color:Wm,width:1.8});}
+  const E=eig2(M);
+  if($('fEig-e').checked&&E.pairs)E.pairs.forEach(([l,u])=>segs.push({x1:-1.35*u[0],y1:-1.35*u[1],x2:1.35*u[0],y2:1.35*u[1],color:C3,width:1.6,dash:[7,4]}));
+  const v=[Math.cos(th),Math.sin(th)], w=mv(M,v), ws=[w[0]/s,w[1]/s];
+  segs.push({x1:0,y1:0,x2:v[0],y2:v[1],color:A,width:3});
+  segs.push({x1:0,y1:0,x2:ws[0],y2:ws[1],color:C2,width:3});
+  plot(cv,{...eqBox(cv,0,0,1.45),xstep:0.5,ystep:0.5,segs,pts:[{x:v[0],y:v[1],color:A,label:'v'},{x:ws[0],y:ws[1],color:C2,label:'Av',r:4}]});
+  const nw=Math.hypot(w[0],w[1]); let msg;
+  if(nw<1e-9) msg='Av = 0 = 0·v: <b>v is an eigenvector with eigenvalue 0</b>';
+  else{const ang=Math.atan2(Math.abs(v[0]*w[1]-v[1]*w[0]),v[0]*w[0]+v[1]*w[1])*180/PI;
+    msg=`angle between v and Av: ${fmt(ang,1)}° → `+((ang<1||ang>179)?`<b>Av is (almost) a multiple of v: eigenvector, λ ≈ ${fmt(v[0]*w[0]+v[1]*w[1],2)}</b>`:'not an eigenvector');}
+  const eg=E.complex?`eigenvalues ${fmt(E.re,2)} ± ${fmt(E.im,2)}i (complex): no real eigenvector`:E.all?`eigenvalue ${fmt(E.ls[0])}: every direction`:'eigenvalues '+E.pairs.map(p=>fmt(p[0],2)).join(' and ')+(E.pairs.length===1?' (repeated, one eigen-line)':'');
+  $('fEig-out').innerHTML=`v = ${vfmt(v)}, Av = ${vfmt(w)}<br>${msg}<br>${eg}`;
+}
+['fEig-m','fEig-t','fEig-e'].forEach(id=>$(id).addEventListener('input',drawEig)); redraws.push(drawEig);
+
+/* ---------- Fig: eigenspaces of slides 8, 9, 10 (section 5) ---------- */
+const ES={
+  '8':{lines:[[[1,0,0],'--accent','v₁ (λ=1)'],[[1,-1,0],'--c2','v₂ (λ=2)'],[[3,-2,2],'--c3','v₃ (λ=3)']],txt:'Slide 8: three eigenvalues 1, 2, 3, each with an eigen-<b>line</b>. Three independent eigenvectors → diagonalizable.'},
+  '9':{plane:[0,-1,2],lines:[[[1,0,0],'--accent','(1, 0, 0)'],[[0,2,1],'--c2','(0, 2, 1)']],txt:'Slide 9: λ = 1 (algebraic multiplicity 3); E₁ is the <b>plane</b> 2x₃ = x₂ spanned by (1, 0, 0) and (0, 2, 1): geometric multiplicity 2 → not diagonalizable.'},
+  '10':{lines:[[[1,0,0],'--accent','(1, 0, 0)']],txt:'Slide 10: λ = 1 (algebraic multiplicity 3); E₁ is only the <b>x₁-axis</b>: geometric multiplicity 1 → not diagonalizable.'}};
+const vES=view3d('fES',{scale:.65,yaw:-0.6,pitch:0.4,draw(V){
+  const S=ES[$('fES-m').value]; V.axes(1.5);
+  if(S.plane)planePatch(V,S.plane,0,[0,0,0],1.2,css('--accent'),.18);
+  S.lines.forEach(([d,c,l])=>{const L=Math.hypot(...d),u=d.map(t=>t/L);V.line(u.map(t=>-1.7*t),u.map(t=>1.7*t),css(c),2.4);V.point(u.map(t=>1.1*t),css(c),l);});
+}});
+function outES(){$('fES-out').innerHTML=ES[$('fES-m').value].txt;vES.redraw();}
+$('fES-m').addEventListener('input',outES); outES();
+
+/* ---------- Fig: powers of the population matrix (section 8) ---------- */
+function drawPow(){
+  const n=+$('fPow-n').value, r0=+$('fPow-r').value, cv=$('fPow'), b=r0-375;
+  const A=css('--accent'),Wm=css('--warm'),C3=css('--c3'),I=css('--ink');
+  const X=k=>[375+b*Math.pow(0.92,k),625-b*Math.pow(0.92,k)];
+  const segs=[{x1:0,y1:1000,x2:1000,y2:0,color:Wm,width:1.6,dash:[6,4]},{x1:0,y1:0,x2:660,y2:1100,color:C3,width:2}], pts=[];
+  for(let k=0;k<=n;k++){const p=X(k);pts.push({x:p[0],y:p[1],color:A,r:k===n?6:3});if(k)segs.push({x1:X(k-1)[0],y1:X(k-1)[1],x2:p[0],y2:p[1],color:A,width:1.2});}
+  pts.unshift({x:375,y:625,color:C3,r:7,open:true,label:'(375, 625)',align:'right'});
+  pts.push({x:X(0)[0],y:X(0)[1],color:I,r:3,label:'x₀'});
+  if(n>0)pts.push({x:X(n)[0],y:X(n)[1],color:A,r:6,label:'xₙ'});
+  plot(cv,{...eqBox(cv,500,500,560),xstep:200,ystep:200,segs,pts});
+  const p=X(n);
+  $('fPow-out').innerHTML=`x<sub>${n}</sub> = 125·(3, 5) + (${fmt(b)})·0.92<sup>${n}</sup>·(1, −1) = <b>(${fmt(p[0],1)}, ${fmt(p[1],1)})</b> thousand<br>distance from the steady state: ${fmt(Math.abs(b)*Math.SQRT2*Math.pow(0.92,n),1)} thousand (×0.92 each year)`;
+}
+['fPow-n','fPow-r'].forEach(id=>$(id).addEventListener('input',drawPow)); redraws.push(drawPow);
+
+/* ---------- Fig: symmetric 2x2 matrix (section 12) ---------- */
+function drawSym(){
+  const a=+$('fSym-a').value,b=+$('fSym-b').value,c=+$('fSym-c').value, cv=$('fSym'), M=[a,b,b,c];
+  const A=css('--accent'),C2=css('--c2'),Wm=css('--warm'),Ax=css('--axis');
+  const m=(a+c)/2, r=Math.hypot((a-c)/2,b), l1=m+r, l2=m-r;
+  const u1=Math.abs(b)>1e-12?unit([b,l1-a]):(a>=c?[1,0]:[0,1]), u2=[-u1[1],u1[0]];
+  const R=Math.max(1.2,Math.abs(l1),Math.abs(l2))+0.3, segs=[], N=120;
+  for(let k=0;k<N;k++){const p=[Math.cos(2*PI*k/N),Math.sin(2*PI*k/N)],q=[Math.cos(2*PI*(k+1)/N),Math.sin(2*PI*(k+1)/N)];
+    segs.push({x1:p[0],y1:p[1],x2:q[0],y2:q[1],color:Ax,width:1.2,dash:[4,4]});
+    const P=mv(M,p),Q=mv(M,q);segs.push({x1:P[0],y1:P[1],x2:Q[0],y2:Q[1],color:Wm,width:2});}
+  [[u1,l1,A],[u2,l2,C2]].forEach(([u,l,col])=>{segs.push({x1:-R*1.5*u[0],y1:-R*1.5*u[1],x2:R*1.5*u[0],y2:R*1.5*u[1],color:col,width:1,dash:[6,4]});
+    segs.push({x1:0,y1:0,x2:l*u[0],y2:l*u[1],color:col,width:3.5});});
+  const pts=[{x:u1[0],y:u1[1],color:A,label:'u₁'},{x:u2[0],y:u2[1],color:C2,label:'u₂'}];
+  plot(cv,{...eqBox(cv,0,0,R),xstep:R>3?1:0.5,ystep:R>3?1:0.5,segs,pts});
+  const sg=x=>Math.abs(x)<1e-9?0:Math.sign(x), s1=sg(l1), s2=sg(l2);
+  const def=(s1>0&&s2>0)?'positive definite':(s1<0&&s2<0)?'negative definite':(s1*s2<0)?'indefinite':(s1>=0&&s2>=0)?'positive semidefinite':'negative semidefinite';
+  $('fSym-out').innerHTML=`A = [${fmt(a)} ${fmt(b)}; ${fmt(b)} ${fmt(c)}]: λ₁ = <b>${fmt(l1,3)}</b>, u₁ = ${vfmt(u1,3)}; λ₂ = <b>${fmt(l2,3)}</b>, u₂ = ${vfmt(u2,3)}<br>u₁·u₂ = 0 always (perpendicular); A = λ₁u₁u₁ᵀ + λ₂u₂u₂ᵀ. Definiteness (earlier syllabus): ${def}`;
+}
+['fSym-a','fSym-b','fSym-c'].forEach(id=>$(id).addEventListener('input',drawSym)); redraws.push(drawSym);
+
+/* ===== redraw on resize / theme / fonts ===== */
+const all=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+all();
+let t; window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(all,120);});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);}catch(e){}
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+<script>
+/* MATH1853 bundle navigation. Link targets are fixed (notes: note-<CH>.html#sN; guides: guide-<CH>.html#<CH>-<n>; earlier-syllabus page: guide-beyond.html#B-<CH>-<n>), so hrefs are written directly in the HTML. This script only marks the current section in the contents rail. */
+(function(){
+  var links=[].slice.call(document.querySelectorAll('nav.toc a[href^="#"]'));
+  if(!links.length||!('IntersectionObserver' in window))return;
+  var map={};links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a;});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.removeAttribute('aria-current');});var a=map[e.target.id];if(a)a.setAttribute('aria-current','true');}});},{rootMargin:'0px 0px -70% 0px'});
+  Object.keys(map).forEach(function(id){var s=document.getElementById(id);if(s)io.observe(s);});
+})();
+</script>
+</body>
+</html>

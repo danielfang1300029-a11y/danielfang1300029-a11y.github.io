@@ -1,0 +1,1395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MECH2407 C4 · Fourier Series</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+/* MECH2407 house style (from the MATH1851 bundle): one 46rem reading column, sticky contents rail on wide screens,
+   teal accent, warm orange for "Beyond the handouts", dark mode through CSS variables. Figures read colours via css('--accent') etc. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf; --prev:#6a4c9c; --prev-soft:#efe9f8;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#7a4fc2;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518; --prev:#b9a2e6; --prev-soft:#2a2238;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#b79bff; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518; --prev:#b9a2e6; --prev-soft:#2a2238;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#b79bff; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:230px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible,nav.toc a.on{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+nav.toc .home{display:block;margin:0 0 12px 10px;font-size:12.5px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+header.top .crumbs{font-size:13px;display:flex;flex-wrap:wrap;gap:4px 14px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0;min-width:0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent} .beyond>.tag{color:var(--warm)}
+.box.prev{background:var(--prev-soft);border-color:transparent;border-left:4px solid var(--prev)} .box.prev>.tag{color:var(--prev)}
+.pill.prev{background:var(--prev-soft);color:var(--prev)}
+.analogy{border-left:4px solid var(--c3)} .analogy>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent)} .ready>.tag{color:var(--accent)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+.figure .pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+canvas.plot{width:100%;display:block;border-radius:4px;touch-action:none}
+canvas.plot.drag{cursor:grab}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+.ctrl button{font:inherit;font-size:.88rem;padding:4px 12px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums;overflow-x:auto}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px;min-width:0}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0;min-width:0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide,a.note{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+a.guide:hover,a.note:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+.boxed{border:1.5px solid var(--accent);border-radius:6px;padding:6px 10px;display:block;margin:8px 0;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+main svg[role="img"][aria-label] text{paint-order:stroke;stroke:var(--card);stroke-width:3.5px;stroke-linejoin:round}
+mjx-container svg text{stroke:none}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+footer.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px} .box,.q{padding:10px 10px} .figure{padding:10px} details{padding:0 10px} mjx-container[display="true"]{font-size:92%}}
+
+/* ---- exam-guide classes (added Phase 4; notes do not use them) ---- */
+.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:6px;padding:12px 16px;margin:14px 0;min-width:0}
+.card>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.card .row{display:grid;grid-template-columns:6.2rem 1fr;gap:4px 12px;padding:6px 0;border-top:1px solid var(--grid);min-width:0}
+.card .row>b{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+.card .row>div{min-width:0}
+@media (max-width:520px){.card .row{grid-template-columns:1fr}}
+.freq{font-family:var(--mono);font-size:12px;color:var(--muted);margin:2px 0 6px}
+.proc{border:1px solid var(--line);border-left:4px solid var(--c3,#2a9d6a);border-radius:6px;padding:10px 16px;margin:14px 0;background:var(--card);min-width:0}
+.proc>.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.marker{font-size:.9rem;background:var(--accent-soft);border-radius:6px;padding:6px 10px;margin:8px 0}
+.marker::before{content:"Marker note · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.alsoset{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 6px}
+.glance{width:100%;border-collapse:collapse;font-size:.92rem}
+.glance td,.glance th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{
+  pd:['\\frac{\\partial #1}{\\partial #2}',2], vb:['\\mathbf{#1}',1], grad:'\\nabla', R:'\\mathbb{R}',
+  ii:'\\mathbf{i}', jj:'\\mathbf{j}', kk:'\\mathbf{k}'}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="assets/mathjax/tex-svg.js"></script>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <a class="home" href="index.html">← Start Here</a>
+  <p class="h">Chapter 4</p>
+  <ol>
+    <li><a href="#s0">0 · Where this chapter sits</a></li>
+    <li><a href="#s1">1 · Periodic functions</a></li>
+    <li><a href="#s2">2 · Fourier series representation</a></li>
+    <li><a href="#s3">3 · Convergence and series sums</a></li>
+    <li><a href="#s4">4 · Even and odd functions</a></li>
+    <li><a href="#s5">5 · Half-range series</a></li>
+    <li><a href="#s6">6 · Approximation, Parseval, spectrum</a></li>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#mistakes">Common mistakes</a></li>
+    <li><a href="#find-mistake">Find the mistake</a></li>
+    <li><a href="#group-work">Practice problems</a></li>
+    <li><a href="#checks">Concept checks</a></li>
+    <li><a href="#taster">Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MECH2407 · Multivariable Calculus &amp; PDEs · Chapter 4</span>
+  <h1>Fourier Series</h1>
+  <p class="lede">How to write a repeating signal (a square wave, a saw-tooth, a rectified voltage) as a sum of sines and cosines, explained from scratch in the order of the course: periodic functions, the Fourier coefficients and why the formulas work (orthogonality), what the series converges to (including at jumps, and how to use that to add up number series), the short cuts for even and odd functions, half-range sine and cosine series (the tool Chapter 5 needs for PDEs), and the best-approximation property, Parseval's theorem, other periods and the frequency spectrum. Every graph is interactive: drag the sliders to add terms and watch the partial sums converge. Every example is solved in full, and long integrations sit in "Show the calculation" tabs with a reason for each line. Material the exam uses but the course handouts leave out sits in orange "Beyond the handouts" boxes. The chapter ends with real past-paper questions, each linked to its exam-guide section.</p>
+  <div class="crumbs"><a href="index.html">← Start Here</a><a href="note-C3c.html">← Previous: C3c Gauss and Stokes</a><a href="guide-C4.html">Exam guide for this chapter →</a><a href="note-C5.html">Next: C5 Partial Differential Equations →</a></div>
+</header>
+
+<section id="s0">
+<h2><span class="n">0</span>Where this chapter sits</h2>
+<p>Chapters 1–3 were about functions of several variables. This chapter goes back to functions of <b>one</b> variable \(t\) (think of \(t\) as time), but of a special kind: functions that <b>repeat</b>, such as an alternating voltage or the position of a piston. The big idea, due to Joseph Fourier (1807), is that almost any repeating function can be built by adding up simple waves:</p>
+\[\begin{aligned}f(t)=\ &\tfrac12a_0\\&+a_1\cos t+a_2\cos2t+\cdots\\&+b_1\sin t+b_2\sin2t+\cdots\end{aligned}\]
+<p class="word"><b>In words:</b> a repeating signal = a constant level + a mixture of cosine and sine waves whose frequencies are 1, 2, 3, … times the basic frequency. The numbers \(a_n,b_n\) (the <b>Fourier coefficients</b>) say how much of each wave is in the mixture.</p>
+<div class="box analogy"><span class="tag">Analogy · a chord on a piano</span>
+<p>A note played on a violin and the same note on a flute have the same pitch but sound different. The difference is the mix of <b>overtones</b>: pure tones at 2, 3, 4, … times the base frequency, in different amounts. A Fourier series is the "recipe" of a signal: which pure tones, and how loud each one is. Finding the Fourier series = reading off the recipe.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Building a square wave out of sine waves</p>
+  <canvas class="plot" id="f-build" style="aspect-ratio:16/9" aria-label="Square wave with its first few sine-wave ingredients and their sum"></canvas>
+  <div class="ctrl"><label>number of sine waves <input type="range" id="bd-n" min="1" max="12" step="1" value="3"></label><label><input type="checkbox" id="bd-c" checked> show the ingredients</label></div>
+  <div class="readout" id="bd-out"></div>
+  <p class="cap">The thin coloured curves are the ingredients \(\frac{2}{\pi}\sin t\), \(\frac{2}{3\pi}\sin3t\), \(\frac{2}{5\pi}\sin5t\), … (each lifted by \(\tfrac12\) so you can see them against the target). The thick curve is \(\tfrac12+\) their sum, and the dashed grey line is the square wave it is trying to copy (0 on \((-\pi,0)\), 1 on \((0,\pi)\), repeated). Add waves with the slider: the sum gets closer and closer to the square wave. This is Example 4.2.1, worked out in §2.</p>
+</div>
+<p>The plan of the chapter, following the course:</p>
+<ol class="steps">
+  <li><b>§1</b> Periodic functions, the period and fundamental period, harmonics; a sum of periodic functions need not be periodic (Examples 4.1.1–4.1.3).</li>
+  <li><b>§2</b> The Fourier series of a \(2\pi\)-periodic function; deriving the formulas for \(a_0,a_n,b_n\) from <b>orthogonality</b>; the square wave (Example 4.2.1) and \(e^t\) (Example 4.2.2).</li>
+  <li><b>§3</b> Convergence: piecewise continuous functions, one-sided limits and derivatives (Examples 4.3.1–4.3.2), the convergence theorem (the series gives the <b>average</b> at a jump), Examples 4.3.3–4.3.4, and summing number series such as \(1-\frac13+\frac15-\cdots=\frac\pi4\) (exam type C4.2). Beyond: the Gibbs overshoot.</li>
+  <li><b>§4</b> Even and odd functions; cosine series and sine series; the full-wave rectifier (Examples 4.4.1–4.4.3).</li>
+  <li><b>§5</b> Half-range series: even and odd periodic extensions of a function given on \([0,\pi]\) (Example 4.5.1).</li>
+  <li><b>§6</b> The best-approximation property, Bessel's inequality and <b>Parseval's theorem</b>; term-by-term differentiation and integration; <b>functions of any period \(T\)</b>; the frequency spectrum.</li>
+</ol>
+<p><b>What you are assumed to know:</b> integration by parts, \(\sin n\pi=0\), \(\cos n\pi=(-1)^n\), and the product-to-sum identities such as \(\cos A\cos B\) \(=\tfrac12[\cos(A+B)+\cos(A-B)]\) (all restated where used). Nothing from Chapters 1–3 is needed, except one partial derivative in §6 (<a href="note-C1.html#s2">Chapter 1 §2</a>). Chapter 5 (PDEs) uses half-range series (§5) all the time.</p>
+<div class="box warn"><span class="tag">Which \(a_0\)? The convention used in these notes</span>
+<p>These notes (like the course and the <b>December formula sheet</b>) write the constant term as \(\tfrac12a_0\), so that one formula serves all \(n=0,1,2,\dots\):</p>
+\[\begin{aligned}f(t)&=\frac{a_0}2+\sum_{n=1}^\infty\big(a_n\cos n\omega t+b_n\sin n\omega t\big),\\ a_n&=\frac2T\int_a^{a+T}f(t)\cos n\omega t\,dt,\quad\omega=\frac{2\pi}T.\end{aligned}\]
+<p class="word"><b>In words:</b> the constant term is <b>half</b> of \(a_0\), and \(\frac{a_0}{2}\) is the average value of \(f\) over one period.</p>
+<p>The <b>May 2015–2019 formula sheet</b> used a different but equivalent convention on \([-L,L]\) (period \(T=2L\)): \(f=A_0+\sum(A_n\cos\frac{n\pi t}L+B_n\sin\frac{n\pi t}L)\) with \(A_0=\frac1{2L}\int_{-L}^Lf\,dt\), \(A_n=\frac1L\int_{-L}^Lf\cos\frac{n\pi t}L\,dt\). To convert: \(\boxed{A_0=\tfrac12a_0}\), \(A_n=a_n\), \(B_n=b_n\). The <b>series itself is the same</b>; only the name of the constant differs. Either convention earns full marks if used consistently: the classic mistake is mixing them (using \(a_0=\frac1L\int f\) and then forgetting the \(\frac12\)). See §6 for the details.</p>
+</div>
+<p><b>How the exam uses this chapter.</b> Across the papers collected for this bundle, 39 question parts (about 270 marks) come from this chapter, in every December paper and most May papers. Four types recur:</p>
+<ul class="list">
+<li><b>C4.1 Fourier series of a given periodic function</b> (24 parts in 14 sittings, about 165 marks): sketch the function over several periods, compute \(a_0,a_n,b_n\), often "show that the series has the form \(A+B\sum\cdots\)", sometimes find the series of a shifted copy.</li>
+<li><b>C4.2 Sum a number series</b> by putting a special value of \(t\) into a Fourier series (7 parts, about 25 marks): §3.</li>
+<li><b>C4.3 Half-range sine or cosine series</b> of a function given on \([0,L]\) (6 parts, about 64 marks, May papers): §5.</li>
+<li><b>C4.4 Parseval's identity</b> to sum a series such as \(\sum\frac1{n^4}\) (2 parts, 16 marks, May papers): §6.</li>
+</ul>
+<p>The December formula sheet gives the Fourier series of a \(T\)-periodic function on \([a,a+T]\) (the box above) and reduction formulas for integrals such as \(\int x^n\sin\alpha x\,dx\), \(\int x^n\cos\alpha x\,dx\), \(\int e^{\beta x}\cos^n\alpha x\,dx\). It does <b>not</b> give the even/odd short cuts, half-range formulas, the convergence theorem or Parseval's theorem: learn those. May papers from 2021 on have no formula sheet. See the <a href="guide-C4.html">C4 exam guide</a>.</p>
+</section>
+
+<section id="s1">
+<h2><span class="n">1</span>Periodic functions <span class="muted small">(handout §4.1, pp. 1–2)</span></h2>
+<div class="box def"><span class="tag">Definition · periodic function, period</span>
+<p>A function \(f(t)\) is <b>periodic</b> if there is a positive number \(T\) such that</p>
+\[f(t+T)=f(t)\qquad\forall t\]
+<p>and \(f(t)\) is defined for all real \(t\). The number \(T\) is called a <b>period</b> of \(f(t)\). Such a function is also said to be <b>\(T\)-periodic</b>.</p>
+<p class="word"><b>In words:</b> shift the graph sideways by \(T\) and it lands exactly on itself; the pattern repeats every \(T\) units of time. (The symbol \(\forall t\) means "for every value of \(t\)".)</p>
+</div>
+<div class="figure">
+  <p class="ttl">A periodic function, and the "shift test" for a period</p>
+  <canvas class="plot" id="f-per" style="aspect-ratio:16/8" aria-label="Graph of a periodic function with a shifted copy; readout of the mismatch"></canvas>
+  <div class="ctrl"><label>function <select id="pe-sel">
+    <option value="0">a periodic wave (period T = 2)</option><option value="1">cos 3t</option><option value="2">sin t + sin 2t</option><option value="3">sin t + sin 2πt</option><option value="4">f(t) = 1 (constant)</option></select></label>
+    <label>shift by <input type="range" id="pe-s" min="0" max="8" step="0.01" value="2"></label></div>
+  <div class="readout" id="pe-out"></div>
+  <p class="cap">Solid curve: \(f(t)\). Dashed curve: the shifted copy \(f(t+\text{shift})\). The shift is a period exactly when the dashed curve sits on top of the solid one everywhere, i.e. when the biggest gap (readout) is 0. The first function is a typical periodic wave like the one sketched in the course (marked at \(-2T,-T,0,T,2T\)); try shifts of 2, 4, 6. For \(\cos3t\) try \(2\pi/3\approx2.09\) and \(2\pi\approx6.28\). For \(\sin t+\sin2\pi t\) no shift ever gives exactly 0 (Example 4.1.3).</p>
+</div>
+<p>Periodic functions occur in many areas of engineering, for example the current and voltage in an AC (alternating current) circuit, and the motion of a piston in an internal combustion engine.</p>
+<p>If \(f(t)\) is \(T\)-periodic and \(n\) is any integer,</p>
+\[f(t+nT)=f(t)\]
+<p>and so \(2T,3T,4T,\dots\) are also periods of \(f(t)\) (shifting by \(T\) twice is shifting by \(2T\)). The smallest possible value of the period \(T\) is called the <b>fundamental period</b>, or simply <b>the period</b>, of \(f(t)\).</p>
+<p class="word"><b>In words:</b> if a pattern repeats every 2 seconds it also repeats every 4, 6, 8 seconds; "the period" means the shortest repeat time.</p>
+
+<div class="box eg"><span class="tag">Example 4.1.1</span>
+<ol class="steps">
+<li>\(\cos t\) and \(\sin t\) have the fundamental period \(2\pi\).</li>
+<li>\(\cos nt\) and \(\sin nt\) have fundamental period \(\dfrac{2\pi}n\) for \(n\in\{1,2,3,\dots\}\). \(2\pi\) is also a period of these functions. <i>Why:</i> \(\cos n\big(t+\frac{2\pi}n\big)=\cos(nt+2\pi)=\cos nt\); the wave \(\cos nt\) squeezes \(n\) complete oscillations into a length \(2\pi\), so \(2\pi=n\times\frac{2\pi}{n}\) is a whole number of its periods.</li>
+<li>\(f(t)=\) constant is periodic but has <b>no</b> fundamental period: every positive \(T\) is a period, and there is no smallest positive number.</li>
+<li>\(\cos\omega t\) and \(\sin\omega t\) have a fundamental period of \(T=\dfrac{2\pi}\omega\). The <b>harmonics</b> (frequency \(n\omega\), \(n\gt1\) integer) \(\cos n\omega t\) and \(\sin n\omega t\) also have \(T\) as a period.</li>
+</ol>
+</div>
+<div class="box def"><span class="tag">Plain-language terms · angular frequency, harmonics</span>
+<p>In \(\cos\omega t\), the number \(\omega\) (omega) is the <b>angular frequency</b>: how many radians the angle \(\omega t\) turns through per unit time. One full oscillation takes \(T=2\pi/\omega\) (the period); the ordinary frequency, in oscillations per unit time, is \(1/T=\omega/2\pi\). A <b>harmonic</b> of \(\omega\) is a wave with angular frequency \(2\omega,3\omega,\dots\): it oscillates exactly 2, 3, … times as fast, so it fits a whole number of oscillations into one period \(T\).</p>
+</div>
+<p>If \(f(t)\) and \(g(t)\) are periodic with the <b>same</b> period \(T\), then any linear combination</p>
+\[h(t)=\alpha f(t)+\beta g(t)\]
+<p>is also periodic with period \(T\) (where \(\alpha,\beta\) are constants), since \(h(t+T)\) \(=\alpha f(t+T)+\beta g(t+T)\) \(=\alpha f(t)+\beta g(t)\) \(=h(t)\).</p>
+<p class="word"><b>In words:</b> adding or scaling functions that repeat every \(T\) gives something that also repeats every \(T\).</p>
+<div class="box eg"><span class="tag">Example 4.1.2</span>
+\[\begin{aligned}f(t)=\ &a_0+a_1\cos t+a_2\cos2t+\dots\\&+a_n\cos nt+\dots\\&+b_1\sin t+b_2\sin2t+\dots\\&+b_n\sin nt+\dots\end{aligned}\]
+<p>has period \(2\pi\): by Example 4.1.1, every term has \(2\pi\) as a period, so (by the linear-combination rule) the whole sum does. This is exactly the shape of a Fourier series.</p>
+</div>
+<p>However, the sum of periodic functions is <b>not</b> necessarily periodic!</p>
+<div class="box eg"><span class="tag">Example 4.1.3</span>
+<p>Consider</p>
+\[g(t)=\sin t+\sin2\pi t.\]
+<p>Notice that \(\sin t\) has fundamental period \(2\pi\) while \(\sin2\pi t\) has fundamental period \(1\). Here, \(g(t)\) is <b>not</b> periodic. (Check!)</p>
+<p>The reason: a common period would have to be a whole number of \(2\pi\)'s <b>and</b> a whole number of 1's at the same time, \(T=2\pi k=m\), which would make \(\pi=\frac m{2k}\) a fraction. But \(\pi\) is irrational, so no such \(T\) exists. The tab below turns this into a proof.</p>
+<details><summary>Show the calculation: why \(g(t)=\sin t+\sin2\pi t\) is not periodic</summary><div>
+<ol class="steps">
+<li>Suppose, to get a contradiction, that \(g(t+T)=g(t)\) for all \(t\), with some \(T\gt0\).</li>
+<li>Differentiating an identity that holds for all \(t\) keeps it true, so \(g''(t+T)=g''(t)\) too. Here \(g''(t)=-\sin t-4\pi^2\sin2\pi t\).</li>
+<li>Combine to kill the second wave: \(g''+4\pi^2g=(4\pi^2-1)\sin t\). <i>Why:</i> \(-4\pi^2\sin2\pi t+4\pi^2\sin2\pi t=0\). Since the left side is \(T\)-periodic, so is \(\sin t\): \(T\) must be a multiple of \(2\pi\), say \(T=2\pi k\) with \(k\) a positive integer.</li>
+<li>Combine to kill the first wave: \(g''+g=(1-4\pi^2)\sin2\pi t\). So \(\sin2\pi t\) is \(T\)-periodic, and \(T\) must be a whole number \(m\) (its period is 1).</li>
+<li>Then \(2\pi k=m\), so \(\pi=\dfrac m{2k}\) would be a fraction, which is false (\(\pi\) is irrational). So no period \(T\) exists: \(g\) is not periodic. ∎</li>
+</ol>
+<p>Notice in the figure that a shift of \(T=44\) comes very close (\(7\times2\pi=43.98\)), so \(g\) "nearly repeats", but never exactly.</p>
+</div></details>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · the period of a sum</span>
+<p>When the separate periods have a rational ratio, the sum <b>is</b> periodic, and its period is the least common multiple. For example \(\sin3t+\cos2t\): periods \(\frac{2\pi}3\) and \(\pi\); the smallest length that is a whole number of both is \(2\pi\) (\(=3\times\frac{2\pi}3=2\times\pi\)). Exam questions often ask you to "state the fundamental period" of the function you are given: read it off from the interval on which it is defined (e.g. \(-2\lt t\lt2\) repeated: \(T=4\)).</p>
+</div>
+</section>
+
+<section id="s2">
+<h2><span class="n">2</span>Fourier series representation <span class="muted small">(handout §4.2, pp. 2–7)</span></h2>
+<p>Let \(f(t)\) be a periodic function of period \(2\pi\) which we wish to represent by the <b>trigonometric series</b> (a sum of a constant, cosines and sines), equation (4.1):</p>
+\[f(t)=\frac12a_0+\sum_{n=1}^\infty\big(a_n\cos nt+b_n\sin nt\big)\]
+<p class="word"><b>In words:</b> \(f\) = half of \(a_0\) + (amount \(a_n\) of the wave \(\cos nt\)) + (amount \(b_n\) of the wave \(\sin nt\)), added up over \(n=1,2,3,\dots\)</p>
+<p>How do we determine the coefficients \(a_n\) and \(b_n\)? The trick is the same each time: multiply both sides by one particular wave and integrate over one period. Almost every term then integrates to zero, leaving one coefficient alone.</p>
+
+<h3>Finding \(a_0\)</h3>
+<p>Integrate both sides of (4.1) over the interval \([-\pi,\pi]\). Assuming term-by-term integration is possible (integrating an infinite sum one term at a time; this is allowed for the functions in this course), we have</p>
+\[\begin{aligned}\int_{-\pi}^\pi f(t)\,dt=\ &\frac12a_0\int_{-\pi}^\pi1\,dt\\&+\sum_{n=1}^\infty\Big(a_n\int_{-\pi}^\pi\cos nt\,dt\\&\qquad+b_n\int_{-\pi}^\pi\sin nt\,dt\Big)\end{aligned}\]
+<p>Now,</p>
+\[\begin{aligned}\int_{-\pi}^\pi dt&=2\pi,\\ \int_{-\pi}^\pi\cos nt\,dt&=\Big[\frac{\sin nt}n\Big]_{-\pi}^\pi=0,\\ \int_{-\pi}^\pi\sin nt\,dt&=\Big[\frac{-\cos nt}n\Big]_{-\pi}^\pi\\&=-\frac1n\big(\cos n\pi-\cos(-n\pi)\big)=0,\end{aligned}\]
+<p>(since \(\sin(\pm n\pi)=0\) and \(\cos(-n\pi)=\cos n\pi\)) giving \(\int_{-\pi}^\pi f\,dt=\frac12a_0\cdot2\pi=\pi a_0\), i.e.</p>
+\[a_0=\frac1\pi\int_{-\pi}^\pi f(t)\,dt.\]
+<p class="word"><b>In words:</b> every wave has as much area above the axis as below over a full period, so integrating kills all of them and leaves only the constant. So \(\frac12a_0=\frac1{2\pi}\int_{-\pi}^\pi f\,dt\) is the <b>average value</b> of \(f\) over a period.</p>
+
+<h3>Finding \(a_n\)</h3>
+<p>Multiply both sides of (4.1) by \(\cos mt\) (\(m\) a fixed positive integer) and integrate over \([-\pi,\pi]\), giving equation (4.2):</p>
+\[\begin{aligned}\int_{-\pi}^\pi f(t)\cos mt\,dt=\ &\frac12a_0\int_{-\pi}^\pi\cos mt\,dt\\&+\sum_{n=1}^\infty a_n\int_{-\pi}^\pi\cos nt\cos mt\,dt\\&+\sum_{n=1}^\infty b_n\int_{-\pi}^\pi\sin nt\cos mt\,dt.\end{aligned}\]
+<p>Now \(\int_{-\pi}^\pi\cos mt\,dt=0\) (as above), and for \(n\ne m\)</p>
+\[\begin{aligned}&\int_{-\pi}^\pi\cos nt\cos mt\,dt\\&=\frac12\int_{-\pi}^\pi\big[\cos(n+m)t+\cos(n-m)t\big]dt\\&=\frac12\Big[\frac{\sin(n+m)t}{n+m}+\frac{\sin(n-m)t}{n-m}\Big]_{-\pi}^\pi=0\end{aligned}\]
+<p>since the sine of an integer multiple of \(\pi\) is zero. If \(m=n\ (\ne0)\), the above result is incorrect due to the division by \(n-m=0\). In this case</p>
+\[\begin{aligned}\int_{-\pi}^\pi\cos mt\cos mt\,dt&=\frac12\int_{-\pi}^\pi(1+\cos2mt)\,dt\\&=\frac12\Big[t+\frac{\sin2mt}{2m}\Big]_{-\pi}^\pi=\pi.\end{aligned}\]
+<p>Also,</p>
+\[\begin{aligned}&\int_{-\pi}^\pi\sin nt\cos mt\,dt\\&=\frac12\int_{-\pi}^\pi\big[\sin(n+m)t+\sin(n-m)t\big]dt\\&=\frac12\Big[\frac{-\cos(n+m)t}{n+m}-\frac{\cos(n-m)t}{n-m}\Big]_{-\pi}^\pi\\&=0\qquad(m\ne n)\end{aligned}\]
+<p>and if \(m=n\ (\ne0)\)</p>
+\[\begin{aligned}\int_{-\pi}^\pi\sin mt\cos mt\,dt&=\frac12\int_{-\pi}^\pi\sin2mt\,dt\\&=\frac12\Big[\frac{-\cos2mt}{2m}\Big]_{-\pi}^\pi=0.\end{aligned}\]
+<details><summary>Show the calculation: the product-to-sum identities and why each bracket vanishes</summary><div>
+<ol class="steps">
+<li>Identities (from the addition formulas \(\cos(A\pm B)=\cos A\cos B\mp\sin A\sin B\), \(\sin(A\pm B)=\sin A\cos B\pm\cos A\sin B\), adding or subtracting the two versions):
+\(\cos A\cos B\) \(=\tfrac12[\cos(A+B)+\cos(A-B)]\), \(\sin A\cos B\) \(=\tfrac12[\sin(A+B)+\sin(A-B)]\), \(\sin A\sin B\) \(=\tfrac12[\cos(A-B)-\cos(A+B)]\).</li>
+<li>\(\cos nt\cos mt\), \(n\ne m\): \(n+m\) and \(n-m\) are nonzero integers \(p\). \(\big[\frac{\sin pt}{p}\big]_{-\pi}^{\pi}=\frac{\sin p\pi-\sin(-p\pi)}{p}=0-0=0\). <i>Why:</i> \(\sin\) of any whole multiple of \(\pi\) is 0.</li>
+<li>\(\cos^2mt\): \(\cos^2A=\tfrac12(1+\cos2A)\). The 1 integrates to \(2\pi\), the \(\cos2mt\) to 0, so the result is \(\tfrac12\cdot2\pi=\pi\).</li>
+<li>\(\sin nt\cos mt\), \(n\ne m\): \(\big[\frac{-\cos pt}{p}\big]_{-\pi}^{\pi}=\frac{-\cos p\pi+\cos(-p\pi)}{p}=0\). <i>Why:</i> \(\cos\) is even, \(\cos(-p\pi)=\cos p\pi\). (If \(n-m\) is negative the formula still works: \(p\) is just a negative integer.)</li>
+<li>\(\sin mt\cos mt=\tfrac12\sin2mt\), which integrates to 0 over a full period.</li>
+<li>\(\sin nt\sin mt\) (used for \(b_n\)): \(\tfrac12[\cos(n-m)t-\cos(n+m)t]\) integrates to 0 if \(n\ne m\); if \(n=m\), \(\sin^2mt=\tfrac12(1-\cos2mt)\) integrates to \(\pi\). (All these integrals were checked in sympy for \(n,m=0,\dots,6\).)</li>
+</ol></div></details>
+<p>The only integral that is non-zero on the right-hand side of (4.2) is the coefficient of \(a_m\), which is \(\pi\). So the left side equals \(\pi a_m\), giving (renaming \(m\) as \(n\))</p>
+\[a_n=\frac1\pi\int_{-\pi}^\pi f(t)\cos nt\,dt,\qquad n=1,2,3,\dots\]
+<p>We now see the reason for choosing \(\frac12a_0\) as the constant term: the formula for \(a_0\) is the same as for all the \(a_n\) terms (note that \(\cos0t\equiv1\)).</p>
+
+<h3>Finding \(b_n\)</h3>
+<p>Multiply both sides of (4.1) by \(\sin mt\) and integrate over \([-\pi,\pi]\). Now,</p>
+\[\int_{-\pi}^\pi\sin nt\sin mt\,dt=\begin{cases}0&m\ne n\\ \pi&m=n\ (\ne0)\end{cases}\]
+<p>and hence all the terms on the right-hand side are zero except the coefficient of \(b_m\), which is \(\pi\), giving</p>
+\[b_n=\frac1\pi\int_{-\pi}^\pi f(t)\sin nt\,dt,\qquad n=1,2,3,\dots\]
+<div class="box thm"><span class="tag">Result · the Fourier series of a \(2\pi\)-periodic function</span>
+\[f(t)=\frac{a_0}2+\sum_{n=1}^\infty\big(a_n\cos nt+b_n\sin nt\big)\]
+<p>where</p>
+\[\begin{aligned}a_n&=\frac1\pi\int_{-\pi}^\pi f(t)\cos nt\,dt,\quad n=0,1,2,3,\dots\\ b_n&=\frac1\pi\int_{-\pi}^\pi f(t)\sin nt\,dt,\quad n=1,2,3,\dots\end{aligned}\]
+<p class="word"><b>In words:</b> to find how much of the wave \(\cos nt\) (or \(\sin nt\)) is in \(f\), multiply \(f\) by that wave, integrate over one period, and divide by \(\pi\). The constant term is half of \(a_0\).</p>
+</div>
+<p>This is known as the <b>Fourier series</b> representation of \(f(t)\), and the coefficients \(a_n,b_n\) are known as the <b>Fourier coefficients</b> of \(f(t)\).</p>
+<p>We note that it was possible to obtain formulae for the coefficients easily (they are sometimes known as <b>Euler's formulae</b>) because the functions \(1,\cos t,\cos2t,\cos3t,\dots,\sin t,\sin2t,\sin3t,\dots\) are <b>orthogonal</b> over the interval \([-\pi,\pi]\). That is, the product of any two different functions from this list integrates to zero over this interval. Since all these functions are \(2\pi\)-periodic, <b>any interval of length \(2\pi\)</b> will do for the integration, for example \([0,2\pi]\).</p>
+<div class="box analogy"><span class="tag">Analogy · components of a vector</span>
+<p>To find the \(x\)-component of a vector \(\vb v=v_1\ii+v_2\jj+v_3\kk\) you take a dot product: \(\vb v\cdot\ii=v_1\), because \(\ii\cdot\jj=\ii\cdot\kk=0\) (perpendicular, "orthogonal") and \(\ii\cdot\ii=1\). For functions, "dot product" means \(\int_{-\pi}^\pi f(t)g(t)\,dt\). The waves \(1,\cos nt,\sin nt\) are like infinitely many mutually perpendicular axes, and \(a_n\) is the component of \(f\) along the \(\cos nt\) axis: "dot" \(f\) with \(\cos nt\), divide by the "length squared" \(\int\cos^2nt\,dt=\pi\).</p>
+</div>
+<div class="figure">
+  <p class="ttl">Orthogonality: the area under a product of two waves</p>
+  <canvas class="plot" id="f-orth" style="aspect-ratio:16/8" aria-label="Two waves and their product with the area under the product shaded"></canvas>
+  <div class="ctrl"><label>first wave <select id="or-a"><option value="c">cos</option><option value="s">sin</option></select></label><label>n <input type="range" id="or-n" min="0" max="5" step="1" value="2"></label>
+  <label>second wave <select id="or-b"><option value="c">cos</option><option value="s">sin</option></select></label><label>m <input type="range" id="or-m" min="0" max="5" step="1" value="3"></label></div>
+  <div class="readout" id="or-out"></div>
+  <p class="cap">Thin curves: the two waves. Thick curve: their product, with the area above the axis shaded teal and below shaded red. Over \([-\pi,\pi]\) the two areas cancel exactly (integral 0) unless both waves are the same; then the product is a square, never negative, and the integral is \(\pi\) (or \(2\pi\) for \(\cos0t\cdot\cos0t=1\)).</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 4.2.1 · the square wave</span>
+<p><b>Find the Fourier series representation of the square wave</b></p>
+\[f(t)=\begin{cases}0&-\pi\lt t\le0\\1&0\lt t\lt\pi\end{cases},\qquad f(t+2\pi)=f(t).\]
+<p>(Graph: height 0 on \((-\pi,0]\) and height 1 on \((0,\pi)\), repeated every \(2\pi\): flat steps of height 1 over \((0,\pi)\), \((2\pi,3\pi)\), \((-2\pi,-\pi)\), …; see the figure below.)</p>
+<p><b>Solution.</b> \(f(t)=\frac12a_0+\sum_{n=1}^\infty(a_n\cos nt+b_n\sin nt)\). Since \(f=0\) on \((-\pi,0)\), only \((0,\pi)\) contributes to each integral. We have</p>
+\[\begin{aligned}a_n&=\frac1\pi\int_{-\pi}^\pi f(t)\cos nt\,dt=\frac1\pi\int_0^\pi1\cdot\cos nt\,dt\\&=\frac1\pi\Big[\frac{\sin nt}n\Big]_0^\pi=0,\qquad n\ne0\end{aligned}\]
+<p>and</p>
+\[a_0=\frac1\pi\int_{-\pi}^\pi f(t)\,dt=\frac1\pi\int_0^\pi1\,dt=1.\]
+<p>Also</p>
+\[\begin{aligned}b_n&=\frac1\pi\int_{-\pi}^\pi f(t)\sin nt\,dt=\frac1\pi\int_0^\pi\sin nt\,dt\\&=\frac1\pi\Big[\frac{-\cos nt}n\Big]_0^\pi,\qquad n\ne0\end{aligned}\]
+<p>so that</p>
+\[b_n=\frac1{n\pi}\big[1-\cos n\pi\big]=\frac1{n\pi}\big[1-(-1)^n\big].\]
+<p>For even \(n\), \((-1)^n=1\) and \(b_n=0\); for odd \(n\), \((-1)^n=-1\) and \(b_n=\frac2{n\pi}\). That is,</p>
+\[\begin{aligned}&\therefore\ b_{2n}=0\ \text{ and }\\&\quad b_{2n+1}=\frac2{(2n+1)\pi},\quad n=0,1,2,\dots\\ &\therefore\ f(t)=\frac12+\frac2\pi\Big[\frac{\sin t}1+\frac{\sin3t}3\\&\qquad+\frac{\sin5t}5+\cdots\Big]\end{aligned}\]
+<p>or</p>
+\[f(t)=\frac12+\frac2\pi\sum_{n=0}^\infty\frac{\sin(2n+1)t}{2n+1}.\]
+<p class="word"><b>In words:</b> the square wave = its average height \(\frac12\) + odd sine harmonics with amplitudes \(\frac{2}{\pi},\frac{2}{3\pi},\frac{2}{5\pi},\dots\)</p>
+</div>
+<p>By looking at various <b>partial sums</b> of this series (the sum of only the first few terms) we may see how it approaches \(f(t)\) as more terms are taken. The course labels them by the number of non-zero terms: \(s_1=\frac12\), \(s_2=\frac12+\frac2\pi\sin t\), \(s_3=\frac12+\frac2\pi\sin t+\frac2{3\pi}\sin3t\), …, \(s_7=\frac12+\frac2\pi\sin t+\cdots+\frac2{11\pi}\sin11t\).</p>
+<div class="figure">
+  <p class="ttl">Example 4.2.1: partial sums of the square-wave series</p>
+  <canvas class="plot" id="f-sq" style="aspect-ratio:16/9" aria-label="Square wave and a partial sum of its Fourier series"></canvas>
+  <div class="ctrl"><label>non-zero terms k <input type="range" id="sq-k" min="1" max="40" step="1" value="3"></label>
+  <button type="button" data-k="1">s₁</button><button type="button" data-k="2">s₂</button><button type="button" data-k="3">s₃</button><button type="button" data-k="7">s₇</button><button type="button" data-k="40">s₄₀</button></div>
+  <div class="readout" id="sq-out"></div>
+  <p class="cap">Grey dashed: the square wave \(f\) on \(-3\pi\le t\le3\pi\). Teal: the partial sum \(s_k\). The buttons give the four partial sums \(s_1,s_2,s_3,s_7\) that the course plots: \(s_1\) is just the flat line at \(\frac12\); \(s_2\) is one sine hump; \(s_3\) already has the shape of a step with two ripples on top; \(s_7\) is close to the square wave except near the jumps. The orange dots at the jumps \(t=0,\pm\pi,\dots\) mark the value \(\frac12\) that every partial sum passes through.</p>
+</div>
+<div class="box def"><span class="tag">Notes on Example 4.2.1</span>
+<ol class="steps">
+<li>As more terms are taken the series does approach \(f(t)\).</li>
+<li>At a point of discontinuity of \(f(t)\) (a <b>jump</b>), that is at \(t=0\) (and also at \(t=n\pi\), \(n=\pm1,\pm2,\dots\)), the series converges to \(\frac12\), which is the average of the left-hand and right-hand limits at that point (\(0\) and \(1\)). <i>Why:</i> every \(\sin(2n+1)t\) is 0 there, leaving just \(\frac12\).</li>
+<li>Only sine terms are present in this series, and only the <b>odd harmonics</b> (\(\sin t,\sin3t,\sin5t\), etc.). §4 explains why: \(f-\frac12\) is an odd function.</li>
+<li>The coefficients \(b_n\) (the amplitudes of the sine terms present) are proportional to \(\frac1n\), and hence we may expect fairly slow convergence of this series: the terms shrink slowly, so many are needed.</li>
+</ol>
+</div>
+
+<div class="box eg"><span class="tag">Example 4.2.2 · \(e^t\) repeated</span>
+<p><b>Find the Fourier series of</b></p>
+\[\begin{aligned}&f(t)=e^t\quad\text{for }-\pi\lt t\lt\pi,\\&f(t+2\pi)=f(t).\end{aligned}\]
+<p>(Graph: the exponential curve from \(e^{-\pi}\approx0.04\) up to \(e^\pi\approx23.1\) on \((-\pi,\pi)\), then the same piece copied onto \((\pi,3\pi)\), \((-3\pi,-\pi)\), …, with a drop back down at every odd multiple of \(\pi\); see the figure.)</p>
+<p><b>Solution.</b> \(f(t)=\frac12a_0+\sum_{n=1}^\infty(a_n\cos nt+b_n\sin nt)\), where</p>
+\[\begin{aligned}a_n&=\frac1\pi\int_{-\pi}^\pi e^t\cos nt\,dt\\&=\frac1\pi\,\frac{(-1)^n}{1+n^2}\big(e^\pi-e^{-\pi}\big)\\&=\frac2\pi\,\frac{(-1)^n}{1+n^2}\sinh\pi\end{aligned}\]
+<p>and</p>
+\[\begin{aligned}b_n&=\frac1\pi\int_{-\pi}^\pi e^t\sin nt\,dt\\&=\frac1\pi\,\frac{(-1)^{n+1}n}{1+n^2}\big(e^\pi-e^{-\pi}\big)\\&=\frac2\pi\,\frac{(-1)^{n+1}n}{1+n^2}\sinh\pi.\end{aligned}\]
+<p>(Here \(\sinh\pi=\frac{e^\pi-e^{-\pi}}2\), the hyperbolic sine, so \(e^\pi-e^{-\pi}=2\sinh\pi\).) Putting \(n=0\) in the \(a_n\) formula gives \(a_0=\frac{2\sinh\pi}{\pi}\), so \(\frac12a_0=\frac{\sinh\pi}{\pi}\), and</p>
+\[\begin{aligned}\therefore\ f(t)=\ &\frac{\sinh\pi}\pi\\&+\frac{2\sinh\pi}\pi\sum_{n=1}^\infty\Big(\frac{(-1)^n}{1+n^2}\cos nt\\&+\frac{(-1)^{n+1}n}{1+n^2}\sin nt\Big).\end{aligned}\]
+<details><summary>Show the calculation: the two integrals \(\int e^t\cos nt\,dt\) and \(\int e^t\sin nt\,dt\)</summary><div>
+<ol class="steps">
+<li>Let \(C=\int e^t\cos nt\,dt\) and \(S=\int e^t\sin nt\,dt\) (indefinite). Integrate \(C\) by parts with \(u=\cos nt\), \(dv=e^t\,dt\): \(C\) \(=e^t\cos nt+n\int e^t\sin nt\,dt\) \(=e^t\cos nt+nS\). <i>Why:</i> \(du=-n\sin nt\,dt\), and minus times minus gives plus.</li>
+<li>Same for \(S\) with \(u=\sin nt\): \(S\) \(=e^t\sin nt-n\int e^t\cos nt\,dt\) \(=e^t\sin nt-nC\).</li>
+<li>Substitute the second into the first: \(C=e^t\cos nt+ne^t\sin nt-n^2C\), so \((1+n^2)C=e^t(\cos nt+n\sin nt)\). <i>Why:</i> the integral we want reappears on the right; move it to the left (the "integrate by parts twice" trick).</li>
+<li>Hence \(C=\dfrac{e^t(\cos nt+n\sin nt)}{1+n^2}\) and then \(S=\dfrac{e^t(\sin nt-n\cos nt)}{1+n^2}\). (Check by differentiating; the December formula sheet's reduction formula for \(\int e^{\beta x}\cos^n\alpha x\,dx\) gives the same.)</li>
+<li>Limits \(\pm\pi\): \(\sin(\pm n\pi)=0\), \(\cos(\pm n\pi)=(-1)^n\). So \(\int_{-\pi}^\pi e^t\cos nt\,dt=\dfrac{(-1)^n(e^\pi-e^{-\pi})}{1+n^2}\).</li>
+<li>\(\int_{-\pi}^\pi e^t\sin nt\,dt\) \(=\dfrac{-n(-1)^n(e^\pi-e^{-\pi})}{1+n^2}\) \(=\dfrac{(-1)^{n+1}n(e^\pi-e^{-\pi})}{1+n^2}\).</li>
+<li>Divide by \(\pi\) and write \(e^\pi-e^{-\pi}=2\sinh\pi\) to get \(a_n\) and \(b_n\) above.</li>
+</ol></div></details>
+<p>Note that the series only represents \(e^t\) in the interval \((-\pi,\pi)\). Outside this interval it represents the <b>periodic extension</b> of \(e^t\): the piece on \((-\pi,\pi)\) copied over and over.</p>
+<p>Using the free computer-algebra program WxMaxima, you may visualise the approximation up to the term \(n=5\) easily. The commands are (here <code>a0</code> stores the constant term \(\frac{\sinh\pi}{\pi}\), and the sum uses \((-1)^n(\cos nt-n\sin nt)\), which is the same as the two terms in the bracket above):</p>
+<pre class="handwork">a0:sinh(%pi)/%pi;
+f5:a0+2*a0*sum((-1)^n*(cos(n*t)-n*sin(n*t))/(1+n^2),n,1,5);
+plot2d(f5,[t,-3*%pi,3*%pi]);</pre>
+<p>The figure below draws the same thing, with a slider for the number of terms.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Example 4.2.2: the periodic extension of \(e^t\) and its partial sums</p>
+  <canvas class="plot" id="f-exp" style="aspect-ratio:16/9" aria-label="Periodic extension of e^t and a partial Fourier sum"></canvas>
+  <div class="ctrl"><label>terms up to n = <input type="range" id="ex-n" min="0" max="40" step="1" value="5"></label></div>
+  <div class="readout" id="ex-out"></div>
+  <p class="cap">Grey dashed: the periodic extension of \(e^t\) on \(-3\pi\le t\le3\pi\) (the actual \(e^t\) only on the middle piece). Teal: the partial sum up to \(n\) (start at \(n=5\): this is the WxMaxima picture, a wavy curve with tall peaks just before each \(t=\pi,3\pi,\dots\)). At each jump (\(t=\pm\pi,\pm3\pi\)) every partial sum heads for the orange dot at height \(\cosh\pi=\frac{e^\pi+e^{-\pi}}2\approx11.6\), halfway up the jump (§3).</p>
+</div>
+<div class="box ready"><span class="tag">Ready-to-use values (Beyond the handouts) · they appear in every Fourier calculation</span>
+<div class="scroll"><table>
+<tr><th>\(n\)</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>general</th></tr>
+<tr><td>\(\sin n\pi\)</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>\(0\)</td></tr>
+<tr><td>\(\cos n\pi\)</td><td>−1</td><td>1</td><td>−1</td><td>1</td><td>−1</td><td>\((-1)^n\)</td></tr>
+<tr><td>\(\sin\frac{n\pi}2\)</td><td>1</td><td>0</td><td>−1</td><td>0</td><td>1</td><td>0 for even \(n\); \((-1)^k\) for \(n=2k+1\)</td></tr>
+<tr><td>\(\cos\frac{n\pi}2\)</td><td>0</td><td>−1</td><td>0</td><td>1</td><td>0</td><td>0 for odd \(n\); \((-1)^k\) for \(n=2k\)</td></tr>
+<tr><td>\(1-(-1)^n\)</td><td>2</td><td>0</td><td>2</td><td>0</td><td>2</td><td>2 for odd \(n\), 0 for even \(n\)</td></tr>
+</table></div>
+<p>Integrals by parts (\(n\ne0\)), checked in sympy:</p>
+\[\begin{aligned}\int t\cos nt\,dt&=\frac{t\sin nt}n+\frac{\cos nt}{n^2},\\ \int t\sin nt\,dt&=-\frac{t\cos nt}n+\frac{\sin nt}{n^2}.\end{aligned}\]
+<p class="word"><b>In words:</b> sines of whole multiples of \(\pi\) vanish; cosines alternate \(-1,+1\); "\(1-(-1)^n\)" is the switch that keeps only the odd \(n\).</p>
+</div>
+</section>
+
+<section id="s3">
+<h2><span class="n">3</span>Convergence of Fourier series (incl. series sums) <span class="muted small">(handout §4.3, pp. 7–10)</span></h2>
+<p>A series <b>converges</b> at a point \(t\) if its partial sums \(s_k(t)\) settle down to a definite number as \(k\to\infty\); that number is the "value" of the infinite series there. The question of this section: <b>for which functions, and to which values, does a Fourier series converge?</b></p>
+<p>The class of functions which may be represented by a Fourier series is quite large, larger than the class of functions which have a Taylor series. A Taylor series requires infinite differentiability at a point (you need \(f'(0),f''(0),f'''(0),\dots\)), while a Fourier series can be applied to some <b>discontinuous</b> functions, such as the square wave. The approximation error using a truncated Taylor series (a Taylor polynomial) may be very large at a point far away from where the Taylor series is computed, while the truncated Fourier series has its error distributed more evenly along the domain of approximation.</p>
+<div class="figure">
+  <p class="ttl">Taylor polynomial versus Fourier partial sum for \(e^t\) on \((-\pi,\pi)\)</p>
+  <canvas class="plot" id="f-taylor" style="aspect-ratio:16/9" aria-label="e^t, a Taylor polynomial about 0 and a Fourier partial sum on minus pi to pi"></canvas>
+  <div class="ctrl"><label>number of terms N <input type="range" id="ty-n" min="1" max="15" step="1" value="4"></label></div>
+  <div class="readout" id="ty-out"></div>
+  <p class="cap">Black: \(e^t\) on \((-\pi,\pi)\). Orange: the Taylor polynomial \(1+t+\frac{t^2}{2!}+\dots+\frac{t^{N}}{N!}\) about \(t=0\): perfect near 0, worse and worse towards the ends. Teal: the Fourier partial sum of Example 4.2.2 up to \(n=N\): it wiggles around \(e^t\) along the whole interval, with its error spread out (it cannot follow the jump of the periodic extension at \(\pm\pi\), so it is worst there). The readout compares the errors at \(t=0\) and \(t=2.5\).</p>
+</div>
+
+<div class="box def"><span class="tag">Definition 4.3.1 · piecewise continuous</span>
+<p>A real-valued function \(f\) is said to be <b>piecewise continuous</b> on an interval \([a,b]\) if</p>
+<ol class="steps">
+<li>\(f\) is defined and is continuous at all but a finite number of points in \([a,b]\);</li>
+<li>the right- and left-hand limits
+\[\begin{aligned}f(t_0^+)&=\lim_{h\to0}f(t_0+h)\quad(h\gt0)\\ f(t_0^-)&=\lim_{h\to0}f(t_0-h)\quad(h\gt0)\end{aligned}\]
+exist for all \(t_0\in(a,b)\), and the right-hand limit exists at \(t_0=a\) and the left-hand limit exists at \(t_0=b\).</li>
+</ol>
+<p class="word"><b>In words:</b> the graph is made of finitely many unbroken pieces, and at every break you can see a definite height approaching from the right (\(f(t_0^+)\)) and a definite height approaching from the left (\(f(t_0^-)\)); the graph never shoots off to infinity. A finite <b>jump</b> is allowed; a vertical asymptote such as \(1/t\) at 0 is not.</p>
+</div>
+<div class="box eg"><span class="tag">Example 4.3.1</span>
+\[f(t)=\begin{cases}t&-2\le t\lt0\\2&0\lt t\lt1\\t^2&1\le t\le2\end{cases}\]
+<p>is piecewise continuous on \([-2,2]\). (Graph: a straight line from \((-2,-2)\) rising to an open circle at the origin; a horizontal segment at height 2 from an open circle at \(t=0\) to an open circle at \(t=1\); then the parabola \(t^2\) from the filled point \((1,1)\) up to the filled point \((2,4)\). See the figure.)</p>
+\[\begin{aligned}&f(2^-)=4,\quad f(1^-)=2,\quad f(0^-)=0,\\ &f(1^+)=1,\quad f(0^+)=2,\quad f(-2^+)=-2,\end{aligned}\]
+<p>and \(f(0)\) is not defined. (That is allowed: the definition only needs the one-sided limits at 0.)</p>
+</div>
+<p>In a similar way to part 2 of Definition 4.3.1, we may define the <b>right- and left-hand derivatives</b> of \(f(t)\) at \(t_0\) by</p>
+\[\begin{aligned}f'(t_0^+)&=\lim_{h\to0}\frac{f(t_0+h)-f(t_0^+)}{h}\quad(h\gt0)\\ f'(t_0^-)&=\lim_{h\to0}\frac{f(t_0-h)-f(t_0^-)}{-h}\quad(h\gt0)\end{aligned}\]
+<p>respectively. Whenever \(f'(t_0)\) exists, \(f'(t_0^+)=f'(t_0^-)=f'(t_0)\).</p>
+<p class="word"><b>In words:</b> the right-hand derivative is the slope of the piece of graph just to the right of \(t_0\) (measured from the height that piece approaches); the left-hand derivative is the slope of the piece just to the left. At a jump they can exist even though the ordinary derivative does not.</p>
+<div class="box eg"><span class="tag">Example 4.3.2</span>
+<p>For the function in the previous example (Example 4.3.1),</p>
+\[\begin{aligned}&f'(2^-)=4,\quad f'(1^-)=0,\quad f'(0^-)=1,\\ &f'(1^+)=2,\quad f'(0^+)=0,\quad f'(-2^+)=1.\end{aligned}\]
+<p><i>Why:</i> left of 0 the graph is the line \(t\) (slope 1); on \((0,1)\) it is the constant 2 (slope 0); right of 1 it is \(t^2\), whose slope \(2t\) is 2 at \(t=1\) and 4 at \(t=2\).</p>
+</div>
+<div class="figure">
+  <p class="ttl">Examples 4.3.1–4.3.2: one-sided limits and one-sided derivatives</p>
+  <canvas class="plot" id="f-pw" style="aspect-ratio:16/10;max-width:620px;margin:0 auto" aria-label="Piecewise function with open and filled endpoints, one-sided limits and tangent lines at a chosen point"></canvas>
+  <div class="ctrl"><label>point \(t_0\) <select id="pw-t"><option value="-2">−2</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2</option><option value="0.5">0.5</option></select></label></div>
+  <div class="readout" id="pw-out"></div>
+  <p class="cap">Open circles: end points not included; filled dots: end points included. At the chosen \(t_0\), the orange arrow slides in from the left towards \(f(t_0^-)\) and the teal arrow from the right towards \(f(t_0^+)\); the short dashed lines are the one-sided tangent lines, whose slopes are \(f'(t_0^-)\) and \(f'(t_0^+)\).</p>
+</div>
+
+<div class="box thm"><span class="tag">Theorem 4.3.1 (Convergence Theorem)</span>
+<p>Let \(f(t)\) be a piecewise continuous function on \([-\pi,\pi]\) and have right- and left-hand derivatives on \((-\pi,\pi)\), with \(f'(-\pi^+)\) and \(f'(\pi^-)\) existing. Then,</p>
+<ol class="steps">
+<li>for \(-\pi\lt t_0\lt\pi\), the Fourier series converges to \(\frac12\big[f(t_0^-)+f(t_0^+)\big]\);</li>
+<li>at \(t_0=-\pi\) and \(t_0=\pi\), the Fourier series converges to \(\frac12\big[f(-\pi^+)+f(\pi^-)\big]\).</li>
+</ol>
+<p class="word"><b>In words:</b> the series converges to the average of the left and right limits, "the point midway between the gap in the graph".</p>
+</div>
+<p>The conclusion of this theorem may be stated as:</p>
+<ol class="steps">
+<li>At a point where \(f(t)\) is continuous, the Fourier series converges to \(f(t)\) (left and right limits are equal, so their average is \(f(t)\)).</li>
+<li>At a point where \(f(t)\) is discontinuous, the Fourier series converges to the point midway between the gap in the graph.</li>
+<li>At the end points, the Fourier series converges to the average of the two end-point limit values. Due to the periodicity of the Fourier series, this is just a special case of 2: the periodic extension joins the right end \(f(\pi^-)\) of one copy to the left end \(f(-\pi^+)\) of the next, so \(t=\pi\) is an ordinary (possible) jump.</li>
+</ol>
+<div class="box eg"><span class="tag">Example 4.3.3</span>
+<p>For the square wave considered earlier,</p>
+\[f(t)=\begin{cases}0&-\pi\lt t\le0\\1&0\lt t\lt\pi\end{cases}\]
+<p>\(f(t)\) and its Fourier series are shown below.</p>
+<div class="figure">
+  <div class="pair"><div><p class="ttl">\(f(t)\)</p><canvas class="plot" id="f-433a" style="aspect-ratio:16/9" aria-label="Square wave with open and filled end points"></canvas></div>
+  <div><p class="ttl">Fourier series of \(f(t)\)</p><canvas class="plot" id="f-433b" style="aspect-ratio:16/9" aria-label="Sum of the square wave Fourier series with dots at height one half at the jumps"></canvas></div></div>
+  <p class="cap">Left: the square wave as defined (filled dots at height 0 at \(t=0,\pm2\pi\), since \(f(0)=0\) is part of the definition; open circles at the ends of the steps of height 1; at \(t=\pm\pi,\pm3\pi\) the definition on \(-\pi\lt t\lt\pi\) gives no value at all, so both pieces end in open circles). Right: what the Fourier series adds up to. It equals \(f\) everywhere except at the jumps \(t=0,\pm\pi,\pm2\pi,\pm3\pi\), where it takes the value \(\frac12\) (filled dots), whatever value \(f\) was given there.</p>
+</div>
+<p>Note that at the points \(t=-\pi,0,\pi\), the values that the Fourier series converges to are independent of the defined values of \(f(t)\) at those points. Thus when we write</p>
+\[f(t)=\frac12+\frac2\pi\sum_{n=0}^\infty\frac{\sin(2n+1)t}{2n+1}\]
+<p>we must interpret the "\(=\)" sign in the light of the above discussion: "equal wherever \(f\) is continuous; equal to the average at the jumps".</p>
+</div>
+
+<h3>Summing number series (exam type C4.2)</h3>
+<p>By choosing special values for \(t\) in the Fourier series, we may often obtain results concerning sums of infinite series. For example, put \(t=\frac\pi2\) in the above series. Here \(f\) is continuous with \(f(\frac\pi2)=1\), so we know (from the convergence theorem) that the Fourier series converges to 1. Since \(\sin\frac{(2n+1)\pi}2=1,-1,1,-1,\dots\) for \(n=0,1,2,3,\dots\), this gives</p>
+\[1=\frac12+\frac2\pi\Big(\frac11-\frac13+\frac15-\frac17+\cdots\Big)\]
+<p>or</p>
+\[\frac\pi4=1-\frac13+\frac15-\frac17+\cdots\]
+<p class="word"><b>In words:</b> the alternating sum of the reciprocals of the odd numbers is \(\pi/4\) (Leibniz's series), read off from the square wave at its middle.</p>
+<div class="box ready"><span class="tag">Ready procedure · sum a series with a Fourier series (C4.2)</span>
+<ol class="steps">
+<li>Compare the target series with the coefficients: \(\sum\frac1{n^2}\) suggests a series with \(\frac{1}{n^2}\) terms; \(\sum\frac{(-1)^n}{\cdots}\) suggests a point where \(\cos nt=(-1)^n\), i.e. \(t=\pi\), or \(\sin\frac{n\pi}{2}\) patterns at \(t=\frac\pi2\).</li>
+<li>Choose \(t\) to make the waves simple: \(t=0\) (\(\cos n\cdot0=1\), \(\sin=0\)), \(t=\pi\) (\(\cos n\pi=(-1)^n\)), \(t=\frac\pi2\).</li>
+<li>Find the value the series converges to there <b>with the convergence theorem</b>: \(f(t)\) if \(f\) is continuous there, otherwise the average of the left and right limits. Say which in your answer (it earns a mark).</li>
+<li>Rearrange to isolate the target sum.</li>
+<li>Useful link (Beyond the handouts): the even terms of \(\sum\frac1{n^2}\) add up to \(\frac14\sum\frac1{n^2}\), so \(\sum_{\text{odd}}\frac1{n^2}=\frac34\sum\frac1{n^2}\): \(\frac{\pi^2}8=\frac34\cdot\frac{\pi^2}6\).</li>
+</ol>
+</div>
+
+<div class="box eg"><span class="tag">Example 4.3.4</span>
+<p>For</p>
+\[f(t)=\begin{cases}t&-2\le t\lt0\\2&0\lt t\lt1\\t^2&1\le t\le2\end{cases}\]
+<p>(the function of Example 4.3.1, repeated with period 4), \(f(t)\) and its Fourier series are shown below.</p>
+<div class="figure">
+  <div class="pair"><div><p class="ttl">\(f(t)\) in \([-2,2]\)</p><canvas class="plot" id="f-434a" style="aspect-ratio:1/0.9" aria-label="The piecewise function of Example 4.3.1"></canvas></div>
+  <div><p class="ttl">Fourier series of \(f(t)\) in \([-2,2]\)</p><canvas class="plot" id="f-434b" style="aspect-ratio:1/0.9" aria-label="Limit of the Fourier series with midpoint dots at the jumps and a partial sum"></canvas></div></div>
+  <div class="ctrl"><label>partial sum up to n = <input type="range" id="f4-n" min="0" max="60" step="1" value="15"></label></div>
+  <div class="readout" id="f4-out"></div>
+  <p class="cap">Left: \(f\) on \([-2,2]\). Right: what its Fourier series converges to (for period 4, using the formulas of §6). The pieces are the same, but the open/filled circles have moved: at each jump the series takes the midpoint (filled dots): \(\frac{0+2}2=1\) at \(t=0\); \(\frac{2+1}2=\frac32\) at \(t=1\); and at both ends \(t=\pm2\) the average of \(f(-2^+)=-2\) and \(f(2^-)=4\), which is \(1\). The thin teal curve is a partial sum; move the slider and watch it pass through the dots.</p>
+</div>
+<p>Note that this example anticipates a result given later (§6): Fourier series may be found for functions defined on the more general interval \([-L,L]\) (and indeed on an interval of the form \([a,b]\)).</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · the Gibbs phenomenon (overshoot at a jump)</span>
+<p>Look closely at a partial sum next to a jump: it always <b>overshoots</b>, by about 9% of the height of the jump, and the overshoot does not shrink as you add terms; it only gets narrower and moves closer to the jump. This is the <b>Gibbs phenomenon</b>. For the square wave the peak of \(s_k\) tends to \(\frac12+\frac1\pi\int_0^\pi\frac{\sin u}{u}\,du\approx1.0895\), an overshoot of \(0.0895\) for a jump of 1. This does not contradict the convergence theorem: at every fixed \(t\) the error still goes to 0; the bump just slides towards the jump.</p>
+<div class="figure">
+  <p class="ttl">The Gibbs overshoot near the jump of the square wave at \(t=0\)</p>
+  <canvas class="plot" id="f-gibbs" style="aspect-ratio:16/9" aria-label="Zoom near the jump of the square wave showing the overshoot of partial sums"></canvas>
+  <div class="ctrl"><label>non-zero terms k <input type="range" id="gb-k" min="2" max="80" step="1" value="10"></label></div>
+  <div class="readout" id="gb-out"></div>
+  <p class="cap">Zoom on \(-0.5\le t\le1.2\) near the jump of the square wave at 0. The orange line is the level 1.0895. Increase \(k\): the first peak moves towards \(t=0\) but stays at about the same height. At \(t=0\) itself every partial sum equals \(\frac12\).</p>
+</div>
+</div>
+</section>
+
+<section id="s4">
+<h2><span class="n">4</span>Even and odd functions <span class="muted small">(handout §4.4, pp. 11–13)</span></h2>
+<div class="box def"><span class="tag">Definition 4.4.1</span>
+<ul class="list">
+<li>\(f(t)\) is <b>even</b> if \(f(-t)=f(t)\quad\forall t\);</li>
+<li>\(f(t)\) is <b>odd</b> if \(f(-t)=-f(t)\quad\forall t\).</li>
+</ul>
+<p class="word"><b>In words:</b> an even graph is a mirror image of itself in the vertical axis; an odd graph is unchanged by a half-turn (180° rotation) about the origin. Most functions are <b>neither</b> (e.g. \(e^t\), \(t+1\)).</p>
+</div>
+<div class="box eg"><span class="tag">Example 4.4.1</span>
+<ol class="steps">
+<li>The course sketches an even function (a W-shaped curve: a peak on the axis between two valleys, the left half the mirror image of the right) and an odd function (an S-shaped wave through the origin: a hump above the axis on the left, an equal hump below on the right). Both are in the figure (choose "W shape" and "S shape").</li>
+<li>\(f(t)=1,\cos t,\cos2t,\cos3t,\dots\) are all even functions; \(f(t)=\sin t,\sin2t,\sin3t,\dots\) are all odd functions.</li>
+</ol>
+</div>
+<div class="figure">
+  <p class="ttl">Symmetry test: compare \(f(t)\) with its mirror image \(f(-t)\)</p>
+  <canvas class="plot" id="f-eo" style="aspect-ratio:16/9" aria-label="A function, its mirror image in the vertical axis, and optionally its even and odd parts"></canvas>
+  <div class="ctrl"><label>function <select id="eo-sel">
+    <option value="0">W shape (even)</option><option value="1">S shape (odd)</option><option value="2">|sin t|</option><option value="3">t³</option><option value="4">square wave</option><option value="5">square wave − ½</option><option value="6">eᵗ on (−π, π)</option></select></label>
+    <label><input type="checkbox" id="eo-p"> show even and odd parts</label></div>
+  <div class="readout" id="eo-out"></div>
+  <p class="cap">Teal: \(f(t)\). Orange dashed: the mirror image \(f(-t)\). If they coincide, \(f\) is even; if the mirror image is the upside-down copy \(-f(t)\), \(f\) is odd. Tick the box to see the even part \(\frac12[f(t)+f(-t)]\) (green) and the odd part \(\frac12[f(t)-f(-t)]\) (purple), which add up to \(f\) (Beyond box below). The square wave is neither, but square wave \(-\frac12\) is odd (Example 4.4.3).</p>
+</div>
+<h3>Properties</h3>
+<ol class="steps">
+<li><b>For an even function</b>,
+\[\begin{aligned}\int_{-\pi}^\pi f(t)\,dt&=\int_{-\pi}^0f(t)\,dt+\int_0^\pi f(t)\,dt\\&=\int_\pi^0f(-x)(-dx)+\int_0^\pi f(t)\,dt\\&=\int_0^\pi f(t)\,dt+\int_0^\pi f(t)\,dt\\&=2\int_0^\pi f(t)\,dt\end{aligned}\]
+(let \(x=-t\) in the first integral).</li>
+<li><b>For an odd function</b>,
+\[\begin{aligned}\int_{-\pi}^\pi f(t)\,dt&=\int_{-\pi}^0f(t)\,dt+\int_0^\pi f(t)\,dt\\&=\int_\pi^0f(-x)(-dx)+\int_0^\pi f(t)\,dt\\&=-\int_0^\pi f(x)\,dx+\int_0^\pi f(t)\,dt\\&=0.\end{aligned}\]</li>
+</ol>
+<details><summary>Show the calculation: the substitution \(x=-t\), line by line</summary><div>
+<ol class="steps">
+<li>In \(\int_{-\pi}^0f(t)\,dt\) put \(t=-x\): then \(dt=-dx\); when \(t=-\pi\), \(x=\pi\); when \(t=0\), \(x=0\). So \(\int_{-\pi}^0f(t)\,dt=\int_\pi^0f(-x)(-dx)\).</li>
+<li>Flipping the limits changes the sign again: \(\int_\pi^0f(-x)(-dx)=\int_0^\pi f(-x)\,dx\).</li>
+<li>Even \(f\): \(f(-x)=f(x)\), so this is \(\int_0^\pi f(x)\,dx\), the same as the right half (the name of the variable does not matter). Total: twice the right half.</li>
+<li>Odd \(f\): \(f(-x)=-f(x)\), so this is \(-\int_0^\pi f(x)\,dx\), which cancels the right half exactly. Total: 0.</li>
+<li>Picture: for an even function the left area is a mirror copy of the right area; for an odd function it is an upside-down copy, so the signed areas cancel.</li>
+</ol></div></details>
+<ol class="steps" start="3">
+<li>If \(f(t)\) and \(g(t)\) are both even, the product \(f(t)g(t)\) is even, since
+\[f(-t)g(-t)=f(t)g(t).\]
+Similarly, if \(f(t)\) and \(g(t)\) are both odd, the product is even, since
+\[f(-t)g(-t)=(-f(t))(-g(t))=f(t)g(t).\]
+If \(f(t)\) is odd and \(g(t)\) is even, the product is odd, since
+\[f(-t)g(-t)=-f(t)g(t).\]</li>
+</ol>
+<p class="word"><b>In words:</b> products follow the sign rule for multiplying ± numbers, with even = "+" and odd = "−": even × even = even, odd × odd = even, odd × even = odd.</p>
+
+<h3>Fourier series of even and odd functions</h3>
+<p>Now consider finding the Fourier series of an <b>even</b> function \(f(t)\):</p>
+\[a_n=\frac1\pi\int_{-\pi}^\pi f(t)\cos nt\,dt=\frac2\pi\int_0^\pi f(t)\cos nt\,dt\]
+<p>since the product \(f(t)\cos nt\) is even (property 1), and</p>
+\[b_n=\frac1\pi\int_{-\pi}^\pi f(t)\sin nt\,dt=0\]
+<p>since the product \(f(t)\sin nt\) is odd (property 2). Hence the Fourier series of an even function \(f(t)\) is</p>
+<div class="box thm"><span class="tag">Fourier cosine series (even \(f\), period \(2\pi\))</span>
+\[\begin{aligned}f(t)&=\frac12a_0+\sum_{n=1}^\infty a_n\cos nt,\\ a_n&=\frac2\pi\int_0^\pi f(t)\cos nt\,dt.\end{aligned}\]
+<p class="word"><b>In words:</b> an even function needs only the even waves (the cosines and the constant); integrate over the right half only and double.</p>
+</div>
+<p>This is called a <b>Fourier cosine series</b>. You may of course continue to use the full form of the Fourier series when \(f(t)\) is even, but the above form requires less work and you are less likely to make an error in the integration! As expected, an even function \(f(t)\) requires only even terms (the even functions \(1,\cos nt\)) in its representation.</p>
+<p>Similarly, if \(f(t)\) is an <b>odd</b> function, all the coefficients \(a_n\) are zero (including \(a_0\)) and we find</p>
+<div class="box thm"><span class="tag">Fourier sine series (odd \(f\), period \(2\pi\))</span>
+\[\begin{aligned}f(t)&=\sum_{n=1}^\infty b_n\sin nt,\\ b_n&=\frac2\pi\int_0^\pi f(t)\sin nt\,dt.\end{aligned}\]
+<p class="word"><b>In words:</b> an odd function is built from the odd waves \(\sin nt\) only; no constant, no cosines.</p>
+</div>
+<p>This is a <b>Fourier sine series</b>, consisting of only odd terms (the odd functions \(\sin nt\)). Note: "even/odd terms" here means even/odd <b>functions</b>, not even/odd values of \(n\): the square wave of Example 4.2.1 contained only odd <i>harmonics</i> \(n=1,3,5,\dots\), which is a different matter.</p>
+
+<div class="box eg"><span class="tag">Example 4.4.2 · full-wave rectifier</span>
+<p><b>The sinusoidal voltage \(\sin t\) passes through a full-wave rectifier (a circuit that flips the negative half of each cycle to positive) to produce</b></p>
+\[E(t)=|\sin t|,\qquad-\pi\le t\le\pi.\]
+<p><b>Find its Fourier series.</b> (Graph: a row of identical arches of height 1, touching zero at every multiple of \(\pi\); period \(\pi\), but we treat it as \(2\pi\)-periodic.)</p>
+<p><b>Solution.</b> \(E(t)\) is an even function, and so</p>
+\[E(t)=\frac12a_0+\sum_{n=1}^\infty a_n\cos nt\]
+<p>where</p>
+\[\begin{aligned}a_n&=\frac2\pi\int_0^\pi E(t)\cos nt\,dt\\&=\frac2\pi\int_0^\pi\sin t\cos nt\,dt\\&=\frac1\pi\int_0^\pi\big[\sin(1+n)t+\sin(1-n)t\big]dt\\&\qquad\text{(if }n=1\text{, the second}\\&\qquad\text{ term is absent)}\\&=\frac1\pi\Big[\frac{-\cos(1+n)t}{1+n}-\frac{\cos(1-n)t}{1-n}\Big]_0^\pi\\&\qquad\text{if }n\ne1\\&=\frac1\pi\Big[\frac{-\cos(1+n)\pi}{1+n}-\frac{\cos(1-n)\pi}{1-n}\\&\qquad+\frac1{1+n}+\frac1{1-n}\Big]\\&=\begin{cases}0&\text{if }n\text{ is odd}\\ \dfrac4\pi\,\dfrac1{1-n^2}&\text{if }n\text{ is even}\end{cases}\end{aligned}\]
+<p>In particular, \(a_0=4/\pi\), and thus</p>
+\[E(t)=\frac2\pi+\frac4\pi\sum_{n=1}^\infty\frac{\cos2nt}{1-4n^2}.\]
+<p class="word"><b>In words:</b> the rectified voltage = a steady (DC) level \(\frac2\pi\approx0.64\) + even harmonics \(\cos2t,\cos4t,\dots\) with amplitudes falling like \(\frac1{n^2}\).</p>
+<details><summary>Show the calculation: from the bracket to the two cases, and \(n=1\) separately</summary><div>
+<ol class="steps">
+<li>Product to sum: \(\sin t\cos nt\) \(=\tfrac12[\sin(1+n)t+\sin(1-n)t]\); the \(\tfrac12\) cancels the 2 of \(\frac2\pi\).</li>
+<li>Integrate: \(\int\sin pt\,dt=-\frac{\cos pt}{p}\) with \(p=1+n\) and \(p=1-n\) (needs \(n\ne1\)). At \(t=0\): \(\cos0=1\), giving \(+\frac1{1+n}+\frac1{1-n}\) after subtracting the lower limit.</li>
+<li>At \(t=\pi\): \(\cos(1\pm n)\pi=(-1)^{1\pm n}=-(-1)^n\). So the bracket is \(\big(1+(-1)^n\big)\Big(\frac1{1+n}+\frac1{1-n}\Big)\).</li>
+<li>Odd \(n\): \(1+(-1)^n=0\), so \(a_n=0\). Even \(n\): \(1+(-1)^n=2\) and \(\frac1{1+n}+\frac1{1-n}=\frac{2}{1-n^2}\), so \(a_n=\frac1\pi\cdot2\cdot\frac2{1-n^2}=\frac4{\pi(1-n^2)}\).</li>
+<li>\(n=1\) separately: \(a_1\) \(=\frac2\pi\int_0^\pi\sin t\cos t\,dt\) \(=\frac1\pi\int_0^\pi\sin2t\,dt\) \(=0\), consistent with "0 if \(n\) is odd".</li>
+<li>\(n=0\): \(a_0=\frac2\pi\int_0^\pi\sin t\,dt=\frac2\pi\cdot2=\frac4\pi\) (the even formula with \(n=0\) also gives \(\frac4\pi\)). Constant term \(\frac12a_0=\frac2\pi\).</li>
+<li>Only even \(n=2k\) survive: \(a_{2k}=\frac{4}{\pi(1-4k^2)}\); renaming \(k\) as \(n\) gives the series.</li>
+</ol></div></details>
+</div>
+<div class="figure">
+  <p class="ttl">Example 4.4.2: \(|\sin t|\) and its cosine series</p>
+  <canvas class="plot" id="f-rect" style="aspect-ratio:16/8" aria-label="Rectified sine wave and a partial cosine-series sum"></canvas>
+  <div class="ctrl"><label>terms (cos 2nt up to n =) <input type="range" id="rc-n" min="0" max="12" step="1" value="2"></label></div>
+  <div class="readout" id="rc-out"></div>
+  <p class="cap">Grey dashed: \(E(t)=|\sin t|\) on \(-2\pi\le t\le2\pi\). Teal: \(\frac2\pi+\frac4\pi\sum_{k\le n}\frac{\cos2kt}{1-4k^2}\). With \(n=0\) it is the flat average \(\frac2\pi\). Because \(E\) is continuous (no jumps), the convergence is fast and there is no Gibbs overshoot; only the sharp corners at multiples of \(\pi\) take a few terms to form.</p>
+</div>
+<div class="box eg"><span class="tag">Example 4.4.3</span>
+<p>In Example 4.2.1 of the square wave, \(f(t)-\frac12\) is an odd function (it is \(-\frac12\) on \((-\pi,0)\) and \(+\frac12\) on \((0,\pi)\)), which is consistent with its Fourier series being</p>
+\[f(t)=\frac12+\text{sine terms}.\]
+<p class="word"><b>In words:</b> subtract the average and look for symmetry: a function that becomes odd after removing a constant has a series "constant + sines only".</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · every function = even part + odd part</span>
+<p>Any function can be split as</p>
+\[f(t)=\underbrace{\tfrac12[f(t)+f(-t)]}_{\text{even part}}+\underbrace{\tfrac12[f(t)-f(-t)]}_{\text{odd part}}.\]
+<p>The cosine terms of the Fourier series of \(f\) are the series of its even part, the sine terms that of its odd part. Example: \(e^t=\cosh t+\sinh t\); in Example 4.2.2 the \(a_n\) terms are exactly the cosine series of \(\cosh t\) and the \(b_n\) terms the sine series of \(\sinh t\). Exam questions often ask "is \(f\) even or odd?" before the series: the answer tells you which coefficients you can write down as 0 without integrating (say why, for the mark).</p>
+</div>
+</section>
+
+<section id="s5">
+<h2><span class="n">5</span>Half-range series <span class="muted small">(handout §4.5, pp. 14–15)</span></h2>
+<p>In various kinds of applications (such as the solution of partial differential equations by the separation of variables method, <a href="note-C5.html">Chapter 5</a>), it is necessary to express a function \(f(t)\) defined <b>only on \([0,\pi]\)</b> as a series of cosines or sines. (Think of the initial shape of a guitar string fixed at both ends: it only exists between the ends.) Since we only care about \(0\lt t\lt\pi\), we are free to invent the function on \((-\pi,0)\) any way we like, then repeat it with period \(2\pi\). Two inventions are useful.</p>
+<div class="box def"><span class="tag">Definition · even and odd periodic extensions</span>
+<p>We may construct an <b>even</b> function \(f_1(t)\) by</p>
+\[f_1(t)=\begin{cases}f(t)&0\lt t\lt\pi\\f(-t)&-\pi\lt t\lt0\end{cases}\]
+<p>and \(f_1(t+2\pi)=f_1(t)\), known as the <b>even periodic extension</b> of \(f(t)\). This has a Fourier <b>cosine</b> series which converges to \(f(t)\) on \((0,\pi)\).</p>
+<p>Similarly we may construct an <b>odd</b> function \(f_2(t)\) by</p>
+\[f_2(t)=\begin{cases}f(t)&0\lt t\lt\pi\\-f(-t)&-\pi\lt t\lt0\end{cases}\]
+<p>and \(f_2(t+2\pi)=f_2(t)\), known as the <b>odd periodic extension</b> of \(f(t)\). This has a Fourier <b>sine</b> series which converges to \(f(t)\) on \((0,\pi)\).</p>
+<p class="word"><b>In words:</b> even extension = reflect the graph in the vertical axis, then repeat; odd extension = rotate it by a half-turn about the origin, then repeat. Then use the §4 short cuts: \(a_n=\frac2\pi\int_0^\pi f\cos nt\,dt\) (cosine series) or \(b_n=\frac2\pi\int_0^\pi f\sin nt\,dt\) (sine series). These only use \(f\) on \([0,\pi]\), which is all we are given.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Original function, even periodic extension, odd periodic extension</p>
+  <canvas class="plot" id="f-ext" style="aspect-ratio:16/9" aria-label="A function on 0 to pi and its even or odd periodic extension with a partial sum"></canvas>
+  <div class="ctrl"><label>f on (0, π) <select id="xt-f"><option value="0">a rising curve (as in the course figure)</option><option value="1">t</option><option value="2">1</option><option value="3">π − t</option></select></label>
+  <label>show <select id="xt-m"><option value="o">original only</option><option value="e" selected>even extension</option><option value="d">odd extension</option></select></label>
+  <label>terms N <input type="range" id="xt-n" min="0" max="30" step="1" value="5"></label></div>
+  <div class="readout" id="xt-out"></div>
+  <p class="cap">Thick black: the given \(f\) on \((0,\pi)\) only. Grey dashed: the chosen extension on \(-2\pi\le t\le3\pi\). Teal: the partial sum of its cosine series (even extension) or sine series (odd extension). The course's sketch uses a rising, curving piece: its even extension is a row of U-shaped bowls; its odd extension has a jump at every odd multiple of \(\pi\) (and, if \(f(0^+)\ne0\), also at \(0,\pm2\pi,\dots\)). Both series agree with \(f\) on \((0,\pi)\); they differ outside it and at the end points.</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 4.5.1</span>
+<p><b>Find the Fourier cosine and sine series for</b></p>
+\[f(t)=t,\qquad0\lt t\lt\pi.\]
+<p><b>Solution.</b></p>
+<p><b>1. Cosine series.</b> The even periodic extension of \(f(t)\) corresponds to the "triangular" wave: \(|t|\) on \((-\pi,\pi)\), repeated; straight lines rising from 0 at \(t=0\) to \(\pi\) at \(t=\pm\pi\), peaks of height \(\pi\) at odd multiples of \(\pi\) and zeros at even multiples. Then</p>
+\[f(t)=\frac12a_0+\sum_{n=1}^\infty a_n\cos nt\]
+<p>where</p>
+\[\begin{aligned}a_n&=\frac2\pi\int_0^\pi t\cos nt\,dt\\&=\frac2\pi\Big\{\Big[\frac{t\sin nt}n\Big]_0^\pi-\frac1n\int_0^\pi\sin nt\,dt\Big\}\\&=\frac2\pi\Big[\frac{\cos nt}{n^2}\Big]_0^\pi\\&=\frac2{n^2\pi}\big[(-1)^n-1\big],\qquad n\ne0,\\ a_0&=\frac2\pi\int_0^\pi t\,dt=\frac2\pi\Big[\frac{t^2}2\Big]_0^\pi=\pi.\end{aligned}\]
+<details><summary>Show the calculation: integration by parts for \(a_n\)</summary><div>
+<ol class="steps">
+<li>Parts with \(u=t\), \(dv=\cos nt\,dt\): \(du=dt\), \(v=\frac{\sin nt}n\). So \(\int_0^\pi t\cos nt\,dt=\big[\frac{t\sin nt}n\big]_0^\pi-\int_0^\pi\frac{\sin nt}n\,dt\).</li>
+<li>Boundary term: \(\frac{\pi\sin n\pi}{n}-0=0\) because \(\sin n\pi=0\).</li>
+<li>Remaining: \(-\frac1n\int_0^\pi\sin nt\,dt\) \(=-\frac1n\big[-\frac{\cos nt}{n}\big]_0^\pi\) \(=\big[\frac{\cos nt}{n^2}\big]_0^\pi\).</li>
+<li>\(=\frac{\cos n\pi-1}{n^2}=\frac{(-1)^n-1}{n^2}\). Times \(\frac2\pi\): \(a_n=\frac{2[(-1)^n-1]}{n^2\pi}\): \(-\frac{4}{n^2\pi}\) for odd \(n\), 0 for even \(n\).</li>
+</ol></div></details>
+<p>Therefore,</p>
+\[\begin{aligned}f(t)&=\frac\pi2-\frac2\pi\sum_{n=1}^\infty\frac{1-(-1)^n}{n^2}\cos nt\\&=\frac\pi2-\frac4\pi\Big(\cos t+\frac{\cos3t}9\\&\qquad+\frac{\cos5t}{25}+\cdots\Big).\end{aligned}\]
+<p>Putting \(t=0\) in this series (the triangular wave is continuous there, with value 0) gives</p>
+\[\begin{aligned}0&=\frac\pi2-\frac4\pi\Big(1+\frac19+\frac1{25}+\cdots\Big)\\ \frac{\pi^2}8&=1+\frac19+\frac1{25}+\cdots=\sum_{n=1}^\infty\frac1{(2n-1)^2}.\end{aligned}\]
+<p class="word"><b>In words:</b> the sum of the reciprocals of the odd squares is \(\pi^2/8\), read off from the bottom corner of the triangular wave.</p>
+<p><b>2. Sine series.</b> The odd periodic extension of \(f(t)\) corresponds to the "saw-tooth" wave: \(t\) on \((-\pi,\pi)\), repeated; straight lines of slope 1 from \(-\pi\) up to \(\pi\), dropping back at every odd multiple of \(\pi\). Then</p>
+\[f(t)=\sum_{n=1}^\infty b_n\sin nt\]
+<p>where</p>
+\[\begin{aligned}b_n&=\frac2\pi\int_0^\pi t\sin nt\,dt\\&=\frac2\pi\Big\{\Big[-t\frac{\cos nt}n\Big]_0^\pi-\int_0^\pi\frac{-\cos nt}n\,dt\Big\}\\&=\frac{-2(-1)^n}n.\end{aligned}\]
+<details><summary>Show the calculation: integration by parts for \(b_n\)</summary><div>
+<ol class="steps">
+<li>Parts with \(u=t\), \(dv=\sin nt\,dt\): \(v=-\frac{\cos nt}n\). So \(\int_0^\pi t\sin nt\,dt\) \(=\big[-\frac{t\cos nt}n\big]_0^\pi+\frac1n\int_0^\pi\cos nt\,dt\).</li>
+<li>Boundary term: \(-\frac{\pi\cos n\pi}n-0=-\frac{\pi(-1)^n}n\).</li>
+<li>Remaining integral: \(\frac1n\big[\frac{\sin nt}n\big]_0^\pi=0\).</li>
+<li>Times \(\frac2\pi\): \(b_n=-\frac{2(-1)^n}{n}=\frac{2(-1)^{n+1}}n\): \(2,-1,\frac23,-\frac12,\dots\)</li>
+</ol></div></details>
+<p>Therefore,</p>
+\[\begin{aligned}f(t)&=-2\sum_{n=1}^\infty\frac{(-1)^n}n\sin nt\\&=2\Big(\sin t-\frac{\sin2t}2+\frac{\sin3t}3-\cdots\Big).\end{aligned}\]
+<p class="word"><b>In words:</b> on \(0\lt t\lt\pi\), the same function \(t\) has two different series: a cosine series (from the triangle wave) and a sine series (from the saw-tooth). Both are correct there.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Example 4.5.1: cosine series (triangle) versus sine series (saw-tooth) of \(f(t)=t\)</p>
+  <div class="pair"><div><p class="ttl">even extension → cosine series</p><canvas class="plot" id="f-cmpa" style="aspect-ratio:16/10" aria-label="Triangular wave and partial cosine sum"></canvas></div>
+  <div><p class="ttl">odd extension → sine series</p><canvas class="plot" id="f-cmpb" style="aspect-ratio:16/10" aria-label="Saw-tooth wave and partial sine sum"></canvas></div></div>
+  <div class="ctrl"><label>terms N (both) <input type="range" id="cm-n" min="1" max="30" step="1" value="5"></label></div>
+  <div class="readout" id="cm-out"></div>
+  <p class="cap">Same number of terms \(N\) in both. Left: the triangular wave (continuous) and its cosine partial sum, already almost indistinguishable for \(N=5\). Right: the saw-tooth (jumps at \(\pm\pi,3\pi\)) and its sine partial sum, still wavy, with Gibbs overshoot at the jumps. The readout gives the largest error on \((0,\pi)\) (away from the ends) for each.</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · half-range series on \([0,L]\), and which one is better</span>
+<p><b>Any length \(L\).</b> Exams give \(f\) on \([0,L]\) (e.g. \(L=1\), \(2\) or \(D\)). The extensions then have period \(T=2L\), and (with the formulas of §6)</p>
+\[\begin{aligned}\text{cosine: }&f=\frac{a_0}2+\sum a_n\cos\frac{n\pi t}L,\\&a_n=\frac2L\int_0^Lf(t)\cos\frac{n\pi t}L\,dt;\\ \text{sine: }&f=\sum b_n\sin\frac{n\pi t}L,\\&b_n=\frac2L\int_0^Lf(t)\sin\frac{n\pi t}L\,dt.\end{aligned}\]
+<p class="word"><b>In words:</b> replace \(\pi\) by \(L\) in the limits and \(nt\) by \(\frac{n\pi t}{L}\) in the waves. With \(L=\pi\) these are the formulas above.</p>
+<p><b>Which series approximates better for a fixed number of terms?</b> The one whose extension has <b>no jumps</b>. The even extension is always continuous at \(t=0\) and \(t=L\) (it is reflected, so the two sides meet). The odd extension has a jump at \(t=0\) unless \(f(0)=0\), and at \(t=L\) unless \(f(L)=0\). Jumps make the coefficients shrink only like \(\frac1n\) (slow, with Gibbs overshoot), while a continuous extension with corners gives \(\frac1{n^2}\) (fast). For \(f=t\) above: cosine coefficients \(\sim\frac{4}{\pi n^2}\), sine coefficients \(\sim\frac2n\). <b>Where the series converge at the ends:</b> the sine series is always 0 at \(t=0\) and \(t=L\) (the average across the jump of an odd function); the cosine series gives \(f(0^+)\) and \(f(L^-)\).</p>
+</div>
+</section>
+
+<section id="s6">
+<h2><span class="n">6</span>Fourier approximation: Parseval, change of interval, frequency spectrum <span class="muted small">(handout §4.6, pp. 16–18)</span></h2>
+<p>In practice we can only add up finitely many terms. Is a partial sum of the Fourier series the <b>best</b> we can do with that many waves? Suppose we approximate \(f(t)\) by a finite trigonometric series with coefficients \(\alpha_0,\alpha_n,\beta_n\) that we are free to choose,</p>
+\[S_N(t)=\frac12\alpha_0+\sum_{n=1}^N\big(\alpha_n\cos nt+\beta_n\sin nt\big),\]
+<p>such that the <b>square error</b></p>
+\[E=\int_{-\pi}^\pi\big[f(t)-S_N(t)\big]^2dt\]
+<p>is minimised.</p>
+<p class="word"><b>In words:</b> \(E\) adds up the squared gap between \(f\) and the approximation over a whole period; squaring stops positive and negative gaps from cancelling. We want the coefficients that make the total squared gap as small as possible ("least squares").</p>
+\[\begin{aligned}E=\ &\int_{-\pi}^\pi\Big[f(t)-\frac12\alpha_0\\&\quad-\sum_{n=1}^N(\alpha_n\cos nt+\beta_n\sin nt)\Big]^2dt\\=\ &\int_{-\pi}^\pi f^2\,dt+\frac14\alpha_0^2\int_{-\pi}^\pi1^2\,dt\\&+\sum_{n=1}^N\Big(\alpha_n^2\int_{-\pi}^\pi\cos^2nt\,dt\\&\qquad+\beta_n^2\int_{-\pi}^\pi\sin^2nt\,dt\Big)\\&-\alpha_0\int_{-\pi}^\pi f\,dt\\&-2\sum_{n=1}^N\Big(\alpha_n\int_{-\pi}^\pi f\cos nt\,dt\\&\qquad+\beta_n\int_{-\pi}^\pi f\sin nt\,dt\Big)\end{aligned}\]
+<p>(all other cross terms are zero due to the orthogonality of \(1,\cos nt,\sin nt\)). Using \(\int1\,dt=2\pi\), \(\int\cos^2nt=\int\sin^2nt=\pi\), and \(\int f\,dt=\pi a_0\), \(\int f\cos nt\,dt=\pi a_n\), \(\int f\sin nt\,dt=\pi b_n\) (the Fourier coefficients of §2),</p>
+\[\begin{aligned}E=\ &\int_{-\pi}^\pi f^2(t)\,dt+\frac\pi2\alpha_0^2\\&+\pi\sum_{n=1}^N\big(\alpha_n^2+\beta_n^2\big)\\&-\alpha_0\pi a_0-2\sum_{n=1}^N\big(\alpha_n\pi a_n+\beta_n\pi b_n\big).\end{aligned}\]
+<details><summary>Show the calculation: expanding the square</summary><div>
+<ol class="steps">
+<li>Write \(S_N=\frac12\alpha_0\cdot1+\sum(\alpha_n\cos nt+\beta_n\sin nt)\). Then \((f-S_N)^2=f^2-2fS_N+S_N^2\).</li>
+<li>\(\int-2fS_N\,dt\) \(=-\alpha_0\int f\,dt\) \(-\:2\sum\big(\alpha_n\int f\cos nt+\beta_n\int f\sin nt\big)\). <i>Why:</i> \(2\times\frac12\alpha_0=\alpha_0\).</li>
+<li>\(S_N^2\) is a sum of squares of each term plus twice every product of two different terms. Every product of two different waves from \(1,\cos nt,\sin nt\) integrates to 0 (orthogonality, §2), so only the squares remain: \(\frac14\alpha_0^2\int1+\sum(\alpha_n^2\int\cos^2nt+\beta_n^2\int\sin^2nt)\).</li>
+<li>Insert the values: \(\frac14\alpha_0^2\cdot2\pi=\frac\pi2\alpha_0^2\); \(\alpha_n^2\pi+\beta_n^2\pi\).</li>
+<li>Insert \(\int f=\pi a_0\) etc.: \(-\alpha_0\pi a_0-2\sum(\alpha_n\pi a_n+\beta_n\pi b_n)\). (Checked in sympy for \(N=2\), \(f=t+t^2\): the direct integral and this formula agree.)</li>
+</ol></div></details>
+<p>For \(E\) to be a minimum, its partial derivative (rate of change, <a href="note-C1.html#s2">Chapter 1 §2</a>) with respect to each coefficient must be zero:</p>
+\[\begin{aligned}0&=\pd E{\alpha_0}=\pi\alpha_0-\pi a_0&&\Rightarrow\ \alpha_0=a_0,\\ 0&=\pd E{\alpha_n}=2\pi\alpha_n-2\pi a_n&&\Rightarrow\ \alpha_n=a_n,\\ 0&=\pd E{\beta_n}=2\pi\beta_n-2\pi b_n&&\Rightarrow\ \beta_n=b_n,\end{aligned}\]
+<p>for \(n=1,2,\dots,N\). That is, the coefficients \(\alpha_0,\alpha_n,\beta_n\) of the finite series are exactly the coefficients taken from the Fourier series. Thus a <b>truncated Fourier series is the best approximation</b> to \(f(t)\) in the sense that it minimises the square error. (It is a minimum, not a maximum: \(E\) is a sum of upward-opening parabolas in the \(\alpha\)'s and \(\beta\)'s.)</p>
+<p class="word"><b>In words:</b> with \(N\) waves available, you cannot beat the Fourier coefficients; adding more waves never changes the earlier coefficients, it just adds new ones.</p>
+<div class="figure">
+  <p class="ttl">The square error is smallest at the Fourier coefficient</p>
+  <canvas class="plot" id="f-err" style="aspect-ratio:16/8" aria-label="Square wave approximated by one-half plus beta sin t, with the square error as a function of beta"></canvas>
+  <canvas class="plot" id="f-err2" style="aspect-ratio:16/6" aria-label="Square error E as a function of beta with its minimum at 2 over pi"></canvas>
+  <div class="ctrl"><label>\(\beta_1\) <input type="range" id="er-b" min="0" max="1.3" step="0.01" value="1"></label></div>
+  <div class="readout" id="er-out"></div>
+  <p class="cap">Top: the square wave (grey dashed) and the approximation \(S_1=\frac12+\beta_1\sin t\) (teal), with the gap shaded. Bottom: the square error \(E(\beta_1)=\frac\pi2-4\beta_1+\pi\beta_1^2\) (a parabola) and the current value (dot). Its lowest point is at \(\beta_1=\frac2\pi\approx0.637\), the Fourier coefficient \(b_1\) of Example 4.2.1, where \(E=\frac\pi2-\frac4\pi\approx0.297\).</p>
+</div>
+<p>Now, for this choice of the coefficients,</p>
+\[E\to E_{\min}=\int_{-\pi}^\pi f^2(t)\,dt-\frac\pi2a_0^2-\pi\sum_{n=1}^N\big(a_n^2+b_n^2\big)\]
+<p>or, since we must have \(E_{\min}\ge0\) (it is an integral of a square),</p>
+\[\frac1{2\pi}\int_{-\pi}^\pi f^2(t)\,dt\ \ge\ \frac14a_0^2+\frac12\sum_{n=1}^N\big(a_n^2+b_n^2\big)\]
+<p>which is known as <b>Bessel's inequality</b>.</p>
+<p class="word"><b>In words:</b> the mean square of \(f\) is at least the part of it captured by the first \(N\) waves.</p>
+<p>As \(N\to\infty\), we have</p>
+\[\frac14a_0^2+\frac12\sum_{n=1}^\infty\big(a_n^2+b_n^2\big)\ \le\ \frac1{2\pi}\int_{-\pi}^\pi f^2(t)\,dt\]
+<p>but in fact the \(\le\) sign should be replaced by an \(=\) sign, since (squaring the whole Fourier series and integrating, using orthogonality)</p>
+\[\begin{aligned}\int_{-\pi}^\pi f^2(t)\,dt&=\int_{-\pi}^\pi\Big[\frac12a_0\\&\quad+\sum_{n=1}^\infty a_n\cos nt+b_n\sin nt\Big]^2dt\\&=\frac14a_0^2\cdot2\pi+\pi\sum_{n=1}^\infty\big(a_n^2+b_n^2\big).\end{aligned}\]
+<div class="box thm"><span class="tag">Parseval's theorem (4.3)</span>
+\[\begin{aligned}&\frac1{2\pi}\int_{-\pi}^\pi f^2(t)\,dt\\&=\frac14a_0^2+\frac12\sum_{n=1}^\infty\big(a_n^2+b_n^2\big)\end{aligned}\]
+<p class="word"><b>In words:</b> mean square of the signal over a period = (constant term)\(^2\) + half the sum of the squared amplitudes of all the waves. (A wave \(a\cos nt\) has mean square \(\frac12a^2\).)</p>
+</div>
+<p>This result is known as <b>Parseval's theorem</b>. If \(f(t)\) is an electrical signal, \(\frac1{2\pi}\int_{-\pi}^\pi f^2(t)\,dt\) is proportional to the <b>power</b> of the signal (power in a resistor is proportional to voltage squared). This result may be interpreted as "the mean power of a signal equals the sum of the powers in each of the frequency components of that signal".</p>
+<div class="box beyond"><span class="tag">Beyond the handouts · using Parseval to sum a series (exam type C4.4), worked example</span>
+<p><b>Use the saw-tooth series \(t=2\sum_{n=1}^\infty\frac{(-1)^{n+1}}n\sin nt\) on \((-\pi,\pi)\) (Example 4.5.1) to find \(\sum\frac1{n^2}\).</b></p>
+<ol class="steps">
+<li>Left side: \(\frac1{2\pi}\int_{-\pi}^\pi t^2\,dt=\frac1{2\pi}\cdot\frac{2\pi^3}3=\frac{\pi^2}3\).</li>
+<li>Right side: \(a_0=a_n=0\), \(b_n^2=\frac4{n^2}\), so \(\frac12\sum\frac4{n^2}=2\sum\frac1{n^2}\).</li>
+<li>Parseval: \(\frac{\pi^2}3=2\sum\frac1{n^2}\), so \(\boxed{\sum_{n=1}^\infty\frac1{n^2}=\frac{\pi^2}6}\).</li>
+</ol>
+<p><b>Other periods.</b> For a \(T\)-periodic \(f\) (formulas below) Parseval reads \(\dfrac1T\displaystyle\int_a^{a+T}f^2\,dt=\frac14a_0^2+\frac12\sum(a_n^2+b_n^2)\): "mean square over one period" on the left. In the May-sheet convention (constant \(A_0=\frac12a_0\)) the first term is \(A_0^2\). Squares of coefficients like \(\frac1{n^2}\) give sums of \(\frac1{n^4}\): this is how exam questions get \(\sum\frac1{n^4}=\frac{\pi^4}{90}\).</p>
+</div>
+
+<h3>Further properties</h3>
+<p><b>1. Differentiation and integration of Fourier series.</b> Under certain conditions the Fourier series of \(f(t)\) may be differentiated or integrated term by term to give \(f'(t)\) and \(\int f(t)\,dt\), respectively.</p>
+<div class="box beyond"><span class="tag">Beyond the handouts · what "certain conditions" means in practice</span>
+<ul class="list">
+<li><b>Integrating</b> term by term is safe for any piecewise continuous \(f\) (the terms get smaller: \(\sin nt\to-\frac{\cos nt}n\)). If \(a_0\ne0\) the constant integrates to \(\frac12a_0t\), which is not periodic, so integrate \(f-\frac12a_0\) instead.</li>
+<li><b>Differentiating</b> term by term needs the periodic extension to be <b>continuous</b> (no jumps) and \(f'\) piecewise smooth, because it multiplies each term by \(n\). Example: the triangular wave \(\frac\pi2-\frac4\pi\sum\frac{\cos(2k-1)t}{(2k-1)^2}\) (continuous) differentiates to \(\frac4\pi\sum\frac{\sin(2k-1)t}{2k-1}\), which is exactly the series of its slope, \(-1\) on \((-\pi,0)\) and \(+1\) on \((0,\pi)\). But the saw-tooth (which jumps) gives \(2\sum(-1)^{n+1}\cos nt\), which does not converge at all.</li>
+</ul>
+</div>
+<p><b>2. Change of interval.</b> Although we have only considered functions \(f(t)\) of period \(2\pi\), we may find the Fourier series of a function with period \(T\), defined on the interval \([a,a+T]\), by a change of variable. The result is</p>
+<div class="box thm"><span class="tag">Fourier series of a \(T\)-periodic function (on the December formula sheet)</span>
+\[\begin{aligned}f(t)&=\frac12a_0+\sum_{n=1}^\infty\big(a_n\cos n\omega t+b_n\sin n\omega t\big),\\ a_n&=\frac2T\int_a^{a+T}f(t)\cos n\omega t\,dt,\quad n=0,1,2,\dots\\ b_n&=\frac2T\int_a^{a+T}f(t)\sin n\omega t\,dt,\quad n=1,2,3,\dots\end{aligned}\]
+<p>where \(\omega=\dfrac{2\pi}T\) is the <b>fundamental frequency</b>.</p>
+<p class="word"><b>In words:</b> same recipe, but the waves are \(\cos n\omega t,\sin n\omega t\) (which fit \(n\) oscillations into one period \(T\)), the integral runs over any one period, and the factor in front is \(\frac2T\) (which is \(\frac1\pi\) when \(T=2\pi\)).</p>
+</div>
+<details><summary>Show the calculation: where the formulas come from (substitution \(s=\omega t\))</summary><div>
+<ol class="steps">
+<li>Let \(s=\omega t=\frac{2\pi t}{T}\) and \(g(s)=f\big(\frac s\omega\big)=f(t)\). When \(t\) increases by \(T\), \(s\) increases by \(2\pi\), so \(g\) is \(2\pi\)-periodic.</li>
+<li>Apply §2 to \(g\) over the period \(s\in[\omega a,\omega a+2\pi]\): \(g(s)=\frac12a_0+\sum(a_n\cos ns+b_n\sin ns)\) with \(a_n=\frac1\pi\int g(s)\cos ns\,ds\).</li>
+<li>Change back: \(ns=n\omega t\), \(ds=\omega\,dt=\frac{2\pi}T\,dt\), limits \(t=a\) to \(a+T\). So \(a_n\) \(=\frac1\pi\cdot\frac{2\pi}T\int_a^{a+T}f(t)\cos n\omega t\,dt\) \(=\frac2T\int_a^{a+T}f\cos n\omega t\,dt\). Same for \(b_n\).</li>
+<li>Orthogonality also carries over: \(\frac2T\int_a^{a+T}\cos n\omega t\cos m\omega t\,dt\) is 0 for \(n\ne m\) and 1 for \(n=m\ne0\) (checked for sample values in sympy).</li>
+</ol></div></details>
+<div class="box beyond"><span class="tag">Beyond the handouts · special cases you will use, and the two exam conventions</span>
+<ul class="list">
+<li><b>Period \(2L\) on \([-L,L]\)</b> (\(a=-L\), \(T=2L\), \(\omega=\frac\pi L\)): \(a_n=\frac1L\int_{-L}^Lf\cos\frac{n\pi t}L\,dt\), \(b_n=\frac1L\int_{-L}^Lf\sin\frac{n\pi t}L\,dt\). Even/odd short cuts: \(\frac2L\int_0^L\) (cosine or sine series), as in §5.</li>
+<li><b>May 2015–2019 formula sheet</b>: \(f=A_0+\sum(A_n\cos\frac{n\pi t}L+B_n\sin\frac{n\pi t}L)\) with \(A_0=\frac1{2L}\int_{-L}^Lf\,dt\) (the average, no \(\frac12\) in the series), \(A_n=a_n\), \(B_n=b_n\). So \(A_0=\frac12a_0\). Example: \(|t|\) on \((-1,1)\): \(a_0=1\) in these notes, \(A_0=\frac12\) on the May sheet; both give the constant term \(\frac12\).</li>
+<li><b>Shifted or raised copies.</b> If \(g(t)=f(t-c)+k\), replace \(t\) by \(t-c\) in the series of \(f\) and add \(k\) to the constant term; no new integrals are needed. Example: shifting the square wave left by \(\frac\pi2\), \(\sin\big((2k+1)(t+\frac\pi2)\big)\) \(=(-1)^k\cos(2k+1)t\), so the pulse "1 on \(|t|\lt\frac\pi2\), 0 on the rest of \((-\pi,\pi)\)" has series \(\frac12+\frac2\pi\big(\cos t-\frac{\cos3t}3+\frac{\cos5t}5-\cdots\big)\).</li>
+</ul>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · worked example with \(T\ne2\pi\) (written for these notes)</span>
+<p><b>Find the Fourier series of the 2-periodic function with \(f(t)=t\) for \(0\lt t\lt2\).</b></p>
+<p>\(T=2\), \(\omega=\pi\), and the formula-sheet interval \([a,a+T]=[0,2]\) is the natural choice (no need to rewrite \(f\) on \([-1,1]\)).</p>
+\[\begin{aligned}a_0&=\frac22\int_0^2t\,dt=2,\\ a_n&=\int_0^2t\cos n\pi t\,dt=0,\\ b_n&=\int_0^2t\sin n\pi t\,dt=-\frac2{n\pi}.\end{aligned}\]
+<details><summary>Show the calculation: \(a_n\) and \(b_n\)</summary><div>
+<ol class="steps">
+<li>\(a_n\): parts with \(u=t\), \(v=\frac{\sin n\pi t}{n\pi}\): \(\big[\frac{t\sin n\pi t}{n\pi}\big]_0^2+\big[\frac{\cos n\pi t}{(n\pi)^2}\big]_0^2\) \(=0+\frac{\cos2n\pi-1}{(n\pi)^2}\) \(=0\). <i>Why:</i> \(\sin2n\pi=0\) and \(\cos2n\pi=1\).</li>
+<li>\(b_n\): \(\big[-\frac{t\cos n\pi t}{n\pi}\big]_0^2+\big[\frac{\sin n\pi t}{(n\pi)^2}\big]_0^2\) \(=-\frac{2\cos2n\pi}{n\pi}+0\) \(=-\frac2{n\pi}\).</li>
+</ol></div></details>
+\[f(t)=1-\frac2\pi\sum_{n=1}^\infty\frac{\sin n\pi t}n.\]
+<p class="word"><b>In words:</b> a saw-tooth of average height 1, built from \(\sin\pi t,\sin2\pi t,\dots\); at the jumps \(t=0,\pm2,\dots\) it converges to 1, the midpoint of 0 and 2.</p>
+<div class="figure">
+  <p class="ttl">Change of interval: the 2-periodic saw-tooth \(f(t)=t\) on \((0,2)\)</p>
+  <canvas class="plot" id="f-ci" style="aspect-ratio:16/8" aria-label="Saw-tooth of period 2 and its partial Fourier sum"></canvas>
+  <div class="ctrl"><label>terms N <input type="range" id="ci-n" min="0" max="40" step="1" value="6"></label></div>
+  <div class="readout" id="ci-out"></div>
+  <p class="cap">Grey dashed: \(f\) on \(-2\le t\le4\) (three periods). Teal: \(1-\frac2\pi\sum_{n\le N}\frac{\sin n\pi t}{n}\). The orange dots at \(t=0,2,4,\dots\) are at height 1, the midpoint of each jump.</p>
+</div>
+</div>
+
+<p><b>3. Frequency spectrum of a signal \(f(t)\).</b></p>
+<ol class="steps" type="a">
+<li>The first term in the Fourier series,
+\[\frac12a_0=\frac1T\int_a^{a+T}f(t)\,dt,\]
+is the <b>average value</b> of \(f(t)\). It is time independent and is known as the <b>D.C.</b> (direct current) term.</li>
+<li>\(\cos\omega t\) and \(\sin\omega t\) are simple harmonic (single frequency) oscillations with angular frequency \(\omega\), \(\omega\) being the fundamental frequency of \(f(t)\); \(a_1\) and \(b_1\) are the amplitudes of these terms.</li>
+<li>\(\cos n\omega t\) and \(\sin n\omega t\) (\(n=2,3,\dots\)) are the <b>harmonic</b> terms, with frequency an integer multiple of the fundamental frequency, with amplitudes \(a_n\) and \(b_n\).</li>
+<li>Plots of the coefficients \(a_n\) and \(b_n\) as functions of the frequency \(n\omega\) form the <b>frequency spectrum</b> of \(f(t)\). For a periodic function only the frequencies \(n\omega\) occur, and hence the spectrum consists of discrete lines spaced \(\omega\) apart. It is a <b>discrete</b> or <b>line spectrum</b>.</li>
+</ol>
+<p class="word"><b>In words:</b> the spectrum is a bar chart of "how much of each frequency" the signal contains: a bar at 0 for the average, then bars at \(\omega,2\omega,3\omega,\dots\) and nothing in between.</p>
+<div class="figure">
+  <p class="ttl">Line spectra, and Parseval's power count</p>
+  <canvas class="plot" id="f-spec" style="aspect-ratio:16/9" aria-label="Bar chart of Fourier coefficients against frequency"></canvas>
+  <div class="ctrl"><label>signal <select id="sp-sel"><option value="0">square wave (Ex 4.2.1)</option><option value="1">eᵗ repeated (Ex 4.2.2)</option><option value="2">|sin t| (Ex 4.4.2)</option><option value="3">triangle wave (Ex 4.5.1)</option><option value="4">saw-tooth t (Ex 4.5.1)</option></select></label>
+  <label>show <select id="sp-m"><option value="ab">a_n and b_n</option><option value="c">amplitude c_n (Beyond)</option></select></label></div>
+  <div class="readout" id="sp-out"></div>
+  <p class="cap">Horizontal axis: frequency \(n\omega\) (here \(\omega=1\)). Teal bars: \(a_n\) (the bar at 0 shows the D.C. term \(\frac12a_0\)); orange bars: \(b_n\), drawn slightly to the right of the teal ones. The second option shows the <b>amplitude</b> \(c_n=\sqrt{a_n^2+b_n^2}\) of the combined wave \(a_n\cos nt+b_n\sin nt=c_n\cos(nt-\phi_n)\) (Beyond the handouts; engineers usually plot this). The readout checks Parseval: the power in the first 10 lines, \(\frac14a_0^2+\frac12\sum_{n\le10}(a_n^2+b_n^2)\), against the total mean square \(\frac1{2\pi}\int f^2\). Signals with jumps (square, saw-tooth, \(e^t\)) have spectra that die away slowly; continuous ones (triangle, \(|\sin t|\)) die away fast.</p>
+</div>
+</section>
+
+<section id="summary">
+<h2><span class="n">◆</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Formula</th><th>In words</th></tr>
+<tr><td>Periodic</td><td>\(f(t+T)=f(t)\ \forall t\); \(\cos n\omega t\) has period \(\frac{2\pi}{n\omega}\)</td><td>fundamental period = smallest \(T\); sums need not be periodic (\(\sin t+\sin2\pi t\))</td></tr>
+<tr><td>Fourier series (\(2\pi\))</td><td>\(\frac{a_0}2+\sum(a_n\cos nt+b_n\sin nt)\), \(a_n=\frac1\pi\int_{-\pi}^\pi f\cos nt\), \(b_n=\frac1\pi\int_{-\pi}^\pi f\sin nt\)</td><td>multiply by the wave, integrate over a period, divide by \(\pi\)</td></tr>
+<tr><td>Orthogonality</td><td>\(\int_{-\pi}^\pi\) of a product of two different waves \(=0\); \(\int\cos^2nt=\int\sin^2nt=\pi\)</td><td>why the coefficient formulas work</td></tr>
+<tr><td>Period \(T\) (formula sheet)</td><td>\(\omega=\frac{2\pi}T\), \(a_n=\frac2T\int_a^{a+T}f\cos n\omega t\,dt\)</td><td>any interval of length \(T\)</td></tr>
+<tr><td>Conventions</td><td>notes/December: constant \(\frac12a_0\); May 2015–19: \(A_0=\frac1{2L}\int f=\frac12a_0\)</td><td>constant term = average of \(f\) either way</td></tr>
+<tr><td>Convergence</td><td>\(\frac12[f(t_0^-)+f(t_0^+)]\)</td><td>\(f\) where continuous, midpoint at a jump; ends are jumps of the extension</td></tr>
+<tr><td>Series sums</td><td>put \(t=0,\pi,\frac\pi2\); square wave at \(\frac\pi2\): \(\frac\pi4=1-\frac13+\frac15-\cdots\)</td><td>use the convergence value, not the defined value</td></tr>
+<tr><td>Gibbs (Beyond)</td><td>overshoot \(\approx9\%\) of the jump</td><td>never disappears, only narrows</td></tr>
+<tr><td>Even \(f\)</td><td>\(b_n=0\), \(a_n=\frac2\pi\int_0^\pi f\cos nt\)</td><td>cosine series</td></tr>
+<tr><td>Odd \(f\)</td><td>\(a_n=0\), \(b_n=\frac2\pi\int_0^\pi f\sin nt\)</td><td>sine series</td></tr>
+<tr><td>Half-range on \([0,L]\)</td><td>cosine: \(a_n=\frac2L\int_0^Lf\cos\frac{n\pi t}L\); sine: \(b_n=\frac2L\int_0^Lf\sin\frac{n\pi t}L\)</td><td>even extension / odd extension, period \(2L\)</td></tr>
+<tr><td>Best approximation</td><td>\(S_N\) with Fourier coefficients minimises \(\int(f-S_N)^2\)</td><td>least squares</td></tr>
+<tr><td>Parseval</td><td>\(\frac1{2\pi}\int_{-\pi}^\pi f^2=\frac14a_0^2+\frac12\sum(a_n^2+b_n^2)\)</td><td>mean power = sum of powers of the components; Bessel: \(\ge\) for finite \(N\)</td></tr>
+<tr><td>Spectrum</td><td>lines at \(0,\omega,2\omega,\dots\) of heights \(a_n,b_n\)</td><td>D.C. term, fundamental, harmonics</td></tr>
+<tr><td>Examples</td><td>4.2.1: \(\frac12+\frac2\pi\sum\frac{\sin(2n+1)t}{2n+1}\); 4.4.2: \(\frac2\pi+\frac4\pi\sum\frac{\cos2nt}{1-4n^2}\); 4.5.1: \(\frac\pi2-\frac4\pi\sum\frac{\cos(2n-1)t}{(2n-1)^2}\), \(2\sum\frac{(-1)^{n+1}}n\sin nt\)</td><td></td></tr>
+</table></div>
+</section>
+
+<section id="mistakes">
+<h2><span class="n">◆</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Writing the constant term as \(a_0\) after computing \(a_0=\frac1\pi\int f\) (or \(\frac2T\int f\)). <b>Fix:</b> the constant term is \(\frac12a_0\) = the average of \(f\). Check: it must lie between the smallest and largest values of \(f\).</span>
+<span class="x">✗</span><span>Dividing by \(n\) in the \(a_n\) formula and then putting \(n=0\) to get \(a_0\) (giving \(\frac00\) or a wrong value), or using \(\frac{1}{1-n}\) at \(n=1\). <b>Fix:</b> compute \(a_0\) (and any \(n\) that makes a denominator zero) separately.</span>
+<span class="x">✗</span><span>Using the half-range short cut \(\frac2\pi\int_0^\pi\) for a function that is neither even nor odd. <b>Fix:</b> check \(f(-t)=\pm f(t)\) on the whole period first; if neither, integrate over the full period.</span>
+<span class="x">✗</span><span>Evaluating the series at a jump and setting it equal to the defined value \(f(t_0)\). <b>Fix:</b> the series gives \(\frac12[f(t_0^-)+f(t_0^+)]\); at the ends of the interval use the periodic extension.</span>
+<span class="x">✗</span><span>Leaving \(\sin n\pi\), \(\cos n\pi\) unsimplified, or writing \(\cos n\pi=-1\). <b>Fix:</b> \(\sin n\pi=0\), \(\cos n\pi=(-1)^n\); then split into odd and even \(n\).</span>
+<span class="x">✗</span><span>For period \(T\ne2\pi\), keeping \(\cos nt\) and \(\frac1\pi\). <b>Fix:</b> waves \(\cos\frac{2n\pi t}T\), factor \(\frac2T\), integral over one period.</span>
+<span class="x">✗</span><span>Sketching only one period, or drawing the jumps as vertical lines without saying what happens there. <b>Fix:</b> draw the number of periods asked for, label the axes with multiples of the period and the heights; open/filled dots at jumps.</span>
+<span class="x">✗</span><span>Parseval with the wrong left side: \(\int f^2\) instead of the mean \(\frac1T\int f^2\), or \(a_0^2\) instead of \(\frac14a_0^2\). <b>Fix:</b> mean square = (constant term)\(^2\) + \(\frac12\sum(a_n^2+b_n^2)\).</span>
+<span class="ok">✓</span><span>Before integrating, ask: is \(f\) (or \(f\) minus a constant) even or odd? Which half-range extension does the question want? Is there a jump where the series will take the average?</span>
+</div>
+</section>
+
+<section id="find-mistake">
+<h2><span class="n">◆</span>Find the mistake</h2>
+<p class="muted small">Written for these notes. Each "solution" has one error. Find it before opening the answer.</p>
+<div class="q"><p class="qh">1. The constant term</p>
+<p>"For the square wave (0 on \((-\pi,0]\), 1 on \((0,\pi)\)): \(a_0=\frac1\pi\int_0^\pi1\,dt=1\), \(a_n=0\), \(b_n=\frac{1-(-1)^n}{n\pi}\). So \(f(t)=1+\frac2\pi\big(\sin t+\frac{\sin3t}3+\cdots\big)\)."</p>
+<details><summary>Answer</summary><div><p>The constant term is \(\frac12a_0=\frac12\), not \(a_0\). The written series would have average 1, but the square wave spends half its time at 0, so its average is \(\frac12\). Correct: \(f=\frac12+\frac2\pi(\sin t+\frac{\sin3t}3+\cdots)\).</p></div></details></div>
+<div class="q"><p class="qh">2. A short cut too far</p>
+<p>"\(f(t)=t+1\) on \((-\pi,\pi)\), period \(2\pi\). \(t\) is odd, so we use the sine series: \(b_n\) \(=\frac2\pi\int_0^\pi(t+1)\sin nt\,dt\) \(=\frac{2(-1)^{n+1}}n+\frac{2[1-(-1)^n]}{n\pi}\), and \(a_n=0\) for all \(n\)."</p>
+<details><summary>Answer</summary><div><p>\(t+1\) is neither even nor odd, so the half-range formula does not apply (and \(a_0\ne0\)). Split instead: \(t\) is odd, \(1\) is even. Then \(a_0=\frac1\pi\int_{-\pi}^\pi(t+1)\,dt=2\) (constant term 1), \(a_n=0\) for \(n\ge1\), \(b_n=\frac{2(-1)^{n+1}}n\). So \(f=1+2\sum\frac{(-1)^{n+1}}n\sin nt\). The extra \(\frac{2[1-(-1)^n]}{n\pi}\) is the sine series of the constant 1 on \((0,\pi)\), which is not what \(1\) on \((-\pi,\pi)\) is.</p></div></details></div>
+<div class="q"><p class="qh">3. Summing at a jump</p>
+<p>"Put \(t=\pi\) in the series of Example 4.2.2: since \(f(t)=e^t\), the series converges to \(e^\pi\), so \(e^\pi=\frac{\sinh\pi}\pi+\frac{2\sinh\pi}\pi\sum_{n=1}^\infty\frac{(-1)^n(-1)^n}{1+n^2}\)."</p>
+<details><summary>Answer</summary><div><p>\(t=\pi\) is a jump of the periodic extension: the left limit is \(e^\pi\), the right limit (start of the next copy) is \(e^{-\pi}\). The series converges to the average \(\frac{e^\pi+e^{-\pi}}2=\cosh\pi\). Correct: \(\cosh\pi=\frac{\sinh\pi}\pi\big(1+2\sum\frac1{1+n^2}\big)\), so \(\sum_{n=1}^\infty\frac1{1+n^2}=\frac{\pi\coth\pi-1}2\approx1.077\) (checked numerically for these notes).</p></div></details></div>
+</section>
+
+<section id="group-work">
+<h2><span class="n">◆</span>Practice problems (written for these notes)</h2>
+<p class="muted small">The Chapter 4 handout has no group-work questions, so these are written for these notes, one per section (two for §6). Answers checked in sympy and numpy.</p>
+<div class="q"><p class="qh">1. (§1) Find the fundamental period of (a) \(\sin3t+\cos2t\); (b) \(\cos^2t\).</p>
+<details><summary>Hint</summary><div><p>(a) Periods \(\frac{2\pi}3\) and \(\pi\): smallest common multiple. (b) \(\cos^2t=\frac12(1+\cos2t)\).</p></div></details>
+<details><summary>Answer</summary><div><p>(a) \(2\pi\) (\(\pi\) and \(\frac{2\pi}{3}\) are not periods of the sum). (b) \(\pi\).</p></div></details></div>
+<div class="q"><p class="qh">2. (§2) Find the Fourier series of the half-wave rectifier: \(f(t)=0\) for \(-\pi\lt t\lt0\), \(f(t)=\sin t\) for \(0\le t\lt\pi\), \(f(t+2\pi)=f(t)\).</p>
+<details><summary>Hint</summary><div><p>Only \((0,\pi)\) contributes. Use \(\sin t\cos nt\) \(=\frac12[\sin(1+n)t+\sin(1-n)t]\) and treat \(n=1\) separately for both \(a_n\) and \(b_n\); for \(b_n\), \(\sin t\sin nt\) \(=\frac12[\cos(1-n)t-\cos(1+n)t]\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(a_0=\frac2\pi\), \(a_1=0\), \(a_n=-\frac{2}{\pi(n^2-1)}\) for even \(n\), 0 for odd \(n\ge3\); \(b_1=\frac12\), \(b_n=0\) for \(n\ge2\).</p>
+\[f(t)=\frac1\pi+\frac12\sin t-\frac2\pi\sum_{n=1}^\infty\frac{\cos2nt}{4n^2-1}.\]
+<p>(Check: \(f=\frac12(|\sin t|+\sin t)\), and Example 4.4.2 gives \(|\sin t|\).)</p></div></details></div>
+<div class="q"><p class="qh">3. (§3) Use the series of Problem 2 to show that \(\sum_{n=1}^\infty\frac1{4n^2-1}=\frac12\) and \(\frac1{1\cdot3}-\frac1{3\cdot5}+\frac1{5\cdot7}-\cdots=\frac{\pi-2}4\).</p>
+<details><summary>Hint</summary><div><p>\(f\) is continuous everywhere. Put \(t=0\) (where \(f=0\)) and \(t=\frac\pi2\) (where \(f=1\) and \(\cos n\pi=(-1)^n\)). Note \(4n^2-1=(2n-1)(2n+1)\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(t=0\): \(0=\frac1\pi-\frac2\pi\sum\frac1{4n^2-1}\Rightarrow\sum\frac1{4n^2-1}=\frac12\). \(t=\frac\pi2\): \(1\) \(=\frac1\pi+\frac12-\frac2\pi\sum\frac{(-1)^n}{4n^2-1}\) \(\Rightarrow\sum\frac{(-1)^{n+1}}{4n^2-1}\) \(=\frac\pi4-\frac12\) \(=\frac{\pi-2}4\).</p></div></details></div>
+<div class="q"><p class="qh">4. (§4) Find the Fourier series of the \(2\pi\)-periodic pulse \(f(t)=1\) for \(|t|\lt\frac\pi2\), \(f(t)=0\) for \(\frac\pi2\lt|t|\lt\pi\).</p>
+<details><summary>Hint</summary><div><p>\(f\) is even: \(b_n=0\), \(a_n=\frac2\pi\int_0^{\pi/2}\cos nt\,dt\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(a_0=1\), \(a_n=\frac{2\sin(n\pi/2)}{n\pi}\): \(f=\frac12+\frac2\pi\big(\cos t-\frac{\cos3t}3+\frac{\cos5t}5-\cdots\big)\). (Same as the square wave shifted by \(\frac\pi2\), §6 Beyond box.)</p></div></details></div>
+<div class="q"><p class="qh">5. (§5) Find the half-range sine series of \(f(t)=1\) on \(0\lt t\lt\pi\). What does the half-range cosine series look like?</p>
+<details><summary>Hint</summary><div><p>\(b_n=\frac2\pi\int_0^\pi\sin nt\,dt\). The even extension of a constant is the constant.</p></div></details>
+<details><summary>Answer</summary><div><p>\(b_n=\frac{2[1-(-1)^n]}{n\pi}\): \(1=\frac4\pi\big(\sin t+\frac{\sin3t}3+\frac{\sin5t}5+\cdots\big)\) on \((0,\pi)\) (the odd extension is a square wave between \(-1\) and \(1\); compare Example 4.2.1). The cosine series is just \(1\) (\(a_0=2\), all other \(a_n=0\)).</p></div></details></div>
+<div class="q"><p class="qh">6. (§6, change of interval) Find the Fourier series of the 2-periodic function \(f(t)=|t|\), \(-1\lt t\lt1\).</p>
+<details><summary>Hint</summary><div><p>\(T=2\), \(\omega=\pi\), \(f\) even: \(a_n=\frac22\cdot2\int_0^1t\cos n\pi t\,dt\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(a_0=1\), \(a_n=\frac{2[(-1)^n-1]}{(n\pi)^2}\), \(b_n=0\): \(|t|=\frac12-\frac4{\pi^2}\sum_{n=1}^\infty\frac{\cos(2n-1)\pi t}{(2n-1)^2}\). (May-sheet convention: \(A_0=\frac12\), the same constant term.)</p></div></details></div>
+<div class="q"><p class="qh">7. (§6, Parseval) Apply Parseval's theorem to the series of \(|\sin t|\) (Example 4.4.2) to find \(\sum_{n=1}^\infty\frac1{(4n^2-1)^2}\).</p>
+<details><summary>Hint</summary><div><p>Mean square of \(|\sin t|\) is \(\frac12\). \(\frac14a_0^2=\frac4{\pi^2}\), and \(a_{2n}=\frac{4}{\pi(1-4n^2)}\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\frac12\) \(=\frac4{\pi^2}+\frac12\cdot\frac{16}{\pi^2}\sum\frac1{(4n^2-1)^2}\) \(\Rightarrow\sum\frac1{(4n^2-1)^2}\) \(=\frac{\pi^2-8}{16}\) \(\approx0.117\).</p></div></details></div>
+</section>
+
+<section id="checks">
+<h2><span class="n">◆</span>Concept checks</h2>
+<p class="muted small">Written for these notes.</p>
+<div class="q"><p class="qh">1. What is the fundamental period of \(\sin2t+\sin3t\)? Is \(\pi\) a period?</p>
+<details><summary>Answer</summary><div><p>\(2\pi\) (periods \(\pi\) and \(\frac{2\pi}3\); smallest common multiple \(2\pi\)). \(\pi\) is not a period: \(\sin3(t+\pi)=-\sin3t\).</p></div></details></div>
+<div class="q"><p class="qh">2. To what values does the square-wave series of Example 4.2.1 converge at \(t=0\) and at \(t=\frac{3\pi}2\)?</p>
+<details><summary>Answer</summary><div><p>\(\frac12\) at \(t=0\) (a jump from 0 to 1). At \(\frac{3\pi}2\) the function is continuous with \(f(\frac{3\pi}2)=f(-\frac\pi2)=0\), so the series gives 0.</p></div></details></div>
+<div class="q"><p class="qh">3. Without integrating, which coefficients are zero for (a) \(t^3\) on \((-\pi,\pi)\); (b) \(|t|\) on \((-\pi,\pi)\); (c) \(e^t\) on \((-\pi,\pi)\)?</p>
+<details><summary>Answer</summary><div><p>(a) odd: all \(a_n\) (including \(a_0\)). (b) even: all \(b_n\). (c) neither: in general none (Example 4.2.2 has all \(a_n,b_n\ne0\)).</p></div></details></div>
+<div class="q"><p class="qh">4. \(f(t)=3+2\cos t-\sin4t\). Write down its Fourier coefficients without integrating.</p>
+<details><summary>Answer</summary><div><p>It already is a Fourier series: \(\frac12a_0=3\), so \(a_0=6\) (in the May-sheet convention \(A_0=3\)); \(a_1=2\); \(b_4=-1\); all others 0. (Uniqueness: the coefficient formulas would just give these back.)</p></div></details></div>
+<div class="q"><p class="qh">5. Use Parseval to find the mean square \(\frac1{2\pi}\int_{-\pi}^\pi f^2\,dt\) of \(f\) in check 4.</p>
+<details><summary>Answer</summary><div><p>\(\frac14\cdot36+\frac12(2^2+1^2)=9+\frac52=\frac{23}2\) (checked by direct integration).</p></div></details></div>
+<div class="q"><p class="qh">6. For \(f(t)=t\) on \((0,\pi)\) (Example 4.5.1), what do the sine series and the cosine series converge to at \(t=\pi\)?</p>
+<details><summary>Answer</summary><div><p>Sine series: 0 (the saw-tooth jumps from \(\pi\) to \(-\pi\) there; average 0). Cosine series: \(\pi\) (the triangle wave is continuous at its peak).</p></div></details></div>
+<div class="q"><p class="qh">7. Why does the square wave have a Fourier series but no Taylor series about \(t=0\)?</p>
+<details><summary>Answer</summary><div><p>A Taylor series needs all derivatives at the point, and the square wave is not even continuous at 0. A Fourier series only needs \(f\) to be piecewise continuous with one-sided derivatives (Theorem 4.3.1).</p></div></details></div>
+</section>
+
+<section id="taster">
+<h2><span class="n">◆</span>Exam taster</h2>
+<p>Real past-paper questions, one per question type of this chapter, newest December first, then the May-format papers. December papers: answer 4 of 5 questions, 25 marks each, 3 hours; the formula sheet gives the Fourier series of a \(T\)-periodic function on \([a,a+T]\) (constant term \(\frac12a_0\)) and reduction formulas for the integrals, but not the even/odd short cuts, the convergence theorem or Parseval. May papers from 2021 on have no formula sheet. Each question has a hint and the final answer; full worked solutions with marker notes are in the exam guide (follow the tag).</p>
+
+<div class="q"><div class="src"><b>Dec 2025 Q4(b)(iii)</b><span>4 marks</span><a class="guide" href="guide-C4.html#C4-2">Guide C4.2 · series sums</a></div>
+<p>Consider the \(2\pi\)-periodic function \(f(t)=f(t+2\pi)\) where \(f(t)=t^2\) on \([-\pi,\pi)\). [Parts (i)–(ii), plotting \(f\) and finding its Fourier series, are in the guide (type C4.1); the result of (ii) is \(f(t)=\dfrac{\pi^2}3+4\displaystyle\sum_{n=1}^\infty\dfrac{(-1)^n}{n^2}\cos nt\).]</p>
+<p>(iii) Use the result in Q4(b)(ii) to show that</p>
+\[\begin{aligned}\frac{\pi^2}{12}&=1-\frac1{2^2}+\frac1{3^2}-\frac1{4^2}+\cdots\quad\text{and}\\ \frac{\pi^2}6&=1+\frac1{2^2}+\frac1{3^2}+\frac1{4^2}+\cdots\end{aligned}\]
+<details><summary>Hint</summary><div><p>The periodic extension of \(t^2\) is continuous everywhere (\((-\pi)^2=\pi^2\)), so the series equals \(t^2\) at every point. Alternating signs: \(t=0\). All plus signs: \(t=\pi\), where \(\cos n\pi=(-1)^n\) cancels the \((-1)^n\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(t=0\): \(0\) \(=\frac{\pi^2}3+4\sum\frac{(-1)^n}{n^2}\) \(\Rightarrow\boxed{\sum\frac{(-1)^{n+1}}{n^2}=\frac{\pi^2}{12}}\). \(t=\pi\): \(\pi^2=\frac{\pi^2}3+4\sum\frac1{n^2}\Rightarrow\boxed{\sum\frac1{n^2}=\frac{\pi^2}6}\).</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2024 Q4(b)(i)–(ii)</b><span>5 + 7 marks</span><a class="guide" href="guide-C4.html#C4-1">Guide C4.1 · Fourier series</a></div>
+<p>Consider the \(2\pi\)-periodic <i>odd</i> function \(f(t)=f(t+2\pi)\) where</p>
+\[f(t)=\begin{cases}-\pi&-\pi\le t\lt-\frac\pi2\\2t&-\frac\pi2\le t\lt\frac\pi2\\ \pi&\frac\pi2\le t\lt\pi\end{cases}\]
+<p>(i) Plot the function \(f(t)\) from \(t\in[-2\pi,2\pi)\).</p>
+<p>(ii) Find the Fourier series of \(f(t)\). (You may keep the term \(\sin\left(\frac{n\pi}2\right)\) without further manipulation.)</p>
+<details><summary>Hint</summary><div><p>Odd: \(a_n=0\), \(b_n=\frac2\pi\int_0^\pi f\sin nt\,dt\), split at \(\frac\pi2\): \(\int_0^{\pi/2}2t\sin nt\,dt\) (by parts) \(+\int_{\pi/2}^\pi\pi\sin nt\,dt\). The \(\cos\frac{n\pi}2\) terms cancel.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(i) Ramps of slope 2 from \((-\frac\pi2,-\pi)\) to \((\frac\pi2,\pi)\), flat at \(\pi\) on \([\frac\pi2,\pi)\) and at \(-\pi\) on \([-\pi,-\frac\pi2)\), repeated; jumps from \(\pi\) to \(-\pi\) at \(t=\pm\pi\):</p>
+<canvas class="plot" id="f-q24" style="aspect-ratio:16/8;max-width:520px" aria-label="Sketch of the odd periodic function of Dec 2024 Q4(b)"></canvas>
+<p>(ii) \[\boxed{\begin{aligned}f(t)&=\sum_{n=1}^\infty\Big[\frac{4\sin(n\pi/2)}{\pi n^2}\\&\qquad\quad-\frac{2(-1)^n}{n}\Big]\sin nt\end{aligned}}\] i.e. \(b_1=2+\frac4\pi\), \(b_2=-1\), \(b_3=\frac23-\frac4{9\pi}\), ….</p>
+<details><summary>Show the calculation: outline</summary><div><ol class="steps">
+<li>\(\int_0^{\pi/2}2t\sin nt\,dt\) \(=\big[-\frac{2t\cos nt}n\big]_0^{\pi/2}+\frac2n\int_0^{\pi/2}\cos nt\,dt\) \(=-\frac{\pi\cos(n\pi/2)}n+\frac{2\sin(n\pi/2)}{n^2}\).</li>
+<li>\(\int_{\pi/2}^\pi\pi\sin nt\,dt\) \(=\frac\pi n\big[\cos\frac{n\pi}2-\cos n\pi\big]\).</li>
+<li>Sum: the \(\cos\frac{n\pi}2\) terms cancel, leaving \(\frac{2\sin(n\pi/2)}{n^2}-\frac{\pi(-1)^n}n\). Times \(\frac2\pi\) gives \(b_n\).</li></ol></div></details></div></details></div>
+
+<div class="q"><div class="src"><b>May 2026 Q7</b><span>10 marks</span><span class="older">May format</span><a class="guide" href="guide-C4.html#C4-3">Guide C4.3 · half-range series</a></div>
+<p>Organize the function \(f(t)\) as an even function and sketch it over 3 periods. Then, determine its Fourier series representation:</p>
+\[f(t)=\begin{cases}1-t&0\lt t\le1\\0&1\lt t\le2\end{cases}\]
+<details><summary>Hint</summary><div><p>Even extension to \((-2,2)\): period \(T=4\), \(L=2\), \(\omega=\frac\pi2\). \(b_n=0\), \(a_n\) \(=\frac22\int_0^2f\cos\frac{n\pi t}2\,dt\) \(=\int_0^1(1-t)\cos\frac{n\pi t}2\,dt\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>Sketch: triangles of height 1 on \([-1,1]\), \([3,5]\), \([-5,-3]\), … (peaks at \(t=0,\pm4\)), zero in between:</p>
+<canvas class="plot" id="f-q26" style="aspect-ratio:16/7;max-width:520px" aria-label="Sketch of the even periodic extension, period 4"></canvas>
+<p>\[\boxed{\begin{aligned}f(t)&=\frac14+\frac4{\pi^2}\sum_{n=1}^\infty\frac{1-\cos(n\pi/2)}{n^2}\\&\qquad\times\cos\frac{n\pi t}2\end{aligned}}\] (constant \(\frac12a_0=\frac14\); first terms \(\frac4{\pi^2}\cos\frac{\pi t}2+\frac2{\pi^2}\cos\pi t+\frac4{9\pi^2}\cos\frac{3\pi t}2+\cdots\)).</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2017 Q4(b)</b><span>6 marks</span><span class="older">May format</span><a class="guide" href="guide-C4.html#C4-4">Guide C4.4 · Parseval</a></div>
+<p>Consider a periodic function \(f(x)=x^2\), \(-1\le x\le1\) with the period \(T=2\), and the Fourier series</p>
+\[f(x)=\frac13+\sum_{n=1}^\infty\frac{4(-1)^n}{n^2\pi^2}\cos(n\pi x).\]
+<p>With the help of the given Fourier series, use Parseval's identity to find the sum of the series \(\displaystyle\sum_{n=1}^\infty\frac1{n^4}\).</p>
+<details><summary>Hint</summary><div><p>Here the constant term is \(\frac13\) (May-sheet \(A_0\)), so Parseval reads \(\frac1{2}\int_{-1}^1x^4\,dx=A_0^2+\frac12\sum a_n^2\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\frac15=\frac19+\frac12\cdot\frac{16}{\pi^4}\sum\frac1{n^4}\Rightarrow\boxed{\sum_{n=1}^\infty\frac1{n^4}=\frac{\pi^4}{90}}\).</p></div></details></div>
+<p class="muted small">Left for the exam guide: all other C4.1 parts (Dec 2025 Q4(b)(i)–(ii), Dec 2023, 2022, 2018, 2017, 2016, 2014 and the May papers), the other six C4.2 parts, the other five C4.3 parts (May 2024, 2021, 2017, 2015) and May 2021 Q4(c) (C4.4).</p>
+</section>
+
+<footer class="foot">MECH2407 Revision Bundle · written for students revising on their own. Material in orange "Beyond the handouts" boxes is not in the course handouts. <a href="index.html">Start Here</a></footer>
+</main>
+</div>
+
+<script>
+/* ===== MV: shared plotting helpers (2D plot, 3D surface, contour map, vector field) ===== */
+window.MV=(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+function hex(c){c=c.replace('#','');if(c.length===3)c=c.split('').map(x=>x+x).join('');return [0,2,4].map(i=>parseInt(c.substr(i,2),16));}
+function mix(a,b,t){const A=hex(a),B=hex(b);return 'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')+')';}
+function ramp(t){t=Math.max(0,Math.min(1,t));return t<.5?mix(css('--accent'),css('--c3'),t*2):mix(css('--c3'),css('--warm'),(t-.5)*2);}
+function setup(cv){const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return null;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card');g.fillRect(0,0,W,H);g.font='11px Inter, system-ui, sans-serif';return {g,W,H};}
+function arrow(g,x1,y1,x2,y2,col,w,head){g.strokeStyle=col;g.fillStyle=col;g.lineWidth=w||2;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  const a=Math.atan2(y2-y1,x2-x1),L=head||8;g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-L*Math.cos(a-.4),y2-L*Math.sin(a-.4));g.lineTo(x2-L*Math.cos(a+.4),y2-L*Math.sin(a+.4));g.closePath();g.fill();}
+function label(g,t,x,y,col,align,bold){g.font=(bold?'600 ':'')+'12px Inter, system-ui, sans-serif';g.fillStyle=col;g.textAlign=align||'left';g.textBaseline='middle';g.save();g.strokeStyle=css('--card');g.lineWidth=3.5;g.lineJoin='round';g.strokeText(t,x,y);g.restore();g.fillText(t,x,y);g.font='11px Inter, system-ui, sans-serif';}
+
+/* ---- 2D axes. o: xmin,xmax,ymin,ymax,xstep,ystep,equal, curves[{f,color,dash,width,from,to}], param[{x(t),y(t),t0,t1,color}],
+   segs[{x1,y1,x2,y2,color,dash}], arrows[{x1,y1,x2,y2,color,label}], pts[{x,y,color,label,open}], extra(g,X,Y) ---- */
+function axes2d(cv,o){
+  const s=setup(cv);if(!s)return;const {g,W,H}=s;
+  const pl=34,pr=12,pt=12,pb=26;
+  if(o.equal){const sx=(W-pl-pr)/(o.xmax-o.xmin),sy=(H-pt-pb)/(o.ymax-o.ymin);if(sx>sy){const c=(o.xmin+o.xmax)/2,h=(W-pl-pr)/sy/2;o=Object.assign({},o,{xmin:c-h,xmax:c+h});}else{const c=(o.ymin+o.ymax)/2,h=(H-pt-pb)/sx/2;o=Object.assign({},o,{ymin:c-h,ymax:c+h});}}
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr), Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const xs=o.xstep||1,ys=o.ystep||1;
+  const xt=range(Math.ceil(o.xmin/xs)*xs,o.xmax,xs),yt=range(Math.ceil(o.ymin/ys)*ys,o.ymax,ys);
+  g.strokeStyle=css('--grid');g.lineWidth=1;
+  xt.forEach(v=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(v=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis');g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted');g.textAlign='center';g.textBaseline='top';
+  xt.forEach(v=>{if(v!==0)g.fillText(fmt(v,2),X(v),H-pb+6);});
+  g.textAlign='right';g.textBaseline='middle';yt.forEach(v=>{if(v!==0)g.fillText(fmt(v,2),pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr-2,Y(Math.max(o.ymin,Math.min(0,o.ymax)))-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,X(Math.max(o.xmin,Math.min(0,o.xmax)))+5,pt+2);}
+  g.save();g.beginPath();g.rect(pl,pt,W-pl-pr,H-pt-pb);g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{const a=c.from!==undefined?c.from:o.xmin,b=c.to!==undefined?c.to:o.xmax,N=c.n||600;
+    g.strokeStyle=c.color;g.lineWidth=c.width||2.4;g.setLineDash(c.dash||[]);g.beginPath();let pen=false,py=null;
+    for(let i=0;i<=N;i++){const x=a+(b-a)*i/N,y=c.f(x);if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*.5)pen=false;if(!pen){g.moveTo(X(x),Y(y));pen=true;}else g.lineTo(X(x),Y(y));py=y;}
+    g.stroke();g.setLineDash([]);});
+  (o.param||[]).forEach(c=>{const N=c.n||400;g.strokeStyle=c.color;g.lineWidth=c.width||2.4;g.setLineDash(c.dash||[]);g.beginPath();
+    for(let i=0;i<=N;i++){const t=c.t0+(c.t1-c.t0)*i/N;const x=c.x(t),y=c.y(t);i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y));}g.stroke();g.setLineDash([]);});
+  (o.segs||[]).forEach(q=>{g.strokeStyle=q.color;g.lineWidth=q.width||2;g.setLineDash(q.dash||[]);g.beginPath();g.moveTo(X(q.x1),Y(q.y1));g.lineTo(X(q.x2),Y(q.y2));g.stroke();g.setLineDash([]);});
+  if(o.extra)o.extra(g,X,Y);
+  g.restore();
+  (o.arrows||[]).forEach(a=>{arrow(g,X(a.x1),Y(a.y1),X(a.x2),Y(a.y2),a.color,a.width||2.2);if(a.label)label(g,a.label,X(a.x2)+6,Y(a.y2)-8,a.color,'left',true);});
+  (o.pts||[]).forEach(p=>{g.beginPath();g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label)label(g,p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-10,p.color,p.align||'left',true);});
+  return {X,Y,g};
+}
+
+/* ---- 3D surface z=f(x,y) (or parametric o.P), drag to rotate. o: f, x:[a,b], y:[c,d] (box), z:[lo,hi] (clip), n (grid), view {yaw,elev}, psurfs[{P,s,t,color,alpha}],
+   f2 (second surface, e.g. tangent plane), curves3d[{pts:[[x,y,z]...],color,width}], pts3d[{p:[x,y,z],color,label}],
+   arrows3d[{from,to,color,label}], labels {x,y,z}, alpha, mask(x,y)->bool ---- */
+function surface(cv,o){
+  if(!cv._view){cv._view=Object.assign({yaw:-0.65,elev:0.45},o.view||{});attachDrag(cv);}
+  cv._o=o;const s=setup(cv);if(!s)return;const {g,W,H}=s;const v=cv._view;
+  const [xa,xb]=o.x,[ya,yb]=o.y;let [za,zb]=o.z;
+  const nx=x=>2*(x-xa)/(xb-xa)-1, ny=y=>2*(y-ya)/(yb-ya)-1, zs=o.zscale||0.8, nz=z=>zs*(2*(z-za)/(zb-za)-1);
+  const cy=Math.cos(v.yaw),sy=Math.sin(v.yaw),ce=Math.cos(v.elev),se=Math.sin(v.elev);
+  const sc=Math.min(W,H)*0.33, ox=W/2, oy=H/2+H*0.03;
+  function P(x,y,z){const X=nx(x),Y=ny(y),Z=nz(z);const u=X*cy-Y*sy,d=X*sy+Y*cy;return [ox+sc*u, oy-sc*(Z*ce+d*se), d*ce-Z*se];}
+  // axes box floor + axes
+  g.lineWidth=1;g.strokeStyle=css('--grid');
+  const fl=[[xa,ya],[xb,ya],[xb,yb],[xa,yb],[xa,ya]].map(q=>P(q[0],q[1],za));
+  g.beginPath();fl.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();
+  const ax=[[P(xa,ya,za),P(xb,ya,za),o.labels?o.labels.x:'x'],[P(xa,ya,za),P(xa,yb,za),o.labels?o.labels.y:'y'],[P(xa,ya,za),P(xa,ya,zb),o.labels?o.labels.z:'z']];
+  ax.forEach(a=>{arrow(g,a[0][0],a[0][1],a[1][0],a[1][1],css('--axis'),1.3,6);label(g,a[2],a[1][0]+(a[1][0]>a[0][0]?6:-6),a[1][1]-6,css('--muted'),a[1][0]>a[0][0]?'left':'right');});
+  const quads=[];
+  function addGrid(pt,N,M,col,alpha,isMain){const G=[];
+    for(let i=0;i<=N;i++){G[i]=[];for(let j=0;j<=M;j++){const q=pt(i/N,j/M);const ok=q&&q.every(isFinite)&&q[2]>=za-1e-9&&q[2]<=zb+1e-9&&(!o.mask||o.mask(q[0],q[1]));G[i][j]={q,ok};}}
+    for(let i=0;i<N;i++)for(let j=0;j<M;j++){const c=[G[i][j],G[i+1][j],G[i+1][j+1],G[i][j+1]];if(c.some(q=>!q.ok))continue;
+      const pp=c.map(q=>P(q.q[0],q.q[1],q.q[2]));const zm=(c[0].q[2]+c[1].q[2]+c[2].q[2]+c[3].q[2])/4;
+      quads.push({pp,depth:(pp[0][2]+pp[1][2]+pp[2][2]+pp[3][2])/4,fill:col?col:ramp((zm-za)/(zb-za)),alpha,isMain});}}
+  function addSurf(f,col,alpha,isMain){const N=o.n||28;addGrid((u,w)=>{const x=xa+(xb-xa)*u,y=ya+(yb-ya)*w;return [x,y,f(x,y)];},N,N,col,alpha,isMain);}
+  // parametric piece: {P:(s,t)=>[x,y,z], s:[a,b], t:[c,d], n, m, color (css var; omit for height colours), alpha}
+  function addParam(q,isMain){const [sa,sb]=q.s,[ta,tb]=q.t;addGrid((u,w)=>q.P(sa+(sb-sa)*u,ta+(tb-ta)*w),q.n||24,q.m||48,q.color?css(q.color):null,q.alpha||(isMain?0.92:0.5),isMain);}
+  if(o.f)addSurf(o.f,null,o.alpha||0.92,true);
+  if(o.P)addParam(Object.assign({alpha:o.alpha||0.92},o.P),true);
+  if(o.f2)addSurf(o.f2,css(o.f2color||'--warm'),o.f2alpha||0.55,false);
+  (o.surfs||[]).forEach(q=>addSurf(q.f,css(q.color),q.alpha||0.5,false));
+  (o.psurfs||[]).forEach(q=>addParam(q,false));
+  quads.sort((a,b)=>b.depth-a.depth);
+  const line=css('--card');
+  quads.forEach(q=>{g.globalAlpha=q.alpha;g.fillStyle=q.fill;g.beginPath();q.pp.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();g.fill();
+    g.globalAlpha=q.isMain?0.35:0.2;g.strokeStyle=line;g.lineWidth=0.6;g.stroke();});
+  g.globalAlpha=1;
+  (o.curves3d||[]).forEach(c=>{g.strokeStyle=c.color;g.lineWidth=c.width||2.6;g.setLineDash(c.dash||[]);g.beginPath();c.pts.forEach((q,i)=>{const p=P(q[0],q[1],q[2]);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.stroke();g.setLineDash([]);});
+  (o.arrows3d||[]).forEach(a=>{const p=P(...a.from),q=P(...a.to);arrow(g,p[0],p[1],q[0],q[1],a.color,2.4);if(a.label)label(g,a.label,q[0]+6,q[1]-8,a.color,'left',true);});
+  (o.pts3d||[]).forEach(t=>{const p=P(...t.p);g.beginPath();g.arc(p[0],p[1],t.r||5,0,7);g.fillStyle=t.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();if(t.label)label(g,t.label,p[0]+8,p[1]-10,t.color,'left',true);});
+  g.fillStyle=css('--muted');g.font='11px Inter, system-ui, sans-serif';g.textAlign='right';g.textBaseline='bottom';g.fillText('drag to rotate',W-8,H-6);
+}
+function attachDrag(cv){cv.classList.add('drag');let d=null;
+  cv.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY,yaw:cv._view.yaw,elev:cv._view.elev};cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!d)return;cv._view.yaw=d.yaw-(e.clientX-d.x)*0.01;cv._view.elev=Math.max(-0.2,Math.min(1.45,d.elev+(e.clientY-d.y)*0.01));surface(cv,cv._o);});
+  ['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>{d=null;}));}
+
+/* ---- contour map of f(x,y). o: f, x,y ranges, levels [..], labels (bool), equal, plus any axes2d options (pts, arrows, curves, param) ---- */
+function contour(cv,o){
+  const base=Object.assign({xmin:o.x[0],xmax:o.x[1],ymin:o.y[0],ymax:o.y[1]},o);
+  base.extra=function(g,X,Y){
+    const N=o.n||120,[xa,xb]=[base.xmin,base.xmax],[ya,yb]=[base.ymin,base.ymax];const F=[];
+    for(let i=0;i<=N;i++){F[i]=[];for(let j=0;j<=N;j++)F[i][j]=o.f(xa+(xb-xa)*i/N,ya+(yb-ya)*j/N);}
+    const L=o.levels,lo=Math.min(...L),hi=Math.max(...L);
+    L.forEach(c=>{g.strokeStyle=o.color?css(o.color):ramp(hi>lo?(c-lo)/(hi-lo):0.5);g.lineWidth=1.8;g.beginPath();
+      for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+        const x0=xa+(xb-xa)*i/N,x1=xa+(xb-xa)*(i+1)/N,y0=ya+(yb-ya)*j/N,y1=ya+(yb-ya)*(j+1)/N;
+        const v=[F[i][j],F[i+1][j],F[i+1][j+1],F[i][j+1]],P=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]],e=[];
+        if(v.some(q=>!isFinite(q)))continue;
+        for(let k=0;k<4;k++){const a=v[k]-c,b=v[(k+1)%4]-c;if((a<0)!==(b<0)){const t=a/(a-b),A=P[k],B=P[(k+1)%4];e.push([A[0]+t*(B[0]-A[0]),A[1]+t*(B[1]-A[1])]);}}
+        for(let k=0;k+1<e.length;k+=2){g.moveTo(X(e[k][0]),Y(e[k][1]));g.lineTo(X(e[k+1][0]),Y(e[k+1][1]));}}
+      g.stroke();});
+    if(o.extra2)o.extra2(g,X,Y);
+  };
+  return axes2d(cv,base);
+}
+
+/* ---- vector field F(x,y) -> [u,v]. o: F, x,y ranges, n (arrows per side), plus axes2d options ---- */
+function field(cv,o){
+  const base=Object.assign({xmin:o.x[0],xmax:o.x[1],ymin:o.y[0],ymax:o.y[1],equal:true},o);
+  base.extra=function(g,X,Y){const n=o.n||13,[xa,xb]=o.x,[ya,yb]=o.y,h=Math.min((xb-xa),(yb-ya))/n;let mx=0;const A=[];
+    for(let i=0;i<=n;i++)for(let j=0;j<=n;j++){const x=xa+(xb-xa)*i/n,y=ya+(yb-ya)*j/n,F=o.F(x,y);const m=Math.hypot(F[0],F[1]);if(isFinite(m)){A.push([x,y,F,m]);mx=Math.max(mx,m);}}
+    A.forEach(([x,y,F,m])=>{if(m<1e-12)return;const L=0.42*h*(o.uniform?1:Math.sqrt(m/mx))/m;
+      arrow(g,X(x-F[0]*L),Y(y-F[1]*L),X(x+F[0]*L),Y(y+F[1]*L),ramp(m/mx),1.6,5);});
+    if(o.extra2)o.extra2(g,X,Y);};
+  return axes2d(cv,base);
+}
+
+function mount(id,draw){const el=document.getElementById(id);if(!el)return;const f=()=>draw(el);redraws.push(f);f();return f;}
+function slider(id,cb){const el=document.getElementById(id);if(el)el.addEventListener('input',cb);return el;}
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>redraws.forEach(f=>f()),120);});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>redraws.forEach(f=>f()));
+document.addEventListener('DOMContentLoaded',()=>{ // highlight current section in rail
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];if(!('IntersectionObserver' in window)||!links.length)return;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));}}),{rootMargin:'-20% 0px -70% 0px'});
+  links.forEach(a=>{const s=document.getElementById(a.getAttribute('href').slice(1));if(s)io.observe(s);});});
+return {css,fmt,range,mix,ramp,arrow,label,axes2d,surface,contour,field,mount,slider,redraw:()=>redraws.forEach(f=>f())};
+})();
+</script>
+<script>
+(function(){
+const {css,fmt,mount,axes2d,label,arrow}=MV;
+const $=id=>document.getElementById(id);
+const PI=Math.PI;
+const on=(ids,f)=>ids.forEach(id=>{const e=$(id);if(e){e.addEventListener('input',f);e.addEventListener('change',f);}});
+const md=(t,T)=>((t%T)+T)%T;
+const T=(g,s,x,y,col,al)=>label(g,s,x,y,col||css('--ink'),al||'left',true);
+function simpson(f,a,b,n){n=n||400;if(n%2)n++;const h=(b-a)/n;let s=f(a)+f(b);for(let i=1;i<n;i++)s+=(i%2?4:2)*f(a+i*h);return s*h/3;}
+/* draw y=f(t) on [a,b], breaking the pen at jumps bigger than tol */
+function drawF(g,X,Y,f,a,b,col,w,dash,tol,N){N=N||1200;g.save();g.strokeStyle=col;g.lineWidth=w||2.2;g.setLineDash(dash||[]);g.beginPath();let pen=false,py=null;
+  for(let i=0;i<=N;i++){const x=a+(b-a)*i/N,y=f(x);if(!isFinite(y)){pen=false;continue;}
+    if(pen&&tol!==undefined&&Math.abs(y-py)>tol)pen=false;if(!pen){g.moveTo(X(x),Y(y));pen=true;}else g.lineTo(X(x),Y(y));py=y;}
+  g.stroke();g.restore();}
+function seg(g,X,Y,x1,y1,x2,y2,col,w,dash){g.save();g.strokeStyle=col;g.lineWidth=w||2.4;g.setLineDash(dash||[]);g.beginPath();g.moveTo(X(x1),Y(y1));g.lineTo(X(x2),Y(y2));g.stroke();g.restore();}
+function dot(g,X,Y,x,y,col,open,r){g.beginPath();g.arc(X(x),Y(y),r||4.5,0,7);if(open){g.fillStyle=css('--card');g.fill();g.strokeStyle=col;g.lineWidth=1.8;g.stroke();}else{g.fillStyle=col;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.2;g.stroke();}}
+function piLab(k,den){ // value k/den * pi as text
+  if(k===0)return '0';let a=k,b=den;const gcd=(p,q)=>q?gcd(q,p%q):Math.abs(p);const d=gcd(a,b);a/=d;b/=d;
+  const s=a<0?'−':'';a=Math.abs(a);return s+(a===1?'':a)+'π'+(b===1?'':'/'+b);}
+/* axes with t-ticks at multiples of pi/den. o: xmin,xmax,ymin,ymax,ystep,den, draw(g,X,Y) */
+function piAxes(cv,o){
+  const den=o.den||1;
+  const r=axes2d(cv,Object.assign({},o,{xstep:1e9,extra:(g,X,Y)=>{
+    g.strokeStyle=css('--grid');g.lineWidth=1;
+    for(let k=Math.ceil(o.xmin/PI*den);k<=Math.floor(o.xmax/PI*den);k++){if(k===0)continue;const x=X(k*PI/den);g.beginPath();g.moveTo(x,0);g.lineTo(x,4000);g.stroke();}
+    if(o.draw)o.draw(g,X,Y);}}));
+  if(!r)return;const {g,X,Y}=r;const H=cv.clientHeight;g.fillStyle=css('--muted');g.font='11px Inter, system-ui, sans-serif';g.textAlign='center';g.textBaseline='top';
+  const every=o.every||1;
+  for(let k=Math.ceil(o.xmin/PI*den);k<=Math.floor(o.xmax/PI*den);k++){if(k===0||k%every)continue;g.fillText(piLab(k,den),X(k*PI/den),H-26+6);}
+  if(o.tl){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.tl,X(o.xmax)-2,Y(Math.max(o.ymin,Math.min(0,o.ymax)))-3);}
+  return r;}
+const sqw=t=>md(t,2*PI)<PI&&md(t,2*PI)>0?1:0;
+const sqS=(t,k)=>{let s=.5;for(let j=0;j<k-1;j++){const m=2*j+1;s+=2/(m*PI)*Math.sin(m*t);}return s;}; // k non-zero terms
+const SH=Math.sinh(PI);
+const expExt=t=>Math.exp(md(t+PI,2*PI)-PI);
+const expS=(t,N)=>{let s=SH/PI;for(let n=1;n<=N;n++){const c=2*SH/PI/(1+n*n)*(n%2?-1:1);s+=c*Math.cos(n*t)-c*n*Math.sin(n*t);}return s;};
+const COLS=()=>[css('--c2'),css('--c3'),css('--c4'),css('--warm')];
+
+/* ================= §0 build ================= */
+function drawBuild(cv){const N=+$('bd-n').value,sh=$('bd-c').checked,cols=COLS();
+  piAxes(cv,{xmin:-2*PI,xmax:2*PI,ymin:-0.35,ymax:1.4,ystep:0.5,den:2,every:1,tl:'t',draw:(g,X,Y)=>{
+    drawF(g,X,Y,sqw,-2*PI,2*PI,css('--axis'),1.8,[6,4],0.5);
+    if(sh)for(let j=0;j<N;j++){const m=2*j+1;drawF(g,X,Y,t=>.5+2/(m*PI)*Math.sin(m*t),-2*PI,2*PI,cols[j%4],1.2);}
+    drawF(g,X,Y,t=>sqS(t,N+1),-2*PI,2*PI,css('--accent'),2.8);}});
+  $('bd-out').innerHTML=`sum = ½ + (2/π)(sin t + … + sin ${2*N-1}t / ${2*N-1})   value at t = π/2: <b>${fmt(sqS(PI/2,N+1),4)}</b> (square wave: 1)`;}
+if($('f-build')){on(['bd-n','bd-c'],()=>drawBuild($('f-build')));mount('f-build',drawBuild);}
+
+/* ================= §1 periodic ================= */
+const PER=[{f:t=>Math.sin(PI*t)+0.45*Math.sin(2*PI*t+0.6),y:2,name:'periodic wave, T = 2'},{f:t=>Math.cos(3*t),y:1.6,name:'cos 3t'},{f:t=>Math.sin(t)+Math.sin(2*t),y:2.3,name:'sin t + sin 2t'},
+  {f:t=>Math.sin(t)+Math.sin(2*PI*t),y:2.3,name:'sin t + sin 2πt'},{f:t=>1,y:1.6,name:'constant 1'}];
+function drawPer(cv){const P=PER[+$('pe-sel').value],s=+$('pe-s').value;
+  axes2d(cv,{xmin:-4,xmax:6,ymin:-P.y,ymax:P.y,xstep:1,ystep:1,xlabel:'t',extra:(g,X,Y)=>{
+    drawF(g,X,Y,P.f,-4,6,css('--accent'),2.6);drawF(g,X,Y,t=>P.f(t+s),-4,6,css('--warm'),2,[6,4]);
+    if(+$('pe-sel').value===0){[-4,-2,2,4].forEach((v,i)=>T(g,['−2T','−T','T','2T'][i],X(v)+3,Y(-P.y)+(-14),css('--muted')));}}});
+  let mx=0;for(let i=0;i<=2000;i++){const t=-4+10*i/2000;mx=Math.max(mx,Math.abs(P.f(t+s)-P.f(t)));}
+  $('pe-out').innerHTML=`${P.name}: shift = ${fmt(s,2)}   biggest gap |f(t+shift) − f(t)| on the window = <b>${fmt(mx,3)}</b>   → ${mx<2e-3?'<b>this shift is a period</b>':'not a period'}`;}
+if($('f-per')){on(['pe-sel','pe-s'],()=>drawPer($('f-per')));mount('f-per',drawPer);}
+
+/* ================= §2 orthogonality ================= */
+function drawOrth(cv){const A=$('or-a').value,n=+$('or-n').value,B=$('or-b').value,m=+$('or-m').value;
+  const w1=t=>A==='c'?Math.cos(n*t):Math.sin(n*t),w2=t=>B==='c'?Math.cos(m*t):Math.sin(m*t),p=t=>w1(t)*w2(t);
+  piAxes(cv,{xmin:-PI,xmax:PI,ymin:-1.25,ymax:1.25,ystep:0.5,den:2,tl:'t',draw:(g,X,Y)=>{
+    [[1,css('--accent')],[-1,css('--c2')]].forEach(([sg,col])=>{g.save();g.beginPath();g.rect(0,sg>0?0:Y(0),4000,sg>0?Y(0):4000);g.clip();
+      g.globalAlpha=0.28;g.fillStyle=col;g.beginPath();g.moveTo(X(-PI),Y(0));for(let i=0;i<=600;i++){const t=-PI+2*PI*i/600;g.lineTo(X(t),Y(p(t)));}g.lineTo(X(PI),Y(0));g.closePath();g.fill();g.restore();});
+    drawF(g,X,Y,w1,-PI,PI,css('--c4'),1.3,[5,3]);drawF(g,X,Y,w2,-PI,PI,css('--warm'),1.3,[2,3]);drawF(g,X,Y,p,-PI,PI,css('--ink'),2.4);}});
+  const I=simpson(p,-PI,PI,2000);const nm=(c,k)=>(c==='c'?'cos ':'sin ')+k+'t';
+  $('or-out').innerHTML=`∫ from −π to π of (${nm(A,n)})(${nm(B,m)}) dt = <b>${fmt(Math.abs(I)<1e-9?0:I,4)}</b>${Math.abs(I-PI)<1e-6?' = π':Math.abs(I-2*PI)<1e-6?' = 2π':''}${(A==='s'&&n===0)||(B==='s'&&m===0)?'   (sin 0t = 0)':''}`;}
+if($('f-orth')){on(['or-a','or-n','or-b','or-m'],()=>drawOrth($('f-orth')));mount('f-orth',drawOrth);}
+
+/* ================= §2 square wave partial sums ================= */
+function drawSq(cv){const k=+$('sq-k').value;
+  piAxes(cv,{xmin:-3*PI,xmax:3*PI,ymin:-0.35,ymax:1.4,ystep:0.5,den:1,tl:'t',draw:(g,X,Y)=>{
+    drawF(g,X,Y,sqw,-3*PI,3*PI,css('--axis'),1.8,[6,4],0.5);drawF(g,X,Y,t=>sqS(t,k),-3*PI,3*PI,css('--accent'),2.6,null,undefined,2400);
+    for(let j=-3;j<=3;j++)dot(g,X,Y,j*PI,.5,css('--warm'));}});
+  const m=2*k-3,last=k>1?`(2/${m===1?'':m}π) sin ${m===1?'':m}t`:'';
+  $('sq-out').innerHTML=`s<sub>${k}</sub> = ½${k>1?' + … + '+last:''}   s<sub>${k}</sub>(π/2) = <b>${fmt(sqS(PI/2,k),4)}</b>   s<sub>${k}</sub>(0) = <b>0.5</b>`;}
+if($('f-sq')){on(['sq-k'],()=>drawSq($('f-sq')));mount('f-sq',drawSq);
+  document.querySelectorAll('#f-sq ~ .ctrl button[data-k]').forEach(b=>b.addEventListener('click',()=>{$('sq-k').value=b.dataset.k;drawSq($('f-sq'));}));}
+
+/* ================= §2 e^t ================= */
+function drawExp(cv){const N=+$('ex-n').value;
+  piAxes(cv,{xmin:-3*PI,xmax:3*PI,ymin:-4,ymax:26,ystep:5,den:1,tl:'t',draw:(g,X,Y)=>{
+    drawF(g,X,Y,expExt,-3*PI,3*PI,css('--axis'),1.8,[6,4],5);drawF(g,X,Y,t=>Math.exp(t),-PI,PI,css('--ink'),1.4);
+    drawF(g,X,Y,t=>expS(t,N),-3*PI,3*PI,css('--accent'),2.4,null,undefined,2400);
+    [-3,-1,1,3].forEach(j=>dot(g,X,Y,j*PI,Math.cosh(PI),css('--warm')));}});
+  $('ex-out').innerHTML=`partial sum up to n = ${N}: at t = 1 <b>${fmt(expS(1,N),3)}</b> (e = 2.718); at t = π <b>${fmt(expS(PI,N),3)}</b> (cosh π = ${fmt(Math.cosh(PI),3)})`;}
+if($('f-exp')){on(['ex-n'],()=>drawExp($('f-exp')));mount('f-exp',drawExp);}
+
+/* ================= §3 Taylor vs Fourier ================= */
+function taylor(t,N){let s=0,term=1;for(let j=0;j<=N;j++){s+=term;term*=t/(j+1);}return s;}
+function drawTaylor(cv){const N=+$('ty-n').value;
+  piAxes(cv,{xmin:-PI,xmax:PI,ymin:-4,ymax:26,ystep:5,den:2,tl:'t',draw:(g,X,Y)=>{
+    drawF(g,X,Y,Math.exp,-PI,PI,css('--ink'),2.4);drawF(g,X,Y,t=>taylor(t,N),-PI,PI,css('--warm'),2.2);drawF(g,X,Y,t=>expS(t,N),-PI,PI,css('--accent'),2.2);}});
+  const e=t=>[Math.abs(taylor(t,N)-Math.exp(t)),Math.abs(expS(t,N)-Math.exp(t))];
+  const a=e(0),b=e(2.5);
+  $('ty-out').innerHTML=`N = ${N}   error at t = 0: Taylor <b>${fmt(a[0],3)}</b>, Fourier <b>${fmt(a[1],3)}</b>   error at t = 2.5: Taylor <b>${fmt(b[0],3)}</b>, Fourier <b>${fmt(b[1],3)}</b>`;}
+if($('f-taylor')){on(['ty-n'],()=>drawTaylor($('f-taylor')));mount('f-taylor',drawTaylor);}
+
+/* ================= §3 Example 4.3.1 piecewise ================= */
+const pw=t=>t<0?t:(t<1?2:t*t);
+function pwPieces(g,X,Y,col){drawF(g,X,Y,t=>t,-2,0,col,2.4);drawF(g,X,Y,t=>2,0,1,col,2.4);drawF(g,X,Y,t=>t*t,1,2,col,2.4);}
+const PWD={'-2':{R:[-2,1]},'0':{L:[0,1],R:[2,0]},'1':{L:[2,0],R:[1,2]},'2':{L:[4,4]},'0.5':{L:[2,0],R:[2,0]}};
+function drawPw(cv){const k=$('pw-t').value,t0=+k,D=PWD[k];
+  axes2d(cv,{xmin:-2.6,xmax:2.6,ymin:-2.6,ymax:4.6,xstep:1,ystep:1,xlabel:'t',ylabel:'f(t)',extra:(g,X,Y)=>{
+    pwPieces(g,X,Y,css('--ink'));
+    if(D.L){seg(g,X,Y,t0-0.7,D.L[0]-0.7*D.L[1],t0,D.L[0],css('--warm'),1.6,[5,4]);const xa=t0-0.4,xb=t0-0.08;arrow(g,X(xa),Y(pw(xa)),X(xb),Y(pw(xb)),css('--warm'),2.6,9);}
+    if(D.R){seg(g,X,Y,t0,D.R[0],t0+0.7,D.R[0]+0.7*D.R[1],css('--accent'),1.6,[5,4]);const xa=t0+0.4,xb=t0+0.08;arrow(g,X(xa),Y(pw(xa)),X(xb),Y(pw(xb)),css('--accent'),2.6,9);}
+    dot(g,X,Y,-2,-2,css('--ink'));dot(g,X,Y,0,0,css('--ink'),true);dot(g,X,Y,0,2,css('--ink'),true);dot(g,X,Y,1,2,css('--ink'),true);dot(g,X,Y,1,1,css('--ink'));dot(g,X,Y,2,4,css('--ink'));}});
+  const L=D.L?`f(t₀⁻) = <b>${fmt(D.L[0])}</b>, f′(t₀⁻) = <b>${fmt(D.L[1])}</b>`:'no left limit needed (end point)';
+  const R=D.R?`f(t₀⁺) = <b>${fmt(D.R[0])}</b>, f′(t₀⁺) = <b>${fmt(D.R[1])}</b>`:'no right limit needed (end point)';
+  $('pw-out').innerHTML=`t₀ = ${k.replace('-','−')}:   left: ${L}   right: ${R}${k==='0'?'   (f(0) itself is not defined)':''}`;}
+if($('f-pw')){on(['pw-t'],()=>drawPw($('f-pw')));mount('f-pw',drawPw);}
+
+/* ================= §3 Example 4.3.3 ================= */
+function sqDots(g,X,Y,limit){const c=css('--ink');for(let j=-3;j<=2;j++){const a=j*PI,b=a+PI,lev=(j%2===0)?1:0;seg(g,X,Y,a,lev,b,lev,c,2.4);}
+  for(let j=-3;j<=3;j++){const x=j*PI;if(limit){dot(g,X,Y,x,1,c,true);dot(g,X,Y,x,0,c,true);dot(g,X,Y,x,.5,css('--warm'));}
+    else{dot(g,X,Y,x,1,c,true);dot(g,X,Y,x,0,c,j%2!==0);}}}
+function draw433(cv){const lim=cv.id==='f-433b';piAxes(cv,{xmin:-3.3*PI,xmax:3.3*PI,ymin:-0.35,ymax:1.35,ystep:0.5,den:1,tl:'t',draw:(g,X,Y)=>sqDots(g,X,Y,lim)});}
+if($('f-433a')){mount('f-433a',draw433);mount('f-433b',draw433);}
+
+/* ================= §3 Example 4.3.4 ================= */
+const C434=(()=>{const A=[],B=[];for(let n=0;n<=60;n++){const w=n*PI/2;
+  const f=(g)=>simpson(t=>t*g(w*t),-2,0,600)+simpson(t=>2*g(w*t),0,1,600)+simpson(t=>t*t*g(w*t),1,2,600);
+  A.push(0.5*f(Math.cos));B.push(0.5*f(Math.sin));}return {A,B};})();
+const S434=(t,N)=>{let s=C434.A[0]/2;for(let n=1;n<=N;n++)s+=C434.A[n]*Math.cos(n*PI*t/2)+C434.B[n]*Math.sin(n*PI*t/2);return s;};
+function draw434(cv){const lim=cv.id==='f-434b',N=+$('f4-n').value,c=css('--ink');
+  axes2d(cv,{xmin:-2.4,xmax:2.4,ymin:-2.6,ymax:4.6,xstep:1,ystep:1,xlabel:'t',extra:(g,X,Y)=>{
+    pwPieces(g,X,Y,c);
+    if(lim){drawF(g,X,Y,t=>S434(t,N),-2.4,2.4,css('--accent'),1.5);[[-2,-2],[0,0],[0,2],[1,2],[1,1],[2,4]].forEach(p=>dot(g,X,Y,p[0],p[1],c,true));
+      [[-2,1],[0,1],[1,1.5],[2,1]].forEach(p=>dot(g,X,Y,p[0],p[1],css('--warm')));}
+    else{dot(g,X,Y,-2,-2,c);dot(g,X,Y,0,0,c,true);dot(g,X,Y,0,2,c,true);dot(g,X,Y,1,2,c,true);dot(g,X,Y,1,1,c);dot(g,X,Y,2,4,c);}}});
+  if(lim)$('f4-out').innerHTML=`partial sum up to n = ${N} (period 4, ω = π/2):  at t = 0: <b>${fmt(S434(0,N),3)}</b> (→ 1)   at t = 1: <b>${fmt(S434(1,N),3)}</b> (→ 1.5)   at t = 2: <b>${fmt(S434(2,N),3)}</b> (→ 1)`;}
+if($('f-434a')){on(['f4-n'],()=>draw434($('f-434b')));mount('f-434a',draw434);mount('f-434b',draw434);}
+
+/* ================= §3 Gibbs ================= */
+function drawGibbs(cv){const k=+$('gb-k').value;let mx=-1,at=0;for(let i=1;i<=3000;i++){const t=1.2*i/3000,v=sqS(t,k);if(v>mx){mx=v;at=t;}}
+  axes2d(cv,{xmin:-0.5,xmax:1.2,ymin:-0.2,ymax:1.25,xstep:0.25,ystep:0.25,xlabel:'t',extra:(g,X,Y)=>{
+    seg(g,X,Y,-0.5,1.0895,1.2,1.0895,css('--warm'),1.4,[5,4]);drawF(g,X,Y,sqw,-0.5,1.2,css('--axis'),1.8,[6,4],0.5);
+    drawF(g,X,Y,t=>sqS(t,k),-0.5,1.2,css('--accent'),2.4,null,undefined,2000);dot(g,X,Y,at,mx,css('--c2'));T(g,'1.0895',X(1.2)-4,Y(1.0895)-9,css('--warm'),'right');}});
+  $('gb-out').innerHTML=`k = ${k} non-zero terms: highest point of s<sub>k</sub> = <b>${fmt(mx,4)}</b> at t = <b>${fmt(at,3)}</b> (overshoot ${fmt((mx-1)*100,1)}% of the jump)`;}
+if($('f-gibbs')){on(['gb-k'],()=>drawGibbs($('f-gibbs')));mount('f-gibbs',drawGibbs);}
+
+/* ================= §4 even/odd ================= */
+const EO=[{f:t=>0.12*t**4-t*t+1.2,x:3,y:[-1.5,2.2],v:'even'},{f:t=>-t+0.12*t**3,x:3,y:[-1.6,1.6],v:'odd'},{f:t=>Math.abs(Math.sin(t)),x:2*PI,y:[-1.2,1.3],v:'even'},
+  {f:t=>t**3,x:2,y:[-8.5,8.5],v:'odd'},{f:sqw,x:2*PI,y:[-1.2,1.3],v:'neither (but square wave − ½ is odd)'},{f:t=>sqw(t)-.5,x:2*PI,y:[-1.2,1.3],v:'odd'},
+  {f:t=>Math.exp(t),x:PI,y:[-2,24],v:'neither: even part cosh t, odd part sinh t'}];
+function drawEO(cv){const E=EO[+$('eo-sel').value],sp=$('eo-p').checked;
+  axes2d(cv,{xmin:-E.x,xmax:E.x,ymin:E.y[0],ymax:E.y[1],xstep:E.x>4?PI/2:1,ystep:E.y[1]>5?(E.y[1]>10?5:2):0.5,xlabel:'t',extra:(g,X,Y)=>{
+    const tol=(E.y[1]-E.y[0])*0.3;
+    if(sp){drawF(g,X,Y,t=>(E.f(t)+E.f(-t))/2,-E.x,E.x,css('--c3'),1.6,null,tol);drawF(g,X,Y,t=>(E.f(t)-E.f(-t))/2,-E.x,E.x,css('--c4'),1.6,null,tol);}
+    drawF(g,X,Y,E.f,-E.x,E.x,css('--accent'),2.6,null,tol);drawF(g,X,Y,t=>E.f(-t),-E.x,E.x,css('--warm'),2,[6,4],tol);}});
+  $('eo-out').innerHTML=`f is <b>${E.v}</b>${E.x>4?'   (t-ticks every π/2)':''}`;}
+if($('f-eo')){on(['eo-sel','eo-p'],()=>drawEO($('f-eo')));mount('f-eo',drawEO);}
+
+/* ================= §4 rectifier ================= */
+const recS=(t,N)=>{let s=2/PI;for(let k=1;k<=N;k++)s+=4/PI*Math.cos(2*k*t)/(1-4*k*k);return s;};
+function drawRect(cv){const N=+$('rc-n').value;
+  piAxes(cv,{xmin:-2*PI,xmax:2*PI,ymin:-0.2,ymax:1.25,ystep:0.5,den:2,tl:'t',draw:(g,X,Y)=>{
+    drawF(g,X,Y,t=>Math.abs(Math.sin(t)),-2*PI,2*PI,css('--axis'),1.8,[6,4]);drawF(g,X,Y,t=>recS(t,N),-2*PI,2*PI,css('--accent'),2.6);}});
+  let mx=0;for(let i=0;i<=1000;i++){const t=-PI+2*PI*i/1000;mx=Math.max(mx,Math.abs(recS(t,N)-Math.abs(Math.sin(t))));}
+  $('rc-out').innerHTML=`terms up to cos ${2*N}t: largest error = <b>${fmt(mx,4)}</b> (at the corners t = 0, ±π)`;}
+if($('f-rect')){on(['rc-n'],()=>drawRect($('f-rect')));mount('f-rect',drawRect);}
+
+/* ================= §5 extensions ================= */
+const HF=[t=>0.2+t*t/4,t=>t,t=>1,t=>PI-t];
+const HC=HF.map(f=>{const a=[],b=[];for(let n=0;n<=30;n++){a.push(2/PI*simpson(t=>f(t)*Math.cos(n*t),0,PI,800));b.push(2/PI*simpson(t=>f(t)*Math.sin(n*t),0,PI,800));}return {a,b};});
+function ext(f,mode){return t=>{const u=md(t+PI,2*PI)-PI;if(Math.abs(u)<1e-12||Math.abs(Math.abs(u)-PI)<1e-12)return NaN;return u>0?f(u):(mode==='e'?f(-u):-f(-u));};}
+function drawExt(cv){const i=+$('xt-f').value,mode=$('xt-m').value,N=+$('xt-n').value,f=HF[i],C=HC[i];
+  const S=t=>{if(mode==='e'){let s=C.a[0]/2;for(let n=1;n<=N;n++)s+=C.a[n]*Math.cos(n*t);return s;}let s=0;for(let n=1;n<=N;n++)s+=C.b[n]*Math.sin(n*t);return s;};
+  let top=0;for(let k=0;k<=100;k++)top=Math.max(top,Math.abs(f(PI*k/100)));const ymax=top*1.25+0.3,ymin=mode==='d'?-ymax:-0.4;
+  piAxes(cv,{xmin:-2*PI,xmax:3*PI,ymin,ymax,ystep:top>2?1:0.5,den:1,tl:'t',draw:(g,X,Y)=>{
+    if(mode!=='o'){drawF(g,X,Y,ext(f,mode),-2*PI,3*PI,css('--axis'),1.8,[6,4],top*0.4);drawF(g,X,Y,S,-2*PI,3*PI,css('--accent'),2.2,null,undefined,2000);}
+    drawF(g,X,Y,f,0.0001,PI-0.0001,css('--ink'),3);}});
+  const nm=['0.2 + t²/4','t','1','π − t'][i];
+  $('xt-out').innerHTML=mode==='o'?`f(t) = ${nm} on (0, π) only: choose an extension`:
+    `${mode==='e'?'cosine series: ½a₀ = '+fmt(C.a[0]/2,3)+', a₁ = '+fmt(C.a[1],3)+', a₂ = '+fmt(C.a[2],3)+', a₃ = '+fmt(C.a[3],3):'sine series: b₁ = '+fmt(C.b[1],3)+', b₂ = '+fmt(C.b[2],3)+', b₃ = '+fmt(C.b[3],3)}   at t = π/2: series <b>${fmt(S(PI/2),3)}</b>, f = ${fmt(f(PI/2),3)}`;}
+if($('f-ext')){on(['xt-f','xt-m','xt-n'],()=>drawExt($('f-ext')));mount('f-ext',drawExt);}
+
+/* ================= §5 cos vs sine series of t ================= */
+const triS=(t,N)=>{let s=PI/2;for(let n=1;n<=N;n++)if(n%2)s-=4/(PI*n*n)*Math.cos(n*t);return s;};
+const sawS=(t,N)=>{let s=0;for(let n=1;n<=N;n++)s+=2*(n%2?1:-1)/n*Math.sin(n*t);return s;};
+function drawCmp(cv){const N=+$('cm-n').value,tri=cv.id==='f-cmpa';
+  piAxes(cv,{xmin:-2*PI,xmax:2*PI,ymin:tri?-0.6:-4.2,ymax:4.2,ystep:1,den:1,tl:'t',draw:(g,X,Y)=>{
+    if(tri){drawF(g,X,Y,t=>Math.abs(md(t+PI,2*PI)-PI),-2*PI,2*PI,css('--axis'),1.8,[6,4]);drawF(g,X,Y,t=>triS(t,N),-2*PI,2*PI,css('--accent'),2.4);}
+    else{drawF(g,X,Y,t=>md(t+PI,2*PI)-PI,-2*PI,2*PI,css('--axis'),1.8,[6,4],3);drawF(g,X,Y,t=>sawS(t,N),-2*PI,2*PI,css('--warm'),2.2,null,undefined,2000);}
+    drawF(g,X,Y,t=>t,0.001,PI-0.001,css('--ink'),1.4);}});
+  if(!tri){let e1=0,e2=0;for(let i=0;i<=600;i++){const t=0.3+(PI-0.6)*i/600;e1=Math.max(e1,Math.abs(triS(t,N)-t));e2=Math.max(e2,Math.abs(sawS(t,N)-t));}
+    $('cm-out').innerHTML=`N = ${N}: largest error on 0.3 ≤ t ≤ π − 0.3: cosine series <b>${fmt(e1,4)}</b>, sine series <b>${fmt(e2,4)}</b>`;}}
+if($('f-cmpa')){on(['cm-n'],()=>{drawCmp($('f-cmpa'));drawCmp($('f-cmpb'));});mount('f-cmpa',drawCmp);mount('f-cmpb',drawCmp);}
+
+/* ================= §6 square error ================= */
+function drawErr(){const b=+$('er-b').value,S=t=>.5+b*Math.sin(t);const cv=$('f-err'),cv2=$('f-err2');
+  piAxes(cv,{xmin:-PI,xmax:PI,ymin:-0.9,ymax:1.9,ystep:0.5,den:2,tl:'t',draw:(g,X,Y)=>{
+    g.save();g.globalAlpha=0.25;g.fillStyle=css('--c2');for(let i=0;i<300;i++){const t=-PI+2*PI*(i+.5)/300,y1=sqw(t),y2=S(t);g.fillRect(X(-PI+2*PI*i/300),Math.min(Y(y1),Y(y2)),X(-PI+2*PI*(i+1)/300)-X(-PI+2*PI*i/300)+0.5,Math.abs(Y(y1)-Y(y2)));}g.restore();
+    drawF(g,X,Y,sqw,-PI,PI,css('--axis'),1.8,[6,4],0.5);drawF(g,X,Y,S,-PI,PI,css('--accent'),2.6);}});
+  const E=x=>PI/2-4*x+PI*x*x;
+  axes2d(cv2,{xmin:0,xmax:1.3,ymin:0,ymax:2.6,xstep:0.25,ystep:0.5,xlabel:'β₁',ylabel:'E',extra:(g,X,Y)=>{
+    drawF(g,X,Y,E,0,1.3,css('--ink'),2.2);seg(g,X,Y,2/PI,0,2/PI,E(2/PI),css('--warm'),1.4,[4,4]);dot(g,X,Y,b,E(b),css('--accent'),false,6);T(g,'2/π',X(2/PI)+5,Y(0.12),css('--warm'));}});
+  $('er-out').innerHTML=`β₁ = ${fmt(b,2)}:  E = π/2 − 4β₁ + πβ₁² = <b>${fmt(E(b),4)}</b>   (minimum ${fmt(E(2/PI),4)} at β₁ = 2/π ≈ 0.6366)`;}
+if($('f-err')){on(['er-b'],drawErr);mount('f-err',drawErr);mount('f-err2',()=>{});}
+
+/* ================= §6 change of interval ================= */
+const ciS=(t,N)=>{let s=1;for(let n=1;n<=N;n++)s-=2/(PI*n)*Math.sin(n*PI*t);return s;};
+function drawCi(cv){const N=+$('ci-n').value;
+  axes2d(cv,{xmin:-2,xmax:4,ymin:-0.5,ymax:2.5,xstep:1,ystep:0.5,xlabel:'t',extra:(g,X,Y)=>{
+    drawF(g,X,Y,t=>md(t,2),-2,4,css('--axis'),1.8,[6,4],1);drawF(g,X,Y,t=>ciS(t,N),-2,4,css('--accent'),2.4,null,undefined,2000);
+    [-2,0,2,4].forEach(x=>dot(g,X,Y,x,1,css('--warm')));}});
+  $('ci-out').innerHTML=`N = ${N}: at t = 0.5 the partial sum is <b>${fmt(ciS(0.5,N),4)}</b> (f = 0.5); at t = 0 it is exactly 1 (the jump midpoint)`;}
+if($('f-ci')){on(['ci-n'],()=>drawCi($('f-ci')));mount('f-ci',drawCi);}
+
+/* ================= §6 spectrum ================= */
+const SPEC=[
+  {c:n=>[0,(1-(n%2?-1:1))/(n*PI)],d:.5,ms:.5,nm:'square wave'},
+  {c:n=>{const a=2*SH/PI/(1+n*n)*(n%2?-1:1);return [a,-n*a];},d:SH/PI,ms:Math.sinh(2*PI)/(2*PI),nm:'eᵗ repeated'},
+  {c:n=>[n%2?0:4/(PI*(1-n*n)),0],d:2/PI,ms:.5,nm:'|sin t|'},
+  {c:n=>[2*((n%2?-1:1)-1)/(n*n*PI),0],d:PI/2,ms:PI*PI/3,nm:'triangle wave'},
+  {c:n=>[0,2*(n%2?1:-1)/n],d:0,ms:PI*PI/3,nm:'saw-tooth'}];
+function drawSpec(cv){const S=SPEC[+$('sp-sel').value],amp=$('sp-m').value==='c';const L=[];for(let n=1;n<=10;n++)L.push(S.c(n));
+  let lo=Math.min(0,S.d),hi=Math.max(0,S.d);L.forEach(([a,b])=>{if(amp){hi=Math.max(hi,Math.hypot(a,b));}else{lo=Math.min(lo,a,b);hi=Math.max(hi,a,b);}});
+  const pad=(hi-lo)*0.12+0.05;const span=hi-lo+2*pad;const ys=span>8?2:span>3?1:span>1.2?0.5:0.25;
+  axes2d(cv,{xmin:-0.6,xmax:10.6,ymin:lo-pad,ymax:hi+pad,xstep:1,ystep:ys,xlabel:'nω',extra:(g,X,Y)=>{
+    const bar=(x,v,col,w)=>{g.fillStyle=col;const y0=Y(0),y1=Y(v);g.fillRect(X(x-w/2),Math.min(y0,y1),X(x+w/2)-X(x-w/2),Math.abs(y1-y0));};
+    bar(0,amp?Math.abs(S.d):S.d,css('--accent'),0.3);
+    L.forEach(([a,b],i)=>{const n=i+1;if(amp)bar(n,Math.hypot(a,b),css('--c4'),0.34);else{bar(n-0.16,a,css('--accent'),0.28);bar(n+0.16,b,css('--warm'),0.28);}});}});
+  const P10=S.d*S.d+0.5*L.reduce((s,[a,b])=>s+a*a+b*b,0);
+  $('sp-out').innerHTML=`${S.nm}: D.C. term ½a₀ = ${fmt(S.d,3)}   power in lines 0–10: <b>${fmt(P10,4)}</b>   total mean square (1/2π)∫f² = <b>${fmt(S.ms,4)}</b>   (${fmt(100*P10/S.ms,2)}%)`;}
+if($('f-spec')){on(['sp-sel','sp-m'],()=>drawSpec($('f-spec')));mount('f-spec',drawSpec);}
+
+/* ================= taster sketches ================= */
+const f24=t=>{const u=md(t+PI,2*PI)-PI;return u<-PI/2?-PI:(u<PI/2?2*u:PI);};
+function drawQ24(cv){piAxes(cv,{xmin:-2*PI,xmax:2*PI,ymin:-4,ymax:4,ystep:1,den:2,tl:'t',draw:(g,X,Y)=>{
+  drawF(g,X,Y,f24,-2*PI,2*PI-1e-6,css('--accent'),2.6,null,3);
+  [-PI,PI].forEach(x=>{dot(g,X,Y,x,-PI,css('--accent'));dot(g,X,Y,x,PI,css('--accent'),true);});dot(g,X,Y,-2*PI,0,css('--accent'));
+  T(g,'π',X(-2*PI)+4,Y(PI)-8,css('--muted'));T(g,'−π',X(-2*PI)+4,Y(-PI)+10,css('--muted'));}});}
+if($('f-q24'))mount('f-q24',drawQ24);
+const f26=t=>{const u=md(t+2,4)-2;return Math.abs(u)<1?1-Math.abs(u):0;};
+function drawQ26(cv){axes2d(cv,{xmin:-6,xmax:6,ymin:-0.3,ymax:1.3,xstep:1,ystep:0.5,xlabel:'t',extra:(g,X,Y)=>{drawF(g,X,Y,f26,-6,6,css('--accent'),2.6);}});}
+if($('f-q26'))mount('f-q26',drawQ26);
+
+document.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)MV.redraw();}));
+})();
+
+</script>
+</body>
+</html>

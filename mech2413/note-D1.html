@@ -1,0 +1,1032 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH2413 D1 · Dynamics of Particles</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH2413 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Dynamics · D1</p>
+  <ol>
+    <li><a href="#s0">0 · Where this sits</a></li>
+    <li><a href="#s1">1 · A body as a particle</a></li>
+    <li><a href="#s2">2 · Displacement, velocity, acceleration</a></li>
+    <li><a href="#s3">3 · Constant acceleration</a></li>
+    <li><a href="#s4">4 · Varying acceleration: integrate</a></li>
+    <li><a href="#s5">5 · Acceleration depending on \(v\) or \(s\)</a></li>
+    <li><a href="#s6">6 · Newton's second law and frames</a></li>
+    <li><a href="#s7">7 · The recipe + string in a car</a></li>
+    <li><a href="#s8">8 · Example: parachute opens</a></li>
+    <li><a href="#s9">9 · Curvilinear motion: n–t and polar</a></li>
+    <li><a href="#s10">10 · Curves: station, off-ramp, maglev</a></li>
+    <li><a href="#s11">11 · Fluid drag and terminal velocity</a></li>
+    <li><a href="#s12">12 · Laminar drag</a></li>
+    <li><a href="#s13">13 · Turbulent drag</a></li>
+    <li><a href="#s14">14 · Drag exercises</a></li>
+    <li><a href="#s15">15 · Summary</a></li>
+    <li><a href="#s16">16 · Common mistakes</a></li>
+    <li><a href="#s17">17 · Find the mistake</a></li>
+    <li><a href="#s18">18 · Concept checks</a></li>
+    <li><a href="#s19">19 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-D1.html">Exam guide · D1</a><a href="note-S7.html">← S7</a><a href="note-D2.html">Next: D2 →</a></nav>
+  <span class="course">MECH2413 · Engineering Mechanics · Dynamics chapter 1</span>
+  <h1>Dynamics of Particles</h1>
+  <p class="lede">Every slide of the Dynamics chapter 1 handout (44 slides) explained from scratch: describing motion with calculus (position, velocity, acceleration), the trick \(v\,\mathrm dv=a\,\mathrm ds\), Newton's second law in inertial and accelerating frames, motion on curves with normal and tangential components (banked tracks, leaning, curvature), and falling against air drag, laminar and turbulent. Every exercise on the slides is solved in full with a free-body diagram. The exam taster at the end shows how Question B1 asks about this chapter.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>MECH2413 has three parts (slide 4). <b>Statics</b> (S1–S7, Prof. D.M. Shin) studies bodies at rest and the forces and moments on them. <b>Dynamics</b> (this part, D1–D3, Prof. P.C.Y. Chow) studies <b>how things move</b> in response to those forces and moments. <b>Introduction to Control</b> (C1, Prof. X. Li) designs ways to make systems move, respond and settle the way we want, using statics and dynamics.</p>
+<p>Slides 2 and 3 open with two quotes (from ChatGPT) on what mechanics is: the branch of physics about motion and the forces that cause or change it, which lets us predict how objects move, stay at rest or change their motion; and why it matters to mechanical engineers: it is the foundation for analysing and designing machines, structures and mechanisms, predicting (modelling) how parts behave under forces, keeping them safe and reliable, and turning physics into working designs.</p>
+<p><b>Schedule (slide 5).</b> Thursday 2-hour classes (13:00–14:50) and Friday 1-hour classes (15:00–15:50) in CYCP1. Weeks 1–4 statics (Shin); dynamics (Chow) runs from 2 October (week 5) to 6 November (week 10), with a holiday on 1 October and reading week 15–16 October; control (Li) runs from 30 October to 27 November (week 13).</p>
+
+<h3>Newton's three laws (slide 6)</h3>
+<div class="box thm"><span class="tag">Laws · Newton's laws of motion</span>
+<ol class="steps">
+<li><b>First law (law of inertia).</b> An object at rest stays at rest, and an object in motion keeps moving with constant velocity, unless an external force acts on it.</li>
+<li><b>Second law.</b> The acceleration of an object is directly proportional to the net (total) force on it and inversely proportional to its mass: \(\vb F=m\vb a\) (Section 6 gives the full form).</li>
+<li><b>Third law.</b> For every action there is an equal and opposite reaction: the forces two bodies exert on each other are equal in size, opposite in direction and on the same line (S1 Section 3).</li>
+</ol>
+<p class="word"><b>In words:</b> no net force, no change of velocity; a net force changes velocity at a rate force ÷ mass; forces come in pairs acting on different bodies.</p></div>
+<p class="muted">Dec 2021 B1(a) asked exactly this for 3 marks: "State Newton's three laws of motion."</p>
+
+<h3>What the dynamics part covers (slide 7)</h3>
+<ol class="steps"><li>Dynamics of particles (this chapter, D1).</li><li>Dynamics of rigid bodies (<a href="note-D2.html">D2</a>).</li><li>Dynamics of rockets (<a href="note-D3.html">D3</a>).</li></ol>
+<div class="box warn"><span class="tag">Syllabus change · slide 7</span>
+<p>The mathematical analysis of <b>orbital dynamics</b> and <b>space re-entry</b> has been removed from the course from 2026/27. Past-paper questions on those topics (many Section B parts from 2013–2019) can be ignored when revising. Satellites appear in this chapter only as pictures (slide 26) and in one qualitative remark (slide 35).</p></div>
+<p class="muted"><span class="lowpri">older syllabus</span> The May 2013 paper also had a free-vibration question (mass on a spring, \(\ddot y+\omega_n^2y=0\)). Vibration is not in the current handout, so it is not covered here; the <a href="guide-D1.html#D1-5">exam guide lists it</a> for completeness.</p>
+
+<div class="box conv"><span class="tag">Sign convention and colours for this chapter</span>
+<ul class="list">
+<li><b>Straight-line motion:</b> choose one positive direction along the line (usually the direction of motion) and state it with an arrow. Position \(s\), velocity \(v\) and acceleration \(a\) are all positive in that direction; a negative \(a\) while \(v\gt0\) means slowing down.</li>
+<li><b>Falling problems (Sections 8, 11–14):</b> positive is <b>downward</b>, so gravity gives \(+g\) and drag, which always opposes the velocity, gives a negative term.</li>
+<li><b>Curved motion:</b> \(\e{t}\) (tangential) points along the velocity; \(\e{n}\) (normal) points towards the <b>centre of curvature</b> (inside of the bend).</li>
+<li><b>Diagram colours:</b> <span style="color:var(--c2)">red</span> = weight and applied (driving) forces; <span style="color:var(--accent)">teal</span> = forces from the surroundings (normal reaction, friction, tension, drag, lift); <span style="color:var(--c3)">green</span> = acceleration (a motion arrow, <b>not</b> a force); <span style="color:var(--warm)">orange</span> = fictitious (inertial) force, drawn only when working in an accelerating frame.</li>
+</ul></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Treating a body as a particle (slides 8–9)</h2>
+<div class="box def"><span class="tag">Definition · particle</span>
+<p>Treating an object as a <b>particle</b> means modelling the whole object as a single <b>point mass</b>: it has mass but negligible size and shape, and we ignore its rotation and how its mass is spread inside it (slide 9). Only its <b>translational</b> motion (moving from place to place) is studied.</p></div>
+<p>Slide 9 shows two examples: cars on a motorway (for traffic or a journey, a car is a moving dot) and the Soyuz MS-15 capsule landing under its parachute in April 2020 (for its descent speed, the capsule is a falling point). When rotation matters (a wheel, a crank, a flywheel) the body must be treated as a <b>rigid body</b>, which is <a href="note-D2.html">D2</a>.</p>
+<p class="word"><b>Rule of thumb:</b> a body can be a particle when every point of it moves in (almost) the same way, or when the question only asks about its overall path and speed.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Displacement, velocity and acceleration (slides 10–11)</h2>
+<div class="box def"><span class="tag">Definitions · kinematics</span>
+<ul class="list">
+<li><b>Kinematics:</b> describing motion (where, how fast, how quickly speed changes) without asking what causes it. <b>Kinetics</b> (Section 6 on) links motion to forces.</li>
+<li><b>Displacement</b> \(\Delta\vb r\): the change of position, a <b>vector</b> (length and direction). It joins the start point to the end point; where the origin is does not matter (slide 11).</li>
+<li><b>Path:</b> the actual route travelled. Different paths can give the same displacement, so displacement ≠ path (slide 11).</li>
+<li><b>Average velocity</b> over a time \(\Delta t\): \(\vb v_{\rm avg}=\Delta\vb r/\Delta t\) (slide 10).</li>
+<li><b>Instantaneous velocity:</b> the limit as \(\Delta t\to0\):</li></ul>
+\[\begin{aligned}\vb v&=\lim_{\Delta t\to0}\frac{\Delta\vb r}{\Delta t}=\frac{\mathrm d\vb r}{\mathrm dt}=\dot{\vb r},\\ \vb a&=\lim_{\Delta t\to0}\frac{\Delta\vb v}{\Delta t}=\frac{\mathrm d\vb v}{\mathrm dt}=\ddot{\vb r}.\end{aligned}\]
+<p class="word"><b>In words:</b> velocity is the rate of change of position; acceleration is the rate of change of velocity. A dot over a symbol means "differentiate with respect to time" (\(\dot{\vb r}=\mathrm d\vb r/\mathrm dt\), \(\ddot{\vb r}=\mathrm d^2\vb r/\mathrm dt^2\)).</p></div>
+<div id="fig-s2"></div>
+<p>Slide 11's picture: a particle moves along a curved path from \(A\) at time \(t\) to \(A'\) at time \(t+\Delta t\). Its position vector changes from \(\vb r\) to \(\vb r'=\vb r+\Delta\vb r\). As \(\Delta t\) shrinks, \(\Delta\vb r\) lines up with the path, so <b>the velocity is always tangent to the path</b>.</p>
+<p><b>Straight-line (rectilinear) motion.</b> On a line we only need one coordinate \(s\) (slide 10 draws a point \(P\) moving to \(P'\) along the \(s\)-axis, \(\Delta s\) apart):</p>
+\[v=\frac{\mathrm ds}{\mathrm dt},\quad a=\frac{\mathrm dv}{\mathrm dt}=\frac{\mathrm d^2s}{\mathrm dt^2}.\]
+<p class="word"><b>In words:</b> on a straight line, velocity is the slope of the \(s\)–\(t\) graph and acceleration is the slope of the \(v\)–\(t\) graph.</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Constant acceleration (slides 12–13)</h2>
+<p>If \(a=a_c\) is constant, integrate step by step (slide 12), with \(v=v_0\) and \(s=s_0\) at \(t=0\):</p>
+<div class="box thm"><span class="tag">Results · constant acceleration only</span>
+\[\begin{aligned}&\textstyle\int_{v_0}^{v}\mathrm dv=\int_0^t a_c\,\mathrm dt\\ &\quad\Rightarrow\ v=v_0+a_ct,\\ &\textstyle\int_{s_0}^{s}\mathrm ds=\int_0^t(v_0+a_ct)\,\mathrm dt\\ &\quad\Rightarrow\ s=s_0+v_0t+\tfrac12a_ct^2,\\ &\textstyle\int_{v_0}^{v}v\,\mathrm dv=\int_{s_0}^{s}a_c\,\mathrm ds\\ &\quad\Rightarrow\ v^2=v_0^2+2a_c(s-s_0).\end{aligned}\]
+<p class="word"><b>In words:</b> these are the HKDSE "suvat" equations. The third comes from the chain rule \(a=\dfrac{\mathrm dv}{\mathrm dt}=\dfrac{\mathrm dv}{\mathrm ds}\dfrac{\mathrm ds}{\mathrm dt}=v\dfrac{\mathrm dv}{\mathrm ds}\), i.e. \(v\,\mathrm dv=a\,\mathrm ds\) (Section 5).</p></div>
+<div class="box warn"><span class="tag">Warning · slides 12 and 13</span><p>Acceleration is often <b>not</b> constant in real life (drag, springs, engines, a driver's foot). Then these formulas are <b>not valid</b>. Never use them when \(a\ne\) constant; integrate instead (Sections 4–5).</p></div>
+<div class="box eg"><span class="tag">Worked example · slide 13 · free fall from height \(h\)</span>
+<div class="pair"><div><div id="fig-s3-sys"></div><p class="sub">Ball released from rest</p></div><div><div id="fig-s3-fbd"></div><p class="sub">FBD (air resistance neglected): weight only</p></div></div>
+<p>Acceleration is measured as a function of time, \(a(t)=\mathrm dv/\mathrm dt\), so in general (slide 13)</p>
+\[\begin{aligned}v_2&=v_1+\int_{t_1}^{t_2}a(t)\,\mathrm dt,\\ s_2&=s_1+\int_{t_1}^{t_2}\Big(v_1\\ &\qquad+\int_{t_1}^{t}a(t')\,\mathrm dt'\Big)\mathrm dt.\end{aligned}\]
+<p>Here, with \(s\) and \(v\) positive downward, \(a=g\) constant, \(u=v(0)=0\), \(s(0)=0\):</p>
+\[\begin{aligned}v(t)&=\textstyle\int_0^tg\,\mathrm dt=gt,\\ s(t)&=\textstyle\int_0^tv\,\mathrm dt=\tfrac12gt^2,\\ h&=\tfrac12g\tau^2\ \Rightarrow\ \boxed{\tau=\sqrt{2h/g}},\\ &\boxed{v(\tau)=g\tau=\sqrt{2gh}}.\end{aligned}\]
+<p class="word"><b>In words:</b> the time to fall grows with the square root of the height; the impact speed is \(\sqrt{2gh}\) whatever the mass. Check: \(h=5\u{m}\) gives \(\tau=1.01\u{s}\), \(v=9.9\u{m/s}\).</p>
+<p class="muted">Slide 13's "remedial maths box": \(\int x^n\,\mathrm dx=\frac{x^{n+1}}{n+1}+\text{const}\) for \(n\ne-1\), but \(\int\frac1x\,\mathrm dx=\ln|x|+\text{const}\). The \(\ln\) case appears constantly with drag.</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Varying acceleration: integrate (slides 14–17)</h2>
+<p>When acceleration changes with time, the same integrals still work; you just cannot pull \(a\) out (slide 14):</p>
+\[\begin{aligned}v_2&=v_1+\int_{t_1}^{t_2}a(t)\,\mathrm dt,\\ s_2&=s_1+\int_{t_1}^{t_2}v(t)\,\mathrm dt.\end{aligned}\]
+<p class="word"><b>In words:</b> the change in velocity is the <b>area under the \(a\)–\(t\) graph</b>; the change in position is the <b>area under the \(v\)–\(t\) graph</b>. Going the other way, differentiate: \(a=\mathrm dv/\mathrm dt\), \(v=\mathrm ds/\mathrm dt\).</p>
+<p><b>Why integrate acceleration? (slide 15).</b> Acceleration is the easiest of the three to measure. An <b>accelerometer</b> is a small mass sitting on a <b>piezoelectric</b> crystal (a crystal that produces a voltage when squeezed or sheared, with no power supply). When the structure accelerates, the crystal must push the mass with force \(F=m\ddot y\), and the voltage is proportional to that force, so it measures \(\ddot y\). Slide 15 plots a measured \(a(t)\) (red bars) and the velocity \(V=\int a\,\mathrm dt\) found from it (blue). Our goal: if we know how acceleration, velocity or displacement change over time, we can <b>model and predict</b> the motion.</p>
+<div class="box eg"><span class="tag">Worked example · slides 16–17 · car with \(v=0.9t^2+0.6t\)</span>
+<p>A car moves in a straight line so that for a short time its velocity is \(v=(0.9t^2+0.6t)\u{m/s}\), \(t\) in s. Find its position and acceleration at \(t=3\u{s}\). At \(t=0\), \(s=0\).</p>
+<div class="pair"><div><div id="fig-s4-car"></div><p class="sub">Coordinate \(s\) from the fixed origin \(O\), positive to the right</p></div></div>
+<ol class="steps">
+<li><b>Coordinate system.</b> \(s\) measured from the fixed origin \(O\), positive to the right.</li>
+<li><b>Position</b> (from \(v=\mathrm ds/\mathrm dt\), which links \(v\), \(s\), \(t\)):
+\[\begin{aligned}&\textstyle\int_0^s\mathrm ds=\int_0^t(0.9t^2+0.6t)\,\mathrm dt\\ &\Rightarrow\ s=0.3t^3+0.3t^2.\end{aligned}\]
+At \(t=3\): \(s=0.3(27)+0.3(9)=\boxed{10.8\u{m}}\).</li>
+<li><b>Acceleration</b> (from \(a=\mathrm dv/\mathrm dt\), which links \(a\), \(v\), \(t\)): \(a=1.8t+0.6\). At \(t=3\): \(a=\boxed{6.0\u{m/s^2}}\) (to the right).</li>
+</ol>
+<p class="word"><b>Recipe (slide 16):</b> step 1, integrate or differentiate \(v(t)\) to get formulas for \(s(t)\) or \(a(t)\); step 2, put in the time to get the numbers.</p></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>When acceleration depends on velocity or position: \(v\,\mathrm dv=a\,\mathrm ds\) (slides 18–20)</h2>
+<p>Air drag makes the deceleration depend on <b>speed</b>, not on time. Then \(a=\mathrm dv/\mathrm dt\) can still be used for time (separate the variables), and for <b>distance</b> the chain rule gives the key trick (slide 18):</p>
+<div class="box thm"><span class="tag">Result · chain rule (slides 18, 44)</span>
+\[\begin{gathered}a=\frac{\mathrm dv}{\mathrm dt}=\frac{\mathrm dv}{\mathrm ds}\cdot\frac{\mathrm ds}{\mathrm dt}=v\frac{\mathrm dv}{\mathrm ds}\\ \Longrightarrow\quad \boxed{v\,\mathrm dv=a\,\mathrm ds}\end{gathered}\]
+<p class="word"><b>In words:</b> whenever the formula for \(a\) has no "time" in it (it depends on \(v\) or \(s\)), use \(v\,\mathrm dv=a\,\mathrm ds\) to get distance, and \(\mathrm dt=\mathrm dv/a\) to get time.</p></div>
+<div class="box def"><span class="tag">Definition · separating variables</span><p>Putting everything with \(v\) on one side and everything with \(t\) (or \(s\)) on the other, then integrating each side between matching limits. It works for \(\mathrm dv/\mathrm dt=f(v)\): \(\int\mathrm dv/f(v)=\int\mathrm dt\).</p></div>
+
+<div class="box eg"><span class="tag">Worked example · slides 18–19 · F-117 with a drag parachute (Bedford &amp; Fowler Ex. 13.4)</span>
+<p>After deploying its drag parachute, an aeroplane has acceleration \(a=-0.04v^2\u{m/s^2}\) (\(v\) in m/s). Air drag, and hence deceleration, is normally proportional to \(v^2\). (a) Find the time for \(v\) to fall from 80 m/s to 10 m/s. (b) What distance does the plane cover in that time?</p>
+<div class="pair"><div><div id="fig-s5-plane"></div><p class="sub">FBD (horizontal): drag \(D=0.04mv^2\) opposes the motion</p></div></div>
+<p><b>(a) Time.</b> \(\dfrac{\mathrm dv}{\mathrm dt}=-0.04v^2\Rightarrow\displaystyle\int_{80}^{10}v^{-2}\,\mathrm dv=-0.04\int_0^t\mathrm dt\). Using \(\int v^{-2}\mathrm dv=-v^{-1}\):</p>
+\[\begin{aligned}&\Big[-\tfrac1v\Big]_{80}^{10}=-0.04t\\ &\Rightarrow\ t=\frac{1/10-1/80}{0.04}=\boxed{2.19\u{s}}.\end{aligned}\]
+<p><b>(b) Distance</b> (tip: \(v\,\mathrm dv=a\,\mathrm ds\)). \(v\,\mathrm dv=-0.04v^2\,\mathrm ds\Rightarrow\displaystyle\int_{80}^{10}\frac{\mathrm dv}{v}=-0.04\int_0^s\mathrm ds\). Using \(\int v^{-1}\mathrm dv=\ln v\):</p>
+\[\ln\tfrac{10}{80}=-0.04s\ \Rightarrow\ s=\tfrac{\ln8}{0.04}=\boxed{52.0\u{m}}.\]
+<p><b>How long to stop completely? (slide 19).</b> Mathematically, putting \(v=0\) gives \(t=\infty\) and \(s=\infty\). Is that correct? <b>No.</b> The law \(a\propto-v^2\) only holds at high speed. At low speed the drag becomes proportional to \(v\) (\(a\propto-v\)) and other forces (rolling resistance, brakes) dominate, so the plane does stop. See Section 11.</p></div>
+
+<div class="box eg"><span class="tag">Worked example · slide 20 · \(a=-cv^3\)</span>
+<p>A point moves along a straight line with \(a=-cv^3\) (\(c\) a constant). If its velocity is \(v_0\), what distance does it travel before its velocity falls to \(v_0/2\)? How much time does it take? <i>Hint: no "time" in \(a\), so use \(v\,\mathrm dv=a\,\mathrm ds\).</i></p>
+\[\begin{aligned}&\text{distance: } v\,\mathrm dv=-cv^3\,\mathrm ds\\ &\Rightarrow\ \int_{v_0}^{v_0/2}\frac{\mathrm dv}{v^2}=-c\int_0^s\mathrm ds\\ &\Rightarrow\ \Big[-\tfrac1v\Big]_{v_0}^{v_0/2}=-\tfrac1{v_0}=-cs\\ &\Rightarrow\ \boxed{s=\frac1{cv_0}};\\ &\text{time: } \frac{\mathrm dv}{v^3}=-c\,\mathrm dt\\ &\Rightarrow\ \Big[-\tfrac1{2v^2}\Big]_{v_0}^{v_0/2}=-\tfrac{2}{v_0^2}+\tfrac{1}{2v_0^2}=-ct\\ &\Rightarrow\ \boxed{t=\frac{3}{2cv_0^2}}.\end{aligned}\]
+<p class="word"><b>Dimension check:</b> \(a=-cv^3\) means \(c\) has units s²/m² (so \(cv^3\) is m/s²). Then \(1/(cv_0)\) has units m ✓ and \(1/(cv_0^2)\) has units s ✓.</p></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Newton's second law and frames of reference (slides 21–22)</h2>
+<div class="box thm"><span class="tag">Law · Newton's second law (slide 21)</span>
+<p>The total force on a particle equals the rate of change of its <b>linear momentum</b> (mass × velocity):</p>
+\[\begin{gathered}\vb F=\frac{\mathrm d}{\mathrm dt}\big(m\vb V\big);\\ \text{if } m \text{ is constant: } \vb F=m\frac{\mathrm d\vb V}{\mathrm dt}=m\vb a.\end{gathered}\]
+<p class="word"><b>In words:</b> net force = mass × acceleration, provided the mass does not change.</p></div>
+<p>Two important points when applying it (slide 21):</p>
+<ul class="list">
+<li>It is <b>only valid in an inertial frame</b>. When analysing motion in a non-inertial (accelerating) frame you must add an "inertial force", e.g. centrifugal force.</li>
+<li>In some problems the mass of the moving object <b>changes</b> with time (a rocket burning fuel), and then \(F\ne ma\). That is <a href="note-D3.html">D3</a>.</li>
+</ul>
+<div class="box def"><span class="tag">Definitions · frames of reference</span>
+<ul class="list"><li>A <b>frame of reference</b> is the set of axes (and the observer) from which motion is measured.</li>
+<li>An <b>inertial frame</b> is one that is not accelerating: fixed to the ground is good enough for this course. Newton's laws hold in it as stated.</li>
+<li>A <b>non-inertial frame</b> accelerates or rotates (fixed to a braking car, a lift starting up, a turning car).</li>
+<li>A <b>fictitious</b> (inertial) force \(\vb F'=-m\vb a_{\rm frame}\) is an imaginary force added in a non-inertial frame so that "\(\sum\vb F=m\vb a'\)" works there. It has no partner in Newton's third law: nothing pushes it.</li></ul></div>
+<div class="box eg"><span class="tag">Worked example · slide 22 · standing in a lift (reminder from ENGG1300/ENGG1000)</span>
+<p>You stand in a lift that starts to move up with acceleration \(a\) relative to the ground. (1) Find the normal force the floor exerts on you. (2) Evaluate Newton's second law in a frame fixed to the lift.</p>
+<div id="fig-s6-lift"></div>
+<ol class="steps">
+<li><b>Ground (inertial) frame</b>, up positive: \(\sum F=N-mg=ma\Rightarrow\boxed{N=mg+ma}\). You feel heavier.</li>
+<li><b>Lift frame</b> (axes \(x',y'\) moving with the lift): you are at rest relative to it, \(v'=0\), \(a'=0\). But \(\sum F=N-mg=ma\ne0\), so "\(\sum F=ma'\)" fails: <b>the lift frame is not inertial</b> (it accelerates at \(a\)).</li>
+<li><b>Fix it with a fictitious force</b> \(F'=-ma\) (downward): \(\sum F=N-mg+F'=mg+ma-mg-ma=0=ma'\) ✓. The fictitious force makes Newton's law work in the non-inertial frame.</li>
+</ol></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>The problem-solving recipe and a string in an accelerating car (slides 23–24)</h2>
+<div class="box thm"><span class="tag">Recipe · solving mechanics problems with Newton's laws (slides 23, 29)</span>
+<ol class="steps">
+<li><b>Understand and draw.</b> Read carefully; sketch the situation with all moving objects and surfaces.</li>
+<li><b>Choose a coordinate system.</b> Standard \(x,y\) for each object; line one axis up with the motion or the acceleration if you can.</li>
+<li><b>Free-body diagram.</b> Isolate each object; draw <b>all real forces</b> (gravity, normal force, tension, friction, drag) acting on it.</li>
+<li><b>Break forces into components</b> along your axes (sines and cosines).</li>
+<li><b>Apply Newton's second law</b> separately on each axis: \(\sum F_x=ma_x\), \(\sum F_y=ma_y\). Set the acceleration to zero in a direction where the object does not move. The result is the <b>equation of motion</b>.</li>
+<li><b>Solve</b>: plug in the given conditions (time, distance, speed), integrate if needed, and check that the answer makes physical sense.</li>
+</ol></div>
+<div class="box eg"><span class="tag">Worked example · slide 24 · weight hanging in an accelerating car</span>
+<p>A small weight of mass \(m\) hangs from a string in a car that accelerates at rate \(A\). What is the steady angle of the string from the vertical, and what is its tension? Analyse it both in the inertial (ground) frame and in a frame accelerating with the car.</p>
+<div id="fig-s7-car"></div>
+<div id="fig-s7-fbd"></div>
+<p><b>Inertial frame</b> (\(x\) forward, \(y\) up). The weight swings back until the string, at angle \(\theta\) from the vertical, pulls it forward hard enough to accelerate it with the car (\(a_x=A\), \(a_y=0\)):</p>
+\[\begin{aligned}\textstyle\sum F_x=ma_x:&\quad T\sin\theta=mA,\\ \textstyle\sum F_y=ma_y:&\quad T\cos\theta-mg=0.\end{aligned}\]
+<p>Divide, then square and add:</p>
+\[\boxed{\tan\theta=\frac Ag},\quad \boxed{T=m\sqrt{g^2+A^2}}.\]
+<p><b>Car frame.</b> The weight is at rest relative to the car (\(a'=0\)), so add the fictitious force \(F'=mA\) <b>backward</b>. Now it is a statics problem: \(T\sin\theta-mA=0\), \(T\cos\theta-mg=0\), the same answers.</p>
+<p class="word"><b>In words:</b> the string hangs along the "effective gravity", the vector sum of real gravity and the backward fictitious force. This is how an accelerometer can be as simple as a pendulum. Limits: \(A=0\) gives \(\theta=0\), \(T=mg\) ✓; very large \(A\) gives \(\theta\to90^\circ\).</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Example: the parachute opens (slide 25)</h2>
+<div class="box eg"><span class="tag">Worked example · slide 25 (Q5)</span>
+<p>A sky diver and his parachute weigh 890 N. He is falling vertically at 30.5 m/s when his parachute opens. With the parachute open, the magnitude of the drag force (in newtons) is \(0.5v^2\). (a) What is the magnitude of his acceleration at the instant the parachute opens? (b) What is the magnitude of his velocity when he has descended 6.1 m from the point where the parachute opens?</p>
+<div class="pair"><div><div id="fig-s8-fbd"></div><p class="sub">FBD, downward positive</p></div></div>
+<p>Mass: \(m=890/9.81=90.72\u{kg}\). Downward positive:</p>
+\[m\frac{\mathrm dv}{\mathrm dt}=mg-0.5v^2.\]
+<p><b>(a)</b> At \(v=30.5\u{m/s}\): drag \(=0.5(30.5)^2=465.1\u{N}\).</p>
+\[a=\frac{890-465.1}{90.72}=\boxed{4.68\u{m/s^2}}\ (\downarrow).\]
+<p class="word"><b>Sense check:</b> his terminal speed is where \(0.5v^2=890\), i.e. \(v_T=\sqrt{1780}=42.2\u{m/s}\). He is slower than that, so the weight still wins and he keeps accelerating, but less than \(g\).</p>
+<p><b>(b)</b> No time in the force law, so use \(v\,\mathrm dv=a\,\mathrm ds\) (slide 25's hint), with \(k=0.5\u{N\,s^2/m^2}\):</p>
+\[\begin{aligned}v\frac{\mathrm dv}{\mathrm ds}&=g-\frac km v^2\\ \Rightarrow\ &\int_{30.5}^{v}\frac{v\,\mathrm dv}{g-\frac km v^2}=\int_0^{6.1}\mathrm ds\\ \Rightarrow\ v^2&=v_T^2+\big(v_0^2-v_T^2\big)\,e^{-2ks/m}\\ &=1780+(930.25-1780)\\ &\qquad\times e^{-2(0.5)(6.1)/90.72}\\ &=1780-849.75(0.9350)\\ &=985.5\ \mathrm{m^2/s^2},\\ v&=\boxed{31.4\u{m/s}}.\end{aligned}\]
+<div class="beyond box"><span class="tag">Beyond the handouts · the \(v^2(s)\) formula</span>
+<p>Substitute \(w=v^2\), so \(v\,\mathrm dv=\tfrac12\mathrm dw\): \(\tfrac12\frac{\mathrm dw}{\mathrm ds}=g-\frac kmw\), a first-order linear ODE (MATH1851) with solution</p>
+\[\begin{gathered}v^2=v_T^2+\big(v_0^2-v_T^2\big)\,e^{-2ks/m},\\ v_T^2=\frac{mg}{k}.\end{gathered}\]
+<p class="word"><b>In words:</b> for drag \(kv^2\), the <b>square</b> of the speed approaches \(v_T^2\) exponentially with <b>distance</b>, with "decay length" \(m/(2k)\). It reappears in slide 43 and in Dec 2021 B3(c).</p></div></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Curvilinear motion: normal–tangential and polar coordinates (slides 26–29)</h2>
+<p>Now the particle moves along a curve: a car going round a hairpin bend, or a satellite in orbit (slide 26; orbits are no longer examined). We still ignore the body's size. The main idea: <b>choose the coordinate system that suits the problem</b> (slide 27, a reminder from ENGG1300/ENGG1000).</p>
+
+<h3>Normal and tangential (n–t) coordinates</h3>
+<div id="fig-s9-nt"></div>
+<div class="box def"><span class="tag">Definitions · n–t components (slide 27)</span>
+<ul class="list">
+<li>\(\e{t}\) (written \(\vb u_t\) on the slide): unit vector <b>tangent</b> to the path, pointing along the velocity.</li>
+<li>\(\e{n}\) (\(\vb u_n\)): unit vector <b>perpendicular</b> to \(\e{t}\), pointing towards the <b>inside of the curve</b>, i.e. towards the centre of curvature.</li>
+<li><b>Radius of curvature</b> \(\rho\): the radius of the circle that best fits the path at that point (the dashed circle). A gentle bend has a large \(\rho\); a straight line has \(\rho=\infty\).</li></ul></div>
+\[\begin{aligned}\vb v&=v\,\e{t},\\ \vb a&=\frac{\mathrm d\vb v}{\mathrm dt}=\underbrace{\frac{\mathrm dv}{\mathrm dt}}_{a_t}\e{t}+\underbrace{\frac{v^2}{\rho}}_{a_n}\e{n}.\end{aligned}\]
+<p class="word"><b>In words:</b> the velocity is always along the path. The acceleration has two parts: \(a_t\) along the path changes the <b>speed</b>; \(a_n=v^2/\rho\) towards the centre changes the <b>direction</b> (slide 28). The acceleration can have both components at once.</p>
+<p>For a path given as \(y(x)\), the radius of curvature is (slide 27)</p>
+\[\rho=\frac{\big[1+(\mathrm dy/\mathrm dx)^2\big]^{3/2}}{\big|\mathrm d^2y/\mathrm dx^2\big|}.\]
+<p class="word"><b>In words:</b> a curve bends sharply (small \(\rho\)) where its second derivative is large and its slope is small. Check: for a circle of radius \(R\) at its lowest point, slope 0 and \(|y''|=1/R\), so \(\rho=R\).</p>
+
+<h3>Polar coordinates (2D)</h3>
+<div class="box def"><span class="tag">Definitions · polar components (slide 27)</span>
+<p>Position by distance \(r\) from a fixed origin \(O\) and angle \(\theta\) (in radians). \(\vb u_r\) points radially outward; \(\vb u_\theta\) is perpendicular to it, in the direction of increasing \(\theta\). \(\omega=\dot\theta\) is the angular velocity and \(\alpha=\dot\omega\) the angular acceleration.</p>
+\[\begin{aligned}\vb r&=r\,\vb u_r,\\ \vb v&=\dot r\,\vb u_r+r\omega\,\vb u_\theta,\\ \vb a&=\big(\ddot r-r\omega^2\big)\vb u_r\\ &\quad+\big(r\alpha+2\dot r\omega\big)\vb u_\theta.\end{aligned}\]
+<p class="word"><b>In words:</b> radial acceleration = (rate of change of radial speed) − (centripetal term \(r\omega^2\)); transverse acceleration = (angular acceleration × radius, the "Euler" term) + (\(2\dot r\omega\), the <b>Coriolis</b> term, which appears when the distance from \(O\) changes while turning).</p></div>
+<div id="fig-s9-polar"></div>
+
+<h3>Newton's second law in n–t form (slide 28)</h3>
+<div class="box thm"><span class="tag">Result · equations of motion on a curve</span>
+\[\begin{gathered}\textstyle\sum F_t\,\e{t}+\sum F_n\,\e{n}=m\big(a_t\e{t}+a_n\e{n}\big),\\ a_t=\dfrac{\mathrm dv}{\mathrm dt},\quad \boxed{a_n=\dfrac{v^2}{\rho}}.\end{gathered}\]
+<p>So \(\sum F_t=m\,\mathrm dv/\mathrm dt\) and \(\sum F_n=mv^2/\rho\). Often there is no motion perpendicular to the plane of \(\e{t}\), \(\e{n}\), so the forces in that third direction balance. For rotation at <b>constant radius</b> \(R\):</p>
+\[v=\omega R,\qquad a_n=\frac{v^2}{R}=\omega^2R.\]
+<p class="word"><b>In words:</b> to move on a curve, the net force must have a part pointing to the inside of the bend, equal to mass × \(v^2/\rho\). The <b>normal component</b> is the <b>centripetal</b> ("centre-seeking") acceleration.</p></div>
+<div class="box warn"><span class="tag">Watch</span><p>\(m v^2/\rho\) is <b>not</b> an extra force to add to the FBD in the ground frame. It is what the real forces (friction, normal force, tension, gravity) must add up to. Only in the non-inertial frame of the moving body do you add the outward <b>centrifugal</b> force \(mv^2/\rho\) (orange) and then use equilibrium.</p></div>
+<p>Slide 29 repeats the six-step recipe of Section 7; use it for every problem below.</p>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Curves in practice: space station, off-ramp, maglev, banking (slides 30–32)</h2>
+<div class="box eg"><span class="tag">Worked example · slide 30 · rotating space station</span>
+<p>Future space stations may rotate to give their inhabitants simulated gravity. If the distance from the rotation axis to the occupied outer ring is \(R=100\u{m}\), what rotation rate gives one half of Earth's gravity?</p>
+<div id="fig-s10-station"></div>
+<p><b>Inertial frame.</b> The only force on the astronaut is the floor's normal force \(N\), pointing <b>towards the axis</b>; it supplies the centripetal acceleration: \(N=m\omega^2R\). "Half gravity" means the floor pushes as hard as it would on Earth at \(g/2\): \(N=m g/2\).</p>
+\[\begin{aligned}\omega^2R&=\tfrac12g\ \Rightarrow\ \omega=\sqrt{\frac{g}{2R}}=\sqrt{\frac{9.81}{200}}\\ &=\boxed{0.221\u{rad/s}}=2.12\u{rev/min}.\end{aligned}\]
+<p><b>Non-inertial (rotating) frame.</b> The astronaut is at rest, so add the outward centrifugal force \(m\omega^2R\); equilibrium \(N-m\omega^2R=0\) gives the same answer. To the astronaut, the centrifugal force feels exactly like weight pulling them onto the floor.</p></div>
+
+<div class="box eg"><span class="tag">Worked example · slide 31 · freeway off-ramp</span>
+<p>A preliminary design for a freeway off-ramp is circular with radius \(R=60\u{m}\) (flat, not banked). If the coefficient of static friction between tyres and road is at least \(\mu_s=0.4\), what is the maximum speed at which vehicles can enter the ramp without losing traction? (friction \(\le\mu N\))</p>
+<div id="fig-s10-ramp"></div>
+\[\begin{aligned}\uparrow:&\quad N-mg=0\ \Rightarrow\ N=mg,\\ \text{to centre:}&\quad f=m\frac{v^2}{R}\ \le\ \mu_sN=\mu_smg\\ \Rightarrow\ v_{\max}&=\sqrt{\mu_sgR}=\sqrt{0.4(9.81)(60)}\\ &=\boxed{15.3\u{m/s}}\ (55\u{km/h}).\end{aligned}\]
+<p><b>Centrifugal force felt by the passengers (slide 31).</b> In the car's (non-inertial) frame each passenger feels an outward push \(mv^2/R\): at 15.3 m/s that is \(0.4\,mg\), 40% of their weight, sideways. It <b>scales with \(v^2\)</b>: double the speed, four times the sideways push. Note the answer does not depend on the car's mass.</p></div>
+
+<div class="box eg"><span class="tag">Worked example · slide 32 · maglev train on a banked track</span>
+<p>An experimental magnetically levitated train is supported by magnetic repulsion forces \(M\) normal to the track. Sideways motion is prevented by lateral supports (force \(S\)). The 20 000 kg train travels at 30 m/s on a circular track of radius \(R=150\u{m}\) banked at 40°. Find \(M\) and \(S\).</p>
+<div class="pair"><div><div id="fig-s10-mag"></div><p class="sub">Front view, centre of the curve to the left</p></div></div>
+<p>Use vertical (no motion) and horizontal-towards-centre (\(a_n=v^2/R\)) directions. \(M\) is perpendicular to the track (up and towards the centre); \(S\) acts along the track surface, up the slope (up and away from the centre):</p>
+\[\begin{aligned}\uparrow:&\ M\cos40^\circ+S\sin40^\circ=mg\ \ (1)\\ \leftarrow:&\ M\sin40^\circ-S\cos40^\circ=m\tfrac{v^2}{R}\ \ (2)\end{aligned}\]
+<p>with \(mg=196.2\u{kN}\) and \(mv^2/R=20\,000(900)/150=120\u{kN}\). Solving (multiply (1) by \(\cos40^\circ\), (2) by \(\sin40^\circ\) and add, etc.):</p>
+\[\begin{aligned}M&=mg\cos40^\circ+m\tfrac{v^2}{R}\sin40^\circ\\ &=\boxed{227.4\u{kN}},\\ S&=mg\sin40^\circ-m\tfrac{v^2}{R}\cos40^\circ\\ &=\boxed{34.2\u{kN}}.\end{aligned}\]
+<p class="word"><b>Note (slide 32):</b> axes normal and tangential to the track surface would make this harder, because the acceleration (horizontal) would then have components along both. Choose axes along the acceleration. \(S\gt0\): at 30 m/s the train is too slow for this bank and the lateral supports stop it sliding down-slope; with no lateral force needed, \(\tan\theta=v^2/(gR)\) would require 31.5°.</p></div>
+
+<div class="beyond box"><span class="tag">Beyond the handouts · banked curves with and without friction, leaning</span>
+<p>Exam questions (Dec 2024 B1, Dec 2023 B1) ask these, so here they are in general. A car (mass \(m\)) goes round a curve of radius \(R\) banked at \(\theta\), at speed \(v\).</p>
+<p><b>No friction needed</b> (normal force alone provides \(a_n\)): vertical \(N\cos\theta=mg\), towards centre \(N\sin\theta=mv^2/R\). Divide:</p>
+\[\tan\theta=\frac{v^2}{gR}\ \Longleftrightarrow\ v_0=\sqrt{gR\tan\theta}.\]
+<p><b>With friction</b> \(f\) along the slope (positive down-slope), solving vertical and centre-ward equations:</p>
+\[\begin{aligned}f&=m\Big(\frac{v^2}{R}\cos\theta-g\sin\theta\Big),\\ N&=m\Big(g\cos\theta+\frac{v^2}{R}\sin\theta\Big).\end{aligned}\]
+<p>Faster than \(v_0\): friction acts <b>down</b> the slope (the car tends to slide up and out). Slower: friction acts <b>up</b> the slope. No slip while \(|f|\le\mu N\), giving</p>
+\[\begin{aligned}v_{\max}^2&=gR\frac{\sin\theta+\mu\cos\theta}{\cos\theta-\mu\sin\theta},\\ v_{\min}^2&=gR\frac{\sin\theta-\mu\cos\theta}{\cos\theta+\mu\sin\theta}.\end{aligned}\]
+<p><b>Leaning (cyclist, motorcyclist).</b> On a flat road, friction \(f=mv^2/R\) (towards centre) and \(N=mg\) act at the tyre. For no tipping, their resultant must pass through the centre of mass, so the rider leans at angle \(\phi\) from the vertical with \(\tan\phi=f/N=v^2/(gR)\). Mass cancels: the lean angle does not depend on the rider's weight.</p>
+<p class="word"><b>In words:</b> the right bank angle and the right lean angle obey the same formula, \(\tan(\text{angle})=v^2/(gR)\): the surface (or the bike) is tilted so that the support force points along the "effective gravity" of real gravity plus centrifugal force.</p></div>
+
+<div class="figure"><p class="ttl">Try it · car on a banked curve (Beyond the handouts)</p>
+<div id="fig-bank-live"></div>
+<div class="ctrl"><label>speed \(v\) (km/h) <input type="range" id="bv" min="0" max="200" step="5" value="100"></label>
+<label>radius \(R\) (m) <input type="range" id="bR" min="20" max="500" step="10" value="120"></label>
+<label>bank \(\theta\) (°) <input type="range" id="bt" min="0" max="45" step="1" value="20"></label>
+<label>\(\mu_s\) <input type="range" id="bm" min="0" max="1" step="0.05" value="0.4"></label></div>
+<div class="readout" id="bank-out"></div>
+<p class="cap">The friction arrow flips from down-slope to up-slope as the speed drops below the design speed \(v_0\). Set \(\theta=0\) for the flat off-ramp of slide 31 (\(R=60\), \(\mu=0.4\): slips above 55 km/h).</p></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Fluid drag and terminal velocity (slides 33–36)</h2>
+<div class="box def"><span class="tag">Definitions · drag, laminar, turbulent (slides 33–34)</span>
+<ul class="list">
+<li><b>Drag</b>: the force a fluid (air, water) exerts on a body moving through it, opposite to the body's velocity. It depends on velocity in a complicated way.</li>
+<li><b>Laminar flow</b>: at low speed (or for tiny bodies), the fluid "creeps" past in orderly layers. Drag is <b>proportional to speed</b>: \(\text{Drag}=C_fV\).</li>
+<li><b>Turbulent flow</b>: at higher speed the flow loses stability and becomes chaotic with eddies (Fluid Mechanics, years 2/3). Drag is <b>proportional to speed squared</b>: \(\text{drag}=C_D\rho V^2A\), with \(\rho\) the fluid density and \(A\) the frontal area. (The coefficient is, the slide jokes, one of the best-guarded secrets of nature: it must be measured.)</li>
+<li>\(C_f\) and \(C_D\) are constants for a given body and fluid.</li></ul></div>
+<p>For a body falling in a uniform fluid, with downward positive (slide 33):</p>
+\[m\frac{\mathrm dV}{\mathrm dt}=mg-\text{Drag}\quad\text{(1)}\]
+<div class="box def"><span class="tag">Definition · terminal velocity</span><p>When the drag has grown to balance the weight, \(mg=\text{drag}\), there is no more acceleration and the body falls at a constant speed, the <b>terminal velocity</b> \(V_T\).</p></div>
+<div class="pair"><div><div id="fig-s11-ball"></div><p class="sub">Slide 35: (1) released; (2) drag grows with speed; (3) drag = weight at \(V_T\)</p></div></div>
+<p><b>Slide 35.</b> Starting from rest, the speed rises quickly at first and then levels off at \(V_T\) (the curve flattens because the net force shrinks as drag grows). What if the body starts <b>faster</b> than \(V_T\)? Then drag exceeds weight, the net force points up, and it <b>slows down</b> towards \(V_T\) from above. This is what happens to a satellite coming back from orbit into the atmosphere at high speed.</p>
+<div class="box thm"><span class="tag">Recipe · falling against drag (slide 36)</span>
+<ol class="steps"><li><b>Terminal velocity:</b> set \(a=0\), so the net force is zero: \(mg-\text{drag}=0\); rearrange for \(V_T\).</li>
+<li><b>Full motion</b> as a function of time: write and solve the ODE \(mg-\text{drag}=m\,\mathrm dV/\mathrm dt\) (or \(m\,\mathrm dV/\mathrm dt-mg+\text{drag}=0\)). The answer differs for laminar and turbulent drag.</li></ol></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Laminar drag (slides 37–38)</h2>
+<p><b>(1) Terminal velocity.</b> For a perfect sphere of diameter \(d\) in a fluid of <b>viscosity</b> \(\mu\) (the fluid's "stickiness", unit kg/(m·s) = Pa·s):</p>
+\[\begin{gathered}\text{Drag}=C_fV,\quad C_f=3\pi\mu d\ \ (\text{Stokes}),\\ C_fV_T=mg\ \Rightarrow\ V_T=\frac{mg}{C_f}.\end{gathered}\]
+<p>With \(m=\rho_{\rm sphere}\tfrac16\pi d^3\):</p>
+<div class="box thm"><span class="tag">Result · laminar terminal velocity of a sphere</span>
+\[V_T^{\rm laminar}=\frac{\rho_{\rm sphere}\,g\,d^2}{18\mu}\quad\text{(2)}\]
+<p class="word"><b>In words:</b> terminal speed grows with the <b>square</b> of the diameter: a sphere ten times smaller falls a hundred times slower.</p></div>
+<div class="box eg"><span class="tag">Worked example · slide 37 · raindrop 0.2 mm across</span>
+<p>With \(\mu=1.5\times10^{-5}\u{kg/(m\,s)}\) (air) and \(\rho_{\rm water}=1000\u{kg/m^3}\):</p>
+\[\begin{aligned}V_T&=\frac{1000(9.81)(0.2\times10^{-3})^2}{18(1.5\times10^{-5})}\\ &=\boxed{1.45\u{m/s}}.\end{aligned}\]
+<p>For large raindrops (2 mm across) the drag is proportional to \(V^2\) and this result is not suitable: use Section 13.</p>
+<p class="muted">Units: (kg/m³)(m/s²)(m²)/(kg/(m·s)) = m/s ✓.</p></div>
+<p><b>(2) The full motion.</b> Eq (1) with laminar drag is a standard inhomogeneous, first-order, linear ODE (slide 37):</p>
+\[\begin{gathered}m\frac{\mathrm dV}{\mathrm dt}+C_fV=mg\\ \Rightarrow\ \frac{\mathrm dV}{\mathrm dt}+\frac{C_f}{m}V=g.\end{gathered}\]
+<p>The standard form \(\frac{\mathrm dy}{\mathrm dt}+py=q\) has solution \(y(t)=e^{-pt}\big[\int qe^{pt}\mathrm dt+\text{const}\big]\) (integrating factor, slide 38). Here \(p=C_f/m=g/V_T\), \(q=g\):</p>
+\[\begin{aligned}V(t)&=e^{-C_ft/m}\Big[\int ge^{C_ft/m}\mathrm dt+C\Big]\\ &=\frac{mg}{C_f}+Ce^{-C_ft/m}\\ &=V_T+Ce^{-gt/V_T}.\end{aligned}\]
+<p>With \(V(0)=V_0\): \(C=V_0-V_T\). Hence</p>
+<div class="box thm"><span class="tag">Result · laminar fall</span>
+\[\begin{gathered}\frac{V(t)}{V_T}=1+\Big(\frac{V_0}{V_T}-1\Big)e^{-gt/V_T}\\ \text{Eq (3)}\end{gathered}\]
+<p class="word"><b>In words:</b> the gap between the speed and the terminal speed shrinks exponentially, with time constant \(V_T/g\). After \(3V_T/g\) the speed is within 5% of \(V_T\).</p></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Turbulent drag (slides 39–40)</h2>
+<p>Turbulent drag \(=C_D\rho V^2A\), where \(C_D\) (between 0 and 2) is dimensionless and \(A\) is the frontal area (the area the body presents to the flow).</p>
+<div class="box thm"><span class="tag">Results · turbulent fall (slide 39)</span>
+<p><b>(1) Terminal velocity</b> from \(mg=\text{drag}\):</p>
+\[V_T^{\rm turbulent}=\sqrt{\frac{mg}{C_D\rho A}}\quad\text{(4)}\]
+<p><b>(2) Equation of motion:</b> \(m\,\mathrm dV/\mathrm dt=mg-C_D\rho AV^2\), and dividing by \(m\) with Eq (4):</p>
+\[\frac{\mathrm dV}{\mathrm dt}=g\Big(1-\frac{V^2}{V_T^2}\Big)\quad\text{(5)}\]
+<p>Separating variables (partial fractions) gives the solution</p>
+\[\begin{aligned}\frac{gt}{V_T}&=\frac12\ln\left|\frac{V+V_T}{V-V_T}\right|\\ &\quad-\frac12\ln\left|\frac{V_0+V_T}{V_0-V_T}\right|\quad\text{(6)}\end{aligned}\]
+\[\begin{gathered}\frac{V}{V_T}=\frac{Ce^{2gt/V_T}-1}{Ce^{2gt/V_T}+1},\\ C=\frac{V_T+V_0}{V_T-V_0}\quad\text{(7)}\end{gathered}\]
+<p class="word"><b>In words:</b> the speed again approaches \(V_T\), but because drag grows with \(V^2\) the approach is faster than in the laminar case (a <b>tanh</b> curve: for \(V_0=0\), \(V=V_T\tanh(gt/V_T)\)).</p></div>
+<p class="flag">slide 39 prints Eq (7) with \(C=(V_0+V_T)/(V_0-V_T)\). With that \(C\) the formula gives \(V(0)=V_T^2/V_0\), not \(V_0\). The form above, \(C=(V_T+V_0)/(V_T-V_0)\), satisfies Eq (5) and \(V(0)=V_0\) (checked by computer). Equivalently keep the slide's \(C\) and invert the fraction: \(V/V_T=(Ce^{2gt/V_T}+1)/(Ce^{2gt/V_T}-1)\). The slides' plots (slides 38, 40) are correct.</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · where Eq (6) comes from, and the ½</span>
+<p>From Eq (5): \(\dfrac{\mathrm dV}{1-V^2/V_T^2}=g\,\mathrm dt\). Partial fractions: \(\dfrac{1}{1-V^2/V_T^2}=\dfrac{V_T}{2}\Big(\dfrac1{V_T+V}+\dfrac1{V_T-V}\Big)\), which integrates to \(\dfrac{V_T}2\ln\left|\dfrac{V_T+V}{V_T-V}\right|\). Evaluate between \(V_0\) and \(V\), divide by \(V_T\): Eq (6).</p>
+<p>Most textbooks write turbulent drag as \(\tfrac12C_D\rho AV^2\). This course (slides 34, 39) and several past papers (Dec 2016, May 2013) leave out the \(\tfrac12\); Dec 2023 includes it. The constant is just absorbed into \(C_D\): <b>use the expression the question gives</b>.</p></div>
+<div class="box eg"><span class="tag">Worked example · slide 39 · spacecraft under a parachute</span>
+<p>A spacecraft of mass \(m=5000\u{kg}\), \(C_D=1\), \(\rho=1\u{kg/m^3}\), frontal area \(A=20\u{m^2}\). Eq (4):</p>
+\[V_T=\sqrt{\frac{5000(9.81)}{1(1)(20)}}=\boxed{49.5\u{m/s}}.\]
+<p>Reducing \(V_T\) to 5 m/s (ten times less) requires a <b>100 times</b> larger frontal area, because \(V_T\propto1/\sqrt A\).</p></div>
+<div class="pair"><div><div id="fig-s13-sky"></div><p class="sub">Slide 39 cartoon: just after leaving the helicopter, drag ≈ 0</p></div></div>
+<p>The slide 39 cartoon: a sky diver of 100 kg just after jumping has only gravity, 1000 N, acting, so \(a=F_{\rm net}/m=1000/100=10\u{m/s^2}\) downward (taking \(g\approx10\)). The <b>parachute area</b> \(A\) is designed so that the terminal velocity is what the sky diver can tolerate on landing, normally \(V_T\approx3\text{–}5\u{m/s}\).</p>
+<h3>Laminar vs turbulent: the picture to remember (slides 38, 40)</h3>
+<div class="figure"><p class="ttl">Try it · speed against time when falling with drag</p>
+<canvas class="plot" id="cv-drag" style="height:260px"></canvas>
+<div class="ctrl"><label>start speed \(V_0/V_T\) <input type="range" id="dv0" min="0" max="3" step="0.1" value="0"></label></div>
+<div class="legend"><span style="--k:var(--c2)">laminar, Eq (3)</span><span style="--k:var(--ink)">turbulent, Eq (7)</span><span style="--k:var(--c3)">\(V=V_T\)</span></div>
+<div class="readout" id="drag-out"></div>
+<p class="cap">Axes: \(V/V_T\) against \(gt/V_T\). Slides 38 and 40 show \(V_0=0\) and \(V_0=2V_T\). Both curves end at \(V_T\); turbulent drag gets there sooner; the most drastic speeding up or slowing down happens at \(t=0\).</p></div>
+<div class="box ready"><span class="tag">Ready summary · falling against gravity (slide 40)</span>
+<div class="scroll"><table>
+<tr><th></th><th>Laminar</th><th>Turbulent</th></tr>
+<tr><td>Drag</td><td>\(C_fV\) (\(\propto V\))</td><td>\(C_D\rho V^2A\) (\(\propto V^2\))</td></tr>
+<tr><td>\(V_T\)</td><td>\(mg/C_f\)</td><td>\(\sqrt{mg/(C_D\rho A)}\)</td></tr>
+<tr><td>\(V(t)\)</td><td>Eq (3), exponential approach</td><td>Eq (7), tanh-type, faster approach</td></tr>
+<tr><td>Deceleration law</td><td>\(a\propto-v\)</td><td>\(a\propto-v^2\)</td></tr>
+</table></div>
+<p>Only \(V(t)\) and \(t\) are variables; the rest are constants. You are <b>not expected to memorise</b> Eqs (3)–(7), but you are expected to know the <b>shape of the plots</b> and what they mean physically (slide 40).</p></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Drag exercises (slides 41–43)</h2>
+<div class="box eg"><span class="tag">Worked example · slide 41 · how long do droplets stay in the air?</span>
+<p>The drag on small particles is \(3\pi\mu Vd\), with \(\mu=1.5\times10^{-5}\u{kg\,m^{-1}s^{-1}}\) the air viscosity and \(d\) the diameter. Estimate the time it takes water droplets of 1 µm and 10 µm diameter to fall 1 m.</p>
+<div class="pair"><div><div id="fig-s14-drop"></div><p class="sub">FBD of a droplet at terminal velocity</p></div></div>
+<p>Terminal velocity from Eq (2), \(V_T=\rho gd^2/(18\mu)\). The time to reach it, about \(V_T/g\), is microseconds, so the droplet falls the whole metre at \(V_T\):</p>
+\[\begin{aligned}&d=1\u{\mu m}:\\ &\ V_T=\frac{1000(9.81)(10^{-6})^2}{18(1.5\times10^{-5})}\\ &\quad\ \ =3.63\times10^{-5}\u{m/s},\\ &\ t=\frac{1\u{m}}{V_T}=\boxed{2.75\times10^{4}\u{s}\approx7.6\u{h}};\\ &d=10\u{\mu m}:\\ &\ V_T=3.63\times10^{-3}\u{m/s},\\ &\ t=\boxed{275\u{s}\approx4.6\u{min}}.\end{aligned}\]</div>
+<p><b>Micro-droplets are "airborne" (slide 42).</b> This is why small droplets matter for disease spread. Slide 42 reproduces a figure from Morawska &amp; Cao, "Airborne transmission of SARS-CoV-2: the world should face the reality" (<i>Environment International</i>, 2020): larger droplets carrying virus fall and deposit close to the person who emits them (droplet transmission), while smaller ones can travel metres or tens of metres in indoor air (aerosol transmission).</p>
+<div class="box eg"><span class="tag">Worked example · slide 43 · sky diver, \(a=g-cv^2\) (Bedford &amp; Fowler Q13.49)</span>
+<p>A sky diver jumps from a helicopter and is falling straight down at 30 m/s when her parachute opens. From then on her downward acceleration is approximately \(a=g-cv^2\), where \(c\) is a constant. After an initial transient she descends at a nearly constant 5 m/s. (a) What is \(c\)? (b) What maximum acceleration or deceleration does she experience? (c) What is her downward speed when she has fallen 2 m from the point where the parachute opens?</p>
+<div class="pair"><div><div id="fig-s14-sky"></div><p class="sub">FBD after opening, downward positive</p></div></div>
+<p><b>(a)</b> At the steady 5 m/s, \(a=0\): \(c=g/v_T^2=9.81/25=\boxed{0.392\u{m^{-1}}}\).</p>
+<p><b>(b)</b> \(|a|\) is largest when \(v\) is furthest from \(v_T\), i.e. at the moment of opening, \(v=30\u{m/s}\):</p>
+\[a=9.81-0.392(30)^2=\boxed{-343\u{m/s^2}}.\]
+<p><b>(c)</b> \(v\,\mathrm dv=(g-cv^2)\,\mathrm ds\) gives, as in Section 8, \(v^2=v_T^2+(v_0^2-v_T^2)e^{-2cs}\):</p>
+\[\begin{aligned}v^2&=25+(900-25)e^{-2(0.392)(2)}\\ &=25+875(0.208)=207.1\\ \Rightarrow\ v&=\boxed{14.4\u{m/s}}.\end{aligned}\]
+<p class="word"><b>Sense check:</b> 35\(g\) is far more than a person can take; real parachutes open gradually, so \(c\) grows over a second or two instead of jumping.</p></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Summary (slide 44)</h2>
+<p>Slide 44 closes the chapter with six points. They are the rows marked ★ below; the other rows collect the rest of the chapter.</p>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>★ Rectilinear kinematics</td><td>\(v=\mathrm ds/\mathrm dt\), \(a=\mathrm dv/\mathrm dt\)</td><td>solve by integrating or differentiating; suvat only if \(a\) is constant</td></tr>
+<tr><td>★ \(a\) depends on \(v\) or \(s\)</td><td>\(v\,\mathrm dv=a\,\mathrm ds\), \(\mathrm dt=\mathrm dv/a\)</td><td>no time in \(a\): separate variables</td></tr>
+<tr><td>★ Curvilinear motion</td><td>\(a_t=\mathrm dv/\mathrm dt\), \(a_n=v^2/\rho\) (\(=\omega^2R\) on a circle)</td><td>the centripetal part points to the inside of the bend</td></tr>
+<tr><td>Radius of curvature</td><td>\(\rho=[1+y'^2]^{3/2}/|y''|\)</td><td>how tightly a path \(y(x)\) bends</td></tr>
+<tr><td>★ Recipe</td><td>axes → sketch → FBD → components → \(\sum F=ma\) → solve with the given conditions</td><td>the equation of motion comes from the FBD</td></tr>
+<tr><td>Frames</td><td>inertial: real forces only; accelerating frame: add \(-m\vb a_{\rm frame}\)</td><td>centrifugal force exists only in the rotating frame</td></tr>
+<tr><td>Banking / leaning (Beyond)</td><td>\(\tan\theta=v^2/(gR)\)</td><td>no friction needed at the design speed; mass cancels</td></tr>
+<tr><td>★ Drag depends on velocity</td><td>terminal speed where drag = weight</td><td>speed levels off at \(V_T\), from below or above</td></tr>
+<tr><td>★ Laminar vs turbulent</td><td>laminar \(a\propto-v\), \(V_T=mg/C_f\); turbulent \(a\propto-v^2\), \(V_T=\sqrt{mg/(C_D\rho A)}\)</td><td>know the shapes of \(V(t)\), not the formulas by heart</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Using \(v^2=v_0^2+2as\) or \(s=v_0t+\tfrac12at^2\) when \(a\) depends on \(v\), \(s\) or \(t\).</span>
+<span class="ok">✓</span><span>Those hold only for constant \(a\). Otherwise integrate: \(\mathrm dt=\mathrm dv/a\) or \(v\,\mathrm dv=a\,\mathrm ds\).</span>
+<span class="x">✗</span><span>Drawing "\(mv^2/R\)" as an extra force on the FBD in the ground frame.</span>
+<span class="ok">✓</span><span>In the inertial frame, real forces add up to \(mv^2/R\) towards the centre. The outward centrifugal force appears only in the car's (rotating) frame.</span>
+<span class="x">✗</span><span>Resolving forces along and across a banked slope when the acceleration is horizontal.</span>
+<span class="ok">✓</span><span>Use vertical (\(\sum F=0\)) and horizontal-towards-centre (\(\sum F=mv^2/R\)) axes (slide 32).</span>
+<span class="x">✗</span><span>Giving drag the same sign as gravity, or forgetting it reverses when the body moves the other way.</span>
+<span class="ok">✓</span><span>Drag always opposes the velocity. With downward positive: \(m\dot V=mg-\text{drag}\).</span>
+<span class="x">✗</span><span>Forgetting the limits when separating variables (e.g. \(\int_0^t\) on one side, an indefinite integral on the other).</span>
+<span class="ok">✓</span><span>Matching limits on both sides: \(\int_{v_0}^{v}\dots=\int_0^t\dots\).</span>
+<span class="x">✗</span><span>Concluding from \(a=-0.04v^2\) that the plane never stops, as a physical statement.</span>
+<span class="ok">✓</span><span>The model breaks down at low speed (drag becomes \(\propto v\), and other forces take over), slide 19.</span>
+<span class="x">✗</span><span>Thinking a heavier rider must lean more (or less) on a bend.</span>
+<span class="ok">✓</span><span>\(\tan\phi=v^2/(gR)\): mass cancels.</span>
+</div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17"><h2><span class="n">17</span>Find the mistake</h2>
+<div class="q"><p class="qh">1 · The F-117 distance</p>
+<p>"\(a=-0.04v^2\), \(v\) from 80 to 10 m/s. Average acceleration \(=-0.04\times\big(\tfrac{80+10}{2}\big)^2=-81\u{m/s^2}\). Then \(v^2=v_0^2+2as\) gives \(s=\dfrac{100-6400}{2(-81)}=38.9\u{m}\)."</p>
+<details><summary>Hint</summary><div><p>Is the acceleration constant? Can you average it like that?</p></div></details>
+<details><summary>Answer</summary><div><p>\(a\) changes with \(v\), so the constant-acceleration formula is invalid and "average \(v\), then square" is not the average acceleration either. Use \(v\,\mathrm dv=a\,\mathrm ds\): \(s=\ln 8/0.04=52.0\u{m}\) (Section 5).</p></div></details></div>
+<div class="q"><p class="qh">2 · The off-ramp FBD</p>
+<p>"Forces on the car going round the flat ramp: weight \(mg\) down, normal \(N\) up, friction \(f\) inwards, and the centripetal force \(mv^2/R\) inwards. Horizontal balance: \(f+mv^2/R=0\)."</p>
+<details><summary>Hint</summary><div><p>Is the car in equilibrium horizontally? Is \(mv^2/R\) a force from anything?</p></div></details>
+<details><summary>Answer</summary><div><p>There is no separate centripetal force: friction <b>is</b> what provides the centripetal acceleration. The correct equation is \(f=mv^2/R\) (net inward force = mass × \(a_n\)), with \(f\le\mu N\) (Section 10).</p></div></details></div>
+<div class="q"><p class="qh">3 · Terminal speed in water</p>
+<p>"A 2 mm steel ball sinks in oil with laminar drag. Its terminal speed is \(V_T=\sqrt{mg/(C_D\rho A)}\)."</p>
+<details><summary>Hint</summary><div><p>Which drag law goes with laminar flow?</p></div></details>
+<details><summary>Answer</summary><div><p>That formula is for <b>turbulent</b> drag (\(\propto V^2\)). Laminar drag \(C_fV=3\pi\mu dV\) gives \(V_T=mg/C_f=\rho_{\rm sphere}gd^2/(18\mu)\) (Section 12). (Strictly, buoyancy should also be subtracted in a liquid; slide 37 neglects it for air.)</p></div></details></div>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="s18"><h2><span class="n">18</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Which equation?</p><p>Acceleration is given as \(a=-kx\) (a spring). You want the speed at a given position. Which relation do you start from?</p>
+<details><summary>Answer</summary><div><p>\(v\,\mathrm dv=a\,\mathrm ds\) (no time in \(a\)): \(\tfrac12(v^2-v_0^2)=-\tfrac12k(x^2-x_0^2)\).</p></div></details></div>
+<div class="q"><p class="qh">2 · Constant speed, still accelerating?</p><p>A car goes round a roundabout at a steady 30 km/h. Is it accelerating? Which components of \(\vb a\) are non-zero?</p>
+<details><summary>Answer</summary><div><p>Yes. \(a_t=\mathrm dv/\mathrm dt=0\), but \(a_n=v^2/R\ne0\): the direction of the velocity changes.</p></div></details></div>
+<div class="q"><p class="qh">3 · Double the speed</p><p>On a flat bend, by what factor must the friction force grow if the speed doubles? What about the lean angle's tangent for a cyclist?</p>
+<details><summary>Answer</summary><div><p>Both are \(\propto v^2\): four times the friction force, four times \(\tan\phi\).</p></div></details></div>
+<div class="q"><p class="qh">4 · Starting faster than terminal</p><p>A body is thrown downward at \(2V_T\). Describe its speed afterwards and the sign of its acceleration.</p>
+<details><summary>Answer</summary><div><p>Drag exceeds weight, so the acceleration points upward (it slows down), steeply at first, and the speed falls towards \(V_T\) from above, never crossing it (slides 35, 38, 40).</p></div></details></div>
+<div class="q"><p class="qh">5 · Halve the size</p><p>Two water droplets fall in air under laminar drag; one has half the diameter of the other. Compare their terminal speeds.</p>
+<details><summary>Answer</summary><div><p>\(V_T\propto d^2\), so the smaller one falls at a quarter of the speed (and takes four times as long to fall 1 m).</p></div></details></div>
+<div class="q"><p class="qh">6 · Fictitious or real?</p><p>In a braking bus you feel pushed forward. Which force is that in the bus frame, and what is the real explanation in the ground frame?</p>
+<details><summary>Answer</summary><div><p>In the bus frame: the fictitious force \(-m\vb a_{\rm bus}\), pointing forward because the bus accelerates backward. In the ground frame there is no forward force: your body simply keeps moving (first law) while the bus slows beneath you, until friction from the seat or a handrail decelerates you.</p></div></details></div>
+</section>
+
+<!-- ============ 19 ============ -->
+<section id="s19"><h2><span class="n">19</span>Exam taster</h2>
+<p>Real past-paper parts, about one per question type in this chapter. This chapter is Question B1 (and parts of B3 in Dec 2021) on every recent paper. Since Dec 2021 the Section B formula list does <b>not</b> give \(a_n=v^2/\rho\), the radius-of-curvature formula or any drag law: know them. Full method and more questions: <a href="guide-D1.html">Exam guide · D1</a>.</p>
+
+<div class="q"><div class="src"><b>Dec 2023 B1(c)</b><span>5 marks</span><a class="guide" href="guide-D1.html#D1-1">D1.1 rectilinear kinematics</a></div>
+<p>The cyclist has now reached the top of the slope and the road becomes flat (\(\varphi=0\)). At this point (\(t=0\)), the cyclist stops pedalling and is travelling at an initial speed of 5 m/s. If we ignore friction, the acceleration can be expressed as \(a=-0.05v^2\u{m/s^2}\). Determine the cyclist's velocity 5 seconds later (\(t=5\u{s}\)).</p>
+<details><summary>Hint</summary><div><p>\(a=\mathrm dv/\mathrm dt\) with \(a\) depending on \(v\): separate variables (slide 18).</p></div></details>
+<details><summary>Answer</summary><div>
+\[\begin{aligned}&\int_5^v\frac{\mathrm dv}{v^2}=-0.05\int_0^5\mathrm dt\\ &\Rightarrow\ \frac15-\frac1v=-0.25\ \Rightarrow\ \frac1v=0.45\end{aligned}\]
+<p>\(\boxed{v=2.22\u{m/s}}\)</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2018 B1(a)</b><span>6 marks</span><a class="guide" href="guide-D1.html#D1-1">D1.1 rectilinear kinematics</a></div>
+<p>A particle is moving along a straight line such that its speed is defined as \(v=(-4s^2)\u{m/s}\), where \(s\) is in meters. If \(s=2\u{m}\) when \(t=0\), determine the velocity and acceleration as functions of time.</p>
+<details><summary>Hint</summary><div><p>First find \(s(t)\) from \(\mathrm ds/\mathrm dt=-4s^2\); then differentiate twice.</p></div></details>
+<details><summary>Answer</summary><div>
+\[\begin{aligned}&\int_2^s\frac{\mathrm ds}{s^2}=-4\int_0^t\mathrm dt\\ &\Rightarrow\ \frac12-\frac1s=-4t\ \Rightarrow\ s=\frac{2}{1+8t}\u{m}.\end{aligned}\]
+<p>\(\boxed{v=\dfrac{\mathrm ds}{\mathrm dt}=-\dfrac{16}{(1+8t)^2}\u{m/s},\qquad a=\dfrac{\mathrm dv}{\mathrm dt}=\dfrac{256}{(1+8t)^3}\u{m/s^2}}\)</p>
+<p class="muted">Check at \(t=0\): \(v=-16=-4(2)^2\) ✓; and \(a=v\,\mathrm dv/\mathrm ds=(-4s^2)(-8s)=32s^3=256\) ✓.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2024 B1(b)</b><span>4 marks</span><span>with B1(a), (c) on the same figure</span><a class="guide" href="guide-D1.html#D1-2">D1.2 curvilinear n–t, banking</a></div>
+<p>A curved section of a race track has a fixed banking angle of \(\theta\) and a fixed curve of radius \(R\). All of the racing cars are travelling in this curved section without slipping up or down the banked track; they have negligible size and mass \(m=1000\u{kg}\). Derive an expression for the banking angle \(\theta\) for the race track so that the cars will not have to depend on friction to prevent them from sliding up or down the track, and determine \(\theta\) if the racing cars travel at a fixed speed of \(v=50\u{m/s}\) and \(R=0.5\u{km}\).</p>
+<div id="fig-t3"></div>
+<p class="muted">The paper shows a photo; redrawn as a front view of a car on the banked track, centre of the curve to the left.</p>
+<details><summary>Hint</summary><div><p>Only \(N\) and \(mg\). Vertical: no acceleration. Horizontal: \(mv^2/R\) towards the centre.</p></div></details>
+<details><summary>Answer</summary><div><div id="fig-t3a"></div>
+\[\begin{aligned}&N\cos\theta=mg,\quad N\sin\theta=\frac{mv^2}{R}\\ &\Rightarrow\ \tan\theta=\frac{v^2}{gR}\\ &\qquad\quad\ =\frac{50^2}{9.81(500)}=0.510\end{aligned}\]
+<p>\(\boxed{\theta=27.0^\circ}\), independent of \(m\).</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2018 B1(c)</b><span>10 marks</span><a class="guide" href="guide-D1.html#D1-2">D1.2 curvilinear n–t, curvature</a></div>
+<p>The 0.8 Mg car travels over the hill having the shape of a parabola. If the driver maintains a constant speed of 9 m/s, determine both the resultant normal force and the resultant frictional force that all the wheels of the car exert on the road at the instant it reaches point A. Neglect the size of the car. (Printed beside the question: \(a=a_t+a_n\), \(a_t=\mathrm dv/\mathrm dt\), \(a_n=v^2/\rho\), \(\rho=[1+(\mathrm dy/\mathrm dx)^2]^{3/2}/|\mathrm d^2y/\mathrm dx^2|\).)</p>
+<div id="fig-t4"></div>
+<details><summary>Hint</summary><div><p>At \(A\): slope \(y'\) gives the angle \(\theta\) of the road; \(\rho\) from the formula. Constant speed means \(a_t=0\) (friction balances the weight component along the road); \(a_n=v^2/\rho\) points down, towards the centre of curvature below the hill.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(y'=-\dfrac{x}{160}=-0.5\), \(y''=-\dfrac1{160}\) at \(x=80\u{m}\): \(\theta=\tan^{-1}0.5=26.57^\circ\),</p>
+\[\rho=\frac{(1+0.25)^{3/2}}{1/160}=223.6\u{m}.\]
+<div id="fig-t4a"></div>
+\[\begin{aligned}n:&\ mg\cos\theta-N=m\frac{v^2}{\rho}\\ \Rightarrow\ N&=800\Big(9.81(0.894)-\frac{81}{223.6}\Big)\\ &=6.73\u{kN},\\ t:&\ mg\sin\theta-F=0\\ \Rightarrow\ F&=800(9.81)(0.447)=3.51\u{kN}.\end{aligned}\]
+<p>\(\boxed{N=6.73\u{kN},\quad F=3.51\u{kN}}\) (on the car: \(N\) perpendicular to the road, \(F\) up the slope; the wheels push the road the opposite way).</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2016 B1(a)</b><span>10 marks</span><a class="guide" href="guide-D1.html#D1-3">D1.3 Newton's second law with friction and drag</a></div>
+<p>A country skier is on a 15° slope with a friction coefficient of \(\mu_k=0.1\) between his skis and snow. When he gathers some momentum, the wind drag becomes significant and it is estimated as \(C_D\rho_0V^2A\), where the drag coefficient is \(C_D=1\), the air density is \(\rho_0=1.2\u{kg/m^3}\) and his frontal area is \(A=0.5\u{m^2}\). His body weight is 70 kg. Determine his initial acceleration when he first begins his free down-hill sliding and his terminal speed.</p>
+<p class="flag">the drag is written without the factor ½; it is used as given (Section 13, Beyond box). "Body weight 70 kg" is read as mass 70 kg.</p>
+<details><summary>Hint</summary><div><p>Axes along and perpendicular to the slope (here the acceleration <b>is</b> along the slope). Initially \(V=0\), so no drag; terminal speed when the net force along the slope is zero.</p></div></details>
+<details><summary>Answer</summary><div><div id="fig-t5a"></div>
+\[\begin{aligned}\perp:&\ N=mg\cos15^\circ,\\ \parallel:&\ m\dot V=mg\sin15^\circ-\mu_kmg\cos15^\circ\\ &\qquad-C_D\rho_0AV^2.\end{aligned}\]
+<p>At \(V=0\): \(a_0=9.81(0.2588-0.1\times0.9659)=\boxed{1.59\u{m/s^2}}\) down the slope.</p>
+<p>Terminal: \(C_D\rho_0AV_T^2=ma_0\Rightarrow V_T=\sqrt{\dfrac{70(1.591)}{1(1.2)(0.5)}}=\boxed{13.6\u{m/s}}\).</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2021 B1(a)</b><span>3 marks</span><a class="guide" href="guide-D1.html#D1-4">D1.4 Newton's laws stated</a></div>
+<p>State Newton's three laws of motion.</p>
+<details><summary>Hint</summary><div><p>Inertia; \(F=ma\); action and reaction. One sentence each.</p></div></details>
+<details><summary>Answer</summary><div><ol class="steps"><li>A body stays at rest or moves with constant velocity unless a net external force acts on it.</li><li>The net force equals the rate of change of momentum; for constant mass \(\vb F=m\vb a\).</li><li>The forces two bodies exert on each other are equal in magnitude, opposite in direction and collinear.</li></ol></div></details></div>
+</section>
+</main>
+</div>
+
+<script>
+/* MECH2413 shared helpers (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-D1 figures (page-level helpers only; lib.js is frozen).
+   Colours (s0 box): force = weight/applied (red), react = surroundings: N, friction, tension, drag (teal),
+   good = acceleration/velocity arrows (green), load = fictitious force (orange), dim = geometry. */
+const P=FBD.panels, D=FBD.draw;
+const T=(x,y,s,cls,dx,dy)=>({t:'text',x,y,s,cls:cls||'it',dx,dy});
+const R2D=180/Math.PI;
+/* arrow from (x1,y1) to (x2,y2) in world units; px needed for its pixel length */
+function arr(x1,y1,x2,y2,px,k,lbl,o){return Object.assign({t:'force',x:x2,y:y2,ang:Math.atan2(y2-y1,x2-x1)*R2D,len:Math.hypot(x2-x1,y2-y1)*px,k:k||'dim',lbl},o||{});}
+/* box standing on a surface: bottom-centre (cx,cy), width w, height h, surface angle deg */
+function rbox(cx,cy,w,h,deg,cls){const a=deg/R2D,c=Math.cos(a),s=Math.sin(a);
+  const pts=[[-w/2,0],[w/2,0],[w/2,h],[-w/2,h]].map(([u,v])=>[cx+u*c-v*s,cy+u*s+v*c]);return {t:'poly',pts,cls:cls||'member2'};}
+/* point at local (u along surface, v normal) from (cx,cy) on a surface at deg */
+function loc(cx,cy,deg,u,v){const a=deg/R2D;return [cx+u*Math.cos(a)-v*Math.sin(a),cy+u*Math.sin(a)+v*Math.cos(a)];}
+/* ground wedge under a surface through (0,0) at angle deg, from x=-L to x=L */
+function wedge(deg,L){const t=Math.tan(deg/R2D),lo=Math.min(-L*t,L*t)-0.4;return {t:'poly',pts:[[-L,-L*t],[L,L*t],[L,lo],[-L,lo]],cls:'member'};}
+const F=(x,y,ang,len,lbl,k,o)=>Object.assign({t:'force',x,y,ang,len,lbl,k:k||'force',at:'tail'},o||{});
+
+/* ---------- Section 2: displacement ---------- */
+(function(){const px=46,c=t=>[0.8+4.6*t,0.9+2.4*t*t],pts=[];for(let i=0;i<=30;i++)pts.push(c(i/30));
+  const A=c(0.1),B=c(0.75),O=[3.6,-0.3];
+  D('fig-s2',{x0:-0.5,x1:6.2,y0:-0.6,y1:4.0,px,pad:10,maxw:380},[{t:'line',p:pts,cls:'ink'},{t:'axes',x:-0.2,y:-0.4,len:26},
+    arr(O[0],O[1],A[0],A[1],px,'dim','',{}),arr(O[0],O[1],B[0],B[1],px,'dim','',{}),arr(A[0],A[1],B[0],B[1],px,'force','',{}),
+    {t:'force',x:A[0],y:A[1],ang:Math.atan2(4.8*0.1,4.6)*R2D,len:48,k:'good',at:'tail',lbl:'v',dy:12},
+    {t:'dot',x:A[0],y:A[1],k:'dim'},{t:'dot',x:B[0],y:B[1],k:'dim'},T(A[0]-0.1,A[1]+0.4,'A'),T(B[0]+0.3,B[1]-0.05,"A′"),{t:'dot',x:O[0],y:O[1],k:'dim'},T(O[0]+0.3,O[1]-0.1,'O'),
+    T(2.3,0.05,'r','lbl-dim'),T(4.25,0.9,"r′",'lbl-dim'),T(2.7,2.05,'Δr','lbl-force'),T(5.5,3.8,'path','lbl-dim')]);})();
+
+/* ---------- Section 3: free fall ---------- */
+(function(){const px=40;
+  D('fig-s3-sys',{x0:-1.2,x1:2,y0:-0.5,y1:4.2,px,pad:10,maxw:200},[{t:'fixed',x:0.5,y:0,side:'bottom',len:100},{t:'circle',x:0.5,y:3.6,r:0.25,cls:'member2'},
+    {t:'vdim',y1:0,y2:3.6,x:-0.4,lbl:'h',left:true},F(1.2,3.4,-90,40,'s','dim',{dx:10})]);
+  D('fig-s3-fbd',{x0:-1,x1:2,y0:-0.5,y1:4.2,px,pad:10,maxw:200},[{t:'circle',x:0.5,y:2.6,r:0.25,cls:'member2'},F(0.5,2.35,-90,48,'mg'),F(1.3,2.9,-90,40,'a = g','good',{dx:22})]);})();
+
+/* ---------- Section 4: car on a line ---------- */
+D('fig-s4-car',{x0:-0.6,x1:8,y0:-0.9,y1:1.6,px:40,pad:8,maxw:380},[{t:'line',p:[[-0.4,0],[7.8,0]],cls:'ground'},{t:'rect',x:4,y:0.15,w:1.6,h:0.7,cls:'member2'},
+  {t:'circle',x:4.35,y:0.15,r:0.15},{t:'circle',x:5.25,y:0.15,r:0.15},{t:'dot',x:0,y:0,k:'dim'},T(0,-0.45,'O'),{t:'dim',x1:0,x2:4.8,y:-0.55,lbl:'s'},F(5.7,0.5,0,40,'v','good',{dy:-10})]);
+
+/* ---------- Section 5: plane with drag chute ---------- */
+D('fig-s5-plane',{x0:-4.4,x1:3.8,y0:-0.8,y1:1.4,px:44,pad:8,maxw:360},[{t:'poly',pts:[[-1.2,0],[1.6,0],[2.1,0.25],[1.6,0.5],[-1.2,0.5],[-1.5,1.0],[-1.7,1.0],[-1.6,0.25]],cls:'member2'},
+  F(-1.6,0.25,180,50,'D = 0.04mv²','react',{dy:-12}),F(2.3,0.25,0,40,'v','good',{dy:-12}),{t:'line',p:[[-4.4,-0.5],[3.8,-0.5]],cls:'faint'}]);
+
+/* ---------- Section 6: lift ---------- */
+(function(){const o={x0:-1.6,x1:2.0,y0:-1.6,y1:3.6,px:36,pad:8},man=[{t:'rect',x:-0.25,y:0,w:0.5,h:1.7,cls:'member2'},{t:'circle',x:0,y:2.0,r:0.25,cls:'member2'}];
+  const box=[{t:'line',p:[[-1.2,-0.1],[1.2,-0.1],[1.2,2.9],[-1.2,2.9],[-1.2,-0.1]],cls:'ink'}];
+  P('fig-s6-lift',[{o,cap:'ground (inertial) frame: \\(N-mg=ma\\)',items:[...box,...man,{t:'force',x:-0.1,y:0,ang:90,len:40,k:'react',lbl:'N',at:'tip',dx:-14},F(0.1,1.0,-90,40,'mg',undefined,{dx:16}),F(1.55,1.0,90,40,'a','good',{dx:10})]},
+   {o,cap:'lift frame: add \\(F′=ma\\) down; \\(a′=0\\)',items:[...box,...man,{t:'force',x:-0.1,y:0,ang:90,len:40,k:'react',lbl:'N',at:'tip',dx:-14},F(0.1,1.0,-90,40,'mg',undefined,{dx:16}),F(0.6,1.6,-90,28,"F′ = ma",'load',{dx:30,dy:-4})]}]);})();
+
+/* ---------- Section 7: string in an accelerating car ---------- */
+(function(){const px=40,th=24/R2D,Lp=1.5,pv=[3.0,2.0],bob=[pv[0]-Lp*Math.sin(th),pv[1]-Lp*Math.cos(th)];
+  D('fig-s7-car',{x0:-0.4,x1:7.4,y0:-0.6,y1:3.0,px,pad:8,maxw:400},[{t:'line',p:[[-0.3,-0.25],[6.5,-0.25]],cls:'ground'},
+    {t:'poly',pts:[[0.3,0.1],[5.6,0.1],[5.6,1.4],[4.8,2.2],[0.6,2.2],[0.3,1.6]],cls:'member2'},{t:'circle',x:1.4,y:0.1,r:0.32},{t:'circle',x:4.6,y:0.1,r:0.32},
+    {t:'line',p:[pv,bob],cls:'ink'},{t:'line',p:[pv,[pv[0],pv[1]-1.6]],cls:'faint'},{t:'circle',x:bob[0],y:bob[1],r:0.13,cls:'member'},T(pv[0]-0.2,pv[1]-0.55,'θ','lbl-dim'),
+    F(5.7,1.0,0,40,'A','good',{dy:-10}),T(0.9,2.55,'car accelerating at A','lbl-dim',undefined)]);
+  const o={x0:-1.6,x1:2.2,y0:-1.6,y1:2.0,px:40,pad:8},sx=Math.sin(th),cy=Math.cos(th);
+  const base=[{t:'circle',x:0,y:0,r:0.13,cls:'member'},{t:'line',p:[[0,0],[1.5*sx,1.5*cy]],cls:'faint'},F(0,0,90-24,52,'T','react',{at:'tail'}),F(0,0,-90,44,'mg')];
+  P('fig-s7-fbd',[{o,cap:'inertial frame: \\(T\\sin\\theta=mA\\), \\(T\\cos\\theta=mg\\)',items:[...base,F(0.9,-0.9,0,36,'a = A','good',{dy:-11})]},
+   {o,cap:'car frame: add \\(mA\\) backward; statics',items:[...base,F(-0.15,0,180,38,'mA','load',{dy:-11})]}]);})();
+
+/* ---------- Section 8: parachute FBD ---------- */
+D('fig-s8-fbd',{x0:-1.6,x1:2.2,y0:-1.8,y1:1.8,px:40,pad:8,maxw:220},[{t:'circle',x:0,y:0,r:0.22,cls:'member2'},F(0,0.22,90,46,'0.5v²','react'),F(0,-0.22,-90,46,'mg = 890 N'),
+  F(1.2,0.5,-90,40,'v, a (+)','good',{dx:12})]);
+
+/* ---------- Section 9: n-t and polar ---------- */
+(function(){const px=50,pts=[];for(let i=0;i<=40;i++){const x=0.4+5.2*i/40;pts.push([x,0.6+0.3*(x-3)**2]);}
+  const rho=1/0.6;
+  D('fig-s9-nt',{x0:0,x1:6.2,y0:0,y1:4.0,px,pad:8,maxw:380},[{t:'circle',x:3,y:0.6+rho,r:rho,cls:'faint'},{t:'line',p:pts,cls:'ink'},{t:'dot',x:3,y:0.6,k:'dim'},
+    F(3,0.6,0,46,'e_t','good',{dy:-10,dx:4}),F(3,0.6,90,40,'e_n','good',{dx:14}),{t:'line',p:[[3,0.6+rho],[3+rho*Math.cos(-0.6),0.6+rho+rho*Math.sin(-0.6)]],cls:'dim'},
+    T(3.75,1.65,'ρ','lbl-dim'),{t:'dot',x:3,y:0.6+rho,r:2.5,k:'dim'},T(3.0,2.55,'centre of curvature','lbl-dim'),T(5.5,3.8,'path','lbl-dim')]);
+  const r=3,th=35/R2D,Pp=[r*Math.cos(th),r*Math.sin(th)],arc=[];for(let i=0;i<=20;i++){const a=th*i/20;arc.push([0.9*Math.cos(a),0.9*Math.sin(a)]);}
+  D('fig-s9-polar',{x0:-0.4,x1:4.4,y0:-0.4,y1:3.0,px,pad:8,maxw:340},[{t:'line',p:[[0,0],[4.2,0]],cls:'faint'},{t:'line',p:[[0,0],Pp],cls:'dim'},{t:'line',p:arc,cls:'dim'},
+    T(1.15,0.3,'θ','lbl-dim'),T(1.1,1.15,'r','lbl-dim'),{t:'dot',x:Pp[0],y:Pp[1],k:'dim'},T(-0.2,-0.25,'O'),
+    F(Pp[0],Pp[1],35,40,'u_r','good',{dx:6}),F(Pp[0],Pp[1],125,40,'u_{θ}','good')]);})();
+
+/* ---------- Section 10 ---------- */
+(function(){const px=34;
+  D('fig-s10-station',{x0:-2.8,x1:2.8,y0:-2.8,y1:2.8,px,pad:8,maxw:240},[{t:'circle',x:0,y:0,r:2.2,cls:'ink'},{t:'circle',x:0,y:0,r:2.35,cls:'ink'},{t:'dot',x:0,y:0,k:'dim'},
+    {t:'moment',x:0,y:0,r:16,sense:'ccw',k:'dim',lbl:'ω'},{t:'rect',x:-0.15,y:-2.2,w:0.3,h:0.6,cls:'member2'},F(0.35,-2.2,90,40,'N','react',{dx:12}),
+    {t:'line',p:[[0,0],[-1.556,-1.556]],cls:'dim'},T(-1.0,-0.6,'R','lbl-dim')]);
+  const o1={x0:-2.4,x1:2.6,y0:-2.4,y1:2.4,px,pad:8},o2={x0:-2.4,x1:2.4,y0:-1.4,y1:2.6,px:40,pad:8};
+  P('fig-s10-ramp',[{o:o1,cap:'top view: friction points to the centre',items:[{t:'circle',x:0,y:0,r:1.8,cls:'faint'},{t:'dot',x:0,y:0,k:'dim'},{t:'rect',x:1.6,y:-0.3,w:0.4,h:0.6,cls:'member2'},
+      F(1.6,0,180,40,'f','react',{dy:-11}),F(2.1,0.35,90,34,'v','good',{dx:10}),T(0,-0.6,'R = 60 m','lbl-dim')]},
+    {o:o2,cap:'front view (centre to the left)',items:[{t:'fixed',x:0,y:0,side:'bottom',len:150},{t:'rect',x:-0.8,y:0.05,w:1.6,h:0.9,cls:'member2'},
+      F(0,0.5,-90,46,'mg'),{t:'force',x:0.4,y:0,ang:90,len:40,k:'react',lbl:'N',at:'tip',dx:12},F(-0.8,0.05,180,36,'f','react',{dy:-11}),F(-0.4,1.5,180,40,'a_n','good',{dy:-11})]}]);
+  // maglev: surface rises to the right at 40°, centre of curve on the left
+  const b=40,c0=[0,0],cg=loc(0,0,b,0,0.45);
+  D('fig-s10-mag',{x0:-2.4,x1:2.6,y0:-2.4,y1:2.8,px:44,pad:8,maxw:320},[wedge(b,2.2),rbox(0,0,1.4,0.9,b),
+    F(cg[0],cg[1],90+b,48,'M','react'),F(cg[0],cg[1],b,44,'S','react',{dy:-6}),F(cg[0],cg[1],-90,50,'mg'),F(-0.2,2.1,180,40,'a_n = v²/R','good',{dy:-12}),T(1.6,0.5,'40°','lbl-dim')]);
+})();
+
+/* ---------- Section 10: live banked curve ---------- */
+(function(){const g=9.81,m=1000;
+  function live(){const v=+$('bv').value/3.6,R=+$('bR').value,th=+$('bt').value,mu=+$('bm').value,a=th/R2D,an=v*v/R;
+    const f=m*(an*Math.cos(a)-g*Math.sin(a)),N=m*(g*Math.cos(a)+an*Math.sin(a)),need=Math.abs(f)/N;
+    const v0=Math.sqrt(g*R*Math.tan(a)),den=Math.cos(a)-mu*Math.sin(a),vmax=den>0?Math.sqrt(g*R*(Math.sin(a)+mu*Math.cos(a))/den):Infinity,
+      vminSq=g*R*(Math.sin(a)-mu*Math.cos(a))/(Math.cos(a)+mu*Math.sin(a)),vmin=vminSq>0?Math.sqrt(vminSq):0;
+    const sc=46/(m*g),cg=loc(0,0,th,0,0.45),items=[wedge(th,2.2),rbox(0,0,1.4,0.9,th),F(cg[0],cg[1],-90,46,'mg'),F(cg[0],cg[1],90+th,Math.max(8,N*sc),'N','react')];
+    if(Math.abs(f)>1e-6*m){const fp=loc(0,0,th,f>0?-0.7:0.7,0);items.push(F(fp[0],fp[1],f>0?180+th:th,Math.max(14,Math.abs(f)*sc),'f','react',{dy:14}));}
+    if(an>0)items.push(F(-0.3,2.3,180,Math.max(10,m*an*sc),'ma_n','good',{dy:-11}));
+    D('fig-bank-live',{x0:-2.8,x1:2.6,y0:-2.4,y1:2.9,px:44,pad:8,maxw:320},items);
+    const st=need<=mu?'<b>holds</b> (friction needed ≤ μ)':(f>0?'<b>slides up and out</b>':'<b>slides down and in</b>');
+    $('bank-out').innerHTML=`design speed v₀ = <b>${fmt(v0*3.6,1)} km/h</b> · friction f = ${fmt(f/1000,2)} kN (${f>=0?'down-slope':'up-slope'}), N = ${fmt(N/1000,2)} kN for m = 1000 kg<br>
+      μ needed = ${fmt(need,3)} → ${st} · safe range ${fmt(vmin*3.6,1)} to ${isFinite(vmax)?fmt(vmax*3.6,1):'∞'} km/h`;}
+  ['bv','bR','bt','bm'].forEach(i=>$(i).addEventListener('input',live));redraws.push(live);live();
+})();
+
+/* ---------- Section 11: ball falling ---------- */
+(function(){const o={x0:-1.0,x1:1.4,y0:-1.6,y1:1.6,px:40,pad:6};
+  const it=d=>[{t:'circle',x:0,y:0,r:0.25,cls:'member2'},F(0,-0.25,-90,44,'mg'),...(d>0?[F(0,0.25,90,d,'drag','react')]:[])];
+  P('fig-s11-ball',[{o,cap:'(1) released: drag 0',items:it(0)},{o,cap:'(2) drag growing',items:it(24)},{o,cap:'(3) drag = mg: \\(V=V_T\\)',items:it(44)}]);})();
+
+/* ---------- Section 13 ---------- */
+D('fig-s13-sky',{x0:-1.4,x1:2.0,y0:-1.8,y1:1.0,px:40,pad:8,maxw:200},[{t:'circle',x:0,y:0,r:0.22,cls:'member2'},F(0,-0.22,-90,46,'1000 N'),F(1.1,0.3,-90,40,'a = 10 m/s²','good',{dx:16})]);
+(function(){
+  function draw(){const v0=+$('dv0').value,lam=t=>1+(v0-1)*Math.exp(-t),
+      C=Math.abs(1-v0)<1e-9?null:(1+v0)/(1-v0),tur=t=>C===null?1:(C*Math.exp(2*t)-1)/(C*Math.exp(2*t)+1),ymax=Math.max(1.2,v0*1.1);
+    plot($('cv-drag'),{xmin:0,xmax:4,ymin:0,ymax:ymax,xstep:1,ystep:ymax>2?0.5:0.2,xlabel:'gt / V_T',ylabel:'V / V_T',
+      curves:[{f:x=>1,color:css('--c3'),dash:[6,4],width:1.6},{f:lam,color:css('--c2')},{f:tur,color:css('--ink')}]});
+    const within=(fn)=>{for(let i=0;i<=4000;i++){const t=i/500;if(Math.abs(fn(t)-1)<=0.05&&[1,2,3].every(k=>Math.abs(fn(t+k*0.05)-1)<=0.05))return t;}return NaN;};
+    $('drag-out').innerHTML=Math.abs(v0-1)<1e-9?'V₀ = V_T: no change at all.':`within 5% of V_T after gt/V_T ≈ <b>${fmt(within(lam),2)}</b> (laminar) and <b>${fmt(within(tur),2)}</b> (turbulent)`;}
+  $('dv0').addEventListener('input',draw);redraws.push(draw);draw();
+})();
+
+/* ---------- Section 14 ---------- */
+D('fig-s14-drop',{x0:-1.4,x1:2.2,y0:-1.6,y1:1.6,px:40,pad:8,maxw:220},[{t:'circle',x:0,y:0,r:0.14,cls:'member2'},F(0,-0.14,-90,44,'mg'),F(0,0.14,90,44,'3πμV_Td','react'),T(1.2,-1.1,'V = V_T, a = 0','lbl-dim')]);
+D('fig-s14-sky',{x0:-1.4,x1:2.2,y0:-1.8,y1:1.8,px:40,pad:8,maxw:220},[{t:'circle',x:0,y:0,r:0.22,cls:'member2'},F(0,-0.22,-90,44,'mg'),F(0,0.22,90,46,'mcv²','react'),F(1.3,0.5,-90,40,'v (+)','good',{dx:14})]);
+
+/* ---------- Exam taster ---------- */
+(function(){const th=27,cg=loc(0,0,th,0,0.45);
+  D('fig-t3',{x0:-2.4,x1:2.6,y0:-1.8,y1:2.0,px:44,pad:8,maxw:320},[wedge(th,2.2),rbox(0,0,1.4,0.7,th),{t:'line',p:[[-2.2,-2.2*Math.tan(th/R2D)],[-0.5,-2.2*Math.tan(th/R2D)]],cls:'faint'},T(-1.25,-0.92,'θ','lbl-dim'),F(-0.4,1.6,180,44,'to centre','dim',{dy:-11})]);
+  D('fig-t3a',{x0:-2.4,x1:2.6,y0:-1.8,y1:2.4,px:44,pad:8,maxw:320},[wedge(th,2.2),rbox(0,0,1.4,0.7,th),F(cg[0],cg[1],90+th,52,'N','react'),F(cg[0],cg[1],-90,46,'mg'),F(-0.2,2.1,180,40,'a_n = v²/R','good',{dy:-11})]);
+  // parabolic hill
+  const hp=[];for(let i=0;i<=60;i++){const x=-15+125*i/60;hp.push([x,20*(1-x*x/6400)]);}
+  const sA=-26.565;
+  D('fig-t4',{x0:-20,x1:118,y0:-16,y1:30,px:3.4,pad:8,maxw:520},[{t:'line',p:hp,cls:'ink'},{t:'line',p:[[-20,0],[118,0]],cls:'faint'},rbox(80,0,7,3.5,sA),
+    {t:'dot',x:80,y:0,k:'dim'},T(84,-5,'A'),{t:'vdim',y1:0,y2:20,x:-8,lbl:'20 m',left:true},{t:'dim',x1:0,x2:80,y:-12,lbl:'80 m'},{t:'axes',x:0,y:0,len:26},
+    T(45,26,'y = 20(1 − x²/6400) m','lbl-dim'),F(88,-6,sA,30,'9 m/s','good',{dy:10,dx:10})]);
+  const c=loc(0,0,sA,0,0.4);
+  D('fig-t4a',{x0:-2.4,x1:2.6,y0:-2.6,y1:2.0,px:44,pad:8,maxw:320},[{t:'line',p:[loc(0,0,sA,-2.2,0),loc(0,0,sA,2.2,0)],cls:'ground'},rbox(0,0,1.2,0.6,sA),
+    F(c[0],c[1],90+sA,46,'N','react'),F(c[0],c[1],-90,46,'mg'),F(c[0],c[1],180+sA,42,'F','react',{dy:-10}),F(1.2,-1.4,-90+sA,38,'a_n','good',{dx:14}),T(1.9,-0.4,'26.6°','lbl-dim')]);
+  const s=-15,cs=loc(0,0,s,0,0.45);
+  D('fig-t5a',{x0:-2.4,x1:2.6,y0:-1.8,y1:2.0,px:44,pad:8,maxw:320},[{t:'line',p:[loc(0,0,s,-2.2,0),loc(0,0,s,2.2,0)],cls:'ground'},rbox(0,0,0.5,1.0,s),
+    F(cs[0],cs[1],90+s,40,'N','react'),F(cs[0],cs[1],-90,48,'mg'),F(loc(0,0,s,-0.25,0.15)[0],loc(0,0,s,-0.25,0.15)[1],180+s,40,'μN','react',{dy:12}),
+    F(loc(0,0,s,-0.25,0.85)[0],loc(0,0,s,-0.25,0.85)[1],180+s,38,'C_DρAV²','react',{dy:-12}),F(1.0,1.2,s,40,'a','good',{dy:-10})]);
+})();
+
+</script>
+</body></html>

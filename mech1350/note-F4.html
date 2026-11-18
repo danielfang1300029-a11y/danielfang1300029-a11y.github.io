@@ -1,0 +1,1557 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH1350 F4 · Momentum, drag and losses (beyond the handouts)</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH1350 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --purple:#6d3fb2; --purple-soft:#efe8fa; --green:#1f7a4d; --green-soft:#e3f4ea;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+/* ---- MECH1350 additions ---- */
+.box.prev,.prev.box{background:var(--purple-soft);border-color:transparent;border-left:4px solid var(--purple)} .prev>.tag{color:var(--purple)}
+section.prev-sec{border-top:3px solid var(--purple)} section.prev-sec>h2 .n{color:var(--purple)}
+section.prev-sec>.prevbar{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin:-8px 0 8px}
+.beyond{border-left:4px solid var(--warm)}
+.banner{background:var(--warm-soft);border:1px solid var(--warm);border-radius:8px;padding:10px 14px;font-size:.95rem}
+.banner b{color:var(--warm)}
+.conv{background:var(--green-soft);border-color:transparent;border-left:4px solid var(--green)} .conv>.tag{color:var(--green)}
+details.calc{border-left:3px solid var(--accent)}
+details.calc>summary{color:var(--accent);font-weight:500}
+details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.calc .why{color:var(--muted);font-size:.9rem}
+table.tbl td,table.tbl th{padding:6px 8px}
+.circuit{width:100%;height:auto;display:block}
+.circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
+.circuit .r{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+.circuit .node{fill:var(--ink)}
+.circuit text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.circuit .q{stroke:var(--c2);fill:var(--c2)}
+
+/* ---- exam-guide classes (promoted from guide-T3 pilot, Gate D 2026-11-17) ---- */
+.mem{border:2px solid var(--c3);background:var(--card)} .mem>.tag{color:var(--c3)}
+.mem table td{padding:5px 8px;font-size:.92rem}
+.proc{border-left:4px solid var(--accent)} .proc>.tag{color:var(--accent)}
+.skel{border-left:4px solid var(--purple)} .skel>.tag{color:var(--purple)}
+.recap{font-size:.95rem;background:var(--accent-soft);border-radius:6px;padding:8px 12px;margin:8px 0 14px}
+.recap a{font-family:var(--mono);font-size:12px;white-space:nowrap}
+details.hint>summary{color:var(--muted)}
+details.hint>summary::before{content:"Hint · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.sol{border-left:3px solid var(--accent)}
+details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.mnote{font-size:.9rem;border-left:3px solid var(--warm);padding-left:10px;color:var(--muted)}
+.mnote b{color:var(--warm);font-weight:600}
+.q .part{font-weight:600;margin-top:14px}
+.q .opts{list-style:none;padding-left:.4rem;margin:6px 0}
+.q .opts li{margin:3px 0}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
+.stats span{font-size:.88rem;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted)}
+.stats b{color:var(--ink);font-family:var(--display)}
+.small{font-size:.88rem}
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/es5/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents"><p class="h">Fluid dynamics · F4</p><ol>
+  <li><a href="#s0">0 · Where this sits</a></li>
+  <li><a href="#s1">1 · Momentum flux</a></li>
+  <li><a href="#s2">2 · CV momentum equation</a></li>
+  <li><a href="#s3">3 · Jets on flat plates</a></li>
+  <li><a href="#s4">4 · Inclined plates, vanes</a></li>
+  <li><a href="#s5">5 · Vertical jets, gravity</a></li>
+  <li><a href="#s6">6 · Bends, nozzles</a></li>
+  <li><a href="#s7">7 · Tanks on scales</a></li>
+  <li><a href="#s8">8 · Drag and lift</a></li>
+  <li><a href="#s9">9 · Drag force, power</a></li>
+  <li><a href="#s10">10 · Aerofoils, stall, flaps</a></li>
+  <li><a href="#s11">11 · Head loss</a></li>
+  <li><a href="#s12">12 · Open channels</a></li>
+  <li><a href="#s13">13 · Summary</a></li>
+  <li><a href="#s14">14 · Common mistakes</a></li>
+  <li><a href="#s15">15 · Find the mistake</a></li>
+  <li><a href="#s16">16 · Concept checks</a></li>
+  <li><a href="#s17">17 · Exam taster</a></li>
+</ol></nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-F4.html">Exam guide · F4</a><a href="note-F3.html">← F3</a></nav>
+  <span class="course">MECH1350 · Fluid dynamics · chapter 4 · beyond the handouts</span>
+  <h1>Momentum, drag and losses (beyond the handouts)</h1>
+  <p class="banner"><b>Beyond the handouts.</b> No 2026 handout covers these topics; they come from past Section C papers. They may or may not be examined this year — check Moodle.</p>
+  <p class="lede">The momentum equation for forces of flowing fluids (jets, bends, tanks), drag and lift, head loss and open channels, explained from scratch. No 2026 handout: written from past papers and a standard textbook.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>F2 conserved <b>mass</b> and F3 conserved <b>energy</b>; this chapter adds the third law the F2 handout announces, conservation of <b>momentum</b>, for the forces flowing fluids exert, plus drag, losses and open channels. It is the last chapter of the course.</p>
+<p><b>In the exam:</b> asked in 9 of 11 past sittings (Dec 2018 to May 2025), usually one 6–10 mark force question in Section C. See the <a href="guide-F4.html">F4 exam guide</a>.</p>
+<p class="muted small">Source: no 2026 handout; past ENGG1350 papers (cited as sitting and question) and Çengel &amp; Cimbala, <i>Fluid Mechanics</i> / Munson et al., <i>Fundamentals of Fluid Mechanics</i>; no slide numbers quoted.</p>
+
+<div class="box conv"><span class="tag">Sign convention for this chapter</span>
+<ul class="list">
+<li>Pick <b>axes</b> first and draw them on your sketch: \(x\) to the right and \(y\) up unless the question gives others. Every velocity, force and momentum flux is then a <b>component with a sign</b>: a jet moving left has \(V_x=-20\u{m/s}\).</li>
+<li>In the momentum equation \(\sum F\) means the forces <b>on the fluid inside the control volume</b>. The force <b>on the plate, bend or tank</b> is equal and opposite (Newton's third law). Say clearly which one you are giving.</li>
+<li>Pressures are <b>gauge</b> pressures (above atmospheric). The atmosphere pushes on every side of the control volume equally, so it cancels; using gauge pressure removes it in one step. A <b>free jet</b> (a jet in open air) has gauge pressure 0.</li>
+<li>A pressure force at an inlet or outlet always pushes <b>into</b> the control volume, with size \(pA\).</li>
+<li>Flow is <b>steady</b> (nothing changes with time), <b>incompressible</b> (constant density) and <b>uniform</b> across each inlet and outlet (one speed per section), as in every past paper.</li>
+<li>Colours in the sketches: <span style="color:var(--accent)"><b>teal</b></span> = flow and momentum flux \(\dot mV\); <span style="color:var(--warm)"><b>orange</b></span> = pressure force \(pA\); <span style="color:var(--purple)"><b>purple</b></span> = weight; <span style="color:var(--c2)"><b>red</b></span> = the support (anchoring) force; <span style="color:var(--c3)"><b>green dashed</b></span> = control-volume boundary.</li>
+</ul></div>
+
+<h3>Symbols used throughout</h3>
+<div class="scroll"><table class="tbl">
+<tr><th>Symbol</th><th>Meaning</th><th>Unit</th></tr>
+<tr><td>\(\rho\)</td><td>density (water 1000, air 1.2–1.23)</td><td>kg/m³</td></tr>
+<tr><td>\(V\) (or \(U\))</td><td>flow speed at a section</td><td>m/s</td></tr>
+<tr><td>\(A\)</td><td>cross-section area of a jet or pipe</td><td>m²</td></tr>
+<tr><td>\(Q=AV\)</td><td>volume flow rate (discharge)</td><td>m³/s</td></tr>
+<tr><td>\(\dot m=\rho AV=\rho Q\)</td><td>mass flow rate ("m-dot")</td><td>kg/s</td></tr>
+<tr><td>\(\dot mV\)</td><td>momentum flux: momentum carried through a section per second</td><td>kg·m/s² = N</td></tr>
+<tr><td>\(p\)</td><td>(gauge) pressure</td><td>Pa = N/m²</td></tr>
+<tr><td>\(F_A\), \(R_x\), \(R_y\)</td><td>anchoring (support) force and its components</td><td>N</td></tr>
+<tr><td>\(F_D\), \(F_L\)</td><td>drag and lift forces</td><td>N</td></tr>
+<tr><td>\(C_D\), \(C_L\)</td><td>drag and lift coefficients</td><td>none</td></tr>
+<tr><td>\(h_L\)</td><td>head loss</td><td>m</td></tr>
+<tr><td>\(y\), \(b\)</td><td>flow depth and width of an open channel</td><td>m</td></tr>
+<tr><td>\(E_s\)</td><td>specific energy of an open-channel flow</td><td>m</td></tr>
+<tr><td>\(g\)</td><td>gravitational acceleration: use the paper's value (9.81, or 9.8 in May 2021)</td><td>m/s²</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Momentum and momentum flux <span class="pill">Beyond</span></h2>
+<p>From HKDSE Physics: the <b>momentum</b> of a body is mass × velocity, \(mV\), a vector. Newton's second law says the net force on a body equals its <b>rate of change of momentum</b>, \(F=\mathrm d(mV)/\mathrm dt\), which is \(ma\) when \(m\) is fixed. The F2 handout calls this "the linear momentum relation" and splits it into components, \(F_x=ma_x\), \(F_y=ma_y\), \(F_z=ma_z\).</p>
+<p>For a fluid we do not follow one lump of water. We watch a fixed region, the <b>control volume</b> (F2), and ask how much momentum flows in and out of it every second.</p>
+<div class="box beyond"><span class="tag">Definition · mass flow rate and momentum flux</span>
+<p>Through a section of area \(A\) where fluid of density \(\rho\) crosses at speed \(V\):</p>
+<ul class="list">
+<li>the <b>mass flow rate</b> is \(\dot m=\rho AV\) (kg of fluid crossing per second);</li>
+<li>the <b>momentum flux</b> is \(\dot m\vec V=\rho AV\,\vec V\): the momentum carried across the section per second. Its direction is the direction of the flow there; its size is \(\rho AV^2\).</li>
+</ul></div>
+<div class="box beyond"><span class="tag">Result · momentum flux of a jet</span>
+\[\dot mV=\rho AV^2\]
+<p class="word"><b>In words:</b> momentum per second = (mass per second) × velocity = density × area × speed squared. Unit: (kg/s)(m/s) = kg·m/s² = N, the same as a force.</p></div>
+<details class="calc"><summary>why the momentum flux is \(\rho AV^2\)</summary><div>
+<p>1. In a short time \(\Delta t\) the fluid crossing the section fills a cylinder of length \(V\Delta t\) and area \(A\). <span class="why">Every particle moves \(V\Delta t\).</span></p>
+<p>2. Its mass is \(\rho AV\Delta t\), so the mass per second is \(\rho AV\). <span class="why">This is \(\dot m\), as in F2's continuity equation.</span></p>
+<p>3. Each kilogram carries momentum \(V\), so the momentum crossing in \(\Delta t\) is \(\rho AV\Delta t\times V\). <span class="why">Momentum = mass × velocity.</span></p>
+<p>4. Divide by \(\Delta t\): momentum per second \(=\rho AV^2=\dot mV\).</p>
+</div></details>
+<p class="word"><b>Analogy:</b> a stream of tennis balls fired from a machine. If 10 balls of 0.06 kg leave each second at 20 m/s, the machine pushes out \(10\times0.06\times20=12\) kg·m/s of momentum every second. A wall that stops them all must push back with 12 N. A water jet is the same idea with a continuous stream instead of balls.</p>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A garden-hose jet: diameter 15 mm, speed 12 m/s, water. Find \(\dot m\) and the momentum flux.</p>
+<ol class="steps">
+<li>\(A=\tfrac{\pi}{4}(0.015)^2=1.767\times10^{-4}\u{m^2}\).</li>
+<li>\(\dot m=\rho AV\) \(=1000(1.767\times10^{-4})(12)\) \(=2.121\u{kg/s}\).</li>
+<li>\(\dot mV=2.121\times12=\boxed{25.4\u{N}}\): the force needed to stop this jet dead (Section 3).</li>
+</ol></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Momentum flux goes as \(V^2\): double the speed through the same nozzle and \(\dot m\) doubles <i>and</i> each kilogram carries twice the momentum, so the force from the jet is four times as large.</p></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>The control-volume momentum equation <span class="pill">Beyond</span></h2>
+<p>For a <b>steady</b> flow the momentum inside a fixed control volume (CV) does not change with time. So the net force on the fluid in the CV only has to account for the difference between the momentum that flows out each second and the momentum that flows in.</p>
+<div class="box beyond"><span class="tag">Law · linear momentum equation for a steady control volume</span>
+\[\sum\vec F=\sum_\text{out}\dot m\vec V-\sum_\text{in}\dot m\vec V\]
+<p>In components (one equation per axis):</p>
+\[\sum F_x=\sum_\text{out}\dot mV_x-\sum_\text{in}\dot mV_x\]
+\[\sum F_y=\sum_\text{out}\dot mV_y-\sum_\text{in}\dot mV_y\]
+<p class="word"><b>In words:</b> net force on the fluid in the CV = momentum flowing out per second − momentum flowing in per second, worked out separately in \(x\) and in \(y\).</p></div>
+<details class="calc"><summary>where this comes from (Newton's second law for a moving lump of fluid)</summary><div>
+<p>1. Take the lump of fluid that is inside the CV at time \(t\). Newton's second law applies to it: net force = rate of change of <i>its</i> momentum. <span class="why">The lump is a fixed set of particles, a "system" in F2's language.</span></p>
+<p>2. A moment \(\Delta t\) later the lump has shifted: a little of it has left through the outlets, and new fluid (not part of the lump) has entered through the inlets.</p>
+<p>3. Lump's momentum at \(t+\Delta t\) = (momentum inside the CV) + (momentum of the bit that left) − (momentum of the new bit that entered). <span class="why">Book-keeping: the CV now holds new fluid that is not part of the lump.</span></p>
+<p>4. Steady flow: momentum inside the CV is the same at both times. So the change of the lump's momentum is (left) − (entered) \(=\sum_\text{out}\dot m\vec V\Delta t-\sum_\text{in}\dot m\vec V\Delta t\).</p>
+<p>5. Divide by \(\Delta t\): \(\sum\vec F=\sum_\text{out}\dot m\vec V-\sum_\text{in}\dot m\vec V\). <span class="why">This is the same "budget" idea as the continuity equation, with momentum instead of mass.</span></p>
+</div></details>
+<h3>Which forces go into \(\sum F\)?</h3>
+<p>Draw the CV boundary and list every force that acts on the fluid inside it, exactly as in a free-body diagram:</p>
+<ol class="steps">
+<li><b>Pressure forces</b> \(pA\) at each inlet and outlet where the pressure is not atmospheric, pointing <b>into</b> the CV. Free jets: \(p=0\) gauge, no force.</li>
+<li><b>The support force</b> from whatever the CV cuts through: the bolts or hand holding a plate or bend, the scale under a tank. Usually this is the unknown: give it a symbol (\(R_x\), \(R_y\) or \(F_A\)) and a guessed direction; a negative answer means the other way.</li>
+<li><b>Weights</b> (of the fluid and the device inside the CV), downward, when the question gives them or they matter (tanks, vertical jets). Often negligible for air jets.</li>
+<li>Viscous (friction) forces on the fluid from walls are part of the support force when the CV includes the wall. On a "smooth" or "frictionless" plate the plate can only push <b>normal</b> to its surface.</li>
+</ol>
+<div id="fig-cv"></div>
+<p class="muted">A general control volume, drawn for these notes. Inflow at section 1, outflow at section 2. The momentum fluxes (teal) are not forces, but they enter the equation like forces: "out minus in". The forces (orange pressures, purple weight, red support) act on the fluid inside the dashed boundary.</p>
+<div class="box ready"><span class="tag">Ready answer · the momentum recipe (every F4.1 and F4.2 question)</span>
+<ol class="steps">
+<li>Sketch the device, choose the CV (cut <b>perpendicular</b> to the flow at each inlet and outlet; enclose the plate, bend or tank), draw axes.</li>
+<li>Continuity first: \(\dot m=\rho A_1V_1=\rho A_2V_2\) (or the sum of outlets = inlet). Bernoulli (F3) if a pressure or speed is missing.</li>
+<li>FBD of the CV: pressure forces \(pA\) into the CV, weight, unknown support force \(R_x,R_y\).</li>
+<li>Write \(\sum F_x=\sum_\text{out}\dot mV_x-\sum_\text{in}\dot mV_x\) and the same for \(y\); keep signs of velocity components.</li>
+<li>Solve for \(R_x,R_y\); give size \(\sqrt{R_x^2+R_y^2}\) and direction. State whether it is the force <b>on the fluid</b> or <b>on the device</b> (opposite).</li>
+</ol></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>The "out minus in" side is not a force on anything: never draw \(\dot mV\) arrows on an FBD and then add them as forces as well. Put forces on one side and momentum fluxes on the other.</p></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Jets on flat plates <span class="pill">Beyond</span></h2>
+<div class="box beyond"><span class="tag">Definition · free jet</span>
+<p>A <b>free jet</b> is a stream of fluid moving through open air (or a liquid jet in air) with nothing around it. Its pressure is atmospheric, so its <b>gauge pressure is zero</b> everywhere along it. That is why jets in these questions have no \(pA\) forces.</p></div>
+<h3>A jet hitting a plate square-on</h3>
+<p>A horizontal jet (area \(A\), speed \(V\)) strikes a flat plate held at right angles to it. The water spreads out sideways along the plate and leaves the edges parallel to the plate. Choose a CV that encloses the plate and cuts the jet upstream and the sheet of water at the edges.</p>
+<div id="fig-normal"></div>
+<p class="muted">Left: the jet, the plate and the CV. Right: the free-body sketch of the CV. Only the support force \(R_x\) acts in \(x\): the jet and the outgoing sheets are at atmospheric pressure, and weight acts in \(y\) only.</p>
+<ol class="steps">
+<li>In: momentum flux \(\dot mV\) in the \(+x\) direction. Out: the sheets move along the plate (\(\pm y\)), so their \(x\)-velocity is zero.</li>
+<li>\(\sum F_x=R_x=(\text{out})-(\text{in})=0-\dot mV\).</li>
+<li>So \(R_x=-\dot mV\): the plate pushes the fluid backwards (to the left) with \(\dot mV\).</li>
+</ol>
+<div class="box beyond"><span class="tag">Result · jet striking a stationary plate normally</span>
+\[F=\dot mV=\rho AV^2\]
+<p class="word"><b>In words:</b> the force of a jet on a plate square to it = the momentum flux of the jet, because all of its forward momentum is destroyed. The jet pushes the plate downstream; the support must push upstream with the same force.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A water jet of diameter 50 mm and speed 20 m/s strikes a fixed flat plate normally. Find the force needed to hold the plate.</p>
+<ol class="steps">
+<li>\(A=\tfrac\pi4(0.05)^2=1.963\times10^{-3}\u{m^2}\); \(\dot m=1000(1.963\times10^{-3})(20)\) \(=39.27\u{kg/s}\).</li>
+<li>\(F=\dot mV=39.27\times20=\boxed{785\u{N}}\), applied to the plate <b>against</b> the jet (upstream).</li>
+</ol>
+<p>About the weight of an 80 kg person: fire-hose jets knock people over for this reason.</p></div>
+<div class="box beyond"><span class="tag">Fact · the speed along a smooth plate does not change</span>
+<p>Follow a streamline from the jet onto the plate and out to the edge. The pressure is atmospheric at both ends, and the height hardly changes, so Bernoulli (F3) gives the <b>same speed</b> \(V\) leaving as arriving (if friction is ignored). Past papers state this as "the velocity magnitude remains constant as the air flows over the plate" (May 2025). Only the <b>direction</b> of the velocity changes, and that is what needs a force.</p></div>
+<h3>A plate with a hole: part of the jet passes through</h3>
+<p>If the plate has a hole in the middle, a smaller jet (area \(A_2\)) carries on through it at the same speed. Only the part of the jet that is turned sideways loses its forward momentum.</p>
+<div id="fig-hole"></div>
+<ol class="steps">
+<li>Continuity: \(\dot m_1=\dot m_2+\dot m_\text{side}\), with \(\dot m_1=\rho A_1V\), \(\dot m_2=\rho A_2V\).</li>
+<li>\(x\)-momentum: \(R_x=\dot m_2V-\dot m_1V\) (the sideways sheets have no \(x\)-velocity).</li>
+<li>So the force on the plate is \(\dot m_1V-\dot m_2V=\rho V^2(A_1-A_2)\).</li>
+</ol>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A 60 mm water jet at 15 m/s hits a plate square-on; a 20 mm hole in the plate lets a 20 mm jet through at 15 m/s. Find the horizontal force to hold the plate.</p>
+\[\begin{aligned}F&=\rho V^2\,\tfrac\pi4\big(D_1^2-D_2^2\big)\\&=1000(15^2)\tfrac\pi4(0.06^2-0.02^2)\\&=\boxed{565\u{N}}\end{aligned}\]
+<p>Dec 2018 Q2 (8 marks) is this question with an air jet: see the exam guide, <a href="guide-F4.html#F4-1">F4.1</a>.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Use the jet's own area for \(\dot m\), not the plate's area. And \(\rho\) is the density of the <b>jet fluid</b>: an air jet (1.23 kg/m³) gives forces about 800 times smaller than a water jet of the same size and speed.</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Inclined plates and curved vanes <span class="pill">Beyond</span></h2>
+<h3>A jet on an inclined plate</h3>
+<p>Now the plate makes an angle \(\theta\) with the jet. The jet divides: a mass flow \(\dot m_2\) runs one way along the plate and \(\dot m_3\) the other way. The plate is smooth, so both leave at the jet speed \(V\). The trick is to use axes <b>along</b> the plate (\(s\)) and <b>normal</b> to it (\(n\)).</p>
+<div class="figure" id="fig-incl-wrap"><p class="ttl">Try it · a jet on an inclined plate</p>
+<div id="fig-incl"></div>
+<div class="ctrl">
+<label>\(\theta\) (°) <input type="range" id="i-th" min="10" max="90" step="1" value="30"></label>
+<label>\(V\) (m/s) <input type="range" id="i-V" min="5" max="50" step="1" value="40"></label>
+<label>\(D\) (mm) <input type="range" id="i-D" min="10" max="100" step="1" value="30"></label>
+<label>fluid <select id="i-fl"><option value="1.23" selected>air 1.23 kg/m³</option><option value="1000">water 1000 kg/m³</option></select></label>
+</div>
+<div class="readout" id="out-incl"></div>
+<p class="cap">Starts at the May 2025 Q6 numbers (air, 30 mm, 40 m/s, 30°). The arrow widths along the plate show the split \(\dot m_2:\dot m_3\). At \(\theta=90°\) the plate is square to the jet: equal split, \(F_A=\dot mV\).</p></div>
+<ol class="steps">
+<li><b>Along the plate (\(s\)).</b> A smooth plate cannot push along itself, so \(\sum F_s=0\). The jet brings in \(\dot mV\cos\theta\) along \(+s\); \(\dot m_2\) leaves with \(+V\), \(\dot m_3\) with \(-V\):
+\[0=\dot m_2V-\dot m_3V-\dot mV\cos\theta\]</li>
+<li><b>Continuity:</b> \(\dot m_2+\dot m_3=\dot m\).</li>
+<li><b>Normal to the plate (\(n\)).</b> Only the support pushes along \(n\). The outflows have no \(n\)-velocity; the jet brings \(\dot mV\sin\theta\) into the plate. So the plate must push back with \(\dot mV\sin\theta\).</li>
+</ol>
+<div class="box beyond"><span class="tag">Result · smooth inclined plate (angle \(\theta\) between jet and plate)</span>
+\[F_A=\dot mV\sin\theta\quad\text{(normal to the plate)}\]
+\[\frac{\dot m_2}{\dot m}=\frac{1+\cos\theta}{2},\qquad\frac{\dot m_3}{\dot m}=\frac{1-\cos\theta}{2}\]
+<p class="word"><b>In words:</b> the plate only has to cancel the part of the jet's momentum that points into it, \(\dot mV\sin\theta\). The flow along the plate splits so that the "forward" share (\(\dot m_2\), the side the jet leans towards) is bigger: their difference carries exactly the jet's along-plate momentum \(\dot mV\cos\theta\).</p></div>
+<details class="calc"><summary>solving for the split, step by step</summary><div>
+<p>1. From step 1, divide by \(V\): \(\dot m_2-\dot m_3=\dot m\cos\theta\). <span class="why">Same speed \(V\) everywhere cancels.</span></p>
+<p>2. Add continuity \(\dot m_2+\dot m_3=\dot m\): \(2\dot m_2=\dot m(1+\cos\theta)\). <span class="why">Two equations, two unknowns.</span></p>
+<p>3. Subtract instead: \(2\dot m_3=\dot m(1-\cos\theta)\).</p>
+<p>4. Check: \(\theta=90°\) gives \(\tfrac12,\tfrac12\) (square-on plate, equal split); \(\theta\to0\) gives \(1,0\) (the jet just slides along the plate, no force). <span class="why">Limits match common sense.</span></p>
+</div></details>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A 25 mm water jet at 12 m/s strikes a smooth flat plate inclined at 60° to the jet. Find the normal force needed to hold the plate and how the flow divides.</p>
+<ol class="steps">
+<li>\(\dot m=1000\cdot\tfrac\pi4(0.025)^2(12)\) \(=5.890\u{kg/s}\); \(\dot mV=70.69\u{N}\).</li>
+<li>\(F_A=\dot mV\sin60°\) \(=70.69(0.8660)=\boxed{61.2\u{N}}\), normal to the plate, pushing towards the jet side.</li>
+<li>\(\dot m_2/\dot m=(1+0.5)/2=\boxed{0.75}\) (along the plate, in the direction the jet leans), \(\dot m_3/\dot m=\boxed{0.25}\).</li>
+</ol>
+<p>If the question wants horizontal and vertical components, resolve: with the jet along \(x\), \(F_x=F_A\sin\theta=53.0\u{N}\) and \(F_y=F_A\cos\theta=30.6\u{N}\).</p></div>
+<h3>A curved vane that turns the jet</h3>
+<p>A <b>vane</b> is a curved blade (as in a turbine) that turns a jet through an angle \(\beta\) without stopping it. On a smooth vane the speed stays \(V\). Jet in along \(+x\); out at angle \(\beta\) measured from the \(+x\) direction.</p>
+<div id="fig-vane"></div>
+<ol class="steps">
+<li>Out velocity components: \(V\cos\beta\) and \(V\sin\beta\). In: \(V\) and 0.</li>
+<li>\(R_x=\dot mV\cos\beta-\dot mV\) \(=-\dot mV(1-\cos\beta)\).</li>
+<li>\(R_y=\dot mV\sin\beta-0=\dot mV\sin\beta\).</li>
+</ol>
+<div class="box beyond"><span class="tag">Result · force of a jet on a fixed smooth vane (deflection \(\beta\))</span>
+\[F_x=\dot mV(1-\cos\beta),\qquad F_y=\dot mV\sin\beta\]
+<p class="word"><b>In words:</b> the vane is pushed back along the jet by \(\dot mV(1-\cos\beta)\) and sideways, away from the direction the jet is turned, by \(\dot mV\sin\beta\). Turning the jet right round (\(\beta=180°\)) gives the largest push, \(2\dot mV\): twice the force of a flat plate.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A jet with \(\dot m=5\u{kg/s}\) and \(V=20\u{m/s}\) is turned through 150° by a fixed smooth vane. Find the force on the vane.</p>
+\[\begin{aligned}F_x&=100(1-\cos150°)=186.6\u{N}\\F_y&=100\sin150°=50.0\u{N}\\|F|&=\sqrt{186.6^2+50^2}=\boxed{193\u{N}}\end{aligned}\]
+<p>\(F_y\) points opposite to the sideways velocity given to the jet.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Check which angle the question gives. "Plate inclined at 30° to the horizontal" with a horizontal jet means \(\theta=30°\) between jet and plate, so \(F_A=\dot mV\sin30°\). "Vane deflects the jet by 30°" means \(\beta=30°\), so \(F_x=\dot mV(1-\cos30°)\). Draw it.</p></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Vertical jets: gravity changes the speed <span class="pill">Beyond</span></h2>
+<p>A jet pointing <b>up</b> slows down as it rises, like a ball thrown upward. Its pressure stays atmospheric, so Bernoulli (F3) between the nozzle (speed \(V_0\)) and height \(h\) gives</p>
+\[\frac{V_0^2}{2g}=\frac{V^2}{2g}+h\quad\Longrightarrow\quad V^2=V_0^2-2gh\]
+<p class="word"><b>In words:</b> the jet loses speed exactly as a thrown stone would (the HKDSE equation \(v^2=u^2-2as\)). Continuity, \(A_0V_0=AV\), then says the jet gets <b>wider</b> as it slows.</p>
+<h3>Which speed goes into \(\dot mV\)?</h3>
+<p>The force on a plate (or cup) at height \(h\) comes from the momentum the jet <b>still has when it arrives</b>, so use the speed \(V\) at the plate, not the nozzle speed \(V_0\). The mass flow \(\dot m=\rho A_0V_0\) is the same at every height.</p>
+<div id="fig-vjet"></div>
+<p class="muted">Two equally good control volumes for a vertical jet hitting a plate. Small CV (left): cut the jet just under the plate, where it moves at \(V\); weight inside is negligible. Large CV (right): cut at the nozzle, where it moves at \(V_0\); now the weight \(W_\text{jet}\) of the water column is inside and must be included.</p>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A water jet leaves a 20 mm nozzle vertically upward at 8 m/s and strikes a horizontal plate 2 m above the nozzle; the water leaves the plate horizontally. Find the force on the plate (\(g=9.81\u{m/s^2}\)).</p>
+<ol class="steps">
+<li>\(\dot m=1000\cdot\tfrac\pi4(0.02)^2(8)=2.513\u{kg/s}\).</li>
+<li>Speed at the plate: \(V=\sqrt{8^2-2(9.81)(2)}\) \(=\sqrt{24.76}=4.976\u{m/s}\).</li>
+<li>Small CV round the plate, \(y\) up: \(\sum F_y=R_y=0-\dot mV\), so the plate pushes down on the water with \(\dot mV\).</li>
+<li>Force of the jet on the plate (upward): \(\dot mV=2.513\times4.976=\boxed{12.5\u{N}}\).</li>
+</ol>
+<details class="calc"><summary>the large CV gives the same answer once the jet's weight is included</summary><div>
+<p>1. Large CV from the nozzle to the plate: \(-F-W_\text{jet}=0-\dot mV_0\), so \(F=\dot mV_0-W_\text{jet}\). <span class="why">The plate pushes down (\(-F\)); weight acts down.</span></p>
+<p>2. Weight of the rising column: \(W_\text{jet}=\rho g\int_0^hA\,\mathrm dz\) with \(A=Q/V(z)\). <span class="why">The jet is wider where it is slower.</span></p>
+<p>3. \(\int_0^h\mathrm dz/V\) is the time a water particle takes to rise \(h\), which is \((V_0-V)/g\) (constant deceleration \(g\)). So \(W_\text{jet}=\rho gQ(V_0-V)/g=\dot m(V_0-V)\).</p>
+<p>4. Then \(F=\dot mV_0-\dot m(V_0-V)=\dot mV\). <span class="why">Same as the small CV.</span></p>
+<p>5. Numbers: \(W_\text{jet}=2.513(8-4.976)=7.60\u{N}\); \(F=2.513(8)-7.60=12.5\u{N}\) ✓.</p>
+</div></details></div>
+<h3>A cup held up by a jet</h3>
+<p>A hollow hemisphere (a cup, open side down) held up by a vertical jet turns the water through 180°: it arrives going up at \(V\) and leaves going down at \(V\) (smooth surface, same height). The force on the cup is \(2\dot mV\) (Section 4 with \(\beta=180°\)). If the cup floats still, this force equals its weight.</p>
+<div id="fig-cup"></div>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A 30 mm water jet leaves a nozzle vertically at 12 m/s and holds a hollow hemisphere stationary 4 m above the nozzle. Find the hemisphere's weight (\(g=9.81\); the cup is small compared with 4 m).</p>
+<ol class="steps">
+<li>\(\dot m=1000\cdot\tfrac\pi4(0.03)^2(12)\) \(=8.482\u{kg/s}\).</li>
+<li>Speed at the cup: \(V=\sqrt{12^2-2(9.81)(4)}=8.094\u{m/s}\).</li>
+<li>CV round the cup, \(y\) up. In: \(\dot m(+V)\). Out: \(\dot m(-V)\). \(\sum F_y=\dot m(-V)-\dot m(V)=-2\dot mV\).</li>
+<li>The force of the cup on the water is \(2\dot mV\) downward, so the water pushes the cup up with \(2\dot mV\), which balances its weight: \(W=2(8.482)(8.094)=\boxed{137\u{N}}\).</li>
+</ol>
+<p>May 2021 Q3 (8 marks) is this question with its own numbers: see the exam guide, <a href="guide-F4.html#F4-1">F4.1</a>.</p></div>
+<div class="box beyond"><span class="tag">Past papers · a jet under a plate with a piezometer (May 2019 Q3)</span>
+<p>May 2019 Q3 joins three chapters: an upward jet from a 0.01 m pipe hits a 0.1 m plate 0.2 m above and leaves the plate edge as a 0.4 mm sheet. Parts (a)–(c) use continuity (F2) and Bernoulli (F3) to get \(V_1\), \(V_2\), \(Q\) and the piezometer reading; part (d), "find the impact force on the plate", is this section: force = \(\rho Q\times\) (speed of the jet where it reaches the plate). The full solution is in the exam guide.</p></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Pipe bends, nozzles and reducers <span class="pill">Beyond</span></h2>
+<p>Inside a pipe the water is usually at a pressure well above atmospheric, so the <b>pressure forces</b> \(pA\) at the cut sections are often much bigger than the momentum fluxes. A bend, nozzle or reducing section is held by flanges and bolts (or a support); the momentum equation gives the force those bolts must carry.</p>
+<div class="box beyond"><span class="tag">Definition · bend, reducer, nozzle, elbow</span>
+<p>A <b>bend</b> (or <b>elbow</b>) changes the direction of a pipe; a <b>reducer</b> (contraction, "convergent section") makes it narrower; a <b>reducing elbow</b> does both; a <b>nozzle</b> is a reducer at the end of a pipe that makes a fast free jet. A <b>flange</b> is the bolted ring joining two pipe pieces.</p></div>
+<h3>The general bend</h3>
+<p>Take a horizontal bend: water enters at section 1 along \(+x\) (pressure \(p_1\), area \(A_1\), speed \(V_1\)) and leaves at section 2 turned through angle \(\theta\) (here turning towards \(-y\), as in the past paper), with \(p_2,A_2,V_2\). Let \(\vec R=(R_x,R_y)\) be the force of the bend on the water.</p>
+<div class="figure" id="fig-bend-wrap"><p class="ttl">Try it · forces on a reducing bend (water, \(A_1=0.01\u{m^2}\), horizontal)</p>
+<div id="fig-bend"></div>
+<div class="ctrl">
+<label>bend \(\theta\) (°) <input type="range" id="b-th" min="0" max="180" step="5" value="90"></label>
+<label>\(p_1\) (kPa) <input type="range" id="b-p" min="0" max="300" step="5" value="120"></label>
+<label>\(V_1\) (m/s) <input type="range" id="b-V" min="0.5" max="8" step="0.1" value="4"></label>
+<label>\(A_2/A_1\) <input type="range" id="b-r" min="0.25" max="1" step="0.05" value="0.25"></label>
+</div>
+<div class="readout" id="out-bend"></div>
+<p class="cap">\(p_2\) is found from Bernoulli (no losses, no height change); if it comes out negative the bend would need a suction outlet, which the readout points out. The red arrow is the force the support must apply to hold the bend; it equals \(\vec R\), because the water pushes the bend with \(-\vec R\) and the support has to cancel that. It starts at the May 2024 Q3 elbow with the frictionless inlet pressure 120 kPa (outlet to the atmosphere, \(p_2=0\)). Set \(\theta=0\): a straight reducer, pushed downstream.</p></div>
+<ol class="steps">
+<li>Forces on the water in the CV: \(p_1A_1\) pushing in at section 1 (along \(+x\)); \(p_2A_2\) pushing in at section 2 (opposite to the outflow direction); \(\vec R\) from the bend; weight in the vertical direction only (not in this horizontal plane).</li>
+<li>Outflow direction at 2: \((\cos\theta,-\sin\theta)\).</li>
+<li>\(x\): \(p_1A_1-p_2A_2\cos\theta+R_x\) \(=\dot m(V_2\cos\theta-V_1)\).</li>
+<li>\(y\): \(p_2A_2\sin\theta+R_y=\dot m(-V_2\sin\theta)\).</li>
+</ol>
+<div class="box beyond"><span class="tag">Result · force of a horizontal bend on the water</span>
+\[\begin{aligned}R_x&=\dot m(V_2\cos\theta-V_1)\\&\quad-p_1A_1+p_2A_2\cos\theta\end{aligned}\]
+\[R_y=-\dot mV_2\sin\theta-p_2A_2\sin\theta\]
+<p class="word"><b>In words:</b> support force on the water = (momentum out − momentum in) − (pressure forces). The water pushes the bend with \(-\vec R\): <b>outwards</b>, away from the inside of the turn and along the incoming flow. The support must push the bend with \(+\vec R\) to hold it.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes · a 90° bend</span>
+<p>Water flows at 0.05 m³/s through a horizontal 90° bend in a 150 mm pipe. The gauge pressure is 100 kPa at both ends (losses ignored). Find the force needed to hold the bend.</p>
+<div id="fig-bend90"></div>
+<ol class="steps">
+<li>\(A=\tfrac\pi4(0.15)^2=0.01767\u{m^2}\); \(V=Q/A=2.829\u{m/s}\); \(\dot m=\rho Q=50\u{kg/s}\); \(\dot mV=141.5\u{N}\); \(pA=1767\u{N}\).</li>
+<li>\(\theta=90°\): \(R_x=\dot m(0-V)-p_1A\) \(=-141.5-1767=-1909\u{N}\).</li>
+<li>\(R_y=-\dot mV-p_2A=-1909\u{N}\).</li>
+<li>Size \(\sqrt{1909^2+1909^2}=\boxed{2700\u{N}}\), at 45°. On the water it points back and down; the bend is pushed forward (\(+x\)) and up (\(+y\)), so the support pushes the bend back and down.</li>
+</ol>
+<p>The pressure terms (1767 N each) are twelve times the momentum terms (141.5 N): forgetting \(pA\) is the commonest way to lose these marks.</p></div>
+<h3>A nozzle (or convergent duct): pushed downstream</h3>
+<p>A nozzle on the end of a hose (or a convergent section ending in a free jet) speeds the flow up, so the water gains forward momentum. Yet the nozzle is pushed <b>off</b> the hose, downstream. The reason is the inlet pressure.</p>
+<div class="box eg"><span class="tag">Example · written for these notes · a hose nozzle</span>
+<p>A horizontal nozzle reduces a 60 mm hose to a 20 mm free jet. The flow is 6 L/s of water. Ignoring losses, find the force on the nozzle and say what holds it.</p>
+<div id="fig-nozzle"></div>
+<ol class="steps">
+<li>\(A_1=2.827\times10^{-3}\), \(A_2=3.142\times10^{-4}\u{m^2}\); \(V_1=Q/A_1=2.122\), \(V_2=19.10\u{m/s}\); \(\dot m=6\u{kg/s}\).</li>
+<li>Bernoulli, jet at \(p_2=0\): \(p_1=\tfrac12\rho(V_2^2-V_1^2)=180.1\u{kPa}\); \(p_1A_1=509.3\u{N}\).</li>
+<li>\(x\)-momentum: \(p_1A_1+R_x=\dot m(V_2-V_1)\).</li>
+<li>\(R_x=6(16.98)-509.3=-407.5\u{N}\): the nozzle pushes the water <b>backwards</b>.</li>
+<li>So the water pushes the nozzle <b>forwards</b> (downstream) with \(\boxed{408\u{N}}\): the coupling to the hose must hold it on, in tension.</li>
+</ol>
+<p>Dec 2024 (Section B Q4(e), 5 marks) asked for the force of air on the convergent end of a duct: the same calculation, after finding \(p_1\) and the speeds from a manometer (see the exam guide, <a href="guide-F4.html#F4-2">F4.2</a>).</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<ul class="list">
+<li>Pressure forces always point <b>into</b> the CV, whatever the flow direction.</li>
+<li>An outlet to the atmosphere has \(p_2=0\) gauge: no force there.</li>
+<li>If the bend is in a vertical plane, add the weight of the water (and the bend, if given) in \(y\).</li>
+<li>Give the answer as asked: "force required to hold the bend" is the force <b>on the bend</b> from the support, equal to \(\vec R\) (support on water = support's push transmitted through the bend). Say its direction in words or as an angle.</li>
+</ul></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Tanks on scales <span class="pill">Beyond</span></h2>
+<p>A tank sits on a scale while water pours in from above and runs out of side openings. The scale reads the upward force \(N\) it must supply. It is <b>more</b> than the weight of the tank and the water: the scale also has to stop the downward momentum of the incoming jet.</p>
+<div id="fig-tank"></div>
+<p class="muted">The CV surrounds the tank and all the water in it, cutting the jets at the openings. Forces: the scale's push \(N\) (up), the weights of tank and water (down). Momentum: in at the top going down; out at the sides going sideways.</p>
+<ol class="steps">
+<li>Axes: \(y\) up. In: \(\dot m_1\) with \(V_y=-V_1\) (downward). Out: \(\dot m_2,\dot m_3\) horizontal, \(V_y=0\).</li>
+<li>\(y\)-momentum: \(N-W_\text{tank}-W_\text{water}\) \(=0-\dot m_1(-V_1)=\dot m_1V_1\).</li>
+<li>Free jets: no pressure forces at the openings.</li>
+</ol>
+<div class="box beyond"><span class="tag">Result · tank on a scale, jet in from above, outflow sideways</span>
+\[N=W_\text{tank}+W_\text{water}+\dot m_1V_1\]
+<p class="word"><b>In words:</b> scale reading = weight of the tank + weight of the water inside + the momentum flux of the jet arriving from above. Equal and opposite side jets cancel in \(x\); an outflow going <b>down</b> would <b>reduce</b> the reading by its own \(\dot mV\), like a small rocket.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A tank weighing 50 N when empty stands on a scale. Its inside cross-section is 0.2 m² and the water depth stays at 0.5 m. Water enters through the top as a vertical jet of area 0.005 m² at 4 m/s and leaves through a horizontal side pipe. Find the scale reading (\(g=9.81\)).</p>
+<ol class="steps">
+<li>Water: \(W=\rho gV\) \(=1000(9.81)(0.2\times0.5)=981\u{N}\).</li>
+<li>Jet: \(\dot m_1=\rho A_1V_1\) \(=1000(0.005)(4)=20\u{kg/s}\); \(\dot m_1V_1=80\u{N}\).</li>
+<li>\(N=50+981+80=\boxed{1111\u{N}}\).</li>
+</ol>
+<p>In steady flow the side pipe carries 20 kg/s out horizontally; it adds a horizontal force (which friction between tank and scale must resist) but nothing to the reading. May 2023 Q3 (10 marks) is this set-up with two side openings: see the exam guide, <a href="guide-F4.html#F4-2">F4.2</a>.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>The water in the tank is "the water inside the CV": its weight counts. The jet above the tank is not inside the CV (cut it at the opening). Use the depth and the tank's <b>inside</b> area for the water volume.</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Drag and lift <span class="pill">Beyond</span></h2>
+<p>When air or water flows past a body (or the body moves through it, which is the same thing seen from the body), the fluid pushes on every bit of the body's surface. Adding all those pushes gives one <b>resultant force</b>. We split it into two parts relative to the oncoming flow.</p>
+<div class="box beyond"><span class="tag">Definition · drag and lift (May 2019 Q1(h), (i))</span>
+<ul class="list">
+<li><b>Drag</b> \(F_D\): the component of the fluid's resultant force on a body <b>parallel</b> to the direction of the oncoming flow (the relative velocity). It resists the motion.</li>
+<li><b>Lift</b> \(F_L\): the component <b>perpendicular</b> to the oncoming flow. On a wing it holds the aircraft up; on a racing car's upside-down wing it pushes the car down.</li>
+</ul></div>
+<div id="fig-dl"></div>
+<p class="muted">The fluid's pressure and friction on the surface add up to one resultant force; drag is its part along the flow and lift its part across it. Lift does not have to be "upward": it is defined by the flow direction, not by gravity.</p>
+<h3>Where drag comes from</h3>
+<div class="box beyond"><span class="tag">Definition · friction drag and pressure drag</span>
+<ul class="list">
+<li><b>Friction (skin-friction) drag</b>: viscous shear stress of the fluid dragging along the surface. Because of the <b>no-slip condition</b> (F1: fluid touching a wall has the wall's velocity) a thin <b>boundary layer</b> forms, in which the speed rises from zero at the surface to the outside speed. The shear in it pulls the body backwards. It is large for long, thin bodies with much surface area (a flat plate along the flow, a ship's hull) and is reduced by a <b>smooth</b> surface.</li>
+<li><b>Pressure (form) drag</b>: the pressure on the front of the body is high (near the stagnation point, F3) but the pressure behind it is low. The difference, acting on the frontal area, pushes the body back. It is large for <b>bluff</b> (blunt) bodies.</li>
+</ul></div>
+<div class="box beyond"><span class="tag">Definition · flow separation, wake and vortex shedding</span>
+<p>Around the back of a blunt body the flow would have to slow down against rising pressure. The slow fluid in the boundary layer cannot do this: it stops and <b>separates</b> from the surface. Behind the separation points is a <b>wake</b>: a region of swirling eddies at low pressure. A wide wake means large pressure drag. Behind a cylinder the eddies peel off alternately from the top and bottom, a pattern called <b>vortex shedding</b> (a "Kármán vortex street"). It makes the force on the body fluctuate (wires "sing" in the wind; chimneys and bridges can vibrate) and adds drag.</p></div>
+<div id="fig-bodies"></div>
+<p class="muted">Top: a <b>streamlined</b> body (long tapering tail) lets the flow follow its surface almost to the end: thin wake, mostly friction drag. Bottom: a <b>bluff</b> body (cylinder, flat plate across the flow) makes the flow separate early: wide wake with shed vortices, mostly pressure drag.</p>
+<h3>Drag and lift coefficients</h3>
+<p>Experiments show that both forces grow with the <b>dynamic pressure</b> \(\tfrac12\rho V^2\) of F3 and with the size of the body. Engineers therefore write:</p>
+<div class="box beyond"><span class="tag">Result · drag and lift equations</span>
+\[F_D=C_D\cdot\tfrac12\rho V^2\cdot A\]
+\[F_L=C_L\cdot\tfrac12\rho V^2\cdot A\]
+<p class="word"><b>In words:</b> force = (a dimensionless coefficient for the shape) × (dynamic pressure of the oncoming flow) × (a reference area). \(V\) is the speed of the body relative to the fluid.</p></div>
+<div class="box beyond"><span class="tag">Definition · drag coefficient and reference area</span>
+<p>The <b>drag coefficient</b> \(C_D\) (no units) measures how "draggy" a shape is, found by experiment. It is always quoted with a <b>reference area</b>: for blunt bodies, cars, balls and airships the <b>frontal area</b> (the area of the shadow the body would cast on a screen facing the flow; for a round body of maximum diameter \(D\), \(A=\pi D^2/4\)); for wings, the <b>planform area</b> (wing area seen from above).</p></div>
+<div class="scroll"><table class="tbl">
+<tr><th>Body (frontal area)</th><th>Typical \(C_D\)</th></tr>
+<tr><td>Flat disc or square plate facing the flow</td><td>1.1–1.2</td></tr>
+<tr><td>Long cylinder across the flow</td><td>about 1.2</td></tr>
+<tr><td>Hemispherical cup, open side facing the flow</td><td>about 1.4</td></tr>
+<tr><td>Sphere (smooth, ordinary speeds)</td><td>about 0.47</td></tr>
+<tr><td>Car</td><td>0.25–0.4</td></tr>
+<tr><td>Upright cyclist</td><td>about 0.9 (on \(A\approx0.5\u{m^2}\))</td></tr>
+<tr><td>Streamlined body (airship, fish shape)</td><td>0.04–0.1</td></tr>
+</table></div>
+<p class="muted">Standard textbook values (Çengel &amp; Cimbala, Munson) at high Reynolds number; exam questions always give \(C_D\).</p>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Drag force and propulsion power <span class="pill">Beyond</span></h2>
+<p>To move a body steadily through a fluid, the engine must push it forward with a thrust equal to the drag. Power is force × speed (HKDSE: \(P=Fv\)).</p>
+<div class="box beyond"><span class="tag">Result · power to overcome drag</span>
+\[P=F_DV=C_D\cdot\tfrac12\rho A\cdot V^3\]
+<p class="word"><b>In words:</b> propulsion power = drag force × speed. Since drag goes as \(V^2\), power goes as \(V^3\): twice the speed needs eight times the power.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes · a car on the motorway</span>
+<p>A car has \(C_D=0.30\) and frontal area 2.2 m². Find the drag and the power needed against drag at 100 km/h and at 120 km/h in air of density 1.23 kg/m³.</p>
+<ol class="steps">
+<li>Convert: \(100\u{km/h}=100/3.6=27.78\u{m/s}\).</li>
+<li>\(F_D=0.30(\tfrac12)(1.23)(27.78^2)(2.2)\) \(=313\u{N}\).</li>
+<li>\(P=F_DV=313\times27.78=8.70\u{kW}\).</li>
+<li>At 120 km/h: \(P\) scales with \(V^3\): \(8.70(120/100)^3=\boxed{15.0\u{kW}}\) (and \(F_D=451\u{N}\)).</li>
+</ol>
+<p>Driving 20% faster costs 73% more power against air drag.</p></div>
+<div class="figure" id="fig-drag-wrap"><p class="ttl">Try it · drag power against speed</p>
+<canvas class="plot" id="cv-drag" style="height:260px"></canvas>
+<div class="ctrl">
+<label>\(C_D\) <input type="range" id="d-cd" min="0.02" max="1.2" step="0.01" value="0.3"></label>
+<label>\(A\) (m²) <input type="range" id="d-A" min="0.2" max="20" step="0.1" value="2.2"></label>
+<label>\(V\) (km/h) <input type="range" id="d-V" min="5" max="200" step="1" value="100"></label>
+</div>
+<div class="readout" id="out-drag"></div>
+<p class="cap">Air at 1.23 kg/m³. The curve is \(P=C_D\tfrac12\rho AV^3\); the dot is your speed. Starts at the car example. Halve \(C_D\) and the whole curve halves; double \(V\) and the power goes up 8 times.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<ul class="list">
+<li>Convert km/h to m/s (divide by 3.6) before squaring or cubing: 40 km/h is 11.1 m/s, not 40.</li>
+<li>Use the reference area the \(C_D\) was quoted with. "Based on the frontal area" for a body of maximum diameter \(D\) means \(A=\pi D^2/4\), not length × diameter.</li>
+<li>\(\rho\) is the fluid's density (air 1.23 kg/m³ in the papers), not the body's.</li>
+</ul></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Aerofoils: lift, stall and flaps <span class="pill">Beyond</span></h2>
+<div class="box beyond"><span class="tag">Definition · aerofoil words</span>
+<ul class="list">
+<li><b>Aerofoil</b> (airfoil): the cross-section shape of a wing, rounded at the front and sharp at the back.</li>
+<li><b>Leading edge</b> (front) and <b>trailing edge</b> (back); the straight line between them is the <b>chord</b>, of length \(c\).</li>
+<li><b>Camber</b>: how curved the aerofoil is (the bulge of its middle line above the chord).</li>
+<li><b>Angle of attack</b> \(\alpha\): the angle between the chord and the oncoming air.</li>
+</ul></div>
+<div id="fig-aero"></div>
+<h3>Why a wing lifts</h3>
+<p>Air flowing over the curved upper surface speeds up, so (Bernoulli, F3) its pressure falls below atmospheric; under the wing the air is slowed slightly and its pressure rises. The pressure difference, over the whole wing area, pushes the wing up. The same thing seen through momentum: the wing turns the air stream <b>downward</b> (downwash), so by the momentum equation the air pushes the wing <b>up</b>. Both views are correct descriptions of the same flow.</p>
+<p>The lift coefficient \(C_L\) rises almost in proportion to \(\alpha\) (about 0.1 per degree for a thin wing) up to a maximum \(C_{L,\max}\) at the <b>stall angle</b>, typically 12°–16°. Drag rises slowly at first and then steeply.</p>
+<div id="fig-cl"></div>
+<p class="muted">Typical shape of \(C_L\) and \(C_D\) against angle of attack for a wing section, sketched for these notes (not data for a particular aerofoil).</p>
+<h3>Stall (Dec 2018 Q3(b))</h3>
+<div class="box beyond"><span class="tag">Definition · stall</span>
+<p>An aerofoil <b>stalls</b> when the angle of attack is too large: the air flowing over the upper surface can no longer follow its curve, and the flow <b>separates</b> from the upper surface near the leading edge. A wide turbulent wake of eddies covers the upper surface, so the low pressure there (the "suction" that gives most of the lift) is lost.</p></div>
+<div id="fig-stall"></div>
+<p class="muted">Left: normal flight, small \(\alpha\): the flow stays attached to both surfaces and leaves smoothly from the trailing edge. Right: stalled, large \(\alpha\): the flow separates from the upper surface and a wide wake forms.</p>
+<div class="box ready"><span class="tag">Ready answer · stall: what happens and the consequence</span>
+<ol class="steps">
+<li><b>Cause:</b> angle of attack increased beyond the stall (critical) angle, often because the aircraft flies too slowly and the pilot raises the nose to keep enough lift.</li>
+<li><b>Flow:</b> the boundary layer on the upper surface separates near the leading edge; a large turbulent wake covers the upper surface (sketch the two flows).</li>
+<li><b>Consequence:</b> lift drops suddenly and sharply, drag rises sharply; the aircraft loses height and may buffet or lose control (the controls sit in separated flow). Dangerous near the ground at take-off and landing.</li>
+<li><b>Recovery:</b> reduce the angle of attack (nose down) and gain speed so the flow re-attaches.</li>
+</ol></div>
+<h3>Flaps (Dec 2018 Q3(c))</h3>
+<div class="box beyond"><span class="tag">Definition · flaps</span>
+<p><b>Flaps</b> are hinged sections at the trailing edge of a wing that can be lowered (and often slid backwards). Lowering them <b>increases the camber</b> (and with sliding flaps the wing area), so the wing gives <b>more lift at the same speed</b> and a higher \(C_{L,\max}\). The aircraft can then fly slowly without stalling: lower take-off and landing speeds and shorter runways. Flaps also add drag, which helps the aircraft slow down and descend steeply on approach. In cruise they are retracted to keep drag low. (Slats at the leading edge do a similar job.)</p></div>
+<div id="fig-flaps"></div>
+<div class="box eg"><span class="tag">Example · written for these notes · what flaps buy</span>
+<p>A light aircraft of mass 1000 kg has a wing area of 15 m². \(C_{L,\max}=1.5\) with flaps up and 2.4 with flaps down. Find the stall speed (the lowest speed at which lift can still equal weight) both ways, in air of 1.23 kg/m³.</p>
+<ol class="steps">
+<li>Level flight at the slowest speed: \(W=C_{L,\max}\tfrac12\rho V^2A\).</li>
+<li>So \(V_\text{stall}=\sqrt{\dfrac{2W}{\rho AC_{L,\max}}}\), with \(W=9810\u{N}\).</li>
+<li>Flaps up: \(\sqrt{19620/(1.23\cdot15\cdot1.5)}=26.6\u{m/s}\) (96 km/h).</li>
+<li>Flaps down: \(\sqrt{19620/(1.23\cdot15\cdot2.4)}=\boxed{21.0\u{m/s}}\) (76 km/h).</li>
+</ol>
+<p>The landing run needed grows roughly as \(V^2\), so flaps cut it by about 37.5% (the ratio \(1.5/2.4=0.625\)).</p></div>
+<div class="box beyond"><span class="tag">Past papers · which conditions suit flight? (May 2022 Q6, multiple choice)</span>
+<p>Options were vortex shedding, smooth surface, high drag, high lift. A plane wants <b>high lift</b> and <b>low drag</b>; a <b>smooth surface</b> keeps friction drag low; vortex shedding means separated, unsteady flow (more drag, vibration). So (b) and (d).</p></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Head loss: energy lost in real flows <span class="pill">Beyond</span></h2>
+<p>F3's Bernoulli equation assumes an ideal (frictionless) fluid: the total head \(\tfrac{p}{\rho g}+\tfrac{V^2}{2g}+z\) stays the same along a streamline. In a real fluid, viscosity causes friction at the walls (the no-slip condition, F1) and turbulent eddies inside the flow. Some <b>mechanical energy</b> (pressure, kinetic and potential energy) is turned into <b>heat</b> (internal energy, a tiny temperature rise) and cannot be got back as pressure, speed or height. The F1 handout puts it this way: in internal flows such as pipes "viscous effects cause substantial 'losses'". The F3 handout allows for them with a discharge coefficient \(C_d\) and a velocity coefficient \(C_v\).</p>
+<div class="box beyond"><span class="tag">Definition · head loss (May 2019 Q1(g))</span>
+<p>The <b>head loss</b> \(h_L\) between two sections of a flow is the mechanical energy per unit weight of fluid that is converted into heat by friction (viscous and turbulent effects) between them. It is a length, in metres: the drop in total head from the upstream to the downstream section.</p></div>
+<div class="box beyond"><span class="tag">Result · energy equation with losses (from section 1 to section 2, downstream)</span>
+\[\frac{p_1}{\rho g}+\frac{V_1^2}{2g}+z_1=\frac{p_2}{\rho g}+\frac{V_2^2}{2g}+z_2+h_L\]
+<p class="word"><b>In words:</b> total head upstream = total head downstream + the head lost to friction in between. With \(h_L=0\) it is Bernoulli. The power lost is \(\rho gQh_L\) (weight flow per second × head lost).</p></div>
+<div id="fig-egl"></div>
+<p class="muted">A tank drains through a pipe to a free jet. The <b>energy line</b> (total head, teal) would be level for ideal flow; in a real pipe it slopes down along the pipe and drops a little at the entrance. The fall in the line is the head loss.</p>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>Water drains from a large open tank through a 50 mm pipe that ends as a free jet 10 m below the water surface. The measured jet speed is 12 m/s. Find the head loss and the power lost to friction.</p>
+<ol class="steps">
+<li>Section 1 = tank surface (\(p=0\), \(V\approx0\), \(z=10\u{m}\)); section 2 = jet (\(p=0\), \(V=12\), \(z=0\)).</li>
+<li>\(10=\dfrac{12^2}{2(9.81)}+h_L\), so \(h_L=10-7.34=\boxed{2.66\u{m}}\). (Ideal flow would give 14.0 m/s.)</li>
+<li>\(Q=\tfrac\pi4(0.05)^2(12)=0.02356\u{m^3/s}\).</li>
+<li>Power lost \(=\rho gQh_L\) \(=1000(9.81)(0.02356)(2.66)\) \(=\boxed{615\u{W}}\), turned into heat in the water.</li>
+</ol></div>
+<div class="box beyond"><span class="tag">Beyond the past papers · what head loss depends on (for reference)</span>
+<p>Textbooks split it into <b>major losses</b>, friction along straight pipe, \(h_L=f\,\dfrac{L}{D}\,\dfrac{V^2}{2g}\) (Darcy–Weisbach; \(f\) is a friction factor from a chart), and <b>minor losses</b> at bends, valves, entrances and sudden expansions, \(h_L=K\,V^2/(2g)\). Both grow roughly with \(V^2\). No past MECH1350/ENGG1350 paper has asked for these formulas; know the definition and the energy equation.</p></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Open-channel flow: specific energy and critical depth <span class="pill">Beyond</span></h2>
+<div class="box beyond"><span class="tag">Definition · open channel</span>
+<p>An <b>open channel</b> carries liquid with a <b>free surface</b> open to the atmosphere: rivers, canals, drains, gutters, spillways. Gravity drives the flow (a pipe flowing full is driven by pressure instead). For a rectangular channel of width \(b\) with water depth \(y\) and flow rate \(Q\), continuity gives the mean speed</p>
+\[V=\frac{Q}{by}.\]</div>
+<div id="fig-chan"></div>
+<h3>Specific energy</h3>
+<div class="box beyond"><span class="tag">Definition and result · specific energy</span>
+<p>The <b>specific energy</b> \(E_s\) is the total head measured from the <b>channel bed</b>: depth (the pressure head plus height of the surface above the bed) plus velocity head.</p>
+\[E_s=y+\frac{V^2}{2g}=y+\frac{Q^2}{2gb^2y^2}\]
+<p class="word"><b>In words:</b> specific energy = depth + velocity head, in metres. For a given flow rate, a deep slow flow and a shallow fast flow can have the same \(E_s\).</p></div>
+<p>Plot \(E_s\) against \(y\) for a fixed \(Q\): very deep flow is slow, so \(E_s\approx y\); very shallow flow is fast, so the velocity head blows up. In between, \(E_s\) has a <b>minimum</b>. Every larger value of \(E_s\) is reached at two depths, the <b>alternate depths</b>.</p>
+<div class="box beyond"><span class="tag">Result · critical depth (rectangular channel)</span>
+\[y_c=\left(\frac{Q^2}{gb^2}\right)^{1/3},\qquad E_{s,\min}=\tfrac32y_c\]
+<p class="word"><b>In words:</b> the critical depth is the depth at which a given flow has the least specific energy. Past papers print this formula (Dec 2021).</p></div>
+<details class="calc"><summary>where \(y_c\) and \(E_{s,\min}\) come from</summary><div>
+<p>1. Minimum of \(E_s(y)\): set \(\dfrac{\mathrm dE_s}{\mathrm dy}=1-\dfrac{Q^2}{gb^2y^3}=0\). <span class="why">Differentiate \(y+\tfrac{Q^2}{2gb^2}y^{-2}\).</span></p>
+<p>2. So \(y^3=\dfrac{Q^2}{gb^2}\), i.e. \(y_c=(Q^2/gb^2)^{1/3}\).</p>
+<p>3. At \(y_c\): \(\dfrac{Q^2}{2gb^2y_c^2}=\dfrac{y_c^3}{2y_c^2}=\dfrac{y_c}{2}\), so \(E_{s,\min}=y_c+\tfrac12y_c=\tfrac32y_c\). <span class="why">Use \(Q^2/(gb^2)=y_c^3\).</span></p>
+<p>4. Also \(V_c^2=Q^2/(b^2y_c^2)=gy_c\), so at critical depth \(V_c=\sqrt{gy_c}\): the Froude number below equals 1.</p>
+</div></details>
+<div class="box beyond"><span class="tag">Definition · Froude number; subcritical and supercritical flow</span>
+\[\mathrm{Fr}=\frac{V}{\sqrt{gy}}\]
+<ul class="list">
+<li><b>Subcritical</b> (tranquil): \(y\gt y_c\), \(\mathrm{Fr}\lt1\): deep and slow (a lowland river).</li>
+<li><b>Critical</b>: \(y=y_c\), \(\mathrm{Fr}=1\).</li>
+<li><b>Supercritical</b> (rapid): \(y\lt y_c\), \(\mathrm{Fr}\gt1\): shallow and fast (water rushing down a spillway).</li>
+</ul>
+<p class="word"><b>Meaning:</b> \(\sqrt{gy}\) is the speed of a small surface wave in water of depth \(y\). In subcritical flow a ripple can travel upstream; in supercritical flow every ripple is swept downstream, much as a supersonic jet outruns its own sound.</p></div>
+<div class="figure" id="fig-ey-wrap"><p class="ttl">Try it · specific-energy diagram of a rectangular channel</p>
+<canvas class="plot" id="cv-ey" style="height:300px"></canvas>
+<div class="ctrl">
+<label>\(Q\) (m³/s) <input type="range" id="e-Q" min="0.1" max="6" step="0.05" value="3"></label>
+<label>\(b\) (m) <input type="range" id="e-b" min="0.2" max="4" step="0.05" value="2"></label>
+<label>\(y\) (m) <input type="range" id="e-y" min="0.05" max="2.5" step="0.01" value="1.2"></label>
+</div>
+<div class="readout" id="out-ey"></div>
+<p class="cap">The curve is \(E_s(y)\) for the chosen \(Q\) and \(b\); the dashed line is \(E_s=y\) (no velocity head). The red dot is your depth; the green dot is its alternate depth (same \(E_s\)); the nose of the curve is the critical depth. Starts at the example below.</p></div>
+<h3>Alternate depth</h3>
+<p>If something makes the flow change character (subcritical ↔ supercritical) without losing energy, for example flowing under a sluice gate, the new depth is the <b>other</b> depth with the <b>same</b> \(E_s\). Rearranged, it is a root of the cubic</p>
+\[y^3-E_sy^2+\frac{Q^2}{2gb^2}=0.\]
+<p>The cubic has three roots: the depth you started with, the alternate depth, and a negative root (no physical meaning). Find the alternate one with a calculator's equation solver or by trial (try values on the other side of \(y_c\)).</p>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>Water flows at 3 m³/s in a 2 m wide rectangular channel, 1.2 m deep. Is the flow subcritical or supercritical? Find the alternate depth (\(g=9.81\)).</p>
+<ol class="steps">
+<li>\(V=\dfrac{3}{2(1.2)}=1.25\u{m/s}\); \(\mathrm{Fr}=\dfrac{1.25}{\sqrt{9.81(1.2)}}=0.364\).</li>
+<li>\(y_c=\left(\dfrac{3^2}{9.81(2^2)}\right)^{1/3}=0.612\u{m}\). Since \(y=1.2\gt y_c\) (and \(\mathrm{Fr}\lt1\)): <b>subcritical</b>.</li>
+<li>\(E_s=1.2+\dfrac{1.25^2}{2(9.81)}\) \(=1.2+0.0796=1.280\u{m}\).</li>
+<li>Alternate depth: solve \(y+\dfrac{0.1147}{y^2}=1.280\) for \(y\lt0.612\):</li>
+</ol>
+<details class="calc"><summary>trial values for the alternate depth</summary><div>
+<p>\(Q^2/(2gb^2)\) \(=9/(2\cdot9.81\cdot4)=0.1147\u{m^3}\).</p>
+<p>\(y=0.30\): \(0.30+0.1147/0.09=1.574\) <span class="why">too big: go deeper</span></p>
+<p>\(y=0.35\): \(0.35+0.1147/0.1225=1.286\) <span class="why">slightly too big</span></p>
+<p>\(y=0.352\): \(0.352+0.1147/0.1239=1.278\) <span class="why">slightly too small: the root is between</span></p>
+<p>Root: \(y=0.3515\u{m}\) (a calculator's solver gives 0.35151).</p>
+</div></details>
+<p>\(\boxed{y_\text{alt}\approx0.352\u{m}}\), supercritical: \(V=3/(2\times0.3515)=4.27\u{m/s}\), \(\mathrm{Fr}=2.30\).</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Use the flow rate \(Q\) (m³/s) and the full width \(b\) in \(y_c\). Compare \(y\) with \(y_c\) to classify the flow and quote \(\mathrm{Fr}\) as a check; both must agree. The alternate depth is on the other side of \(y_c\).</p></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>Momentum flux</td><td>\(\dot mV=\rho AV^2\)</td><td>momentum carried through a section per second (N)</td></tr>
+<tr><td>CV momentum equation</td><td>\(\sum F=\sum_\text{out}\dot mV-\sum_\text{in}\dot mV\)</td><td>forces on the fluid = momentum out − in, per axis, with signs</td></tr>
+<tr><td>Forces in \(\sum F\)</td><td>\(pA\) into the CV, weight, support</td><td>free jets: \(p=0\) gauge; smooth plate pushes only normal to itself</td></tr>
+<tr><td>Jet on a square plate</td><td>\(F=\dot mV\)</td><td>all forward momentum destroyed</td></tr>
+<tr><td>Plate with a hole</td><td>\(F=\rho V^2(A_1-A_2)\)</td><td>only the deflected part pushes</td></tr>
+<tr><td>Inclined smooth plate</td><td>\(F_A=\dot mV\sin\theta\); split \(\tfrac{1\pm\cos\theta}{2}\)</td><td>normal force; bigger share goes the way the jet leans</td></tr>
+<tr><td>Vane (turn \(\beta\))</td><td>\(F_x=\dot mV(1-\cos\beta)\), \(F_y=\dot mV\sin\beta\)</td><td>\(\beta=180°\): \(2\dot mV\)</td></tr>
+<tr><td>Vertical jet</td><td>\(V^2=V_0^2-2gh\)</td><td>use the speed where the jet arrives; \(\dot m\) unchanged</td></tr>
+<tr><td>Bend, nozzle</td><td>\(R=\Delta(\dot mV)-\sum pA\)</td><td>pressure terms usually dominate; nozzle pushed downstream</td></tr>
+<tr><td>Tank on a scale</td><td>\(N=W_\text{tank}+W_\text{water}+\dot m_1V_1\)</td><td>a jet arriving from above adds its momentum flux</td></tr>
+<tr><td>Drag, lift</td><td>\(F_{D,L}=C_{D,L}\tfrac12\rho V^2A\)</td><td>along / across the oncoming flow</td></tr>
+<tr><td>Drag power</td><td>\(P=F_DV\propto V^3\)</td><td>km/h ÷ 3.6 first</td></tr>
+<tr><td>Stall</td><td>\(\alpha\) above the stall angle</td><td>upper-surface separation: lift falls, drag rises</td></tr>
+<tr><td>Flaps</td><td>more camber (and area)</td><td>more lift at low speed; lower stall speed</td></tr>
+<tr><td>Head loss</td><td>\(H_1=H_2+h_L\)</td><td>mechanical energy per unit weight turned to heat (m)</td></tr>
+<tr><td>Open channel</td><td>\(V=\dfrac{Q}{by}\), \(E_s=y+\dfrac{V^2}{2g}\)</td><td>specific energy measured from the bed</td></tr>
+<tr><td>Critical depth</td><td>\(y_c=(Q^2/gb^2)^{1/3}\), \(\mathrm{Fr}=V/\sqrt{gy}\)</td><td>\(y\gt y_c\): subcritical; \(y\lt y_c\): supercritical</td></tr>
+<tr><td>Alternate depth</td><td>\(y^3-E_sy^2+\dfrac{Q^2}{2gb^2}=0\)</td><td>same \(E_s\), other side of \(y_c\)</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Leaving out the pressure forces \(pA\) at the inlet of a bend or nozzle.</span>
+<span class="ok">✓</span><span>Inside a pipe the gauge pressure is not zero: \(p_1A_1\) pushes into the CV and is often ten times the momentum terms.</span>
+<span class="x">✗</span><span>Adding pressure forces at a free jet or an outlet to the atmosphere.</span>
+<span class="ok">✓</span><span>Free jets are at atmospheric pressure: \(p=0\) gauge, no force.</span>
+<span class="x">✗</span><span>Writing "in − out" or losing the sign of a velocity component.</span>
+<span class="ok">✓</span><span>Always "out − in", each \(V\) as a signed component on your axes.</span>
+<span class="x">✗</span><span>Giving the force on the fluid when the question asks for the force on the plate (or the reverse).</span>
+<span class="ok">✓</span><span>The momentum equation gives the force on the fluid; the fluid's force on the device is opposite. "Force to hold it" = the support's force.</span>
+<span class="x">✗</span><span>Using the plate's area, or the nozzle speed at the plate of a vertical jet.</span>
+<span class="ok">✓</span><span>\(\dot m=\rho A_\text{jet}V\); for a vertical jet, \(V^2=V_0^2-2gh\) at the plate.</span>
+<span class="x">✗</span><span>Putting km/h into \(\tfrac12\rho V^2\).</span>
+<span class="ok">✓</span><span>Divide by 3.6 first.</span>
+<span class="x">✗</span><span>Frontal area of an airship taken as length × diameter.</span>
+<span class="ok">✓</span><span>"Based on the frontal area": \(A=\pi D^2/4\) with the maximum diameter.</span>
+<span class="x">✗</span><span>"Stall" described as the engine stopping.</span>
+<span class="ok">✓</span><span>Aerodynamic stall: flow separates from the upper surface at high angle of attack; lift drops.</span>
+<span class="x">✗</span><span>Classifying open-channel flow by speed alone ("3 m/s is fast").</span>
+<span class="ok">✓</span><span>Compare \(y\) with \(y_c\) (or \(\mathrm{Fr}\) with 1).</span>
+<span class="x">✗</span><span>Giving the negative root, or the original depth, as the alternate depth.</span>
+<span class="ok">✓</span><span>The alternate depth is the other positive root, on the other side of \(y_c\).</span>
+</div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Find the mistake</h2>
+<div class="q"><p class="qh">1 · A student's nozzle</p>
+<p>"Nozzle from 60 mm to a 20 mm free jet, 6 L/s of water. \(\sum F_x=\dot m(V_2-V_1)\) \(=6(19.10-2.12)=102\u{N}\), so the force on the nozzle is 102 N, pushing it upstream."</p>
+<details><summary>Hint</summary><div><p>What is the gauge pressure at the inlet of the nozzle? What forces are in \(\sum F_x\)?</p></div></details>
+<details><summary>Answer</summary><div><p>\(\sum F_x\) is <b>not</b> the force of the nozzle: it also contains \(p_1A_1=509.3\u{N}\) at the inlet (Bernoulli gives \(p_1=180.1\u{kPa}\)). \(R_x=101.9-509.3=-407.5\u{N}\) on the water, so the water pushes the nozzle <b>downstream</b> with 408 N (Section 6).</p></div></details></div>
+<div class="q"><p class="qh">2 · A student's vertical jet</p>
+<p>"A 20 mm water jet leaves the nozzle upward at 8 m/s and hits a plate 2 m higher. \(\dot m=2.513\u{kg/s}\), so the force is \(\dot mV=2.513\times8=20.1\u{N}\)."</p>
+<details><summary>Hint</summary><div><p>Is the jet still moving at 8 m/s when it reaches the plate?</p></div></details>
+<details><summary>Answer</summary><div><p>The jet slows as it rises: \(V=\sqrt{8^2-2(9.81)(2)}=4.976\u{m/s}\) at the plate, so \(F=2.513\times4.976=12.5\u{N}\). Using 8 m/s with a CV round the plate ignores the weight of the rising column (7.60 N), Section 5.</p></div></details></div>
+<div class="q"><p class="qh">3 · A student's blimp</p>
+<p>"\(C_D=0.10\), length 40 m, diameter 10 m, 40 km/h. \(A=40\times10=400\u{m^2}\); \(F_D=0.10\times\tfrac12(1.23)(40^2)(400)\) \(=39\,360\u{N}\); \(P=F_DV=1.57\u{MW}\)."</p>
+<details><summary>Hint</summary><div><p>Two mistakes: which area goes with "based on the frontal area"? What unit must \(V\) be in?</p></div></details>
+<details><summary>Answer</summary><div><p>Frontal area \(=\tfrac\pi4(10^2)=78.54\u{m^2}\) and \(V=40/3.6=11.11\u{m/s}\): \(F_D=596\u{N}\), \(P=6.63\u{kW}\). The student's power is about 240 times too large.</p></div></details></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Flat plate or cup?</p><p>The same jet hits (i) a flat plate square-on and (ii) a smooth cup that turns it right round. Compare the forces.</p>
+<details><summary>Answer</summary><div><p>(i) \(\dot mV\); (ii) \(2\dot mV\). The cup sends the water back at \(V\), so the momentum change is \(\dot mV-(-\dot mV)=2\dot mV\): twice as much.</p></div></details></div>
+<div class="q"><p class="qh">2 · Double the speed</p><p>A jet from a fixed nozzle doubles its speed. By what factor does the force on a square plate change? The drag on a car at double the speed? The power against drag?</p>
+<details><summary>Answer</summary><div><p>Jet force \(\rho AV^2\): ×4. Drag \(\propto V^2\): ×4. Power \(\propto V^3\): ×8.</p></div></details></div>
+<div class="q"><p class="qh">3 · Which way is the nozzle pushed?</p><p>The water speeds up through a nozzle, gaining forward momentum, so the nozzle must push it forward. Why is the nozzle nevertheless pushed <i>downstream</i> off the hose?</p>
+<details><summary>Hint</summary><div><p>List every force on the water in the nozzle.</p></div></details>
+<details><summary>Answer</summary><div><p>The inlet pressure force \(p_1A_1\) pushes the water forward more than enough to supply its momentum gain. The nozzle must hold the water <b>back</b> with the difference, so (third law) the water pushes the nozzle forward, downstream.</p></div></details></div>
+<div class="q"><p class="qh">4 · Tank with a downward outlet</p><p>The tank of Section 7 has its side outlet replaced by an outlet in the floor that sends the water straight down at speed \(V_2\) (it falls past the scale). Does the scale reading go up or down, and by how much?</p>
+<details><summary>Answer</summary><div><p>Down by \(\dot mV_2\): \(N-W=\dot m(-V_2)-\dot m(-V_1)\), so \(N=W+\dot mV_1-\dot mV_2\). The downward outflow acts like a rocket pushing the tank up.</p></div></details></div>
+<div class="q"><p class="qh">5 · Lift and drag on a car</p><p>A racing car has an upside-down wing at the back that pushes the car down. Is that force lift or drag? Why might the team want it?</p>
+<details><summary>Answer</summary><div><p>Lift: it is perpendicular to the oncoming air (lift is defined by the flow direction, not "up"). It presses the tyres onto the road for more grip in corners, at the cost of extra drag.</p></div></details></div>
+<div class="q"><p class="qh">6 · Head loss and Bernoulli</p><p>A long pipe of constant diameter runs horizontally. The speed is the same at both ends. If there were no head loss, how would the pressures at the ends compare? With a head loss of 3 m of water?</p>
+<details><summary>Answer</summary><div><p>Same \(V\) and \(z\): with \(h_L=0\), \(p_1=p_2\). With \(h_L=3\u{m}\), \(p_1-p_2=\rho gh_L\) \(=1000(9.81)(3)=29.4\u{kPa}\): friction is paid for by a pressure drop along the pipe.</p></div></details></div>
+<div class="q"><p class="qh">7 · Which side of critical?</p><p>A shallow, fast stream rushes down a spillway into a deep, slow river. Which flow is supercritical? Which has \(\mathrm{Fr}\gt1\)?</p>
+<details><summary>Answer</summary><div><p>The spillway flow: shallow and fast, \(y\lt y_c\), \(\mathrm{Fr}\gt1\). The river is subcritical. (Where they meet, a hydraulic jump forms: a sudden rise from the supercritical to the subcritical depth.)</p></div></details></div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17"><h2><span class="n">17</span>Exam taster</h2>
+<p>Real past-paper parts (ENGG1350, the predecessor of MECH1350; Section C), one per question type of this chapter. None of these topics is in a 2026 handout, so check Moodle before revising them heavily. Full methods, every other sitting, and more practice: <a href="guide-F4.html">Exam guide · F4</a>.</p>
+
+<div class="q"><div class="src"><b>May 2025 Q6</b><span>4 + 5 marks</span><span>similar: Dec 2018 Q2, May 2021 Q3</span><a class="guide" href="guide-F4.html#F4-1">F4.1 jets on plates &amp; vanes</a></div>
+<p>If the air velocity magnitude remains constant as the air flows over the plate surface</p>
+<p>(a) determine \(F_A\), the anchoring force required to hold the plate stationary; <span class="muted">(4 marks)</span></p>
+<p>(b) the fraction of mass flow along the plate surface in each of the two directions shown. (the density of the air is 1.23 kg/m³) <span class="muted">(5 marks)</span></p>
+<div id="fig-t1"></div>
+<p class="muted">Figure redrawn from the paper: a horizontal air jet, \(D_j=30\u{mm}\), \(V_j=40\u{m/s}\), strikes a flat plate inclined at 30° to the horizontal; the flow leaves along the plate as \(V_2\) (up the slope) and \(V_3\) (down the slope); \(F_A\) acts on the plate at 90° to its surface.</p>
+<details><summary>Hint</summary><div><p>Axes along and normal to the plate. Smooth plate: no force along it, and the air leaves at 40 m/s both ways. Normal direction gives \(F_A\); along-plate momentum plus continuity gives the split.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(\dot m=\rho AV\) \(=1.23\cdot\tfrac\pi4(0.03)^2(40)\) \(=0.03478\u{kg/s}\); \(\dot mV=1.391\u{N}\).</p>
+<p>(a) Normal to the plate: \(\boxed{F_A=\dot mV\sin30°=0.696\u{N}}\), perpendicular to the plate, pushing towards the jet (as drawn).</p>
+<p>(b) Along the plate: \(\dot m_2-\dot m_3=\dot m\cos30°\) and \(\dot m_2+\dot m_3=\dot m\), so</p>
+\[\frac{\dot m_2}{\dot m}=\frac{1+\cos30°}{2}=\boxed{0.933}\]
+\[\frac{\dot m_3}{\dot m}=\frac{1-\cos30°}{2}=\boxed{0.067}\]
+<p>93.3% goes up the slope (\(V_2\)), 6.7% down (\(V_3\)).</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2024 Q3</b><span>10 marks</span><span>similar: Dec 2024 B Q4(e), May 2023 Q3(c)</span><a class="guide" href="guide-F4.html#F4-2">F4.2 bends &amp; tanks</a></div>
+<p>Water flows steadily through a 90° reducing elbow (Figure C3). At the inlet to the elbow, the gauge pressure is \(P_1=220\u{kPa}\) and the cross-section area \(A_1=0.01\u{m^2}\). At the outlet, the elbow discharges to the atmosphere at which the flow speed is \(U_2=16\u{m\,s^{-1}}\) and the cross-section area \(A_2=0.0025\u{m^2}\).</p>
+<p>Calculate the force required to hold the 90° reducing elbow in place. Neglect the change in elevation. (Density of water 1,000 kg m⁻³.)</p>
+<div id="fig-t2"></div>
+<p class="muted">Figure redrawn from the paper. Its label box reads "\(P_1\) = 120 kPa (gauge)", the text says 220 kPa.</p>
+<p class="flag">the text (220 kPa) and the figure (120 kPa) disagree. 120 kPa is what frictionless Bernoulli gives from the other data, so the figure may be the intended value; we follow the text and show both.</p>
+<details><summary>Hint</summary><div><p>Continuity for \(U_1\); CV round the elbow; \(P_1A_1\) pushes in at 1; outlet is a free jet. "Out − in" in \(x\) and in \(y\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(U_1=A_2U_2/A_1=4\u{m/s}\); \(\dot m=\rho A_1U_1=40\u{kg/s}\); \(P_1A_1=2200\u{N}\).</p>
+<p>\(x\): \(P_1A_1+R_x=\dot m(0-U_1)\), so \(R_x=-160-2200=-2360\u{N}\).</p>
+<p>\(y\) (outflow downward): \(R_y=\dot m(-U_2)-0=-640\u{N}\).</p>
+\[\begin{aligned}|R|&=\sqrt{2360^2+640^2}\\&=\boxed{2445\u{N}}\end{aligned}\]
+<p>The support must push the elbow to the left (against the inflow) and down, at \(\tan^{-1}(640/2360)=15.2°\) below the \(-x\) direction. With the figure's 120 kPa: \(R_x=-1360\u{N}\), \(R_y=-640\u{N}\), \(|R|=1503\u{N}\) at 25.2°.</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2021 Q2</b><span>3 + 3 marks</span><a class="guide" href="guide-F4.html#F4-3">F4.3 drag force &amp; power</a></div>
+<p>The blimp shown in Figure C2 is used at various athletic events. It is 40 m long and has a maximum diameter of 10 m. If its drag coefficient (based on the frontal area) is 0.10, estimate the power (= force × speed) required to propel it. (Density of air = 1.23 kg/m³.)</p>
+<p>(a) Estimate the power required to propel it at its 40 km/h cruising speed. <span class="muted">(3 marks)</span></p>
+<p>(b) Estimate the power required to propel it at its maximum 90 km/h speed. <span class="muted">(3 marks)</span></p>
+<div id="fig-t3"></div>
+<details><summary>Hint</summary><div><p>Frontal area from the maximum diameter; km/h ÷ 3.6; \(P=C_D\tfrac12\rho AV^3\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(A=\tfrac\pi4(10^2)=78.54\u{m^2}\).</p>
+<p>(a) \(V=11.11\u{m/s}\): \(F_D=0.10(\tfrac12)(1.23)(11.11^2)(78.54)\) \(=596\u{N}\); \(\boxed{P=F_DV=6.63\u{kW}}\).</p>
+<p>(b) \(V=25\u{m/s}\): \(F_D=3019\u{N}\); \(\boxed{P=75.5\u{kW}}\), which is \((90/40)^3=11.4\) times (a).</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2018 Q3(b)(c)</b><span>4 + 2 marks</span><span>similar: May 2022 Q6</span><a class="guide" href="guide-F4.html#F4-4">F4.4 drag, lift &amp; aerofoils</a></div>
+<p>(b) With the aid of a sketch, briefly explain what happens to the flow around an airfoil when the airfoil stalls. What is the consequence of stalling? <span class="muted">(4 marks)</span></p>
+<p>(c) Briefly explain the function of movable flaps in an airfoil. <span class="muted">(2 marks)</span></p>
+<details><summary>Hint</summary><div><p>Angle of attack, separation on the upper surface, wake; lift and drag. Flaps: camber, \(C_{L,\max}\), landing speed.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(b) Sketch the attached flow at small \(\alpha\) and the separated flow at large \(\alpha\) (as in Section 10). When the angle of attack exceeds the stall angle, the flow on the <b>upper surface separates</b> near the leading edge and a wide turbulent <b>wake</b> forms over the wing. Consequence: the low pressure on the upper surface is lost, so <b>lift drops sharply</b> and <b>drag rises sharply</b>; the aircraft loses height and control.</p>
+<p>(c) Lowering the flaps <b>increases the camber</b> (and area) of the wing, giving <b>more lift at low speed</b> (higher \(C_{L,\max}\)), so the aircraft can take off and land slower without stalling; they also add drag to slow it on approach.</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2019 Q1(g)(h)(i)</b><span>1 mark each (assumed)</span><a class="guide" href="guide-F4.html#F4-5">F4.5 head loss</a><a class="guide" href="guide-F4.html#F4-4">F4.4</a></div>
+<p>Briefly explain the following terms in the context of fluid flow. (g) Head loss (h) Drag (i) Lift</p>
+<p class="flag">the paper gives 9 marks for nine terms (a)–(i); 1 mark per term is assumed.</p>
+<details><summary>Hint</summary><div><p>One sentence each: what is it, in which direction, in what unit.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(g) <b>Head loss</b>: the mechanical energy per unit weight of fluid converted into heat by friction (viscous and turbulent effects) between two sections; the drop in total head, in metres.</p>
+<p>(h) <b>Drag</b>: the component of the force exerted by the fluid on a body parallel to the direction of the oncoming flow; it resists the relative motion.</p>
+<p>(i) <b>Lift</b>: the component of the force exerted by the fluid on a body perpendicular to the direction of the oncoming flow.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2021 Q3</b><span>5 + 5 marks</span><a class="guide" href="guide-F4.html#F4-6">F4.6 open channels</a></div>
+<p>Water is flowing steadily in a 0.4-m-wide (\(b\)) rectangular open channel at a rate of \(\dot Q=0.2\u{m^3\,s^{-1}}\) (Figure C3). If the flow depth is 0.15 m,</p>
+<p>(a) Determine the flow velocity and whether the flow is subcritical or supercritical. <span class="muted">(5 marks)</span></p>
+<p>(b) Determine the alternate flow depth if the character of the flow were to change. <span class="muted">(5 marks)</span></p>
+<p>Note: the critical depth \(y_c\) for this flow is (C3a), where \(g\) (= 9.81 m s⁻²) is the gravitational acceleration; the specific energy \(E_s\) for this flow is (C3b):</p>
+\[y_c=\left(\frac{\dot Q^2}{gb^2}\right)^{1/3}\qquad\text{(C3a)}\]
+\[E_s=y+\frac{\dot Q^2}{2gb^2y^2}\qquad\text{(C3b)}\]
+<div id="fig-t4"></div>
+<details><summary>Hint</summary><div><p>\(V=\dot Q/(by)\); compare \(y\) with \(y_c\). Then keep \(E_s\) and find the other positive depth.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) \(V=\dfrac{0.2}{0.4(0.15)}=\boxed{3.33\u{m/s}}\).</p>
+\[y_c=\left(\frac{0.2^2}{9.81(0.4^2)}\right)^{1/3}=0.294\u{m}\]
+<p>\(y=0.15\lt y_c\), so the flow is <b>supercritical</b> (check: \(\mathrm{Fr}=3.33/\sqrt{9.81(0.15)}=2.75\gt1\)).</p>
+<p>(b) \(E_s=0.15+\dfrac{3.333^2}{2(9.81)}=0.716\u{m}\). Solve \(y+0.012742/y^2=0.7163\) for \(y\gt y_c\):</p>
+<p>\(y=0.69\): 0.7168 (just too big); \(y=0.689\): 0.7158 (too small); root \(\boxed{y\approx0.690\u{m}}\), subcritical (\(V=0.725\u{m/s}\), \(\mathrm{Fr}=0.28\)).</p></div></details></div>
+</section>
+</main></div>
+
+<script>
+/* MECH1350 shared helpers (from MECH2413) (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-F4 figures: control-volume sketches for jets, plates, vanes, bends, nozzles and tanks; drag/lift and aerofoil sketches;
+   energy line; open channel; four interactive figures (inclined plate, reducing bend, drag power, specific-energy diagram).
+   SVG helpers copied from note-T3.js (E, T, tw, arrow, arrowHead, svgIn, wavy, reg, pairOf, panels3).
+   New page-local helpers: pipe(g,d,w) thick stream/pipe; cvRect / cvPath dashed green control-volume boundary;
+   axes(g,x,y) small x-y axes; foil(g,cx,cy,c,ang,o) aerofoil outline; ld(...) labelled arrow in a colour role. */
+const NS='http://www.w3.org/2000/svg';
+function E(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)if(a[k]!==undefined)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function tw(s,fs=13){const c=s.replace(/_\{([^}]*)\}/g,(m,a)=>'\u0001'.repeat(a.length)).replace(/_([A-Za-z0-9,∞]+)/g,(m,a)=>'\u0001'.repeat(a.length));
+  let w=0;for(const ch of c)w+=(ch==='\u0001'?0.72:1)*(/[ .,:·()′]/.test(ch)?0.33:0.6);return w*fs;}
+function T(p,x,y,s,o={}){
+  const t=E('text',{x,y,'text-anchor':o.a||'middle','dominant-baseline':'middle',style:`font-size:${o.fs||13}px;fill:${o.col||'var(--ink)'};${o.bold?'font-weight:600;':''}`},p);
+  const re=/([^_]*?)(?:_(\{[^}]*\}|[A-Za-z0-9,∞]+))/y; let i=0, m, lastSub=false;
+  const add=(str,sub,ital)=>{if(!str)return;const sp=E('tspan',{},t);sp.textContent=str;
+    if(sub){sp.setAttribute('dy',4);sp.setAttribute('font-size',(o.fs||13)*0.74);lastSub=true;} else if(lastSub){sp.setAttribute('dy',-4);lastSub=false;}
+    if(ital)sp.setAttribute('font-style','italic');};
+  while((m=re.exec(s))){ let pre=m[1]; const mm=/^(.*?)([A-Za-zαλεσΔ])$/.exec(pre);
+    if(mm&&(mm[1]===''||/[\s(=+−\-\/]$/.test(mm[1]))){add(mm[1]);add(mm[2],false,true);} else add(pre);
+    add(m[2].replace(/[{}]/g,''),true); i=re.lastIndex; }
+  add(s.slice(i)); if(o.it&&!s.includes('_'))t.setAttribute('font-style','italic'); return t;}
+function arrowHead(p,x,y,ux,uy,col,L=9,W=7){const bx=x-ux*L,by=y-uy*L,nx=-uy,ny=ux;E('polygon',{points:`${x},${y} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,style:`fill:${col};stroke:none`},p);}
+function arrow(p,x1,y1,x2,y2,col='var(--c2)',w=2.2){const L=Math.hypot(x2-x1,y2-y1);if(L<1)return;const ux=(x2-x1)/L,uy=(y2-y1)/L;
+  E('line',{x1,y1,x2:x2-ux*7,y2:y2-uy*7,style:`stroke:${col};stroke-width:${w}`},p);arrowHead(p,x2,y2,ux,uy,col);}
+function svgIn(el,W,H,alt){if(typeof el==='string')el=document.getElementById(el);el.innerHTML='';
+  const s=E('svg',{viewBox:`0 0 ${W} ${H}`,class:'circuit',role:'img','aria-label':alt||'diagram'});s.style.maxWidth=W+'px';s.style.margin='0 auto';el.appendChild(s);return s;}
+function wavy(p,x1,y1,x2,y2,col,amp=4,per=12){const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy,ny=ux;let d='';
+  for(let s=0;s<=L-8;s+=1){const w=amp*Math.sin(2*Math.PI*s/per);d+=(s?'L':'M')+(x1+ux*s+nx*w).toFixed(1)+','+(y1+uy*s+ny*w).toFixed(1);}
+  E('path',{d,style:`stroke:${col};stroke-width:1.8;fill:none`},p);arrowHead(p,x2,y2,ux,uy,col);}
+const figs=[]; const reg=f=>{figs.push(f);redraws.push(f);f();};
+let togT=null;document.addEventListener('toggle',()=>{clearTimeout(togT);togT=setTimeout(()=>figs.forEach(f=>{try{f();}catch(e){console.error(e);}}),60);},true);
+function pairOf(id,fa,fb,ca,cb){const host=document.getElementById(id);host.innerHTML='';const w=document.createElement('div');w.className='pair';host.appendChild(w);
+  [[fa,ca],[fb,cb]].forEach(([f,c],i)=>{const d=document.createElement('div');w.appendChild(d);const s=document.createElement('div');s.id=id+'-p'+i;d.appendChild(s);
+    if(c){const p=document.createElement('p');p.className='sub';p.innerHTML=c;d.appendChild(p);}reg(()=>f(s.id));});}
+function panels3(id,fns){const host=document.getElementById(id);host.innerHTML='';const w=document.createElement('div');w.className='pair';w.style.gridTemplateColumns='repeat(auto-fit,minmax(230px,1fr))';host.appendChild(w);
+  fns.forEach((f,i)=>{const d=document.createElement('div');d.id=id+'-'+i;w.appendChild(d);reg(()=>f(d.id));});}
+
+/* ---------- page-local helpers ---------- */
+const FLOW='var(--accent)',PRES='var(--warm)',WGT='var(--purple)',SUP='var(--c2)',CVC='var(--c3)';
+function pipe(g,d,w,fill='var(--accent-soft)',edge=true){if(edge)E('path',{d,style:`stroke:var(--ink);stroke-width:${w+2.6};fill:none;stroke-linejoin:round`},g);
+  E('path',{d,style:`stroke:${fill};stroke-width:${w};fill:none;stroke-linejoin:round`},g);}
+function jet(g,d,w){E('path',{d,style:`stroke:var(--accent-soft);stroke-width:${w};fill:none;stroke-linejoin:round;stroke-linecap:butt`},g);}
+function cvRect(g,x,y,w,h){E('rect',{x,y,width:w,height:h,rx:6,style:`fill:none;stroke:${CVC};stroke-width:1.8;stroke-dasharray:7 4`},g);}
+function cvPath(g,d){E('path',{d,style:`fill:none;stroke:${CVC};stroke-width:1.8;stroke-dasharray:7 4`},g);}
+function axes(g,x,y,L=30,lx='x',ly='y'){arrow(g,x,y,x+L,y,'var(--ink)',1.4);arrow(g,x,y,x,y-L,'var(--ink)',1.4);T(g,x+L+8,y,lx,{it:true,fs:12});T(g,x,y-L-9,ly,{it:true,fs:12});}
+function ld(g,x1,y1,x2,y2,col,s,dx=0,dy=-11,o={}){arrow(g,x1,y1,x2,y2,col,o.w||2.2);if(s)T(g,(o.at==='tail'?x1:o.at==='tip'?x2:(x1+x2)/2)+dx,(o.at==='tail'?y1:o.at==='tip'?y2:(y1+y2)/2)+dy,s,{fs:o.fs||12,col,a:o.a,bold:o.bold});}
+function plate(g,x1,y1,x2,y2,w=7){E('line',{x1,y1,x2,y2,style:`stroke:var(--ink);stroke-width:${w+2};stroke-linecap:butt`},g);E('line',{x1,y1,x2,y2,style:`stroke:var(--grid);stroke-width:${w};stroke-linecap:butt`},g);}
+function nozzle(g,x,y,len,w1,w2,dir='right'){ // horizontal nozzle ending at (x,y)
+  const s=dir==='right'?-1:1;E('path',{d:`M${x+s*len},${y-w1/2} L${x+s*len*0.35},${y-w1/2} L${x},${y-w2/2} L${x},${y+w2/2} L${x+s*len*0.35},${y+w1/2} L${x+s*len},${y+w1/2}`,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.5'},g);}
+function vnozzle(g,x,y,len,w1,w2){E('path',{d:`M${x-w1/2},${y+len} L${x-w1/2},${y+len*0.4} L${x-w2/2},${y} L${x+w2/2},${y} L${x+w1/2},${y+len*0.4} L${x+w1/2},${y+len}`,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.5'},g);}
+function foil(g,cx,cy,c,ang,o={}){ // NACA-like thickness, camber; ang in degrees (nose up positive), leading edge at (cx,cy)
+  const t=o.t||0.12,mc=o.m===undefined?0.04:o.m,flap=o.flap||0,N=40,up=[],lo=[];const ca=Math.cos(ang*Math.PI/180),sa=Math.sin(ang*Math.PI/180);
+  for(let i=0;i<=N;i++){const xc=0.5-0.5*Math.cos(Math.PI*i/N);let yt=5*t*(0.2969*Math.sqrt(xc)-0.126*xc-0.3516*xc*xc+0.2843*xc**3-0.1015*xc**4);
+    let yc=xc<0.4?mc/0.16*(0.8*xc-xc*xc):mc/0.36*(0.2+0.8*xc-xc*xc);
+    if(flap&&xc>0.72)yc-=(xc-0.72)*Math.tan(flap*Math.PI/180);
+    up.push([xc,yc+yt]);lo.push([xc,yc-yt]);}
+  const P=([x,y])=>[cx+c*(x*ca+y*sa),cy-c*(-x*sa+y*ca)];
+  const pts=up.concat(lo.reverse()).map(P);E('path',{d:'M'+pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L')+'Z',style:`fill:${o.fill||'var(--grid)'};stroke:var(--ink);stroke-width:1.5`},g);
+  return {P,te:P([1,0-(flap?0.28*Math.tan(flap*Math.PI/180):0)]),le:P([0,0])};}
+
+/* ================= Section 2: general CV ================= */
+reg(function(){const svg=svgIn('fig-cv',460,260,'general control volume with forces and momentum fluxes');const g=E('g',{},svg);
+  pipe(g,'M20,150 L150,150 Q240,150 280,95 L330,40',34);
+  cvPath(g,'M110,118 L110,182 L200,182 Q300,170 340,90 L352,58 L290,24 Q250,90 200,118 Z');
+  E('line',{x1:110,y1:126,x2:110,y2:174,style:'stroke:var(--ink);stroke-width:1.2'},g);T(g,110,198,'1',{fs:12,bold:true});T(g,358,46,'2',{fs:12,bold:true});
+  ld(g,40,150,100,150,FLOW,'ṁV_{1}',0,-28,{fs:12});
+  ld(g,334,36,380,-2+30,FLOW,'',0,0);T(g,404,28,'ṁV_{2}',{fs:12,col:FLOW});
+  ld(g,60,212,108,212,PRES,'p_{1}A_{1}',-20,0,{a:'end',at:'tail'});E('line',{x1:108,y1:182,x2:108,y2:212,style:'stroke:var(--warm);stroke-width:1;stroke-dasharray:2 2'},g);
+  ld(g,400,92,350,70,PRES,'p_{2}A_{2}',8,6,{a:'start',at:'tail'});
+  ld(g,215,140,215,200,WGT,'W',12,0,{a:'start',at:'tip'});
+  ld(g,250,120,190,70,SUP,'R (support on fluid)',-6,-8,{a:'end',at:'tip'});
+  axes(g,400,236,22);
+  T(g,320,236,'CV',{fs:12,col:CVC,bold:true});
+});
+
+/* ================= Section 3 ================= */
+pairOf('fig-normal',id=>{const g=E('g',{},svgIn(id,280,200,'jet hitting a flat plate normally'));
+  nozzle(g,60,100,50,40,22);jet(g,'M60,100 L196,100',22);
+  jet(g,'M201,100 L201,22',8);jet(g,'M201,100 L201,178',8);plate(g,210,30,210,170,8);
+  E('line',{x1:216,y1:20,x2:240,y2:6,style:'stroke:var(--ink);stroke-width:1'},g);T(g,244,10,'plate',{a:'start',fs:12});
+  ld(g,124,82,170,82,FLOW,'V',0,-10);ld(g,192,60,192,22,FLOW,'',0,0);ld(g,192,140,192,178,FLOW,'',0,0);T(g,180,38,'V',{fs:12,col:FLOW,it:true});T(g,180,166,'V',{fs:12,col:FLOW,it:true});
+  cvRect(g,110,14,128,172);T(g,128,196,'CV',{fs:12,col:CVC,bold:true});
+  ld(g,268,100,226,100,SUP,'',0,0);T(g,256,118,'support',{fs:11,col:SUP});},
+ id=>{const g=E('g',{},svgIn(id,280,200,'free-body sketch of the control volume'));
+  cvRect(g,90,30,110,140);E('line',{x1:180,y1:40,x2:180,y2:160,style:'stroke:var(--ink);stroke-width:6;opacity:.35'},g);
+  ld(g,20,100,88,100,FLOW,'ṁV in',0,-14);ld(g,170,60,170,8,FLOW,'',0,0);ld(g,170,140,170,194,FLOW,'',0,0);
+  T(g,160,16,'out: no x-part',{fs:11,col:FLOW,a:'end'});
+  ld(g,262,100,206,100,SUP,'R_{x}',0,-14,{bold:true});axes(g,24,178,26);
+  T(g,145,100,'ΣF_{x} = R_{x}',{fs:12});});
+
+reg(function(){const svg=svgIn('fig-hole',440,200,'jet on a plate with a central hole');const g=E('g',{},svg);
+  nozzle(g,70,100,56,50,32);jet(g,'M70,100 L222,100',32);jet(g,'M222,100 L410,100',10);
+  jet(g,'M226,92 L226,18',6);jet(g,'M226,108 L226,182',6);
+  plate(g,236,24,236,94,8);plate(g,236,106,236,176,8);
+  ld(g,96,72,150,72,FLOW,'A_{1}, V',0,-12);ld(g,330,84,390,84,FLOW,'A_{2}, V',0,-12);
+  ld(g,214,60,214,20,FLOW,'',0,0);ld(g,214,140,214,180,FLOW,'',0,0);T(g,202,16,'ṁ_{side}',{fs:12,col:FLOW,a:'end'});
+  cvRect(g,140,8,150,184);T(g,300,186,'CV',{fs:12,col:CVC,bold:true,a:'start'});
+  ld(g,300,140,250,140,SUP,'R_{x}',22,-12);
+  T(g,236,100,'hole',{fs:10.5,col:'var(--muted)'});
+});
+
+/* ================= Section 4: inclined plate (interactive) ================= */
+reg(function(){const el=$('fig-incl');if(!el)return;
+  const th=+$('i-th').value,V=+$('i-V').value,D=+$('i-D').value,rho=+$('i-fl').value;const r=th*Math.PI/180;
+  const A=Math.PI/4*(D/1000)**2,m=rho*A*V,F=m*V*Math.sin(r),f2=(1+Math.cos(r))/2,f3=(1-Math.cos(r))/2;
+  const svg=svgIn(el,460,290,'jet on an inclined plate');const g=E('g',{},svg);
+  const Px=250,Py=150,s=[Math.cos(r),-Math.sin(r)],n=[-Math.sin(r),-Math.cos(r)],L=140,w=6+D/100*20;
+  // jet hits the plate at P (on the jet-side face)
+  const off=6;const Fx=Px+n[0]*off,Fy=Py+n[1]*off;
+  nozzle(g,90,Fy,60,w+14,w);jet(g,`M90,${Fy} L${Fx},${Fy}`,w);
+  const w2=Math.max(2,w*f2),w3=Math.max(1.5,w*f3);
+  jet(g,`M${Fx+n[0]*w2/2},${Fy+n[1]*w2/2} L${Fx+n[0]*w2/2+s[0]*L},${Fy+n[1]*w2/2+s[1]*L}`,w2);
+  jet(g,`M${Fx+n[0]*w3/2},${Fy+n[1]*w3/2} L${Fx+n[0]*w3/2-s[0]*L},${Fy+n[1]*w3/2-s[1]*L}`,w3);
+  plate(g,Px-s[0]*(L+8),Py-s[1]*(L+8),Px+s[0]*(L+8),Py+s[1]*(L+8),7);
+  const o2=w2+8,o3=w3+8;
+  ld(g,Fx+n[0]*o2+s[0]*60,Fy+n[1]*o2+s[1]*60,Fx+n[0]*o2+s[0]*120,Fy+n[1]*o2+s[1]*120,FLOW,'',0,0,{w:1.4+3*f2});
+  T(g,Fx+n[0]*(o2+14)+s[0]*128,Fy+n[1]*(o2+14)+s[1]*128,'ṁ_{2}',{fs:12,col:FLOW});
+  if(f3>0.004){ld(g,Fx+n[0]*o3-s[0]*60,Fy+n[1]*o3-s[1]*60,Fx+n[0]*o3-s[0]*120,Fy+n[1]*o3-s[1]*120,FLOW,'',0,0,{w:1.4+3*f3});
+    T(g,Fx+n[0]*(o3+14)-s[0]*128,Fy+n[1]*(o3+14)-s[1]*128,'ṁ_{3}',{fs:12,col:FLOW});}
+  ld(g,110,Fy-w/2-14,160,Fy-w/2-14,FLOW,'V',0,-10);
+  // anchoring force: from behind the plate towards it, along n
+  const LF=70;ld(g,Px-n[0]*(LF+10),Py-n[1]*(LF+10),Px-n[0]*8,Py-n[1]*8,SUP,'F_{A}',14,10,{at:'tail',bold:true});
+  // angle mark
+  const R0=46,ex=Px-s[0]*R0,ey=Py-s[1]*R0;E('line',{x1:Px-R0-14,y1:Py,x2:Px,y2:Py,style:'stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3'},g);
+  E('path',{d:`M${Px-R0},${Py} A${R0},${R0} 0 0 ${1} ${ex},${ey}`,style:'stroke:var(--muted);stroke-width:1.2;fill:none'},g);
+  T(g,Px-R0-8+ (th>60?0:0),Py+ (th<40?14:16),'θ',{fs:12,col:'var(--muted)',it:true,a:'end'});
+  $('out-incl').innerHTML=`ṁ = ρAV = ${fmt(rho,4)} × ${fmt(A*1e6,1)}×10⁻⁶ × ${V} = <b>${fmt(m,4)} kg/s</b> · ṁV = ${fmt(m*V,3)} N<br>`+
+    `F<sub>A</sub> = ṁV sin θ = <b>${fmt(F,3)} N</b> (horizontal ${fmt(F*Math.sin(r),3)} N, vertical ${fmt(F*Math.cos(r),3)} N)<br>`+
+    `split: ṁ<sub>2</sub>/ṁ = <b>${fmt(f2,3)}</b>, ṁ<sub>3</sub>/ṁ = <b>${fmt(f3,3)}</b>`;
+});
+['i-th','i-V','i-D','i-fl'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+reg(function(){const svg=svgIn('fig-vane',420,280,'jet turned by a curved vane');const g=E('g',{transform:'translate(0,60)'},svg);
+  nozzle(g,70,150,56,30,16);jet(g,'M70,150 L190,150',16);
+  // vane: arc turning the jet through 150 deg (out direction up-left)
+  const cx=190,cy=95,R=55;jet(g,`M190,150 A${R},${R} 0 0 0 ${cx+R*Math.sin(150*Math.PI/180)},${cy+R*Math.cos(150*Math.PI/180)}`,14);
+  E('path',{d:`M190,${150+10} A${R+10},${R+10} 0 1 0 ${cx+(R+10)*Math.sin(150*Math.PI/180)},${cy+(R+10)*Math.cos(150*Math.PI/180)}`,style:'stroke:var(--ink);stroke-width:5;fill:none'},g);
+  const ox=cx+R*Math.sin(150*Math.PI/180),oy=cy+R*Math.cos(150*Math.PI/180);
+  const ux=Math.cos(150*Math.PI/180),uy=-Math.sin(150*Math.PI/180);
+  jet(g,`M${ox},${oy} L${ox+ux*120},${oy+uy*120}`,14);
+  ld(g,ox+ux*50,oy+uy*50-18,ox+ux*110,oy+uy*110-18,FLOW,'V (out)',36,-6);
+  ld(g,96,128,146,128,FLOW,'V (in)',0,-10);
+  E('path',{d:`M${ox+ux*90+40},${oy+uy*90+42} L${ox+ux*90+90},${oy+uy*90+42}`,style:'stroke:var(--muted);stroke-dasharray:3 3'},g);
+  T(g,ox+ux*90+64,oy+uy*90+26,'β',{fs:13,col:'var(--muted)',it:true});
+  ld(g,300,60,360,60,SUP,'F_{x} on vane',4,-12);ld(g,330,90,330,150,SUP,'F_{y} on vane',8,0,{a:'start',at:'tip'});
+  axes(g,24,206,26);
+});
+
+/* ================= Section 5 ================= */
+pairOf('fig-vjet',id=>{const g=E('g',{},svgIn(id,240,260,'small control volume round the plate'));
+  vnozzle(g,120,210,40,30,14);jet(g,'M120,210 L120,60',14);E('path',{d:'M110,62 L113,210 M130,62 L127,210',style:'stroke:none'},g);
+  jet(g,'M120,52 L40,52',6);jet(g,'M120,52 L200,52',6);plate(g,40,42,200,42,7);
+  ld(g,96,120,96,80,FLOW,'V',-10,0,{a:'end'});ld(g,60,64,30,64,FLOW,'',0,0);ld(g,180,64,210,64,FLOW,'',0,0);
+  cvRect(g,26,26,188,56);T(g,214,94,'CV',{fs:12,col:CVC,bold:true,a:'end'});
+  ld(g,120,8,120,34,SUP,'R_{y}',12,0,{a:'start',at:'tail'});
+  T(g,148,236,'V_{0} at nozzle',{fs:11.5,a:'start'});},
+ id=>{const g=E('g',{},svgIn(id,240,260,'large control volume from the nozzle to the plate'));
+  vnozzle(g,120,210,40,30,14);jet(g,'M120,210 L120,60',14);
+  jet(g,'M120,52 L40,52',6);jet(g,'M120,52 L200,52',6);plate(g,40,42,200,42,7);
+  ld(g,96,208,96,176,FLOW,'V_{0}',-10,0,{a:'end'});
+  cvRect(g,26,26,188,186);
+  ld(g,146,120,146,170,WGT,'W_{jet}',8,0,{a:'start'});
+  ld(g,120,8,120,34,SUP,'R_{y}',12,0,{a:'start',at:'tail'});T(g,214,226,'CV',{fs:12,col:CVC,bold:true,a:'end'});},
+ 'Small CV: speed V at the cut.','Large CV: speed V<sub>0</sub>, plus the jet’s weight.');
+
+reg(function(){const svg=svgIn('fig-cup',320,280,'jet holding up a hollow hemisphere');const g=E('g',{},svg);
+  vnozzle(g,140,232,40,32,16);jet(g,'M140,232 L140,64',16);
+  // cup: hollow hemisphere open side down
+  E('path',{d:'M86,92 A54,54 0 0 1 194,92 L182,92 A42,42 0 0 0 98,92 Z',style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.5'},g);
+  jet(g,'M104,92 L104,150',8);jet(g,'M176,92 L176,150',8);
+  ld(g,92,104,92,150,FLOW,'V',-8,0,{a:'end'});ld(g,188,104,188,150,FLOW,'V',8,0,{a:'start'});ld(g,126,170,126,120,FLOW,'V',-8,0,{a:'end'});
+  ld(g,140,20,140,44,WGT,'W (cup)',10,0,{a:'start',at:'tail'});
+  ld(g,226,80,226,40,SUP,'2ṁV on cup',6,0,{a:'start',at:'tip'});
+  E('line',{x1:250,y1:232,x2:250,y2:92,style:'stroke:var(--muted)'},g);arrowHead(g,250,92,0,-1,'var(--muted)',6,5);arrowHead(g,250,232,0,1,'var(--muted)',6,5);
+  T(g,258,162,'h',{fs:13,it:true,a:'start'});T(g,190,252,'V_{0}',{fs:12,a:'start'});
+});
+
+/* ================= Section 6: reducing bend (interactive) ================= */
+reg(function(){const el=$('fig-bend');if(!el)return;
+  const th=+$('b-th').value,p1=+$('b-p').value*1000,V1=+$('b-V').value,rr=+$('b-r').value,rho=1000,A1=0.01,A2=rr*A1,V2=V1/rr,m=rho*A1*V1;
+  const p2=p1+0.5*rho*(V1*V1-V2*V2),t=th*Math.PI/180,c=Math.cos(t),s=Math.sin(t);
+  const Rx=m*(V2*c-V1)-p1*A1+p2*A2*c,Ry=-m*V2*s-p2*A2*s,R=Math.hypot(Rx,Ry);
+  const svg=svgIn(el,460,300,'reducing bend with pressure, momentum and support forces');const g=E('g',{},svg);
+  const Cx=200,Cy=90,Rb=50,w1=34,w2=34*Math.sqrt(rr);
+  const Ex=Cx+Rb*s,Ey=Cy+Rb*(1-c),dx=c,dy=s,S1x=Cx-70,S2x=Ex+dx*55,S2y=Ey+dy*55;
+  pipe(g,`M${S1x-30},${Cy} L${Cx},${Cy}`,w1);
+  if(th>0){pipe(g,`M${Cx},${Cy} A${Rb},${Rb} 0 0 1 ${Ex},${Ey}`,(w1+w2)/2);}
+  pipe(g,`M${Ex},${Ey} L${S2x+dx*30},${S2y+dy*30}`,w2);
+  // section cuts
+  E('line',{x1:S1x,y1:Cy-w1/2-6,x2:S1x,y2:Cy+w1/2+6,style:'stroke:var(--ink);stroke-width:1.4'},g);T(g,S1x,Cy-w1/2-16,'1',{fs:12,bold:true});
+  E('line',{x1:S2x-dy*(w2/2+6),y1:S2y+dx*(w2/2+6),x2:S2x+dy*(w2/2+6),y2:S2y-dx*(w2/2+6),style:'stroke:var(--ink);stroke-width:1.4'},g);
+  T(g,S2x+dy*(w2/2+16)+dx*6,S2y-dx*(w2/2+16)+dy*6,'2',{fs:12,bold:true});
+  const pts=[[S1x,Cy],[S2x,S2y],[Cx,Cy],[Ex,Ey],[Cx+Rb*Math.sin(t/2),Cy+Rb*(1-Math.cos(t/2))]];
+  const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),pad=w1/2+8;
+  cvRect(g,Math.min(...xs)-4,Math.min(...ys)-pad,Math.max(...xs)-Math.min(...xs)+8,Math.max(...ys)-Math.min(...ys)+2*pad);
+  const Fm=Math.max(p1*A1,Math.abs(p2*A2),R,m*V1,m*V2,1),Lf=F=>14+86*F/Fm;
+  if(p1*A1>1e-6){const L=Lf(p1*A1);ld(g,S1x-L,Cy+w1/2+16,S1x,Cy+w1/2+16,PRES,'p_{1}A_{1}',0,12);}
+  if(Math.abs(p2*A2)>1e-6){const L=Lf(Math.abs(p2*A2)),sg=p2>0?1:-1,bx=S2x+dy*(w2/2+12),by=S2y-dx*(w2/2+12);
+    if(sg>0)ld(g,bx+dx*L,by+dy*L,bx,by,PRES,'p_{2}A_{2}',14,0,{a:'start',at:'tail'});else ld(g,bx,by,bx+dx*L,by+dy*L,PRES,'p_{2}A_{2} (suction)',14,0,{a:'start',at:'tip'});}
+  { const L=Lf(m*V1);ld(g,S1x-L-40,Cy,S1x-40,Cy,FLOW,'ṁV_{1}',0,-w1/2-6);}
+  { const L=Lf(m*V2),bx=S2x+dx*34,by=S2y+dy*34;ld(g,bx,by,bx+dx*L,by+dy*L,FLOW,'ṁV_{2}',-dy*16-6,dx*16,{at:'tip',a:'end'});}
+  if(R>1e-6){const L=Lf(R),ux=Rx/R,uy=-Ry/R,mx=Cx+Rb*Math.sin(t/2)*0.6,my=Cy+Rb*(1-Math.cos(t/2))*0.6+ (th>0?0:0);
+    ld(g,mx+ux*0,my+uy*0,mx+ux*L,my+uy*L,SUP,'R',ux*16+(Math.abs(uy)>0.7?14:0),uy*16,{at:'tip',bold:true,w:2.8});}
+  axes(g,24,286,26);
+  const ang=Math.atan2(-Ry,-Rx)*180/Math.PI;
+  $('out-bend').innerHTML=`ṁ = ${fmt(m,1)} kg/s · V<sub>2</sub> = ${fmt(V2,2)} m/s · p<sub>2</sub> (Bernoulli) = <b>${fmt(p2/1000,1)} kPa</b>${p2<-1?' <span style="color:var(--c2)">(negative gauge: below atmospheric, not a free jet)</span>':''}<br>`+
+    `p<sub>1</sub>A<sub>1</sub> = ${fmt(p1*A1,0)} N · p<sub>2</sub>A<sub>2</sub> = ${fmt(p2*A2,0)} N · ṁV<sub>1</sub> = ${fmt(m*V1,0)} N · ṁV<sub>2</sub> = ${fmt(m*V2,0)} N<br>`+
+    `R<sub>x</sub> = <b>${fmt(Rx,0)} N</b>, R<sub>y</sub> = <b>${fmt(Ry,0)} N</b>, |R| = <b>${fmt(R,0)} N</b>${R>1e-6?` (${fmt(Math.abs(ang),1)}° ${Ry<=0?'below':'above'} the −x direction)`:''}`;
+});
+['b-th','b-p','b-V','b-r'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+reg(function(){const svg=svgIn('fig-bend90',380,270,'90 degree bend: forces on the water');const g=E('g',{},svg);
+  pipe(g,'M30,70 L160,70 A60,60 0 0 1 220,130 L220,240',34);
+  cvPath(g,'M90,42 L170,42 Q252,46 250,130 L250,200 L190,200 L190,130 Q186,100 160,98 L90,98 Z');
+  E('line',{x1:90,y1:46,x2:90,y2:94,style:'stroke:var(--ink);stroke-width:1.4'},g);T(g,90,32,'1',{fs:12,bold:true});
+  E('line',{x1:194,y1:200,x2:246,y2:200,style:'stroke:var(--ink);stroke-width:1.4'},g);T(g,258,206,'2',{fs:12,bold:true});
+  ld(g,30,112,86,112,PRES,'p_{1}A_{1}',0,14);ld(g,276,250,276,204,PRES,'p_{2}A_{2}',8,0,{a:'start',at:'tail'});
+  ld(g,40,70,80,70,FLOW,'ṁV',0,-24);ld(g,220,210,220,256,FLOW,'ṁV',-24,0,{a:'end',at:'tip'});
+  ld(g,190,140,130,140,SUP,'R_{x}',0,14,{at:'tip',a:'end'});ld(g,190,140,190,200,SUP,'',0,0);T(g,176,186,'R_{y}',{fs:12,col:SUP,a:'end'});
+  E('circle',{cx:190,cy:140,r:3,style:'fill:var(--c2)'},g);
+  ld(g,300,130,340,90,'var(--ink)','',0,0,{w:1.6});T(g,300,72,'water pushes',{fs:11,a:'start'});T(g,300,150,'bend: +x, +y',{fs:11,a:'start'});
+  axes(g,24,252,26);
+});
+
+reg(function(){const svg=svgIn('fig-nozzle',440,190,'hose nozzle: forces on the water');const g=E('g',{},svg);
+  pipe(g,'M20,90 L140,90',40);
+  E('path',{d:'M140,70 L230,82 L230,98 L140,110 Z',style:'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.5'},g);
+  jet(g,'M230,90 L400,90',13);
+  cvRect(g,120,52,124,76);E('line',{x1:128,y1:66,x2:128,y2:114,style:'stroke:var(--ink);stroke-width:1.4'},g);T(g,128,40,'1',{fs:12,bold:true});T(g,238,40,'2',{fs:12,bold:true});
+  ld(g,64,134,124,134,PRES,'p_{1}A_{1} = 509 N',0,16);
+  ld(g,40,90,100,90,FLOW,'',0,0);T(g,70,62,'D_{1} = 60 mm',{fs:11.5});
+  ld(g,280,74,340,74,FLOW,'V_{2} = 19.1 m/s',0,-12);T(g,330,112,'free jet, p = 0',{fs:11.5,col:'var(--muted)'});
+  ld(g,200,160,150,160,SUP,'R_{x} = 408 N on water',0,16,{at:'tip',a:'start'});
+  ld(g,330,150,380,150,'var(--ink)','',0,0,{w:1.6});T(g,356,170,'on nozzle',{fs:11});
+  axes(g,20,176,24);
+});
+
+/* ================= Section 7: tank on a scale ================= */
+reg(function(){const svg=svgIn('fig-tank',420,306,'tank on a scale with a jet in and side outflows');const g=E('g',{},svg);
+  E('rect',{x:140,y:90,width:140,height:130,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.8'},g);
+  E('rect',{x:141,y:120,width:138,height:99,style:'fill:var(--accent-soft)'},g);
+  jet(g,'M210,14 L210,120',16);
+  jet(g,'M280,180 L380,180',10);jet(g,'M140,180 L40,180',10);
+  E('rect',{x:120,y:222,width:180,height:16,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.4'},g);T(g,210,230,'scale',{fs:11});
+  E('line',{x1:100,y1:250,x2:320,y2:250,style:'stroke:var(--ink);stroke-width:1.4'},g);
+  for(let x=104;x<320;x+=9)E('line',{x1:x,y1:250,x2:x-6,y2:258,style:'stroke:var(--axis);stroke-width:1'},g);
+  cvRect(g,128,76,164,148);T(g,296,70,'CV',{fs:12,col:CVC,bold:true,a:'start'});
+  ld(g,236,16,236,62,FLOW,'ṁ_{1}V_{1}',6,0,{a:'start'});ld(g,330,166,374,166,FLOW,'ṁ_{2}V_{2}',0,-10);ld(g,90,166,46,166,FLOW,'ṁ_{3}V_{3}',0,-10);
+  ld(g,166,126,166,164,WGT,'W_{water}',-6,0,{a:'end',at:'tip'});ld(g,250,104,250,150,WGT,'W_{tank}',6,0,{a:'start',at:'tip'});
+  ld(g,210,292,210,240,SUP,'N',10,0,{a:'start',at:'tail',bold:true});
+  E('line',{x1:300,y1:120,x2:300,y2:218,style:'stroke:var(--muted)'},g);T(g,308,140,'h',{fs:12,it:true,a:'start'});
+  axes(g,30,296,24);
+});
+
+/* ================= Section 8 ================= */
+reg(function(){const svg=svgIn('fig-dl',420,240,'resultant force split into drag and lift');const g=E('g',{transform:'translate(0,30)'},svg);
+  [60,90,120,150].forEach(y=>arrow(g,14,y,70,y,FLOW,1.6));T(g,10,40,'oncoming flow V',{fs:12,col:FLOW,a:'start'});
+  foil(g,110,120,200,6,{t:0.14,m:0.05});
+  const ox=200,oy=112;ld(g,ox,oy,ox+60,oy-110,'var(--ink)','resultant',8,0,{at:'tip',a:'start',w:2.4});
+  ld(g,ox,oy,ox,oy-110,SUP,'lift F_{L} (⊥ to flow)',-8,0,{at:'tip',a:'end'});ld(g,ox,oy,ox+60,oy,'var(--warm)','drag F_{D}',44,-12,{at:'tip'});
+  E('line',{x1:ox,y1:oy-110,x2:ox+60,y2:oy-110,style:'stroke:var(--muted);stroke-dasharray:3 3'},g);E('line',{x1:ox+60,y1:oy,x2:ox+60,y2:oy-110,style:'stroke:var(--muted);stroke-dasharray:3 3'},g);
+  T(g,210,196,'drag ∥ to the oncoming flow',{fs:11.5,col:'var(--muted)'});
+});
+reg(function(){const svg=svgIn('fig-bodies',440,264,'streamlined and bluff bodies');const g=E('g',{},svg);
+  T(g,10,14,'streamlined',{fs:12,a:'start',bold:true});
+  E('path',{d:'M90,70 C90,48 140,44 190,52 C240,60 300,68 330,70 C300,72 240,80 190,88 C140,96 90,92 90,70 Z',style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.5'},g);
+  [[30,'C110,30 250,40 420,46'],[50,'C110,46 250,56 420,60'],[90,'C110,94 250,84 420,80'],[110,'C110,110 250,100 420,94']].forEach(([y,c])=>E('path',{d:`M14,${y} ${c}`,style:'stroke:var(--accent);stroke-width:1.3;fill:none'},g));
+  E('path',{d:'M330,70 L420,64 L420,76 Z',style:'fill:var(--warm-soft);opacity:.8'},g);T(g,380,26,'thin wake',{fs:11,col:'var(--warm)'});
+  T(g,10,140,'bluff (cylinder)',{fs:12,a:'start',bold:true});
+  E('circle',{cx:130,cy:195,r:34,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.5'},g);
+  E('path',{d:'M14,160 C80,150 110,152 140,160',style:'stroke:var(--accent);stroke-width:1.3;fill:none'},g);E('path',{d:'M14,230 C80,240 110,238 140,230',style:'stroke:var(--accent);stroke-width:1.3;fill:none'},g);
+  E('path',{d:'M14,150 C120,128 200,140 420,150',style:'stroke:var(--accent);stroke-width:1.3;fill:none'},g);E('path',{d:'M14,240 C120,262 200,250 420,240',style:'stroke:var(--accent);stroke-width:1.3;fill:none'},g);
+  E('path',{d:'M140,160 C200,160 300,168 420,170 L420,222 C300,224 200,232 140,230',style:'fill:var(--warm-soft);opacity:.6'},g);
+  [[190,175,1],[240,214,-1],[290,178,1],[340,212,-1],[390,180,1]].forEach(([x,y,sg])=>{E('path',{d:`M${x+12},${y} A12,12 0 1 ${sg>0?0:1} ${x},${y-12*sg}`,style:'stroke:var(--warm);stroke-width:1.6;fill:none'},g);arrowHead(g,x,y-12*sg,-1,0,'var(--warm)',6,5);});
+  E('circle',{cx:150,cy:166,r:3,style:'fill:var(--c2)'},g);E('circle',{cx:150,cy:224,r:3,style:'fill:var(--c2)'},g);T(g,156,150,'separation',{fs:11,col:'var(--c2)',a:'start'});
+  T(g,330,258,'wide wake, shed vortices',{fs:11,col:'var(--warm)'});
+});
+
+/* ================= Section 9: drag power (interactive) ================= */
+reg(function(){const cv=$('cv-drag');if(!cv)return;const cd=+$('d-cd').value,A=+$('d-A').value,Vk=+$('d-V').value,rho=1.23;
+  const P=vk=>cd*0.5*rho*A*(vk/3.6)**3/1000;const top=Math.max(P(200),P(Vk))*1.08;const steps=[1,2,5,10,20,50,100,200,500,1000,2000];const ystep=steps.find(s=>top/s<=7)||5000;
+  plot(cv,{xmin:0,xmax:200,ymin:0,ymax:Math.ceil(top/ystep)*ystep,xstep:20,ystep,pl:42,xlabel:'V (km/h)',ylabel:'P (kW)',
+    curves:[{f:P,color:css('--accent')}],pts:[{x:Vk,y:P(Vk),color:css('--c2'),label:fmt(P(Vk),1)+' kW',align:Vk>140?'right':'left'}]});
+  const V=Vk/3.6,F=cd*0.5*rho*V*V*A;
+  $('out-drag').innerHTML=`V = ${Vk}/3.6 = <b>${fmt(V,2)} m/s</b> · F<sub>D</sub> = ${fmt(cd,2)} × ½(1.23)(${fmt(V,2)})² × ${fmt(A,1)} = <b>${fmt(F,0)} N</b><br>P = F<sub>D</sub>V = <b>${fmt(F*V/1000,2)} kW</b> · at double the speed: ${fmt(8*F*V/1000,1)} kW`;
+});
+['d-cd','d-A','d-V'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Section 10 ================= */
+reg(function(){const svg=svgIn('fig-aero',440,200,'aerofoil terms');const g=E('g',{},svg);
+  const a=10,f=foil(g,90,120,280,a,{t:0.12,m:0.05});
+  const [lx,ly]=f.le,[tx,ty]=f.P([1,0]);E('line',{x1:lx,y1:ly,x2:tx,y2:ty,style:'stroke:var(--c2);stroke-width:1.4;stroke-dasharray:6 3'},g);
+  let d='';for(let i=0;i<=20;i++){const xc=i/20,yc=xc<0.4?0.05/0.16*(0.8*xc-xc*xc):0.05/0.36*(0.2+0.8*xc-xc*xc);const [x,y]=f.P([xc,yc]);d+=(i?'L':'M')+x.toFixed(1)+','+y.toFixed(1);}
+  E('path',{d,style:'stroke:var(--accent);stroke-width:1.3;stroke-dasharray:2 3;fill:none'},g);
+  E('line',{x1:lx-70,y1:ly,x2:lx+120,y2:ly,style:'stroke:var(--muted);stroke-width:1'},g);
+  ld(g,10,ly+40,60,ly+40,FLOW,'oncoming air',-25,14,{a:'start'});
+  E('path',{d:`M${lx+100},${ly} A100,100 0 0 0 ${lx+100*Math.cos(a*Math.PI/180)},${ly-100*Math.sin(a*Math.PI/180)}`,style:'stroke:var(--ink);stroke-width:1.2;fill:none'},g);T(g,lx+112,ly-8,'α',{it:true,fs:13,a:'start'});
+  T(g,lx-6,ly+16,'leading edge',{fs:11.5,a:'end'});T(g,tx,ty+16,'trailing edge',{fs:11.5});
+  T(g,(lx+tx)/2+30,(ly+ty)/2+26,'chord c',{fs:11.5,col:'var(--c2)'});T(g,(lx+tx)/2-10,(ly+ty)/2-62,'camber line',{fs:11.5,col:FLOW});
+});
+reg(function(){const svg=svgIn('fig-cl',420,230,'lift and drag coefficients against angle of attack');const g=E('g',{},svg);
+  const x0=50,y0=190,X=a=>x0+(a+4)*15,Y=v=>y0-v*110;
+  E('line',{x1:x0,y1:y0,x2:x0+360,y2:y0,style:'stroke:var(--axis);stroke-width:1.2'},g);E('line',{x1:X(0),y1:y0+6,x2:X(0),y2:20,style:'stroke:var(--axis);stroke-width:1.2'},g);
+  [0,5,10,15,20].forEach(a=>{T(g,X(a),y0+12,a+'°',{fs:11,col:'var(--muted)'});});[0.5,1,1.5].forEach(v=>T(g,X(0)-6,Y(v),String(v),{fs:11,col:'var(--muted)',a:'end'}));
+  T(g,x0+360,y0-12,'α',{it:true,a:'end'});
+  const CL=a=>a<=15?0.2+0.1*a:1.7-0.18*(a-15),CD=a=>a<=14?0.008+0.0004*a*a:0.0864+0.06*(a-14)+0.004*(a-14)**2;
+  let d='',e='';for(let a=-2;a<=20;a+=0.25){d+=(a>-2?'L':'M')+X(a).toFixed(1)+','+Y(CL(a)).toFixed(1);e+=(a>-2?'L':'M')+X(a).toFixed(1)+','+Y(CD(a)).toFixed(1);}
+  E('path',{d,style:'stroke:var(--accent);stroke-width:2.4;fill:none'},g);E('path',{d:e,style:'stroke:var(--warm);stroke-width:2.4;fill:none'},g);
+  T(g,X(5),Y(1.05),'C_{L}',{col:FLOW,bold:true});T(g,X(17),Y(0.55),'C_{D}',{col:'var(--warm)',bold:true});
+  E('line',{x1:X(15),y1:Y(1.75),x2:X(15),y2:y0,style:'stroke:var(--c2);stroke-dasharray:4 3'},g);T(g,X(15)+6,Y(1.45),'stall',{fs:12,col:SUP,a:'start'});
+});
+pairOf('fig-stall',id=>{const g=E('g',{},svgIn(id,260,150,'attached flow at small angle of attack'));
+  foil(g,50,80,170,4,{t:0.12,m:0.04});
+  [44,60].forEach((y,i)=>E('path',{d:`M6,${y} C60,${y-14+i*4} 150,${y-6+i*4} 254,${y+12+i*6}`,style:'stroke:var(--accent);stroke-width:1.3;fill:none'},g));
+  [100,116].forEach((y,i)=>E('path',{d:`M6,${y} C60,${y+6-i*2} 150,${y+4} 254,${y+6}`,style:'stroke:var(--accent);stroke-width:1.3;fill:none'},g));
+  T(g,130,140,'small α: attached, thin wake',{fs:11.5});},
+ id=>{const g=E('g',{},svgIn(id,260,150,'separated flow at stall'));
+  E('path',{d:'M66,58 C120,40 200,46 254,58 L254,126 C232,120 214,116 202,112 L66,64 Z',style:'fill:var(--warm-soft);opacity:.7'},g);
+  foil(g,40,60,170,18,{t:0.12,m:0.04});
+  E('path',{d:'M6,44 C40,32 60,32 70,36 C140,22 200,28 254,38',style:'stroke:var(--accent);stroke-width:1.3;fill:none'},g);
+  E('path',{d:'M6,90 C80,118 160,128 254,130',style:'stroke:var(--accent);stroke-width:1.3;fill:none'},g);
+  [[112,66],[152,76],[192,88],[232,100]].forEach(([x,y])=>{E('path',{d:`M${x+9},${y} A9,9 0 1 0 ${x},${y-9}`,style:'stroke:var(--warm);stroke-width:1.5;fill:none'},g);});
+  E('circle',{cx:64,cy:57,r:3,style:'fill:var(--c2)'},g);T(g,60,22,'separation',{fs:11,col:SUP,a:'start'});
+  T(g,130,144,'large α: separated, wide wake',{fs:11.5});},
+ 'Before stall','Stalled');
+pairOf('fig-flaps',id=>{const g=E('g',{},svgIn(id,260,120,'flaps up'));foil(g,30,60,200,3,{t:0.12,m:0.03});T(g,130,104,'flaps up: cruise, low drag',{fs:11.5});},
+ id=>{const g=E('g',{},svgIn(id,260,120,'flaps down'));foil(g,30,50,200,3,{t:0.12,m:0.03,flap:30});T(g,130,104,'flaps down: more camber, more lift',{fs:11.5});
+  ld(g,236,40,236,22,SUP,'',0,0);T(g,232,14,'more lift',{fs:11,col:SUP,a:'end'});},
+ 'Clean wing','Flap lowered at the trailing edge');
+
+/* ================= Section 11: energy line ================= */
+reg(function(){const svg=svgIn('fig-egl',440,240,'energy line for a tank draining through a pipe');const g=E('g',{},svg);
+  E('path',{d:'M20,40 L20,170 L110,170 L110,40',style:'fill:none;stroke:var(--ink);stroke-width:1.8'},g);E('rect',{x:21,y:60,width:88,height:109,style:'fill:var(--accent-soft)'},g);
+  E('line',{x1:20,y1:60,x2:110,y2:60,style:'stroke:var(--accent);stroke-width:1.4'},g);T(g,64,52,'1',{fs:12,bold:true});
+  pipe(g,'M110,160 L360,200',14);jet(g,'M361,201 L400,207',10);T(g,384,224,'2 (jet)',{fs:12});
+  E('line',{x1:20,y1:60,x2:430,y2:60,style:'stroke:var(--muted);stroke-dasharray:6 4'},g);T(g,430,52,'ideal (no loss)',{fs:11,col:'var(--muted)',a:'end'});
+  E('path',{d:'M20,60 L110,60 L114,72 L360,112',style:'stroke:var(--accent);stroke-width:2.4;fill:none'},g);T(g,250,84,'energy line (real)',{fs:11.5,col:FLOW});
+  const hx=380;E('line',{x1:hx,y1:62,x2:hx,y2:110,style:'stroke:var(--c2);stroke-width:1.2'},g);arrowHead(g,hx,62,0,-1,'var(--c2)',6,5);arrowHead(g,hx,110,0,1,'var(--c2)',6,5);T(g,hx+6,86,'h_{L}',{fs:13,col:SUP,a:'start'});
+  E('line',{x1:360,y1:112,x2:360,y2:200,style:'stroke:var(--muted);stroke-dasharray:3 3'},g);T(g,350,156,'V²/2g',{fs:11.5,a:'end'});
+  E('line',{x1:10,y1:204,x2:430,y2:204,style:'stroke:var(--axis);stroke-dasharray:2 4'},g);T(g,14,216,'datum z = 0 at the jet',{fs:11,col:'var(--muted)',a:'start'});
+  T(g,126,96,'entrance loss',{fs:10.5,col:'var(--muted)',a:'start'});
+});
+
+/* ================= Section 12: open channel ================= */
+pairOf('fig-chan',id=>{const g=E('g',{},svgIn(id,240,170,'channel cross-section'));
+  E('path',{d:'M40,20 L40,140 L200,140 L200,20',style:'fill:none;stroke:var(--ink);stroke-width:2'},g);E('rect',{x:41,y:70,width:158,height:69,style:'fill:var(--accent-soft)'},g);
+  E('line',{x1:41,y1:70,x2:199,y2:70,style:'stroke:var(--accent);stroke-width:1.6'},g);T(g,120,60,'free surface',{fs:11.5,col:FLOW});
+  E('line',{x1:214,y1:70,x2:214,y2:140,style:'stroke:var(--muted)'},g);arrowHead(g,214,70,0,-1,'var(--muted)',6,5);arrowHead(g,214,140,0,1,'var(--muted)',6,5);T(g,222,105,'y',{it:true,a:'start'});
+  E('line',{x1:40,y1:156,x2:200,y2:156,style:'stroke:var(--muted)'},g);arrowHead(g,40,156,-1,0,'var(--muted)',6,5);arrowHead(g,200,156,1,0,'var(--muted)',6,5);T(g,120,166,'b',{it:true});
+  T(g,120,106,'area A = by',{fs:12});},
+ id=>{const g=E('g',{},svgIn(id,240,170,'channel side view'));
+  E('line',{x1:10,y1:140,x2:230,y2:140,style:'stroke:var(--ink);stroke-width:2'},g);E('rect',{x:10,y:80,width:220,height:59,style:'fill:var(--accent-soft)'},g);
+  E('line',{x1:10,y1:80,x2:230,y2:80,style:'stroke:var(--accent);stroke-width:1.6'},g);
+  [96,114,130].forEach(y=>arrow(g,60,y,130,y,FLOW,1.6));T(g,170,112,'V = Q/(by)',{fs:12,a:'start'});
+  E('line',{x1:20,y1:80,x2:20,y2:140,style:'stroke:var(--muted)'},g);T(g,26,68,'y',{it:true,a:'start'});
+  E('line',{x1:10,y1:40,x2:230,y2:40,style:'stroke:var(--c2);stroke-dasharray:5 3'},g);T(g,120,30,'energy line: E_{s} = y + V²/2g above the bed',{fs:11,col:SUP});
+  E('line',{x1:210,y1:40,x2:210,y2:80,style:'stroke:var(--muted)'},g);T(g,204,60,'V²/2g',{fs:11,a:'end'});},
+ 'Cross-section','Side view');
+
+reg(function(){const cv=$('cv-ey');if(!cv)return;const Q=+$('e-Q').value,b=+$('e-b').value,y=+$('e-y').value,g0=9.81;
+  const K=Q*Q/(2*g0*b*b),Es=yy=>yy+K/(yy*yy),yc=Math.cbrt(Q*Q/(g0*b*b)),E0=Es(y);
+  let lo,hi,f=yy=>Es(yy)-E0;if(Math.abs(y-yc)<1e-6){lo=hi=yc;}else if(y>yc){lo=1e-4;hi=yc;}else{lo=yc;hi=Math.max(E0,yc*2);}
+  for(let i=0;i<80&&hi-lo>1e-9;i++){const mid=(lo+hi)/2;const fm=f(mid);if(y>yc){if(fm>0)lo=mid;else hi=mid;}else{if(fm<0)lo=mid;else hi=mid;}}
+  const ya=(lo+hi)/2;const ymax=Math.max(y,ya,yc*2)*1.15,xmax=Math.max(E0*1.25,ymax);
+  const segs=[];let prev=null;for(let i=0;i<=400;i++){const yy=0.01*ymax+(ymax-0.01*ymax)*i/400,x=Es(yy);if(prev)segs.push({x1:prev[0],y1:prev[1],x2:x,y2:yy,color:css('--accent'),width:2.4});prev=[x,yy];}
+  segs.push({x1:0,y1:0,x2:xmax,y2:xmax,color:css('--muted'),width:1.2,dash:[5,4]});
+  segs.push({x1:0,y1:yc,x2:xmax,y2:yc,color:css('--c3'),width:1,dash:[3,3]});
+  segs.push({x1:E0,y1:0,x2:E0,y2:ymax,color:css('--c2'),width:1,dash:[3,3]});
+  const st=v=>{const s=[0.05,0.1,0.2,0.25,0.5,1];return s.find(q=>v/q<=8)||1;};
+  plot(cv,{xmin:0,xmax,ymin:0,ymax,xstep:st(xmax),ystep:st(ymax),pl:40,xlabel:'Eₛ (m)',ylabel:'y (m)',segs,
+    pts:[{x:E0,y,color:css('--c2'),label:'y = '+fmt(y,3)},{x:Es(ya),y:ya,color:css('--c3'),label:'alt '+fmt(ya,3)},{x:1.5*yc,y:yc,color:css('--accent'),r:4,label:'critical',align:'right'}]});
+  const V=Q/(b*y),Fr=V/Math.sqrt(g0*y);
+  $('out-ey').innerHTML=`V = Q/(by) = <b>${fmt(V,3)} m/s</b> · Fr = ${fmt(Fr,3)} · y<sub>c</sub> = <b>${fmt(yc,3)} m</b> → <b>${Math.abs(y-yc)<0.002?'critical':y>yc?'subcritical':'supercritical'}</b><br>`+
+    `E<sub>s</sub> = ${fmt(y,3)} + ${fmt(K/(y*y),4)} = <b>${fmt(E0,4)} m</b> (minimum 1.5y<sub>c</sub> = ${fmt(1.5*yc,3)} m) · alternate depth <b>${fmt(ya,4)} m</b> (Fr = ${fmt(Q/(b*ya)/Math.sqrt(g0*ya),2)})`;
+});
+['e-Q','e-b','e-y'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Exam taster figures ================= */
+reg(function(){const svg=svgIn('fig-t1',420,250,'May 2025 Q6: air jet on an inclined plate');const g=E('g',{},svg);
+  const r=30*Math.PI/180,Px=210,Py=140,s=[Math.cos(r),-Math.sin(r)],n=[-Math.sin(r),-Math.cos(r)],off=5,Fx=Px+n[0]*off,Fy=Py+n[1]*off,w=22;
+  nozzle(g,130,Fy,40,34,w);jet(g,`M130,${Fy} L${Fx},${Fy}`,w);
+  jet(g,`M${Fx+n[0]*5},${Fy+n[1]*5} L${Fx+n[0]*5+s[0]*165},${Fy+n[1]*5+s[1]*165}`,10);
+  jet(g,`M${Fx+n[0]*2},${Fy+n[1]*2} L${Fx+n[0]*2-s[0]*140},${Fy+n[1]*2-s[1]*140}`,4);
+  const L=[Px-s[0]*150,Py-s[1]*150];plate(g,L[0],L[1],Px+s[0]*175,Py+s[1]*175,6);
+  ld(g,14,Fy,74,Fy,FLOW,'V_{j} = 40 m/s',0,-24,{a:'start',at:'tail'});T(g,150,Fy-w/2-14,'D_{j} = 30 mm',{fs:11.5});
+  ld(g,Fx+n[0]*20+s[0]*130,Fy+n[1]*20+s[1]*130,Fx+n[0]*20+s[0]*170,Fy+n[1]*20+s[1]*170,FLOW,'V_{2}',6,-12,{at:'tip'});
+  ld(g,Fx+n[0]*16-s[0]*100,Fy+n[1]*16-s[1]*100,Fx+n[0]*16-s[0]*140,Fy+n[1]*16-s[1]*140,FLOW,'V_{3}',-4,-14,{at:'tip'});
+  const Q=[Px+s[0]*70,Py+s[1]*70];ld(g,Q[0]-n[0]*90,Q[1]-n[1]*90,Q[0]-n[0]*7,Q[1]-n[1]*7,SUP,'F_{A}',14,6,{at:'tail',bold:true});
+  T(g,Q[0]+s[0]*22-n[0]*20,Q[1]+s[1]*22-n[1]*20,'90°',{fs:11,col:'var(--muted)'});
+  E('line',{x1:L[0],y1:L[1],x2:L[0]+90,y2:L[1],style:'stroke:var(--muted);stroke-width:1'},g);
+  E('path',{d:`M${L[0]+55},${L[1]} A55,55 0 0 0 ${L[0]+55*s[0]},${L[1]+55*s[1]}`,style:'stroke:var(--muted);stroke-width:1.2;fill:none'},g);
+  T(g,L[0]+70,L[1]-10,'30°',{fs:11.5,col:'var(--muted)',a:'start'});
+});
+reg(function(){const svg=svgIn('fig-t2',420,280,'May 2024 Q3: 90 degree reducing elbow');const g=E('g',{},svg);
+  E('path',{d:'M40,110 L180,110 Q300,110 300,240 L300,250',style:'fill:none;stroke:var(--ink);stroke-width:1.8'},g);
+  E('path',{d:'M40,160 L180,160 Q260,160 268,240 L268,250',style:'fill:none;stroke:var(--ink);stroke-width:1.8'},g);
+  E('path',{d:'M40,110 L180,110 Q300,110 300,240 L300,250 L268,250 L268,240 Q260,160 180,160 L40,160 Z',style:'fill:var(--accent-soft);stroke:none'},g);
+  E('line',{x1:110,y1:100,x2:110,y2:170,style:'stroke:var(--ink);stroke-width:1.2;stroke-dasharray:5 3'},g);
+  ld(g,56,135,96,135,FLOW,'',0,0);ld(g,284,252,284,276,FLOW,'',0,0);
+  E('circle',{cx:110,cy:44,r:12,style:'fill:none;stroke:var(--ink);stroke-width:1.4'},g);T(g,110,45,'1',{fs:12,bold:true});
+  E('rect',{x:128,y:28,width:170,height:40,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.2'},g);T(g,136,40,'P_{1} = 120 kPa (gauge)',{fs:12,a:'start'});T(g,136,58,'A_{1} = 0.01 m²',{fs:12,a:'start'});
+  E('circle',{cx:248,cy:240,r:12,style:'fill:none;stroke:var(--ink);stroke-width:1.4'},g);T(g,248,241,'2',{fs:12,bold:true});
+  E('rect',{x:84,y:222,width:150,height:40,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.2'},g);T(g,92,234,'U_{2} = 16 m s⁻¹',{fs:12,a:'start'});T(g,92,252,'A_{2} = 0.0025 m²',{fs:12,a:'start'});
+  axes(g,20,210,30);
+});
+reg(function(){const svg=svgIn('fig-t3',440,170,'May 2021 Q2: blimp');const g=E('g',{},svg);
+  E('path',{d:'M60,80 L30,52 L44,52 L80,72 Z M60,84 L32,112 L46,112 L80,92 Z',style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.3'},g);
+  E('ellipse',{cx:210,cy:82,rx:160,ry:40,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.6'},g);
+  E('rect',{x:196,y:122,width:34,height:14,rx:3,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.3'},g);E('line',{x1:204,y1:121,x2:204,y2:116,style:'stroke:var(--ink)'},g);E('line',{x1:222,y1:121,x2:222,y2:116,style:'stroke:var(--ink)'},g);
+  E('line',{x1:50,y1:154,x2:370,y2:154,style:'stroke:var(--muted)'},g);arrowHead(g,50,154,-1,0,'var(--muted)',6,5);arrowHead(g,370,154,1,0,'var(--muted)',6,5);T(g,210,164,'40 m (from the text)',{fs:11.5,col:'var(--muted)'});
+  E('line',{x1:394,y1:42,x2:394,y2:122,style:'stroke:var(--muted)'},g);arrowHead(g,394,42,0,-1,'var(--muted)',6,5);arrowHead(g,394,122,0,1,'var(--muted)',6,5);T(g,404,82,'10 m',{fs:11.5,col:'var(--muted)',a:'start'});
+  ld(g,410,20,360,20,FLOW,'air relative to blimp',-6,0,{at:'tip',a:'end'});
+});
+reg(function(){const svg=svgIn('fig-t4',400,200,'Dec 2021 Q3: rectangular open channel');const g=E('g',{},svg);
+  // simple oblique view: near cross-section at left, channel runs to upper right
+  const ox=60,oy=150,b=110,h=40,dx=200,dy=-60;
+  E('path',{d:`M${ox},${oy-h-20} L${ox},${oy} L${ox+b},${oy} L${ox+b},${oy-h-20}`,style:'fill:none;stroke:var(--ink);stroke-width:1.6'},g);
+  E('path',{d:`M${ox},${oy-h} L${ox+b},${oy-h} L${ox+b+dx},${oy-h+dy} L${ox+dx},${oy-h+dy} Z`,style:'fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2'},g);
+  E('path',{d:`M${ox+b},${oy} L${ox+b+dx},${oy+dy} L${ox+b+dx},${oy-h+dy} L${ox+b},${oy-h} Z`,style:'fill:var(--accent-soft);opacity:.7;stroke:var(--ink);stroke-width:1.2'},g);
+  E('rect',{x:ox,y:oy-h,width:b,height:h,style:'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.2'},g);
+  E('line',{x1:ox+b+dx,y1:oy+dy-h-20,x2:ox+b+dx,y2:oy+dy,style:'stroke:var(--ink);stroke-width:1.6'},g);
+  E('line',{x1:ox+b,y1:oy-h-20,x2:ox+b+dx,y2:oy-h-20+dy,style:'stroke:var(--ink);stroke-width:1.2'},g);
+  E('line',{x1:ox,y1:oy+14,x2:ox+b,y2:oy+14,style:'stroke:var(--muted)'},g);arrowHead(g,ox,oy+14,-1,0,'var(--muted)',6,5);arrowHead(g,ox+b,oy+14,1,0,'var(--muted)',6,5);T(g,ox+b/2,oy+26,'0.4 m',{fs:12});
+  E('line',{x1:ox-12,y1:oy-h,x2:ox-12,y2:oy,style:'stroke:var(--muted)'},g);arrowHead(g,ox-12,oy-h,0,-1,'var(--muted)',6,5);arrowHead(g,ox-12,oy,0,1,'var(--muted)',6,5);T(g,ox-18,oy-h/2,'0.15 m',{fs:12,a:'end'});
+  ld(g,ox+b+60,oy-h+dy/2-40,ox+b+130,oy-h+dy/2-40-21,FLOW,'0.2 m³/s',0,-14);
+});
+
+</script>
+</body></html>

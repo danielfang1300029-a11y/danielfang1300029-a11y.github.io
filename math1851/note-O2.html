@@ -1,0 +1,885 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH1851 O2 · ODEs by Substitution</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (46rem) with a sticky contents rail on wide screens; graphs inline beside the maths they explain; practice and past papers at the end. Palette and type match the MECH2407 notes. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">ODE · Part O2</p>
+  <ol>
+    <li><a href="#s0">0 · Where we are</a></li>
+    <li><a href="#s1">1 · Bernoulli's equation</a></li>
+    <li><a href="#s2">2 · Riccati's equation</a></li>
+    <li><a href="#s3">3 · Separable equations (reminder)</a></li>
+    <li><a href="#s4">4 · Homogeneous functions</a></li>
+    <li><a href="#s5">5 · Homogeneous equations: y = vx</a></li>
+    <li><a href="#s6">6 · Shift substitutions</a></li>
+    <li><a href="#s7">7 · Reduction of order</a></li>
+    <li><a href="#s8">8 · Summary</a></li>
+    <li><a href="#s9">9 · Common mistakes</a></li>
+    <li><a href="#s10">10 · Find the mistake</a></li>
+    <li><a href="#s11">11 · Group work</a></li>
+    <li><a href="#s12">12 · Concept checks</a></li>
+    <li><a href="#pastpaper">13 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MATH1851 · ODE · Part O2</span>
+  <h1>ODEs by Substitution</h1>
+  <p class="lede">Every slide of this part of the ODE handout explained from scratch, with interactive graphs. The worked examples are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this part.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this part sits</h2>
+<p>A <b>differential equation</b> is an equation that links an unknown function \(y(x)\) with its derivatives, for example \(\frac{dy}{dx}=y-y^2\). It is an <b>ordinary differential equation (ODE)</b> when there is only one independent variable (here \(x\)). <b>Solving</b> it means finding the function \(y(x)\) itself. A <b>general solution</b> contains arbitrary constants (\(C\), \(c_1\), \(c_2\), …) and describes every solution at once, a whole <b>family</b> of curves.</p>
+
+<p><b>Part O1</b> (the first part of the ODE handout) set up the language and three direct methods. One-line reminders:</p>
+<ul class="list">
+  <li><b>Order</b>: the order of the highest derivative in the equation (\(y''\) appears → second order).</li>
+  <li><b>Linear vs nonlinear</b>: an ODE is <b>linear</b> if the unknown \(y\) and its derivatives appear only to the first power, never multiplied together and never inside a nonlinear function (no \(y^2\), \(\sin y\), \(e^y\), \(y\,y'\), …). Nonlinear functions of \(x\) are allowed. Linear ODEs obey the <b>superposition principle</b>: if the right side is zero, the sum of two solutions is again a solution.</li>
+  <li><b>Separable</b>: \(\frac{dy}{dx}=X(x)\,Y(y)\). Put all the \(y\)'s on one side, all the \(x\)'s on the other, and integrate.</li>
+  <li><b>Linear first order, integrating factor</b>: write the equation as \(\frac{dy}{dx}+P(x)\,y=Q(x)\) (coefficient of \(\frac{dy}{dx}\) equal to 1, the \(y\) term on the same side). Multiply by the <b>integrating factor</b> \(e^{\int P\,dx}\). The left side becomes one derivative:
+  \[ \frac{d}{dx}\Big(e^{\int P\,dx}\,y\Big)=Q(x)\,e^{\int P\,dx}, \]
+  and you integrate both sides. This method <b>always</b> works for a first-order linear ODE.</li>
+  <li><b>Exact</b>: \(M\,dx+N\,dy=0\) with \(\frac{\partial M}{\partial y}=\frac{\partial N}{\partial x}\); the solution is \(F(x,y)=\text{constant}\).</li>
+</ul>
+
+<p><b>What this part adds.</b> Most nonlinear ODEs cannot be solved exactly. This part collects the special nonlinear (and second-order) equations that <b>can</b> be solved, because a clever <b>substitution</b> (a change of unknown, like \(u=y^{-1}\) or \(y=vx\)) turns them into a type from Part O1. It is the same idea as integration by substitution (Lecture 13): swap the variable for one that makes the problem familiar.</p>
+<div class="scroll"><table>
+<tr><th>Equation type</th><th>Shape</th><th>Substitution</th><th>Becomes</th></tr>
+<tr><td>Bernoulli (§1)</td><td>\(y'+p(x)y=q(x)y^n\)</td><td>\(u=y^{1-n}\)</td><td>linear (integrating factor)</td></tr>
+<tr><td>Riccati (§2)</td><td>\(y'=p y^2+q y+r\)</td><td>\(y=Y(x)+\frac1u\)</td><td>linear</td></tr>
+<tr><td>Homogeneous (§5)</td><td>\(y'=G\!\left(\frac yx\right)\)</td><td>\(y=vx\)</td><td>separable</td></tr>
+<tr><td>Shift (§6, beyond)</td><td>\(y'=f(ax+by+c)\)</td><td>\(u=ax+by+c\)</td><td>separable</td></tr>
+<tr><td>Reduction of order (§7)</td><td>2nd-order linear, one solution \(y_1\) known</td><td>\(y=y_1u\), then \(w=u'\)</td><td>first order</td></tr>
+</table></div>
+<p style="font-size:.92rem;color:var(--muted)">Slide numbers in this note (slide 1 to slide 9) refer to this part's handout, which collects slides 11–16 and 36–38 of the original ODE deck. Slide 4 (separable equations) belongs to Part O1 and is only reviewed here. This part of the deck has no admin, summary, common-mistakes, find-the-mistake or group-work slides; those sections below were written for these notes.</p>
+<p><b>Notation.</b> A prime means a derivative with respect to \(x\): \(y'=\frac{dy}{dx}\), \(y''=\frac{d^2y}{dx^2}\). The functions \(p(x)\), \(q(x)\), \(r(x)\) are given functions of \(x\) only.</p>
+</section>
+
+<!-- ============ 1 Bernoulli ============ -->
+<section id="s1"><h2><span class="n">1</span>Bernoulli's equation (slides 1–2)</h2>
+<div class="box def"><span class="tag">Definition (slide 1)</span>
+<p>A <b>Bernoulli equation</b> is a first-order ODE of the form</p>
+\[ \frac{dy}{dx}+p(x)\,y=q(x)\,y^n , \]
+<p>where \(n\) is any real number: it need <b>not</b> be an integer (\(n=\frac12\), \(n=-3\), \(n=\frac23\) are all allowed).</p>
+<p class="word"><b>In words:</b> rate of change of \(y\) + (function of \(x\)) × \(y\) = (function of \(x\)) × (a power of \(y\)).</p>
+</div>
+<p>It looks exactly like the linear equation of Part O1, except for the extra power \(y^n\) on the right. For \(n\ne0,1\) that power makes the equation <b>nonlinear</b>, so the integrating factor cannot be used directly. Slide 1 calls it "a special case of a nonlinear first order ODE which can be solved exactly": <b>exactly</b> means we get a formula for \(y\), not just a numerical approximation.</p>
+
+<div class="box thm"><span class="tag">Method (slide 2)</span>
+<p>To solve \(\frac{dy}{dx}+p(x)\,y=q(x)\,y^n\) (with \(n\ne1\)), use the substitution</p>
+\[ u=y^{1-n}. \]
+<p class="word"><b>In words:</b> new unknown = old unknown raised to the power (1 − the power on the right).</p>
+<p>This converts the Bernoulli equation into a <b>linear</b> first-order equation in \(u\):</p>
+\[ \frac{du}{dx}+(1-n)\,p(x)\,u=(1-n)\,q(x). \]
+<p class="word"><b>In words:</b> rate of change of \(u\) + (1 − n) × p × \(u\) = (1 − n) × q. Both p and q get multiplied by the same factor (1 − n).</p>
+</div>
+
+<h3>Why the substitution works</h3>
+<ol class="steps">
+<li><b>Divide the whole equation by \(y^n\)</b> (assume \(y\ne0\) for now):
+\[ y^{-n}\frac{dy}{dx}+p(x)\,y^{1-n}=q(x). \]
+Now the right side has no \(y\) at all, and \(y^{1-n}\) appears in the middle term. That suggests calling \(u=y^{1-n}\).</li>
+<li><b>Differentiate \(u\)</b> with the chain rule (Lecture 6), remembering \(y\) is a function of \(x\):
+\[ \frac{du}{dx}=(1-n)\,y^{-n}\,\frac{dy}{dx}. \]
+So the first term \(y^{-n}\frac{dy}{dx}\) is exactly \(\frac{1}{1-n}\frac{du}{dx}\).</li>
+<li><b>Substitute:</b>
+\[ \frac{1}{1-n}\frac{du}{dx}+p(x)\,u=q(x). \]
+Multiply by \((1-n)\) to get the linear equation in the box. Solve it with the integrating factor \(e^{\int(1-n)p\,dx}\) (Part O1), then return to \(y\) using \(y=u^{1/(1-n)}\).</li>
+</ol>
+
+<div class="box warn"><span class="tag">Special values of n and a lost solution</span>
+<ul class="list">
+<li>\(n=0\): the equation is \(y'+py=q\), already linear. Nothing to do.</li>
+<li>\(n=1\): the equation is \(y'+(p-q)y=0\), linear (and separable). The substitution \(u=y^0=1\) is useless, so the method needs \(n\ne1\).</li>
+<li>When \(n\gt0\), the constant function \(y=0\) is a solution (both sides are 0). Dividing by \(y^n\) throws it away, so state it separately if the question wants all solutions.</li>
+<li>When \(n\) is not an integer, \(y^n\) may only make sense for \(y\ge0\) (for example \(\sqrt y\)); the answer is then valid only where \(y\ge0\).</li>
+</ul></div>
+
+<div class="box eg"><span class="tag">Example 1 (written for these notes)</span>
+<p>Solve \(\dfrac{dy}{dx}+y=y^2\).</p>
+<p><b>Spot the type.</b> \(p(x)=1\), \(q(x)=1\), \(n=2\). So \(u=y^{1-2}=y^{-1}=\frac1y\).</p>
+<p><b>Transform.</b> Divide by \(y^2\): \(y^{-2}y'+y^{-1}=1\). Since \(u'=-y^{-2}y'\), the first term is \(-u'\):</p>
+\[ -u'+u=1\quad\Longrightarrow\quad u'-u=-1. \]
+<p>(Check against the box: \((1-n)p=-1\), \((1-n)q=-1\). ✓)</p>
+<p><b>Integrating factor</b> \(e^{\int(-1)dx}=e^{-x}\):</p>
+\[ \begin{aligned} \frac{d}{dx}\big(e^{-x}u\big)&=-e^{-x}\\ e^{-x}u&=e^{-x}+C\\ u&=1+Ce^{x}. \end{aligned} \]
+<p><b>Back to y:</b></p>
+\[ y=\frac{1}{1+Ce^{x}},\qquad\text{and also } y=0. \]
+<p class="word"><b>In words:</b> y = 1 ÷ (1 + constant × eˣ); the zero function is a separate solution lost when we divided by y².</p>
+<p>Compare the <b>logistic</b> equation \(y'=y(1-y)\) used for population growth (one of the motivating examples at the start of the ODE deck). Our equation is its mirror image, \(y'=y^2-y=-y(1-y)\): solutions between 0 and 1 move away from \(y=1\) and towards \(y=0\) as \(x\) increases.</p>
+</div>
+
+<div class="figure"><p class="ttl">Solution family of y′ + y = y²</p>
+<canvas class="plot" id="fbern" style="aspect-ratio:16/10" aria-label="Curves y = 1/(1 + C e^x) for several C, with one highlighted by the slider"></canvas>
+<div class="ctrl"><label for="fbern-c">Constant C <input type="range" id="fbern-c" min="-3" max="3" step="0.1" value="1"></label></div>
+<div class="legend"><span style="--k:var(--accent)">chosen solution</span><span style="--k:var(--muted)">other members</span><span style="--k:var(--c3)">y = 1 (C = 0)</span><span style="--k:var(--c2)">y = 0 (lost solution)</span></div>
+<div class="readout" id="fbern-out"></div>
+<p class="cap">Drag C. For \(C\gt0\) the curve falls from near 1 (far left) to near 0 (far right). For \(C\lt0\) there is a vertical asymptote at \(x=\ln(-1/C)\): to its left the curve lies above 1 and shoots up; to its right the curve is negative and climbs back towards 0. No value of \(C\) gives the red line \(y=0\); it only appears as the limit \(C\to\infty\), which is why it must be listed separately.</p></div>
+
+<div class="box eg"><span class="tag">Example 2: a non-integer power (written for these notes)</span>
+<p>Solve \(\dfrac{dy}{dx}+\dfrac{y}{x}=x\sqrt y\) for \(x\gt0\), \(y\ge0\).</p>
+<p><b>Spot the type.</b> \(\sqrt y=y^{1/2}\), so \(n=\frac12\), \(p=\frac1x\), \(q=x\). Substitution \(u=y^{1-\frac12}=y^{1/2}=\sqrt y\).</p>
+<p><b>Transform</b> (using the boxed formula, \(1-n=\frac12\)):</p>
+\[ u'+\frac{1}{2x}\,u=\frac x2. \]
+<p><b>Integrating factor</b> \(e^{\int\frac1{2x}dx}=e^{\frac12\ln x}=x^{1/2}\):</p>
+\[ \begin{aligned} \frac{d}{dx}\big(x^{1/2}u\big)&=\frac{x^{3/2}}{2}\\ x^{1/2}u&=\frac{x^{5/2}}{5}+C\\ u&=\frac{x^2}{5}+\frac{C}{\sqrt x}. \end{aligned} \]
+<p><b>Back to y</b> (\(y=u^2\)):</p>
+\[ y=\left(\frac{x^2}{5}+\frac{C}{\sqrt x}\right)^{2},\qquad\text{and also } y=0, \]
+<p>valid where \(\frac{x^2}{5}+\frac{C}{\sqrt x}\ge0\) (because \(u=\sqrt y\) cannot be negative).</p>
+<p class="word"><b>In words:</b> y = (x²/5 + constant/√x)², as long as the bracket is not negative.</p>
+</div>
+</section>
+
+<!-- ============ 2 Riccati ============ -->
+<section id="s2"><h2><span class="n">2</span>Riccati's equation (slide 3)</h2>
+<div class="box def"><span class="tag">Definition (slide 3)</span>
+<p>A <b>Riccati equation</b> is a first-order ODE of the form</p>
+\[ \frac{dy}{dx}=p(x)\,y^2+q(x)\,y+r(x). \]
+<p class="word"><b>In words:</b> rate of change of y = a quadratic expression in y whose coefficients are functions of x.</p>
+</div>
+<p>Slide 3 says it is <b>nonlinear</b> (because of \(y^2\)) and "does not belong to the classical equations": it is not linear, separable, exact or Bernoulli in general, and there is <b>no recipe that always works from scratch</b>. You need one extra piece of information.</p>
+
+<div class="box thm"><span class="tag">Method (slide 3)</span>
+<p>If one <b>particular solution</b> \(Y(x)\) is known (one specific function, with no arbitrary constant, that satisfies the equation), substitute</p>
+\[ y=Y(x)+\frac1u . \]
+<p class="word"><b>In words:</b> unknown solution = the known solution + 1 ÷ (new unknown).</p>
+<p>The equation for \(u\) is then <b>linear</b>:</p>
+\[ \frac{du}{dx}+\big(2p(x)Y(x)+q(x)\big)\,u=-p(x). \]
+<p class="word"><b>In words:</b> rate of change of u + (2 × p × known solution + q) × u = −p.</p>
+</div>
+
+<h3>Why it works</h3>
+<p>Differentiate \(y=Y+u^{-1}\): \(y'=Y'-\dfrac{u'}{u^2}\). Expand the right side:</p>
+\[ \begin{aligned} &p\Big(Y+\frac1u\Big)^2+q\Big(Y+\frac1u\Big)+r\\ &=\underbrace{pY^2+qY+r}_{=\,Y'}+\frac{2pY+q}{u}+\frac{p}{u^2}. \end{aligned} \]
+<p>The underbraced part equals \(Y'\) because \(Y\) is a solution. So \(Y'\) cancels from both sides:</p>
+\[ -\frac{u'}{u^2}=\frac{2pY+q}{u}+\frac{p}{u^2}. \]
+<p>Multiply by \(-u^2\): \(u'=-(2pY+q)u-p\), which is the boxed linear equation. The nasty \(y^2\) disappeared because the known solution already "uses up" the quadratic part.</p>
+
+<div class="box beyond"><span class="tag">Beyond the handouts</span>
+<ul class="list">
+<li><b>Links with §1.</b> If \(r(x)=0\), the Riccati equation \(y'-qy=py^2\) is a Bernoulli equation with \(n=2\) (and \(Y=0\) is a particular solution, so both methods agree). If \(p(x)=0\), it is just linear.</li>
+<li><b>Finding \(Y\).</b> Exam questions give the substitution or the particular solution. If not, try simple shapes suggested by the equation: a constant, \(Y=ax\), or \(Y=\frac ax\) (good when the equation contains \(\frac1{x^2}\)), and choose \(a\) to make it work. Always <b>check</b> \(Y\) by substituting it back.</li>
+<li>The known solution \(Y\) itself is not included in \(Y+\frac1u\) for any finite \(u\); it corresponds to "\(u=\infty\)" (constant \(\to\infty\)). Mention it separately if all solutions are wanted.</li>
+</ul></div>
+
+<div class="box eg"><span class="tag">Example 3 (written for these notes)</span>
+<p>Solve \(\dfrac{dy}{dx}=y^2-\dfrac yx-\dfrac1{x^2}\), given that \(Y=\dfrac1x\) is a particular solution.</p>
+<p><b>Check \(Y\).</b> \(Y'=-\frac1{x^2}\). Right side: \(\frac1{x^2}-\frac1{x^2}-\frac1{x^2}=-\frac1{x^2}\). ✓</p>
+<p><b>Read off</b> \(p=1\), \(q=-\frac1x\), so \(2pY+q=\frac2x-\frac1x=\frac1x\). With \(y=\frac1x+\frac1u\) the linear equation is</p>
+\[ u'+\frac1x\,u=-1. \]
+<p><b>Integrating factor</b> \(e^{\int\frac1x dx}=x\) (take \(x\gt0\)):</p>
+\[ \begin{aligned} (xu)'&=-x\\ xu&=-\frac{x^2}{2}+C\\ u&=\frac{2C-x^2}{2x}. \end{aligned} \]
+<p><b>Back to y</b> (write \(K=2C\)):</p>
+\[ y=\frac1x+\frac{2x}{K-x^2},\qquad\text{and also } y=\frac1x. \]
+<p class="word"><b>In words:</b> y = the known solution 1/x + a correction 2x/(K − x²) that contains the arbitrary constant.</p>
+</div>
+</section>
+
+<!-- ============ 3 Separable ============ -->
+<section id="s3"><h2><span class="n">3</span>Separable equations: a reminder (slide 4)</h2>
+<p>Slide 4 repeats the separable equation from Part O1, because two of the substitutions in this part (homogeneous §5 and shift §6) end in a separable equation.</p>
+<div class="box def"><span class="tag">Definition (slide 4, from Part O1)</span>
+<p>A <b>separable</b> equation is a first-order equation of the form</p>
+\[ \frac{dy}{dx}=X(x)\,Y(y). \]
+<p>"By observation" the \(x\)'s can be moved to one side and the \(y\)'s to the other:</p>
+\[ \frac{1}{Y(y)}\,dy=X(x)\,dx, \]
+<p>and the solution is obtained by simple integration: \(\displaystyle\int\frac{dy}{Y(y)}=\int X(x)\,dx+C\).</p>
+<p class="word"><b>In words:</b> derivative = (function of x only) × (function of y only); divide by the y-part, then integrate each side with respect to its own variable.</p>
+</div>
+<p>Here \(X\) and \(Y\) are just names for "a function of \(x\) only" and "a function of \(y\) only" (this \(Y\) has nothing to do with the particular solution \(Y\) of §2). If \(Y(y_0)=0\) for some number \(y_0\), the constant \(y=y_0\) is also a solution that dividing by \(Y(y)\) loses. Full treatment and examples: Part O1.</p>
+</section>
+
+<!-- ============ 4 Homogeneous functions ============ -->
+<section id="s4"><h2><span class="n">4</span>Homogeneous functions (slide 5)</h2>
+<div class="box def"><span class="tag">Definition (slide 5)</span>
+<p>A function \(g(x,y)\) of two variables is <b>homogeneous of degree \(N\)</b> if, for every scale factor \(k\),</p>
+\[ g(kx,ky)=k^N\,g(x,y). \]
+<p class="word"><b>In words:</b> stretch both inputs by the same factor k, and the output gets multiplied by k to the power N.</p>
+</div>
+<p>Analogy: in a photo enlarged \(k\) times, every <b>length</b> grows by \(k\) (degree 1), every <b>area</b> by \(k^2\) (degree 2), and every <b>angle</b> stays the same (degree 0). Each term of a homogeneous polynomial has the same total power of \(x\) and \(y\) (the powers in each term add up to the same number \(N\)).</p>
+<p>The slide's three examples, checked by replacing \(x\to kx\), \(y\to ky\):</p>
+<div class="cases">
+<div><b>\(x^2+3xy+y^2\): degree 2</b>\(k^2x^2+3k^2xy+k^2y^2\)<br>\(=k^2(x^2+3xy+y^2)\). Every term has total power 2.</div>
+<div><b>\(x^3+y^3\): degree 3</b>\(k^3x^3+k^3y^3=k^3(x^3+y^3)\).</div>
+<div><b>\(x^2+y^3\): NOT homogeneous</b>\(k^2x^2+k^3y^3\). The two terms grow at different rates, so no single \(k^N\) can be factored out.</div>
+</div>
+<div class="box thm"><span class="tag">Key fact: degree 0 means "depends only on y/x" (written for these notes)</span>
+<p>If \(g\) is homogeneous of <b>degree 0</b>, then \(g(kx,ky)=g(x,y)\). Choose \(k=\frac1x\) (\(x\ne0\)):</p>
+\[ g(x,y)=g\Big(1,\frac yx\Big)=G\Big(\frac yx\Big). \]
+<p class="word"><b>In words:</b> a degree-0 function does not care about size, only about the ratio y/x (the slope of the line from the origin to the point).</p>
+<p>A quotient of two homogeneous functions of the <b>same</b> degree is homogeneous of degree 0, e.g. \(\frac{x^2+3xy+y^2}{x^2}=1+3\frac yx+\big(\frac yx\big)^2\).</p>
+</div>
+</section>
+
+<!-- ============ 5 Homogeneous equations ============ -->
+<section id="s5"><h2><span class="n">5</span>Homogeneous equations: the substitution y = vx (slide 6)</h2>
+<div class="box thm"><span class="tag">Method (slide 6)</span>
+<p>The equation \(\dfrac{dy}{dx}=g(x,y)\), where \(g\) is homogeneous (of degree 0), can be solved by the substitution</p>
+\[ w=\frac yx,\qquad\text{i.e. } y=wx . \]
+<p class="word"><b>In words:</b> new unknown = y ÷ x, the slope of the line from the origin to the point (x, y).</p>
+<p>Exam papers and many textbooks call the new unknown \(v\) and write \(y=vx\); it is the same thing.</p>
+</div>
+<p style="font-size:.92rem;color:var(--muted)">Note on slide 6: it says only "g is homogeneous". For the method to work, \(g\) must be homogeneous of <b>degree 0</b> (as in §4's key fact). Equivalently, if the equation is written as \(M(x,y)\,dx+N(x,y)\,dy=0\), then \(M\) and \(N\) must be homogeneous of the <b>same</b> degree. This note uses that reading.</p>
+
+<h3>Why it works</h3>
+<ol class="steps">
+<li>Degree 0 means \(g(x,y)=G(w)\) with \(w=\frac yx\) (§4).</li>
+<li>From \(y=wx\), the product rule (Lecture 6) gives
+\[ \frac{dy}{dx}=w+x\frac{dw}{dx}. \]
+<p class="word"><b>In words:</b> derivative of y = w + x × (derivative of w). The "+ w" is the part students forget.</p></li>
+<li>So the equation becomes
+\[ w+x\frac{dw}{dx}=G(w)\quad\Longrightarrow\quad x\frac{dw}{dx}=G(w)-w, \]
+which is <b>separable</b> (§3):
+\[ \int\frac{dw}{G(w)-w}=\int\frac{dx}{x}=\ln|x|+C. \]</li>
+<li>Finally replace \(w\) by \(\frac yx\). If \(G(w_0)=w_0\) for some number \(w_0\), the straight line \(y=w_0x\) is an extra solution lost by dividing.</li>
+</ol>
+
+<div class="figure"><p class="ttl">Why only y/x matters: the slope field is constant along every ray</p>
+<canvas class="plot" id="fray" style="aspect-ratio:16/10" aria-label="Slope field of a homogeneous equation with a highlighted line through the origin along which all slope marks are parallel"></canvas>
+<div class="ctrl"><label for="fray-s">Equation <select id="fray-s"><option value="a">Example 4: x²y′ = x² + 3xy + y²</option><option value="b">Example 5: y′ = (x + y)/(x − y)</option><option value="n">Not homogeneous: y′ = x² + y³</option></select></label>
+<label for="fray-a">Line angle <input type="range" id="fray-a" min="-85" max="85" step="5" value="25"></label></div>
+<div class="legend"><span style="--k:var(--axis)">slope marks y′ = g(x, y)</span><span style="--k:var(--accent)">marks on the chosen line through O</span></div>
+<div class="readout" id="fray-out"></div>
+<p class="cap">A <b>slope field</b> draws, at many points \((x,y)\), a short dash with slope \(g(x,y)\): the direction a solution curve must have when it passes through that point. For a homogeneous equation, every point on the line \(y=mx\) has the same \(w=\frac yx=m\), hence the same slope \(G(m)\): the highlighted dashes are all parallel. Switch to the non-homogeneous equation and they are not.</p></div>
+
+<div class="box eg"><span class="tag">Example 4 (written for these notes, using slide 5's function)</span>
+<p>Solve \(x^2\dfrac{dy}{dx}=x^2+3xy+y^2\) for \(x\ne0\).</p>
+<p><b>Spot the type.</b> Dividing by \(x^2\):</p>
+\[ \frac{dy}{dx}=1+3\frac yx+\Big(\frac yx\Big)^2 \]
+<p>so \(G(w)=1+3w+w^2\).</p>
+<p>(Degree 2 on top over degree 2 below: degree 0.)</p>
+<p><b>Substitute</b> \(y=wx\), \(y'=w+xw'\):</p>
+\[ \begin{aligned} w+xw'&=1+3w+w^2\\ xw'&=w^2+2w+1=(w+1)^2. \end{aligned} \]
+<p><b>Separate</b> (for \(w\ne-1\)):</p>
+\[ \begin{aligned} \int(w+1)^{-2}\,dw&=\int\frac{dx}{x}\\ -\frac{1}{w+1}&=\ln|x|+C\\ w&=-1-\frac{1}{\ln|x|+C}. \end{aligned} \]
+<p><b>Back to y</b> (\(y=wx\)):</p>
+\[ y=-x-\frac{x}{\ln|x|+C},\qquad\text{and also } y=-x \]
+<p>(the line from \(w=-1\), where \(G(w)-w=0\); check: \(x^2(-1)=x^2-3x^2+x^2\) ✓).</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 5: spiral solutions (written for these notes)</span>
+<p>Solve \(\dfrac{dy}{dx}=\dfrac{x+y}{x-y}\).</p>
+<p><b>Spot the type.</b> Degree 1 over degree 1. Divide top and bottom by \(x\): \(G(w)=\frac{1+w}{1-w}\).</p>
+<p><b>Substitute:</b></p>
+\[ \begin{aligned} w+xw'&=\frac{1+w}{1-w}\\ xw'&=\frac{1+w}{1-w}-w=\frac{1+w^2}{1-w}. \end{aligned} \]
+<p><b>Separate and integrate</b>, splitting the fraction:</p>
+\[ \int\Big(\frac{1}{1+w^2}-\frac{w}{1+w^2}\Big)dw=\int\frac{dx}{x}. \]
+<p>The first piece is \(\tan^{-1}w\) (Lecture 7); the second is \(\frac12\ln(1+w^2)\) by the substitution \(t=1+w^2\) (Lecture 13):</p>
+\[ \tan^{-1}w-\tfrac12\ln(1+w^2)=\ln|x|+C. \]
+<p><b>Back to x, y.</b> Since \(\ln|x|+\frac12\ln\big(1+\frac{y^2}{x^2}\big)=\ln\sqrt{x^2+y^2}\):</p>
+\[ \tan^{-1}\frac yx=\ln\sqrt{x^2+y^2}+C . \]
+<p><b>In polar coordinates</b> (Lecture 15: \(r=\sqrt{x^2+y^2}\), \(\theta\) the angle, \(\tan\theta=\frac yx\)) this is \(\theta=\ln r+C\), i.e.</p>
+\[ r=Ke^{\theta}\quad(K=e^{-C}\gt0). \]
+<p class="word"><b>In words:</b> distance from the origin = constant × e^(angle): every solution curve is a logarithmic spiral.</p>
+<p style="font-size:.92rem;color:var(--muted)">The formula with \(\tan^{-1}\frac yx\) describes the solutions piece by piece (for \(x\gt0\), \(\tan^{-1}\frac yx\) is exactly \(\theta\)); the polar form joins the pieces into whole spirals.</p>
+</div>
+
+<div class="figure"><p class="ttl">Solution curves r = K e^θ, with the slope field</p>
+<canvas class="plot" id="fspi" style="aspect-ratio:16/10" aria-label="Logarithmic spiral solution curve on top of the slope field"></canvas>
+<div class="ctrl"><label for="fspi-s">Centre <select id="fspi-s"><option value="o">y′ = (x + y)/(x − y): centre (0, 0)</option><option value="h">y′ = (x + y − 2)/(x − y): centre (1, 1) (§6)</option></select></label>
+<label for="fspi-k">K <input type="range" id="fspi-k" min="0.1" max="1.5" step="0.05" value="0.5"></label></div>
+<div class="legend"><span style="--k:var(--accent)">solution curve</span><span style="--k:var(--axis)">slope marks</span></div>
+<div class="readout" id="fspi-out"></div>
+<p class="cap">The spiral follows the slope marks everywhere: it is a solution curve. Changing \(K\) gives another member of the family (it is the same spiral, turned). The second option is the shifted equation of §6: the same picture moved so that its centre is \((1,1)\).</p></div>
+
+<div class="box warn"><span class="tag">Two meanings of "homogeneous" (slide 6)</span>
+<p>Slide 6 warns that the word <b>homogeneous</b> is used again later in the course with a completely different meaning:</p>
+<ul class="list">
+<li><b>Here (Part O2):</b> \(y'=g(x,y)\) with \(g\) depending only on \(\frac yx\). Solve with \(y=vx\).</li>
+<li><b>Later (Part O3):</b> a <b>linear</b> equation whose right side is zero, e.g. \(y''-2y'+y=0\) (no term without \(y\)). Solve with a characteristic equation.</li>
+</ul>
+<p>Decide which meaning from the shape of the equation, not from the word.</p></div>
+</section>
+
+<!-- ============ 6 Shift ============ -->
+<section id="s6"><h2><span class="n">6</span>Shift substitutions</h2>
+<div class="box beyond"><span class="tag">Beyond the handouts</span>
+<p>This section is not on the slides, but this type of question appears in recent exams (May 2025, for example). It uses only the ideas above.</p>
+<h3 style="margin-top:8px">Type A: the right side depends only on one combination \(ax+by+c\)</h3>
+<p>If the equation is \(\dfrac{dy}{dx}=f(ax+by+c)\), put</p>
+\[ u=ax+by+c, \]
+\[ \begin{aligned}\frac{du}{dx}&=a+b\,\frac{dy}{dx}\\ &=a+b\,f(u). \end{aligned} \]
+<p class="word"><b>In words:</b> name the repeated combination u; its derivative is a + b × (the right side), which is separable.</p>
+<p><b>Recognition cue:</b> after expanding, the right side contains a perfect square like \(y^2-2xy+x^2=(y-x)^2\) or \((x+y)^2\), or a function such as \(\sin(x-y)\). Try \(u=y-x\), \(u=x+y\), … Watch the extra constant: for \(u=y-x\), \(u'=y'-1\), not \(u'=y'\).</p>
+<div class="box eg"><span class="tag">Example 6</span>
+<p>Solve \(\dfrac{dy}{dx}=(x+y)^2\).</p>
+<p>Put \(u=x+y\), so \(u'=1+y'=1+u^2\). Separate:</p>
+\[ \begin{aligned} \int\frac{du}{1+u^2}&=\int dx\\ \tan^{-1}u&=x+C\\ u&=\tan(x+C). \end{aligned} \]
+<p>Back to \(y=u-x\):</p>
+\[ y=\tan(x+C)-x. \]
+</div>
+<h3>Type B: shifting the origin</h3>
+<p>For \(\dfrac{dy}{dx}=\dfrac{a_1x+b_1y+c_1}{a_2x+b_2y+c_2}\), where the two lines \(a_1x+b_1y+c_1=0\) and \(a_2x+b_2y+c_2=0\) meet at a point \((h,k)\), put \(x=X+h\), \(y=Y+k\). The constants disappear and the new equation in \(X,Y\) is homogeneous (§5).</p>
+<div class="box eg"><span class="tag">Example 7</span>
+<p>Solve \(\dfrac{dy}{dx}=\dfrac{x+y-2}{x-y}\).</p>
+<p>The lines \(x+y=2\) and \(x=y\) meet at \((1,1)\). With \(X=x-1\), \(Y=y-1\) (so \(\frac{dY}{dX}=\frac{dy}{dx}\)):</p>
+\[ \frac{dY}{dX}=\frac{X+Y}{X-Y}, \]
+<p>which is Example 5. So the solutions are the same spirals, centred at \((1,1)\):</p>
+\[ \begin{aligned}&\tan^{-1}\frac{y-1}{x-1}\\ &\quad=\ln\sqrt{(x-1)^2+(y-1)^2}+C. \end{aligned} \]
+<p>(Second option of the spiral figure above.)</p>
+</div>
+</div>
+
+<div class="figure"><p class="ttl">Solution family of y′ = (x + y)²</p>
+<canvas class="plot" id="fshift" style="aspect-ratio:16/10" aria-label="Curves y = tan(x + C) − x for several C"></canvas>
+<div class="ctrl"><label for="fshift-c">Constant C <input type="range" id="fshift-c" min="-1.5" max="1.5" step="0.05" value="0"></label></div>
+<div class="legend"><span style="--k:var(--accent)">y = tan(x + C) − x</span><span style="--k:var(--muted)">other members</span></div>
+<div class="readout" id="fshift-out"></div>
+<p class="cap">Every solution is increasing (\(y'=(x+y)^2\ge0\)) and has vertical asymptotes where \(x+C=\frac\pi2+n\pi\): each solution only lives on an interval of length \(\pi\). Changing \(C\) slides the tangent pattern sideways.</p></div>
+</section>
+
+<!-- ============ 7 Reduction of order ============ -->
+<section id="s7"><h2><span class="n">7</span>Reduction of order (slides 7–9)</h2>
+<h3>Background from Part O3, in brief</h3>
+<p>Reduction of order is about <b>second-order linear</b> equations. Here is the minimum you need (Part O3 covers it properly):</p>
+<ul class="list">
+<li>A second-order linear equation (with zero right side) has the form
+\[ y''+P(x)\,y'+Q(x)\,y=0 . \]
+(This is "homogeneous" in the <b>second</b> meaning of §5.)</li>
+<li>By superposition (Part O1), if \(y_1\) and \(y_2\) are solutions then so is \(c_1y_1+c_2y_2\). If \(y_2\) is genuinely different from \(y_1\), i.e. not just a constant multiple of it (<b>linearly independent</b>, Part O3), then
+\[ y=c_1y_1+c_2y_2 \]
+is the <b>general solution</b>: two arbitrary constants for a second-order equation.</li>
+<li>For constant coefficients, e.g. \(y''-2y'+y=0\), Part O3 tries \(y=e^{mx}\). Since \(y'=me^{mx}\), \(y''=m^2e^{mx}\), this gives the <b>characteristic equation</b> \(m^2-2m+1=0\), i.e. \((m-1)^2=0\). There is only one (repeated) root \(m=1\), so only one solution \(y_1=e^x\). Where is the second one? Reduction of order finds it.</li>
+</ul>
+
+<div class="box thm"><span class="tag">The idea (slide 7): dividing out a known factor</span>
+<p>For the quadratic \(x^2-5x+6=0\), if we know one root \(x=2\), we divide by the factor \((x-2)\):</p>
+\[ \frac{x^2-5x+6}{x-2}=x-3, \]
+<p>which is simpler (degree 1 instead of 2) and gives the other root \(x=3\).</p>
+<p class="word"><b>In words:</b> knowing one answer lets you reduce the problem to a smaller one.</p>
+<p>Similarly, for an ODE, if \(y_1\) is a known solution we look at \(\frac{y}{y_1}\), i.e. write \(y=y_1u\) and find the equation for \(u\).</p></div>
+
+<div class="box thm"><span class="tag">Method (slide 8)</span>
+<p>When one solution \(y_1\) of a <b>linear</b> differential equation in \(y\) is known, substituting</p>
+\[ y=y_1(x)\,u(x) \]
+<p>reduces the order of the differential equation by one.</p>
+<p class="word"><b>In words:</b> unknown solution = known solution × new unknown function; the new problem has one derivative fewer.</p>
+</div>
+
+<h3>Why it works (written for these notes)</h3>
+<p>Differentiate \(y=y_1u\) twice with the product rule:</p>
+\[ \begin{aligned} y'&=y_1'u+y_1u'\\ y''&=y_1''u+2y_1'u'+y_1u''. \end{aligned} \]
+<p>Substitute into \(y''+Py'+Qy=0\) and group by \(u\), \(u'\), \(u''\):</p>
+\[ \begin{aligned} &y_1u''+\big(2y_1'+Py_1\big)u'\\ &\quad+\underbrace{\big(y_1''+Py_1'+Qy_1\big)}_{=\,0\text{ since }y_1\text{ is a solution}}u=0. \end{aligned} \]
+<p>The \(u\) term always vanishes. Only \(u''\) and \(u'\) remain, so put \(w=u'\):</p>
+\[ y_1\,w'+\big(2y_1'+Py_1\big)\,w=0, \]
+<p class="word"><b>In words:</b> known solution × (derivative of w) + (2 × derivative of known solution + P × known solution) × w = 0.</p>
+<p>This is a <b>first-order</b> linear (and separable) equation for \(w\): solve it (Part O1), integrate once more to get \(u\), and multiply by \(y_1\). The same works for higher orders: a third-order linear equation becomes second order in \(w\), and so on.</p>
+
+<div class="box eg"><span class="tag">Example 8 (slide 9)</span>
+<p>For \(y''-2y'+y=0\) with \(y=y_1u\), where \(y_1=e^x\), the resulting equation for \(u\) has only \(u''\) and \(u'\) terms and <b>no \(u\)</b> term. Defining \(w=u'\) gives a first-order ODE in \(w\): reduction of order from second to first.</p>
+<p><b>Check \(y_1\).</b> \(e^x-2e^x+e^x=0\) ✓.</p>
+<p><b>Differentiate</b> \(y=e^xu\):</p>
+\[ \begin{aligned} y'&=e^x(u+u')\\ y''&=e^x(u+2u'+u''). \end{aligned} \]
+<p><b>Substitute</b> and divide by \(e^x\neq0\):</p>
+\[ \begin{aligned} (u+2u'+u'')-2(u+u')+u&=0\\ u''&=0. \end{aligned} \]
+<p>In this example even the \(u'\) term cancels (\(2y_1'+Py_1=2e^x-2e^x=0\)), so the equation is as simple as possible. In general a \(u'\) term remains.</p>
+<p><b>Reduce:</b> \(w=u'\) gives \(w'=0\), so \(w=c_2\). Then \(u=c_2x+c_1\), and</p>
+\[ y=e^xu=(c_1+c_2x)\,e^x . \]
+<p class="word"><b>In words:</b> the second solution is x times the first one: \(y_2=xe^x\). This "multiply by x" rule for a repeated root of the characteristic equation is used throughout Part O3.</p>
+</div>
+
+<div class="figure"><p class="ttl">General solution of y″ − 2y′ + y = 0</p>
+<canvas class="plot" id="fred" style="aspect-ratio:16/10" aria-label="The solutions e^x, x e^x and their combination c1 e^x + c2 x e^x"></canvas>
+<div class="ctrl"><label for="fred-a">c₁ <input type="range" id="fred-a" min="-2" max="2" step="0.1" value="1"></label><label for="fred-b">c₂ <input type="range" id="fred-b" min="-2" max="2" step="0.1" value="-1"></label></div>
+<div class="legend"><span style="--k:var(--accent)">y = (c₁ + c₂x)eˣ</span><span style="--k:var(--c3)">y₁ = eˣ</span><span style="--k:var(--c4)">y₂ = xeˣ (found by reduction of order)</span></div>
+<div class="readout" id="fred-out"></div>
+<p class="cap">\(e^x\) never crosses zero, but \(xe^x\) does (at \(x=0\)), so \(y_2\) is not a constant multiple of \(y_1\): they are linearly independent. With both sliders you can match any starting height \(y(0)=c_1\) and starting slope \(y'(0)=c_1+c_2\), which a single \(c\,e^x\) could not.</p></div>
+
+<div class="box eg"><span class="tag">Example 9: variable coefficients (written for these notes)</span>
+<p>Given that \(y_1=x^2\) solves \(x^2y''-3xy'+4y=0\) (\(x\gt0\)), find the general solution.</p>
+<p><b>Check \(y_1\).</b> \(x^2(2)-3x(2x)+4x^2=0\) ✓.</p>
+<p><b>Substitute</b> \(y=x^2u\) directly into the equation as given (no need to divide by \(x^2\) first):</p>
+\[ \begin{aligned} y'&=2xu+x^2u'\\ y''&=2u+4xu'+x^2u''. \end{aligned} \]
+\[ \begin{aligned} &x^2(2u+4xu'+x^2u'')\\ &-3x(2xu+x^2u')+4x^2u\\ &=x^4u''+x^3u'+0\cdot u=0. \end{aligned} \]
+<p><b>Reduce:</b> divide by \(x^3\) and put \(w=u'\): \(xw'+w=0\), i.e. \((xw)'=0\), so \(w=\frac{c_2}{x}\). Integrate: \(u=c_2\ln x+c_1\).</p>
+\[ y=x^2\,(c_1+c_2\ln x). \]
+<p class="word"><b>In words:</b> the second solution is \(x^2\ln x\); the general solution is any combination of \(x^2\) and \(x^2\ln x\).</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts</span>
+<p>Solving \(y_1w'+(2y_1'+Py_1)w=0\) once and for all (separate variables) gives the ready-made formula</p>
+\[ w=u'=\frac{e^{-\int P\,dx}}{y_1^{\,2}}, \]
+\[ y_2=y_1\int\frac{e^{-\int P\,dx}}{y_1^{\,2}}\,dx, \]
+<p>where \(P\) is read from the <b>standard form</b> \(y''+Py'+Qy=0\) (coefficient of \(y''\) equal to 1). In Example 9, \(P=-\frac3x\): \(e^{-\int P}=x^3\), \(w=\frac{x^3}{x^4}=\frac1x\), \(y_2=x^2\ln x\) ✓. Exams expect the substitution working, so show the steps rather than quoting this.</p></div>
+</section>
+
+<!-- ============ 8 Summary ============ -->
+<section id="s8"><h2><span class="n">8</span>Summary <span class="pill">Written for these notes</span></h2>
+<ul class="list">
+<li><b>Bernoulli</b> \(y'+py=qy^n\) (\(n\) any real, \(n\ne0,1\)): \(u=y^{1-n}\) gives the linear equation \(u'+(1-n)pu=(1-n)q\). For \(n\gt0\), \(y=0\) is an extra solution.</li>
+<li><b>Riccati</b> \(y'=py^2+qy+r\): needs one particular solution \(Y\); \(y=Y+\frac1u\) gives the linear equation \(u'+(2pY+q)u=-p\).</li>
+<li><b>Separable</b> \(y'=X(x)Y(y)\) (Part O1): separate and integrate. The homogeneous and shift substitutions end here.</li>
+<li><b>Homogeneous function of degree \(N\)</b>: \(g(kx,ky)=k^Ng(x,y)\). Degree 0 means \(g\) depends only on \(\frac yx\).</li>
+<li><b>Homogeneous equation</b> \(y'=G\big(\frac yx\big)\): \(y=wx\) (or \(vx\)), \(y'=w+xw'\), then \(xw'=G(w)-w\) is separable. "Homogeneous" means something else for linear equations (Part O3).</li>
+<li><b>Shift</b> (beyond the handouts): \(y'=f(ax+by+c)\) → \(u=ax+by+c\); a linear-over-linear right side → move the origin to where the two lines meet.</li>
+<li><b>Reduction of order</b>: if \(y_1\) solves a linear equation, \(y=y_1u\) kills the \(u\) term; \(w=u'\) gives an equation of one lower order. For \(y''-2y'+y=0\), \(y_1=e^x\) leads to \(y=(c_1+c_2x)e^x\).</li>
+</ul>
+</section>
+
+<!-- ============ 9 Common mistakes ============ -->
+<section id="s9"><h2><span class="n">9</span>Common mistakes <span class="pill">Written for these notes</span></h2>
+<div class="box"><div class="mistake">
+<span class="x">✗</span><span>Bernoulli: writing \(u'=y^{-n}y'\) and forgetting the factor \((1-n)\). <span class="ok">✓</span> \(u'=(1-n)y^{-n}y'\); e.g. for \(u=y^{-1}\), \(u'=-y^{-2}y'\) (minus sign). Both \(p\) and \(q\) get multiplied by \((1-n)\).</span>
+<span class="x">✗</span><span>Bernoulli: reading \(p\), \(q\), \(n\) before tidying the equation. <span class="ok">✓</span> First make the coefficient of \(y'\) equal to 1 and put the \(y\) term on the left, as for the integrating factor.</span>
+<span class="x">✗</span><span>Using \(u=y^{n-1}\) or \(u=y^n\). <span class="ok">✓</span> The power is \(1-n\); only then does the equation become linear.</span>
+<span class="x">✗</span><span>Dividing by \(y^n\), \(G(w)-w\) or \(Y(y)\) and never mentioning what was divided by zero. <span class="ok">✓</span> Note the lost solutions (\(y=0\); lines \(y=w_0x\); the particular solution \(Y\) of a Riccati equation) when a question asks for all solutions.</span>
+<span class="x">✗</span><span>Homogeneous: writing \(\frac{dy}{dx}=x\frac{dw}{dx}\) or \(\frac{dy}{dx}=w\). <span class="ok">✓</span> Product rule: \(\frac{dy}{dx}=w+x\frac{dw}{dx}\).</span>
+<span class="x">✗</span><span>Calling an equation homogeneous because each function is a polynomial. <span class="ok">✓</span> Test \(g(kx,ky)=g(x,y)\); e.g. \(\frac{x^2+y^3}{x^2}\) fails.</span>
+<span class="x">✗</span><span>Leaving the answer in \(w\) or \(u\). <span class="ok">✓</span> Substitute back (\(w=\frac yx\), \(u=y^{1-n}\), …) and give \(y\) (explicitly if easy, otherwise as an equation in \(x\) and \(y\)).</span>
+<span class="x">✗</span><span>Riccati: \(\frac{d}{dx}\big(\frac1u\big)=\frac1{u'}\). <span class="ok">✓</span> \(\frac{d}{dx}\big(\frac1u\big)=-\frac{u'}{u^2}\) (chain rule).</span>
+<span class="x">✗</span><span>Shift: \(u=y-x\) but \(u'=y'\). <span class="ok">✓</span> \(u'=y'-1\).</span>
+<span class="x">✗</span><span>Reduction of order: giving only \(y_2\), or only \(u\). <span class="ok">✓</span> The answer is \(y=y_1u=c_1y_1+c_2y_2\), with two constants.</span>
+<span class="x">✗</span><span>Mixing up the two meanings of "homogeneous". <span class="ok">✓</span> First order with \(\frac yx\): use \(y=vx\). Linear with zero right side: Part O3 methods.</span>
+</div></div>
+</section>
+
+<!-- ============ 10 Find the mistake ============ -->
+<section id="s10"><h2><span class="n">10</span>Find the mistake <span class="pill">Written for these notes</span></h2>
+<p>Each piece of student work below contains one error. Find it before opening the answer.</p>
+
+<div class="q"><p class="qh">A. Solve \(\dfrac{dy}{dx}+2y=e^xy^2\).</p>
+<div class="handwork">
+<p>Bernoulli with \(n=2\): let \(u=y^{-1}\), so \(\dfrac{du}{dx}=y^{-2}\dfrac{dy}{dx}\).</p>
+<p>Divide by \(y^2\): \(y^{-2}y'+2y^{-1}=e^x\), so \(u'+2u=e^x\).</p>
+<p>Integrating factor \(e^{2x}\): \((e^{2x}u)'=e^{3x}\), so \(e^{2x}u=\frac13e^{3x}+C\).</p>
+\[ u=\tfrac13e^x+Ce^{-2x},\qquad y=\frac{1}{\frac13e^x+Ce^{-2x}}. \]
+</div>
+<details><summary>Hint</summary><div><p>Differentiate \(u=y^{-1}\) again carefully with the chain rule.</p></div></details>
+<details><summary>Answer</summary><div><p>The first line is wrong: \(\frac{du}{dx}=-y^{-2}\frac{dy}{dx}\) (the factor \(1-n=-1\) is missing). The correct linear equation is \(-u'+2u=e^x\), i.e. \(u'-2u=-e^x\). With integrating factor \(e^{-2x}\): \((e^{-2x}u)'=-e^{-x}\), \(e^{-2x}u=e^{-x}+C\), \(u=e^x+Ce^{2x}\):</p>
+\[ y=\frac{1}{e^x+Ce^{2x}}\quad(\text{and } y=0). \]
+<p>Substituting the student's answer back into the equation does not give an identity, which is a quick way to catch such errors.</p></div></details></div>
+
+<div class="q"><p class="qh">B. Solve \(x^2\dfrac{dy}{dx}=y^2+2xy\).</p>
+<div class="handwork">
+<p>Homogeneous: \(\dfrac{dy}{dx}=w^2+2w\) where \(w=\frac yx\). Let \(y=wx\), so \(x\dfrac{dw}{dx}=w^2+2w\).</p>
+\[ \int\frac{dw}{w(w+2)}=\int\frac{dx}{x} \]
+\[ \tfrac12\ln\left|\frac{w}{w+2}\right|=\ln|x|+C \]
+\[ \frac{w}{w+2}=Kx^2\;\Rightarrow\; y=\frac{2Kx^3}{1-Kx^2}. \]
+</div>
+<details><summary>Hint</summary><div><p>What is \(\frac{dy}{dx}\) when \(y=wx\)?</p></div></details>
+<details><summary>Answer</summary><div><p>The student used \(\frac{dy}{dx}=x\frac{dw}{dx}\) and lost the \(+w\). Correctly, \(w+xw'=w^2+2w\), so \(xw'=w^2+w=w(w+1)\). Partial fractions (Lecture 14): \(\frac1{w(w+1)}=\frac1w-\frac1{w+1}\), so \(\ln\left|\frac{w}{w+1}\right|=\ln|x|+C\), \(\frac{w}{w+1}=Kx\), \(w=\frac{Kx}{1-Kx}\):</p>
+\[ y=\frac{Kx^2}{1-Kx}\quad(\text{also } y=-x \text{ from } w=-1). \]
+<p>(\(y=0\) is the case \(K=0\).)</p></div></details></div>
+</section>
+
+<!-- ============ 11 Group work ============ -->
+<section id="s11"><h2><span class="n">11</span>Group work <span class="pill">Written for these notes</span></h2>
+<p>Practice questions, one per method. Try each before opening the hints.</p>
+
+<div class="q"><p class="qh">1. Solve \(x\dfrac{dy}{dx}+y=x^2y^2\) for \(x\gt0\).</p>
+<details><summary>Hint 1</summary><div><p>Divide by \(x\) first: \(y'+\frac1xy=xy^2\). Bernoulli with \(n=2\).</p></div></details>
+<details><summary>Hint 2</summary><div><p>\(u=y^{-1}\) gives \(u'-\frac1xu=-x\). Integrating factor \(\frac1x\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\big(\frac ux\big)'=-1\), so \(\frac ux=-x+C\), \(u=Cx-x^2\):</p>
+\[ y=\frac{1}{Cx-x^2}\quad(\text{and } y=0). \]</div></details></div>
+
+<div class="q"><p class="qh">2. Solve \(\dfrac{dy}{dx}=e^{-x}y^2+y-e^x\), given that \(Y=e^x\) is a particular solution.</p>
+<details><summary>Hint 1</summary><div><p>Riccati with \(p=e^{-x}\), \(q=1\), \(r=-e^x\). Check \(Y\): \(e^{-x}e^{2x}+e^x-e^x=e^x=Y'\).</p></div></details>
+<details><summary>Hint 2</summary><div><p>\(2pY+q=3\), so \(y=e^x+\frac1u\) gives \(u'+3u=-e^{-x}\).</p></div></details>
+<details><summary>Answer</summary><div><p>Integrating factor \(e^{3x}\): \(e^{3x}u=-\frac12e^{2x}+C\), \(u=Ce^{-3x}-\frac12e^{-x}\). Writing \(K=2C\):</p>
+\[ y=e^x+\frac{2e^{3x}}{K-e^{2x}}\quad(\text{and } y=e^x). \]</div></details></div>
+
+<div class="q"><p class="qh">3. Solve \(x\dfrac{dy}{dx}=y+xe^{y/x}\) for \(x\gt0\).</p>
+<details><summary>Hint 1</summary><div><p>Divide by \(x\): \(y'=w+e^w\) with \(w=\frac yx\). Homogeneous.</p></div></details>
+<details><summary>Hint 2</summary><div><p>\(w+xw'=w+e^w\) gives \(xw'=e^w\); separate as \(e^{-w}dw=\frac{dx}{x}\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(-e^{-w}=\ln x+C\), so \(e^{-w}=K-\ln x\) (\(K=-C\)) and \(w=-\ln(K-\ln x)\):</p>
+\[ y=-x\ln(K-\ln x),\qquad 0\lt x\lt e^K. \]</div></details></div>
+
+<div class="q"><p class="qh">4. Given that \(y_1=x\) solves \(x^2y''+xy'-y=0\) (\(x\gt0\)), use reduction of order to find the general solution.</p>
+<details><summary>Hint 1</summary><div><p>Put \(y=xu\): \(y'=u+xu'\), \(y''=2u'+xu''\).</p></div></details>
+<details><summary>Hint 2</summary><div><p>The equation becomes \(x^3u''+3x^2u'=0\); with \(w=u'\), \(xw'+3w=0\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(w=cx^{-3}\), \(u=-\frac{c}{2x^2}+c_1\), so</p>
+\[ y=c_1x+\frac{c_2}{x}. \]</div></details></div>
+</section>
+
+<!-- ============ 12 Concept checks ============ -->
+<section id="s12"><h2><span class="n">12</span>Concept checks <span class="pill">Written for these notes</span></h2>
+
+<div class="q"><p class="qh">1. Is \(\dfrac{dy}{dx}=\dfrac{x^3+y^3}{xy^2}\) a homogeneous equation? If so, what is \(G(w)\)?</p>
+<details><summary>Answer</summary><div><p>Yes: top and bottom are both degree 3, so the quotient is degree 0. Dividing top and bottom by \(x^3\): \(G(w)=\dfrac{1+w^3}{w^2}\).</p></div></details></div>
+
+<div class="q"><p class="qh">2. Which substitution turns \(\dfrac{dy}{dx}-\dfrac yx=x\,y^{1/3}\) into a linear equation? What is that linear equation?</p>
+<details><summary>Answer</summary><div><p>Bernoulli with \(n=\frac13\): \(u=y^{2/3}\). Since \(1-n=\frac23\): \(u'-\frac{2}{3x}u=\frac23x\).</p></div></details></div>
+
+<div class="q"><p class="qh">3. A Riccati equation has \(r(x)=0\). Which other type is it, and which particular solution is then obvious?</p>
+<details><summary>Answer</summary><div><p>It is \(y'-qy=py^2\): a Bernoulli equation with \(n=2\). The obvious particular solution is \(Y=0\), and then \(y=0+\frac1u\) is exactly the Bernoulli substitution \(u=y^{-1}\).</p></div></details></div>
+
+<div class="q"><p class="qh">4. Which substitution would you try for \(\dfrac{dy}{dx}=\sin(x-y)\)? What equation does it give?</p>
+<details><summary>Answer</summary><div><p>\(u=x-y\). Then \(u'=1-y'=1-\sin u\): separable.</p></div></details></div>
+
+<div class="q"><p class="qh">5. Is \(g(x,y)=\sqrt{x^2+y^2}\) homogeneous? Of what degree?</p>
+<details><summary>Answer</summary><div><p>Yes, of degree 1 for positive scale factors: \(\sqrt{k^2x^2+k^2y^2}=k\sqrt{x^2+y^2}\) when \(k\gt0\) (for \(k\lt0\) you get \(|k|\)). The definition is usually read with \(k\gt0\).</p></div></details></div>
+
+<div class="q"><p class="qh">6. \(y_1=e^{3x}\) solves \(y''-6y'+9y=0\). Without calculation, what does reduction of order give as a second solution, and why is the "no \(u\) term" property guaranteed?</p>
+<details><summary>Answer</summary><div><p>\(y_2=xe^{3x}\) (same pattern as slide 9: the characteristic equation \((m-3)^2=0\) has a repeated root). The coefficient of \(u\) is \(y_1''-6y_1'+9y_1\), which is zero precisely because \(y_1\) is a solution.</p></div></details></div>
+</section>
+
+<!-- ============ Exam taster ============ -->
+<section id="pastpaper"><h2><span class="n">13</span>Exam taster</h2>
+<p>A few real past-paper questions, about one for each main question type in this part, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
+<p style="font-size:.92rem;color:var(--muted)">Part O2's question types appear 19 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide.</p>
+
+<div class="q"><p class="src"><b>May 2026 Q7(a)</b><span>Q7 total 10 pts</span><a class="guide" data-guide="O2.2">Guide · O2.2 Bernoulli</a></p>
+<p class="qh">Solve the differential equation:</p>
+\[ x^2\frac{dy}{dx}=(x^3+x^2e^x)\,y^2+xy \]
+<details><summary>Hint</summary><div><p>Bernoulli. Divide by \(x^2\) and move the \(y\) term left: \(y'-\frac1xy=(x+e^x)y^2\), so \(n=2\). Put \(u=y^{-1}\): the linear equation is \(u'+\frac1xu=-(x+e^x)\), integrating factor \(x\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=\frac{x}{C-\frac{x^3}{3}-(x-1)e^x}\quad(\text{and } y=0) \]
+<p>Equivalently \(\frac xy=C-\frac{x^3}{3}-(x-1)e^x\).</p>
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2023 Q6(b)</b><span>5%</span><a class="guide" data-guide="O2.1">Guide · O2.1 Homogeneous (y = vx)</a></p>
+<p class="qh">Solve the differential equation:</p>
+\[ (x^2+2y^2)\,dx-2xy\,dy=0\qquad(x\gt0) \]
+<details><summary>Hint</summary><div><p>Homogeneous: \(\frac{dy}{dx}=\frac{x^2+2y^2}{2xy}\) is degree 2 over degree 2. Put \(y=vx\): \(v+xv'=\frac{1+2v^2}{2v}\), so \(xv'=\frac1{2v}\), which is separable.</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y^2=x^2(\ln x+C) \]
+<p>Equivalently \(y=\pm x\sqrt{\ln x+C}\).</p>
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2022 Q6(b)</b><span>5%</span><a class="guide" data-guide="O2.3">Guide · O2.3 Riccati</a></p>
+<p class="qh">Solve the Riccati's equation: (Hint: use a substitution of \(y=-\frac1x+\frac1u\).)</p>
+\[ \frac{dy}{dx}=-y^2+\frac{2}{x^2} \]
+<details><summary>Hint</summary><div><p>First check that \(Y=-\frac1x\) is a solution. Then \(p=-1\), \(q=0\), so \(2pY+q=\frac2x\) and the linear equation is \(u'+\frac2xu=1\); integrating factor \(x^2\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=-\frac1x+\frac{3x^2}{x^3+K}\quad(\text{and } y=-\tfrac1x) \]
+<p>Equivalently \(u=\frac x3+\frac{C}{x^2}\), or \(y=\dfrac{2x^3-K}{x(x^3+K)}\).</p>
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2025 Q6(b)</b><span>Q6 total 10%</span><a class="guide" data-guide="O2.4">Guide · O2.4 Shift substitution</a></p>
+<p class="qh">Solve the differential equation</p>
+\[ \frac{dy}{dx}=y^2-2xy+x^2+1. \]
+<details><summary>Hint</summary><div><p>The right side is \((y-x)^2+1\). Put \(u=y-x\); then \(u'=y'-1=u^2\), which is separable.</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=x-\frac{1}{x+C}\quad(\text{and } y=x) \]
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2017 Q7(b)</b><span>Q7 total 10%</span><span class="older">older format</span><a class="guide" data-guide="O2.5">Guide · O2.5 Reduction of order</a></p>
+<p class="qh">Observe that \(y_1=x\) is one solution to the differential equation</p>
+\[ x^2y''+x(x-2)y'-(x-2)y=0. \]
+<p class="qh">Find the general solution using the method of reduction of order. (Hint: you may consider to attempt \(y_2=c(x)y_1\) to get another independent solution.)</p>
+<details><summary>Hint</summary><div><p>Put \(y=x\,c(x)\): \(y'=c+xc'\), \(y''=2c'+xc''\). The \(c\) terms cancel and you get \(x^3c''+x^3c'=0\), i.e. \(c''+c'=0\). Let \(w=c'\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=c_1x+c_2xe^{-x} \]
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+</section>
+</main>
+</div>
+<script>
+(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const PI=Math.PI;
+const $=id=>document.getElementById(id);
+
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+const piTicks=(lo,hi)=>{const out=[];const L={'-4':'−2π','-3':'−3π/2','-2':'−π','-1':'−π/2','0':'0','1':'π/2','2':'π','3':'3π/2','4':'2π','5':'5π/2'};for(let k=Math.ceil(lo/(PI/2));k<=Math.floor(hi/(PI/2));k++)out.push([k*PI/2,L[k]||'']);return out;};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+
+/* slope-field helper: returns segs for plot() */
+function field(fn,o,step,len,color){
+  const out=[];
+  for(let x=Math.ceil(o.xmin/step)*step+step/2;x<o.xmax;x+=step){
+    for(let y=Math.ceil(o.ymin/step)*step+step/2;y<o.ymax;y+=step){
+      const s=fn(x,y); if(isNaN(s))continue;
+      let dx,dy; if(!isFinite(s)){dx=0;dy=len/2;} else {const n=Math.sqrt(1+s*s);dx=len/2/n;dy=s*len/2/n;}
+      out.push({x1:x-dx,y1:y-dy,x2:x+dx,y2:y+dy,color:color,width:1.2});
+    }
+  }
+  return out;
+}
+function seg1(x,y,s,len,color,w){let dx,dy;if(!isFinite(s)){dx=0;dy=len/2;}else{const n=Math.sqrt(1+s*s);dx=len/2/n;dy=s*len/2/n;}return {x1:x-dx,y1:y-dy,x2:x+dx,y2:y+dy,color:color,width:w||3};}
+
+/* Figure 1: Bernoulli family */
+function drawBern(){
+  const C=+$('fbern-c').value, mu=css('--muted');
+  const curves=[-2,-0.5,0.5,2,6].map(c=>({f:x=>1/(1+c*Math.exp(x)),color:mu,width:1.2,alpha:.55}));
+  curves.push({f:x=>1,color:css('--c3'),width:1.8,dash:[6,4]});
+  curves.push({f:x=>0,color:css('--c2'),width:2,dash:[6,4]});
+  curves.push({f:x=>1/(1+C*Math.exp(x)),color:css('--accent'),width:2.8});
+  const pts=[];
+  if(Math.abs(1+C)>1e-9){const y0=1/(1+C); if(y0>-2&&y0<3)pts.push({x:0,y:y0,color:css('--accent')});}
+  plot($('fbern'),{xmin:-4,xmax:4,ymin:-2,ymax:3,xstep:1,ystep:1,curves,pts});
+  let s='C = <b>'+fmt(C,2)+'</b> &nbsp; y = 1/(1 + '+fmt(C,2)+'eˣ)';
+  if(Math.abs(1+C)<1e-9) s+=' &nbsp; y(0) undefined (asymptote at x = 0)'; else s+=' &nbsp; y(0) = <b>'+fmt(1/(1+C),3)+'</b>';
+  if(C<0) s+=' &nbsp; vertical asymptote at x = ln(−1/C) = <b>'+fmt(Math.log(-1/C),3)+'</b>';
+  if(C===0) s+=' &nbsp; (this is the constant solution y = 1)';
+  $('fbern-out').innerHTML=s;
+}
+$('fbern-c').addEventListener('input',drawBern); redraws.push(drawBern);
+
+/* Figure 2: rays */
+const RAYF={
+  a:{g:(x,y)=>(x*x+3*x*y+y*y)/(x*x),G:m=>1+3*m+m*m,txt:'G(w) = 1 + 3w + w²'},
+  b:{g:(x,y)=>(x+y)/(x-y),G:m=>(1+m)/(1-m),txt:'G(w) = (1 + w)/(1 − w)'},
+  n:{g:(x,y)=>x*x+y*y*y,G:null,txt:''}
+};
+function drawRay(){
+  const k=$('fray-s').value, F=RAYF[k], ang=+$('fray-a').value*PI/180, m=Math.tan(ang);
+  const o={xmin:-4,xmax:4,ymin:-2.5,ymax:2.5,xstep:1,ystep:1};
+  const segs=field(F.g,o,0.5,0.32,css('--axis'));
+  const ac=css('--accent');
+  segs.push({x1:-6*Math.cos(ang),y1:-6*Math.sin(ang),x2:6*Math.cos(ang),y2:6*Math.sin(ang),color:css('--c4'),width:1.2,dash:[5,4]});
+  const slopes=[];
+  for(let t=-4.2;t<=4.21;t+=0.7){ if(Math.abs(t)<0.3)continue; const x=t*Math.cos(ang), y=t*Math.sin(ang); if(Math.abs(x)>3.9||Math.abs(y)>2.4)continue; const s=F.g(x,y); slopes.push(s); segs.push(seg1(x,y,s,0.5,ac,3)); }
+  plot($('fray'),Object.assign(o,{segs,pts:[{x:0,y:0,color:css('--ink'),r:3}]}));
+  let out='line y = <b>'+fmt(m,3)+'</b>·x (angle '+$('fray-a').value+'°)';
+  if(F.G){ out+=' &nbsp; w = y/x = '+fmt(m,3)+' &nbsp; '+F.txt+' = <b>'+fmt(F.G(m),3)+'</b> at every point of the line'; }
+  else { const fin=slopes.filter(isFinite); out+=' &nbsp; slopes on the line range from <b>'+fmt(Math.min(...fin),2)+'</b> to <b>'+fmt(Math.max(...fin),2)+'</b>: not constant, so not homogeneous'; }
+  $('fray-out').innerHTML=out;
+}
+$('fray-s').addEventListener('input',drawRay); $('fray-a').addEventListener('input',drawRay); redraws.push(drawRay);
+
+/* Figure 3: spirals */
+function drawSpi(){
+  const h=$('fspi-s').value==='h'?1:0, K=+$('fspi-k').value;
+  const o={xmin:-4+h,xmax:4+h,ymin:-2.5+h,ymax:2.5+h,xstep:1,ystep:1};
+  const g=h?(x,y)=>(x+y-2)/(x-y):(x,y)=>(x+y)/(x-y);
+  const segs=field(g,o,0.5,0.3,css('--axis'));
+  const ac=css('--accent'); let px=null,py=null;
+  for(let th=-12;th<=2.6;th+=0.02){const r=K*Math.exp(th), x=h+r*Math.cos(th), y=h+r*Math.sin(th); if(px!==null)segs.push({x1:px,y1:py,x2:x,y2:y,color:ac,width:2.6}); px=x;py=y;}
+  const pts=[{x:h,y:h,color:css('--ink'),r:3},{x:h+K,y:h,color:css('--c2'),label:'θ = 0'}];
+  plot($('fspi'),Object.assign(o,{segs,pts}));
+  $('fspi-out').innerHTML='centre ('+h+', '+h+') &nbsp; r = <b>'+fmt(K,2)+'</b>·e<sup>θ</sup> &nbsp; ln r − θ = ln K = <b>'+fmt(Math.log(K),3)+'</b> &nbsp; crosses the horizontal through the centre at x = '+fmt(h+K,2)+' (θ = 0) and x = '+fmt(h-K*Math.exp(-PI),3)+' (θ = −π)';
+}
+$('fspi-s').addEventListener('input',drawSpi); $('fspi-k').addEventListener('input',drawSpi); redraws.push(drawSpi);
+
+/* Figure 4: shift family */
+function drawShift(){
+  const C=+$('fshift-c').value, mu=css('--muted');
+  const curves=[-1.2,-0.6,0.6,1.2].map(c=>({f:x=>Math.tan(x+c)-x,color:mu,width:1.2,alpha:.55,n:1400}));
+  curves.push({f:x=>Math.tan(x+C)-x,color:css('--accent'),width:2.8,n:1400});
+  plot($('fshift'),{xmin:-3,xmax:3,ymin:-6,ymax:6,xstep:1,ystep:2,curves,pts:[{x:0,y:Math.tan(C),color:css('--accent')}]});
+  const a=PI/2-C; let as=[]; for(let n=-2;n<=2;n++){const v=a+n*PI; if(v>-3&&v<3)as.push(fmt(v,2));}
+  $('fshift-out').innerHTML='C = <b>'+fmt(C,2)+'</b> &nbsp; y(0) = tan C = <b>'+fmt(Math.tan(C),3)+'</b> &nbsp; asymptotes in view at x = '+as.join(', ');
+}
+$('fshift-c').addEventListener('input',drawShift); redraws.push(drawShift);
+
+/* Figure 5: reduction of order */
+function drawRed(){
+  const a=+$('fred-a').value, b=+$('fred-b').value;
+  plot($('fred'),{xmin:-4,xmax:2,ymin:-6,ymax:8,xstep:1,ystep:2,curves:[
+    {f:x=>Math.exp(x),color:css('--c3'),width:1.8,dash:[6,4]},
+    {f:x=>x*Math.exp(x),color:css('--c4'),width:1.8,dash:[6,4]},
+    {f:x=>(a+b*x)*Math.exp(x),color:css('--accent'),width:2.8}],
+    pts:[{x:0,y:a,color:css('--accent')}]});
+  let s='c₁ = <b>'+fmt(a,2)+'</b>, c₂ = <b>'+fmt(b,2)+'</b> &nbsp; y(0) = c₁ = <b>'+fmt(a,2)+'</b> &nbsp; y′(0) = c₁ + c₂ = <b>'+fmt(a+b,2)+'</b>';
+  if(Math.abs(b)>1e-9) s+=' &nbsp; crosses zero at x = −c₁/c₂ = <b>'+fmt(-a/b,3)+'</b>'; else s+=' &nbsp; (just a multiple of eˣ: never zero unless c₁ = 0)';
+  $('fred-out').innerHTML=s;
+}
+$('fred-a').addEventListener('input',drawRed); $('fred-b').addEventListener('input',drawRed); redraws.push(drawRed);
+
+const all=()=>redraws.forEach(f=>{try{f();}catch(e){}});
+all();
+let t; window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(all,120);});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);}catch(e){}
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+<script>
+/* MATH1851 bundle links: fills hrefs for a.note[data-note] and a.guide[data-guide], links "Lx guide" mentions, adds an index link on guide pages. */
+(function(){
+var B="",N={"L1": "note-L1.html", "L2": "note-L2.html", "L3": "note-L3.html", "L4": "note-L4.html", "L5": "note-L5.html", "L6": "note-L6.html", "L7": "note-L7.html", "L8": "note-L8.html", "L9": "note-L9.html", "L10": "note-L10.html", "L11": "note-L11.html", "L12": "note-L12.html", "L13": "note-L13.html", "L14": "note-L14.html", "L15": "note-L15.html", "L16": "note-L16.html", "L17": "note-L17.html", "O1": "note-O1.html", "O2": "note-O2.html", "O3": "note-O3.html", "O4": "note-O4.html", "LT": "note-LT.html"},G={"L1": "guide-L1.html", "L2": "guide-L2.html", "L3": "guide-L3.html", "L4": "guide-L4.html", "L5": "guide-L5.html", "L6": "guide-L6.html", "L7": "guide-L7.html", "L8": "guide-L8.html", "L9": "guide-L9.html", "L10": "guide-L10.html", "L12": "guide-L12.html", "L13": "guide-L13.html", "L14": "guide-L14.html", "L15": "guide-L15.html", "L16": "guide-L16.html", "L17": "guide-L17.html", "O1": "guide-O1.html", "O2": "guide-O2.html", "O3": "guide-O3.html", "O4": "guide-O4.html", "LT": "guide-LT.html"},M={"LT#forward|forward transforms and shifts": "LT#s4", "LT#partial-fractions|partial fractions": "LT#s10", "LT#second-shift|second shift and the step function": "LT#s5", "LT#repeated-factors|repeated factors and the first shift": "LT#s10", "LT#convolution|convolution": "LT#s6", "LT#s5|solving ODEs by Laplace": "LT#s12", "LT#s6|convolution and integral equations": "LT#s11", "L1#s4|limit laws": "L1#s5", "L1#s5|direct substitution": "L1#s6", "L1#s6|removing the 0/0 by algebra": "L1#s7", "L1#s7|one-sided limits": "L1#s3", "L1#s8|absolute values and piecewise functions": "L1#s3", "L2#s2|the Sandwich Theorem": "L2#s1", "L2#s3|x sin(1/x) and other examples": "L2#s2", "L2#s4|the limit sin x / x": "L2#s3", "L1#s5|one-sided limits": "L1#s3", "L3#s2|infinite limits": "L3#s1", "L3#s3|limits at infinity": "L3#s2", "L1#s6|conjugates": "L1#s7", "L3#s4|asymptotes": "L3#s5", "L9#s3|asymptotes in curve sketching": "L9#s8", "L4#s2|continuity at a point": "L4#s1", "L4#s4|continuity of combinations": "L4#s5", "L4#s3|one-sided limits and continuity": "L4#s1", "L4#s5|limits of composite functions": "L4#s7", "L4#s6|types of discontinuity": "L4#s3", "L4#s7|the Intermediate Value Theorem": "L4#s8", "L5#s2|definition of the derivative": "L5#s3", "L5#s3|one-sided derivatives": "L5#s5", "L5#s4|differentiable implies continuous": "L5#s6", "L6#s2|product and quotient rules": "L6#s2", "L6#s4|chain rule": "L6#s5", "L6#s5|implicit differentiation": "L6#s6", "L6#s6|tangent lines": "L5#s2", "L7#s5|logarithmic differentiation": "L7#s4", "L7#s4|derivatives of ln and exp": "L7#s3", "L7#s4|derivatives of exp, ln and aˣ": "L7#s3", "L7#s6|derivatives of inverse trig functions": "L7#s6", "L7#s2|derivative of an inverse function": "L7#s2", "L7#s1|one-to-one functions and inverses": "L7#s1", "L7#s5|graphs and limits of eˣ and ln x": "L7#s3", "L4#s2|continuity of composite functions": "L4#s6", "L8#s2|absolute extrema and the Extreme Value Theorem": "L8#s3", "L8#s3|critical points": "L8#s4", "L8#s4|Rolle's Theorem": "L8#s6", "L8#s5|the Mean Value Theorem": "L8#s7", "L8#s6|counting roots with Rolle's Theorem": "L8#s9", "L4#s5|the Intermediate Value Theorem": "L4#s8", "L8#s7|consequences of the MVT": "L8#s8", "L9#s2|increasing, decreasing and the first derivative test": "L9#s2", "L9#s3|concavity and inflection points": "L9#s7", "L9#s5|curve sketching checklist": "L9#s8", "L9#s2|sign of f′ and monotonicity": "L9#s1", "L9#s3|concavity from f′": "L9#s4", "L12#s4|area functions": "L12#s7", "L9#s5|curve sketching from f′ and f″": "L9#s9", "L9#s6|applied optimisation": "L9#s3", "L8#s2|absolute extrema on an interval": "L8#s5", "L9#s3|what f′ and f″ say about a graph": "L9#s4", "L10#s3|L'Hôpital's Rule": "L10#s3", "L10#s2|classifying forms": "L10#s2", "L10#s4|∞ − ∞ forms": "L10#s5", "L10#s5|0 · ∞ forms": "L10#s5", "L10#s6|indeterminate powers": "L10#s6", "L10#s7|L'Hôpital with an unknown function": "L10#s3", "L10#s8|L'Hôpital at a join": "L10#s3", "L4#s2|continuity": "L4#s1", "L5#s2|derivative by definition": "L5#s3", "L12#s4|FTC Part I": "L12#s7", "L6#s5|chain rule": "L6#s5", "L12#s2|Riemann sums and the definite integral": "L12#s1", "L11#s5|sigma notation and area": "L11#s6", "L12#s5|the area function": "L12#s7", "L12#s4|the Fundamental Theorem of Calculus": "L12#s7", "L12#s6|average value": "L12#s6", "L13#s2|substitution": "L13#s2", "L13#s3|substitution in definite integrals": "L13#s5", "L13#s4|integration by parts": "L13#s7", "L13#s5|repeated parts, ln and inverse trig": "L13#s8", "L13#s6|by parts with an unknown function": "L13#s7", "L13#s7|reduction formulas": "L13#s8", "L13#s8|the x → a − x substitution": "L13#s5", "L14#s2|partial fractions": "L14#s5", "L14#s3|repeated and quadratic factors": "L14#s5", "L14#s4|trig integrals": "L14#s3", "L14#s5|trig substitution": "L14#s4", "L15#s2|parametric curves": "L15#s1", "L15#s3|slope of a parametric curve": "L15#s3", "L15#s4|polar coordinates": "L15#s5", "L15#s5|sketching polar curves and symmetry": "L15#s7", "L15#s6|slope of a polar curve": "L15#s8", "L16#s1|area between curves": "L16#s1", "L16#s2|discs and washers": "L16#s4", "L16#s3|cylindrical shells": "L16#s5", "L16#s4|choosing discs or shells": "L16#s6", "L16#s5|volume by slicing": "L16#s3", "L17#s2|arc length": "L17#s2", "L17#s3|parametric and polar length": "L17#s3", "L14#s4|trig substitution": "L14#s4", "L17#s4|surface area": "L17#s6", "L16#s3|solids of revolution": "L16#s4", "O1#separable|separable equations": "O1#s6", "O1#linear|linear equations and the integrating factor": "O1#s5", "O1#exact|exact equations": "O1#s8", "O2#homogeneous|homogeneous equations": "O2#s5", "O2#bernoulli|Bernoulli equations": "O2#s1", "O2#riccati|Riccati equations": "O2#s2", "O2#shift|shift substitution": "O2#s6", "O2#reduction|reduction of order": "O2#s7", "O3#roots|root cases": "O3#s4", "O3#constant|constant coefficients": "O3#s3", "O3#higher|higher-order equations": "O3#s7", "O3#euler|Cauchy–Euler": "O3#s10", "O4#s2|undetermined coefficients": "O4#s2", "O4#s3|when the trial clashes": "O4#s3", "O4#s4|initial value problems": "O4#s4", "O4#variation-of-parameters|variation of parameters": "O4#s6", "O4#vop-cauchy-euler|VoP for Cauchy–Euler": "O4#s7", "O3#cauchy-euler|Cauchy–Euler homogeneous": "O3#s10", "O4#d-operator|D-operator method": "O4#s5"},IDX="index.html#part2";
+function ext(a,u){a.href=u;}
+function go(){
+  var h=document.querySelector("nav.toc .h"),m0=h&&/Exam guide\s*·\s*([A-Z0-9]+)/i.exec(h.textContent),self=m0?m0[1].toUpperCase():null,isGuide=!!(h&&/Exam guide/i.test(h.textContent));
+  document.querySelectorAll("a.note[data-note]").forEach(function(a){
+    var k=a.getAttribute("data-note"),t=a.textContent.replace(/\s+/g," ").replace(/^\s*Chapter note\s*·?\s*/,"").trim();
+    var v=M[k+"|"+t]||k,p=v.split("#"),c=p[0];
+    if(!N[c])return;
+    ext(a,B+N[c]+(p[1]&&p[1]!=="top"?"#"+p[1]:""));
+  });
+  document.querySelectorAll("a.guide[data-guide]").forEach(function(a){
+    var g=a.getAttribute("data-guide"),h=g.indexOf("#")>=0,c=h?g.split("#")[0]:g.split(".")[0],f=h?g.split("#")[1]:g.replace(".","");
+    if(!G[c])return;
+    ext(a,B+G[c]+"#"+f);
+  });
+  if(!isGuide)return;
+  var main=document.querySelector("main");
+  if(!main)return;
+  var top=main.querySelector("header.top");
+  if(top&&IDX&&self!=="INDEX"){var p=document.createElement("p");p.className="muted";var a=document.createElement("a");ext(a,B+IDX);a.textContent="← All exam-guide pages and the exam format";p.appendChild(a);top.appendChild(p);}
+  var re=/\b(L1[0-7]|L[1-9]|O[1-4]|LT) guide\b/g,skip={A:1,SCRIPT:1,STYLE:1,H1:1,H2:1,CODE:1,"MJX-CONTAINER":1,SUMMARY:1};
+  var w=document.createTreeWalker(main,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    for(var e=n.parentNode;e&&e!==main;e=e.parentNode){if(skip[e.nodeName])return NodeFilter.FILTER_REJECT;}
+    re.lastIndex=0;return re.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP;}});
+  var list=[],n;while((n=w.nextNode()))list.push(n);
+  list.forEach(function(n){
+    var s=n.nodeValue,f=document.createDocumentFragment(),last=0,m;re.lastIndex=0;
+    while((m=re.exec(s))){
+      var c=m[1];if(c===self||!G[c])continue;
+      f.appendChild(document.createTextNode(s.slice(last,m.index)));
+      var a=document.createElement("a");ext(a,B+G[c]);a.textContent=m[0];f.appendChild(a);last=m.index+m[0].length;
+    }
+    if(last===0)return;
+    f.appendChild(document.createTextNode(s.slice(last)));n.parentNode.replaceChild(f,n);
+  });
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
+})();
+</script>
+</html>

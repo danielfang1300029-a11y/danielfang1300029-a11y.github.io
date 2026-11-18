@@ -1,0 +1,874 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH2413 D3 · Dynamics of Rockets</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH2413 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Dynamics · D3</p>
+  <ol>
+    <li><a href="#s0">0 · Where this sits</a></li>
+    <li><a href="#s1">1 · Newton's law for open systems</a></li>
+    <li><a href="#s2">2 · The rocket equation at a glance</a></li>
+    <li><a href="#s3">3 · Deriving it: one small puff</a></li>
+    <li><a href="#s4">4 · Thrust and the integrated equation</a></li>
+    <li><a href="#s5">5 · True or false?</a></li>
+    <li><a href="#s6">6 · Saturn V worked example</a></li>
+    <li><a href="#s7">7 · Varying mass beyond rockets</a></li>
+    <li><a href="#s8">8 · Fuels and exhaust speed</a></li>
+    <li><a href="#s9">9 · Multi-stage rockets</a></li>
+    <li><a href="#s10">10 · Orbits (not examined)</a></li>
+    <li><a href="#s11">11 · Summary</a></li>
+    <li><a href="#s12">12 · Common mistakes</a></li>
+    <li><a href="#s13">13 · Find the mistake</a></li>
+    <li><a href="#s14">14 · Concept checks</a></li>
+    <li><a href="#s15">15 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-D3.html">Exam guide · D3</a><a href="note-D2.html">← D2</a><a href="note-C1.html">Next: C1 →</a></nav>
+  <span class="course">MECH2413 · Engineering Mechanics · Dynamics chapter 3</span>
+  <h1>Dynamics of Rockets</h1>
+  <p class="lede">Every slide of the Dynamics chapter 3 handout (slides 79–96) explained from scratch: Newton's second law in momentum form for a body that loses mass, the derivation of the Tsiolkovsky rocket equation, thrust, burnout speed with and without gravity, varying-mass problems beyond rockets, rocket fuels, and why real rockets have several stages. Orbits appear only as background: they were removed from the syllabus for 2026/27. The exam taster at the end uses real past-paper parts that are still examinable.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>In <a href="note-D1.html">D1</a> you used Newton's second law \(F=ma\) for a particle whose mass never changes. A rocket breaks that assumption: it throws away most of its own mass (as hot exhaust gas) while it flies, and that throwing-away is exactly what pushes it forward. This chapter shows how to apply Newton's law correctly to such a body and what the result means for rocket design.</p>
+<p>The opening slides set the scene. Slide 80 ("Rockets: how?") shows three launches: a Chinese Long March rocket beside its launch tower, a SpaceX Falcon 9, and a third rocket climbing on its exhaust plume. Slide 81 ("Rocket development") shows the family tree of U.S. rockets since the 1950s and a chart of the cost of putting 1 kg into low Earth orbit: on a logarithmic scale it falls from tens of thousands of dollars per kilogram (Space Shuttle era) towards a few hundred (Falcon Heavy, Starship), with a projected continuing fall. Slide 82 ("Space age is coming back?") is a bar chart of orbital launch attempts per year by country since 1957: a peak of about 120–140 a year in the Soviet era, a dip to about 50–60 around 2000–2005, and a sharp rise after 2015 driven by the USA and China, back to more than 140 a year by the early 2020s.</p>
+<div class="box warn"><span class="tag">Syllabus change for 2026/27</span>
+<p>Orbital dynamics (circular, elliptic and escape orbits, orbit transfer) and atmospheric re-entry were <b>removed</b> from the course from 2026/27 (D1 handout, slide 7). This handout keeps only three short slides on satellites (93–95), which are background. Past-paper questions on orbits and re-entry are listed in the exam guide as "no longer examined" and are not used on this page.</p></div>
+<div class="box warn"><span class="tag">Formula sheet</span>
+<p>The Dec 2021–Dec 2024 papers print a Section B formula list (relative velocity, \(I=\int r^2\,\mathrm dm\), orbit formulas), but it does <b>not</b> give the rocket equation or the thrust formula. Older papers (Dec 2016–May 2019) printed \(\Delta V=V_{ex}\ln(M_i/M_f)\) (with \(-gt\) in 2018/19). Learn the equation and its derivation: the derivation alone is a 4–10 mark question on almost every paper.</p></div>
+<div class="box conv"><span class="tag">Sign convention for this chapter</span>
+<ul class="list">
+<li>The rocket moves along a straight line; <b>upward (direction of flight) is positive</b>, as on slide 85.</li>
+<li>\(M(t)\) is the instantaneous mass of the rocket (structure + payload + fuel still on board). It decreases, so \(\dfrac{\mathrm dM}{\mathrm dt}\lt 0\).</li>
+<li>\(\dot m=-\dfrac{\mathrm dM}{\mathrm dt}\gt0\) is the <b>burn rate</b> (fuel mass leaving per second, kg/s). The slides write it \(\mathrm dm/\mathrm dt\), with "\(\mathrm dm/\mathrm dt\) is \(-\mathrm dM/\mathrm dt\)" (slide 86).</li>
+<li>\(v_{ex}\gt0\) is the <b>exhaust speed relative to the rocket</b>, pointing backwards (down). Seen from the ground the exhaust moves at \(v-v_{ex}\).</li>
+<li>\(g\) is taken constant (9.81 m/s² unless a question says otherwise); air drag is ignored unless stated.</li>
+</ul></div>
+<div class="box def"><span class="tag">Definitions · words used throughout</span>
+<ul class="list">
+<li><b>Exhaust (jet) velocity \(v_{ex}\)</b>: how fast the burnt gas leaves the nozzle, measured by someone riding on the rocket.</li>
+<li><b>Thrust \(F_{th}\)</b>: the forward push on the rocket produced by throwing the exhaust backwards (Section 4).</li>
+<li><b>Payload</b>: what the rocket is built to carry (satellite, capsule, crew). <b>Structural mass</b>: tanks, engines, shell.</li>
+<li><b>Burnout</b>: the instant the fuel runs out. The time from ignition to burnout is the <b>burnout time</b> (slide 86).</li>
+<li><b>Mass ratio</b>: initial mass ÷ final mass, \(M_{ini}/M_{fi}\) (some questions give its inverse, final ÷ initial).</li>
+<li><b>Stage</b>: a rocket section with its own tanks and engines that is thrown away once empty (Section 9).</li>
+</ul></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Newton's second law for an open system (slide 83)</h2>
+<p>Newton's second law is usually remembered as \(F=ma\), but Newton stated it in terms of <b>momentum</b> \(m\vb v\) (mass × velocity):</p>
+\[\vb F=\frac{\mathrm d}{\mathrm dt}(m\vb v),\]
+\[\vb I=\int_{t_1}^{t_2}\vb F(t)\,\mathrm dt=(m\vb v)_2-(m\vb v)_1\quad\text{Eq (1)}.\]
+<p class="word"><b>In words:</b> the net external force equals the rate of change of momentum; integrated over a time interval, the <b>impulse</b> \(\vb I\) of the force equals the change of momentum. \(F=ma\) is the special case where \(m\) is constant.</p>
+<div class="box def"><span class="tag">Definition · open system</span>
+<p>An <b>open system</b> is one where part of the mass leaves (or enters) across a boundary, such as exhaust gas leaving a rocket nozzle. Slide 83 warns that Newton's law must then be applied so that it <b>follows all the particles in question</b>: draw the boundary around the rocket <b>and</b> the bit of gas that is about to leave, so that no mass crosses the boundary during the short time you look at (a "control volume" that moves with the mass).</p></div>
+<p class="word"><b>Analogy:</b> sit on a skateboard holding a pile of bricks and throw them backwards one by one. Each throw pushes you forward. If you only "watched" yourself, mass would vanish from your sums; if you include each brick in the system until it has left, momentum book-keeping works.</p>
+<p>Slide 83 lists the forces in chemical rocket engineering. Two <b>external</b> forces act: <b>gravity</b>, which varies with time and distance from Earth, and <b>atmospheric drag</b>. When both are ignored, the momentum of rocket + exhaust is <b>conserved</b>: the push between rocket and gas is internal (action and reaction). The slide adds that interplanetary or interstellar flight will probably need propulsion beyond chemical rockets: nuclear or other ideas (tethers, electrical propulsion, anti-matter).</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>The Tsiolkovsky rocket equation at a glance (slide 84)</h2>
+<div class="box thm"><span class="tag">Result · Tsiolkovsky rocket equation</span>
+\[\Delta v=v_{ex}\ln\frac{m_0}{m_f}\]
+<p>\(\Delta v\): change in velocity; \(v_{ex}\) (written \(v_e\) on slide 84): exhaust velocity; \(m_0\): initial mass; \(m_f\): final mass. Valid with no gravity and no drag.</p>
+<p class="word"><b>In words:</b> the speed a rocket can gain equals its exhaust speed times the natural logarithm of how many times heavier it was at the start than at the end.</p></div>
+<p>The equation is named after the Russian scientist <b>Konstantin Tsiolkovsky</b>, who derived it independently and published it in 1903. The right-hand graph on slide 84 turns it round: the mass ratio needed for a given \(\Delta v\) is</p>
+\[\frac{m_0}{m_f}=e^{\Delta v/v_{ex}},\]
+<p class="word"><b>In words:</b> the required mass ratio grows <b>exponentially</b> with the speed you want. \(\Delta v=v_{ex}\) needs a ratio of \(e=2.72\); \(2v_{ex}\) needs 7.39; \(3v_{ex}\) needs 20.1; \(4v_{ex}\) needs about 55 (the curve on slide 84 leaves the top of its graph at 40 just before \(\Delta v/v_{ex}=4\)).</p>
+<div class="figure"><p class="ttl">Try it · the price of speed</p>
+<canvas class="plot" id="cv-ln" style="height:240px"></canvas>
+<div class="ctrl"><label>mass ratio \(m_0/m_f\) <input type="range" id="lnR" min="1" max="40" step="0.5" value="4"></label>
+<label>exhaust speed \(v_{ex}\) (km/s) <input type="range" id="lnV" min="2" max="5" step="0.1" value="2.6"></label></div>
+<div class="readout" id="ln-out"></div>
+<p class="cap">Curve: \(\Delta v/v_{ex}=\ln(m_0/m_f)\) (slide 84 plots the same curve with the axes swapped). Going from ratio 4 to 8 adds only \(0.69\,v_{ex}\); raising \(v_{ex}\) scales every speed directly. Low Earth orbit needs roughly 9–10 km/s once gravity and drag losses are included, which a single stage with \(v_{ex}\approx 3\)–4 km/s cannot reach with a useful payload.</p></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Deriving the rocket equation: one small puff of exhaust (slide 85)</h2>
+<p>Consider a rocket of total instantaneous mass \(M(t)\) at time \(t\), moving at speed \(v(t)\) upward against gravity \(g\). Over a small time interval \(\Delta t\), a chunk of exhaust of mass \(\Delta m\) is expelled at velocity \(v_{ex}\) <b>relative to</b> the ascending rocket. Seen by a stationary observer the exhaust moves at \(v-v_{ex}\) upward (a negative number if \(v_{ex}\gt v\), i.e. downward). The remaining rocket, mass \(M-\Delta m\), now moves at \(v+\Delta v\). Both the remaining rocket and the exhaust feel gravity. Air drag is ignored for the moment, and \(g\) is constant over the short \(\Delta t\). Find \(\Delta v\) with the momentum law Eq (1), upward positive.</p>
+<div class="pair">
+<div><div id="fig-cv1"></div><p class="sub">Time \(t\): the system is the whole rocket, mass \(M\), speed \(v\).</p></div>
+<div><div id="fig-cv2"></div><p class="sub">Time \(t+\Delta t\): the same mass, now in two parts (dashed boundary).</p></div>
+</div>
+<p class="muted">Colour key in this chapter: red = force, grey = velocity.</p>
+<ol class="steps">
+<li><b>External force and impulse.</b> The only external force on the system (rocket + chunk) is its weight: \(F=-Mg\), so \(I=\int_0^{\Delta t}F\,\mathrm dt=-Mg\,\Delta t\).</li>
+<li><b>Change of momentum.</b> After minus before:
+\[\begin{aligned}\Delta(mv)&=(M-\Delta m)(v+\Delta v)\\&\quad+\Delta m\,(v-v_{ex})-Mv\\&=(M-\Delta m)\Delta v-\Delta m\,v_{ex}.\end{aligned}\]
+(Expand: the \(Mv\), \(-\Delta m\,v\) and \(+\Delta m\,v\) terms cancel.)</li>
+<li><b>Impulse = change of momentum,</b> then divide by \(\Delta t\):
+\[\begin{aligned}-Mg\,\Delta t&=(M-\Delta m)\Delta v\\&\quad-\Delta m\,v_{ex}\\ \Rightarrow\ (M-\Delta m)\frac{\Delta v}{\Delta t}&=\frac{\Delta m}{\Delta t}v_{ex}\\&\quad-Mg.\end{aligned}\]</li>
+<li><b>Let \(\Delta t\to0\).</b> Every quantity with "\(\Delta\)" tends to zero, so \(M-\Delta m\to M\); but the ratios become derivatives, \(\Delta v/\Delta t\to\mathrm dv/\mathrm dt\) and \(\Delta m/\Delta t\to\mathrm dm/\mathrm dt\). The differential equation of rocket flight is
+\[M\frac{\mathrm dv}{\mathrm dt}=v_{ex}\frac{\mathrm dm}{\mathrm dt}-Mg.\]</li>
+</ol>
+<p class="word"><b>In words:</b> mass × acceleration = (exhaust speed × rate of throwing out mass) − weight. The first term on the right behaves like a forward force, even though nothing outside the rocket is pushing it.</p>
+<div class="box warn"><span class="tag">Watch</span>
+<p>The exhaust's velocity in the momentum sum is the <b>ground-frame</b> velocity \(v-v_{ex}\), not \(-v_{ex}\). Using \(-v_{ex}\) alone gives an extra wrong \(\Delta m\,v\) term. Also note the term \(\Delta m\,\Delta v\) inside \((M-\Delta m)\Delta v\) is a product of two small quantities and drops out in the limit.</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Thrust, and integrating the equation (slide 86)</h2>
+<p>\(\Delta m\) is the <b>reduction</b> of the rocket's mass, so \(\mathrm dm/\mathrm dt=-\mathrm dM/\mathrm dt\). The equation becomes an ODE (ordinary differential equation) in \(M\) and \(v\) only:</p>
+\[M\frac{\mathrm dv}{\mathrm dt}=-v_{ex}\frac{\mathrm dM}{\mathrm dt}-Mg.\]
+<div class="box thm"><span class="tag">Result · thrust force, Eq (2)</span>
+\[F_{th}=-v_{ex}\frac{\mathrm dM}{\mathrm dt}=v_{ex}\,\dot m\]
+<p class="word"><b>In words:</b> thrust = exhaust speed × mass of gas thrown out per second. Unit check: (m/s)(kg/s) = kg·m/s² = N. With it the rocket equation reads like \(F=ma\): \(M\,\mathrm dv/\mathrm dt=F_{th}-Mg\).</p></div>
+<div id="fig-thrust"></div>
+<p class="sub">Free-body diagram of the rocket at any instant: thrust up, weight down, acceleration \(a=\mathrm dv/\mathrm dt\).</p>
+<h3>Integrating (Eq 3 and Eq 4)</h3>
+<p>Divide by \(M\):</p>
+\[\frac{\mathrm dv}{\mathrm dt}=-v_{ex}\frac{\mathrm dM}{M\,\mathrm dt}-g\qquad\text{Eq (3)}.\]
+<p>Integrate from \(0\) to \(t\) (the handwritten note on slide 86 does it with limits: at \(t=0\), \(v=v_i\), \(M=M_i\); at time \(t\), \(v=v_f\), \(M=M_f\)), using \(\mathrm dM/M=\mathrm d\ln M\):</p>
+\[\int_{v_i}^{v_f}\mathrm dv=-v_{ex}\int_{M_i}^{M_f}\frac{\mathrm dM}{M}-g\int_0^t\mathrm dt,\]
+\[v(t)=v_{initial}+v_{ex}\ln\frac{M_{initial}}{M(t)}-gt.\]
+<p class="word"><b>In words:</b> speed now = starting speed + (exhaust speed × log of how much lighter the rocket has become) − (gravity × time spent burning). The last term is the <b>gravity loss</b>.</p>
+<p>When the effect of \(g\) is ignored (in space, or for a very short burn):</p>
+<div class="box thm"><span class="tag">Result · Eq (4)</span>
+\[\frac{v_{final}-v_{initial}}{v_{ex}}=\ln\frac{M_{initial}}{M_{final}}\]
+<p class="word"><b>In words:</b> the velocity gain measured in "exhaust speeds" is the log of the mass ratio. This is the Tsiolkovsky equation of Section 2.</p></div>
+<p>Hereafter subscripts "initial" and "final" are shortened to "ini" and "fi". Slide 86 adds a warning that \(v_{ini}\) is not the same as \(v_0\) of an earlier orbit tutorial (the satellite's speed at perigee); orbits are no longer examined, so simply keep \(v_{ini}\) as "the speed before this burn".</p>
+<div class="box ready"><span class="tag">Ready answer · rocket formulas to write from memory</span>
+\[\begin{aligned}&M\dot v=-v_{ex}\dot M-Mg,\quad F_{th}=-v_{ex}\dot M,\\ &v_{fi}=v_{ini}+v_{ex}\ln\frac{M_{ini}}{M_{fi}}-g\,t_b,\\ &t_b=\frac{\text{fuel mass}}{\dot m},\quad M_{fi}=M_{ini}e^{-\Delta v/v_{ex}}.\end{aligned}\]
+<p class="word"><b>In words:</b> the ODE, the thrust, the burnout speed with the gravity loss \(g\,t_b\), the burnout time, and the final mass for a required \(\Delta v\) (fuel needed = \(M_{ini}-M_{fi}\)).</p></div>
+<h3>Design guidelines (slide 86)</h3>
+<p>To get a high burnout speed \(v_{fi}\):</p>
+<ol class="steps">
+<li><b>Make the exhaust speed \(v_{ex}\) as high as possible.</b> \(v_{fi}\) is proportional to \(v_{ex}\). It is <b>not</b> very effective to push up the logarithmic term instead: doubling the mass ratio adds only \(v_{ex}\ln2=0.69\,v_{ex}\).</li>
+<li><b>Make the final mass as small as possible.</b> So the payload is severely limited: for a high orbit velocity it may be only about \(0.02\,M_{ini}\) (2% of the launch mass). Check: \(\ln(1/0.02)=3.91\), so even then \(\Delta v\approx3.9\,v_{ex}\) at most.</li>
+<li><b>Burn all the fuel quickly</b>, so that the gravity loss \(gt\) is small. The total burning time is the <b>burnout time</b>.</li>
+</ol>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>True or false? (slide 87)</h2>
+<p>Slide 87 asks three questions, with the reference formula \(v_{fi}=v_{ini}+v_{ex}\ln(M_{ini}/M_{fi})-gt\) and a sketch of \(y=\ln x\), which passes through \((1,0)\) and \((e,1)\) and rises ever more slowly.</p>
+<div class="q"><p class="qh">C1 · Burnout time in outer space</p><p>True or false: in outer space, the shorter the burnout time, the higher the maximum speed attainable by a rocket.</p>
+<details><summary>Hint</summary><div><p>Which term in the formula contains \(t\)? What is \(g\) far out in space?</p></div></details>
+<details><summary>Answer</summary><div><p><b>False.</b> Far from any planet \(g\approx0\), so \(v_{fi}=v_{ini}+v_{ex}\ln(M_{ini}/M_{fi})\) does not depend on how fast the fuel is burnt. Burnout time only matters near a planet, where a short burn reduces the gravity loss \(gt\) (design guideline 3).</p></div></details></div>
+<div class="q"><p class="qh">C2 · Payload</p><p>True or false: the smaller the payload, the higher the speed that can be attained by a rocket.</p>
+<details><summary>Answer</summary><div><p><b>True.</b> A smaller payload makes \(M_{fi}\) smaller and the mass ratio larger, so \(\ln(M_{ini}/M_{fi})\) is larger. The gain is only logarithmic, though, and \(M_{fi}\) can never go below the empty structure.</p></div></details></div>
+<div class="q"><p class="qh">C3 · Faster than the exhaust?</p><p>True or false: the speed of a rocket is always greater than the exhaust gas speed \(v_{ex}\).</p>
+<details><summary>Answer</summary><div><p><b>False.</b> Starting from rest with no gravity, \(v=v_{ex}\ln(M_{ini}/M)\), which is less than \(v_{ex}\) until the mass ratio passes \(e=2.72\) (from the \((e,1)\) point on the graph). With ratio 2, \(v=0.69\,v_{ex}\). A rocket <b>can</b> go faster than its exhaust (ratio above \(e\)); then the exhaust moves forward relative to the ground, but still backward relative to the rocket, so it still pushes.</p></div></details></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Worked example: the Saturn V (slides 88–89)</h2>
+<div class="box eg"><span class="tag">Worked example · slides 88–89</span>
+<p>The <b>Saturn V</b> (土星 5, "Saturn five", not "v") rocket was used in NASA's Apollo Moon programme. Use the approximate data: \(M_{ini}=3\times10^6\u{kg}\), \(\mathrm dm/\mathrm dt=14\times10^3\u{kg/s}\), thrust \(F_{th}=36\times10^6\u{N}\), mass ratio (final ÷ initial) \(=0.25\). (1) Determine the exhaust speed of the burned fuel. (2) Determine the time of burnout. (3) Calculate the acceleration at take-off. (4) Calculate the speed at burnout.</p>
+<div class="pair">
+<div><div id="fig-sv-sys"></div><p class="sub">System: rocket on the pad, \(M_{ini}=3\times10^6\) kg.</p></div>
+<div><div id="fig-sv-fbd"></div><p class="sub">FBD at take-off (slide 88's sketch: \(F_{th}\) up, \(Mg\) down, \(Ma\) up).</p></div>
+</div>
+<p class="muted">The slides give the question and the formulas; the numbers below are worked for these notes.</p>
+<ol class="steps">
+<li><b>Exhaust speed</b> from Eq (2), \(F_{th}=v_{ex}\,\dot m\):
+\[v_{ex}=\frac{36\times10^6\u{N}}{14\times10^3\u{kg/s}}=2571\u{m/s}.\]</li>
+<li><b>Burnout time.</b> Final mass \(=0.25\times3\times10^6=0.75\times10^6\u{kg}\), so the fuel is \(2.25\times10^6\u{kg}\):
+\[t_b=\frac{2.25\times10^6\u{kg}}{14\times10^3\u{kg/s}}=160.7\u{s}.\]</li>
+<li><b>Acceleration at take-off</b> (\(M=M_{ini}\)):
+\[\begin{aligned}a&=\frac{F_{th}-Mg}{M}=\frac{36\times10^6}{3\times10^6}-9.81\\&=12-9.81=2.19\u{m/s^2}.\end{aligned}\]
+(Thrust-to-weight ratio \(12/9.81=1.22\): the rocket barely lifts off at first. Just before burnout, \(M=0.75\times10^6\u{kg}\) and \(a=48-9.81=38.2\u{m/s^2}\), about 4\(g\): the same thrust on a much lighter rocket.)</li>
+<li><b>Speed at burnout</b>, from rest:
+\[\begin{aligned}v_b&=v_{ex}\ln\frac{M_{ini}}{M_{fi}}-g\,t_b\\&=2571\ln4-9.81(160.7)\\&=3565-1577=1988\u{m/s}.\end{aligned}\]</li>
+</ol>
+<p>\(\boxed{v_{ex}=2571\u{m/s},\ t_b=160.7\u{s},\ a_0=2.19\u{m/s^2},\ v_b\approx1990\u{m/s}}\)</p>
+<p class="word"><b>Sense check:</b> slide 88 notes that the \(gt\) term → 0 if the burnout time is very short. Here it is not short: gravity eats 1577 m/s, about 44% of the ideal 3565 m/s. (Drag, ignored here, takes more.)</p></div>
+<div class="figure"><p class="ttl">Saturn V first stage · speed and acceleration during the burn</p>
+<canvas class="plot" id="cv-sv-v" style="height:170px"></canvas><canvas class="plot" id="cv-sv-a" style="height:150px"></canvas>
+<p class="cap">Top: \(v(t)=v_{ex}\ln\frac{M_{ini}}{M_{ini}-\dot mt}-gt\) (accent) and the no-gravity speed (dashed). Bottom: \(a(t)=F_{th}/M(t)-g\) rises as the rocket gets lighter. Neither curve is a straight line.</p></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Varying mass beyond rockets (slide 90)</h2>
+<p>The thrust expression Eq (2), \(F_{th}=-v_{ex}\,\mathrm dM/\mathrm dt\), came from momentum alone, so it applies to <b>any</b> system that gains or loses mass while moving (slide 90). The handout's examples: a fire-fighting helicopter releasing water, and a truck unloading sand from its back.</p>
+<div class="box thm"><span class="tag">Rule · when does losing mass push?</span>
+<p>Mass leaving with relative velocity \(\vb u\) (relative to the body) gives the body a force \(-\dot m\,\vb u\): opposite to the way the mass leaves, of size (relative speed) × (mass rate). If the mass simply <b>drops off</b> with zero relative velocity, there is <b>no thrust</b>: the body only gets lighter.</p>
+<p class="word"><b>In words:</b> it is throwing mass away fast that pushes you, not merely losing it.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes · helicopter</span>
+<p>A hovering fire-fighting helicopter pumps water out of a nozzle pointing straight down at \(10\u{m/s}\) relative to the helicopter, at \(200\u{kg/s}\). (a) What extra force does this give? (b) What if the water is just released through an open hatch?</p>
+<div class="pair"><div><div id="fig-heli"></div><p class="sub">FBD: rotor lift \(L\), weight \(Mg\), jet thrust \(F_{th}\).</p></div></div>
+<p>(a) \(F_{th}=u\,\dot m=10\u{m/s}\times200\u{kg/s}=2000\u{N}\), <b>upward</b> (opposite to the jet). The rotor can produce 2000 N less lift and the helicopter still hovers. (b) Released water leaves with zero relative velocity: no thrust. But the helicopter's weight falls by \(200\times9.81=1962\u{N}\) every second, so the pilot must reduce lift steadily or the helicopter climbs.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes · truck</span>
+<p>A truck drives forward while a conveyor throws sand out of the back at \(2\u{m/s}\) relative to the truck, at \(50\u{kg/s}\). Thrust on the truck: \(2\times50=100\u{N}\) <b>forward</b>. If the sand just slides off the tailgate with the truck's own speed, the thrust is zero.</p></div>
+
+<div class="box eg"><span class="tag">Past-paper worked example · Dec 2017 B3(a) · 12 marks · type D3.3</span>
+<p>The rocket has an initial mass \(m_0\) including the fuel. For practical reasons desired for the crew, it is required that it maintain a constant upward acceleration \(a_0\). If the fuel is expelled from the rocket at a constant relative speed \(v_{e/r}\), prove that the rate at which the fuel should be consumed \(\mathrm dm/\mathrm dt\) to maintain the desired motion is \(\dfrac{\mathrm dm}{\mathrm dt}=\dfrac{m_0(a_0+g)}{v_{e/r}}e^{(a_0+g)t/v_{e/r}}\). Neglect air resistance, and assume that the gravitational acceleration \(g\) is constant.</p>
+<div class="pair"><div><div id="fig-17a"></div><p class="sub">FBD: thrust \(v_{e/r}\dot m\) up, weight \(Mg\) down, \(\dot v=a_0\).</p></div></div>
+<ol class="steps">
+<li>Rocket ODE with \(\mathrm dv/\mathrm dt=a_0\) and \(M(t)\) the rocket mass:
+\[Ma_0=-v_{e/r}\frac{\mathrm dM}{\mathrm dt}-Mg.\]</li>
+<li>Separate variables:
+\[\begin{aligned}\frac{\mathrm dM}{M}&=-\frac{a_0+g}{v_{e/r}}\,\mathrm dt\\ \Rightarrow\ M&=m_0e^{-(a_0+g)t/v_{e/r}}.\end{aligned}\]</li>
+<li>Burn rate (mass leaving per second):
+\[\dot m=-\frac{\mathrm dM}{\mathrm dt}=\frac{m_0(a_0+g)}{v_{e/r}}e^{-(a_0+g)t/v_{e/r}}.\]</li>
+</ol>
+<p>\(\boxed{\dot m=\dfrac{m_0(a_0+g)}{v_{e/r}}\,e^{-(a_0+g)t/v_{e/r}}}\)</p>
+<p class="flag">the printed result has \(+\) in the exponent. A rocket that gets lighter needs a <b>falling</b> burn rate for constant acceleration (constant thrust on a lighter rocket would accelerate it more), so the exponent must be negative. Prove the correct form and point out the sign in one line.</p>
+<p class="word"><b>In words:</b> to keep the crew's acceleration steady, burn fuel in proportion to the rocket's current mass, so the burn rate decays exponentially.</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Liquid fuels: maximising the exhaust speed (slide 91)</h2>
+<p>Design guideline 1 says: maximise \(v_{ex}\). It is set mainly by the chemistry: how hot the combustion gas gets and how light its molecules are (light, hot gas leaves the nozzle fastest). Slide 91 tabulates fuel/oxidiser pairs (the <b>oxidiser</b> supplies the oxygen, since there is no air in space):</p>
+<div class="scroll"><table>
+<tr><th>Fuel / oxidiser</th><th>Combustion temperature (K)</th><th>Max exhaust speed \(v_{ex}\) (km/s)</th></tr>
+<tr><td>Ethyl alcohol / O₂</td><td>3000</td><td>3.9 (earlier rockets)</td></tr>
+<tr><td>Kerosene / O₂</td><td>3300</td><td>4 (Saturn V, stage 1)</td></tr>
+<tr><td>Unsymmetrical dimethyl hydrazine / O₂</td><td>3300</td><td>4.1 (Long March, Ariane)</td></tr>
+<tr><td>H₂ / O₂</td><td>3300</td><td>5.1 (Saturn V stages 2–3)</td></tr>
+<tr><td>H₂ / fluorine</td><td>3600</td><td>5.5 (polluting, not good)</td></tr>
+</table></div>
+<p>The photos on slide 91 show the flame colours of different propellants: RP-1 (refined kerosene) burns bright orange; methane (liquefied natural gas) blue-purple; hydrogen clear to pale blue; solid propellant cloudy and bright white; hypergolic propellants (N₂O₄ with UDMH, which ignite on contact) blue with orange fumes. The last photo shows the liquid propellant tanks of NASA's Space Launch System (SLS) rocket.</p>
+<p class="flag">the slide-91 values are "maximum" (ideal) exhaust speeds. The Saturn V example in Section 6 gives an effective \(v_{ex}=2.57\) km/s for stage 1, lower than the table's 4 km/s, because real engines and sea-level operation lose performance and the example's data are approximate.</p>
+<p class="word"><b>In words:</b> hydrogen with oxygen gives the highest practical exhaust speed, which is why upper stages (which need the most efficiency) use it; denser kerosene suits first stages, where compact tanks and high thrust matter more.</p>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Multi-stage rockets (slide 92)</h2>
+<p>Slide 92 compares a <b>single-stage</b> rocket (payload on one booster) with a <b>two-stage</b> rocket (payload on stage 2, on stage 1). Stage 1 burns with initial and final masses \(M_{ini}^{(1)}, M_{fi}^{(1)}\). When it is empty its shell is <b>discarded</b>, and stage 2 then burns from \(M_{ini}^{(2)}\) to \(M_{fi}^{(2)}\).</p>
+<div id="fig-stages"></div>
+<div class="box thm"><span class="tag">Result · two stages (slide 92, no gravity)</span>
+\[\begin{aligned}\Delta V&=v_{ex}\ln\frac{M_{ini}^{(1)}}{M_{fi}^{(1)}}+v_{ex}\ln\frac{M_{ini}^{(2)}}{M_{fi}^{(2)}}\\&=v_{ex}\ln\left(\frac{M_{ini}^{(1)}}{M_{fi}^{(1)}}\times\frac{M_{ini}^{(2)}}{M_{fi}^{(2)}}\right),\end{aligned}\]
+<p>with \(M_{fi}^{(1)}\gt M_{ini}^{(2)}\) (the difference is the discarded shell).</p>
+<p class="word"><b>In words:</b> apply the rocket equation once per stage and add the speed gains; the overall effect is as if the mass ratios were multiplied. Throwing away the shell makes the second ratio bigger than it would be if the shell were carried.</p></div>
+<p class="flag">slide 92 marks the two-stage formula box "Not examined" for this year. Past papers (Dec 2018 B3, Dec 2015 B2, May 2014 B2) did ask staging calculations; they need nothing beyond applying the rocket equation once per stage, so the practice question in the exam taster is kept, labelled lower priority.</p>
+<p>Slide 92's two points:</p>
+<ul class="list">
+<li>Multi-stage rockets are <b>more energy efficient</b> than single stage, because you are not wasting fuel to propel empty fuel containers.</li>
+<li>Infinitely many stages would in theory be most efficient, but in reality <b>structural complication and cost</b> prevent the design of more than <b>3 stages</b> typically.</li>
+</ul>
+<div class="figure"><p class="ttl">Try it · one stage or two? (data of Dec 2018 B3: 500 kN at launch, 420 kN fuel, 40 kN payload, 40 kN structure, burn 3 kN/s, \(v_{ex}=3\) km/s, \(g=9.6\) m/s²)</p>
+<canvas class="plot" id="cv-stg" style="height:230px"></canvas>
+<div class="legend"><span style="--k:var(--c2)">single stage</span><span style="--k:var(--accent)">two stages</span></div>
+<div class="ctrl"><label>stage-1 fuel (kN) <input type="range" id="stF" min="60" max="400" step="10" value="300"></label>
+<label>stage-1 structure (kN) <input type="range" id="stS" min="5" max="35" step="1" value="30"></label></div>
+<div class="readout" id="stg-out"></div>
+<p class="cap">Stage 2 gets the rest: \(420-F_1\) fuel and \(40-S_1\) structure. Both rockets burn for 140 s in total. The two-stage curve jumps nowhere, but after separation it climbs faster because it no longer carries stage 1's shell. Start values reproduce the past paper (single 4154 m/s, two-stage 5076 m/s).</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · why "about 3 stages"</span>
+<p>Each extra stage saves less than the one before (the dead mass you avoid carrying gets smaller), while every stage adds engines, separation hardware, and a chance of failure at separation. For typical Earth-to-orbit missions the benefit flattens after 2–3 stages; most modern launchers have 2 (Falcon 9) or 3 (Saturn V, Long March 3B), sometimes with strap-on boosters as a "stage 0".</p></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Orbits and satellites: background only (slides 93–95)</h2>
+<div class="box warn"><span class="tag">No longer examined</span>
+<p>Orbital dynamics was removed from the 2026/27 syllabus. These slides are qualitative background; the handout's summary (slide 96) does not list orbits. No formulas are needed.</p></div>
+<ul class="list">
+<li><b>Slide 93 · man-made satellites.</b> Since about 1960 satellites have enabled trans-continental TV broadcast, GPS navigation, meteorology (weather) and defence. Since 2015 SpaceX's Starlink connects the whole world through a network of low-orbit satellites (the slide's June 2026 update counts over 10,000 Starlink satellites in orbit). A sketch shows the orbit bands: <b>LEO</b> (low Earth orbit) about 500–2000 km up, <b>MEO</b> (medium) about 8000–20,000 km, <b>GEO</b> (geostationary) at 35,786 km.</li>
+<li><b>Slide 94 · low-Earth-orbit traffic.</b> The number of objects in orbit has surged in recent years (charts of tracked objects by year, with a steep rise after 2019 mainly from Starlink), so orbital space is a limited resource. Discussion: what strategies can engineers develop to prevent satellite crashes?</li>
+<li><b>Slide 95 · plenty of space up there, but…</b> Geosynchronous satellites (orbit period 24 hours, so they stay over the same point on Earth) are very useful, but they all orbit at the same height, 35,786 km above sea level, so there is a risk of collision, especially between satellites run by different agencies and companies.</li>
+</ul>
+<details><summary>Discussion (slide 94) · some answers</summary><div>
+<p class="muted">Written for these notes.</p>
+<ul class="list"><li>Track every object from the ground and share the data between operators; plan <b>collision-avoidance burns</b> when a close approach is predicted (with a small thruster, i.e. the rocket equation again).</li>
+<li>Allocate orbital "slots" (for GEO, international coordination of positions).</li>
+<li>At end of life, <b>de-orbit</b> LEO satellites so they burn up in the atmosphere, and move GEO satellites to a higher "graveyard" orbit.</li>
+<li>Design satellites not to shed debris; passivate (empty) old tanks and batteries so they cannot explode.</li></ul></div></details>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Summary (slide 96)</h2>
+<p>Slide 96 lists what this chapter should leave you able to do: use Newton's law in momentum-conservation form for systems whose mass varies during motion; write the instantaneous thrust and acceleration and the final velocity; appreciate the logarithm of the mass ratio and the limit set by the exhaust velocity; explain why real rockets use several stages; and apply the thrust force to moving systems of varying mass beyond rockets. Its calculation box: given the masses and \(v_{fi}\), find \(v_{ex}\), or given \(v_{ex}\), find \(v_{fi}\); given several stage masses, find \(v_{fi}\) or \(v_{ex}\).</p>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>Momentum law</td><td>\(F=\frac{\mathrm d}{\mathrm dt}(mv)\), \(I=(mv)_2-(mv)_1\)</td><td>follow all the mass, including the gas leaving</td></tr>
+<tr><td>Rocket ODE</td><td>\(M\dot v=-v_{ex}\dot M-Mg\)</td><td>mass × acceleration = thrust − weight</td></tr>
+<tr><td>Thrust</td><td>\(F_{th}=-v_{ex}\dot M=v_{ex}\dot m\)</td><td>exhaust speed × burn rate</td></tr>
+<tr><td>Burnout speed</td><td>\(v_{fi}=v_{ini}+v_{ex}\ln\frac{M_{ini}}{M_{fi}}-gt\)</td><td>log of mass ratio, minus gravity loss</td></tr>
+<tr><td>No gravity</td><td>\(\Delta v=v_{ex}\ln\frac{M_{ini}}{M_{fi}}\)</td><td>Tsiolkovsky (1903)</td></tr>
+<tr><td>Fuel for a \(\Delta v\)</td><td>\(M_{fi}=M_{ini}e^{-\Delta v/v_{ex}}\)</td><td>mass ratio grows exponentially with speed</td></tr>
+<tr><td>Design</td><td>high \(v_{ex}\); small \(M_{fi}\); short burn</td><td>chemistry, light payload, fast burn</td></tr>
+<tr><td>Stages</td><td>\(\Delta V=v_{ex}\ln\prod\frac{M_{ini}^{(k)}}{M_{fi}^{(k)}}\)</td><td>don't carry empty tanks; usually ≤ 3 stages</td></tr>
+<tr><td>Other systems</td><td>force \(=\) relative speed × mass rate</td><td>no relative speed, no thrust</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Writing the exhaust's momentum as \(\Delta m(-v_{ex})\).</span>
+<span class="ok">✓</span><span>Its ground velocity is \(v-v_{ex}\): momentum \(\Delta m(v-v_{ex})\).</span>
+<span class="x">✗</span><span>Using \(F=Ma\) with \(F=F_{th}\) and forgetting the weight on the launch pad.</span>
+<span class="ok">✓</span><span>\(Ma=F_{th}-Mg\); a rocket lifts off only if \(F_{th}\gt Mg\).</span>
+<span class="x">✗</span><span>Putting the mass ratio upside down: \(\ln(M_{fi}/M_{ini})\), giving a negative speed.</span>
+<span class="ok">✓</span><span>Heavier (initial) on top: \(\ln(M_{ini}/M_{fi})\gt0\). Watch questions that quote "final/initial = 0.25".</span>
+<span class="x">✗</span><span>Leaving out \(-gt_b\) when the question says the rocket is launched from Earth's surface with gravity.</span>
+<span class="ok">✓</span><span>Include \(g t_b\) unless told to ignore gravity; state which you did.</span>
+<span class="x">✗</span><span>Mixing weights (kN) and masses (kg).</span>
+<span class="ok">✓</span><span>Mass ratios can be taken from weights directly (\(g\) cancels), but the burn rate in kN/s must be divided by \(g\) before \(F_{th}=v_{ex}\dot m\).</span>
+<span class="x">✗</span><span>In staging, starting stage 2 from the stage-1 burnout mass.</span>
+<span class="ok">✓</span><span>Subtract the discarded shell first: \(M_{ini}^{(2)}=M_{fi}^{(1)}-\text{shell}\).</span>
+<span class="x">✗</span><span>Dividing by a common logarithm (\(\log_{10}\)).</span>
+<span class="ok">✓</span><span>The rocket equation uses the natural log \(\ln\).</span>
+</div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Find the mistake</h2>
+<div class="q"><p class="qh">1 · Saturn V burnout speed</p>
+<p>"Mass ratio final/initial = 0.25, so \(v_b=2571\ln(0.25)-9.81(160.7)=-3565-1577=-5142\u{m/s}\). The minus sign means the rocket is going down."</p>
+<details><summary>Hint</summary><div><p>Which mass goes on top of the logarithm?</p></div></details>
+<details><summary>Answer</summary><div><p>The ratio must be initial/final \(=4\): \(v_b=2571\ln4-1577=1988\u{m/s}\) upward.</p></div></details></div>
+<div class="q"><p class="qh">2 · Thrust from a weight rate</p>
+<p>"Dec 2018 B3: burn rate 3 kN/s, \(v_{ex}=3\u{km/s}\), so \(F_{th}=3000\times3000=9\times10^6\u{N}\)."</p>
+<details><summary>Hint</summary><div><p>Is 3 kN/s a mass rate?</p></div></details>
+<details><summary>Answer</summary><div><p>3 kN/s is a <b>weight</b> rate. Mass rate \(=3000/9.6=312.5\u{kg/s}\), so \(F_{th}=312.5\times3000=937.5\u{kN}\).</p></div></details></div>
+<div class="q"><p class="qh">3 · Two stages</p>
+<p>"Stage 1 burns 500 → 200 kN, stage 2 burns 200 → 80 kN, so \(\Delta v=3000[\ln2.5+\ln2.5]\)."</p>
+<details><summary>Hint</summary><div><p>What happens to the 30 kN stage-1 shell?</p></div></details>
+<details><summary>Answer</summary><div><p>The shell is discarded before stage 2 fires: stage 2 runs from \(170\) to \(50\u{kN}\) (120 kN fuel burnt; 40 kN payload + 10 kN stage-2 shell remain), ratio 3.4, not 2.5.</p></div></details></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Pushing on nothing</p><p>In space there is no air to push against. What does the rocket push on?</p>
+<details><summary>Answer</summary><div><p>On its own exhaust gas. The engine pushes the gas backwards; by action and reaction the gas pushes the rocket forwards. Momentum of rocket + gas is conserved.</p></div></details></div>
+<div class="q"><p class="qh">2 · Double the fuel</p><p>A rocket in space has mass ratio 3. Its tanks are enlarged so that the ratio becomes 6 (same \(v_{ex}\)). By what factor does \(\Delta v\) grow?</p>
+<details><summary>Answer</summary><div><p>\(\ln6/\ln3=1.79/1.10=1.63\): about 63% more, not double. Doubling \(v_{ex}\) instead would double \(\Delta v\) (design guideline 1).</p></div></details></div>
+<div class="q"><p class="qh">3 · Dropping an empty shell</p><p>After its booster has finished firing, a satellite releases the empty booster shell (it just lets go). Does the satellite's speed change? (Dec 2016 B2(d) asked this.)</p>
+<details><summary>Answer</summary><div><p>No. The shell leaves with zero relative velocity, so no impulse acts between them (Section 7 rule): both keep moving at the same speed, and the satellite's path is unchanged. Releasing it only reduces the mass for later burns.</p></div></details></div>
+<div class="q"><p class="qh">4 · Lift-off</p><p>A 50 t rocket has \(v_{ex}=3\u{km/s}\). What minimum burn rate lets it leave the pad (\(g=9.81\u{m/s^2}\))?</p>
+<details><summary>Answer</summary><div><p>Need \(v_{ex}\dot m\gt Mg\): \(\dot m\gt50{,}000\times9.81/3000=163.5\u{kg/s}\).</p></div></details></div>
+<div class="q"><p class="qh">5 · Shape of \(v(t)\)</p><p>With constant burn rate and no gravity, is \(v(t)\) a straight line?</p>
+<details><summary>Answer</summary><div><p>No. \(v=v_{ex}\ln\frac{M_{ini}}{M_{ini}-\dot mt}\) curves upward: the same thrust acts on a lighter and lighter rocket, so the acceleration \(v_{ex}\dot m/M\) keeps rising.</p></div></details></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Exam taster</h2>
+<p>Real past-paper parts that are still examinable. In 2014–2024 rockets appeared as one Section B question (often B2 or B3) mixed with orbit and re-entry parts, which are now removed; expect the rocket parts to stay and the rest to change. Full method and more questions: <a href="guide-D3.html">Exam guide · D3</a>.</p>
+
+<div class="q"><div class="src"><b>Dec 2024 B3(a)</b><span>4 marks</span><span>also Dec 2023 B3(a), Dec 2022 B3(a), Dec 2021 B2(a), Dec 2015 B2(a), Dec 2014 B2(a)</span><a class="guide" href="guide-D3.html#D3-1">D3.1 derive the rocket equation</a></div>
+<p>In a space mission, a single stage rocket containing a space shuttle is launched into space from Earth's surface. During the launch from Earth, a chunk of mass \(\Delta m\) is ejected at a speed of \(v_{ex}\) relative to the rocket, causing the rest of the rocket to gain a velocity increment \(\Delta v\). Derive the differential equation for the rocket flight by ignoring gravity and air resistance. Show by integration that the total velocity increase from mass \(M_0\) to \(M_1\) is \(\Delta v=v_{ex}\ln(M_0/M_1)\).</p>
+<div id="fig-t1"></div>
+<details><summary>Hint</summary><div><p>Momentum before \(=Mv\); after \(=(M-\Delta m)(v+\Delta v)+\Delta m(v-v_{ex})\). No external force, so they are equal. Then \(\Delta m=-\Delta M\).</p></div></details>
+<details><summary>Answer</summary><div>
+<ol class="steps"><li>No external force: \((M-\Delta m)(v+\Delta v)+\Delta m(v-v_{ex})=Mv\Rightarrow(M-\Delta m)\Delta v=\Delta m\,v_{ex}\).</li>
+<li>Divide by \(\Delta t\), let \(\Delta t\to0\), with \(\mathrm dm=-\mathrm dM\): \(M\,\mathrm dv=-v_{ex}\,\mathrm dM\), i.e. \(M\dfrac{\mathrm dv}{\mathrm dt}=-v_{ex}\dfrac{\mathrm dM}{\mathrm dt}\).</li>
+<li>Integrate: \(\displaystyle\int_{v_0}^{v_1}\mathrm dv=-v_{ex}\int_{M_0}^{M_1}\frac{\mathrm dM}{M}\).</li></ol>
+<p>\(\boxed{\Delta v=v_{ex}\ln\dfrac{M_0}{M_1}}\)</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2023 B3(c)</b><span>4 marks</span><a class="guide" href="guide-D3.html#D3-2">D3.2 rocket-equation numbers</a></div>
+<p>(From part (b): the shuttle's orbital speed is 3074 m/s.) The total initial weight of the rocket is 28,000 kg (rocket plus satellite plus fuel), and the fuel exhaust speed is \(v_{ex}=4\u{km/s}\). Ignoring the effect of gravity and air resistance, determine the amount of fuel needed to place the space shuttle into the geostationary orbit.</p>
+<p class="flag">"weight 28,000 kg" is read as mass 28,000 kg; \(\Delta v\) is taken as the 3074 m/s orbital speed given in the question (launch from rest).</p>
+<details><summary>Hint</summary><div><p>Solve \(\Delta v=v_{ex}\ln(M_0/M_1)\) for \(M_1\); fuel \(=M_0-M_1\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[\begin{aligned}M_1&=28{,}000\,e^{-3074/4000}=12{,}984\u{kg},\\ \text{fuel}&=28{,}000-12{,}984=15{,}016\u{kg}.\end{aligned}\]
+<p>\(\boxed{\text{fuel}\approx1.50\times10^4\u{kg}}\)</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2018 B3(a)–(f)</b><span>20 marks</span><a class="guide" href="guide-D3.html#D3-2">D3.2 rocket-equation numbers</a><a class="guide" href="guide-D3.html#D3-4">D3.4 multi-stage</a></div>
+<p>The initial weight of a single stage rocket is 500 kN, of which 420 kN is fuel. The weight of payload is 40 kN and the structural mass of the booster is 40 kN. It is launched vertically from the surface of the earth. It burns fuel at a constant rate of 3 kN/s and has a constant exhaust speed of 3 km/s. Assume that the average value of the gravitational acceleration is 9.6 m/s² and the rocket starts from rest. (a) Determine the average thrust of the rocket engine to burnout. [4] (b) Determine the time of burnout. [2] (c) Determine the speed at the burnout. [4]</p>
+<p>The rocket is redesigned and a two stage booster is used. The payload weight is the same (40 kN). The 420 kN of fuel is stored in the stage 1 booster (300 kN fuel and 30 kN structural booster mass) and the stage 2 booster (120 kN fuel and 10 kN structural booster mass). The fuel burn rate and the exhaust speed are still the same; \(g=9.6\u{m/s^2}\), start from rest. (d) Determine the speed at the first burnout. [4] (e) Determine the speed at the second burnout. [4] (f) Compare the performance of the single stage rocket and the two stage rocket using the above results. [2]</p>
+<div id="fig-t3"></div>
+<p class="flag">parts (d)–(f) are staging calculations; slide 92 marks the staging formula "Not examined" for 2026/27, so treat them as lower-priority practice.</p>
+<details><summary>Hint</summary><div><p>Convert the burn rate to kg/s with \(g=9.6\). Mass ratios can be taken from weights. Stage 2 starts after dropping the 30 kN shell.</p></div></details>
+<details><summary>Answer</summary><div>
+<ol class="steps"><li>(a) \(\dot m=3000/9.6=312.5\u{kg/s}\); \(F_{th}=312.5\times3000=937.5\u{kN}\).</li>
+<li>(b) \(t_b=420/3=140\u{s}\).</li>
+<li>(c) \(v=3000\ln\frac{500}{80}-9.6(140)=5498-1344=4154\u{m/s}\).</li>
+<li>(d) Stage 1 burns 100 s, 500 → 200 kN: \(v_1=3000\ln2.5-960=1789\u{m/s}\).</li>
+<li>(e) Drop 30 kN: 170 kN; stage 2 burns 40 s to 50 kN: \(v_2=1789+3000\ln3.4-384=5076\u{m/s}\).</li>
+<li>(f) Same fuel, same burn time, but 922 m/s (22%) faster with two stages, because the empty stage-1 shell is not accelerated.</li></ol>
+<p>\(\boxed{937.5\u{kN};\ 140\u{s};\ 4154\u{m/s};\ 1789\u{m/s};\ 5076\u{m/s}}\)</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2017 B3(b)</b><span>8 marks</span><a class="guide" href="guide-D3.html#D3-3">D3.3 variable-mass thrust</a></div>
+<p>The second stage B of the two-stage rocket has a mass of 5 Mg (empty) and is launched from the first stage A with an initial velocity of 600 km/h as shown. The fuel in the second stage has a mass of 0.7 Mg and is consumed at the rate of 4 kg/s. If it is ejected from the rocket at the rate of 3 km/s, measured relative to B, determine the acceleration of B at the instant the engine is fired and just before all the fuel is consumed. Neglect the effects of gravitation and air resistance.</p>
+<div id="fig-t4"></div>
+<details><summary>Hint</summary><div><p>Thrust \(=v_{ex}\dot m\) is constant; only the mass changes. Is the 600 km/h needed?</p></div></details>
+<details><summary>Answer</summary><div><p>\(F_{th}=3000\times4=12{,}000\u{N}\). At firing \(M=5700\u{kg}\): \(a=12{,}000/5700=2.11\u{m/s^2}\). Just before burnout \(M=5000\u{kg}\): \(a=2.40\u{m/s^2}\). The initial speed does not affect the acceleration.</p>
+<p>\(\boxed{a_{\text{start}}=2.11\u{m/s^2},\ \ a_{\text{end}}=2.40\u{m/s^2}}\)</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2023 B3(d)</b><span>4 marks</span><a class="guide" href="guide-D3.html#D3-5">D3.5 launch practicalities</a></div>
+<p>In reality, gravity and air resistance cannot be neglected. Describe what engineering design strategies are used to minimise these effects in a real space shuttle launch.</p>
+<details><summary>Hint</summary><div><p>Gravity loss is \(g t_b\); drag grows with air density and speed squared.</p></div></details>
+<details><summary>Answer</summary><div><ul class="list">
+<li><b>Gravity:</b> high thrust-to-weight ratio so the fuel burns quickly (short \(t_b\), small \(gt_b\), slide 86 guideline 3); staging to shed dead mass so the rocket accelerates harder later.</li>
+<li><b>Drag:</b> slender, streamlined body with a pointed nose/fairing; climb vertically first to leave the dense lower atmosphere quickly, then tilt over gradually ("gravity turn"); throttle down through the region of maximum aerodynamic pressure.</li>
+<li><span class="pill">Beyond</span> Launch eastward near the equator to gain Earth's rotation speed (about 0.46 km/s).</li></ul></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2015 B2(c)</b><span>4 marks</span><span>also May 2014 B2(c), May 2013 B3(d)</span><a class="guide" href="guide-D3.html#D3-4">D3.4 why multi-stage</a> <span class="lowpri">low priority</span></div>
+<p>Explain why a multiple-stage rocket is more energy efficient than a single-stage one, and why rocket design is usually limited to 3 stages.</p>
+<details><summary>Answer</summary><div><ul class="list"><li>A single stage must accelerate its empty tanks and engines all the way to burnout; a multi-stage rocket discards each empty stage, so later fuel accelerates less dead mass and each stage achieves a better mass ratio (\(\Delta V=v_{ex}\ln\prod M_{ini}/M_{fi}\)).</li>
+<li>Infinitely many stages would be ideal, but each extra stage adds structural complication, separation hardware, failure risk and cost, while the gain shrinks; so typically no more than 3 (slide 92).</li></ul></div></details></div>
+</section>
+</main>
+</div>
+
+<script>
+/* MECH2413 shared helpers (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-D3 figures (page-level helpers only; lib.js is frozen) */
+const P=FBD.panels, D=FBD.draw;
+const T=(x,y,s,cls,dx,dy)=>({t:'text',x,y,s,cls:cls||'it',dx,dy});
+/* rocket outline: centre x, base y, width w, body height h (nose adds 0.6w), fins at the base */
+function rocket(cx,yb,w,h,cls){const c=cls||'member';return [
+  {t:'rect',x:cx-w/2,y:yb,w:w,h:h,cls:c},
+  {t:'poly',pts:[[cx-w/2,yb+h],[cx+w/2,yb+h],[cx,yb+h+0.9*w]],cls:c},
+  {t:'poly',pts:[[cx-w/2,yb],[cx-w,yb-0.15*w],[cx-w/2,yb+0.6*w]],cls:c},
+  {t:'poly',pts:[[cx+w/2,yb],[cx+w,yb-0.15*w],[cx+w/2,yb+0.6*w]],cls:c}];}
+function flame(cx,yb,w,L){return {t:'poly',pts:[[cx-w*0.35,yb],[cx+w*0.35,yb],[cx,yb-L]],cls:'loadfill'};}
+const vel=(x,y,len,lbl,ang)=>({t:'force',x,y,ang:ang===undefined?90:ang,len,k:'dim',at:'tail',lbl,dx:0});
+/* nice step for axis ticks */
+function nstep(span,n=4){const r=span/n,p=Math.pow(10,Math.floor(Math.log10(r))),m=r/p;return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p;}
+
+/* ---------- Section 2: ln curve ---------- */
+(function(){
+  function d(){const R=+$('lnR').value,ve=+$('lnV').value,dv=Math.log(R);
+    plot($('cv-ln'),{xmin:0,xmax:40,ymin:0,ymax:4,xstep:5,ystep:1,pl:36,xlabel:'m₀ / m_f',ylabel:'Δv / v_ex',
+      curves:[{f:x=>x>=1?Math.log(x):NaN,color:css('--accent'),from:1,to:40}],
+      segs:[{x1:R,y1:0,x2:R,y2:dv,color:css('--axis'),dash:[4,4],width:1},{x1:0,y1:dv,x2:R,y2:dv,color:css('--axis'),dash:[4,4],width:1}],
+      pts:[{x:R,y:dv,color:css('--c2'),label:fmt(dv,2)}]});
+    $('ln-out').innerHTML=`Δv / v_ex = ln(${fmt(R,1)}) = <b>${fmt(dv,3)}</b> · Δv = <b>${fmt(dv*ve,2)} km/s</b> · fuel = <b>${fmt(100*(1-1/R),1)}%</b> of launch mass, payload + structure ${fmt(100/R,1)}%`;}
+  ['lnR','lnV'].forEach(i=>$(i).addEventListener('input',d));redraws.push(d);d();
+})();
+
+/* ---------- Section 3: control volume ---------- */
+(function(){
+  const o={x0:-2.2,x1:2.6,y0:-3.4,y1:3.4,px:34,pad:10,maxw:240};
+  D('fig-cv1',o,[...rocket(0,-1,1.0,2.4),T(0,0.4,'M','it'),vel(1.0,-0.4,40,'v'),
+    {t:'force',x:0,y:-1.1,ang:-90,len:44,k:'force',at:'tail',lbl:'Mg',dx:20}]);
+  D('fig-cv2',o,[{t:'line',p:[[-1.6,-2.8],[1.9,-2.8],[1.9,3.2],[-1.6,3.2],[-1.6,-2.8]],cls:'faint'},
+    ...rocket(0,-0.2,1.0,2.2),T(0,1.0,'M−Δm','it',-42),vel(1.0,0.6,40,'v+Δv'),
+    {t:'rect',x:-0.3,y:-1.9,w:0.6,h:0.6,cls:'loadfill'},T(0,-1.6,'Δm','lbl-load'),vel(0.9,-1.2,30,'v−v_ex',-90),
+    {t:'force',x:-1.1,y:0.3,ang:-90,len:44,k:'force',at:'tail',lbl:'Mg',dx:-18}]);
+})();
+
+/* ---------- Section 4: thrust FBD ---------- */
+D('fig-thrust',{x0:-2.4,x1:2.6,y0:-3.0,y1:3.4,px:30,pad:8,maxw:220},[...rocket(0,-0.6,1.0,2.4),flame(0,-0.6,1.0,1.0),
+  {t:'force',x:-0.8,y:-0.6,ang:90,len:52,k:'force',at:'tail',lbl:'F_th',dx:-16,dy:30},{t:'force',x:0.8,y:0.4,ang:-90,len:52,k:'force',at:'tail',lbl:'Mg',dx:18},
+  vel(1.5,1.6,36,'a')]);
+
+/* ---------- Section 6: Saturn V ---------- */
+(function(){
+  const o={x0:-2.4,x1:2.6,y0:-1.2,y1:4.4,px:30,pad:8,maxw:220};
+  D('fig-sv-sys',o,[{t:'fixed',x:0,y:-0.35,side:'bottom',len:110},...rocket(0,0,1.0,2.8),{t:'rect',x:0.9,y:-0.35,w:0.3,h:3.6,cls:'member2'},
+    T(-1.6,3.15,'3×10⁶ kg','lbl-dim'),T(-1.6,3.6,'Saturn V','lbl-dim')]);
+  D('fig-sv-fbd',o,[...rocket(0,0,1.0,2.8),flame(0,0,1.0,0.9),{t:'force',x:-0.85,y:0,ang:90,len:58,k:'force',at:'tail',lbl:'F_th = 36 MN',dx:-52,dy:4},
+    {t:'force',x:0.85,y:1.4,ang:-90,len:50,k:'force',at:'tail',lbl:'Mg = 29.4 MN',dx:44,dy:4},vel(1.6,2.2,36,'a')]);
+  const Mi=3e6,md=14e3,ve=36e6/md,g=9.81,tb=2.25e6/md;
+  const v=t=>ve*Math.log(Mi/(Mi-md*t))-g*t, v0=t=>ve*Math.log(Mi/(Mi-md*t)), a=t=>36e6/(Mi-md*t)-g;
+  function d(){plot($('cv-sv-v'),{xmin:0,xmax:170,ymin:0,ymax:4000,xstep:20,ystep:1000,pl:44,xlabel:'t (s)',ylabel:'v (m/s)',
+      curves:[{f:v,color:css('--accent'),from:0,to:tb},{f:v0,color:css('--axis'),dash:[5,4],from:0,to:tb,width:1.6}],
+      pts:[{x:tb,y:v(tb),color:css('--accent'),label:'1988',align:'right'},{x:tb,y:v0(tb),color:css('--muted'),label:'3565 (no g)',align:'right',r:3.5}]});
+    plot($('cv-sv-a'),{xmin:0,xmax:170,ymin:0,ymax:40,xstep:20,ystep:10,pl:44,xlabel:'t (s)',ylabel:'a (m/s²)',
+      curves:[{f:a,color:css('--c4'),from:0,to:tb}],pts:[{x:0,y:a(0),color:css('--c4'),label:'2.19'},{x:tb,y:a(tb),color:css('--c4'),label:'38.2',align:'right'}]});}
+  redraws.push(d);d();
+})();
+
+/* ---------- Section 7 ---------- */
+(function(){
+  const o={x0:-3.0,x1:3.0,y0:-2.8,y1:2.6,px:30,pad:8,maxw:240};
+  D('fig-heli',o,[{t:'rect',x:-1.2,y:-0.5,w:2.4,h:1.0,cls:'member'},{t:'line',p:[[-2.4,1.0],[2.4,1.0]],cls:'ink'},{t:'line',p:[[0,0.5],[0,1.0]],cls:'ink'},
+    {t:'rect',x:-0.12,y:-1.1,w:0.24,h:0.6,cls:'member2'},{t:'poly',pts:[[-0.12,-1.1],[0.12,-1.1],[0.3,-2.4],[-0.3,-2.4]],cls:'loadfill'},
+    {t:'force',x:-1.6,y:1.0,ang:90,len:40,k:'force',at:'tail',lbl:'L',dx:-12},{t:'force',x:1.4,y:-0.5,ang:-90,len:44,k:'force',at:'tail',lbl:'Mg',dx:16},
+    {t:'force',x:-0.7,y:-0.5,ang:90,len:30,k:'force',at:'tip',lbl:'F_th',dx:-20,dy:-18},{t:'text',x:-1.0,y:-2.0,s:'water 10 m/s',cls:'lbl-load',anchor:'end'}]);
+  D('fig-17a',{x0:-2.4,x1:2.6,y0:-2.6,y1:3.4,px:30,pad:8,maxw:220},[...rocket(0,-0.6,1.0,2.4),flame(0,-0.6,1.0,1.0),
+    {t:'force',x:-0.8,y:-0.6,ang:90,len:52,k:'force',at:'tail',lbl:'v_e/r ṁ',dx:-22,dy:30},{t:'force',x:0.8,y:0.4,ang:-90,len:52,k:'force',at:'tail',lbl:'Mg',dx:18},
+    vel(1.5,1.6,36,'a₀')]);
+})();
+
+/* ---------- Section 9: stages ---------- */
+(function(){
+  const o={x0:-0.8,x1:0.8,y0:-0.9,y1:6.4,px:26,pad:8};
+  const lab=(y1,y2,s)=>({t:'vdim',y1,y2,x:0.65,lbl:s});
+  const single=[...rocket(0,0,0.6,5),{t:'line',p:[[-0.3,4.0],[0.3,4.0]],cls:'ink'},lab(0,4,'booster'),lab(4,5.5,'payload')];
+  const two=[...rocket(0,0,0.6,5),{t:'line',p:[[-0.3,2.6],[0.3,2.6]],cls:'ink'},{t:'line',p:[[-0.3,4.0],[0.3,4.0]],cls:'ink'},flame(0,0,0.6,0.8),lab(0,2.6,'1'),lab(2.6,4,'2'),lab(4,5.5,'payload')];
+  const after=[...rocket(0,2.6,0.6,2.4),flame(0,2.6,0.6,0.8),{t:'line',p:[[-0.3,4.0],[0.3,4.0]],cls:'ink'},lab(2.6,4,'2'),lab(4,5.5,'payload'),
+    {t:'rect',x:-0.55,y:-0.4,w:0.6,h:2.3,cls:'member2'},T(-0.25,0.75,'1','lbl-dim')];
+  const oc={x0:-1.0,x1:1.6,y0:-1.0,y1:6.4,px:26,pad:8};
+  P('fig-stages',[{o:oc,cap:'single stage',items:single},{o:oc,cap:'two-stage, stage 1 firing: \\(M_{ini}^{(1)}\\to M_{fi}^{(1)}\\)',items:two},
+    {o:oc,cap:'stage 1 shell discarded; stage 2 fires: \\(M_{ini}^{(2)}\\to M_{fi}^{(2)}\\)',items:after}]);
+  function d(){const F1=+$('stF').value,S1=+$('stS').value,ve=3000,g=9.6,b=3,W0=500,T1=F1/b,Tb=420/b;
+    const vs=t=>ve*Math.log(W0/(W0-b*t))-g*t;
+    const v1=vs(T1),W2=W0-F1-S1;
+    const vt=t=>t<=T1?vs(t):v1+ve*Math.log(W2/(W2-b*(t-T1)))-g*(t-T1);
+    plot($('cv-stg'),{xmin:0,xmax:150,ymin:0,ymax:6000,xstep:20,ystep:1000,pl:44,xlabel:'t (s)',ylabel:'v (m/s)',
+      curves:[{f:vs,color:css('--c2'),from:0,to:Tb,width:2},{f:vt,color:css('--accent'),from:0,to:Tb}],
+      segs:[{x1:T1,y1:0,x2:T1,y2:6000,color:css('--axis'),dash:[4,4],width:1}],
+      pts:[{x:Tb,y:vs(Tb),color:css('--c2'),label:fmt(vs(Tb),0),align:'right'},{x:Tb,y:vt(Tb),color:css('--accent'),label:fmt(vt(Tb),0),align:'right'}]});
+    $('stg-out').innerHTML=`separation at t = ${fmt(T1,1)} s, v = ${fmt(v1,0)} m/s · single stage: <b>${fmt(vs(Tb),0)} m/s</b> · two stages: <b>${fmt(vt(Tb),0)} m/s</b> (gain ${fmt(vt(Tb)-vs(Tb),0)} m/s)`;}
+  ['stF','stS'].forEach(i=>$(i).addEventListener('input',d));redraws.push(d);d();
+})();
+
+/* ---------- Exam taster ---------- */
+(function(){
+  const o={x0:-2.2,x1:2.6,y0:-3.4,y1:3.4,px:30,pad:8,maxw:220};
+  D('fig-t1',o,[{t:'line',p:[[-1.6,-2.8],[1.9,-2.8],[1.9,3.2],[-1.6,3.2],[-1.6,-2.8]],cls:'faint'},
+    ...rocket(0,-0.2,1.0,2.2),T(0,1.0,'M−Δm','it',-42),vel(1.0,0.6,40,'v+Δv'),
+    {t:'rect',x:-0.3,y:-1.9,w:0.6,h:0.6,cls:'loadfill'},T(0,-1.6,'Δm','lbl-load'),vel(0.9,-1.2,30,'v−v_ex',-90),
+    {t:'force',x:-1.1,y:0.3,ang:-90,len:44,k:'force',at:'tail',lbl:'Mg',dx:-18}]);
+  const oc={x0:-1.0,x1:1.8,y0:-1.0,y1:6.4,px:26,pad:8};
+  const lab=(y1,y2,s)=>({t:'vdim',y1,y2,x:0.65,lbl:s});
+  P('fig-t3',[{o:oc,cap:'single stage: 420 kN fuel, 40 kN structure, 40 kN payload',items:[...rocket(0,0,0.6,5),{t:'line',p:[[-0.3,4.0],[0.3,4.0]],cls:'ink'},lab(0,4,'420 + 40'),lab(4,5.5,'40')]},
+    {o:oc,cap:'two stages: (300 + 30) and (120 + 10) kN',items:[...rocket(0,0,0.6,5),{t:'line',p:[[-0.3,2.6],[0.3,2.6]],cls:'ink'},{t:'line',p:[[-0.3,4.0],[0.3,4.0]],cls:'ink'},lab(0,2.6,'330'),lab(2.6,4,'130'),lab(4,5.5,'40')]},
+    {o:{x0:-1.8,x1:2.2,y0:-2.6,y1:3.8,px:26,pad:8},cap:'FBD in flight',items:[...rocket(0,-0.6,0.8,2.6),flame(0,-0.6,0.8,0.9),
+      {t:'force',x:-0.7,y:-0.6,ang:90,len:46,k:'force',at:'tail',lbl:'F_th',dx:-16,dy:28},{t:'force',x:0.7,y:0.6,ang:-90,len:46,k:'force',at:'tail',lbl:'Mg',dx:16}]}]);
+  P('fig-t4',[{o:{x0:-1.8,x1:2.6,y0:-3.6,y1:3.6,px:26,pad:8},cap:'stage B leaving stage A, \\(v_B=600\\) km/h',items:[...rocket(0,0.4,0.7,2.2),T(0,1.3,'B','it'),vel(1.0,1.2,36,'v_B'),
+      {t:'poly',pts:[[-0.35,-0.1],[0.35,-0.1],[0.75,-3.0],[-0.05,-3.2]],cls:'member2'},T(0.2,-1.8,'A','it')]},
+    {o:{x0:-1.8,x1:2.6,y0:-2.4,y1:3.6,px:26,pad:8},cap:'FBD of B (gravity neglected)',items:[...rocket(0,-0.4,0.7,2.4),flame(0,-0.4,0.7,0.9),
+      {t:'force',x:-0.6,y:-0.4,ang:90,len:50,k:'force',at:'tail',lbl:'F_th = 12 kN',dx:-46,dy:4},vel(1.0,1.2,36,'a')]}]);
+})();
+
+</script>
+</body></html>

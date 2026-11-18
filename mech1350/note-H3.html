@@ -1,0 +1,1705 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH1350 H3 · Hydrostatic forces on surfaces</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH1350 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --purple:#6d3fb2; --purple-soft:#efe8fa; --green:#1f7a4d; --green-soft:#e3f4ea;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+/* ---- MECH1350 additions ---- */
+.box.prev,.prev.box{background:var(--purple-soft);border-color:transparent;border-left:4px solid var(--purple)} .prev>.tag{color:var(--purple)}
+section.prev-sec{border-top:3px solid var(--purple)} section.prev-sec>h2 .n{color:var(--purple)}
+section.prev-sec>.prevbar{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin:-8px 0 8px}
+.beyond{border-left:4px solid var(--warm)}
+.banner{background:var(--warm-soft);border:1px solid var(--warm);border-radius:8px;padding:10px 14px;font-size:.95rem}
+.banner b{color:var(--warm)}
+.conv{background:var(--green-soft);border-color:transparent;border-left:4px solid var(--green)} .conv>.tag{color:var(--green)}
+details.calc{border-left:3px solid var(--accent)}
+details.calc>summary{color:var(--accent);font-weight:500}
+details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.calc .why{color:var(--muted);font-size:.9rem}
+table.tbl td,table.tbl th{padding:6px 8px}
+.circuit{width:100%;height:auto;display:block}
+.circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
+.circuit .r{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+.circuit .node{fill:var(--ink)}
+.circuit text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.circuit .q{stroke:var(--c2);fill:var(--c2)}
+
+/* ---- exam-guide classes (promoted from guide-T3 pilot, Gate D 2026-11-17) ---- */
+.mem{border:2px solid var(--c3);background:var(--card)} .mem>.tag{color:var(--c3)}
+.mem table td{padding:5px 8px;font-size:.92rem}
+.proc{border-left:4px solid var(--accent)} .proc>.tag{color:var(--accent)}
+.skel{border-left:4px solid var(--purple)} .skel>.tag{color:var(--purple)}
+.recap{font-size:.95rem;background:var(--accent-soft);border-radius:6px;padding:8px 12px;margin:8px 0 14px}
+.recap a{font-family:var(--mono);font-size:12px;white-space:nowrap}
+details.hint>summary{color:var(--muted)}
+details.hint>summary::before{content:"Hint · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.sol{border-left:3px solid var(--accent)}
+details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.mnote{font-size:.9rem;border-left:3px solid var(--warm);padding-left:10px;color:var(--muted)}
+.mnote b{color:var(--warm);font-weight:600}
+.q .part{font-weight:600;margin-top:14px}
+.q .opts{list-style:none;padding-left:.4rem;margin:6px 0}
+.q .opts li{margin:3px 0}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
+.stats span{font-size:.88rem;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted)}
+.stats b{color:var(--ink);font-family:var(--display)}
+.small{font-size:.88rem}
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/es5/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents"><p class="h">Hydrostatics · H3</p><ol>
+  <li><a href="#s0">0 · Where this sits</a></li>
+  <li><a href="#s1">1 · Why surface forces</a></li>
+  <li><a href="#s2">2 · Pressure diagrams</a></li>
+  <li><a href="#s3">3 · Load → resultant</a></li>
+  <li><a href="#s4">4 · Vertical rectangle</a></li>
+  <li><a href="#s5">5 · Size of the force</a></li>
+  <li><a href="#s6">6 · Centroids</a></li>
+  <li><a href="#s7">7 · Second moment of area</a></li>
+  <li><a href="#s8">8 · Centre of pressure</a></li>
+  <li><a href="#s9">9 · No formulas needed</a></li>
+  <li><a href="#s10">10 · Surcharge &amp; layers</a></li>
+  <li><a href="#s11">11 · Gates: moments</a></li>
+  <li><a href="#s12">12 · Curved surfaces</a></li>
+  <li><a href="#s13">13 · Curved, from below</a></li>
+  <li><a href="#s14">14 · Circular arcs</a></li>
+  <li><a href="#s15">15 · Two containers</a></li>
+  <li><a href="#s16">16 · Block on a slope</a></li>
+  <li><a href="#s17">17 · Summary</a></li>
+  <li><a href="#s18">18 · Common mistakes</a></li>
+  <li><a href="#s19">19 · Find the mistake</a></li>
+  <li><a href="#s20">20 · Group work</a></li>
+  <li><a href="#s21">21 · Concept checks</a></li>
+  <li><a href="#s22">22 · Exam taster</a></li>
+</ol></nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-H3.html">Exam guide · H3</a><a href="note-H2.html">← H2</a><a href="note-H4.html">Next: H4 →</a></nav>
+  <span class="course">MECH1350 · Hydrostatics · chapter 3</span>
+  <h1>Hydrostatic forces on plane and curved surfaces</h1>
+  <p class="lede">How the pressure on a surface adds up to one force, where that force acts, and how it holds or opens gates, on flat and on curved surfaces. Every slide and supplement example, explained from scratch.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>H2 showed that pressure grows with depth, \(p=\rho g h\); this chapter adds that pressure up into the <b>force on a surface</b> and finds where it acts. H4 then uses the same idea for buoyancy.</p>
+<p><b>In the exam:</b> the core of Section B, with a 9–20 mark question in almost every sitting (a pressure sketch, a gate held by a hinge or stop, or a curved gate or dam face). See the <a href="guide-H3.html">H3 exam guide</a>.</p>
+<p class="muted small">Source: "Fluid Statics" handout (Prof. C.&nbsp;O. Ng), slides 23–43, plus the supplements on plane surfaces, the underside of curved surfaces, moments of area (optional) and pages 1–8 of "Some Concept Questions". The handout has no printed numbers: "slide n" = PDF page n.</p>
+
+<div class="box conv"><span class="tag">Sign convention for this chapter</span>
+<ul class="list">
+<li><b>Pressure is gauge pressure</b> (pressure above atmospheric), as the exam states. The free surface of an open tank is at \(p=0\). Air at atmospheric pressure on the back of a gate exerts no force.</li>
+<li><b>Depth</b> \(h\) (or \(z\)) is measured <b>vertically downward</b> from the free surface. Distances <b>along a sloping surface</b> are called \(y\), measured from the point O where the surface (extended if needed) meets the free surface. For a surface at angle \(\theta\) to the horizontal, \(h=y\sin\theta\).</li>
+<li><b>Pressure force acts normal to the surface and pushes on it</b> (from the fluid into the surface). In pressure diagrams the arrows are drawn perpendicular to the surface, pointing at it.</li>
+<li><b>Forces</b>: horizontal positive to the right, vertical positive upward, unless the question names another direction. A vertical component \(F_V\) is stated with its direction ("upward" or "downward").</li>
+<li><b>Moments</b>: state the sense as seen in the side view drawn ("clockwise" / "anticlockwise"). Take moments about the hinge, so the unknown hinge reaction drops out.</li>
+<li><b>Constants</b>: \(g=9.81\u{m/s^2}\), \(\rho_\text{water}=1000\u{kg/m^3}\), so \(\rho g=9.81\u{kN/m^3}\). Use the paper's own values if it gives others.</li>
+<li>"Per unit width", "unit length" or "a 1 m run" means: take the breadth into the page as 1 m, so forces come out in kN per metre.</li>
+</ul></div>
+
+<h3>Symbols used throughout</h3>
+<div class="scroll"><table class="tbl">
+<tr><th>Symbol</th><th>Meaning</th><th>Unit</th></tr>
+<tr><td>\(\rho\), \(\gamma=\rho g\)</td><td>density; specific weight (weight per cubic metre)</td><td>kg/m³; N/m³</td></tr>
+<tr><td>\(p\)</td><td>(gauge) pressure</td><td>Pa = N/m²</td></tr>
+<tr><td>\(A\)</td><td>wetted area: the part of the surface touched by the fluid</td><td>m²</td></tr>
+<tr><td>C, \(h_c\), \(y_c\)</td><td>centroid (centre of area); its vertical depth; its distance along the plane from O</td><td>—, m, m</td></tr>
+<tr><td>CP, \(h_R\), \(y_R\)</td><td>centre of pressure (where the resultant acts); its depth; its distance along the plane</td><td>—, m, m</td></tr>
+<tr><td>\(F_R\)</td><td>resultant (total) hydrostatic force</td><td>N or kN</td></tr>
+<tr><td>\(\theta\)</td><td>angle between the plane surface and the horizontal</td><td>degrees</td></tr>
+<tr><td>\(I_c\) (also \(I_{xx,c}\))</td><td>second moment of area about the horizontal axis through the centroid, lying in the surface</td><td>m⁴</td></tr>
+<tr><td>\(F_H\), \(F_V\)</td><td>horizontal and vertical components of the force on a curved surface</td><td>N or kN</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Why forces on surfaces matter (slides 23–26)</h2>
+<p>Slide 23 calls this "the core subject matter of fluid statics": the <b>hydrostatic force acting on a submerged surface</b>. A <b>submerged surface</b> is any surface with fluid on at least one side: a dam face, a gate, a tank wall, a ship's hull. <b>Hydrostatic</b> means the fluid is at rest, so the only stress in it is pressure (H1: a fluid at rest carries no shear stress).</p>
+<p>Slides 24–26 show three engineering structures that must be designed against this force:</p>
+<ul class="list">
+<li><b>Gravity dam</b> (slide 24, Hoover Dam photo). A massive concrete wall holds back the reservoir (upstream side). The <b>water pressure</b> pushes horizontally on the upstream face, trying to slide and overturn the dam. The dam resists by its own <b>weight</b> (hence "gravity" dam). Water seeping under the base also pushes up on it: the <b>uplift pressure</b>. Spillway and sluiceway are channels for releasing water.</li>
+<li><b>Control gate</b> in a canal, spillway or shipyard (slide 25, photos of a vertical lift gate, a curved "radial" gate and a flap gate). A gate must be strong enough for the water force, and its hinge, stops or hoist must hold the force and the <b>moment</b> it makes.</li>
+<li><b>Earth-retaining wall</b> (slide 26). An L-shaped concrete wall (vertical "stem", horizontal base with "heel" and "toe") holds back soil. Soil pressure and water pressure push on the stem; the weight of the wall and of the soil on its heel holds it in place.</li>
+</ul>
+<div id="fig-apps"></div>
+<p class="muted">Redrawn for these notes: the water (blue) pushes on the structure (grey) with a pressure that grows with depth; the arrows show the pressure, longest at the bottom.</p>
+<p>In each case the engineer needs two things: <b>how big</b> the total water force is, and <b>where</b> it acts. The rest of the chapter answers exactly these two questions, first for flat (plane) surfaces, then for curved ones.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Pressure distribution diagrams (slide 27; review sheet)</h2>
+<p>Before any formula, draw the <b>pressure distribution diagram</b>: a sketch of the surface with an arrow at each point whose length is proportional to the pressure there. The exam asks for these sketches directly (H3.1, 4–5 marks), and they show at once where the force is biggest. Two facts from H2 are all you need:</p>
+<div class="box thm"><span class="tag">Result · hydrostatic pressure (from H2)</span>
+\[p=p_0+\rho g z\]
+<p class="word"><b>In words:</b> pressure = pressure at the surface + specific weight × vertical depth below that surface. With \(p_0=0\) (open to the air, gauge pressure), \(p=\rho g z\): pressure grows <b>linearly</b> with depth.</p></div>
+<div class="box def"><span class="tag">Definition · pressure force on a surface (review sheet)</span>
+<p>The pressure force is a <b>vector</b>, always <b>perpendicular</b> to the surface and pushing <b>inward</b> on it (from the fluid onto the surface). Pressure itself is a scalar: at a point it is the same in every direction (Pascal's law), so a sloping surface feels the same pressure \(\rho g z\) as a vertical one at the same depth; only the direction of the force changes.</p>
+<p>Spread over a surface, the pressure force is a <b>distributed load</b>: a force spread continuously over an area, like snow on a roof, rather than concentrated at one point.</p></div>
+<h3>Rules for drawing</h3>
+<ol class="steps">
+<li>Mark the free surface and the depth \(z\) of each corner or kink of the surface. <b>Only vertical depth matters</b>, not the distance along a sloping wall.</li>
+<li>Work out \(p\) at the top and bottom of each straight piece (and at every interface between two fluids).</li>
+<li>Draw arrows <b>perpendicular to the surface</b>, pointing onto it, with lengths proportional to \(p\). Join the arrow tails with a straight line (pressure is linear in depth within one fluid).</li>
+<li>Label the largest and smallest values with numbers and units.</li>
+</ol>
+<p>The review sheet lists the shapes you must be able to draw. They all come from the same two rules:</p>
+<div id="fig-pd-types"></div>
+<ul class="list">
+<li><b>Triangular</b>: the surface starts at the free surface (\(p=0\) at the top) and goes down to depth \(h\) (\(p=\rho gh\) at the bottom).</li>
+<li><b>Trapezoidal</b>: the surface is completely under water, its top at depth \(h_1\) and bottom at \(h_2\). The diagram is a rectangle of height \(\rho gh_1\) plus a triangle (slide 27, figure b).</li>
+<li><b>Uniform</b> (rectangular): the surface is <b>horizontal</b>, so every point is at the same depth and \(p=\rho gh\) everywhere on it.</li>
+<li><b>Two-layer</b> (bilinear): a lighter liquid (oil) floats on a heavier one (water). Pressure is continuous at the interface (H2), but below it the line gets <b>steeper</b>, because each metre of water adds \(\rho_w g\), more than a metre of oil. The diagram has a <b>kink</b> at the interface.</li>
+<li><b>Inclined surface</b>: the arrows are perpendicular to the slope, but their lengths still depend only on vertical depth.</li>
+<li><b>Curved surface</b> (such as a circular arc): the arrows are perpendicular to the curve everywhere (for a circle, they all point along radii, through the centre), and their lengths grow with depth.</li>
+</ul>
+<div class="figure" id="fig-pdi-box"><p class="ttl">Try it · two-layer pressure on an inclined wall</p>
+<div id="fig-pdi"></div>
+<div class="ctrl"><label>oil depth \(h_o\) <input type="range" id="pd-ho" min="0" max="2" step="0.1" value="1"></label>
+<label>oil relative density <input type="range" id="pd-sg" min="0.6" max="1" step="0.05" value="0.8"></label>
+<label>wall angle \(\theta\) <input type="range" id="pd-th" min="30" max="90" step="5" value="45"></label></div>
+<div class="readout" id="pd-out"></div>
+<p class="cap">A tank holds oil over 1 m of water against a wall at angle \(\theta\) to the bed (the Dec 2023 exam set-up has \(h_o=1\) m, relative density 0.8, \(\theta=45°\)). The arrows are drawn perpendicular to the wall. Move the oil depth to 0 for a single triangle; set the relative density to 1 and the kink disappears; change the angle and see that the pressures at A and B do not change.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>On an inclined wall, the pressure at a point is \(\rho g\times\) its <b>vertical</b> depth, never \(\rho g\times\) the slant distance along the wall. And the arrows must be perpendicular to the wall, not horizontal.</p></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>From distributed load to resultant force (slides 27–29)</h2>
+<div class="box def"><span class="tag">Definition · resultant force (slide 27)</span>
+<p>The <b>resultant force</b> \(F_R\) is a single point force that can replace the whole distributed pressure load. It is "equivalent" to the distributed load if it satisfies the same <b>static equilibrium conditions</b>: it has the same total push and the same turning effect.</p></div>
+<p>Slide 27's figures show this. In figure (a) a vertical wall holds water; the pressure arrows grow from zero at the surface. A rectangular plate (shaded) sits on the wall from depth \(h_1\) to depth \(h_2\); only the pressure on the plate matters for the plate, a <b>trapezoid</b> ABCE. Figure (b) splits that trapezoid into a <b>rectangle</b> ABDE of width \(\gamma h_1\) (the pressure at the top of the plate) and a <b>triangle</b> BCD of base \(\gamma(h_2-h_1)\). Each piece has its own resultant: \(F_1\) at the middle of the rectangle and \(F_2\) at two-thirds of the way down the triangle. Their sum is \(F_R\), which acts at a depth \(y_A\) between them.</p>
+<div id="fig-split"></div>
+<p>Slide 28 states the two conditions:</p>
+<div class="box thm"><span class="tag">Result · the two equilibrium conditions (slide 28)</span>
+\[\sum F=0\qquad\sum M=0\]
+<p class="word"><b>In words:</b> net force = 0 fixes the <b>magnitude</b> of \(F_R\) (it must equal the total of all the little pressure forces); net moment = 0 fixes its <b>line of action</b> (where it must act so that it turns the surface exactly as much as the spread-out load does).</p></div>
+<p>The boxed statement on slide 28: as far as the equilibrium of the surface is concerned, it makes <b>no difference</b> whether the surface carries the distributed pressure or the single point force \(F_R\) at the right place. So in every gate problem you replace the pressure by \(F_R\) and draw an ordinary free-body diagram.</p>
+<h3>One way to picture it (slide 29)</h3>
+<p>Imagine a thin plate with the distributed load (red arrows, growing from left to right) on top and a single upward point force \(F_R\) underneath. The plate stays still only if \(\sum F=0\) (so \(F_R\) equals the total load) and \(\sum M=0\) (so \(F_R\) sits under the "centre" of the load, nearer the heavy end). That point force is exactly the resultant.</p>
+<div id="fig-plate"></div>
+<p class="word"><b>Analogy:</b> two children on a see-saw are a distributed load in miniature. The single support that balances them must carry both weights and must be closer to the heavier child. The resultant of a pressure distribution is that single support, reversed.</p>
+<p>Slide 30 then sets the plan: first <b>plane</b> (flat) surfaces, where the direction of \(F_R\) is known (perpendicular to the plane) and formulas exist for its size and position; later, curved surfaces (section 12).</p>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>The simplest case: a vertical rectangle piercing the surface (Plane Surface supplement)</h2>
+<p>The supplement "Hydrostatic Force on a Plane Surface" works one case in full by integration, which shows where all the later formulas come from. Take a <b>vertical rectangular wall</b> of breadth \(b\) (into the page) holding water of depth \(h\). The wall "pierces through the free surface": it starts above the water, so the wetted area is \(A=hb\).</p>
+<div id="fig-vrect"></div>
+<ol class="steps">
+<li>Cut the wetted area into thin horizontal strips. A strip at depth \(z\) has height \(\mathrm dz\) and area \(\mathrm dA=b\,\mathrm dz\).</li>
+<li>The pressure on the strip is \(p=\rho g z\), so its force is \(\mathrm dF=p\,\mathrm dA=\rho g z\,b\,\mathrm dz\) (perpendicular to the wall).</li>
+<li>Add all the strips (\(\sum F=0\) for the wall):</li>
+</ol>
+\[\begin{aligned}F_R&=\int_A \mathrm dF=\rho g b\int_0^h z\,\mathrm dz\\&=\tfrac12\rho g h^2 b=\rho g\,\frac h2\,(hb)\end{aligned}\]
+<p>Pressure varies linearly from \(p_\text{min}=0\) at the top to \(p_\text{max}=\rho gh\) at the bottom, so the <b>average pressure</b> is \((p_\text{max}+p_\text{min})/2=\rho g(h/2)\): exactly the pressure at the <b>centre of area</b> of the wetted rectangle (depth \(h/2\)). So</p>
+<div class="box thm"><span class="tag">Result · magnitude (supplement; valid for any plane surface)</span>
+\[F_R=p_\text{ave}\times A\]
+<p class="word"><b>In words:</b> resultant force = pressure at the centre of area × wetted area = average pressure × wetted area.</p></div>
+<p>4. For the <b>position</b>, take moments about the top edge O (\(\sum M=0\)): the moment of \(F_R\) about O must equal the total moment of all the strips. Let \(h_R\) be the depth where \(F_R\) acts:</p>
+\[\begin{aligned}F_R h_R&=\int_A z\,\mathrm dF=\rho g b\int_0^h z^2\,\mathrm dz\\&=\tfrac13\rho g h^3 b\end{aligned}\]
+\[\tfrac12\rho g h^2 b\;h_R=\tfrac13\rho g h^3 b\ \Rightarrow\ \boxed{h_R=\tfrac23 h}\]
+<p>The point where \(F_R\) acts is the <b>centre of pressure</b>, because it is the centre of the pressure distribution (here, the centroid of the pressure triangle, two-thirds of the way down). The supplement stresses: \(h_R=\frac23h\) is valid <b>only</b> for a triangular pressure distribution on a rectangle, that is, a rectangle that starts at the free surface. For anything else, use the general formula of section 8.</p>
+<div class="box eg"><span class="tag">Example · written for these notes · a vertical tank wall</span>
+<p>A vertical tank wall is 2 m wide and holds water 3 m deep. Find the resultant force and where it acts.</p>
+<div id="fig-s4-eg"></div>
+<ol class="steps">
+<li>Pressures: 0 at the surface, \(p_\text{max}=9.81\times3=29.43\u{kPa}\) at the bottom: a triangle.</li>
+<li>Average pressure \(=29.43/2=14.715\u{kPa}\) (the pressure at depth 1.5 m, the centre of area).</li>
+<li>\(F_R=14.715\times(3\times2)=88.29\u{kN}\), or directly \(\tfrac12\rho gh^2b=\tfrac12(9.81)(3^2)(2)\).</li>
+<li>\(h_R=\tfrac23(3)=2\u{m}\) below the surface (1 m above the bottom).</li>
+</ol>
+\[\boxed{F_R=88.3\u{kN},\quad h_R=2\u{m}}\]
+<p>acting horizontally on the wall, 2 m below the surface.</p>
+<p class="muted">FBD of the wall: the single arrow \(F_R\) replaces the triangle; the wall's supports must supply an equal and opposite force and an equal and opposite moment.</p></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Any plane surface: the size of the force (slides 30–33)</h2>
+<h3>The terms (slide 31)</h3>
+<p>Slide 31 draws a plane surface of <b>any shape</b> (a blob), tilted at angle \(\theta\) to the horizontal, under a free surface. The plane is extended upward until it meets the free surface at a line through O. The figure is also drawn "face-on" (rotated into view) so you can see the shape.</p>
+<div id="fig-terms"></div>
+<div class="scroll"><table class="tbl">
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td>C</td><td><b>centroid</b> (centre of area) of the plane surface</td></tr>
+<tr><td>CP</td><td><b>centre of pressure</b>: the point of application of the resultant force on the surface</td></tr>
+<tr><td>\(A\)</td><td><b>wetted area</b> of the plane surface (only the part in contact with the fluid)</td></tr>
+<tr><td>\(h_c\)</td><td>vertical depth of C below the free surface</td></tr>
+<tr><td>\(h_R\)</td><td>vertical depth of CP below the free surface</td></tr>
+<tr><td>\(F_R\)</td><td>magnitude of the resultant force</td></tr>
+<tr><td>\(\theta\)</td><td>inclination of the plane surface with the horizontal</td></tr>
+<tr><td>\(y\), \(y_c\), \(y_R\)</td><td>distances measured <b>along the plane</b> from O (to a strip, to C, to CP)</td></tr>
+</table></div>
+<h3>The integration (slide 32)</h3>
+<p>A small piece of area \(\mathrm dA\) at distance \(y\) along the plane from O is at depth \(h=y\sin\theta\). Its pressure force is \(\mathrm dF=\rho g h\,\mathrm dA\). Add them all:</p>
+\[\begin{aligned}F_R&=\int_A \mathrm dF=\int_A\rho g h\,\mathrm dA\\&=\rho g\sin\theta\int_A y\,\mathrm dA\end{aligned}\]
+<p>The integral \(\int_A y\,\mathrm dA\) is the <b>first moment of area</b> about the axis through O (section 7). By the definition of the centroid it equals \(y_cA\), where \(y_c\) is the distance of the centroid from O. So</p>
+\[F_R=\rho g\sin\theta\,y_cA=\rho g h_cA,\qquad h_c=y_c\sin\theta\]
+<div class="box thm"><span class="tag">Result · magnitude of the resultant force (slides 32–33) · memorise</span>
+\[F_R=\rho g h_c A\]
+<p class="word"><b>In words:</b> resultant force = pressure at the centroid × wetted area. The angle \(\theta\) does not appear: only the depth of the centroid and the area matter.</p></div>
+<h3>What the formula means (slide 33)</h3>
+<p>Pressure is not uniform over the surface; is there an average pressure \(p_\text{ave}\) with \(F_R=p_\text{ave}A\)? Matching this with \(F_R=\rho gh_cA\) gives</p>
+<div class="box thm"><span class="tag">Result · average pressure (slide 33)</span>
+\[p_\text{ave}=\rho g h_c\]
+<p class="word"><b>In words:</b> the average pressure on a plane surface is the pressure acting at its centroid. So \(F_R\) = pressure at the centroid × wetted area.</p></div>
+<p>This is true for <b>any</b> plane shape at <b>any</b> angle, because pressure is linear in depth: the deeper half of the area has extra pressure that exactly balances the shallower half's shortfall, about the centroid.</p>
+<div class="box warn"><span class="tag">Watch</span>
+<p>\(h_c\) is the <b>vertical depth</b> of the centroid, not its distance \(y_c\) along a sloping gate. On a gate at 60°, using \(y_c\) instead of \(h_c\) makes the force about 15% too big.</p></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Centroids (slides 34–35)</h2>
+<div class="box def"><span class="tag">Definition · centroid (slide 34)</span>
+<p>The <b>centroid</b> (or <b>centre of area</b>) is the geometric centre of a two-dimensional shape:</p>
+<ul class="list">
+<li>it is the centre of the distribution of area of the shape;</li>
+<li>it is the point where a thin plate of that shape could be perfectly balanced on a single pin;</li>
+<li>for regular shapes (rectangle, square, circle) it is the centre of the figure;</li>
+<li>for a <b>triangle</b> it is where the three <b>medians</b> meet (a median joins a corner to the midpoint of the opposite side). The centroid divides each median in the ratio <b>2 : 1</b>, two parts from the corner, one part from the side.</li>
+</ul></div>
+<div id="fig-centroids"></div>
+<p>Slide 35: the centroid of a 2-D figure coincides with the <b>centre of mass</b> of a thin uniform plate of the same size and shape. So "where would it balance?" is a quick check.</p>
+<div class="box ready"><span class="tag">Ready answer · centroid positions to know</span>
+<ul class="list">
+<li>Rectangle of height \(L\): at mid-height, \(L/2\) from either edge.</li>
+<li>Circle: at the centre.</li>
+<li>Triangle of height \(L\): \(L/3\) from the base, \(2L/3\) from the apex (the 2 : 1 rule along the median).</li>
+<li>Semicircle of radius \(R\): on the axis of symmetry, \(4R/(3\pi)\approx0.424R\) from the straight edge.</li>
+</ul></div>
+<p class="word"><b>Why it matters here:</b> \(h_c\) is the depth of the centroid. For a triangular gate with its apex at the top, the centroid is two-thirds of the way down, not halfway: the wide base holds most of the area.</p>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Second moment of area (slide 38; Moments of Area supplement, optional)</h2>
+<p>The position of the centre of pressure (section 8) needs one more property of the shape: its <b>second moment of area</b>. Slide 38 gives the values for four shapes, and the review sheet says these formulas <b>will be provided in the exam if needed</b>. You do need to know what they mean and which axis they refer to.</p>
+<div class="box def"><span class="tag">Definition · second moment of area \(I_c\) (slide 38)</span>
+<p>Take the \(x\)-axis as the <b>horizontal</b> axis that passes through the <b>centroid</b> and lies <b>in the plane of the figure</b>. Then \(I_{xx}=\int_A y^2\,\mathrm dA\) about that axis is the \(I_c\) used in the centre-of-pressure formula. (\(y\) here is the distance of each bit of area from that axis.)</p></div>
+<div id="fig-moa"></div>
+<div class="scroll"><table class="tbl">
+<tr><th>Shape (slide 38)</th><th>Area \(A\)</th><th>Centroid</th><th>\(I_c=I_{xx}\)</th></tr>
+<tr><td>(a) rectangle, width \(b\), height \(L\)</td><td>\(bL\)</td><td>mid-height</td><td>\(bL^3/12\)</td></tr>
+<tr><td>(b) circle, radius \(R\)</td><td>\(\pi R^2\)</td><td>centre</td><td>\(\pi R^4/4\)</td></tr>
+<tr><td>(c) triangle, base \(b\), height \(L\)</td><td>\(bL/2\)</td><td>\(L/3\) above base</td><td>\(bL^3/36\)</td></tr>
+<tr><td>(d) semicircle, radius \(R\)</td><td>\(\pi R^2/2\)</td><td>\(4R/(3\pi)\) from diameter</td><td>\(0.10976R^4\)</td></tr>
+</table></div>
+<p class="muted">Slide 38 also lists \(I_{xy}=0\) for (a), (b), (d) and \(I_{xy}=b(b-2s)L^2/72\) for a general triangle whose apex is offset by \(s\); \(I_{xy}\) (the "product of area") is only needed for the sideways position of the centre of pressure on an unsymmetrical shape, which this course does not use. For a circle written with its diameter \(D\), \(\pi R^4/4=\pi D^4/64\) (May 2025 gives it that way).</p>
+<p><b>Units</b>: length⁴, m⁴. Notice the <b>cube</b> of the height in \(bL^3/12\): the second moment is very sensitive to how far the shape extends up and down.</p>
+
+<div class="beyond box"><span class="tag">Moments of Area supplement · marked optional by the handout</span>
+<p>The handout labels this supplement <i>Optional</i>; the exam gives the formulas. It explains what "moments of area" are. For any plane shape and an axis GG in its plane, the <b>\(n\)th moment of area</b> is \(\int_A y^n\,\mathrm dA\), where \(y\) is the (signed) distance of each bit of area \(\mathrm dA\) from GG: negative on the other side of the axis.</p>
+<ul class="list">
+<li><b>Zeroth moment</b> (\(n=0\)): \(\int_A\mathrm dA=A\), the total area.</li>
+<li><b>First moment</b> (\(n=1\)): \(\int_A y\,\mathrm dA=y_cA\), where \(y_c\) is the distance of the centroid from GG. This is the <b>definition</b> of the centroid. About an axis <b>through</b> the centroid, \(y_c=0\), so the first moment is zero.</li>
+<li><b>Second moment</b> (\(n=2\)): \(\int_A y^2\,\mathrm dA=I_{GG}\). It measures the <b>spread</b> of the area about the axis, like the variance of a statistical distribution: narrow and sharp, or broad and flat.</li>
+<li><b>Third moment</b> (\(n=3\)): measures how <b>symmetric</b> the shape is about the centroidal axis (zero for a symmetric shape).</li>
+</ul>
+<details class="calc"><summary>the four moments of a rectangle \(b\times d\) about its centreline</summary><div>
+<p>Strip of width \(b\), height \(\mathrm dy\) at distance \(y\) from the centreline, \(-d/2\le y\le d/2\); \(\mathrm dA=b\,\mathrm dy\).</p>
+<p>\(\int b\,\mathrm dy=b\,[y]_{-d/2}^{d/2}=bd=A\). <span class="why">Zeroth moment: the area.</span></p>
+<p>\(\int y\,b\,\mathrm dy=b\,[y^2/2]_{-d/2}^{d/2}=0\). <span class="why">First moment zero: the axis passes through the centroid.</span></p>
+<p>\(I_c=\int y^2\,b\,\mathrm dy\) \(=b\,[y^3/3]_{-d/2}^{d/2}=\dfrac{bd^3}{12}\). <span class="why">Proportional to \(d^3\): very sensitive to the extent in \(y\).</span></p>
+<p>\(\int y^3\,b\,\mathrm dy=b\,[y^4/4]_{-d/2}^{d/2}=0\). <span class="why">Third moment zero: symmetric about the centroidal axis.</span></p>
+</div></details>
+<div class="box thm"><span class="tag">Result · parallel axis theorem</span>
+\[I_O=I_c+Ay_c^2\]
+<p class="word"><b>In words:</b> second moment about any axis OO = second moment about the parallel axis through the centroid + area × (distance between the axes)².</p></div>
+<div id="fig-parallel"></div>
+<details class="calc"><summary>proof of the parallel axis theorem</summary><div>
+<p>Let \(y'\) be the distance of \(\mathrm dA\) from OO and \(y\) its distance from the centroidal axis GG, with GG a distance \(y_c\) from OO, so \(y'=y_c-y\) (or \(y_c+y\), depending on the side; the result is the same).</p>
+\[\begin{aligned}I_O&=\int_A (y_c-y)^2\,\mathrm dA\\&=y_c^2\!\int_A\!\mathrm dA-2y_c\!\int_A\! y\,\mathrm dA\\&\quad+\int_A y^2\,\mathrm dA\end{aligned}\]
+<p>The first integral is \(A\). The middle integral is the first moment about the centroidal axis, which is <b>zero</b>. The last is \(I_c\). So \(I_O=y_c^2A+I_c\). <span class="why">This is the step used on slide 36.</span></p>
+</div></details>
+<p class="muted">Final remark of the supplement: moments are a statistical tool for describing distributions; in mechanics the "second moment of mass" is the <b>moment of inertia</b>. There is no need to dig deeper for this course.</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Where the force acts: the centre of pressure (slides 36–37)</h2>
+<p>The point of application of \(F_R\) is the <b>centre of pressure</b> (CP). Slide 36 finds it with \(\sum M=0\): the moment of \(F_R\) about O must equal the total moment of all the little forces \(\mathrm dF\) about O.</p>
+<details class="calc"><summary>the derivation of \(y_R\) and \(h_R\) (slide 36)</summary><div>
+<p>Moments about the axis through O, in the plane of the surface:</p>
+\[F_R\,y_R=\int_A y\,\mathrm dF\]
+<span class="why">Each piece \(\mathrm dF\) is perpendicular to the plane, at distance \(y\) from O along the plane, so its moment arm is \(y\).</span>
+\[(\rho g y_c\sin\theta\,A)\,y_R=\int_A y\,(\rho g y\sin\theta\,\mathrm dA)\]
+<span class="why">Substitute \(F_R=\rho g\sin\theta\,y_cA\) (section 5) and \(\mathrm dF=\rho g\,y\sin\theta\,\mathrm dA\).</span>
+\[(y_cA)\,y_R=\int_A y^2\,\mathrm dA\]
+<span class="why">Cancel \(\rho g\sin\theta\) from both sides.</span>
+\[\int_A y^2\,\mathrm dA=I_O=I_c+Ay_c^2\]
+<span class="why">The integral is the second moment about O; the parallel axis theorem moves it to the centroid.</span>
+\[(y_cA)\,y_R=Ay_c^2+I_c\ \Rightarrow\ y_R=y_c+\frac{I_c}{y_cA}\]
+<span class="why">Divide by \(y_cA\).</span>
+<p>Multiply by \(\sin\theta\) to turn distances along the plane into depths (\(h_R=y_R\sin\theta\), \(h_c=y_c\sin\theta\), so \(y_c=h_c/\sin\theta\)):</p>
+\[h_R=h_c+\frac{I_c\sin^2\theta}{h_cA}\]
+</div></details>
+<div class="box thm"><span class="tag">Result · centre of pressure (slides 36–37) · memorise</span>
+\[y_R=y_c+\frac{I_c}{y_cA}\]<p class="muted" style="text-align:center">or, in depths,</p>\[h_R=h_c+\frac{I_c\sin^2\theta}{h_cA}\]
+<p class="word"><b>In words:</b> depth of the centre of pressure = depth of the centroid + (second moment about the centroidal axis × sin²θ) ÷ (depth of centroid × area). Along the plane: distance of CP from O = distance of centroid from O + \(I_c\) ÷ (that distance × area).</p></div>
+<p class="muted">Past papers write the along-the-plane version as \(y_{cp}=\bar y+I_{xx,c}/(\bar yA)\), where \(\bar y\) is the centroid's distance from the free-surface line along the plane. Same formula, different letters. For a <b>vertical</b> surface \(\theta=90°\), \(\sin\theta=1\), and \(y\) and \(h\) are the same thing.</p>
+<h3>Why the centre of pressure is below the centroid (slide 37)</h3>
+<p>The centre of pressure is the centre of the <b>pressure distribution</b>, not of the area. Deeper bits of area carry more pressure, so in the moment \(\int y\,\mathrm dF\) the bits farther from O are weighted more heavily. The balance point shifts down. Mathematically, the extra term \(I_c\sin^2\theta/(h_cA)\) is never negative:</p>
+\[h_R\begin{cases}\gt h_c & \text{inclined or vertical plane, }\theta\ne0\\ =h_c & \text{horizontal plane, }\theta=0\end{cases}\]
+<p>For a horizontal plane the pressure is uniform, so the centre of pressure coincides with the centroid. The exam has asked this as a true/false statement (section 22).</p>
+<div class="box warn"><span class="tag">Watch</span>
+<p>The shift \(I_c\sin^2\theta/(h_cA)\) gets <b>smaller</b> as the surface goes deeper (\(h_c\) in the denominator). Deep down, the pressure is nearly uniform over the surface, so CP is almost at the centroid. Near the surface the shift is largest: for a rectangle starting at the surface it reaches \(h/6\) (from \(h/2\) to \(2h/3\)).</p></div>
+<p><b>Sideways position.</b> For a shape that is symmetric about a line running down the slope (rectangle, circle, isosceles triangle with the apex up or down), the centre of pressure lies on that line of symmetry. All exam shapes are of this kind.</p>
+
+<div class="box eg"><span class="tag">Example · written for these notes · an inclined rectangular gate</span>
+<p>A rectangular gate 2 m long (down the slope) and 1.5 m wide lies on a slope at \(\theta=60°\) to the horizontal. Its top edge is 1 m below the water surface. Find the resultant force and the depth of the centre of pressure.</p>
+<div id="fig-s8-eg"></div>
+<ol class="steps">
+<li>Area: \(A=2\times1.5=3\u{m^2}\).</li>
+<li>Centroid: halfway down the gate, 1 m along the slope below the top edge, so 1 sin 60° = 0.866 m deeper: \(h_c=1+0.866=1.866\u{m}\).</li>
+<li>Force: \(F_R=\rho gh_cA\) \(=9.81\times1.866\times3=54.92\u{kN}\).</li>
+<li>Second moment about the horizontal centroidal axis (in the gate's plane; the height measured along the slope is 2 m): \(I_c=bL^3/12=1.5\times2^3/12=1\u{m^4}\).</li>
+<li>Centre of pressure:</li>
+</ol>
+\[\begin{aligned}h_R&=1.866+\frac{1\times\sin^2 60°}{1.866\times3}\\&=1.866+0.134=2.000\u{m}\end{aligned}\]
+\[\boxed{F_R=54.9\u{kN},\quad h_R=2.00\u{m}}\]
+<p>Along the gate: \(y_c=1.866/\sin60°=2.155\u{m}\) from O, and \(y_R-y_c=I_c/(y_cA)\) \(=1/(2.155\times3)=0.155\u{m}\). So CP is \(1+0.155=1.155\u{m}\) down the gate from its top edge, on its centreline.</p>
+<p class="muted">FBD: \(F_R\) is perpendicular to the gate, pointing from the water onto the gate, at CP.</p></div>
+
+<div class="figure"><p class="ttl">Try it · where is the centre of pressure?</p>
+<div id="fig-cpi"></div>
+<div class="ctrl"><label>shape <select id="cp-shape"><option value="rect">rectangle 2 m × 1.5 m</option><option value="circ">circle, diameter 2 m</option><option value="tri">triangle, apex up, base 2 m, height 2 m</option></select></label>
+<label>depth of top edge (m) <input type="range" id="cp-top" min="0" max="6" step="0.1" value="1"></label>
+<label>angle \(\theta\) <input type="range" id="cp-th" min="0" max="90" step="5" value="60"></label></div>
+<div class="readout" id="cp-out"></div>
+<p class="cap">A plane gate (height 2 m measured along its slope) under water. The orange dot is the centroid C, the red arrow is \(F_R\) at the centre of pressure CP. Lower the gate: CP moves towards C. Set \(\theta=0\) (horizontal): CP sits exactly on C. Set the top depth to 0 with the rectangle at 90°: CP is at \(2/3\) of the depth.</p></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Cases where you don't need the formulas (slides 39–40)</h2>
+<p>Two shapes of pressure diagram are so simple that you can read off the answer from the diagram itself.</p>
+<h3>A rectangle piercing the free surface: triangular pressure (slide 39)</h3>
+<p>A plane rectangle of length \(H\) (measured along the plane) and breadth \(B\) starts at the free surface and slopes down at \(\theta\). Its bottom edge is at depth \(H\sin\theta\), and the pressure diagram is a triangle.</p>
+\[A=HB,\quad h_c=\tfrac12H\sin\theta,\quad h_R=\tfrac23H\sin\theta\]
+\[F_R=\tfrac12\rho g H^2B\sin\theta\]
+<p class="word"><b>In words:</b> the resultant acts two-thirds of the way down the wetted length, and its size is half the bottom pressure × the wetted area. For a vertical wall (\(\theta=90°\), slide 39's second picture) this is section 4's result: \(F_R=\tfrac12\rho gH^2B\), at \(H/3\) above the bottom.</p>
+<div id="fig-s9-tri"></div>
+<details class="calc"><summary>check: the general formula gives the same \(h_R\)</summary><div>
+<p>\(I_c=BH^3/12\) (the height in the plane is \(H\)), \(A=HB\), \(h_c=\tfrac12H\sin\theta\).</p>
+\[\frac{I_c\sin^2\theta}{h_cA}=\frac{(BH^3/12)\sin^2\theta}{\tfrac12H\sin\theta\cdot HB}=\tfrac16H\sin\theta\]
+<p>\(h_R=\tfrac12H\sin\theta+\tfrac16H\sin\theta=\tfrac23H\sin\theta\). ✓ <span class="why">Both routes agree, as they must.</span></p>
+</div></details>
+<h3>A horizontal surface: uniform pressure (slide 40)</h3>
+<p>A horizontal plate at depth \(h\) (a tank bottom, the flat top of a submerged box) has the same pressure \(p=\rho gh\) everywhere on it. So</p>
+<div class="box thm"><span class="tag">Result · horizontal surface (slide 40)</span>
+\[F=\rho g h A\]
+<p class="word"><b>In words:</b> force on a horizontal surface = pressure at its depth × its area = the weight of the column of liquid standing on it. It acts at the centroid (centre of pressure = centre of area).</p></div>
+<div id="fig-s9-hor"></div>
+<h3>Splitting a trapezoid (slide 27, figure b)</h3>
+<p>For a rectangle wholly under water, the pressure diagram is a trapezoid. Instead of the \(I_c\) formula you may split it into a <b>rectangle</b> (uniform pressure equal to the top pressure) and a <b>triangle</b> (the extra pressure growing from zero at the top). Each piece's force acts at its own centroid: the middle of the rectangle, and two-thirds of the way down the triangle. Then combine with moments.</p>
+<div class="box eg"><span class="tag">Example · written for these notes · trapezoid split vs formula</span>
+<p>A vertical rectangular gate, 2 m high and 1 m wide, has its top edge 1 m below the water surface. Find \(F_R\) and the depth of the centre of pressure both ways.</p>
+<div id="fig-s9-eg"></div>
+<ol class="steps">
+<li>Pressures: top \(p_1=9.81\times1=9.81\u{kPa}\); bottom \(p_2=9.81\times3=29.43\u{kPa}\).</li>
+<li>Rectangle part: \(F_1=9.81\times(2\times1)=19.62\u{kN}\), acting at mid-height, 1 m below the top edge.</li>
+<li>Triangle part: extra pressure \(29.43-9.81=19.62\u{kPa}\) at the bottom; \(F_2=\tfrac12\times19.62\times2=19.62\u{kN}\), acting \(\tfrac23\times2=1.333\u{m}\) below the top edge.</li>
+<li>Total \(F_R=F_1+F_2=39.24\u{kN}\). Moments about the top edge: \(F_R\,d=F_1(1)+F_2(1.333)\), so \(d=1.1667\u{m}\): depth \(h_R=1+1.1667=2.167\u{m}\).</li>
+<li>Formula check: \(h_c=2\u{m}\), \(A=2\u{m^2}\), \(F_R=9.81\times2\times2=39.24\u{kN}\) ✓; \(I_c=1\times2^3/12=0.667\u{m^4}\), \(h_R=2+0.667/(2\times2)=2.167\u{m}\) ✓.</li>
+</ol>
+\[\boxed{F_R=39.2\u{kN},\quad h_R=2.17\u{m}}\]</div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Gas pressure above the liquid, and layered liquids (H2 slide 16 idea; review sheet)</h2>
+<p>Two exam favourites (H3.3) break the simple "free surface at \(p=0\)" picture: a <b>closed tank</b> with pressurised (or partly evacuated) air above the liquid, and <b>two liquids</b> in layers. H2 (slide 16) gave the key idea: the pressure at the bottom of the upper layer is a <b>surcharge</b>, transmitted uniformly to every depth of the liquid below. Two methods handle it.</p>
+<h3>Method 1 · equivalent depth (the "piezometric head" method)</h3>
+<p>Replace the surcharge \(p_s\) by an <b>imaginary extra depth</b> of the liquid that would produce the same pressure:</p>
+\[h_\text{eq}=\frac{p_s}{\rho g}\]
+<p class="word"><b>In words:</b> equivalent depth = surcharge pressure ÷ specific weight of the liquid you are working in. Then pretend the free surface is \(h_\text{eq}\) higher (an <b>imaginary free surface</b>), measure all depths from it, and use \(F_R=\rho gh_cA\) and \(h_R=h_c+I_c\sin^2\theta/(h_cA)\) as usual. At the end, convert \(h_R\) back to a real depth by subtracting \(h_\text{eq}\).</p>
+<p>For an oil layer of thickness \(h_o\) on water, \(p_s=\rho_og h_o\), so \(h_\text{eq}=(\rho_o/\rho_w)h_o\): 1.5 m of oil of relative density 0.8 acts on the water like 1.2 m of water. For air at gauge pressure \(p_\text{air}\), \(h_\text{eq}=p_\text{air}/(\rho g)\); if the air is below atmospheric, \(h_\text{eq}\) is negative and the imaginary surface is <b>below</b> the real one.</p>
+<p class="muted">May 2022 calls this "the piezometric head method": a piezometer tube (H2) fitted at the top of the water layer would show water rising to exactly this imaginary level.</p>
+<h3>Method 2 · split the pressure diagram</h3>
+<p>Draw the full pressure diagram and cut it into rectangles (uniform surcharge) and triangles (growth with depth in each layer). Find each piece's force (area of the piece × breadth) and its line of action (rectangle: middle; triangle: two-thirds of the way from the zero end), then combine by moments. This is slide 27(b) applied piece by piece.</p>
+
+<div class="box eg"><span class="tag">Example · written for these notes · oil over water on a vertical wall</span>
+<p>An open tank holds 1.5 m of oil (relative density 0.8) floating on 1.0 m of water. Find the resultant force on a 1 m wide strip of the vertical side wall, and its depth.</p>
+<div id="fig-s10-eg"></div>
+<ol class="steps">
+<li>Pressures: at the interface \(p_i=0.8\times9.81\times1.5=11.772\u{kPa}\); at the bottom \(p_b=11.772+9.81\times1.0=21.582\u{kPa}\). Diagram: a triangle over the oil, then a trapezoid (steeper) over the water.</li>
+<li>Oil triangle: \(F_o=\tfrac12\times11.772\times1.5=8.829\u{kN}\), at \(\tfrac23\times1.5=1.0\u{m}\) depth.</li>
+<li>Water part, uniform piece: \(F_u=11.772\times1.0=11.772\u{kN}\) at 2.0 m depth (middle of the water layer).</li>
+<li>Water part, triangle piece: \(F_t=\tfrac12\times9.81\times1.0=4.905\u{kN}\) at \(1.5+\tfrac23=2.167\u{m}\).</li>
+<li>Total: \(F_R=8.829+11.772+4.905\) \(=25.51\u{kN}\). Moments about the surface:</li>
+</ol>
+\[\begin{aligned}h_R&=\big[8.829(1.0)+11.772(2.0)\\&\qquad+4.905(2.167)\big]/25.51\\&=43.00/25.51=1.686\u{m}\end{aligned}\]
+\[\boxed{F_R=25.5\u{kN/m},\quad h_R=1.69\u{m}}\]
+<details class="calc"><summary>the water part again by the equivalent-depth method</summary><div>
+<p>Oil layer ≡ \(0.8\times1.5=1.2\u{m}\) of water, so the imaginary water surface is 0.3 m <b>below</b> the real oil surface (1.5 − 1.2).</p>
+<p>Water-wetted part of the wall: 1 m high, 1 m wide, centroid at imaginary depth \(1.2+0.5=1.7\u{m}\).</p>
+<p>\(F=9.81\times1.7\times1=16.68\u{kN}\) ✓ (= 11.772 + 4.905). <span class="why">Same as the uniform + triangle pieces.</span></p>
+<p>\(h_R'=1.7+\dfrac{1\times1^3/12}{1.7\times1}=1.749\u{m}\) below the imaginary surface. <span class="why">\(\theta=90°\), \(I_c=bL^3/12\).</span></p>
+<p>Real depth \(=1.749+0.3=2.049\u{m}\). Check with the pieces: \((11.772\times2+4.905\times2.167)/16.68\) \(=2.049\u{m}\) ✓.</p>
+<p class="muted">Use the equivalent depth only for the layer you are in: the oil part of the wall still sees an ordinary oil triangle from the real surface.</p>
+</div></details></div>
+
+<div class="box eg"><span class="tag">Example · written for these notes · air pressure on top of the water</span>
+<p>A closed tank holds 2 m of water with air at 5 kPa (gauge) above it. Find the force on a 1 m wide strip of the vertical side wall over the water depth, and its depth.</p>
+<div id="fig-s10-gas"></div>
+<ol class="steps">
+<li>Pressure diagram: 5 kPa at the water surface (uniform part), plus \(9.81\times2=19.62\u{kPa}\) more at the bottom (triangle part). The air itself also presses on the wall above the water, but the question asks for the water-wetted part.</li>
+<li>Uniform: \(5\times2=10.0\u{kN}\) at 1.0 m depth. Triangle: \(\tfrac12\times19.62\times2=19.62\u{kN}\) at 1.333 m.</li>
+<li>\(F_R=29.62\u{kN}\); depth \(=(10\times1+19.62\times1.333)/29.62\) \(=1.221\u{m}\).</li>
+<li>Equivalent depth check: \(h_\text{eq}=5/9.81=0.510\u{m}\); \(h_c=1.510\), \(F=9.81\times1.510\times2=29.62\u{kN}\) ✓; \(h_R'=1.510+0.667/(1.510\times2)\) \(=1.731\u{m}\), real depth \(1.731-0.510=1.221\u{m}\) ✓.</li>
+</ol>
+\[\boxed{F_R=29.6\u{kN},\quad 1.22\u{m}\text{ deep}}\]</div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>The plain formula \(y_{cp}=\bar y+I_c/(\bar yA)\) assumes \(\bar y\) is measured from a surface where \(p=0\). May 2022 warns: it "works only for free surface conditions". With a surcharge, measure from the <b>imaginary</b> free surface, or split the diagram.</p></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Gates in equilibrium: moments about the hinge (Plane Surface supplement; review sheet)</h2>
+<p>The supplement opens with the principle used for every structure in this chapter (a gate, a wall, a dam):</p>
+<div class="box thm"><span class="tag">Result · static equilibrium of a structure</span>
+\[\sum\text{Forces}=0\qquad\sum\text{Moments}=0\]
+<p class="word"><b>In words:</b> a structure at rest under hydrostatic force, its own weight and support reactions has no net force and no net moment. The review sheet adds: take moments about a <b>point of convenience</b>, for a gate the <b>hinge</b>, because the unknown hinge reaction then has no moment.</p></div>
+<div class="box ready"><span class="tag">Ready answer · gate recipe (H3.4)</span>
+<ol class="steps">
+<li>Sketch the gate (side view) with the free surface, hinge, stops and every given dimension.</li>
+<li>FBD of the gate alone: each hydrostatic resultant \(F_R\) (perpendicular to the gate, at its centre of pressure), the gate's weight at its centroid if given, the applied force or stop reaction, and the hinge reaction (two unknown components at the hinge).</li>
+<li>Find each \(F_R=\rho gh_cA\) and \(h_R\) (or \(y_R\)); turn \(h_R\) into a <b>moment arm about the hinge</b>, measured perpendicular to the line of the force (along the gate for a plane gate).</li>
+<li>\(\sum M_\text{hinge}=0\) gives the unknown force or moment. State its direction or sense.</li>
+<li>If asked, \(\sum F_x=0\), \(\sum F_y=0\) give the hinge reaction.</li>
+</ol></div>
+<div class="box eg"><span class="tag">Example · written for these notes · holding a gate shut</span>
+<p>The vertical gate of section 9 (2 m high, 1 m wide, top edge 1 m below the surface) is hinged along its top edge, with air on the other side. What horizontal force \(P\), applied at its bottom edge, holds it closed? What does the hinge carry?</p>
+<div id="fig-s11-fbd"></div>
+<ol class="steps">
+<li>From section 9: \(F_R=39.24\u{kN}\), acting 1.167 m below the hinge (the top edge).</li>
+<li>Water pushes the gate towards the air side; \(P\) must push back, at 2 m below the hinge.</li>
+<li>\(\sum M_\text{hinge}=0\): \(P\times2=39.24\times1.167\), so \(P=22.89\u{kN}\).</li>
+<li>\(\sum F_x=0\): hinge reaction \(=39.24-22.89=16.35\u{kN}\), pointing towards the water (it pulls the top of the gate back).</li>
+</ol>
+\[\boxed{P=22.9\u{kN},\quad\text{hinge }16.4\u{kN}}\]
+<p class="muted">Gate weight is ignored here (a vertical gate's weight acts along the line of the hinge, so it has no moment about it anyway).</p></div>
+<h3>Self-opening gates and the "resultant passes through the hinge" idea</h3>
+<p>Many exam gates are <b>automatic</b>: hinged somewhere along their length, they stay shut while the resultant passes on one side of the hinge and swing open once it passes to the other side. The limiting case is when the resultant passes <b>exactly through the hinge</b> (zero moment). So "at what water level does it open?" or "what range of hinge heights lets it open?" means: find where the centre of pressure is and compare it with the hinge.</p>
+<p>Two ideas make these quick:</p>
+<ul class="list">
+<li>As the water rises, the centre of pressure on a fixed gate moves <b>up</b> towards the centroid (section 8). A gate pivoted a little below its centroid opens when \(h_R\) rises above the pivot.</li>
+<li>A gate pivoted <b>exactly at its centroid</b> (a "butterfly" gate turning about its centre) always has CP below the pivot, a distance \(I_c/(y_cA)\) down the gate. Its moment about the centre is</li></ul>
+\[F_R\,(y_R-y_c)=\rho g\,I_c\sin\theta\]
+<p>which does not depend on the depth at all: the water's turning effect on a centre-pivoted gate is the same however high the water is (as long as the gate is fully submerged). Something (a stop, an applied moment) must always hold it.</p>
+<p>Section 20 (group work) works the supplement's exercise: the same gate as a rectangle, a circle and a triangle, held by a moment at its top hinge.</p>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Curved surfaces: horizontal and vertical components (slides 41–43)</h2>
+<p>Slide 41 lists what changes when the surface is <b>curved</b> (a radial gate, a rounded tank corner, a cylinder):</p>
+<ul class="list">
+<li>the <b>direction</b> of the resultant force is <b>not known in advance</b> (<i>a priori</i>): each little pressure force is perpendicular to the surface, and on a curve these directions all differ. The direction must be found as part of the problem;</li>
+<li><b>no new formulas</b> are needed: everything comes from the plane-surface results and the weight of some fluid;</li>
+<li>the resultant is found through its <b>horizontal and vertical components</b>, \(F_H\) and \(F_V\).</li>
+</ul>
+<h3>The trick: a free-body diagram of the fluid (slide 42)</h3>
+<p>Slide 42 draws a tank whose wall has a curved part AC (an S-shaped bend). Draw the horizontal line through A and the vertical line through C; they meet at B. AB (length \(a\)) is the <b>horizontal projection</b> of the curved surface and BC (length \(b\)) is its <b>vertical projection</b>: the "shadows" the curve casts on a horizontal and on a vertical plane. The liquid inside ABC is a <b>fluid block</b>, and it is at rest, so the forces on it balance.</p>
+<div id="fig-block"></div>
+<p>The forces on the block ABC (slide 42's free-body diagram, per unit width):</p>
+<ul class="list">
+<li>\(F_1\) on the top face AB: the pressure of the liquid above, pushing down. It is a uniform load equal to the <b>weight of the liquid above AB</b> (a "surcharge load").</li>
+<li>\(W\): the weight of the block itself, acting down through its centre of gravity.</li>
+<li>\(F_2\) on the vertical face BC: the pressure of the liquid on the right, pushing left. It is the force on a <b>plane vertical surface</b> of height \(b\), so section 5 and section 8 give its size and position.</li>
+<li>The force <b>from the curved surface</b> on the block, with components \(F_H\) and \(F_V\). By Newton's third law the fluid pushes on the surface with the same components in the opposite directions.</li>
+</ul>
+\[\begin{aligned}\textstyle\sum F_x=0:&\quad F_H=F_2\\ \textstyle\sum F_y=0:&\quad F_V=F_1+W\end{aligned}\]
+<p>\(F_1+W\) is the weight of the block plus the weight of all the liquid above it: the weight of all the liquid <b>vertically above AC</b>. This gives slide 42's two statements, written out as a rule on slide 43:</p>
+<div class="box thm"><span class="tag">Result · force on a curved surface (slide 43) · memorise</span>
+\[F_H=\rho g\,h_{c,\text{proj}}\,A_\text{proj}\]
+\[F_V=\rho g\,V_\text{above}\]
+\[F_R=\sqrt{F_H^2+F_V^2},\qquad \phi=\tan^{-1}\frac{F_V}{F_H}\]
+<p class="word"><b>In words:</b> horizontal component = force on the <b>plane area formed by projecting the curved surface onto a vertical plane</b>, acting at the centre of pressure of that projection. Vertical component = <b>weight of the entire column of liquid (physical or imaginary) above the curved surface, up to the level of the free surface</b>, acting through the centroid of that column. Resultant = Pythagoras of the two, at angle \(\phi\) to the horizontal.</p></div>
+<p>Slide 43's figure 2.14 makes two more points. In (a) a closed curved body under water has a vertical projection; the horizontal forces on the two sides of a closed body are equal and opposite (they act on the same projection). In (b) the free-body diagram of the fluid above a curved surface ab shows why the column goes all the way up: the column is cut at c–b into a lower part (weight \(W_2\)) and an upper part (weight \(W_1\)), the horizontal forces \(F_1\) on the two sides of the upper column cancel, and above the free surface d–e the air (weight \(W_\text{air}\)) is ignored because we use gauge pressure. Only the weight of liquid counts.</p>
+<div class="box thm"><span class="tag">Result · circular arcs (slide 43)</span>
+<p>On a curved surface that is a <b>circular arc</b>, the resultant force <b>always passes through the centre of the circle</b>.</p>
+<p class="word"><b>Why:</b> every little pressure force is perpendicular to the arc, and a line perpendicular to a circle is a radius. So every little force points along a radius, through the centre. Forces that all pass through one point have a resultant through that point (none of them has a moment about it).</p></div>
+<p>This is a gift in gate problems: you know one point on the line of action without any centroid calculation. Moments of \(F_H\) and \(F_V\) about the centre cancel exactly.</p>
+<div class="box warn"><span class="tag">Watch</span>
+<p>\(F_V\) is the weight of liquid above the surface <b>up to the free-surface level</b>, not just the liquid in some region near the curve. If the tank has gas pressure on top, add the equivalent depth \(p/(\rho g)\) (section 10) before computing the column.</p></div>
+
+<div class="box eg"><span class="tag">Example · written for these notes · a tank with a rounded corner (water above the curve)</span>
+<p>The bottom right-hand corner of a long open tank is a quarter-circle of radius \(R=2\) m, joining the vertical wall to the flat floor. The water is 4 m deep. Find the force on the curved corner per metre length, and show it passes through the centre of the circle.</p>
+<div id="fig-s12-eg"></div>
+<ol class="steps">
+<li><b>Horizontal.</b> The vertical projection of the arc is a 2 m high strip of the wall from depth 2 m to depth 4 m; its centroid is at \(h_c=3\) m. \(F_H=9.81\times3\times(2\times1)=58.86\u{kN}\), to the right (towards the wall). It acts at the centre of pressure of the strip: \(h_R=3+\dfrac{1\times2^3/12}{3\times2}=3.111\u{m}\).</li>
+<li><b>Vertical.</b> The water above the arc up to the surface: a 2 m × 2 m rectangle (from the arc's top level, depth 2 m, up to the surface) plus the quarter-disc region between the arc and that level, area \(\tfrac14\pi R^2=\pi\). Volume per metre \(=4+\pi=7.142\u{m^3}\). \(F_V=9.81\times7.142=70.06\u{kN}\), <b>downward</b> (real water sits on the curve).</li>
+<li><b>Resultant.</b></li>
+</ol>
+\[\begin{aligned}F_R&=\sqrt{58.86^2+70.06^2}\\&=91.50\u{kN}\end{aligned}\]
+\[\phi=\tan^{-1}\frac{70.06}{58.86}=50.0°\]
+\[\boxed{F_R=91.5\u{kN/m}\text{ at }50.0°}\]<p>below the horizontal, pointing down and towards the wall, along a radius through the centre C.</p>
+<details class="calc"><summary>line of action of \(F_V\) and the check that \(F_R\) passes through C</summary><div>
+<p>Put the wall at \(x=0\) and measure \(x\) to the left. The rectangle (area 4) has its centroid 1 m from the wall.</p>
+<p>The quarter disc (area \(\pi\)) is bounded by the vertical line through C (\(x=2\)) and the horizontal line through C. Its centroid is \(4R/(3\pi)=0.849\) m from each straight edge: \(x=2-0.849=1.151\) m from the wall. <span class="why">Quarter disc: the semicircle centroid of section 6 applies in each direction.</span></p>
+\[\bar x=\frac{4(1)+\pi(1.151)}{4+\pi}=1.067\u{m}\]
+<span class="why">Area-weighted average of the two centroids: the column's centroid, where \(F_V\) acts.</span>
+<p>Moments about C, which is 2 m from the wall and 2 m above the floor:</p>
+<p>\(F_H\) acts \(4-3.111=0.889\) m above the floor, so \(2-0.889=1.111\) m below C: moment \(58.86\times1.111=65.4\u{kN\,m}\) anticlockwise. <span class="why">A rightward push below C turns anticlockwise about C.</span></p>
+<p>\(F_V\) acts \(2-1.067=0.933\) m from C towards the wall: moment \(70.06\times0.933=65.4\u{kN\,m}\) clockwise. <span class="why">A downward push to the right of C turns clockwise.</span></p>
+<p>Net moment about C = 0 ✓, so the resultant passes through C, as slide 43 promises.</p>
+</div></details>
+<p class="muted">FBD: the curved corner (taken as a free body) carries \(F_H\) to the right at 3.111 m depth and \(F_V\) down 1.067 m from the wall; together they make \(F_R\) along the radius through C. The tank's supports must supply the opposite force.</p></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Water underneath: force on the underside of a curved surface (Curved Surface supplement)</h2>
+<p>The supplement "Hydrostatic Force Acting on the Underside of a Curved Surface" answers the question slide 43 leaves open: what if the liquid is <b>below</b> the curve, so there is no real liquid above it?</p>
+<p><b>The set-up (supplement example).</b> Liquid stands to the left of a vertical wall, open to the air. The wall stops at A. From A a quarter-circle gate AB curves outwards (into the air on the right) and down to B on the floor. O, the centre of the arc, is on the floor directly below A. The liquid fills the quarter-circle space AOB under the gate, so it pushes up and outwards on the gate; air is above and to the right. Find the resultant force \(F_R\) on a unit length of the gate.</p>
+<div id="fig-s13-set"></div>
+<p>The supplement takes the free-body diagram of the <b>fluid block AOB</b> (O is the centre of the arc) and works in six steps:</p>
+<ol class="steps">
+<li>Resolve \(F_R\) (the force of the fluid on the gate) into \(F_H\) and \(F_V\). The gate pushes back on the block with \(F_H\) to the left and \(F_V\) downward.</li>
+<li><b>Horizontal equilibrium</b> of the block: \(F_H=F_x\), where \(F_x\) is the force of the surrounding liquid on the <b>vertical face AO</b>. AO is the vertical projection of AB, so \(F_x\) comes from the plane-surface formulas.</li>
+<li><b>Vertical equilibrium</b>: \(F_V=F_y-W_{AOB}\), where \(F_y\) is the upward force on the <b>horizontal face OB</b> and \(W_{AOB}\) is the weight of the block.</li>
+<li><b>What is \(F_y\)?</b> The pressure on OB is \(\rho g\times\)(depth of the floor). So \(F_y=\rho g\times\text{depth}\times\overline{OB}\times1\) = \(\rho g\times\)(volume of a column on OB up to the free-surface level) = the <b>weight of a fluid column, imagined, above OB</b> (the column CDBO, with C and D at the free-surface level above O and B).</li>
+<li>So \(F_V=W_{CDBO}-W_{AOB}=W_{CADB}\): the weight of an <b>imaginary</b> column of fluid filling the space <b>above the gate AB</b> up to the free-surface level (C–D), acting <b>upward</b> through the centre of mass of that imaginary column.</li>
+<li>Finally \(F_R=\sqrt{F_H^2+F_V^2}\), at \(\phi=\tan^{-1}(F_V/F_H)\) to the horizontal; since AB is a circular arc, \(F_R\) passes through the centre O.</li>
+</ol>
+<div class="box thm"><span class="tag">Result · liquid below the curved surface (supplement summary)</span>
+<p>Horizontal component \(F_H\) = force \(F_x\) on AO, the projection of AB onto a vertical plane, acting through the centre of pressure of \(F_x\).</p>
+<p>Vertical component \(F_V\) = weight of fluid vertically above AB, <b>on imagining that the space is occupied by the same fluid to the same height</b>, acting <b>upward</b> through the centre of mass of this imaginary fluid.</p>
+<p class="word"><b>In words:</b> the same rule as slide 43, with two changes: the liquid column above the curve is imaginary, and the force points up. Liquid above the curve pushes it down; liquid below pushes it up; the size is the same "weight of liquid up to the free-surface level" either way.</p></div>
+<p class="word"><b>Why the imaginary column works:</b> if the same curve had liquid on top instead (up to the same level), the pressure at every point of the curve would be exactly the same (it depends only on depth), so the force would be the same size, just from the other side. With liquid on top, the force is the weight of that liquid.</p>
+
+<div class="box eg"><span class="tag">Example · written for these notes · numbers for the supplement's gate</span>
+<p>In the supplement's set-up, take the arc radius \(R=2\) m and let A be 3 m below the free surface (so the floor is 5 m deep). Find the force on the gate per metre length.</p>
+<div id="fig-s13-eg"></div>
+<ol class="steps">
+<li><b>Horizontal.</b> Projection AO: vertical, 2 m high, from depth 3 m to 5 m, centroid at 4 m. \(F_H=9.81\times4\times2=78.48\u{kN}\), to the right. Centre of pressure: \(4+\dfrac{2^3/12}{4\times2}=4.083\u{m}\) deep.</li>
+<li><b>Vertical, the long way</b> (block AOB): \(F_y=9.81\times5\times2=98.1\u{kN}\) up on OB; \(W_{AOB}=9.81\times\tfrac14\pi(2^2)=30.82\u{kN}\); \(F_V=98.1-30.82=67.28\u{kN}\).</li>
+<li><b>Vertical, the short way</b> (imaginary column CADB): rectangle 2 m × 5 m minus the quarter disc, \(10-\pi=6.858\u{m^3}\) per metre; \(F_V=9.81\times6.858=67.28\u{kN}\), <b>upward</b> ✓.</li>
+<li><b>Resultant.</b></li>
+</ol>
+\[\begin{aligned}F_R&=\sqrt{78.48^2+67.28^2}\\&=103.4\u{kN}\end{aligned}\]
+\[\phi=\tan^{-1}\frac{67.28}{78.48}=40.6°\]
+\[\boxed{F_R=103.4\u{kN/m}\text{ at }40.6°}\]<p>above the horizontal, pushing up and to the right, along a radius through O.</p>
+<details class="calc"><summary>check that the resultant passes through O</summary><div>
+<p>Line of \(F_V\): centroid of the imaginary column = rectangle (area 10, centroid 1 m right of the wall line) minus quarter disc (area \(\pi\), centroid \(4R/(3\pi)=0.849\) m right of it).</p>
+\[\bar x=\frac{10(1)-\pi(0.849)}{10-\pi}=1.069\u{m}\]
+<span class="why">Subtracting a shape: use negative area in the weighted average.</span>
+<p>Moments about O: \(F_H\) acts \(5-4.083=0.917\) m above O, moment \(78.48\times0.917=72.0\u{kN\,m}\) clockwise; \(F_V\) acts 1.069 m right of O, moment \(67.28\times1.069=71.9\u{kN\,m}\) anticlockwise. <span class="why">Equal within rounding: net moment about O is zero, so \(F_R\) passes through O.</span></p>
+</div></details></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>The commonest error with liquid below: taking \(F_V\) as the weight of the liquid <b>in</b> the quarter circle (\(W_{AOB}\) alone), or drawing it downward. The supplement's step 3 shows \(W_{AOB}\) is only a correction: the main term is the pressure on the floor OB.</p></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Circular arcs: try it, and what exam gates look like</h2>
+<p>Exam curved surfaces are almost always <b>quarter circles</b> (a radial gate, a rounded corner, part of a cylinder). Sections 12 and 13 give everything you need: \(F_H\) from the projection, \(F_V\) from the (real or imaginary) column, and the resultant through the centre. Move the sliders to see how the pieces change.</p>
+<div class="figure"><p class="ttl">Try it · force on a quarter-circle surface</p>
+<div id="fig-arc"></div>
+<div class="ctrl"><label>liquid <select id="arc-side"><option value="above">above the arc (section 12)</option><option value="below">below the arc (section 13)</option></select></label>
+<label>radius \(R\) (m) <input type="range" id="arc-R" min="0.5" max="3" step="0.1" value="2"></label>
+<label>depth of the arc's top (m) <input type="range" id="arc-d" min="0" max="5" step="0.1" value="2"></label></div>
+<div class="readout" id="arc-out"></div>
+<p class="cap">Defaults reproduce section 12 (\(R=2\), top 2 m deep, liquid above). Choose "below" and set the top depth to 3 m for section 13. The shaded column is the real (blue) or imaginary (dashed) liquid whose weight is \(F_V\); the red arrow is \(F_R\), always along a radius. As the depth grows, \(F_H\) and \(F_V\) both grow by \(\rho gR\) per metre, so the angle tends to 45°.</p></div>
+<div class="box ready"><span class="tag">Ready answer · curved surface (H3.5)</span>
+<ol class="steps">
+<li>Sketch the vertical projection; \(F_H=\rho g h_c A_\text{proj}\), direction: the way the liquid pushes; line: centre of pressure of the projection (if asked).</li>
+<li>Shade the column between the curve and the free-surface level; decide real (liquid on top, \(F_V\) down) or imaginary (liquid below, \(F_V\) up). Volume = rectangle ± quarter circle; \(F_V=\rho gV\).</li>
+<li>\(F_R=\sqrt{F_H^2+F_V^2}\), \(\phi=\tan^{-1}(F_V/F_H)\). For a circular arc: "passes through the centre".</li>
+<li>For a gate: moments about the hinge, placing \(F_H\) and \(F_V\) at the centre of the circle (allowed, since \(F_R\) passes through it).</li>
+</ol></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Two containers: the hydrostatic paradox (Some Concept Questions, pages 1–8)</h2>
+<p>The concept-question handout asks a sequence of questions about two containers. Both are filled to the <b>same depth</b> and have the <b>same bottom area</b>. One is an ordinary straight-sided container. The other is a "T" turned upside down: a wide, low chamber at the bottom with a thin tube rising from the middle of its ceiling, so it holds much less water.</p>
+<div id="fig-cq"></div>
+<ol class="steps">
+<li><b>Straight container: what is the force on the bottom?</b> The handout's answer: the <b>weight of fluid in the container</b>. Here pressure × area and weight agree: \(\rho g h A=\rho g(hA)=\rho gV\).</li>
+<li><b>Narrow-necked container: what is the force on the bottom?</b> The handout writes "Weight of fluid in the container?" with a question mark: the obvious answer is <b>wrong</b> here.</li>
+<li><b>Which container has the larger force on the bottom?</b> Answer: the force is <b>the same</b>. Pressure on the bottom is \(\rho gh\) in both (same depth), and the area is the same, so \(F=\rho ghA\) in both (section 9, horizontal surface).</li>
+<li><b>Why the same force, despite the different volumes of fluid?</b> See below.</li>
+</ol>
+<p>The resolution is a free-body diagram of the <b>water</b> in the narrow-necked container. The water is pushed up by the bottom with force \(\rho ghA\). It is pulled down by its own weight, which is much smaller. The difference is supplied by the <b>ceiling</b> of the wide chamber: the water presses up on the ceiling with pressure \(\rho g\times\)(depth of the ceiling), and the ceiling presses back down on the water with the same force. So</p>
+\[F_\text{bottom}=W_\text{water}+F_\text{ceiling}\]
+<p class="word"><b>In words:</b> force on the bottom = weight of the water + downward push of the chamber's ceiling. In the straight container there is no ceiling and the bottom force is just the weight. The pressure depends only on depth, not on how much water is "above" in a sideways sense: this is the <b>hydrostatic paradox</b> (beyond the handouts: the name is the textbook one).</p>
+<div class="box eg"><span class="tag">Example · written for these notes · numbers for the two containers</span>
+<p>Both containers: water depth 0.5 m, bottom area 0.2 m². The narrow-necked one has a chamber 0.05 m tall and a neck 0.45 m tall holding 0.01 m³, so its total volume is 0.02 m³ (neck area 0.0222 m²).</p>
+<ol class="steps">
+<li>Bottom force, both: \(9810\times0.5\times0.2=981\u{N}\).</li>
+<li>Straight container: water weight \(9810\times(0.5\times0.2)=981\u{N}\) = bottom force ✓.</li>
+<li>Narrow-necked: water weight \(9810\times0.02=196.2\u{N}\). Ceiling at depth 0.45 m, area \(0.2-0.0222=0.178\u{m^2}\): \(F_\text{ceiling}=9810\times0.45\times0.178\) \(=784.8\u{N}\).</li>
+<li>Check: \(196.2+784.8=981\u{N}\) ✓.</li>
+</ol></div>
+<p><b>What would a scale under each container read?</b> The weight of container plus water, not the bottom force. In the narrow-necked one, the water pushes <b>down</b> on the bottom with 981 N but <b>up</b> on the ceiling with 784.8 N; the container feels the difference, 196.2 N, which is the water's weight. Nothing is created from nothing.</p>
+<p class="muted">The same idea is behind \(F_V\) on curved surfaces: the vertical force on a surface is the weight of the liquid <b>column</b> above it up to the free-surface level, real or imagined, not the weight of the liquid that happens to be in the container. The rest of "Some Concept Questions" (the melting iceberg) is in H4.</p>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16" class="beyond"><h2><span class="n">16</span>Beyond the handouts: a block on a slope, with water behind and under it (older course ENGG1205)</h2>
+<p class="flag">Beyond the handouts: two papers of the older course ENGG1205 (2014–15 Sem 1 and 2016–17 Sem 1, same lecturer) ask whether a block resting on a slope slides when water gets behind and under it. Friction and seepage uplift are not in the 2026 handouts, although the review sheet does list "equilibrium of a hydraulic structure… balance of forces". It may or may not be examined: check Moodle. The type is H3.6 in the guide.</p>
+<div class="box def"><span class="tag">Definitions · friction, uplift (beyond the handouts)</span>
+<ul class="list">
+<li><b>Normal reaction</b> \(R\): the push of the slope on the block, perpendicular to the slope.</li>
+<li><b>Friction</b>: the slope's grip along the contact. It can take any value up to a maximum \(\mu R\), where \(\mu\) is the <b>coefficient of friction</b>. If the force trying to slide the block is bigger than \(\mu R\), the block slides.</li>
+<li><b>Seepage uplift</b>: water that seeps into the fine gaps under the block presses up on its base. The papers assume this pressure falls linearly from the full hydrostatic value at the back to zero at the front.</li>
+</ul></div>
+<div class="box eg"><span class="tag">Example · written for these notes · does the block slide?</span>
+<p>A concrete block (relative density 2.2) of rectangular cross-section rests on a slope at \(\alpha=20°\). Its base BC, along the slope, is 1.0 m long; its back face AB, perpendicular to the slope, is 0.6 m. A gap behind AB is full of water up to A. Water seeps under the base: the uplift pressure falls linearly from its value at B to zero at C. The pressure on AB is zero at A. Coefficient of friction \(\mu=0.5\). Per 1 m length, does the block slide?</p>
+<div id="fig-s16"></div>
+<ol class="steps">
+<li><b>Pressure at B.</b> AB is perpendicular to the slope, so it is tilted 20° from vertical: B is \(0.6\cos20°=0.564\) m below A. \(p_B=9.81\times0.6\cos20°=5.531\u{kPa}\).</li>
+<li><b>Thrust on AB</b> (triangle, perpendicular to AB, so <b>parallel to the slope</b>, pushing downslope): \(F_{AB}=\tfrac12\times5.531\times0.6=1.659\u{kN}\).</li>
+<li><b>Uplift on BC</b> (triangle, perpendicular to the slope, pushing the block away from it): \(F_{BC}=\tfrac12\times5.531\times1.0=2.766\u{kN}\).</li>
+<li><b>Weight</b>: \(W=2.2\times9.81\times(0.6\times1.0)\) \(=12.949\u{kN}\); components \(W\cos20°=12.168\) into the slope and \(W\sin20°=4.429\u{kN}\) downslope.</li>
+<li><b>Normal reaction</b> (perpendicular to the slope): \(R=W\cos20°-F_{BC}\) \(=12.168-2.766=9.402\u{kN}\). Maximum friction \(\mu R=0.5\times9.402=4.701\u{kN}\).</li>
+<li><b>Driving force</b> down the slope: \(F_{AB}+W\sin20°\) \(=1.659+4.429=6.088\u{kN}\).</li>
+</ol>
+\[6.088\gt 4.701\ \Rightarrow\ \boxed{\text{the block slides}}\]
+<p>Without the water: friction available \(0.5\times12.168=6.084\u{kN}\) against a driving force of 4.429 kN, so the dry block stays put. The water does damage twice: it <b>pushes</b> (thrust on AB) and it <b>lifts</b> (uplift on BC reduces \(R\), and with it the friction).</p></div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17"><h2><span class="n">17</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>Pressure</td><td>\(p=p_0+\rho gz\)</td><td>linear in vertical depth; force normal to the surface, pushing on it</td></tr>
+<tr><td>Resultant</td><td>\(\sum F=0\), \(\sum M=0\)</td><td>one point force with the same push and the same turning effect</td></tr>
+<tr><td>Plane: size</td><td>\(F_R=\rho gh_cA\)</td><td>pressure at the centroid × wetted area; \(\theta\) does not appear</td></tr>
+<tr><td>Plane: position</td><td>\(h_R=h_c+\dfrac{I_c\sin^2\theta}{h_cA}\)</td><td>CP below the centroid; equal only for a horizontal plane</td></tr>
+<tr><td>Along the plane</td><td>\(y_R=y_c+\dfrac{I_c}{y_cA}\)</td><td>\(y\) measured along the plane from the free-surface line</td></tr>
+<tr><td>Rectangle from the surface</td><td>\(F_R=\tfrac12\rho gH^2B\sin\theta\), \(h_R=\tfrac23H\sin\theta\)</td><td>triangle: two-thirds of the way down</td></tr>
+<tr><td>Horizontal surface</td><td>\(F=\rho ghA\)</td><td>uniform; acts at the centroid; weight of the column above</td></tr>
+<tr><td>Second moments</td><td>\(\tfrac{bL^3}{12}\), \(\tfrac{\pi R^4}{4}\), \(\tfrac{bL^3}{36}\); \(I_O=I_c+Ay_c^2\)</td><td>about the horizontal centroidal axis; given in the exam</td></tr>
+<tr><td>Surcharge, layers</td><td>\(h_\text{eq}=p_s/(\rho g)\)</td><td>imaginary free surface; or split into rectangles + triangles</td></tr>
+<tr><td>Gates</td><td>\(\sum M_\text{hinge}=0\)</td><td>FBD; moments about the hinge remove its reaction</td></tr>
+<tr><td>Curved: horizontal</td><td>\(F_H=\rho gh_cA_\text{proj}\)</td><td>force on the vertical projection</td></tr>
+<tr><td>Curved: vertical</td><td>\(F_V=\rho gV_\text{above}\)</td><td>weight of real (down) or imaginary (up) liquid up to the free-surface level</td></tr>
+<tr><td>Curved: resultant</td><td>\(\sqrt{F_H^2+F_V^2}\), \(\tan^{-1}(F_V/F_H)\)</td><td>through the centre of a circular arc</td></tr>
+<tr><td>Two containers</td><td>\(F_\text{bottom}=\rho ghA\)</td><td>depends on depth and area only, not on the volume of liquid</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="s18"><h2><span class="n">18</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Using the distance along a sloping gate as the depth in \(\rho gh\).</span>
+<span class="ok">✓</span><span>Pressure uses vertical depth: \(h=y\sin\theta\).</span>
+<span class="x">✗</span><span>Putting the resultant at the centroid.</span>
+<span class="ok">✓</span><span>It acts at the centre of pressure, \(I_c\sin^2\theta/(h_cA)\) deeper (except on a horizontal surface).</span>
+<span class="x">✗</span><span>Using \(h_R=\tfrac23h\) for every gate.</span>
+<span class="ok">✓</span><span>Only for a rectangle that starts at the free surface; otherwise use the formula or split the diagram.</span>
+<span class="x">✗</span><span>Taking \(I_c\) about the bottom edge or the hinge.</span>
+<span class="ok">✓</span><span>\(I_c\) is about the horizontal axis through the centroid; move it with \(I_O=I_c+Ay_c^2\) if needed.</span>
+<span class="x">✗</span><span>Using \(y_{cp}=\bar y+I_c/(\bar yA)\) with \(\bar y\) from the real surface when there is gas pressure or an upper layer.</span>
+<span class="ok">✓</span><span>Measure from the imaginary free surface (\(h_\text{eq}=p/(\rho g)\)); keep its sign.</span>
+<span class="x">✗</span><span>Drawing pressure arrows horizontal on an inclined wall.</span>
+<span class="ok">✓</span><span>Perpendicular to the surface, pointing onto it.</span>
+<span class="x">✗</span><span>Taking \(F_V\) as the weight of liquid in the quarter circle when the liquid is below the curve, or drawing it downward.</span>
+<span class="ok">✓</span><span>Imaginary column up to the free-surface level; force upward.</span>
+<span class="x">✗</span><span>Moment arm measured from the free surface instead of from the hinge.</span>
+<span class="ok">✓</span><span>Arm = distance from the hinge to the line of the force, along the gate for a plane gate.</span>
+</div>
+</section>
+
+<!-- ============ 19 ============ -->
+<section id="s19"><h2><span class="n">19</span>Find the mistake</h2>
+<div class="q"><p class="qh">1 · A student's circular window</p>
+<p>"A circular window of diameter 3 m in a vertical wall has its top 2 m below the surface. The window's bottom is 5 m deep, so the resultant acts at \(\tfrac23\times5=3.33\u{m}\)."</p>
+<details><summary>Hint</summary><div><p>When is \(h_R=\tfrac23h\) valid? Does this window start at the free surface? Is it a rectangle?</p></div></details>
+<details><summary>Answer</summary><div><p>The two-thirds rule needs a triangular pressure diagram on a rectangle that starts at the surface. This is a circle wholly under water. Use \(h_R=h_c+I_c/(h_cA)\) with \(h_c=3.5\u{m}\):</p>
+\[h_R=3.5+\frac{\pi(1.5)^4/4}{3.5\times\pi(1.5)^2}=3.661\u{m}\]
+<p>Only 0.16 m below the centre (May 2019 Q2(a), section 22).</p></div></details></div>
+<div class="q"><p class="qh">2 · A student's curved gate with water underneath</p>
+<p>"Section 13's gate: the water touching the gate is the quarter circle AOB, so \(F_V=9.81\times\tfrac14\pi(2^2)=30.8\u{kN}\) downward."</p>
+<details><summary>Hint</summary><div><p>Where is the water relative to the gate? How deep is the floor OB?</p></div></details>
+<details><summary>Answer</summary><div><p>Two mistakes. The water is <b>below</b> the gate, so it pushes the gate <b>up</b>. And the size is the weight of the imaginary column above AB up to the free-surface level, \(9.81\times(10-\pi)=67.3\u{kN}\), not the weight of the water in AOB (that is only the correction term in \(F_V=F_y-W_{AOB}\)).</p></div></details></div>
+<div class="q"><p class="qh">3 · A student's inclined gate</p>
+<p>"Section 8's gate (2 m × 1.5 m at 60°, top edge 1 m deep): the centroid is \(y_c=2.155\u{m}\) from O along the slope, so \(F_R=9.81\times2.155\times3=63.4\u{kN}\)."</p>
+<details><summary>Hint</summary><div><p>Which depth sets the pressure at the centroid?</p></div></details>
+<details><summary>Answer</summary><div><p>\(F_R=\rho gh_cA\) uses the <b>vertical</b> depth \(h_c=y_c\sin60°=1.866\u{m}\): \(F_R=9.81\times1.866\times3=54.9\u{kN}\). The student's answer is 15% too big (a factor \(1/\sin60°\)).</p></div></details></div>
+</section>
+
+<!-- ============ 20 ============ -->
+<section id="s20"><h2><span class="n">20</span>Group work: the gate exercise (Plane Surface supplement)</h2>
+<p>The supplement ends with an exercise and a table to fill in. A gate CD closes an opening in a vertical wall. Water is on the left, air on the right. The gate is hinged only at its top C, which is 5 m below the water surface, and has no other support. The gate is 6 m high (C to D). Three shapes are tried (front views): (a) a <b>rectangle</b> 2 m wide; (b) a <b>circle</b> of diameter 6 m; (c) a <b>triangle</b> with base 6 m at the bottom and apex at the hinge. Density of water 1000 kg/m³, \(g=9.81\u{m/s^2}\). For each, find the moment to be applied at the hinge to keep the gate in equilibrium. The supplement asks: write the formula (the right-hand side) before plugging in, and state the units and the direction of the moment.</p>
+<div id="fig-gw"></div>
+<div class="q"><p class="qh">Fill in the table for each gate: \(A\), \(h_c\), \(F_R\), \(I_c\), \(h_R\), \(M\)</p>
+<details><summary>Hint</summary><div><p>Centroid depths: rectangle and circle \(5+3\); triangle with apex up: two-thirds of the way down, \(5+\tfrac23(6)\). The water's force acts below the hinge, so it tries to swing the bottom of the gate towards the air: the applied moment must oppose that. Moment arm \(=h_R-5\).</p></div></details>
+<details><summary>Answer</summary><div>
+<div class="scroll"><table class="tbl">
+<tr><th></th><th>Rectangle</th><th>Circle</th><th>Triangle</th></tr>
+<tr><td>\(A\) (m²)</td><td>\(6\times2=12\)</td><td>\(\pi\,3^2=28.27\)</td><td>\(\tfrac12(6)(6)=18\)</td></tr>
+<tr><td>\(h_c\) (m)</td><td>\(5+3=8\)</td><td>\(5+3=8\)</td><td>\(5+4=9\)</td></tr>
+<tr><td>\(F_R=\rho gh_cA\) (kN)</td><td>941.8</td><td>2219.0</td><td>1589.2</td></tr>
+<tr><td>\(I_c\) (m⁴)</td><td>\(2(6^3)/12=36\)</td><td>\(\pi\,3^4/4=63.6\)</td><td>\(6(6^3)/36=36\)</td></tr>
+<tr><td>\(h_R=h_c+I_c/(h_cA)\) (m)</td><td>8.375</td><td>8.281</td><td>9.222</td></tr>
+<tr><td>\(M=F_R(h_R-5)\) (kN·m)</td><td>3179</td><td>7281</td><td>6710</td></tr>
+</table></div>
+<p>Direction: the water pushes the gate to the right, below the hinge, so on its own it would swing the bottom of the gate towards the air: <b>anticlockwise</b> in the side view (water on the left, hinge at the top). The applied moment must oppose this, so all three moments are <b>clockwise</b>, as the supplement's solution table states.</p>
+<p class="muted">Discuss: the circle has the biggest area and moment; the triangle, with most of its area deep down, has a bigger force than the rectangle though only 1.5 times its area.</p></div></details></div>
+</section>
+
+<!-- ============ 21 ============ -->
+<section id="s21"><h2><span class="n">21</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Deeper means closer</p><p>A vertical square plate, 1 m × 1 m, is lowered from "top edge at the surface" to "top edge 9 m deep". How far below its centroid is the centre of pressure in each case?</p>
+<details><summary>Hint</summary><div><p>\(h_R-h_c=I_c/(h_cA)\) with \(I_c=1/12\).</p></div></details>
+<details><summary>Answer</summary><div><p>At the surface: \(h_c=0.5\), shift \(=(1/12)/0.5=0.0556\u{m}\) (CP at 0.667 m, the two-thirds rule). At 9 m: \(h_c=9.5\), shift \(=0.00877\u{m}\). Deep down the pressure is nearly uniform over the plate, so CP is almost at the centroid.</p></div></details></div>
+<div class="q"><p class="qh">2 · Doubling the depth behind a dam</p><p>A vertical dam face holds water 10 m deep. Find the force per metre. If the depth doubles, by what factor do the force and its moment about the base grow?</p>
+<details><summary>Answer</summary><div><p>\(F=\tfrac12\rho gh^2\) \(=\tfrac12(9.81)(10^2)=490.5\u{kN/m}\). \(F\propto h^2\): doubling gives ×4. The arm about the base is \(h/3\), so the moment \(\propto h^3\): ×8. This is why dams are much thicker at the bottom.</p></div></details></div>
+<div class="q"><p class="qh">3 · A big lake or a narrow channel</p><p>Two identical dams hold water 10 m deep. One holds back a lake 10 km long; the other holds a channel only 1 m long behind it. Which dam feels the larger force?</p>
+<details><summary>Answer</summary><div><p>The same. Pressure depends only on depth, so the force on the face depends only on the depth and the face area, not on how much water is behind it. (Same idea as the two containers, section 15.)</p></div></details></div>
+<div class="q"><p class="qh">4 · Tilting a gate</p><p>A rectangular gate is turned about its centroid from vertical to 45°, so its centroid stays at the same depth. What happens to \(F_R\) and to the centre of pressure?</p>
+<details><summary>Answer</summary><div><p>\(F_R=\rho gh_cA\) is unchanged (same \(h_c\), same \(A\)). The depth shift \(I_c\sin^2\theta/(h_cA)\) halves (\(\sin^245°=\tfrac12\)), so CP moves up towards the centroid. The direction of \(F_R\) turns with the gate (always perpendicular to it).</p></div></details></div>
+<div class="q"><p class="qh">5 · A closed body under water</p><p>A long submerged cylinder lies on its side, completely surrounded by water. What is the net horizontal hydrostatic force on it? The net vertical force?</p>
+<details><summary>Answer</summary><div><p>Horizontal: zero. Each side's horizontal force equals the force on the same vertical projection, in opposite directions (slide 43, figure a). Vertical: the upper surface is pushed down by the real water above it; the lower surface is pushed up by a (real-or-imaginary) column reaching the same free surface. The difference is the weight of water the size of the cylinder, pushing up: Archimedes' buoyancy, the subject of H4.</p></div></details></div>
+<div class="q"><p class="qh">6 · Which way does F<sub>V</sub> point?</p><p>For each case, is \(F_V\) on the curved surface up or down: (a) the rounded corner at the bottom of a tank; (b) a quarter-circle gate bulging out of a wall with water under it; (c) the top half of a submerged pipe's wall?</p>
+<details><summary>Answer</summary><div><p>(a) down: real water above the curve. (b) up: water below, imaginary column. (c) down on the outer surface: the water above the pipe presses on it.</p></div></details></div>
+</section>
+
+<!-- ============ 22 ============ -->
+<section id="s22"><h2><span class="n">22</span>Exam taster</h2>
+<p>Real past-paper parts (ENGG1350, the predecessor of MECH1350; same Section B structure), one or more for each main question type in this chapter. Full methods, every other sitting, and more practice: <a href="guide-H3.html">Exam guide · H3</a>.</p>
+
+<div class="q"><div class="src"><b>Dec 2023 Q2</b><span>5 marks</span><span>same question: ENGG1205 2012–13 Q1(i)</span><a class="guide" href="guide-H3.html#H3-1">H3.1 pressure diagram</a></div>
+<p>Take density of water = 1,000 kg/m³, acceleration due to gravity = 9.81 m/s². Sketch the distribution of hydrostatic pressure acting on an inclined wall of a tank containing oil and water, as is shown in Figure B2. Calculate the pressures at the points \(A\) and \(B\).</p>
+<div id="fig-t1"></div>
+<p class="muted">Figure B2 (redrawn): 1 m of oil (relative density 0.8) floats on 1 m of water. The right wall is a plane at 45° to the bed, leaning outwards. O is where the wall meets the free surface, A is where the oil–water interface meets the wall, B is the foot of the wall on the bed.</p>
+<details><summary>Hint</summary><div><p>Only vertical depth counts. Oil adds \(0.8\times9.81\) kPa per metre, water \(9.81\) kPa per metre. Arrows perpendicular to the wall.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(p_O=0\). \(p_A=0.8\times9.81\times1=7.848\u{kPa}\). \(p_B=7.848+9.81\times1=17.658\u{kPa}\).</p>
+\[\boxed{p_A=7.85\u{kPa},\quad p_B=17.66\u{kPa}}\]
+<p>Sketch: arrows perpendicular to the wall, pointing onto it; a triangle from O (zero) to A (7.85 kPa), then a steeper trapezoid from A to B (17.66 kPa), with a kink at A.</p>
+<div id="fig-t1a"></div></div></details></div>
+
+<div class="q"><div class="src"><b>May 2019 Q2</b><span>7 + 4 marks</span><a class="guide" href="guide-H3.html#H3-2">H3.2 plane surface</a></div>
+<p>(a) Determine the magnitude and the location of the resultant force on a circular window that is under water, as shown in Figure B2. The specific weight of water is 9.81 kN/m³. The second moment of area about the centroidal axis for a circle is \(\dfrac{\pi r^4}{4}\) where \(r\) is the radius of the circle.</p>
+<div id="fig-t2"></div>
+<p class="muted">Figure B2 (redrawn): a vertical tank wall, water 10 m deep; the circular window (diameter 3 m) has its top 2 m below the free surface and its bottom 5 m above the tank bottom.</p>
+<details><summary>Hint</summary><div><p>Centre of the window at \(2+1.5\) m. Vertical wall: \(\sin\theta=1\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(A=\pi(1.5^2)=7.069\u{m^2}\), \(h_c=3.5\u{m}\).</p>
+\[F_R=9.81\times3.5\times7.069=242.7\u{kN}\]
+<p>\(I_c=\pi(1.5^4)/4=3.976\u{m^4}\).</p>
+\[h_R=3.5+\frac{3.976}{3.5\times7.069}=3.661\u{m}\]
+\[\boxed{F_R=242.7\u{kN},\ h_R=3.66\u{m}}\]
+<p>Horizontal, onto the window, 3.66 m below the surface (0.16 m below its centre), on the vertical centreline.</p></div></details>
+<p>(b) Sketch the pressure distribution on the circular window, and indicate the values of highest and lowest pressures. Draw the resultant force on the same diagram. <span class="muted">(4 marks)</span> <a class="guide" href="guide-H3.html#H3-1">H3.1 pressure diagram</a></p>
+<details><summary>Hint</summary><div><p>Top of the window 2 m deep, bottom 5 m deep.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>Trapezoid on the side view of the window: lowest \(9.81\times2=19.62\u{kPa}\) at the top, highest \(9.81\times5=49.05\u{kPa}\) at the bottom, arrows horizontal onto the wall. The resultant 242.7 kN at 3.66 m depth.</p>
+<div id="fig-t2a"></div></div></details></div>
+
+<div class="q"><div class="src"><b>May 2024 Q1(b)(c)</b><span>6 + 8 marks</span><a class="guide" href="guide-H3.html#H3-3">H3.3 surcharge &amp; layers</a></div>
+<p>A closed oil tank and an open water tank are separated by a rectangular flat gate \(AB\), which rotates around hinge \(A\), as shown in the figure below. The closed tank is equipped with a mercury manometer to measure the air pressure inside it. The reading of the mercury manometer is: \(h_1=5\) cm. The height of the oil in the closed tank is \(h_2=3\) m. The height of the gate \(AB\) is the same as the height of the water, which is \(h_3=0.8\) m. The width of the gate \(b=1\) m. The specific weights of mercury, water, and the oil are 133.7 kN/m³, 9.81 kN/m³, and 7.8 kN/m³, respectively.</p>
+<div id="fig-t3"></div>
+<p class="muted">Figure (redrawn): the mercury in the limb connected to the tank stands 5 cm <b>higher</b> than in the open limb. Part (a) (H2) asked for the air pressure: \(p_\text{air}=-133.7\times0.05=-6.685\u{kPa}\) (gauge, below atmospheric).</p>
+<p>(b) If the oil tank is open (i.e., at atmospheric pressure), what is the level of oil that can keep the total force acting on the gate the same as it is now.</p>
+<details><summary>Hint</summary><div><p>Same force needs the same pressure at every point of the gate: replace the air pressure by an equivalent oil depth (negative here).</p></div></details>
+<details><summary>Answer</summary><div>
+\[h_\text{eq}=\frac{-6.685}{7.8}=-0.857\u{m}\]
+<p>The oil level must be \(3-0.857\):</p>
+\[\boxed{h=2.14\u{m}}\]
+<p>Check: closed tank, pressure at the gate's centroid (0.4 m above the floor) \(=-6.685+7.8(2.6)=13.595\u{kPa}\); open tank, \(7.8(2.143-0.4)=13.595\u{kPa}\) ✓. Force \(=13.595\times0.8=10.88\u{kN}\) either way.</p></div></details>
+<p>(c) Based on the results obtained in question (b), determine the horizontal force to be applied at \(B\) to make the gate \(AB\) in equilibrium. The second moment about the centroidal axis of a rectangular area is \(I_{xx,c}=\dfrac{bl^3}{12}\), where \(b\) is the width, and \(l\) is the height. \(y\)-coordinate of center of pressure is \(y_{cp}=\bar y+\dfrac{I_{xx,c}}{\bar yA}\), where \(\bar y\) is the coordinate of the centroid, and \(A\) is the area. <span class="muted">(8 marks)</span> <a class="guide" href="guide-H3.html#H3-4">H3.4 gate moments</a></p>
+<details><summary>Hint</summary><div><p>Use the 2.143 m open-tank level so that \(y_{cp}\) is measured from a free surface. Moments about A: oil force (pushes right), water force (pushes left), \(F_B\) at 0.8 m.</p></div></details>
+<details><summary>Answer</summary><div>
+<div id="fig-t3a"></div>
+<p><b>Oil side.</b> \(\bar y=2.143-0.4=1.743\u{m}\), \(A=0.8\u{m^2}\): \(F_o=7.8\times1.743\times0.8=10.88\u{kN}\). \(I_{xx,c}=1(0.8^3)/12=0.04267\u{m^4}\).</p>
+\[y_{cp}=1.743+\frac{0.04267}{1.743\times0.8}=1.774\u{m}\]
+<p>A is at \(2.143-0.8=1.343\) m below the oil level, so the arm about A is \(1.774-1.343=0.431\u{m}\).</p>
+<p><b>Water side.</b> Triangle from A: \(F_w=9.81\times0.4\times0.8=3.139\u{kN}\), at \(\tfrac23(0.8)=0.533\u{m}\) below A.</p>
+<p><b>Moments about A</b> (oil pushes right below A: anticlockwise; water pushes left: clockwise):</p>
+\[\begin{aligned}0.8F_B&=10.88(0.431)-3.139(0.533)\\&=4.683-1.674=3.009\end{aligned}\]
+\[\boxed{F_B=3.76\u{kN}}\]
+<p>applied at B, horizontally <b>towards the oil</b> (to the left).</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2025 Q3</b><span>10 marks</span><span>same question: Dec 2022 Q2</span><a class="guide" href="guide-H3.html#H3-4">H3.4 gate moments</a></div>
+<p>Acceleration due to gravity = 9.81 m/s², density of water = 1000 kg/m³. Water is kept on the left hand side of a vertical wall. There is a circular hole of diameter 4 m on the wall. A butterfly gate, same size of the hole, stops water from escaping from the hole. The gate is pivoted about the horizontal axis passing through its centre. The hydrostatic force on the gate is counterbalanced by a horizontal reaction force applied at the lowest point of the gate by a stop. Determine this reaction force when the water level is 1 m above the highest point of the gate.</p>
+\[\Big[\,y'-\bar y=\frac{I_{xx}}{A\bar y},\quad I_{xx}=\tfrac1{64}\pi D^4\,\Big]\]
+<div id="fig-t4"></div>
+<details><summary>Hint</summary><div><p>Only the offset of CP below the pivot matters. Moments about the pivot: \(F_R(y'-\bar y)=R\times2\).</p></div></details>
+<details><summary>Answer</summary><div>
+<div id="fig-t4a"></div>
+<p>\(\bar y=1+2=3\u{m}\), \(A=\pi(4^2)/4=12.566\u{m^2}\), \(F_R=9.81\times3\times12.566=369.8\u{kN}\).</p>
+<p>\(I_{xx}=\pi(4^4)/64=12.566\u{m^4}\), so \(y'-\bar y=12.566/(12.566\times3)\) \(=0.333\u{m}\).</p>
+<p>Moments about the pivot: \(369.8\times0.333=123.3\u{kN\,m}\) = \(R\times2\).</p>
+\[\boxed{R=61.6\u{kN}}\]
+<p>horizontal, at the lowest point, pushing towards the water (to the left). Shortcut (section 11): the moment is \(\rho gI_{xx}=9.81\times12.566\), whatever the water level.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2024 Q2</b><span>5 + 5 + 5 + 5 marks</span><span>same question: ENGG1205 2013–14 Sem 2 Q2</span><a class="guide" href="guide-H3.html#H3-5">H3.5 curved surface</a></div>
+<p>For questions in this section: density of water = 1,000 kg/m³; acceleration due to gravity = 9.81 m/s²; pressure means gauge pressure. A long, solid and horizontal cylinder of radius 1 m, which is freely hinged along a generator \(A\) of the cylinder, is used as an automatic gate for a water reservoir, as is shown in Figure B2. When the water level reaches 5 m, the cylindrical gate opens by turning about the hinge \(A\). Consider a 1 m run of the cylinder.</p>
+<div id="fig-t5"></div>
+<p class="muted">Figure B2 (redrawn): the hinge A is on the cylinder's leftmost point, level with its centre, at the end of a horizontal arm 1 m above the bed. Water fills the space under the arm and wets only the lower-left quarter AB of the cylinder, from A down to B where it touches the bed.</p>
+<p>(a) Determine the horizontal component of the total hydrostatic force acting on the curved surface \(AB\). (b) Determine the vertical component. (c) Hence, evaluate the magnitude and direction of the resultant hydrostatic force acting on the curved surface \(AB\).</p>
+<details><summary>Hint</summary><div><p>Projection of AB: 1 m high, from depth 4 m to 5 m. Water is <b>below</b> AB: imaginary column from AB up to the 5 m level.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) \(F_H=9.81\times4.5\times(1\times1)=44.15\u{kN}\), to the right.</p>
+<p>(b) Imaginary column above AB: a 1 m × 4 m rectangle (from A's level up to the surface) plus the quarter disc between the arc and A's level, \(4+\pi/4=4.785\u{m^3}\). \(F_V=9.81\times4.785=46.94\u{kN}\), <b>upward</b>.</p>
+<p>(c)</p>
+\[\begin{aligned}F_R&=\sqrt{44.15^2+46.94^2}\\&=64.44\u{kN}\end{aligned}\]
+\[\phi=\tan^{-1}\frac{46.94}{44.15}=46.8°\]
+<p>up and to the right at 46.8° to the horizontal, through the centre of the cylinder.</p></div></details>
+<p>(d) Find the weight per unit length of the cylinder. <span class="muted">(5 marks)</span> <a class="guide" href="guide-H3.html#H3-4">H3.4 gate moments</a></p>
+<details><summary>Hint</summary><div><p>At the moment it opens, the bed no longer pushes at B. Put \(F_H\) and \(F_V\) at the centre C; take moments about A.</p></div></details>
+<details><summary>Answer</summary><div>
+<div id="fig-t5a"></div>
+<p>Moments about A. \(F_H\) acts along the horizontal line through C, which passes through A: no moment. \(F_V\) (up) and \(W\) (down) both act through C, 1 m from A.</p>
+\[F_V(1)=W(1)\]
+\[\boxed{W=46.94\u{kN/m}}\]
+<p class="flag">the given ENGG1205 solution gives the angle as 46.75°; the numbers above give 46.76°, so "46.8°".</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2024 Q1(n)</b><span>1 mark</span><a class="guide" href="guide-H3.html#H3-2">H3.2 plane surface</a></div>
+<p>State true (T) or false (F): For hydrostatic force acting on a plane surface, the center of pressure is always below the center of area.</p>
+<details><summary>Hint</summary><div><p>Section 8: is there any plane surface where the two coincide?</p></div></details>
+<details><summary>Answer</summary><div><p><b>False.</b> On a horizontal plane surface the pressure is uniform and the centre of pressure coincides with the centre of area (slide 37). It is below for every inclined or vertical plane.</p>
+<p class="flag">no official answer is available; "always" plus the horizontal case of slide 37 is read as False.</p></div></details></div>
+</section>
+</main></div>
+
+<script>
+/* MECH1350 shared helpers (from MECH2413) (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-H3 figures. Helpers E, T, tw, arrow, arrowHead, svgIn, reg, pairOf, panels3 and the details 'toggle' redraw hook are copied from the approved pilot note-T3.js.
+   New page-local helper: scene(id,o) — a world-coordinate (metres, y up) sketch drawer for hydrostatics: water/solid polygons, free surface,
+   hatched walls, pressure-distribution arrows normal to a plane or circular surface (press, pressArc), force arrows, dimensions, centroid and hinge marks. */
+const NS='http://www.w3.org/2000/svg';
+function E(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)if(a[k]!==undefined)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+const INK='stroke:var(--ink);fill:none;stroke-width:1.6';
+const FILLS=['var(--grid)','var(--accent-soft)','var(--warm-soft)','var(--green-soft)','var(--purple-soft)','var(--card)'];
+/* text with subscripts: "T_{∞,o} = 5 °C", "R_3a"; a single letter before _ is set in italics */
+function tw(s,fs=13){const c=s.replace(/_\{([^}]*)\}/g,(m,a)=>'\u0001'.repeat(a.length)).replace(/_([A-Za-z0-9,∞]+)/g,(m,a)=>'\u0001'.repeat(a.length));
+  let w=0;for(const ch of c)w+=(ch==='\u0001'?0.72:1)*(/[ .,:·()′]/.test(ch)?0.33:0.6);return w*fs;}
+function T(p,x,y,s,o={}){
+  const t=E('text',{x,y,'text-anchor':o.a||'middle','dominant-baseline':'middle',style:`font-size:${o.fs||13}px;fill:${o.col||'var(--ink)'};${o.bold?'font-weight:600;':''}`},p);
+  const re=/([^_]*?)(?:_(\{[^}]*\}|[A-Za-z0-9,∞]+))/y; let i=0, m, lastSub=false;
+  const add=(str,sub,ital)=>{if(!str)return;const sp=E('tspan',{},t);sp.textContent=str;
+    if(sub){sp.setAttribute('dy',4);sp.setAttribute('font-size',(o.fs||13)*0.74);lastSub=true;} else if(lastSub){sp.setAttribute('dy',-4);lastSub=false;}
+    if(ital)sp.setAttribute('font-style','italic');};
+  while((m=re.exec(s))){ let pre=m[1]; const mm=/^(.*?)([A-Za-zαλεσΔ])$/.exec(pre);
+    if(mm&&(mm[1]===''||/[\s(=+−\-\/]$/.test(mm[1]))){add(mm[1]);add(mm[2],false,true);} else add(pre);
+    add(m[2].replace(/[{}]/g,''),true); i=re.lastIndex; }
+  add(s.slice(i)); if(o.it&&!s.includes('_'))t.setAttribute('font-style','italic'); return t;}
+function arrowHead(p,x,y,ux,uy,col,L=9,W=7){const bx=x-ux*L,by=y-uy*L,nx=-uy,ny=ux;E('polygon',{points:`${x},${y} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,style:`fill:${col};stroke:none`},p);}
+function arrow(p,x1,y1,x2,y2,col='var(--c2)',w=2.2){const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;
+  E('line',{x1,y1,x2:x2-ux*7,y2:y2-uy*7,style:`stroke:${col};stroke-width:${w}`},p);arrowHead(p,x2,y2,ux,uy,col);}
+function svgIn(el,W,H,alt){if(typeof el==='string')el=document.getElementById(el);el.innerHTML='';
+  const s=E('svg',{viewBox:`0 0 ${W} ${H}`,class:'circuit',role:'img','aria-label':alt||'diagram'});s.style.maxWidth=W+'px';s.style.margin='0 auto';el.appendChild(s);return s;}
+const figs=[]; const reg=f=>{figs.push(f);redraws.push(f);f();};
+let togT=null;document.addEventListener('toggle',()=>{clearTimeout(togT);togT=setTimeout(()=>figs.forEach(f=>{try{f();}catch(e){console.error(e);}}),60);},true);
+
+function pairOf(id,fa,fb,ca,cb){const host=document.getElementById(id);host.innerHTML='';const w=document.createElement('div');w.className='pair';host.appendChild(w);
+  [[fa,ca],[fb,cb]].forEach(([f,c],i)=>{const d=document.createElement('div');w.appendChild(d);const s=document.createElement('div');s.id=id+'-p'+i;d.appendChild(s);
+    if(c){const p=document.createElement('p');p.className='sub';p.innerHTML=c;d.appendChild(p);}f(s.id);});}
+
+function panels3(id,fns){const host=document.getElementById(id);host.innerHTML='';const w=document.createElement('div');w.className='pair';w.style.gridTemplateColumns='repeat(auto-fit,minmax(230px,1fr))';host.appendChild(w);
+  fns.forEach((f,i)=>{const d=document.createElement('div');d.id=id+'-'+i;w.appendChild(d);reg(()=>f(d.id));});}
+
+
+/* ---------------- scene drawer (page-local) ----------------
+ scene(id,{x0,x1,y0,y1,px,pad:[l,r,t,b],alt}) → S with S.X(x), S.Y(y) (world metres, y up → screen px) and:
+ poly(pts,style) line(a,b,style) path(d,style) surf(x1,x2,y,xm) hatch(a,b,into) [into = world vector pointing to the hatched side]
+ press(a,b,pa,pb,k,{into,n,lbl:[sa,sb],col}) arrows ⟂ segment ab, length k px per unit p, tails on the 'into' (fluid) side
+ pressArc(c,R,a1,a2,pf,k,{inside,n}) radial arrows on a circular arc (degrees, world), pf(x,y) = pressure
+ arr(p,dir,L,lbl,{col,tail,lx,ly,a,w}) force arrow with tip at world p (or tail at p) along world dir, L px
+ dimV(x,y1,y2,lbl,{left,dx}) dimH(x1,x2,y,lbl,{below}) t(x,y,s,o) dot(x,y,col,r) cg(x,y) hinge(x,y) arc(c,R,a1,a2,style) */
+const WATER='fill:var(--accent-soft);stroke:none', SOLID='fill:var(--grid);stroke:var(--ink);stroke-width:1.4',
+  IMAG='fill:var(--accent-soft);fill-opacity:.35;stroke:var(--accent);stroke-width:1.4;stroke-dasharray:5 4', EDGE='stroke:var(--ink);stroke-width:1.6;fill:none',
+  GATE='stroke:var(--ink);stroke-width:4;fill:none;stroke-linecap:round', DASH='stroke:var(--muted);stroke-width:1.1;stroke-dasharray:4 3;fill:none';
+const FC='var(--c2)', RC='var(--accent)', PC='var(--warm)', GC='var(--c3)';
+function scene(id,o){
+  const pad=typeof o.pad==='number'?[o.pad,o.pad,o.pad,o.pad]:(o.pad||[20,20,20,20]),px=o.px||40;
+  const W=Math.round((o.x1-o.x0)*px+pad[0]+pad[1]),H=Math.round((o.y1-o.y0)*px+pad[2]+pad[3]);
+  const svg=svgIn(id,W,H,o.alt),g=E('g',{},svg);
+  const X=x=>pad[0]+(x-o.x0)*px, Y=y=>pad[2]+(o.y1-y)*px, P=p=>[X(p[0]),Y(p[1])];
+  const pts=a=>a.map(p=>P(p).map(v=>v.toFixed(1)).join(',')).join(' ');
+  const S={g,svg,X,Y,P,px,W,H};
+  S.poly=(a,st)=>E('polygon',{points:pts(a),style:st||SOLID},g);
+  S.pl=(a,st)=>E('polyline',{points:pts(a),style:st||EDGE},g);
+  S.line=(a,b,st)=>E('line',{x1:X(a[0]),y1:Y(a[1]),x2:X(b[0]),y2:Y(b[1]),style:st||EDGE},g);
+  S.path=(d,st)=>E('path',{d,style:st||EDGE},g);
+  S.arcD=(c,R,a1,a2,move=true)=>{let d='';const n=Math.max(8,Math.ceil(Math.abs(a2-a1)/4));for(let i=0;i<=n;i++){const a=(a1+(a2-a1)*i/n)*Math.PI/180;
+    const [x,y]=P([c[0]+R*Math.cos(a),c[1]+R*Math.sin(a)]);d+=(i===0&&move?'M':'L')+x.toFixed(1)+','+y.toFixed(1);}return d;};
+  S.arc=(c,R,a1,a2,st)=>S.path(S.arcD(c,R,a1,a2),st||EDGE);
+  S.surf=(x1,x2,y,xm)=>{S.line([x1,y],[x2,y],'stroke:var(--accent);stroke-width:1.6');const m=X(xm!==undefined?xm:x1+0.25*(x2-x1)),yy=Y(y);
+    E('polygon',{points:`${m-6},${yy-12} ${m+6},${yy-12} ${m},${yy-2}`,style:'fill:none;stroke:var(--accent);stroke-width:1.3'},g);
+    E('line',{x1:m-7,y1:yy+4,x2:m+7,y2:yy+4,style:'stroke:var(--accent);stroke-width:1.1'},g);E('line',{x1:m-4,y1:yy+8,x2:m+4,y2:yy+8,style:'stroke:var(--accent);stroke-width:1.1'},g);};
+  S.hatch=(a,b,into)=>{const [x1,y1]=P(a),[x2,y2]=P(b),L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;let nx=-uy,ny=ux;
+    if(nx*into[0]+ny*(-into[1])<0){nx=-nx;ny=-ny;}E('line',{x1,y1,x2,y2,style:'stroke:var(--ink);stroke-width:1.8'},g);
+    for(let s=3;s<L-2;s+=7)E('line',{x1:x1+ux*s,y1:y1+uy*s,x2:x1+ux*s+nx*7-ux*5,y2:y1+uy*s+ny*7-uy*5,style:'stroke:var(--axis);stroke-width:1.1'},g);};
+  S.press=(a,b,pa,pb,k,q={})=>{const [x1,y1]=P(a),[x2,y2]=P(b),L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;let nx=-uy,ny=ux;const into=q.into||[0,1];
+    if(nx*into[0]+ny*(-into[1])<0){nx=-nx;ny=-ny;}const col=q.col||PC,La=pa*k,Lb=pb*k;
+    E('polygon',{points:`${x1},${y1} ${x2},${y2} ${x2+nx*Lb},${y2+ny*Lb} ${x1+nx*La},${y1+ny*La}`,style:`fill:${q.fill||'var(--warm-soft)'};fill-opacity:.75;stroke:${col};stroke-width:1.2`},g);
+    const n=q.n||Math.max(3,Math.round(L/16));for(let i=0;i<=n;i++){const f=i/n,x=x1+(x2-x1)*f,y=y1+(y2-y1)*f,l=La+(Lb-La)*f;if(l<9)continue;
+      E('line',{x1:x+nx*l,y1:y+ny*l,x2:x+nx*6,y2:y+ny*6,style:`stroke:${col};stroke-width:1.3`},g);arrowHead(g,x,y,-nx,-ny,col,6,5);}
+    if(q.lbl){const off=q.loff||13;[[q.lbl[0],x1,y1,La],[q.lbl[1],x2,y2,Lb]].forEach(([s,x,y,l],j)=>{if(!s)return;const o2=(q.lo&&q.lo[j])||[0,0];
+      T(g,x+nx*(l+off)+o2[0],y+ny*(l+off)+o2[1],s,{fs:q.fs||11.5,col,bold:true,a:q.la||'middle'});});}
+    return {nx,ny};};
+  S.pressArc=(c,R,a1,a2,pf,k,q={})=>{const col=q.col||PC,n=q.n||10;let env='';const tips=[];
+    for(let i=0;i<=n;i++){const a=(a1+(a2-a1)*i/n)*Math.PI/180,wx=c[0]+R*Math.cos(a),wy=c[1]+R*Math.sin(a),[x,y]=P([wx,wy]);
+      const ux=Math.cos(a),uy=-Math.sin(a),s=q.inside?-1:1,l=pf(wx,wy)*k;const tx=x+s*ux*l,ty=y+s*uy*l;env+=(i?'L':'M')+tx.toFixed(1)+','+ty.toFixed(1);tips.push([x,y,tx,ty,l,s,ux,uy]);}
+    const back=S.arcD(c,R,a2,a1,false);E('path',{d:env+back+'Z',style:`fill:var(--warm-soft);fill-opacity:.75;stroke:${col};stroke-width:1.2`},g);
+    tips.forEach(([x,y,tx,ty,l,s,ux,uy])=>{if(l<9)return;E('line',{x1:tx,y1:ty,x2:x+s*ux*6,y2:y+s*uy*6,style:`stroke:${col};stroke-width:1.3`},g);arrowHead(g,x,y,-s*ux,-s*uy,col,6,5);});};
+  S.arr=(p,dir,L,lbl,q={})=>{const col=q.col||FC,m=Math.hypot(dir[0],dir[1]),ux=dir[0]/m,uy=-dir[1]/m;let [tx,ty]=P(p);if(q.tail){tx+=ux*L;ty+=uy*L;}
+    const sx=tx-ux*L,sy=ty-uy*L;E('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,style:`stroke:${col};stroke-width:${q.w||2.4}`},g);arrowHead(g,tx,ty,ux,uy,col,10,8);
+    if(lbl){const at=q.at==='tip'?[tx,ty]:[sx,sy],d=q.at==='tip'?1:-1;T(g,at[0]+d*ux*12+(q.lx||0),at[1]+d*uy*12+(q.ly||0),lbl,{fs:q.fs||12.5,col,bold:true,a:q.a||'middle'});}};
+  S.dimV=(x,y1,y2,lbl,q={})=>{const xx=X(x),a=Y(y1),b=Y(y2),c='var(--muted)';E('line',{x1:xx,y1:a,x2:xx,y2:b,style:`stroke:${c};stroke-width:1`},g);
+    [a,b].forEach(y=>E('line',{x1:xx-4,y1:y,x2:xx+4,y2:y,style:`stroke:${c};stroke-width:1`},g));arrowHead(g,xx,a,0,a>b?1:-1,c,6,5);arrowHead(g,xx,b,0,b>a?1:-1,c,6,5);
+    if(lbl)T(g,xx+(q.left?-6:6)+(q.dx||0),(a+b)/2+(q.dy||0),lbl,{fs:q.fs||11.5,col:c,a:q.left?'end':'start'});};
+  S.dimH=(x1,x2,y,lbl,q={})=>{const yy=Y(y),a=X(x1),b=X(x2),c='var(--muted)';E('line',{x1:a,y1:yy,x2:b,y2:yy,style:`stroke:${c};stroke-width:1`},g);
+    [a,b].forEach(x=>E('line',{x1:x,y1:yy-4,x2:x,y2:yy+4,style:`stroke:${c};stroke-width:1`},g));arrowHead(g,a,yy,a<b?-1:1,0,c,6,5);arrowHead(g,b,yy,b>a?1:-1,0,c,6,5);
+    if(lbl)T(g,(a+b)/2+(q.dx||0),yy+(q.below?11:-9),lbl,{fs:q.fs||11.5,col:c});};
+  S.t=(x,y,s,q={})=>T(g,X(x)+(q.dx||0),Y(y)+(q.dy||0),s,Object.assign({fs:12},q));
+  S.dot=(x,y,col,r)=>E('circle',{cx:X(x),cy:Y(y),r:r||3.6,style:`fill:${col||'var(--ink)'};stroke:var(--card);stroke-width:1`},g);
+  S.cg=(x,y)=>{const cx=X(x),cy=Y(y),r=6;E('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--warm);stroke-width:1.6'},g);
+    E('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--warm)'},g);};
+  S.hinge=(x,y)=>{E('circle',{cx:X(x),cy:Y(y),r:5,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.8'},g);E('circle',{cx:X(x),cy:Y(y),r:1.6,style:'fill:var(--ink)'},g);};
+  S.dimA=(a,b,off,lbl,q={})=>{const [x1,y1]=P(a),[x2,y2]=P(b),L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*off,ny=ux*off,c='var(--muted)';
+    const A=[x1+nx,y1+ny],B=[x2+nx,y2+ny];E('line',{x1:A[0],y1:A[1],x2:B[0],y2:B[1],style:`stroke:${c};stroke-width:1`},g);
+    E('line',{x1:x1,y1:y1,x2:A[0]+nx*0.15,y2:A[1]+ny*0.15,style:`stroke:${c};stroke-width:0.8;stroke-dasharray:2 2`},g);E('line',{x1:x2,y1:y2,x2:B[0]+nx*0.15,y2:B[1]+ny*0.15,style:`stroke:${c};stroke-width:0.8;stroke-dasharray:2 2`},g);
+    arrowHead(g,A[0],A[1],-ux,-uy,c,6,5);arrowHead(g,B[0],B[1],ux,uy,c,6,5);const s=Math.sign(off)||1;
+    if(lbl)T(g,(A[0]+B[0])/2-uy*s*10+(q.dx||0),(A[1]+B[1])/2+ux*s*10+(q.dy||0),lbl,{fs:q.fs||11.5,col:c});};
+  return S;}
+/* fit: choose px so that the world box is at most maxW px wide and maxH px tall */
+const fitPx=(w,h,maxW,maxH)=>Math.min(maxW/w,maxH/h);
+
+/* ================= Section 1 ================= */
+panels3('fig-apps',[
+ id=>{const S=scene(id,{x0:-3,x1:3.2,y0:-0.5,y1:4.3,px:34,pad:[8,8,22,8],alt:'gravity dam with water pressure and uplift'});
+  S.t(0.1,4.3,'Gravity dam',{bold:true,dy:-8});
+  S.poly([[-3,0],[0,0],[0,3.2],[-3,3.2]],WATER);S.surf(-3,0,3.2,-2.2);
+  S.press([0,3.2],[0,0],0,3.2,10,{into:[-1,0],n:7});
+  S.poly([[0,0],[2.6,0],[0.7,3.8],[0,3.8]],SOLID);S.hatch([-3,0],[3.2,0],[0,-1]);
+  S.press([0,-0.02],[2.6,-0.02],1.2,0,10,{into:[0,-1],n:6});
+  S.arr([1.0,1.6],[0,-1],30,'W',{tail:true,at:'tip',lx:-14,ly:-12,col:'var(--ink)'});
+  S.t(-1.5,1.4,'water',{col:'var(--accent)'});S.t(2.05,-0.38,'uplift',{fs:11,col:PC});},
+ id=>{const S=scene(id,{x0:-3,x1:3.2,y0:-0.5,y1:4.3,px:34,pad:[8,8,22,8],alt:'vertical lift gate in a channel'});
+  S.t(0.1,4.3,'Control gate',{bold:true,dy:-8});
+  S.poly([[-3,0],[0,0],[0,3],[-3,3]],WATER);S.surf(-3,0,3,-2.2);S.poly([[0.15,0],[3.2,0],[3.2,0.6],[0.15,0.6]],WATER);
+  S.press([0,3],[0,0],0,3,10,{into:[-1,0],n:7});
+  S.poly([[0,0],[0.15,0],[0.15,3.6],[0,3.6]],SOLID);S.line([0.07,3.6],[0.07,4.1],'stroke:var(--ink);stroke-width:2');
+  S.t(0.3,4.0,'hoist',{a:'start',fs:11});S.hatch([-3,0],[3.2,0],[0,-1]);S.t(1.7,1.4,'gate',{fs:11});
+  S.t(-1.5,1.4,'water',{col:'var(--accent)'});},
+ id=>{const S=scene(id,{x0:-2,x1:3.6,y0:-0.6,y1:4.3,px:36,pad:[8,8,22,8],alt:'earth-retaining wall'});
+  S.t(0.8,4.3,'Retaining wall',{bold:true,dy:-8});
+  S.poly([[0.4,0.5],[3.6,0.5],[3.6,3.4],[0.4,3.4]],'fill:var(--warm-soft);stroke:none');S.t(2.3,2.6,'soil + water',{fs:11});
+  S.press([0.4,3.4],[0.4,0.5],0,2.9,9,{into:[1,0],n:6,col:'var(--c3)',fill:'var(--green-soft)'});
+  S.poly([[-1.2,0],[2.4,0],[2.4,0.5],[0.4,0.5],[0.4,3.6],[0,3.6],[0,0.5],[-1.2,0.5]],SOLID);
+  S.hatch([-2,0],[3.6,0],[0,-1]);S.t(-0.6,0.25,'toe',{fs:10.5});S.t(1.6,0.25,'heel',{fs:10.5});S.t(-0.25,2.2,'stem',{fs:10.5,a:'end'});}
+]);
+
+/* ================= Section 2 ================= */
+const OIL='fill:var(--green-soft);stroke:none';
+panels3('fig-pd-types',[
+ id=>{const S=scene(id,{x0:-2,x1:1,y0:-0.3,y1:2.5,px:55,pad:[6,6,20,6],alt:'triangular pressure'});S.t(-0.5,2.5,'triangular',{bold:true,dy:-8});
+  S.poly([[-2,0],[0,0],[0,2],[-2,2]],WATER);S.surf(-2,0,2,-1.7);S.press([0,2],[0,0],0,2,22,{into:[-1,0],lbl:['0','ρgh'],lo:[[-8,8],[0,0]]});S.hatch([0,-0.2],[0,2.4],[1,0]);S.dimV(0.45,2,0,'h');},
+ id=>{const S=scene(id,{x0:-2,x1:1,y0:-0.3,y1:2.5,px:55,pad:[6,6,20,6],alt:'trapezoidal pressure on a submerged plate'});S.t(-0.5,2.5,'trapezoidal',{bold:true,dy:-8});
+  S.poly([[-2,0],[0,0],[0,2.2],[-2,2.2]],WATER);S.surf(-2,0,2.2,-1.75);S.hatch([0,-0.2],[0,2.4],[1,0]);S.line([0,1.5],[0,0.3],GATE);
+  S.press([0,1.5],[0,0.3],0.7,1.9,17,{into:[-1,0],lbl:['ρgh_1','ρgh_2'],lo:[[-6,-4],[0,4]]});S.dimV(0.45,2.2,1.5,'h_1');S.dimV(0.8,2.2,0.3,'h_2');},
+ id=>{const S=scene(id,{x0:-1.6,x1:1.6,y0:-0.5,y1:2.3,px:55,pad:[6,6,20,6],alt:'uniform pressure on a horizontal surface'});S.t(0,2.3,'uniform',{bold:true,dy:-8});
+  S.poly([[-1.6,0],[1.6,0],[1.6,1.4],[-1.6,1.4]],WATER);S.surf(-1.6,1.6,1.4,-1.2);S.press([-1.2,0],[1.2,0],1.4,1.4,30,{into:[0,1],n:6,lbl:['ρgh',''],lo:[[22,-2],[0,0]]});
+  S.hatch([-1.6,0],[1.6,0],[0,-1]);S.dimV(1.4,1.4,0,'h',{left:true});},
+ id=>{const S=scene(id,{x0:-2,x1:1,y0:-0.3,y1:2.5,px:55,pad:[6,6,20,6],alt:'two-layer pressure'});S.t(-0.5,2.5,'two-layer',{bold:true,dy:-8});
+  S.poly([[-2,0],[0,0],[0,1],[-2,1]],WATER);S.poly([[-2,1],[0,1],[0,2],[-2,2]],OIL);S.surf(-2,0,2,-1.7);S.t(-1.6,1.5,'oil',{fs:11,a:'start'});S.t(-1.6,0.5,'water',{fs:11,a:'start',col:'var(--accent)'});
+  S.press([0,2],[0,1],0,0.8,22,{into:[-1,0]});S.press([0,1],[0,0],0.8,1.8,22,{into:[-1,0],lbl:['kink',''],lo:[[-6,0],[0,0]]});S.hatch([0,-0.2],[0,2.4],[1,0]);},
+ id=>{const S=scene(id,{x0:-1.8,x1:2.2,y0:-0.3,y1:2.5,px:52,pad:[6,6,20,6],alt:'pressure on an inclined wall'});S.t(0.2,2.5,'inclined',{bold:true,dy:-8});
+  S.poly([[-1.8,0],[0,0],[1.7,2],[-1.8,2]],WATER);S.surf(-1.8,1.7,2,-1.4);S.press([1.7,2],[0,0],0,2,22,{into:[-1,1],lbl:['','ρgh'],lo:[[0,0],[-4,6]]});
+  S.hatch([0,0],[1.95,2.3],[1,-1]);S.t(1.15,0.25,'⟂ wall',{fs:10.5,a:'start'});},
+ id=>{const S=scene(id,{x0:-2.2,x1:0.9,y0:-0.3,y1:2.5,px:55,pad:[6,6,20,6],alt:'pressure on a curved surface'});S.t(-0.7,2.5,'curved',{bold:true,dy:-8});
+  S.poly([[-2.2,0],[-1,0],...[...Array(19)].map((_,i)=>{const a=(270+5*i)*Math.PI/180;return [-1+Math.cos(a),1+Math.sin(a)];}),[0,2.2],[-2.2,2.2]],WATER);S.surf(-2.2,0,2.2,-1.9);
+  S.pressArc([-1,1],1,272,358,(x,y)=>2.2-y,19,{inside:true,n:9});S.arc([-1,1],1,270,360,'stroke:var(--ink);stroke-width:1.8;fill:none');
+  S.line([0,1],[0,2.4],'stroke:var(--ink);stroke-width:1.8');S.line([-2.2,0],[-1,0],'stroke:var(--ink);stroke-width:1.8');S.dot(-1,1,'var(--muted)',2.5);S.t(-1,1,'centre',{fs:10,dy:-10,col:'var(--muted)'});}
+]);
+
+/* interactive: two-layer pressure on an inclined wall */
+reg(function(){const el=$('fig-pdi');if(!el)return;const ho=+$('pd-ho').value,sg=+$('pd-sg').value,th=+$('pd-th').value*Math.PI/180;
+  const hw=1,H=ho+hw,ct=Math.cos(th)/Math.sin(th),xtop=(H+0.3)*ct,pA=sg*9.81*ho,pB=pA+9.81*hw,k=2.6;
+  const px=Math.min(70,300/(2.2+xtop)),S=scene('fig-pdi',{x0:-2.2,x1:xtop+0.3+(k*pB)/70*0+0.4,y0:-0.35,y1:H+0.5,px,pad:[8,40,10,10],alt:'two-layer pressure on an inclined wall'});
+  const xA=hw*ct,xO=H*ct;
+  S.poly([[-2.2,0],[0,0],[xA,hw],[-2.2,hw]],WATER);if(ho>0)S.poly([[-2.2,hw],[xA,hw],[xO,H],[-2.2,H]],OIL);S.surf(-2.2,xO,H,-1.8);
+  if(ho>0)S.press([xO,H],[xA,hw],0,pA,k,{into:[-Math.sin(th),Math.cos(th)],n:Math.max(2,Math.round(ho*4))});
+  S.press([xA,hw],[0,0],pA,pB,k,{into:[-Math.sin(th),Math.cos(th)],n:5,lbl:[ho>0?fmt(pA,2)+' kPa':'',fmt(pB,2)+' kPa'],la:'end',lo:[[-4,-8],[-8,12]]});
+  S.hatch([0,0],[xtop,H+0.3],[1,-0.3]);S.hatch([-2.2,0],[0.2,0],[0,-1]);
+  S.t(xO,H,'O',{dx:6,dy:-12,bold:true});S.t(xA,hw,'A',{dx:12,dy:4,bold:true});S.t(0,0,'B',{dx:10,dy:10,bold:true});
+  S.dimV(-2.0,0,hw,'1 m',{});if(ho>0){S.dimV(-2.0,hw,H,fmt(ho,1)+' m',{});S.t(-1.5,hw+ho/2,'oil',{fs:11.5});}S.t(-1.45,hw/2-0.15,'water',{fs:11.5,col:'var(--accent)'});
+  $('pd-out').innerHTML=`p<sub>A</sub> = ${fmt(sg,2)} × 9.81 × ${fmt(ho,1)} = <b>${fmt(pA,3)} kPa</b> · p<sub>B</sub> = p<sub>A</sub> + 9.81 × 1 = <b>${fmt(pB,3)} kPa</b><br>slope above A: ${fmt(sg*9.81,2)} kPa per m of depth; below A: 9.81 kPa per m · length of wall OB = ${fmt(H/Math.sin(th),2)} m (only the vertical depth sets the pressure)`;});
+['pd-ho','pd-sg','pd-th'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Section 3 ================= */
+reg(function(){const S=scene('fig-split',{x0:-3.3,x1:1.6,y0:-0.3,y1:3.4,px:62,pad:[8,8,8,8],alt:'trapezoidal pressure split into a rectangle and a triangle'});
+  const k=0.9/9.81*62/62, h1=1, h2=2.6, top=3.1; // world: pressure drawn as horizontal length (m) = 0.9*p/9.81... in px via scene
+  S.poly([[-3.3,0],[0,0],[0,top],[-3.3,top]],WATER);S.surf(-3.3,0,top,-3.0);S.hatch([0,-0.2],[0,3.3],[1,0]);
+  const yE=top-h1,yB=top-h2,w1=h1*0.95,w2=h2*0.95;
+  S.poly([[0,yE],[-w1,yE],[-w1,yB],[0,yB]],'fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.3');
+  S.poly([[-w1,yE],[-w2,yB],[-w1,yB]],'fill:var(--purple-soft);stroke:var(--purple);stroke-width:1.3');
+  for(let i=1;i<=5;i++){const y=yE+(yB-yE)*i/6,w=w1+(w2-w1)*i/6;S.arr([0,y],[1,0],w*62,'',{col:PC,w:1.3});}
+  S.line([0,yE],[0,yB],GATE);
+  S.t(0,yE,'A',{dx:10,dy:-6,bold:true});S.t(-w1,yE,'B',{dx:-4,dy:-9,bold:true});S.t(-w2,yB,'C',{dx:-4,dy:11,bold:true});S.t(-w1,yB,'D',{dx:4,dy:11,bold:true});S.t(0,yB,'E',{dx:10,dy:6,bold:true});
+  S.t(-w1/2,(yE+yB)/2+0.35,'F_1',{col:FC,bold:true});S.t(-(w1+w2)/2-0.1,yB+0.35,'F_2',{col:FC,bold:true});
+  S.line([0.15,(yE+yB)/2],[1.0,(yE+yB)/2],DASH);S.line([0.15,yE+(yB-yE)*2/3],[1.0,yE+(yB-yE)*2/3],DASH);
+  const F1=h1*(h2-h1),F2=0.5*(h2-h1)**2,yA=(F1*(yE+yB)/2+F2*(yE+(yB-yE)*2/3))/(F1+F2);
+  S.arr([0.06,yA],[1,0],62,'F_R',{tail:true,at:'tip'});S.dimV(1.35,top,yA,'y_A');
+  S.t(-w1/2,yE,'γh_1',{dy:-22,fs:11.5,col:PC});S.t(-w2/2-0.2,yB,'γh_2',{dy:24,fs:11.5,col:PC});
+  S.dimV(-3.1,top,yE,'h_1');S.dimV(-2.6,top,yB,'h_2');});
+FBD.draw('fig-plate',{x0:-0.5,x1:6.5,y0:-1.6,y1:2,px:38,alt:'distributed load on a plate balanced by one point force'},[
+  {t:'beam',x1:0,x2:6,y:0},{t:'dist',x1:0,x2:6,y:0,q1:12,q2:62,lbl:'distributed load',k:'load',lx:2.2,dy:-4},
+  {t:'force',x:3.714,y:-0.2,ang:90,len:52,lbl:'F_R',k:'react'},{t:'text',x:3.714,y:-1.45,s:'ΣF = 0, ΣM = 0',cls:'lbl-dim'}]);
+
+/* ================= Section 4 ================= */
+pairOf('fig-vrect',id=>reg(function(){const S=scene(id,{x0:-2.4,x1:1.4,y0:-0.3,y1:3.4,px:58,pad:[6,6,8,6],alt:'vertical rectangular wall: strip and pressure triangle'});
+  S.poly([[-2.4,0],[0,0],[0,3],[-2.4,3]],WATER);S.surf(-2.4,0,3,-2.1);S.press([0,3],[0,0],0,3,22,{into:[-1,0],lbl:['','p_max = ρgh'],lo:[[0,0],[10,8]]});
+  S.hatch([0,-0.2],[0,3.3],[1,0]);S.poly([[0,1.05],[0.18,1.05],[0.18,1.25],[0,1.25]],'fill:var(--purple-soft);stroke:var(--purple)');
+  S.t(0.25,1.15,'dz',{a:'start',fs:11.5,col:'var(--purple)'});S.dimV(-2.2,3,1.15,'z');S.t(0,3,'O',{dx:10,dy:-8,bold:true});
+  S.arr([0.06,1],[1,0],50,'F_R',{tail:true,at:'tip',ly:-12});S.dimV(1.3,3,1,'h_R = 2h/3',{left:true,dx:-2});}),
+ id=>reg(function(){const S=scene(id,{x0:-1.6,x1:1.6,y0:-0.6,y1:3.4,px:50,pad:[6,6,8,6],alt:'front view of the wetted rectangle'});
+  S.poly([[-1.2,0],[1.2,0],[1.2,3],[-1.2,3]],'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4');S.line([-1.6,3],[1.6,3],'stroke:var(--accent);stroke-width:1.5');
+  S.poly([[-1.2,1.05],[1.2,1.05],[1.2,1.25],[-1.2,1.25]],'fill:var(--purple-soft);stroke:var(--purple)');S.t(0,1.15,'dA = b dz',{fs:11.5,col:'var(--purple)'});
+  S.dimH(-1.2,1.2,-0.3,'b',{below:false});S.dimV(1.45,3,0,'h',{left:false});S.t(0,2.2,'wetted area A = hb',{fs:11.5});}),
+ 'side view','front view');
+pairOf('fig-s4-eg',id=>reg(function(){const S=scene(id,{x0:-2.4,x1:1.2,y0:-0.3,y1:3.4,px:58,pad:[6,6,8,6],alt:'tank wall 3 m deep: pressure triangle'});
+  S.poly([[-2.4,0],[0,0],[0,3],[-2.4,3]],WATER);S.surf(-2.4,0,3,-2.1);S.press([0,3],[0,0],0,29.43,2.2,{into:[-1,0],lbl:['0','29.43 kPa'],lo:[[-10,8],[16,10]]});
+  S.hatch([0,-0.2],[0,3.3],[1,0]);S.dimV(0.6,3,0,'3 m');}),
+ id=>reg(function(){const S=scene(id,{x0:-1.6,x1:1.8,y0:-0.9,y1:3.4,px:54,pad:[6,6,8,6],alt:'free-body diagram of the wall'});
+  S.poly([[-0.15,0],[0.15,0],[0.15,3.3],[-0.15,3.3]],SOLID);S.line([-1.4,3],[-0.15,3],'stroke:var(--accent);stroke-width:1.4;stroke-dasharray:4 3');S.t(-0.8,3,'water level',{fs:10.5,dy:-8,col:'var(--accent)'});
+  S.arr([-0.15,1],[1,0],60,'F_R = 88.3 kN',{ly:-14,lx:24});
+  S.arr([-0.2,-0.12],[-1,0],50,'H',{tail:true,at:'tip',col:RC});
+  S.path(`M${S.X(0.6)},${S.Y(-0.3)} A 22 22 0 1 1 ${S.X(0.65)},${S.Y(0.45)}`,'stroke:var(--accent);stroke-width:2;fill:none');arrowHead(S.g,S.X(0.65),S.Y(0.45),-0.7,-0.7,RC);
+  S.t(1.1,0.1,'M',{col:RC,bold:true,a:'start'});S.dimV(-1.1,1,0,'1 m',{left:true});}),
+ 'pressure diagram','FBD of the wall: supports supply H and M');
+
+/* ================= Section 5 ================= */
+pairOf('fig-terms',id=>reg(function(){const th=50*Math.PI/180,c=Math.cos(th),s=Math.sin(th),O=[0.2,3.2],at=d=>[O[0]+d*c,O[1]-d*s];
+  const S=scene(id,{x0:-0.6,x1:4.2,y0:-0.4,y1:3.6,px:58,pad:[6,6,8,6],alt:'inclined plane surface: terms'});
+  const dB=(3.2+0.4)/s;S.poly([O,at(dB),[4.2,-0.4],[4.2,3.2]],WATER);S.surf(-0.6,4.2,3.2,3.9);
+  S.line(O,at(4.1),DASH);S.line(at(1.5),at(3.6),GATE);const C=at(2.55),R=at(2.8);
+  S.press(at(1.5),at(3.6),1.5*s,3.6*s,20,{into:[s,c],n:7});S.line(at(1.5),at(3.6),GATE);
+  S.cg(C[0],C[1]);S.dot(R[0],R[1],FC,4);S.arr(R,[-s,-c],46,'F_R',{tail:true,at:'tip',lx:-8});
+  S.t(O[0],O[1],'O',{dx:-4,dy:-12,bold:true});S.path(S.arcD(O,0.45,-50,0),'stroke:var(--ink);stroke-width:1.2;fill:none');S.t(O[0]+0.62,O[1]-0.2,'θ',{it:true});
+  S.line(C,[3.55,C[1]],DASH);S.line(R,[3.85,R[1]],DASH);S.dimV(3.55,3.2,C[1],'h_c',{left:true});S.dimV(3.85,3.2,R[1],'h_R');
+  S.dimA(O,C,-34,'y_c');S.dimA(O,R,-56,'y_R');S.t(C[0],C[1],'C',{dx:-12,dy:8,bold:true,col:PC});S.t(R[0],R[1],'CP',{dx:-6,dy:16,bold:true,col:FC});}),
+ id=>reg(function(){const S=scene(id,{x0:-1.6,x1:1.9,y0:-0.4,y1:3.6,px:55,pad:[6,6,8,6],alt:'the surface seen face-on'});
+  S.path(`M${S.X(-0.9)},${S.Y(2.6)} C${S.X(-0.2)},${S.Y(3.2)} ${S.X(1.3)},${S.Y(2.9)} ${S.X(1.1)},${S.Y(1.6)} C${S.X(1.0)},${S.Y(0.3)} ${S.X(-0.2)},${S.Y(-0.1)} ${S.X(-0.8)},${S.Y(0.6)} C${S.X(-1.3)},${S.Y(1.2)} ${S.X(-1.3)},${S.Y(2.2)} ${S.X(-0.9)},${S.Y(2.6)} Z`,'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.5');
+  S.line([-1.6,1.45],[1.8,1.45],DASH);S.t(1.8,1.45,'x',{dy:-9,it:true});S.cg(0,1.45);S.t(0,1.45,'C',{dx:12,dy:-10,bold:true,col:PC});S.dot(0,1.15,FC,4);S.t(0,1.15,'CP',{dx:14,dy:10,bold:true,col:FC});
+  S.poly([[-1.2,2.25],[1.15,2.25],[1.15,2.4],[-1.2,2.4]],'fill:var(--purple-soft);stroke:var(--purple)');S.t(-1.3,2.33,'dA',{a:'end',fs:11,col:'var(--purple)'});
+  S.line([0,3.6],[0,-0.4],'stroke:var(--muted);stroke-width:1;stroke-dasharray:1 3');S.t(0,3.5,'y (down the plane)',{fs:10.5,col:'var(--muted)',a:'start',dx:4});}),
+ 'side view: depths h, distances y along the plane','face-on view of the same surface');
+
+/* ================= Section 6 ================= */
+panels3('fig-centroids',[
+ id=>{const S=scene(id,{x0:-1.4,x1:1.8,y0:-1.1,y1:1.3,px:62,pad:6,alt:'rectangle centroid'});S.poly([[-1.1,-0.75],[1.1,-0.75],[1.1,0.75],[-1.1,0.75]],'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4');
+  S.line([-1.1,-0.75],[1.1,0.75],DASH);S.line([-1.1,0.75],[1.1,-0.75],DASH);S.cg(0,0);S.t(0,1.1,'rectangle',{bold:true});S.dimV(1.25,0.75,0,'L/2',{});},
+ id=>{const S=scene(id,{x0:-1.4,x1:1.8,y0:-1.1,y1:1.3,px:62,pad:6,alt:'circle centroid'});S.circle=null;E('circle',{cx:S.X(0),cy:S.Y(-0.05),r:0.85*62,style:'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4'},S.g);
+  S.cg(0,-0.05);S.t(0,1.1,'circle: the centre',{bold:true});},
+ id=>{const S=scene(id,{x0:-1.4,x1:1.8,y0:-1.1,y1:1.3,px:62,pad:6,alt:'triangle centroid at the meeting point of the medians'});const A=[0,0.85],B=[-1.1,-0.85],Cc=[1.1,-0.85];
+  S.poly([A,B,Cc],'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4');const mid=(p,q)=>[(p[0]+q[0])/2,(p[1]+q[1])/2];
+  S.line(A,mid(B,Cc),DASH);S.line(B,mid(A,Cc),DASH);S.line(Cc,mid(A,B),DASH);const G=[0,(0.85-0.85-0.85)/3];S.cg(G[0],G[1]);
+  S.t(0,1.1,'triangle: medians meet',{bold:true});S.t(0.08,0.25,'2',{a:'start',fs:11.5,col:'var(--muted)'});S.t(0.08,-0.62,'1',{a:'start',fs:11.5,col:'var(--muted)'});S.dimV(1.25,G[1],-0.85,'L/3',{});},
+ id=>{const S=scene(id,{x0:-1.4,x1:1.8,y0:-1.1,y1:1.3,px:62,pad:6,alt:'semicircle centroid'});S.path(S.arcD([0,-0.8],1.05,0,180)+'Z','fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4');
+  const yc=-0.8+4*1.05/(3*Math.PI);S.cg(0,yc);S.dimV(0.25,-0.8,yc,'4R/(3π)',{});S.t(0,1.1,'semicircle',{bold:true});}
+]);
+
+/* ================= Section 7 ================= */
+panels3('fig-moa',[
+ id=>{const S=scene(id,{x0:-1.5,x1:1.6,y0:-1.25,y1:1.3,px:58,pad:6,alt:'rectangle second moment axis'});S.poly([[-0.8,-0.85],[0.8,-0.85],[0.8,0.85],[-0.8,0.85]],'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4');
+  S.line([-1.3,0],[1.2,0],'stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 3');S.t(1.25,0,'x',{a:'start',it:true,col:GC});S.cg(0,0);S.dimH(-0.8,0.8,-1.05,'b',{below:true});S.dimV(-1.1,0.85,-0.85,'L',{left:true});S.t(0,1.12,'(a) I_c = bL³/12',{bold:true,fs:12});},
+ id=>{const S=scene(id,{x0:-1.5,x1:1.6,y0:-1.25,y1:1.3,px:58,pad:6,alt:'circle second moment axis'});E('circle',{cx:S.X(0),cy:S.Y(-0.05),r:0.85*58,style:'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4'},S.g);
+  S.line([-1.3,-0.05],[1.2,-0.05],'stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 3');S.t(1.25,-0.05,'x',{a:'start',it:true,col:GC});S.cg(0,-0.05);S.line([0,-0.05],[0.6,-0.65],'stroke:var(--muted);stroke-width:1');S.t(0.45,-0.25,'R',{it:true,fs:12,col:'var(--muted)'});S.t(0,1.12,'(b) I_c = πR⁴/4',{bold:true,fs:12});},
+ id=>{const S=scene(id,{x0:-1.5,x1:1.6,y0:-1.25,y1:1.3,px:58,pad:6,alt:'triangle second moment axis'});S.poly([[0.2,0.85],[-0.9,-0.85],[0.9,-0.85]],'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4');
+  const yc=-0.85+1.7/3;S.line([-1.3,yc],[1.2,yc],'stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 3');S.t(1.25,yc,'x',{a:'start',it:true,col:GC});S.cg(0.2/3,yc);S.dimH(-0.9,0.9,-1.05,'b',{below:true});S.dimV(-1.1,0.85,-0.85,'L',{left:true});S.t(0,1.12,'(c) I_c = bL³/36',{bold:true,fs:12});},
+ id=>{const S=scene(id,{x0:-1.5,x1:1.6,y0:-1.25,y1:1.3,px:58,pad:6,alt:'semicircle second moment axis'});S.path(S.arcD([0,-0.75],1.1,0,180)+'Z','fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4');
+  const yc=-0.75+4*1.1/(3*Math.PI);S.line([-1.4,yc],[1.3,yc],'stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 3');S.t(1.35,yc,'x',{a:'start',it:true,col:GC});S.cg(0,yc);S.line([0,-0.75],[-0.78,0.03],'stroke:var(--muted);stroke-width:1');S.t(-0.55,-0.25,'R',{it:true,fs:12,col:'var(--muted)'});S.t(0,1.12,'(d) I_c = 0.10976R⁴',{bold:true,fs:12});}
+]);
+reg(function(){const S=scene('fig-parallel',{x0:-2.2,x1:2.4,y0:-1.2,y1:2.1,px:62,pad:[6,6,8,6],alt:'parallel axis theorem'});
+  S.poly([[-1,-1],[1,-1],[1,0.6],[-1,0.6]],'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4');const yG=-0.2;
+  S.line([-2.1,yG],[2.0,yG],'stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 3');S.t(2.05,yG,'G G',{a:'start',fs:11.5,col:GC});
+  S.line([-2.1,1.7],[2.0,1.7],'stroke:var(--ink);stroke-width:1.5;stroke-dasharray:6 3');S.t(2.05,1.7,'O O',{a:'start',fs:11.5});
+  S.cg(0,yG);S.dimV(-1.6,1.7,yG,'y_c',{left:true});S.poly([[-1,0.25],[1,0.25],[1,0.4],[-1,0.4]],'fill:var(--purple-soft);stroke:var(--purple)');S.t(0.4,0.33,'dA',{fs:11,col:'var(--purple)'});
+  S.dimV(1.25,1.7,0.33,'y′',{});S.dimV(1.55,yG,0.33,'y',{});});
+
+/* ================= Section 8 ================= */
+reg(function(){const th=Math.PI/3,c=Math.cos(th),s=Math.sin(th),top=[0.8,2.4],at=d=>[top[0]+d*c,top[1]-d*s],O=[top[0]-(1/s)*c,3.4];
+  const S=scene('fig-s8-eg',{x0:-0.5,x1:3.8,y0:0,y1:3.75,px:72,pad:[6,6,8,6],alt:'inclined rectangular gate example'});
+  S.poly([O,[O[0]+3.4/s*c,0],[3.8,0],[3.8,3.4]],WATER);S.surf(-0.5,3.8,3.4,2.4);S.line(at(2),[O[0]+3.4/s*c,0],DASH);S.line(O,top,DASH);
+  S.press(top,at(2),9.81,19.62,3.2,{into:[s,c],n:6,lbl:['9.81 kPa','19.62 kPa'],lo:[[16,0],[10,12]]});S.line(top,at(2),GATE);
+  const C=at(1),R=at(1.155);S.cg(C[0],C[1]);S.dot(R[0],R[1],FC,4);S.arr(R,[-s,-c],52,'F_R = 54.9 kN',{tail:true,at:'tip',lx:-30,ly:10});
+  S.t(O[0],O[1],'O',{dx:-4,dy:-12,bold:true});S.dimV(top[0]-0.2,3.4,top[1],'1 m',{left:true});S.line(C,[3.25,C[1]],DASH);S.line(R,[3.5,R[1]],DASH);S.dimV(3.25,3.4,C[1],'h_c = 1.866',{left:true});S.dimV(3.5,3.4,R[1],'',{});
+  S.t(3.5,R[1],'h_R = 2.000',{dx:-6,dy:-10,a:'end',fs:11.5,col:'var(--muted)'});S.dimA(top,at(2),22,'2 m');S.path(S.arcD(at(2),0.35,120,180),'stroke:var(--ink);stroke-width:1.2;fill:none');S.t(at(2)[0]-0.5,at(2)[1]+0.15,'60°',{fs:11.5});});
+
+/* interactive: centre of pressure */
+reg(function(){if(!$('fig-cpi'))return;const shp=$('cp-shape').value,d=+$('cp-top').value,thd=+$('cp-th').value,th=thd*Math.PI/180,c=Math.cos(th),s=Math.sin(th);
+  const sh={rect:{A:3,sc:1,Ic:1,nm:'rectangle'},circ:{A:Math.PI,sc:1,Ic:Math.PI/4,nm:'circle'},tri:{A:2,sc:4/3,Ic:2*8/36,nm:'triangle'}}[shp];
+  const hc=d+sh.sc*s,F=9.81*hc*sh.A;let sR=sh.sc,hR=hc,ok=hc>1e-9;
+  if(ok&&s>1e-9){const yc=hc/s;sR=sh.sc+sh.Ic/(yc*sh.A);hR=hc+sh.Ic*s*s/(hc*sh.A);}
+  const top=[0.6,-d],at=q=>[top[0]+q*c,top[1]-q*s],bot=at(2),ymin=Math.min(bot[1],-d)-0.4;
+  const px=Math.min(60,250/(-ymin+0.5)),S=scene('fig-cpi',{x0:-0.4,x1:4.2,y0:ymin,y1:0.5,px,pad:[6,6,8,6],alt:'gate with centroid and centre of pressure'});
+  S.poly([[-0.4,ymin],[4.2,ymin],[4.2,0],[-0.4,0]],WATER);S.surf(-0.4,4.2,0,0.1);
+  const pk=Math.min(4,60/Math.max(1,9.81*(-bot[1]))) ;S.press(top,bot,9.81*d,9.81*(-bot[1]),pk,{into:[s,c],n:6});S.line(top,bot,GATE);
+  const C=at(sh.sc),R=at(sR);S.cg(C[0],C[1]);if(ok){S.dot(R[0],R[1],FC,4);S.arr(R,[-s,-c],44,'F_R',{lx:8});}
+  S.t(top[0],top[1],'top',{dx:-16,dy:-4,fs:11,col:'var(--muted)'});
+  $('cp-out').innerHTML=ok?`${sh.nm}: A = ${fmt(sh.A,3)} m², I<sub>c</sub> = ${fmt(sh.Ic,3)} m⁴, h<sub>c</sub> = ${fmt(d,2)} + ${fmt(sh.sc,3)} sin ${thd}° = <b>${fmt(hc,3)} m</b><br>F<sub>R</sub> = 9.81 × ${fmt(hc,3)} × ${fmt(sh.A,3)} = <b>${fmt(F,2)} kN</b> · h<sub>R</sub> = <b>${fmt(hR,3)} m</b>, CP is <b>${fmt(hR-hc,4)} m</b> deeper than C (${fmt(sR-sh.sc,4)} m further down the gate)`:'The gate lies flat on the free surface: no pressure, no force.';});
+['cp-shape','cp-top','cp-th'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Section 9 ================= */
+pairOf('fig-s9-tri',id=>reg(function(){const th=40*Math.PI/180,c=Math.cos(th),s=Math.sin(th),O=[0,2],Hh=2.6,at=d=>[O[0]+d*c,O[1]-d*s],B=at(Hh);
+  const S=scene(id,{x0:-0.8,x1:2.9,y0:-0.3,y1:2.45,px:64,pad:[6,6,8,6],alt:'inclined rectangle piercing the free surface'});
+  S.poly([O,B,[2.9,B[1]],[2.9,2]],WATER);S.surf(0,2.9,2,1.6);S.hatch([-0.8,2],[0,2],[0,-1]);
+  S.press(O,B,0,Hh*s,24,{into:[s,c],n:6,lbl:['','ρgH sinθ'],lo:[[0,0],[-36,14]]});S.line(O,at(Hh+0.25),GATE);
+  const R=at(2*Hh/3);S.dot(R[0],R[1],FC,4);S.arr(R,[-s,-c],44,'F_R',{tail:true,at:'tip',lx:-6});S.dimA(O,R,26,'2H/3');S.dimA(O,B,50,'H');
+  S.t(0.2,1.85,'θ',{it:true,dx:14,dy:4});S.path(S.arcD(O,0.35,-40,0),'stroke:var(--ink);stroke-width:1.2;fill:none');}),
+ id=>reg(function(){const S=scene(id,{x0:-2.2,x1:1.4,y0:-0.25,y1:2.45,px:64,pad:[6,6,8,6],alt:'vertical rectangle piercing the free surface'});
+  S.poly([[-2.2,0],[0,0],[0,2],[-2.2,2]],WATER);S.surf(-2.2,0,2,-1.9);S.press([0,2],[0,0],0,2,22,{into:[-1,0],lbl:['','ρgH'],lo:[[0,0],[-6,10]]});S.hatch([0,-0.2],[0,2.35],[1,0]);
+  S.arr([0.06,2/3],[1,0],52,'F_R',{tail:true,at:'tip',ly:-12});S.dimV(1.25,2,2/3,'2H/3',{left:true});S.dimV(-2.0,2,0,'H');}),
+ 'inclined (θ to the horizontal)','vertical (θ = 90°)');
+reg(function(){const S=scene('fig-s9-hor',{x0:-2.2,x1:2.2,y0:-0.9,y1:2.2,px:64,pad:[6,6,8,6],alt:'uniform pressure on a horizontal plate'});
+  S.poly([[-2.2,-0.9],[2.2,-0.9],[2.2,1.8],[-2.2,1.8]],WATER);S.surf(-2.2,2.2,1.8,-1.8);S.press([-1.2,0],[1.2,0],1.8,1.8,26,{into:[0,1],n:6,lbl:['ρgh',''],lo:[[-26,0],[0,0]]});
+  S.poly([[-1.2,-0.12],[1.2,-0.12],[1.2,0],[-1.2,0]],SOLID);S.cg(0,-0.06);S.arr([0,-0.14],[0,-1],40,'F = ρghA',{tail:true,at:'tip',lx:48,ly:-8});S.dimV(1.6,1.8,0,'h');S.t(0,-0.06,'C = CP',{dx:-30,dy:18,fs:11,col:PC});});
+reg(function(){const S=scene('fig-s9-eg',{x0:-3.3,x1:1.9,y0:-0.3,y1:3.4,px:60,pad:[6,6,8,6],alt:'vertical gate with trapezoidal pressure split into rectangle and triangle'});
+  const top=3,k=1/9.81*0.95,yT=2,yB=0;S.poly([[-3.3,0],[0,0],[0,top],[-3.3,top]],WATER);S.surf(-3.3,0,top,-3.0);S.hatch([0,2.0],[0,3.3],[1,0]);S.hatch([0,-0.25],[0,0],[1,0]);
+  const w1=9.81*k,w2=29.43*k;S.poly([[0,yT],[-w1,yT],[-w1,yB],[0,yB]],'fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.3');S.poly([[-w1,yT],[-w2,yB],[-w1,yB]],'fill:var(--purple-soft);stroke:var(--purple);stroke-width:1.3');
+  S.line([0,yT],[0,yB],GATE);S.t(-w1/2,1.0,'F_1',{col:FC,bold:true});S.t(-(w1+w2)/2-0.15,0.45,'F_2',{col:FC,bold:true});
+  S.t(-w1/2,yT,'9.81',{dy:-9,fs:11,col:PC});S.t(-w2,yB,'29.43 kPa',{dy:12,fs:11,col:PC});
+  S.arr([0.06,1],[1,0],46,'19.62',{tail:true,at:'tip',lx:4,ly:-10,fs:11});S.arr([0.06,2-1.333],[1,0],46,'',{tail:true});S.t(0.85,0.55,'19.62',{fs:11,col:FC,bold:true,a:'start'});
+  S.dimV(1.65,top,3-2.167,'2.167 m',{left:true,dx:-4});S.line([0.06,0.833],[1.65,0.833],DASH);S.dimV(-3.1,top,yT,'1 m');S.dimV(-2.7,yT,yB,'2 m');});
+
+/* ================= Section 10 ================= */
+reg(function(){const S=scene('fig-s10-eg',{x0:-3.2,x1:2.2,y0:-0.3,y1:2.75,px:66,pad:[6,6,8,6],alt:'oil over water: pressure diagram and its pieces'});
+  const k=0.11;S.poly([[-3.2,0],[0,0],[0,1],[-3.2,1]],WATER);S.poly([[-3.2,1],[0,1],[0,2.5],[-3.2,2.5]],OIL);S.surf(-3.2,0,2.5,-3.0);S.hatch([0,-0.25],[0,2.7],[1,0]);
+  const pi=11.772,pb=21.582;S.poly([[0,2.5],[-pi*k,1],[0,1]],'fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.3');S.poly([[0,1],[-pi*k,1],[-pi*k,0],[0,0]],'fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.3');
+  S.poly([[-pi*k,1],[-pb*k,0],[-pi*k,0]],'fill:var(--purple-soft);stroke:var(--purple);stroke-width:1.3');
+  S.t(-pi*k,1,'11.77',{dx:-20,dy:-6,fs:11,col:PC});S.t(-pb*k,0,'21.58 kPa',{dy:12,fs:11,col:PC});S.t(-0.4,1.5,'F_o',{fs:11.5,col:FC,bold:true});S.t(-0.65,0.5,'F_u',{fs:11.5,col:FC,bold:true});S.t(-1.6,0.25,'F_t',{fs:11.5,col:FC,bold:true});
+  S.t(-1.7,2.25,'oil, 0.8',{fs:11});S.t(-2.45,0.75,'water',{fs:11,col:'var(--accent)'});S.dimV(-3.0,2.5,1,'1.5 m');S.dimV(-3.0,1,0,'1 m');
+  S.arr([0.06,2.5-1.686],[1,0],56,'25.5 kN',{tail:true,at:'tip',ly:-12,fs:12});S.dimV(1.95,2.5,2.5-1.686,'1.686 m',{left:true,dx:-2});});
+reg(function(){const S=scene('fig-s10-gas',{x0:-3.0,x1:2.2,y0:-0.3,y1:3.1,px:64,pad:[6,6,8,6],alt:'closed tank with air pressure above water'});
+  const k=0.085;S.poly([[-3,0],[0,0],[0,2],[-3,2]],WATER);S.poly([[-3,2],[0,2],[0,2.6],[-3,2.6]],'fill:var(--card);stroke:none');S.t(-1.9,2.3,'air, 5 kPa',{fs:11.5});
+  S.line([-3,2.6],[0.0,2.6],'stroke:var(--ink);stroke-width:3');S.line([-3,2],[0,2],'stroke:var(--accent);stroke-width:1.5');S.hatch([0,-0.25],[0,2.8],[1,0]);
+  S.poly([[0,2],[-5*k,2],[-5*k,0],[0,0]],'fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.3');S.poly([[-5*k,2],[-24.62*k,0],[-5*k,0]],'fill:var(--purple-soft);stroke:var(--purple);stroke-width:1.3');
+  S.t(-5*k,2,'5',{dy:-9,fs:11,col:PC});S.t(-24.62*k,0,'24.62 kPa',{dy:12,fs:11,col:PC});
+  S.line([-3,2.51],[0,2.51],'stroke:var(--accent);stroke-width:1.2;stroke-dasharray:5 4');S.t(-2.9,2.85,'dashed: imaginary free surface, 0.51 m up',{a:'start',fs:10,col:'var(--accent)'});
+  S.arr([0.06,2-1.221],[1,0],56,'29.6 kN',{tail:true,at:'tip',ly:-12});S.dimV(1.95,2,2-1.221,'1.221 m',{left:true,dx:-2});S.dimV(-2.8,2,0,'2 m');});
+
+/* ================= Section 11 ================= */
+reg(function(){const S=scene('fig-s11-fbd',{x0:-2.4,x1:2.6,y0:-0.4,y1:2.55,px:62,pad:[6,6,8,6],alt:'free-body diagram of the hinged gate'});
+  S.poly([[-0.08,0],[0.08,0],[0.08,2],[-0.08,2]],SOLID);S.hinge(0,2);S.t(0,2,'hinge',{dx:12,dy:-12,a:'start',fs:11});
+  S.arr([-0.1,2-1.167],[1,0],70,'F_R = 39.24 kN',{ly:-13,lx:-6});S.arr([0.1,0],[-1,0],70,'P = 22.9 kN',{tail:true,at:'tip',ly:-12,lx:-4});
+  S.arr([0.1,2],[-1,0],60,'16.35 kN',{tail:true,at:'tip',col:RC,ly:-12});S.dimV(1.0,2,2-1.167,'1.167 m');S.dimV(2.1,2,0,'2 m');S.t(-1.4,1.75,'water side',{fs:11,col:'var(--accent)'});S.t(1.5,0.3,'air side',{fs:11,col:'var(--muted)'});});
+
+/* ================= Section 12 ================= */
+const arcPts=(c,R,a1,a2,n=24)=>[...Array(n+1)].map((_,i)=>{const a=(a1+(a2-a1)*i/n)*Math.PI/180;return [c[0]+R*Math.cos(a),c[1]+R*Math.sin(a)];});
+pairOf('fig-block',id=>reg(function(){const S=scene(id,{x0:-0.5,x1:3,y0:-0.3,y1:3.1,px:66,pad:[6,6,8,6],alt:'tank with a curved wall AC and its projections'});
+  const A=[0,2.2],C=[2,0],B=[2,2.2],cur=`M${S.X(0)},${S.Y(2.2)} C${S.X(0)},${S.Y(0.9)} ${S.X(2)},${S.Y(1.3)} ${S.X(2)},${S.Y(0)}`;
+  S.path(cur+` L${S.X(3)},${S.Y(0)} L${S.X(3)},${S.Y(2.9)} L${S.X(0)},${S.Y(2.9)} Z`,WATER);S.surf(0,3,2.9,2.5);
+  S.path(`M${S.X(0)},${S.Y(3.0)} L${S.X(0)},${S.Y(2.2)} `+cur.replace(/^M[^C]*/,'')+` L${S.X(3)},${S.Y(0)}`,'stroke:var(--ink);stroke-width:3;fill:none');
+  S.line(A,B,DASH);S.line(B,C,DASH);S.t(0,2.2,'A',{dx:-10,bold:true});S.t(2,2.2,'B',{dx:10,dy:-8,bold:true});S.t(2,0,'C',{dx:-10,dy:10,bold:true});
+  S.t(1,2.2,'a',{dy:-9,it:true,col:'var(--muted)'});S.t(2,1.1,'b',{dx:9,it:true,col:'var(--muted)'});S.t(0.55,0.6,'curved surface',{fs:11});S.t(2.5,1.6,'liquid',{fs:11,col:'var(--accent)'});}),
+ id=>reg(function(){const S=scene(id,{x0:-0.7,x1:3.3,y0:-0.4,y1:3.2,px:62,pad:[6,6,8,6],alt:'free-body diagram of the liquid block ABC'});
+  const cur=`M${S.X(0)},${S.Y(2.2)} C${S.X(0)},${S.Y(0.9)} ${S.X(2)},${S.Y(1.3)} ${S.X(2)},${S.Y(0)}`;
+  S.path(cur+` L${S.X(2)},${S.Y(2.2)} Z`,'fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4');
+  [0.2,0.6,1.0,1.4,1.8].forEach(x=>S.arr([x,2.22],[0,-1],26,'',{col:PC,w:1.4}));S.t(1,2.22,'F_1 = weight of liquid above AB',{dy:-36,fs:11,col:PC,bold:true});
+  S.arr([1.45,1.55],[0,-1],34,'W',{tail:true,at:'tip',lx:12,col:'var(--ink)'});S.arr([2.02,1.0],[-1,0],44,'F_2',{ly:-12});
+  S.arr([0.75,0.95],[1,0],42,'F_H',{at:'tail',ly:-1,lx:-6});S.arr([0.9,0.86],[0,1],40,'F_V',{at:'tail',lx:-2});
+  S.t(0,2.2,'A',{dx:-10,bold:true});S.t(2,2.2,'B',{dx:10,bold:true});S.t(2,0,'C',{dx:10,dy:8,bold:true});S.t(1.6,-0.25,'F_H, F_V: from the curved surface',{fs:10.5,col:FC});}),
+ 'curved wall AC, projections AB and BC','FBD of the liquid block ABC');
+reg(function(){const S=scene('fig-s12-eg',{x0:-4.3,x1:1.6,y0:-0.4,y1:4.5,px:56,pad:[6,6,8,6],alt:'tank with a rounded corner: forces on the curve'});
+  const Cc=[-2,2],arc=arcPts(Cc,2,-90,0);S.poly([[-4.3,0],...arc,[0,4],[-4.3,4]],WATER);S.surf(-4.3,0,4,-3.6);
+  S.poly([[-2,4],...arc,[0,4]],IMAG);S.pl([[-4.3,0],...arc,[0,4.4]],'stroke:var(--ink);stroke-width:3;fill:none');
+  S.dot(Cc[0],Cc[1],'var(--ink)',3);S.t(Cc[0],Cc[1],'C',{dx:-10,dy:-8,bold:true});S.line(Cc,[0,2],DASH);S.t(-1,2,'R = 2 m',{dy:-9,fs:11,col:'var(--muted)'});
+  const yh=4-3.111,xh=-2+Math.sqrt(4-(yh-2)**2);S.arr([xh,yh],[1,0],56,'F_H = 58.86',{lx:-38,ly:2,fs:11.5});
+  const xv=-1.067,yv=2-Math.sqrt(4-(xv+2)**2);S.arr([xv,yv],[0,-1],70,'F_V = 70.06',{lx:-40,ly:6,fs:11.5});
+  const a=-50*Math.PI/180,P=[Cc[0]+2*Math.cos(a),Cc[1]+2*Math.sin(a)];S.line(Cc,P,'stroke:var(--c2);stroke-width:1.2;stroke-dasharray:4 3');S.arr(P,[Math.cos(a),Math.sin(a)],50,'F_R = 91.5 kN',{at:'tip',lx:20,ly:10,fs:12});
+  S.dimV(1.0,4,0,'4 m');S.t(-3.3,3.0,'water',{fs:11.5,col:'var(--accent)'});S.t(-1.0,3.3,'column',{fs:10.5,col:'var(--accent)'});});
+
+/* ================= Section 13 ================= */
+pairOf('fig-s13-set',id=>reg(function(){const S=scene(id,{x0:-2.6,x1:2.9,y0:-0.4,y1:4.3,px:52,pad:[6,6,8,6],alt:'liquid under a quarter-circle gate'});
+  const arc=arcPts([0,0],2,0,90);S.poly([[-2.6,0],...arc,[0,3.8],[-2.6,3.8]],WATER);S.surf(-2.6,0,3.8,-2.0);
+  S.line([0,2],[0,4.3],'stroke:var(--ink);stroke-width:3');S.pl(arc,'stroke:var(--c2);stroke-width:3.4;fill:none');S.hatch([-2.6,0],[2.9,0],[0,-1]);S.hinge(0,2);
+  S.t(0,2,'A',{dx:-12,bold:true});S.t(2,0,'B',{dx:9,dy:-10,bold:true});S.t(0,0,'O',{dx:-9,dy:-10,bold:true});S.dot(0,0,'var(--ink)',2.5);
+  S.t(-1.5,1.6,'liquid',{fs:11.5,col:'var(--accent)'});S.t(1.8,2.6,'air',{fs:11.5,col:'var(--muted)'});S.t(-1.4,4.1,'air',{fs:11,col:'var(--muted)'});
+  const a=40.6*Math.PI/180;S.arr([2*Math.cos(a),2*Math.sin(a)],[Math.cos(a),Math.sin(a)],40,'F_R',{lx:-8,ly:8});}),
+ id=>reg(function(){const S=scene(id,{x0:-1.6,x1:3.4,y0:-1.3,y1:3.0,px:52,pad:[6,6,8,6],alt:'free-body diagram of the fluid block AOB'});
+  const arc=arcPts([0,0],2,0,90);S.poly([[0,0],...arc],'fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4');
+  S.arr([0,1],[1,0],50,'F_x',{ly:-12});S.arr([1,0],[0,1],46,'F_y',{lx:14,ly:8});S.arr([0.75,1.1],[0,-1],38,'W_AOB',{tail:true,at:'tip',lx:28,ly:-6,col:'var(--ink)',fs:11.5});
+  const a=40*Math.PI/180,P=[2*Math.cos(a),2*Math.sin(a)];S.arr(P,[-1,0],46,'F_H',{tail:false,ly:-12,lx:6});const Q=[2*Math.cos(65*Math.PI/180),2*Math.sin(65*Math.PI/180)];S.arr(Q,[0,-1],40,'F_V',{lx:12,ly:-4});
+  S.t(0,2,'A',{dx:-10,bold:true});S.t(2,0,'B',{dx:9,dy:10,bold:true});S.t(0,0,'O',{dx:-9,dy:10,bold:true});}),
+ 'the supplement\'s gate AB (O = centre)','FBD of the fluid block AOB: F_H, F_V from the gate');
+reg(function(){const S=scene('fig-s13-eg',{x0:-2.6,x1:3.6,y0:-0.4,y1:5.5,px:50,pad:[6,6,8,6],alt:'imaginary column above the gate and the force components'});
+  const arc=arcPts([0,0],2,0,90);S.poly([[-2.6,0],...arc,[0,5],[-2.6,5]],WATER);S.surf(-2.6,0,5,-2.0);
+  S.poly([[0,5],[0,2],...arc.slice().reverse(),[2,5]],IMAG);S.t(1.0,3.7,'imaginary',{fs:10.5,col:'var(--accent)'});S.t(1.0,3.35,'column CADB',{fs:10.5,col:'var(--accent)'});
+  S.line([0,2],[0,5.4],'stroke:var(--ink);stroke-width:3');S.pl(arc,'stroke:var(--c2);stroke-width:3.4;fill:none');S.hatch([-2.6,0],[3.6,0],[0,-1]);S.hinge(0,2);
+  S.t(0,5,'C',{dx:-10,dy:-8,bold:true});S.t(2,5,'D',{dx:10,dy:-8,bold:true});S.t(0,2,'A',{dx:-12,bold:true});S.t(2,0,'B',{dx:9,dy:-10,bold:true});S.t(0,0,'O',{dx:-9,dy:-10,bold:true});
+  const yh=5-4.083,xh=Math.sqrt(4-yh*yh);S.arr([xh,yh],[1,0],40,'F_H = 78.48',{at:'tip',lx:-10,ly:16,tail:true,fs:11.5});
+  const xv=1.069,yv=Math.sqrt(4-xv*xv);S.arr([xv,yv],[0,1],40,'F_V = 67.28',{at:'tip',tail:true,lx:4,ly:-4,fs:11.5});
+  const a=40.6*Math.PI/180;S.line([0,0],[2*Math.cos(a),2*Math.sin(a)],'stroke:var(--c2);stroke-width:1.2;stroke-dasharray:4 3');S.arr([2*Math.cos(a),2*Math.sin(a)],[Math.cos(a),Math.sin(a)],46,'F_R = 103.4 kN',{tail:true,at:'tip',lx:-14,ly:-14,fs:11.5});
+  S.dimV(-2.3,5,2,'3 m');S.dimV(-2.3,2,0,'2 m');S.t(-1.3,1.0,'water',{fs:11.5,col:'var(--accent)'});});
+
+/* ================= Section 14: interactive arc ================= */
+reg(function(){if(!$('fig-arc'))return;const below=$('arc-side').value==='below',R=+$('arc-R').value,d=+$('arc-d').value,g=9.81;
+  const FH=g*(d+R/2)*R,FV=below?g*((d+R)*R-Math.PI*R*R/4):g*(d*R+Math.PI*R*R/4),Fr=Math.hypot(FH,FV),ang=Math.atan2(FV,FH)*180/Math.PI;
+  const top=R+d,hgt=top+0.6,wid=R+3.2,px=Math.min(60,fitPx(wid,hgt,330,330));
+  if(!below){const Cc=[-R,R],arc=arcPts(Cc,R,-90,0);const S=scene('fig-arc',{x0:-R-2.2,x1:1.0,y0:-0.3,y1:top+0.3,px,pad:[6,90,8,6],alt:'quarter-circle corner with liquid above'});
+    S.poly([[-R-2.2,0],...arc,[0,top],[-R-2.2,top]],WATER);S.poly([[-R,top],...arc,[0,top]],IMAG);S.surf(-R-2.2,0,top,-R-1.8);S.pl([[-R-2.2,0],...arc,[0,top+0.3]],'stroke:var(--ink);stroke-width:3;fill:none');
+    S.dot(Cc[0],Cc[1],'var(--ink)',3);S.t(Cc[0],Cc[1],'C',{dx:-9,dy:-8,bold:true});const a=-ang*Math.PI/180,P=[Cc[0]+R*Math.cos(a),Cc[1]+R*Math.sin(a)];
+    S.line(Cc,P,'stroke:var(--c2);stroke-width:1.1;stroke-dasharray:4 3');S.arr(P,[Math.cos(a),Math.sin(a)],46,'F_R',{at:'tip',lx:12,ly:8});S.dimV(0.6,top,R,fmt(d,1)+' m');}
+  else{const arc=arcPts([0,0],R,0,90);const S=scene('fig-arc',{x0:-2.2,x1:R+0.6,y0:-0.3,y1:top+0.3,px,pad:[6,70,8,6],alt:'quarter-circle gate with liquid below'});
+    S.poly([[-2.2,0],...arc,[0,top],[-2.2,top]],WATER);S.poly([[0,top],[0,R],...arc.slice().reverse(),[R,top]],IMAG);S.surf(-2.2,0,top,-1.8);
+    S.line([0,R],[0,top+0.3],'stroke:var(--ink);stroke-width:3');S.pl(arc,'stroke:var(--c2);stroke-width:3.2;fill:none');S.dot(0,0,'var(--ink)',3);S.t(0,0,'O',{dx:-9,dy:-9,bold:true});
+    const a=ang*Math.PI/180,P=[R*Math.cos(a),R*Math.sin(a)];S.line([0,0],P,'stroke:var(--c2);stroke-width:1.1;stroke-dasharray:4 3');S.arr(P,[Math.cos(a),Math.sin(a)],46,'F_R',{tail:true,at:'tip',lx:6});
+    S.dimV(-1.9,top,R,fmt(d,1)+' m');}
+  $('arc-out').innerHTML=`F<sub>H</sub> = 9.81 × ${fmt(d+R/2,2)} × ${fmt(R,1)} = <b>${fmt(FH,2)} kN/m</b> (projection: ${fmt(R,1)} m high, centroid ${fmt(d+R/2,2)} m deep)<br>`+
+   `F<sub>V</sub> = 9.81 × ${below?`(${fmt((d+R)*R,2)} − π×${fmt(R,1)}²/4)`:`(${fmt(d*R,2)} + π×${fmt(R,1)}²/4)`} = <b>${fmt(FV,2)} kN/m ${below?'upward':'downward'}</b><br>F<sub>R</sub> = <b>${fmt(Fr,2)} kN/m</b> at <b>${fmt(ang,1)}°</b> ${below?'above':'below'} the horizontal, through the centre`;});
+['arc-side','arc-R','arc-d'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Section 15 ================= */
+panels3('fig-cq',[
+ id=>{const S=scene(id,{x0:-1,x1:1.6,y0:-0.4,y1:2.1,px:66,pad:6,alt:'straight container'});S.poly([[-0.7,0],[0.7,0],[0.7,1.6],[-0.7,1.6]],'fill:var(--accent);fill-opacity:.35;stroke:none');
+  S.pl([[-0.7,1.8],[-0.7,0],[0.7,0],[0.7,1.8]],'stroke:var(--ink);stroke-width:2;fill:none');S.dimV(1.0,1.6,0,'h');S.t(0,1.95,'straight',{bold:true,fs:12});
+  [-0.5,-0.15,0.2,0.5].forEach(x=>S.arr([x,0.02],[0,-1],22,'',{col:PC,w:1.3}));S.t(0,-0.32,'ρghA',{fs:11.5,col:PC,bold:true});},
+ id=>{const S=scene(id,{x0:-1,x1:1.6,y0:-0.4,y1:2.1,px:66,pad:6,alt:'narrow-necked container'});S.poly([[-0.7,0],[0.7,0],[0.7,0.25],[0.07,0.25],[0.07,1.6],[-0.07,1.6],[-0.07,0.25],[-0.7,0.25]],'fill:var(--accent);fill-opacity:.35;stroke:none');
+  S.pl([[-0.07,1.8],[-0.07,0.25],[-0.7,0.25],[-0.7,0],[0.7,0],[0.7,0.25],[0.07,0.25],[0.07,1.8]],'stroke:var(--ink);stroke-width:2;fill:none');S.dimV(1.0,1.6,0,'h');S.t(0,1.95,'narrow neck',{bold:true,fs:12});
+  [-0.5,-0.15,0.2,0.5].forEach(x=>S.arr([x,0.02],[0,-1],22,'',{col:PC,w:1.3}));S.t(0,-0.32,'ρghA (same)',{fs:11.5,col:PC,bold:true});},
+ id=>{const S=scene(id,{x0:-1.2,x1:1.4,y0:-0.6,y1:2.1,px:66,pad:6,alt:'free-body diagram of the water in the narrow-necked container'});
+  S.poly([[-0.7,0],[0.7,0],[0.7,0.25],[0.07,0.25],[0.07,1.6],[-0.07,1.6],[-0.07,0.25],[-0.7,0.25]],'fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.3');S.t(0.1,1.95,'FBD of the water',{bold:true,fs:12});
+  [-0.55,-0.3,0.3,0.55].forEach(x=>S.arr([x,0.26],[0,-1],26,'',{col:RC,w:1.4}));S.t(-1.15,1.45,'ceiling',{a:'start',fs:10.5,col:RC,bold:true});S.t(-1.15,1.25,'pushes down',{a:'start',fs:10.5,col:RC,bold:true});S.t(-1.15,1.05,'784.8 N',{a:'start',fs:10.5,col:RC,bold:true});
+  [-0.5,-0.2,0.1,0.4].forEach(x=>S.arr([x+0.05,-0.01],[0,1],26,'',{col:RC,w:1.4,tail:false}));S.t(0,-0.5,'bottom: 981 N up',{fs:11,col:RC,bold:true});
+  S.arr([0.0,1.15],[0,-1],40,'',{tail:true,col:'var(--ink)'});S.t(0.15,1.0,'W = 196.2 N',{a:'start',fs:11,bold:true});}
+]);
+
+/* ================= Section 16 ================= */
+pairOf('fig-s16',id=>reg(function(){const a=20*Math.PI/180,t=[Math.cos(a),Math.sin(a)],n=[-Math.sin(a),Math.cos(a)],add=(p,v,k)=>[p[0]+v[0]*k,p[1]+v[1]*k];
+  const C=[0.4,0.3],B=add(C,t,1.6),A=add(B,n,0.96),D=add(C,n,0.96),G1=add(B,t,0.22),G2=add(A,t,0.22);
+  const S=scene(id,{x0:0,x1:2.6,y0:-0.1,y1:2.3,px:96,pad:[6,6,8,6],alt:'block on a slope with water behind and under it'});
+  S.hatch(add(C,t,-0.4),add(C,t,2.3),[n[0]*-1,n[1]*-1]);S.poly([B,A,G2,G1],WATER);S.hatch(G1,add(G2,n,0.25),[1,0]);
+  S.press(B,C,5.53,0,8,{into:[-n[0],-n[1]],n:6});S.poly([C,B,A,D],SOLID);S.press(A,B,0,5.53,8,{into:t,n:4});
+  S.t(A[0],A[1],'A',{dx:-4,dy:-10,bold:true});S.t(B[0],B[1],'B',{dx:14,dy:6,bold:true});S.t(C[0],C[1],'C',{dx:-10,dy:4,bold:true});S.t(D[0],D[1],'D',{dx:-10,bold:true});
+  S.t(0.75,0.12,'20°',{fs:11.5});S.t((B[0]+C[0])/2,(B[1]+C[1])/2,'uplift',{dy:30,fs:11,col:PC});}),
+ id=>reg(function(){const a=20*Math.PI/180,t=[Math.cos(a),Math.sin(a)],n=[-Math.sin(a),Math.cos(a)],add=(p,v,k)=>[p[0]+v[0]*k,p[1]+v[1]*k];
+  const C=[0.4,0.5],B=add(C,t,1.6),A=add(B,n,0.96),D=add(C,n,0.96),G=add(add(C,t,0.8),n,0.48);
+  const S=scene(id,{x0:-0.1,x1:3.0,y0:-0.25,y1:2.4,px:90,pad:[6,6,8,6],alt:'free-body diagram of the block'});S.poly([C,B,A,D],SOLID);
+  S.arr(G,[0,-1],34,'W = 12.95',{tail:true,at:'tip',lx:-38,ly:4,fs:11.5,col:'var(--ink)'});S.dot(G[0],G[1],'var(--ink)',3);
+  S.arr(add(B,n,0.32),[-t[0],-t[1]],50,'F_AB = 1.66',{ly:-12,lx:6,fs:11.5});
+  S.arr(add(B,t,-0.53),n,40,'F_BC = 2.77',{lx:34,ly:6,fs:11.5});S.arr(add(C,t,0.3),n,40,'R = 9.40',{lx:-30,ly:6,fs:11.5,col:RC});
+  S.arr(add(add(C,t,0.7),n,-0.07),t,55,'μR ≤ 4.70',{tail:true,at:'tip',lx:24,ly:16,fs:11.5,col:RC});}),
+ 'set-up: thrust on AB, uplift under BC','FBD per metre (kN): driving 6.09 > 4.70 available');
+
+/* ================= Section 20: group work ================= */
+pairOf('fig-gw',id=>reg(function(){const S=scene(id,{x0:-2.6,x1:2.9,y0:-0.5,y1:11.6,px:24,pad:[6,6,8,6],alt:'side view: gate CD hinged at its top'});
+  S.poly([[-2.6,0],[0,0],[0,11],[-2.6,11]],WATER);S.surf(-2.6,0,11,-2.0);S.line([0,6],[0,11.6],'stroke:var(--ink);stroke-width:3');S.line([0,0],[0,6],GATE);S.hinge(0,6);
+  S.hatch([-2.6,0],[2.9,0],[0,-1]);S.t(0,6,'C (hinge)',{dx:8,dy:-10,a:'start',fs:11});S.t(0,0,'D',{dx:9,dy:-8,bold:true});S.dimV(-2.2,11,6,'5 m');S.dimV(-2.2,6,0,'6 m');
+  S.t(-1.2,9.5,'water',{fs:11,col:'var(--accent)'});S.t(1.2,3,'air',{fs:11,col:'var(--muted)'});}),
+ id=>reg(function(){const S=scene(id,{x0:-0.5,x1:9.9,y0:-1.8,y1:6.6,px:24,pad:[6,6,8,6],alt:'front views: rectangle, circle, triangle'});const F='fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4';
+  S.poly([[0,0],[2,0],[2,6],[0,6]],F);S.dimH(0,2,-0.6,'2 m',{below:true});S.t(1,-1.5,'(a)',{fs:11.5});
+  E('circle',{cx:S.X(4.6),cy:S.Y(3),r:3*24*0.78,style:F},S.g);S.t(4.6,-1.5,'(b) D = 6 m',{fs:11.5});
+  S.poly([[8.4,6],[6.9,0],[9.9,0]],F);S.dimH(6.9,9.9,-0.6,'6 m',{below:true});S.t(8.4,-1.5,'(c)',{fs:11.5});
+  S.cg(1,3);S.cg(4.6,3);S.cg(8.4,2);S.t(4.6,6.3,'(circle drawn to a smaller scale)',{fs:9.5,col:'var(--muted)'});}),
+ 'side view','front views of the three gates (6 m high)');
+
+/* ================= Section 22: exam taster ================= */
+function tankT1(id,withP){reg(function(){const S=scene(id,{x0:-2.9,x1:2.8,y0:-0.45,y1:2.45,px:64,pad:[6,30,8,6],alt:'tank with oil over water and a 45 degree wall'});
+  S.poly([[-2.0,0],[0,0],[1,1],[-2.0,1]],WATER);S.poly([[-2.0,1],[1,1],[2,2],[-2.0,2]],OIL);S.surf(-2.0,2,2,-1.5);
+  S.pl([[-2.0,2.3],[-2.0,0],[0,0],[2.3,2.3]],'stroke:var(--ink);stroke-width:2.4;fill:none');S.hatch([-2.4,0],[0.0,0],[0,-1]);
+  S.dimV(-2.25,2,1,'1 m',{left:true});S.dimV(-2.25,1,0,'1 m',{left:true});S.t(-1.2,1.75,'Oil (relative',{fs:10.5});S.t(-1.2,1.5,'density = 0.8)',{fs:10.5});S.t(-1.0,0.5,'Water',{fs:11,col:'var(--accent)'});
+  S.t(2,2,'O',{dx:12,dy:6,bold:true});S.t(1,1,'A',{dx:12,dy:4,bold:true});S.t(0,0,'B',{dx:4,dy:12,bold:true});S.path(S.arcD([0,0],0.35,0,45),'stroke:var(--ink);stroke-width:1.2;fill:none');S.t(0.55,0.15,'45°',{fs:11});
+  if(withP){const s=Math.SQRT1_2;S.press([2,2],[1,1],0,7.848,4.2,{into:[-s,s],n:3});S.press([1,1],[0,0],7.848,17.658,4.2,{into:[-s,s],n:4,lbl:['7.85 kPa','17.66 kPa'],la:'end',lo:[[-2,10],[-6,10]]});}});}
+tankT1('fig-t1',false);tankT1('fig-t1a',true);
+pairOf('fig-t2',id=>reg(function(){const S=scene(id,{x0:-2.2,x1:1.4,y0:-0.3,y1:10.6,px:26,pad:[6,6,8,6],alt:'vertical tank wall with a circular window'});
+  S.poly([[-2.2,0],[0,0],[0,10],[-2.2,10]],WATER);S.surf(-2.2,0,10,-1.6);S.line([0,-0.2],[0,10.5],'stroke:var(--ink);stroke-width:2.4');S.line([0,8],[0,5],GATE);
+  S.dimV(0.6,10,8,'2 m');S.dimV(0.6,8,5,'3 m');S.dimV(0.6,5,0,'5 m');S.t(-1.1,3,'water',{fs:11,col:'var(--accent)'});}),
+ id=>reg(function(){const S=scene(id,{x0:-2.2,x1:2.2,y0:-0.6,y1:10.6,px:26,pad:[6,6,8,6],alt:'front view of the window'});
+  S.poly([[-2.2,0],[2.2,0],[2.2,10],[-2.2,10]],'fill:var(--grid);stroke:var(--ink);stroke-width:1.2');S.line([-2.2,10],[2.2,10],'stroke:var(--accent);stroke-width:1.5');
+  E('circle',{cx:S.X(0),cy:S.Y(6.5),r:1.5*26,style:'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4'},S.g);S.dimH(-1.5,1.5,4.5,'3 m',{below:true});}),
+ 'side view','front view');
+reg(function(){const S=scene('fig-t2a',{x0:-3.2,x1:2.4,y0:4.4,y1:10.4,px:44,pad:[6,6,8,6],alt:'pressure on the circular window'});
+  S.poly([[-2.6,4.4],[0,4.4],[0,10],[-2.6,10]],WATER);S.surf(-2.6,0,10,-2.3);S.line([0,4.4],[0,10.3],'stroke:var(--ink);stroke-width:2.4');S.line([0,8],[0,5],GATE);
+  S.press([0,8],[0,5],19.62,49.05,1.9,{into:[-1,0],n:6,lbl:['19.62 kPa','49.05 kPa'],lo:[[4,-8],[6,10]]});
+  S.arr([0.06,10-3.661],[1,0],50,'242.7 kN',{tail:true,at:'tip',ly:-12});S.dimV(2.2,10,10-3.661,'3.66 m',{left:true,dx:-2});});
+pairOf('fig-t3',id=>reg(function(){const S=scene(id,{x0:-1.7,x1:4.6,y0:-0.4,y1:4.3,px:52,pad:[6,6,8,6],alt:'closed oil tank with mercury manometer and gate AB to an open water tank'});
+  S.poly([[0,0],[3,0],[3,3],[0,3]],OIL);S.poly([[0,3],[3,3],[3,3.6],[0,3.6]],'fill:var(--card);stroke:none');S.pl([[3,0.8],[3,3.8],[0,3.8],[0,0],[3,0]],'stroke:var(--ink);stroke-width:2.2;fill:none');
+  S.line([3,0],[3,0.8],'stroke:var(--ink);stroke-width:4.5');S.hinge(3,0.8);S.t(3,0.8,'A',{dx:-11,dy:-6,bold:true});S.t(3,0,'B',{dx:-10,dy:-8,bold:true});
+  S.poly([[3.05,0],[4.6,0],[4.6,0.8],[3.05,0.8]],WATER);S.pl([[4.6,1.4],[4.6,0],[3,0]],'stroke:var(--ink);stroke-width:2.2;fill:none');S.surf(3.05,4.6,0.8,4.0);
+  S.dimV(4.4,0.8,0,'h_3',{left:true});S.dimV(0.3,3,0,'h_2');S.t(1.7,1.4,'oil',{fs:11.5});S.t(1.5,3.4,'air',{fs:11.5});
+  S.pl([[0,3.6],[-0.5,3.6],[-0.5,2.4]],'stroke:var(--ink);stroke-width:1.6;fill:none');S.pl([[-0.5,2.6],[-0.5,1.6],[-1.4,1.6],[-1.4,3.3]],'stroke:var(--ink);stroke-width:7;fill:none;stroke-linejoin:round');
+  S.pl([[-0.5,2.38],[-0.5,1.6],[-1.4,1.6],[-1.4,2.0]],'stroke:var(--muted);stroke-width:4;fill:none;stroke-linejoin:round');
+  S.dimV(-1.62,2.38,2.0,'h_1',{left:true});S.t(-0.95,1.25,'mercury',{fs:10.5});S.t(-1.4,3.5,'open',{fs:10.5,col:'var(--muted)'});}),
+ id=>reg(function(){const S=scene(id,{x0:-0.4,x1:4.2,y0:-0.3,y1:2.7,px:58,pad:[6,6,8,6],alt:'manometer detail'});
+  S.t(1.5,2.5,'manometer: tank limb is higher',{fs:11.5,bold:true});S.pl([[0.6,2.1],[0.6,0.3],[2.4,0.3],[2.4,2.1]],'stroke:var(--ink);stroke-width:12;fill:none;stroke-linejoin:round');
+  S.pl([[0.6,1.0],[0.6,0.3],[2.4,0.3],[2.4,1.6]],'stroke:var(--muted);stroke-width:8;fill:none;stroke-linejoin:round');S.t(0.6,2.1,'open',{dy:-10,fs:11});S.t(2.4,2.1,'to tank air',{dy:-10,fs:11});
+  S.dimV(2.9,1.6,1.0,'h_1 = 5 cm');S.line([0.6,1.0],[2.9,1.0],DASH);S.t(1.5,0.0,'mercury',{fs:11});}),
+ 'the two tanks (not to scale)','mercury levels');
+reg(function(){const S=scene('fig-t3a',{x0:-2.5,x1:2.5,y0:-0.3,y1:1.25,px:84,pad:[6,6,8,6],alt:'free-body diagram of gate AB'});
+  S.poly([[-0.05,0],[0.05,0],[0.05,0.8],[-0.05,0.8]],SOLID);S.hinge(0,0.8);S.t(0,0.8,'A',{dx:10,dy:-8,bold:true});S.t(0,0,'B',{dx:10,dy:8,bold:true});
+  S.arr([-0.06,0.8-0.431],[1,0],70,'10.88 kN (oil)',{ly:-12,lx:-6,fs:11.5});S.arr([0.06,0.8-0.533],[-1,0],60,'3.139 kN (water)',{ly:12,lx:10,fs:11.5});
+  S.arr([0.06,0.0],[-1,0],60,'F_B = 3.76 kN',{tail:true,at:'tip',ly:12,fs:11.5});
+  S.dimV(-1.9,0.8,0.8-0.431,'0.431',{left:true});S.line([-1.9,0.369],[-0.06,0.369],DASH);S.dimV(2.2,0.8,0.8-0.533,'0.533',{left:true});S.line([0.06,0.267],[2.2,0.267],DASH);});
+pairOf('fig-t4',id=>reg(function(){const S=scene(id,{x0:-2.2,x1:2.0,y0:-0.5,y1:5.6,px:48,pad:[6,6,8,6],alt:'butterfly gate in a vertical wall'});
+  S.poly([[-2.2,0],[0,0],[0,5],[-2.2,5]],WATER);S.surf(-2.2,0,5,-1.8);S.line([0,4],[0,5.5],'stroke:var(--ink);stroke-width:6');S.line([0,0],[0,4],GATE);S.hinge(0,2);
+  S.poly([[0.06,-0.02],[0.35,-0.02],[0.35,0.25],[0.06,0.25]],SOLID);S.arr([0.75,0.12],[-1,0],30,'R = ?',{tail:false,lx:30,ly:-12});
+  S.t(0,2,'pivot',{dx:12,dy:-12,a:'start',fs:11});S.t(0.4,-0.3,'stop',{fs:11,a:'start'});S.dimV(-1.9,5,4,'1 m');S.dimV(-1.9,4,0,'D = 4 m');S.hatch([-2.2,0],[2.0,0],[0,-1]);}),
+ id=>reg(function(){const S=scene(id,{x0:-2.6,x1:2.6,y0:-0.5,y1:5.6,px:48,pad:[6,6,8,6],alt:'front view of the butterfly gate'});
+  S.line([-2.6,5],[2.6,5],'stroke:var(--accent);stroke-width:1.4;stroke-dasharray:6 4');E('circle',{cx:S.X(0),cy:S.Y(2),r:2*48,style:'fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.4'},S.g);
+  S.line([-2.4,2],[2.4,2],'stroke:var(--ink);stroke-width:1.2;stroke-dasharray:6 3');S.poly([[-0.15,-0.25],[0.15,-0.25],[0.15,0],[-0.15,0]],SOLID);S.hatch([-2.6,-0.25],[2.6,-0.25],[0,-1]);}),
+ 'side view','front view');
+reg(function(){const S=scene('fig-t4a',{x0:-2.9,x1:2.7,y0:-0.4,y1:4.3,px:52,pad:[6,6,8,6],alt:'free-body diagram of the butterfly gate'});
+  S.poly([[-0.07,0],[0.07,0],[0.07,4],[-0.07,4]],SOLID);S.hinge(0,2);S.t(0,2,'pivot',{dx:-10,dy:-12,a:'end',fs:11});
+  S.arr([-0.08,2-0.333],[1,0],70,'F_R = 369.8 kN',{ly:14,lx:-10,fs:11.5});S.arr([0.08,0],[-1,0],60,'R = 61.6 kN',{tail:true,at:'tip',ly:-12,fs:11.5,col:RC});
+  S.line([0.1,2],[1.6,2],DASH);S.line([0.1,1.667],[1.6,1.667],DASH);S.dimV(1.5,2,1.667,'0.333 m');S.dimV(2.1,2,0,'2 m');});
+function cylT5(id,fbd){reg(function(){const S=scene(id,{x0:-4.2,x1:fbd?2.8:1.6,y0:-0.4,y1:5.7,px:52,pad:[6,6,8,6],alt:fbd?'free-body diagram of the cylinder':'cylinder gate hinged at A'});
+  const arc=arcPts([0,1],1,270,180);
+  if(!fbd){S.poly([[-4.2,0],[0,0],...arc,[-2.1,1],[-2.1,5],[-4.2,5]],WATER);S.surf(-4.2,-2.2,5,-3.8);
+   S.pl([[-2.1,5.6],[-2.1,1],[-1.05,1]],'stroke:var(--ink);stroke-width:5;fill:none;stroke-linejoin:round');S.hatch([-4.2,0],[1.6,0],[0,-1]);S.dimV(-3.9,5,0,'5 m');}
+  E('circle',{cx:S.X(0),cy:S.Y(1),r:52,style:fbd?'fill:var(--grid);stroke:var(--ink);stroke-width:1.5':'fill:var(--card);stroke:var(--ink);stroke-width:1.5'},S.g);
+  if(!fbd){S.pl(arc,'stroke:var(--c2);stroke-width:3;fill:none');}S.dot(0,1,'var(--ink)',3);S.hinge(-1,1);S.t(-1,1,'A',{dx:-4,dy:-14,bold:true});S.t(0,0,'B',{dx:10,dy:-8,bold:true});
+  if(!fbd){S.line([0,1],[0.71,1.71],'stroke:var(--ink);stroke-width:1');S.t(0.45,1.62,'1 m',{fs:11});}
+  else{S.arr([0,1],[1,0],56,'F_H = 44.15',{tail:true,at:'tip',lx:36,ly:-12,fs:11.5});S.arr([0,1],[0,1],56,'F_V = 46.94',{tail:true,at:'tip',lx:4,fs:11.5});
+   S.arr([0.03,1],[0,-1],56,'W',{tail:true,at:'tip',lx:12,col:'var(--ink)'});S.t(-1,1,'hinge reaction',{dx:-10,dy:16,a:'end',fs:10.5,col:RC});
+   S.dimH(-1,0,0.2,'1 m',{below:true});S.t(-2.6,4,'moments about A:',{fs:11.5,a:'start'});S.t(-2.6,3.6,'F_V × 1 = W × 1',{fs:11.5,a:'start'});}});}
+cylT5('fig-t5',false);cylT5('fig-t5a',true);
+
+</script>
+</body></html>

@@ -1,0 +1,1203 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MATH1853 P4 · Some elementary statistical inferences</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MATH1853 revision bundle · house style from MATH1851: one 46rem reading column, sticky contents rail on wide screens, dark mode through CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+.tcard{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:10px 14px;margin:10px 0;font-size:.95rem}
+.tcard h3{margin:0 0 4px;font-size:1rem;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.tcard h3 a{font-family:var(--mono);font-size:.85rem;text-decoration:none}
+.tcard h3 .cnt{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400}
+.tcard p{margin:3px 0}
+.tcard .k{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:6px}
+.tcard .k.w{color:var(--warn)}
+
+.typehead{display:grid;gap:10px}
+.cue{border-left:4px solid var(--accent)} .cue>.tag{color:var(--accent)}
+.also{font-size:.88rem;color:var(--muted);margin:2px 0 8px}
+.also b{color:var(--ink);font-weight:500}
+.mark{font-size:.9rem;color:var(--muted);border-left:3px solid var(--c3);padding-left:10px;margin:8px 0}
+.mark b{color:var(--c3);font-weight:600}
+.final{background:var(--accent-soft);border-radius:6px;padding:6px 12px;margin:10px 0}
+.equiv{font-size:.93rem}
+.glance td:first-child{font-family:var(--mono);font-size:.85rem;white-space:nowrap}
+.glance td.num{text-align:right}
+.todo{border:1px dashed var(--axis);background:transparent;color:var(--muted);font-size:.93rem}
+.todo>.tag{color:var(--muted)}
+/* calculus additions */
+.proc{border-left:4px solid var(--c3)} .proc>.tag{color:var(--c3)}
+.proc ol{padding-left:1.4rem;margin:6px 0}
+.proc li{margin:8px 0}
+.proc li::marker{font-family:var(--mono);font-weight:500;color:var(--c3)}
+.proc .sub{list-style:none;padding-left:0;margin:4px 0}
+.proc .sub li{margin:4px 0;padding-left:1.1rem;position:relative}
+.proc .sub li::before{content:"→";position:absolute;left:0;color:var(--muted)}
+.start td:first-child{min-width:9rem}
+.start td:nth-child(3){min-width:12rem}
+.start td:nth-child(2){font-family:var(--mono);font-size:.85rem;white-space:nowrap}
+.start td.cnt{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.st{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;padding:1px 7px;border-radius:4px;border:1px solid var(--c3);color:var(--c3);margin-right:4px;vertical-align:1px;white-space:nowrap}
+.worked{border-left:4px solid var(--accent)}
+.worked .why{font-size:.88rem;color:var(--muted);margin:2px 0 10px 0;padding-left:10px;border-left:2px dotted var(--line)}
+.cov td:first-child{white-space:nowrap}
+.proc .ex{font-size:.85rem;color:var(--muted)}
+
+/* ---- MATH1853 additions ---- */
+.muted{font-size:.92rem;color:var(--muted)}
+.crumbs{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;display:flex;flex-wrap:wrap;gap:4px 14px}
+.crumbs a{color:var(--muted);text-decoration:none}
+.crumbs a:hover{color:var(--accent);text-decoration:underline}
+/* earlier-syllabus content (past-paper topics not in the 2026 handouts) */
+.earlier{background:var(--warm-soft);border:1px dashed var(--warm);font-size:.95rem} .earlier>.tag{color:var(--warm)}
+/* reading of a slide that looks wrong */
+.slidefix{font-size:.92rem;color:var(--muted);border-left:3px solid var(--warn);padding:2px 0 2px 12px;margin:10px 0}
+.slidefix b{color:var(--warn);font-weight:600}
+/* row-reduction player */
+.rr{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.rr .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+.rr .stage{display:flex;justify-content:center;overflow-x:auto;padding:6px 0}
+.rr .op{font-family:var(--mono);font-size:.85rem;text-align:center;min-height:2.6em;color:var(--accent);margin:4px 0}
+.rr .why{font-size:.9rem;color:var(--muted);text-align:center;min-height:1.6em;margin:2px 0 6px}
+.rr .bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.rr button,.btn{font:inherit;font-size:.88rem;padding:5px 12px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+.rr button:hover:not(:disabled),.btn:hover{border-color:var(--accent);color:var(--accent)}
+.rr button:disabled{opacity:.4;cursor:default}
+.rr .count{font-family:var(--mono);font-size:.8rem;color:var(--muted);min-width:5.5em;text-align:center}
+table.mat{border-collapse:separate;border-spacing:0;width:auto;font-family:var(--mono);font-size:.95rem;font-variant-numeric:tabular-nums;border-left:2px solid var(--ink);border-right:2px solid var(--ink);border-radius:5px;padding:2px 2px}
+table.mat td{border:0;padding:3px 9px;text-align:right;transition:background .25s}
+table.mat td.aug{border-left:1.5px solid var(--axis)}
+table.mat tr.hl td{background:var(--accent-soft)}
+table.mat tr.hl2 td{background:var(--warm-soft)}
+table.mat td.piv{color:var(--accent);font-weight:600;box-shadow:inset 0 0 0 1.5px var(--accent);border-radius:3px}
+table.mat td.zero{color:var(--muted)}
+@media (max-width:480px){table.mat{font-size:.82rem} table.mat td{padding:2px 6px}}
+canvas.plot3d{width:100%;display:block;border-radius:4px;touch-action:none;cursor:grab}
+canvas.plot3d:active{cursor:grabbing}
+svg.diag{width:100%;height:auto;display:block}
+svg.diag text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+svg.diag .m{fill:var(--muted)}
+.kbd{font-family:var(--mono);font-size:.85em;padding:0 5px;border:1px solid var(--line);border-radius:4px;background:var(--paper)}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{R:'\\mathbb{R}',vb:['\\mathbf{#1}',1]}},svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/es5/tex-svg.js"></script>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Chapter P4</p>
+  <ol>
+    <li><a href="#s0">0 · Where this chapter sits</a></li>
+    <li><a href="#s1">1 · Parameters and the parameter space</a></li>
+    <li><a href="#s2">2 · Random samples and statistics</a></li>
+    <li><a href="#s3">3 · Point estimators and unbiasedness</a></li>
+    <li><a href="#s4">4 · The sample variance and why n − 1</a></li>
+    <li><a href="#s5">5 · What a confidence interval is</a></li>
+    <li><a href="#s6">6 · The CLT and the critical value z(α/2)</a></li>
+    <li><a href="#s7">7 · CI for μ when σ is known</a></li>
+    <li><a href="#s8">8 · CI for μ when σ is unknown</a></li>
+    <li><a href="#s9">9 · CI for a proportion p</a></li>
+    <li><a href="#s10">10 · Choosing the sample size</a></li>
+    <li><a href="#s11">11 · More exercises: Poisson mean and tacks</a></li>
+    <li><a href="#s12">12 · Summary</a></li>
+    <li><a href="#s13">13 · Common mistakes</a></li>
+    <li><a href="#s14">14 · Find the mistake</a></li>
+    <li><a href="#s15">15 · Concept checks</a></li>
+    <li><a href="#s16">16 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <nav class="crumbs" aria-label="Bundle"><a href="index.html">← Start Here</a><a href="guide-P4.html">Exam guide · P4</a></nav>
+  <span class="course">MATH1853 · Part II · Complex numbers, probability and statistics · Chapter P4</span>
+  <h1>Some elementary statistical inferences</h1>
+  <p class="lede">Every slide of the Chapter 4 handout explained from scratch: what a parameter, a random sample and a statistic are, estimators and unbiasedness (why the sample variance divides by n − 1), what a confidence interval really means, how to read z<sub>α/2</sub> off the normal table without a calculator, and the three intervals the exam asks for: the mean with σ known, the mean with σ replaced by s, and a proportion. Every example and exercise on the slides is solved in full, and you can draw a hundred samples yourself and watch about 95 of the intervals trap the true mean. Almost every Part II paper ends with one of these intervals; the exam taster at the end shows how.</p>
+</header>
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>MATH1853 (Linear Algebra, Probability and Statistics) has two halves. <b>Part I</b> is linear algebra (chapters L1 to L7). <b>Part II</b> is complex numbers, probability and statistics: complex variables (<a href="note-P1.html">P1</a>), probability theory (<a href="note-P2.html">P2</a>), common distributions (<a href="note-P3.html">P3</a>) and this chapter, P4, the last one of the course.</p>
+<p>Chapters P2 and P3 run in one direction: you are <b>told</b> the distribution (say \(X\sim N(600,20^2)\)) and you work out probabilities. Statistics runs the other way. You do <b>not</b> know the distribution, or at least not all of it; you only see some data, and you want to say something about the unknown parts. This is called <b>statistical inference</b>. The chapter does two kinds of inference:</p>
+<ul class="list">
+  <li><b>Point estimation</b>: guess the unknown number by one value, for example "the mean is about 600" (sections 1 to 4).</li>
+  <li><b>Interval estimation</b>: give a range together with a confidence level, for example "we are 95% confident that the mean lies between 593.8 and 606.2" (sections 5 to 11).</li>
+</ul>
+<p>The tool that makes intervals possible is the <b>Central Limit Theorem</b> (CLT, Theorem 2.46 of <a href="note-P2.html">P2</a>): averages of many independent observations are approximately normal. So the only table you need is the standard normal table \(\Phi(z)=P(Z\le z)\), which is exactly the table the exam paper gives you.</p>
+<div class="box warn"><span class="tag">Why this chapter matters for the exam</span>
+<p>Almost every Part II paper <b>ends</b> with a confidence interval: for a mean with \(\sigma\) known, for a mean with only the sample standard deviation, or for a proportion. These are about 27 question parts across the past papers (Dec 2012 to May 2026), usually 5 to 10 marks each. Since Dec 2022 there are no calculators, so the papers say "an expression suffices": you must find \(z_{\alpha/2}\) from the table and write the interval correctly; you need not evaluate the square roots.</p>
+</div>
+
+<h3>The handout (title slide and slide 1)</h3>
+<ul class="list">
+  <li><b>Title slide</b> (unnumbered): MATH1853 Part II, Chapter 4, "Some Elementary Statistical Inferences", by F. Tsang, University of Hong Kong. The slides after it are numbered 1 to 34, and this note cites those printed numbers.</li>
+  <li><b>Slide 1, 4.0 Disclaimer:</b> the chapter follows Chapter 4 of R. V. Hogg, J. W. McKean and A. T. Craig, <i>Introduction to Mathematical Statistics</i>, 8th edition (Pearson, 2019).</li>
+  <li>Sections of the handout: 4.1 Sampling and statistics (slides 2 to 7), 4.2 Point estimators (8 to 12), 4.3 Confidence interval (13 to 20), 4.4 Large sample confidence interval for the mean \(\mu\) (21 to 28), 4.5 Large sample confidence interval for \(p\) (29 to 32), 4.6 More exercises (33, 34). Sections 1 to 11 of this note follow the same order.</li>
+</ul>
+<p class="muted">How this note is laid out: grey-bordered boxes are definitions and examples from the slides, blue boxes are theorems and methods, red boxes are warnings, and orange boxes marked <span class="pill">Beyond the handouts</span> add material that is not on the slides but that the exam uses or that makes the slides easier to follow. The "In words" lines under a formula say what it means in plain language.</p>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Parameters and the parameter space</h2>
+<div class="box def"><span class="tag">The statistical problem (slide 2)</span>
+<p>In a typical statistical problem, we have a random variable \(X\) of interest, but its density function \(f(u)\) or its distribution \(p(x):=P(X=x)\) is not known. Our ignorance about \(f(u)\) or \(p(x)\) can roughly be classified in one of two ways:</p>
+<ol class="steps">
+  <li>\(f(u)\) or \(p(x)\) is <b>completely unknown</b>.</li>
+  <li>The <b>form</b> of \(f(u)\) or \(p(x)\) is known down to a <b>parameter</b> \(\theta\), where \(\theta\) may be a vector, in which case we may use the bold character \(\boldsymbol\theta\).</li>
+</ol>
+<p>For now (and for the whole chapter), we consider the second classification.</p>
+<p class="word"><b>In words:</b> we know what <b>kind</b> of distribution \(X\) has (binomial, normal, Poisson, ...), but one or more of the numbers in its formula are unknown. Those unknown numbers are the parameters.</p>
+</div>
+<p>Recall from P2 and P3: \(f\) is used for a <b>continuous</b> random variable (a density, probabilities are areas under \(f\)), and \(p(x)=P(X=x)\) for a <b>discrete</b> one. The letter \(u\) in \(f(u)\) is just the variable of the function.</p>
+
+<div class="box eg"><span class="tag">Examples (slide 3)</span>
+<p>The unknown parameters are the ones we want to find:</p>
+<ol class="steps" type="a">
+  <li>\(X\sim\text{Binomial}(n,p)\), where \(n\) is <b>known</b> but \(p\) is <b>unknown</b>. So \(\theta=p\).</li>
+  <li>\(X\) has a normal distribution \(N(\mu,\sigma^2)\), where both the mean \(\mu\) and the variance \(\sigma^2\) of \(X\) are unknown. So \(\boldsymbol\theta=(\mu,\sigma^2)\), a vector with two entries.</li>
+</ol>
+</div>
+<p>For instance in (a): a factory knows it packs \(n=20\) bulbs in a box, and \(X\) is the number of faulty bulbs in a box; the faulty rate \(p\) is what management wants to know. In (b): exam scores are roughly bell-shaped, but nobody knows the true average or spread for this year's cohort.</p>
+
+<div class="box def"><span class="tag">Notation: the parameter space (slide 4)</span>
+<p>We often denote this problem by saying that the random variable \(X\) has a density or distribution function of the form</p>
+\[ f(u;\theta)\quad\text{or}\quad p(x;\theta),\qquad \theta\in\Theta, \]
+<p>for a specified set \(\Theta\) (capital theta), called the <b>parameter space</b>. For example, in (a) above, \(\Theta=[0,1]\).</p>
+<p>We call \(\theta\) a <b>parameter</b> of the distribution. Because \(\theta\) is unknown, we want to <b>estimate</b> it.</p>
+<p class="word"><b>In words:</b> the semicolon in \(f(u;\theta)\) separates the variable \(u\) from the parameter \(\theta\): for each possible value of \(\theta\) there is one density. \(\Theta\) is the set of all values \(\theta\) could take.</p>
+</div>
+<p>In (a), \(\Theta=[0,1]\) because a probability lies between 0 and 1. In (b), \(\mu\) can be any real number and \(\sigma^2\) any positive number, so \(\Theta=\{(\mu,\sigma^2):\mu\in\mathbb R,\ \sigma^2\gt0\}\).</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Random samples and statistics</h2>
+<div class="box def"><span class="tag">Where the information comes from (slide 5)</span>
+<p>Our information about the unknown distribution of \(X\), or the unknown parameters of the distribution of \(X\), comes from a <b>sample</b> on \(X\).</p>
+<ul class="list">
+  <li>The sample observations have the <b>same distribution</b> as \(X\), and we denote them as the random variables \(X_1,X_2,\dots,X_n\), where \(n\) denotes the <b>sample size</b>.</li>
+  <li>When the sample is actually drawn, we use lower case letters \(x_1,x_2,\dots,x_n\) as the <b>values</b> or <b>realisations</b> of the sample.</li>
+</ul>
+<p>Often we assume that the sample observations \(X_1,X_2,\dots,X_n\) are also mutually independent, in which case we call the sample a <i>random sample</i>, which we now formally define.</p>
+</div>
+<p>Capital and lower case letters matter throughout this chapter. Before the survey, \(X_1\) is a random variable: "the height of the first person we will measure", which could be many things. After the survey, \(x_1=172\) is a number. The same rule gives \(\bar X\) (random) and \(\bar x\) (a number), \(S\) (random) and \(s\) (a number).</p>
+
+<div class="box def"><span class="tag">Definition 4.1: random sample (slide 6)</span>
+<p>If the random variables \(X_1,X_2,\dots,X_n\) are <b>independent and identically distributed</b> (i.i.d.), then these random variables constitute a <i>random sample</i> (or simply "<i>sample</i>") of size \(n\) from the common distribution.</p>
+<p>If that common distribution is \(X\), then we say that \(X_1,X_2,\dots,X_n\) is <b>a sample on \(X\)</b>.</p>
+<p class="word"><b>In words:</b> each observation is a fresh, independent copy of \(X\). "Identically distributed" means all \(X_i\) have the distribution of \(X\), so the same mean \(\mu\) and variance \(\sigma^2\).</p>
+</div>
+<p>Often, <b>functions of the sample</b> are used to summarise the information in a sample. These are called <i>statistics</i>, defined as follows (slide 6).</p>
+<div class="box def"><span class="tag">Definition 4.2: statistic (slide 6)</span>
+<p>Let \(X_1,X_2,\dots,X_n\) denote a sample on a random variable \(X\). Let \(T=g(X_1,X_2,\dots,X_n)\) be a function of the sample. Then \(T\) is called a <i>statistic</i>.</p>
+<p class="word"><b>In words:</b> a statistic is any formula you can compute from the data alone. It may not contain unknown parameters. Because the \(X_i\) are random, a statistic is itself a random variable.</p>
+</div>
+<div class="box def"><span class="tag">Realisation of a statistic (slide 7)</span>
+<ul class="list">
+  <li>Once the sample is drawn, then \(t\) is called the <b>realisation</b> of \(T\), where \(t=g(x_1,x_2,\dots,x_n)\) and \(x_1,x_2,\dots,x_n\) is the realisation of the sample.</li>
+  <li>The \(g\) in the definition is an ordinary function in \(n\) variables, so if there is no possibility of confusion, we will simply write \(T=T(X_1,X_2,\dots,X_n)\) instead of \(T=g(X_1,X_2,\dots,X_n)\).</li>
+</ul>
+</div>
+<div class="box eg"><span class="tag">Example: which are statistics?</span>
+<p>Let \(X_1,\dots,X_n\) be a sample on \(X\sim N(\mu,\sigma^2)\) with \(\mu\) and \(\sigma\) unknown.</p>
+<ul class="list">
+  <li>\(\bar X=\frac1n(X_1+\cdots+X_n)\), \(\max(X_1,\dots,X_n)\) and \(X_1-X_2\) are statistics: you can compute them from the data.</li>
+  <li>\(\frac{\bar X-\mu}{\sigma/\sqrt n}\) is <b>not</b> a statistic: it contains the unknown \(\mu\) and \(\sigma\). (It is still a perfectly good random variable; section 6 uses it.)</li>
+</ul>
+<p>With data \(x_1,x_2,x_3=2,5,8\), the statistic \(\bar X\) has realisation \(\bar x=5\).</p>
+</div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Point estimators and unbiasedness</h2>
+<div class="box def"><span class="tag">Estimator and estimate (slide 8)</span>
+<p>Using the above terminology, it makes sense to consider a statistic \(T\) which is an <b>estimator</b> of \(\theta\). More formally, \(T\) is called a <b>point estimator</b> of \(\theta\). While we call \(T\) an estimator of \(\theta\), we call its realisation \(t\) an <b>estimate</b> of \(\theta\). Remember this:</p>
+<div class="scroll"><table>
+<tr><th>word</th><th>what it is</th><th>example</th></tr>
+<tr><td>estimator</td><td>a random variable</td><td>\(\bar X=\frac1n(X_1+\cdots+X_n)\)</td></tr>
+<tr><td>estimate</td><td>a realisation (real number)</td><td>\(\bar x=600\)</td></tr>
+</table></div>
+<p class="word"><b>In words:</b> the estimator is the <b>recipe</b> (a formula in the random \(X_i\)); the estimate is the <b>number</b> the recipe gives for the data you actually got.</p>
+</div>
+<p>"Point" means a single value, as opposed to an interval (section 5). Slide 8 adds: there are several properties of point estimators (for example maximum likelihood estimators ("mle") and Bayes estimators), but the course only discusses the following one, to suit the purposes of an introductory statistics course.</p>
+
+<div class="box def"><span class="tag">Definition 4.3: unbiasedness (slide 9)</span>
+<p>Let \(X_1,X_2,\dots,X_n\) denote a sample on a random variable \(X\) with density \(f(u;\theta)\) or distribution \(p(x;\theta)\), \(\theta\in\Theta\). Let \(T=T(X_1,X_2,\dots,X_n)\) be a statistic. We say that \(T\) is an <b>unbiased estimator</b> of \(\theta\) if</p>
+\[ E(T)=\theta. \]
+<p class="word"><b>In words:</b> on average over all possible samples, the estimator hits the true value. It does not systematically over- or under-estimate. (Any single estimate can still be off.)</p>
+</div>
+
+<div class="box eg"><span class="tag">Example (slide 9)</span>
+<p>Let \(X\sim N(\mu,\sigma^2)\) with both parameters \(\mu\) and \(\sigma\) unknown. If \(X_1,X_2,\dots,X_n\) is a random sample on \(X\), then the statistics</p>
+<ul class="list">
+  <li>\(\bar X_n:=\frac1n(X_1+\cdots+X_n)\) is an unbiased estimator of \(\mu\);</li>
+  <li>\(S^2:=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X_n)^2\) is an unbiased estimator of \(\sigma^2\).</li>
+</ul>
+<p>For the proof that \(E(\bar X_n)=\mu\), the slide refers to Exercise 2.45 (chapter P2). The proof for \(S^2\) is on slides 10 and 11 (section 4).</p>
+</div>
+<p>The subscript \(n\) in \(\bar X_n\) only records the sample size; many books (and the exam) write \(\bar X\).</p>
+
+<h3>Exercise 2.45: the mean and variance of \(\bar X_n\)</h3>
+<p>This exercise from P2 ("very important") is used all through the chapter, so here it is in full. Let \(X_1,X_2,\dots\) be independent with the same distribution, mean \(\mu\) and variance \(\sigma^2\).</p>
+<div class="box thm"><span class="tag">Mean and variance of the sample mean (Exercise 2.45)</span>
+<p>By linearity of expectation,</p>
+\[ \begin{aligned} E(\bar X_n)&=\tfrac1n\big(E(X_1)+\cdots+E(X_n)\big)\\ &=\tfrac1n(n\mu)=\mu. \end{aligned} \]
+<p>Because the \(X_i\) are independent, variances add, and \(\operatorname{Var}(cY)=c^2\operatorname{Var}(Y)\):</p>
+\[ \begin{aligned} \operatorname{Var}(\bar X_n)&=\tfrac1{n^2}\big(\operatorname{Var}(X_1)+\cdots\\ &\qquad+\operatorname{Var}(X_n)\big)\\ &=\tfrac1{n^2}(n\sigma^2)=\frac{\sigma^2}n. \end{aligned} \]
+<p class="word"><b>In words:</b> the sample mean is centred on the true mean, and its spread shrinks as the sample grows. Its standard deviation is \(\sigma/\sqrt n\), called the <b>standard error</b>. As \(n\to\infty\), \(\operatorname{Var}(\bar X_n)\to0\): the sample mean piles up at \(\mu\).</p>
+</div>
+<p>This answers a past-paper question (May 2013 Q8(a)): "when \(n\) is large, \(\bar X\) is an accurate estimator of \(\mu\); explain why." Answer: \(E(\bar X)=\mu\) (unbiased) and \(\operatorname{Var}(\bar X)=\sigma^2/n\to0\), so \(\bar X\) is very likely to be close to \(\mu\). (Precisely, this is the weak law of large numbers, Theorem 2.47 in P2: for every fixed \(\varepsilon\gt0\), \(P(|\bar X_n-\mu|\lt\varepsilon)\to1\) as \(n\to\infty\).)</p>
+
+<h3>Estimating a proportion</h3>
+<p>If each \(X_i\) is 1 for a "success" and 0 otherwise (a Bernoulli trial with success probability \(p\)), then \(E(X_i)=p\), so \(\bar X_n\) is an unbiased estimator of \(p\). Here \(\bar X_n\) is the <b>proportion of successes</b> in the sample, written \(\hat p\) (section 9).</p>
+<div class="box eg"><span class="tag">Example (Dec 2015 Q7(a)(ii))</span>
+<p>A coin with \(P(\text{head})=p\) is tossed until the 1000th head, which comes at the 5000th toss. Estimate \(p\) and justify.</p>
+<p><b>Answer.</b> In 5000 tosses there were 1000 heads, so \(\hat p=\frac{1000}{5000}=0.2\). Justification: \(\hat p\) is the sample proportion \(\bar X\) of the 0/1 results, an unbiased estimator of \(p\), and with so many tosses its variance \(p(1-p)/n\) is tiny. (Another view: the waiting time for each head is geometric with mean \(1/p\); the 1000 waiting times add to 5000, average 5, so \(1/p\approx5\).)</p>
+</div>
+<p>The exam taster (section 16) has the most recent question of this kind.</p>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>The sample variance and why n − 1</h2>
+<p>Slides 10 and 11 prove that \(S^2=\frac1{n-1}\sum(X_i-\bar X_n)^2\) is unbiased for \(\sigma^2\). The proof has two steps: rewrite the sum without the subtraction inside the square, then take expectations.</p>
+<div class="box eg"><span class="tag">Step 1: expand the sum (slide 10)</span>
+<p>Expand each square, \((X_i-\bar X_n)^2=X_i^2-2\bar X_nX_i+\bar X_n^2\), and add over \(i\):</p>
+\[ \begin{aligned} S^2&=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X_n)^2\\ &=\frac1{n-1}\sum_{i=1}^n\big(X_i^2-2\bar X_nX_i+\bar X_n^2\big)\\ &=\frac1{n-1}\Big(\sum_{i=1}^nX_i^2-2\bar X_n\sum_{i=1}^nX_i\\ &\qquad\qquad+n\bar X_n^2\Big). \end{aligned} \]
+<p>Now \(\sum X_i=n\bar X_n\) (the definition of the mean), so the middle term is \(-2\bar X_n\cdot n\bar X_n=-2n\bar X_n^2\), and</p>
+\[ S^2=\frac1{n-1}\Big(\sum_{i=1}^nX_i^2-n\bar X_n^2\Big). \]
+<p>Hence, taking expectations (linearity),</p>
+\[ \begin{aligned} E(S^2)&=\frac1{n-1}\sum_{i=1}^nE(X_i^2)\\ &\quad-\frac n{n-1}E(\bar X_n^2). \end{aligned} \]
+</div>
+<div class="box eg"><span class="tag">Step 2: the two expectations (slide 11)</span>
+<p>Use \(\operatorname{Var}(Y)=E(Y^2)-E(Y)^2\), that is \(E(Y^2)=\operatorname{Var}(Y)+E(Y)^2\), twice:</p>
+\[ E(X_i^2)=\operatorname{Var}(X_i)+E(X_i)^2=\sigma^2+\mu^2, \]
+<p>and, by Exercise 2.45 (\(E(\bar X_n)=\mu\), \(\operatorname{Var}(\bar X_n)=\sigma^2/n\)),</p>
+\[ E(\bar X_n^2)=\operatorname{Var}(\bar X_n)+E(\bar X_n)^2=\frac{\sigma^2}n+\mu^2. \]
+<p>So</p>
+\[ \begin{aligned} E(S^2)&=\frac1{n-1}\sum_{i=1}^n(\sigma^2+\mu^2)\\ &\quad-\frac n{n-1}\Big(\frac{\sigma^2}n+\mu^2\Big)\\ &=\frac{n\sigma^2+n\mu^2-\sigma^2-n\mu^2}{n-1}\\ &=\frac{(n-1)\sigma^2}{n-1}=\sigma^2. \end{aligned} \]
+</div>
+<div class="box def"><span class="tag">Names (slide 11)</span>
+<p>\(\bar X_n\) is called the <b>sample mean</b>, \(S^2\) the <b>sample variance</b>, and \(S=\sqrt{S^2}\) the <b>sample standard deviation</b>. These are statistics. Their realisations are written \(\bar x\), \(s^2\), \(s\).</p>
+<p class="word"><b>In words:</b> to estimate the spread, average the squared distances from the sample mean, but divide by \(n-1\), not \(n\). Dividing by \(n\) would on average give \(\frac{n-1}n\sigma^2\), slightly too small.</p>
+</div>
+<p><b>Why too small?</b> The data are closer to their own mean \(\bar x\) than to the true mean \(\mu\) (the sample mean is, by construction, the number that makes \(\sum(x_i-c)^2\) smallest). So the squared distances from \(\bar x\) understate the spread; dividing by the smaller number \(n-1\) corrects this exactly.</p>
+
+<div class="box warn"><span class="tag">Remark (slide 12)</span>
+<p>The above calculations do <b>not</b> require \(X\) to be normal. In fact, \(X\) can follow any distribution with \(E(X)=\mu\) and \(\operatorname{Var}(X)=\sigma^2\), both finite.</p>
+<p>In the case where \(\mu\) is known, \(\theta=\sigma\) is the only parameter. Then</p>
+\[ W^2:=\frac1n\sum_{i=1}^n(X_i-\mu)^2 \]
+<p>is an unbiased estimator of \(\sigma^2\). (Exercise: show that \(E(W^2)=\sigma^2\).)</p>
+</div>
+<div class="box eg"><span class="tag">Exercise on slide 12, solved</span>
+<p>Each term has \(E\big((X_i-\mu)^2\big)=\operatorname{Var}(X_i)=\sigma^2\), by the definition of variance (\(\mu\) is the true mean of \(X_i\)). So</p>
+\[ \begin{aligned} E(W^2)&=\frac1n\sum_{i=1}^nE\big((X_i-\mu)^2\big)\\ &=\frac1n\cdot n\sigma^2=\sigma^2. \end{aligned} \]
+<p>Here we divide by \(n\), not \(n-1\), because we measure distances from the <b>true</b> mean \(\mu\), not from the estimated \(\bar X_n\). \(W^2\) is a statistic only when \(\mu\) is known.</p>
+</div>
+
+<div class="box eg"><span class="tag">Example: computing \(\bar x\) and \(s^2\) by hand</span>
+<p>Data \(2,5,8\): \(\bar x=5\); squared deviations \(9,0,9\), sum \(18\); \(s^2=\frac{18}{3-1}=9\), \(s=3\). (Dividing by \(n=3\) would give 6.)</p>
+<p>Shortcut from step 1:</p>
+\[ \begin{aligned} s^2&=\frac1{n-1}\Big(\sum x_i^2-n\bar x^2\Big)\\ &=\tfrac12(4+25+64-75)=9. \end{aligned} \]
+<p>Without a calculator, it is usually easier to subtract a convenient number first: the deviations and \(s^2\) do not change if every \(x_i\) is shifted by the same amount.</p>
+</div>
+<p>Past paper May 2013 Q8(b) asks exactly this: "propose an unbiased estimator of \(\sigma^2\) and explain why it is unbiased". Answer with \(S^2\) and the two steps above.</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>What a confidence interval is</h2>
+<div class="box def"><span class="tag">The problem with a single estimate (slide 13)</span>
+<p>Recall that the random variable of interest \(X\) has density \(f(u;\theta)\) or distribution \(p(x;\theta)\), \(\theta\in\Theta\), where the parameter \(\theta\) is unknown. We estimate \(\theta\) by a statistic</p>
+\[ \hat\theta=g(X_1,\dots,X_n), \]
+<p>where \(X_1,\dots,X_n\) is a sample from the distribution of \(X\). (Caution: \(\hat\theta\) is a <b>random variable</b>.)</p>
+<p>When the sample is drawn, it is <b>unlikely</b> that the value (realisation) of \(\hat\theta\) is the true value of the parameter. In fact, if \(\hat\theta\) has a density, then \(P_\theta(\hat\theta=\theta)=0\), where the notation \(P_\theta\) denotes that the probability is computed when \(\theta\) is the true parameter.</p>
+<p>What is needed is an estimate of the <b>error</b> of the estimation; that is, by how much did \(\hat\theta\) miss \(\theta\)? In this section, we embody this estimate of error in terms of a <i>confidence interval</i>, which we now formally define.</p>
+</div>
+<p>The hat in \(\hat\theta\) ("theta hat") means "an estimator of \(\theta\)". Why is \(P(\hat\theta=\theta)=0\)? For a continuous random variable, the probability of hitting any single exact value is an area of zero width under the density: zero. So a point estimate such as \(\bar x=600\) is almost surely a little wrong, and alone it does not say <b>how</b> wrong. An interval does.</p>
+
+<div class="box def"><span class="tag">Definition 4.4: confidence interval, CI (slide 14)</span>
+<p>Let \(X_1,X_2,\dots,X_n\) denote a sample on a random variable \(X\), where \(X\) has a density \(f(u;\theta)\) or a distribution \(p(x;\theta)\), \(\theta\in\Theta\). Let \(0\lt\alpha\lt1\) be specified. Let</p>
+\[ L=L(X_1,\dots,X_n) \]
+<p>and</p>
+\[ U=U(X_1,\dots,X_n) \]
+<p>be two statistics. We say that the interval \((L,U)\) is a \((1-\alpha)100\%\) <i>confidence interval</i> for \(\theta\) if</p>
+\[ P_\theta\big(\theta\in(L,U)\big)=(1-\alpha)100\%. \]
+<p>That is, the probability that the interval includes \(\theta\) is \((1-\alpha)100\%\), which is called the <i>confidence level</i> of the interval.</p>
+<p class="word"><b>In words:</b> the <b>end points</b> \(L\) and \(U\) are random (they depend on the sample); \(\theta\) is a fixed unknown number. Before sampling, the chance that the random interval will cover \(\theta\) is \(1-\alpha\). For a 95% interval, \(\alpha=0.05\).</p>
+</div>
+
+<div class="box def"><span class="tag">Understanding the definition (slides 15 and 16)</span>
+<ul class="list">
+  <li>Suppose a sample is drawn; we have the realisation \((X_1,X_2,\dots,X_n)=(x_1,x_2,\dots,x_n)\).</li>
+  <li>Then we obtain the realisations of \(L\) and \(U\), which are, respectively, \(\ell=L(x_1,\dots,x_n)\) and \(u=U(x_1,\dots,x_n)\).</li>
+  <li>So the CI, \((\ell,u)\), is an interval of <b>real numbers</b>. There are two possibilities: either \((\ell,u)\) <b>traps</b> \(\theta\) or it does not.</li>
+  <li>Consider this scenario: set \(\alpha=0.05\), and take 100 samples. This results in 100 realisations of \((L,U)\): \((\ell_1,u_1),(\ell_2,u_2),\dots,(\ell_{100},u_{100})\). Then, approximately 95 (\(=95\%\) of 100) of them will trap \(\theta\).</li>
+</ul>
+</div>
+<p>Try the scenario of slide 16 below. The population is the one of slide 23 (daily demand, \(\sigma=20\), samples of \(n=40\)), except that here <b>we</b> choose the true mean, \(\mu=600\), so that we can see which intervals trap it. Each horizontal bar is the interval \(\bar x\pm z_{\alpha/2}\,\sigma/\sqrt n\) from one sample (the formula is derived in section 7).</p>
+<div class="figure"><p class="ttl">One hundred confidence intervals for the same μ = 600</p>
+<canvas class="plot" id="fCI" style="height:340px"></canvas>
+<div class="ctrl">
+<label>level <select id="fCI-lv"><option value="1.645">90%</option><option value="1.96" selected>95%</option><option value="2.575">99%</option></select></label>
+<label>n <select id="fCI-n"><option value="40" selected>40</option><option value="10">10</option></select></label>
+<label>width uses <select id="fCI-c"><option value="k" selected>σ = 20 (known)</option><option value="s">s (from the sample)</option></select></label>
+<button type="button" class="btn" id="fCI-go">Draw 100 new samples</button>
+</div>
+<div class="readout" id="fCI-out"></div>
+<div class="legend"><span style="--k:var(--accent)">traps μ</span><span style="--k:var(--c2)">misses μ</span><span style="--k:var(--ink)">true μ = 600</span></div>
+<p class="cap">Each bar is one realisation \((\ell_i,u_i)\). The true \(\mu\) never moves; the intervals do. Draw again a few times: the count of red bars changes from draw to draw, but the long-run proportion of bars that trap \(\mu\) settles near the confidence level.</p></div>
+
+<div class="box warn"><span class="tag">What "95% confidence" does and does not mean</span>
+<p><b>Right:</b> if we repeated the sampling many times, about 95% of the intervals computed this way would contain the true \(\mu\). The 95% is a property of the <b>method</b> (the random interval \((L,U)\)).</p>
+<p><b>Wrong:</b> "there is a 95% probability that \(\mu\) lies in \((593.8,606.2)\)". Once computed, \((593.8,606.2)\) is a fixed interval and \(\mu\) is a fixed number: it is either inside or not. (Slide 27 says the same; it is in section 8.)</p>
+<p><b>Also wrong:</b> "95% of the population lie in the interval" (the interval is about the <b>mean</b>, not individuals), and "the sample mean is in the interval with 95% certainty" (\(\bar x\) is always exactly at the centre).</p>
+</div>
+<p>Past papers test this directly, for example Dec 2025 Q25 (multiple choice: the correct option is "if sampling were repeated many times, 95% of the computed intervals would contain the true mean") and Dec 2023 Q9(b) ("the mean will fall within the calculated CI 95% of the time": disagree, the mean does not move; it is the interval that varies from sample to sample).</p>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>The CLT and the critical value z(α/2)</h2>
+<p>To build a confidence interval we need the distribution of the estimator. For a sample mean, the Central Limit Theorem gives it, approximately, whatever the distribution of \(X\).</p>
+<div class="box thm"><span class="tag">Theorem 2.46′: Central Limit Theorem (slide 16)</span>
+<p>Let \(X_1,X_2,\dots,X_n\) be a sequence of i.i.d. random variables with finite mean \(\mu\) and finite variance \(\sigma^2\gt0\). When \(n\) is big, then for \(k\gt0\),</p>
+\[ \begin{aligned} &P\Big(-k\lt\frac{\bar X_n-\mu}{\sigma/\sqrt n}\lt k\Big)\\ &\quad\approx\frac1{\sqrt{2\pi}}\int_{-k}^{k}e^{-x^2/2}\,dx. \end{aligned} \]
+<p>(This is Theorem 2.46 of P2 with \(a=-k\), \(b=k\).)</p>
+<p class="word"><b>In words:</b> standardise the sample mean (subtract its mean \(\mu\), divide by its standard deviation \(\sigma/\sqrt n\), both from Exercise 2.45). For large \(n\) the result behaves like a standard normal \(Z\), even if \(X\) itself is not normal.</p>
+</div>
+<p>If \(X\) is itself normal, \(\bar X_n\) is <b>exactly</b> \(N(\mu,\sigma^2/n)\) for every \(n\) (a sum of independent normals is normal, P3), so then "\(\approx\)" is "\(=\)". That is why exam questions that say "\(X_1,\dots,X_n\) is a random sample from \(N(\mu,25)\)" need no condition on \(n\).</p>
+
+<div class="box def"><span class="tag">Replacing σ by S (slide 17)</span>
+<p>In fact, the above approximation stays the same if we replace \(\sigma\) (a number) by \(S\) (a random variable), that is,</p>
+\[ \begin{aligned} &P\Big(-k\lt\frac{\bar X_n-\mu}{S/\sqrt n}\lt k\Big)\\ &\quad\approx\frac1{\sqrt{2\pi}}\int_{-k}^{k}e^{-x^2/2}\,dx, \end{aligned} \]
+<p>but we will not go into the details here (see Hogg, McKean and Craig, Chapter 5.3). Having said that, it is worth noting that \(n\gt30\) is needed to make the approximation reasonably useful.</p>
+<p class="word"><b>In words:</b> when \(\sigma\) is unknown, use the sample standard deviation \(s\) in its place. For large samples \(S\) is close to \(\sigma\), so the normal approximation still works. Section 8 uses this.</p>
+</div>
+
+<div class="box def"><span class="tag">The right-hand side is a normal probability (slide 18)</span>
+<p>Before running into several examples of CI, we examine the term on the right-hand side, which is actually</p>
+\[ \begin{aligned} \frac1{\sqrt{2\pi}}\int_{-k}^{k}e^{-x^2/2}\,dx&=P(-k\lt Z\lt k)\\ &=P(|Z|\lt k), \end{aligned} \]
+<p>where \(Z\sim N(0,1)\), the <i>standard normal distribution</i>. Our aim is to use the CLT approximations to create CIs; we shall need to find \(k\) so that</p>
+\[ P(|Z|\lt k)=(1-\alpha)100\%. \]
+<p>This \(k\) is sometimes written as \(z_{\alpha/2}\). But why "\(\alpha/2\)"?</p>
+</div>
+<div class="box eg"><span class="tag">Why α/2 (slides 19 and 20)</span>
+<p>Say \(\alpha=0.05\); then \((1-\alpha)100\%=95\%\), so \(P(|Z|\lt z_{0.025})=0.95\). The remaining probability \(0.05\) is split equally between the two tails (the normal curve is symmetric), \(0.025\) in each. So this implies that</p>
+\[ P(Z\lt z_{0.025})=0.95+0.025=0.975. \]
+<p>From the table, \(\Phi(1.96)=0.9750\), so in this case \(z_{0.025}=1.96\).</p>
+<p>When \(\alpha=0.01\), \((1-\alpha)100\%=99\%\), so</p>
+\[ \begin{gathered} P(|Z|\lt z_{0.005})=0.99\\ \Rightarrow\ P(Z\lt z_{0.005})=0.995, \end{gathered} \]
+<p>which appears to be in the middle of \(P(Z\lt2.57)=0.9949\) and \(P(Z\lt2.58)=0.9951\). So \(z_{0.005}\approx2.575\).</p>
+<p><b>Exercise (slide 20): show that \(z_{0.05}\approx1.645\).</b> For 90%, \(\alpha=0.10\) and we need \(P(Z\lt z_{0.05})=0.95\). The table gives \(\Phi(1.64)=0.9495\) and \(\Phi(1.65)=0.9505\); 0.95 is exactly in the middle, so \(z_{0.05}\approx1.645\).</p>
+<p class="word"><b>In words:</b> \(z_{\alpha/2}\) is the point with area \(\alpha/2\) to its right. The name records the <b>tail</b> area, not the central area.</p>
+</div>
+<div class="box thm"><span class="tag">From now on: the notation z<sub>α/2</sub> (slide 20)</span>
+<p>From now on, we replace \(k\) with the notation \(z_{\alpha/2}\). Students may find it handy to memorise the following:</p>
+<div class="scroll"><table style="width:auto">
+<tr><th>\((1-\alpha)100\%\) CI</th><th>\(z_{\alpha/2}\)</th></tr>
+<tr><td>90%</td><td>1.645</td></tr>
+<tr><td>95%</td><td>1.96</td></tr>
+<tr><td>99%</td><td>2.575</td></tr>
+</table></div>
+</div>
+
+<div class="figure"><p class="ttl">The critical value: central area 1 − α, two tails of α/2</p>
+<canvas class="plot" id="fZ" style="height:240px"></canvas>
+<div class="ctrl"><label>confidence level <input type="range" id="fZ-c" min="80" max="99.5" step="0.5" value="95"></label></div>
+<div class="readout" id="fZ-out"></div>
+<p class="cap">The shaded central area is \(1-\alpha\); each unshaded tail has area \(\alpha/2\). To read \(z_{\alpha/2}\) from the table, look for \(\Phi(z)=1-\alpha/2\) (the central area plus the left tail). Try 92%, 93% and 97%: the exam has used all three.</p></div>
+
+<div class="box thm"><span class="tag">Method: z<sub>α/2</sub> for any level from the Φ table</span>
+<ol class="steps">
+<li>From the level \((1-\alpha)100\%\) get \(\alpha\), then \(1-\frac\alpha2\). Example: 93% gives \(\alpha=0.07\), \(1-\frac\alpha2=0.965\).</li>
+<li>Find \(0.965\) <b>inside</b> the table (the body holds \(\Phi(z)\); the margins hold \(z\)): \(\Phi(1.81)=0.9649\), \(\Phi(1.82)=0.9656\). Take the closer one, \(z_{0.035}\approx1.81\) (interpolating gives 1.811).</li>
+<li>Write the value you used in your answer, so the marker can follow.</li>
+</ol>
+</div>
+<div class="scroll"><table class="glance">
+<tr><th>level</th><th>\(1-\alpha/2\)</th><th>table</th><th>\(z_{\alpha/2}\)</th><th>past papers</th></tr>
+<tr><td>80%</td><td>0.90</td><td>\(\Phi(1.28)=0.8997\)</td><td>1.28</td><td>May 2015 Q7(a)</td></tr>
+<tr><td>88%</td><td>0.94</td><td>\(\Phi(1.55)=0.9394,\ \Phi(1.56)=0.9406\)</td><td>1.555</td><td>Dec 2025 Q28</td></tr>
+<tr><td>90%</td><td>0.95</td><td>\(\Phi(1.64)=0.9495,\ \Phi(1.65)=0.9505\)</td><td>1.645</td><td>many</td></tr>
+<tr><td>92%</td><td>0.96</td><td>\(\Phi(1.75)=0.9599\)</td><td>1.75</td><td>May 2024 Q12</td></tr>
+<tr><td>93%</td><td>0.965</td><td>\(\Phi(1.81)=0.9649,\ \Phi(1.82)=0.9656\)</td><td>1.81</td><td>May 2023, Dec 2024</td></tr>
+<tr><td>95%</td><td>0.975</td><td>\(\Phi(1.96)=0.9750\)</td><td>1.96</td><td>many</td></tr>
+<tr><td>97%</td><td>0.985</td><td>\(\Phi(2.17)=0.9850\)</td><td>2.17</td><td>Dec 2018, May 2026</td></tr>
+<tr><td>99%</td><td>0.995</td><td>\(\Phi(2.57)=0.9949,\ \Phi(2.58)=0.9951\)</td><td>2.575</td><td>May 2019</td></tr>
+</table></div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts</span>
+<p><b>Linear interpolation</b> (asked in May 2015 Q7(a): find \(k\) with \(P(Z\le k)=0.90\)). The table gives \(\Phi(1.28)=0.8997\) and \(\Phi(1.29)=0.9015\). Between two table entries, treat \(\Phi\) as a straight line: 0.90 is \(\frac{0.9000-0.8997}{0.9015-0.8997}=\frac{3}{18}=\frac16\) of the way from 0.8997 to 0.9015, so</p>
+\[ k\approx1.28+\tfrac16(0.01)\approx1.2817. \]
+<p>(The exact value is 1.2816.) Unless a question asks for interpolation, the nearest table value is fine.</p>
+<p><b>Symmetry.</b> The table usually lists only \(z\ge0\). For negative values use \(\Phi(-z)=1-\Phi(z)\). For example \(P(|Z|\lt k)=\Phi(k)-\Phi(-k)=2\Phi(k)-1\), so \(P(|Z|\lt k)=0.97\) gives \(\Phi(k)=0.985\), \(k=2.17\) (May 2026 Q9(a)).</p>
+</div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>CI for μ when σ is known</h2>
+<div class="box def"><span class="tag">Setting (slide 21)</span>
+<p>Suppose \(X_1,X_2,\dots,X_n\) is a random sample on a random variable \(X\) with mean \(\mu\) and variance \(\sigma^2\); the distribution of \(X\) is not (necessarily) normal.</p>
+<p><b>Case 1. \(\mu\) unknown, \(\sigma^2\) known.</b> By the CLT (section 6), with \(k=z_{\alpha/2}\),</p>
+\[ \begin{aligned} &P_\mu\Big(-z_{\alpha/2}\lt\frac{\bar X_n-\mu}{\sigma/\sqrt n}\lt z_{\alpha/2}\Big)\\ &\quad\approx(1-\alpha)100\%. \end{aligned} \]
+</div>
+<p>"Playing with the algebra" (slide 21) means turning the inequality inside the probability around, so that \(\mu\) stands alone in the middle. Here are the steps. Multiply all three parts by \(\sigma/\sqrt n\gt0\):</p>
+\[ -z_{\alpha/2}\frac{\sigma}{\sqrt n}\lt\bar X_n-\mu\lt z_{\alpha/2}\frac{\sigma}{\sqrt n}. \]
+<p>Subtract \(\bar X_n\) from all three parts:</p>
+\[ -\bar X_n-z_{\alpha/2}\frac{\sigma}{\sqrt n}\lt-\mu\lt-\bar X_n+z_{\alpha/2}\frac{\sigma}{\sqrt n}. \]
+<p>Multiply by \(-1\), which <b>reverses</b> both inequalities, and write the result from left to right:</p>
+\[ \bar X_n-z_{\alpha/2}\frac{\sigma}{\sqrt n}\lt\mu\lt\bar X_n+z_{\alpha/2}\frac{\sigma}{\sqrt n}. \]
+<p>The events are the same (each inequality was rearranged into an equivalent one), so they have the same probability (slide 21):</p>
+\[ \begin{aligned} &P_\mu\Big(\bar X_n-z_{\alpha/2}\tfrac{\sigma}{\sqrt n}\lt\mu\\ &\qquad\lt\bar X_n+z_{\alpha/2}\tfrac{\sigma}{\sqrt n}\Big)\approx(1-\alpha)100\%. \end{aligned} \]
+<div class="box warn"><span class="tag">Remark (slide 21)</span>
+<p>Here, \(\mu\) is an unknown <b>constant</b>, not a random variable, while</p>
+\[ \begin{aligned} L&=\bar X_n-z_{\alpha/2}\frac{\sigma}{\sqrt n},\\ U&=\bar X_n+z_{\alpha/2}\frac{\sigma}{\sqrt n} \end{aligned} \]
+<p>are random variables. So this matches Definition 4.4 exactly: \((L,U)\) is a random interval that traps \(\mu\) with probability about \(1-\alpha\).</p>
+</div>
+
+<div class="box thm"><span class="tag">CI for μ, σ known (slide 22)</span>
+<p>Let \(\bar x\) denote the realised value of the statistic \(\bar X_n\) after the sample is drawn. An approximate \((1-\alpha)100\%\) CI for \(\mu\) is given by</p>
+\[ \Big(\bar x-z_{\alpha/2}\frac{\sigma}{\sqrt n},\ \bar x+z_{\alpha/2}\frac{\sigma}{\sqrt n}\Big). \]
+<p>Short form: \(\bar x\pm z_{\alpha/2}\,\dfrac{\sigma}{\sqrt n}\).</p>
+<p class="word"><b>In words:</b> start at the sample mean and go out \(z_{\alpha/2}\) standard errors on each side. Higher confidence (bigger \(z_{\alpha/2}\)) gives a wider interval; a bigger sample (bigger \(\sqrt n\)) gives a narrower one.</p>
+</div>
+<p>In particular (slide 22), the 95% CI for \(\mu\) is \(\big(\bar x-1.96\frac{\sigma}{\sqrt n},\ \bar x+1.96\frac{\sigma}{\sqrt n}\big)\). This means that if you have 100 realisations \(\bar x_{(1)},\dots,\bar x_{(100)}\) of \(\bar X_n\), then among the CIs</p>
+\[ \begin{aligned} &\Big(\bar x_{(1)}-1.96\tfrac{\sigma}{\sqrt n},\ \bar x_{(1)}+1.96\tfrac{\sigma}{\sqrt n}\Big)\\ &\qquad\vdots\\ &\Big(\bar x_{(100)}-1.96\tfrac{\sigma}{\sqrt n},\ \bar x_{(100)}+1.96\tfrac{\sigma}{\sqrt n}\Big), \end{aligned} \]
+<p>about 95 of them trap \(\mu\). This is exactly what the figure in <a href="#s5">section 5</a> draws.</p>
+
+<div class="box eg"><span class="tag">Example: demand for a new product (slide 23)</span>
+<p>The average demand of a certain new product is \(\mu\) (unknown) across a network of department stores. A survey of 40 random samples yields a mean of 600 per day. Based on past experience with new products, the variance \(\sigma^2\) is known to be 400. Construct the 90% and 95% CI for the mean \(\mu\).</p>
+<p><b>Answer.</b> The realisation of \(\bar X_n\) is 600 (although the exact realisations of \(X_1,\dots,X_{40}\) are not known), \(n=40\), and \(\sigma^2=400\), so \(\sigma=\sqrt{400}=20\). The standard error is \(\frac{20}{\sqrt{40}}\approx3.162\).</p>
+<p>The 90% CI uses \(z_{\alpha/2}=1.645\); the half-width is \(1.645\times3.162\approx5.20\), so the interval is</p>
+\[ \begin{aligned} &\Big(600-1.645\cdot\tfrac{20}{\sqrt{40}},\ 600+1.645\cdot\tfrac{20}{\sqrt{40}}\Big)\\ &=(594.8,\ 605.2). \end{aligned} \]
+<p>Similarly, the 95% CI uses 1.96; the half-width is \(1.96\times3.162\approx6.20\):</p>
+\[ \begin{aligned} &\Big(600-1.96\cdot\tfrac{20}{\sqrt{40}},\ 600+1.96\cdot\tfrac{20}{\sqrt{40}}\Big)\\ &=(593.8,\ 606.2). \end{aligned} \]
+<p>The 95% interval is wider: to be more confident of trapping \(\mu\), we must allow a larger range.</p>
+</div>
+<p class="slidefix"><b>Note on slide 23.</b> The 90% interval is printed as \(\big(600-1.645\cdot\frac{20}{\sqrt{40}},\ 600-1.645\cdot\frac{20}{\sqrt{40}}\big)\), with a minus sign in the upper limit too. The upper limit must be \(600+1.645\cdot\frac{20}{\sqrt{40}}\); the slide's numerical answer \((594.8,605.2)\) is correct.</p>
+
+<div class="box eg"><span class="tag">Exercise 4.5 (slide 24), solved</span>
+<p>The % of Cu in a certain chemical is to be estimated by taking a series of measurements on small random sample quantities of the chemical and using the sample mean to estimate the true %. From previous experiments, individual measurements of this kind are known to be very close to a normal distribution and have a stable standard deviation of 2%. Now, the sample mean of 36 measurements was found to be 9.2%. Find a 95% confidence interval (CI) for the present mean % of Cu in this compound.</p>
+<p><b>Solution.</b> \(\sigma=2\) is known (Case 1), \(n=36\), \(\bar x=9.2\), \(z_{0.025}=1.96\). Standard error \(\frac{2}{\sqrt{36}}=\frac13\). Half-width \(1.96\times\frac13\approx0.653\). The 95% CI is</p>
+\[ \Big(9.2-\tfrac{1.96}{3},\ 9.2+\tfrac{1.96}{3}\Big)\approx(8.547,\ 9.853) \]
+<p>(in %). Because the measurements are normal, this interval is exact, not just approximate.</p>
+</div>
+<p class="muted">(The slide says "standard derivation"; it means standard deviation.)</p>
+
+<div class="box thm"><span class="tag">Method: CI for a mean, σ known</span>
+<ol class="steps">
+<li>Read off \(\bar x\), \(n\) and \(\sigma\). If the question gives the <b>variance</b> (as \(\sigma^2=400\) or as "\(N(\mu,25)\)"), take the square root.</li>
+<li>Get \(z_{\alpha/2}\) from the level (section 6): solve \(\Phi(z)=1-\frac\alpha2\).</li>
+<li>Write \(\bar x\pm z_{\alpha/2}\dfrac{\sigma}{\sqrt n}\) with the numbers substituted. Without a calculator this expression is usually the expected final answer; simplify when \(\sqrt n\) is a whole number.</li>
+<li>Give it as an interval \((\ell,u)\), lower end first.</li>
+</ol>
+</div>
+<div class="box eg"><span class="tag">Past-paper examples</span>
+<p><b>Dec 2016 Q10(b).</b> Tool weights have SD 0.1 kg; 100 tools give mean 10.05 kg. 95% CI: \(10.05\pm1.96\cdot\frac{0.1}{10}=10.05\pm0.0196\), that is \((10.0304,\ 10.0696)\).</p>
+<p><b>May 2023 Q11.</b> \(X_1,\dots,X_n\) from \(N(\mu,9)\); 93% CI for \(\mu\) in terms of the \(X_i\). Here \(\sigma=3\) and \(z_{0.035}\approx1.81\), so</p>
+\[ \Big(\bar X-1.81\cdot\tfrac{3}{\sqrt n},\ \bar X+1.81\cdot\tfrac{3}{\sqrt n}\Big), \]
+<p>with \(\bar X=\frac1n(X_1+\cdots+X_n)\). (The question asks for the interval "in terms of" the sample, so capital letters are right here: it is the random interval.)</p>
+<p><b>Dec 2018 Q8.</b> 1000 candidates average 68.3; past SD about 10; 97% CI. \(z_{0.015}=2.17\), so \(68.3\pm2.17\cdot\frac{10}{\sqrt{1000}}\), about \((67.61,\ 68.99)\).</p>
+</div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>CI for μ when σ is unknown</h2>
+<p>In practice \(\sigma\) is rarely known. Slide 17 (section 6) said that the CLT approximation still holds with \(\sigma\) replaced by the sample standard deviation \(S\). That gives the second case.</p>
+<div class="box thm"><span class="tag">Case 2. μ unknown, σ² unknown (slide 25)</span>
+<p>So to speak, we replace \(\sigma\) by \(S\):</p>
+\[ \begin{aligned} &P_\mu\Big(-z_{\alpha/2}\lt\frac{\bar X_n-\mu}{S/\sqrt n}\lt z_{\alpha/2}\Big)\\ &\quad\approx(1-\alpha)100\%. \end{aligned} \]
+<p>Similar to the previous case, if \(\bar x\) and \(s\) denote the realised values of the statistics \(\bar X_n\) and \(S\), respectively, after the sample is drawn, an approximate \((1-\alpha)100\%\) confidence interval for \(\mu\) is given by</p>
+\[ \Big(\bar x-z_{\alpha/2}\frac{s}{\sqrt n},\ \bar x+z_{\alpha/2}\frac{s}{\sqrt n}\Big). \]
+<p>This is called a <b>large sample confidence interval</b> for \(\mu\).</p>
+<p class="word"><b>In words:</b> the same recipe as Case 1, with the sample standard deviation \(s\) (computed with \(n-1\), section 4) in place of \(\sigma\). The rearrangement is identical, with \(S\) for \(\sigma\).</p>
+</div>
+<div class="box warn"><span class="tag">Trap: s versus s²</span>
+<p>Questions often give the sample <b>variance</b> (May 2016 Q7: "sample variance 4 years²"). Then \(s=\sqrt4=2\), not 4. If they give data, compute \(s^2\) with \(n-1\) and take the square root.</p>
+</div>
+
+<div class="box eg"><span class="tag">Example: HKU basketball (slides 26 and 27)</span>
+<p>Suppose that, against a certain opponent, the number of points the HKU basketball team scores is normally distributed with an unknown mean \(\mu\) and an unknown variance \(\sigma^2\). Suppose that, over the course of the last 10 games between the two teams, HKU scored the following points:</p>
+<p style="text-align:center">59, 62, 59, 74, 70, 61, 62, 66, 62, 75</p>
+<p>Compute a 95% CI for \(\mu\). Does 95% confidence mean that the probability that \(\mu\) lies within the interval you just found is 95%?</p>
+<p><b>Answer.</b> The realisations of the sample mean and the sample variance are \(\bar x=65\) and \(s^2=35.778\). The working: the ten scores add to 650, so \(\bar x=\frac{650}{10}=65\). Deviations from 65:</p>
+\[ \begin{gathered} -6,\ -3,\ -6,\ 9,\ 5,\\ -4,\ -3,\ 1,\ -3,\ 10 \end{gathered} \]
+<p>Their squares \(36,9,36,81,25,16,9,1,9,100\) add to 322, so \(s^2=\frac{322}{10-1}=\frac{322}{9}\approx35.778\).</p>
+<p>For a 95% CI, \(z_{\alpha/2}=1.96\). The standard error is \(\frac{s}{\sqrt n}=\sqrt{\frac{s^2}{n}}=\sqrt{3.5778}\approx1.8915\). Hence the 95% CI for \(\mu\) is</p>
+\[ \begin{aligned} &\big(65-1.96\sqrt{3.5778},\ 65+1.96\sqrt{3.5778}\big)\\ &=(61.293,\ 68.707). \end{aligned} \]
+<p>(Slide 27) No: 95% confidence means that, in 95% of experiments, the random interval (realisations of \((L,U)\)) will contain the true \(\mu\). It is <b>not</b> the probability that \(\mu\) is in the given interval (one of the realisations); that depends on the prior distribution of \(\mu\), which we do not know.</p>
+<p class="muted">[Slide 27: this example is proudly copied from the MIT course 18.05: Introduction to Probability and Statistics.]</p>
+</div>
+<p class="slidefix"><b>Note on slide 26.</b> The interval is printed as \((65-1.96\sqrt{3.5778},\ 65-1.96\sqrt{3.5778})\), with a minus sign in the upper limit too; the upper limit must be \(65+1.96\sqrt{3.5778}\). The slide's lower end 61.292 is 61.2927 cut off rather than rounded; 61.293 is the rounded value. The number \(3.5778\) under the root is \(s^2/n=35.778/10\).</p>
+<p>The "prior distribution" in slide 27 refers to Bayesian statistics, where \(\mu\) itself is treated as random; in this course \(\mu\) is a fixed unknown constant, so "the probability that \(\mu\) is in \((61.293, 68.707)\)" is either 0 or 1, we just do not know which.</p>
+
+<div class="box eg"><span class="tag">Exercise 4.6 (slide 28), solved</span>
+<p>A machine produces steel rods for a suspension system. Ten rods produced were selected and their diameters in mm were measured to be 8.24, 8.25, 8.23, 8.19, 8.26, 8.20, 8.23, 8.21, 8.20, 8.24. What can we conclude from these measurements about the diameter of the rods produced by this machine?</p>
+<p><b>Solution.</b> Estimate the mean diameter \(\mu\) with a 95% CI, using Case 2 as the slides do for \(n=10\). Sum \(=82.25\), so \(\bar x=8.225\). Deviations from 8.225, in units of 0.01 mm:</p>
+\[ \begin{gathered} 1.5,\ 2.5,\ 0.5,\ -3.5,\ 3.5,\\ -2.5,\ 0.5,\ -1.5,\ -2.5,\ 1.5; \end{gathered} \]
+<p>squares add to \(50.5\), that is \(0.00505\ \text{mm}^2\). So</p>
+\[ s^2=\frac{0.00505}{9}\approx0.000561, \]
+\[ s\approx0.02369. \]
+<p>The 95% CI is \(8.225\pm1.96\cdot\frac{0.02369}{\sqrt{10}}=8.225\pm0.0147\), that is about \((8.210,\ 8.240)\) mm. Conclusion: with 95% confidence the machine's mean rod diameter is between about 8.21 and 8.24 mm; the point estimate is 8.225 mm and individual rods vary with standard deviation about 0.024 mm.</p>
+</div>
+<div class="box eg"><span class="tag">Exercise 4.7 (slide 28), solved</span>
+<p>The contents of a sample of 7 containers of H<sub>2</sub>SO<sub>4</sub> are 9.8, 10.2, 10.4, 9.8, 10.0, 10.2, 9.6 litres. Find a 99% CI for the mean.</p>
+<p><b>Solution.</b> Sum \(=70\), \(\bar x=10\). Deviations \(-0.2,0.2,0.4,-0.2,0,0.2,-0.4\); squares add to \(0.48\); \(s^2=\frac{0.48}{6}=0.08\), \(s=\sqrt{0.08}\approx0.2828\). With \(z_{0.005}=2.575\):</p>
+\[ 10\pm2.575\cdot\frac{\sqrt{0.08}}{\sqrt7}=10\pm0.275, \]
+<p>so the 99% CI is about \((9.725,\ 10.275)\) litres.</p>
+</div>
+<div class="box eg"><span class="tag">Past-paper examples</span>
+<p><b>May 2016 Q7.</b> 100 devices: \(\bar x=3\) years, sample variance 4 years². 90% CI: \(s=2\), \(3\pm1.645\cdot\frac{2}{10}=3\pm0.329\), that is \((2.671,\ 3.329)\).</p>
+<p><b>May 2014 Q7.</b> 50 microdrills: \(\bar x=12.68\), \(s=6.83\). 95% CI: \(12.68\pm1.96\cdot\frac{6.83}{\sqrt{50}}\approx12.68\pm1.893\), that is about \((10.79,\ 14.57)\).</p>
+<p><b>Dec 2015 Q7(b).</b> 25 beverages: \(\bar x=1.10\) fl oz, \(s=0.015\). 95% CI (the normal table may be used): \(1.10\pm1.96\cdot\frac{0.015}{\sqrt{25}}=1.10\pm0.00588\), that is \((1.09412,\ 1.10588)\) fl oz. This is the handout's method (Case 2 with \(z\)), as in slide 26 with \(n=10\).</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts: the t-distribution</span>
+<p>Slide 17 warns that \(n\gt30\) is needed for the \(z\) approximation with \(S\) to be reasonably useful, yet slides 26 and 28 use it with \(n=10\) and \(n=7\). For small samples from a <b>normal</b> population, statistics textbooks (Hogg, McKean and Craig, Chapter 4.2) replace \(z_{\alpha/2}\) by a slightly larger number from the <b>\(t\)-distribution</b> with \(n-1\) degrees of freedom, which allows for the extra randomness in \(S\):</p>
+<div class="scroll"><table style="width:auto">
+<tr><th>question</th><th>\(n\)</th><th>\(z_{\alpha/2}\)</th><th>\(t_{\alpha/2,\,n-1}\)</th></tr>
+<tr><td>slide 26 / Ex 4.6 (95%)</td><td>10</td><td>1.96</td><td>2.262</td></tr>
+<tr><td>Ex 4.7 (99%)</td><td>7</td><td>2.575</td><td>3.707</td></tr>
+<tr><td>Dec 2015 Q7(b) (95%)</td><td>25</td><td>1.96</td><td>2.064</td></tr>
+</table></div>
+<p>The \(t\)-distribution is <b>not</b> in the MATH1853 handouts, and the exam gives only the normal table, so in this course you answer with \(z\) as above. You can see the effect in the <a href="#s5">section 5 figure</a>: choose \(n=10\) and "width uses \(s\)", draw several times, and the share of intervals that trap \(\mu\) comes out a few points below the nominal level (about 92% instead of 95%). With \(n=40\) the shortfall nearly disappears.</p>
+</div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>CI for a proportion p</h2>
+<div class="box def"><span class="tag">Setting (slide 29)</span>
+<p>Let \(X\) be a Bernoulli random variable with probability of success \(p\), where \(X\) is 1 or 0 if the outcome is success or failure, respectively. Suppose \(X_1,\dots,X_n\) is a random sample from the distribution of \(X\). Let \(\hat p=\bar X_n\) be the <b>sample proportion</b> of successes. Note that</p>
+\[ \hat p=\frac1n(X_1+\cdots+X_n) \]
+<p>(Caution: \(\hat p\) is a random variable)</p>
+<p>is the sample average and that \(\operatorname{Var}(\hat p)=p(1-p)/n\). It follows immediately from the CLT that</p>
+\[ \begin{aligned} &P_p\Big(-z_{\alpha/2}\lt\frac{\hat p-p}{\sqrt{p(1-p)/n}}\lt z_{\alpha/2}\Big)\\ &\quad\approx(1-\alpha)100\%. \end{aligned} \]
+</div>
+<p>Where the pieces come from: a Bernoulli variable has \(E(X)=p\) and \(\operatorname{Var}(X)=p(1-p)\) (P3). The sum \(X_1+\cdots+X_n\) is the number of successes, which is Binomial\((n,p)\). By Exercise 2.45, \(E(\hat p)=p\) and \(\operatorname{Var}(\hat p)=\frac{p(1-p)}n\). So this is the CLT of section 6 with \(\mu=p\) and \(\sigma=\sqrt{p(1-p)}\).</p>
+
+<div class="box thm"><span class="tag">CI for p (slide 30)</span>
+<p>As you can see, the inequality is hard to simplify into something like \(L\lt p\lt U\) (the unknown \(p\) appears both in the numerator and under the square root). Therefore, we replace \(p(1-p)\) with its estimate \(\hat p(1-\hat p)\). An approximate \((1-\alpha)100\%\) confidence interval for \(p\) is then given by</p>
+\[ \Big(\hat p-z_{\alpha/2}\sqrt{\tfrac{\hat p(1-\hat p)}n},\ \hat p+z_{\alpha/2}\sqrt{\tfrac{\hat p(1-\hat p)}n}\Big). \]
+<p>Short form: \(\hat p\pm z_{\alpha/2}\sqrt{\dfrac{\hat p(1-\hat p)}n}\), where now \(\hat p\) means the observed proportion (a number).</p>
+<p class="word"><b>In words:</b> the same shape as the interval for a mean. The centre is the observed proportion; the standard error is \(\sqrt{\hat p(1-\hat p)/n}\), because for 0/1 data the standard deviation is \(\sqrt{p(1-p)}\) and we plug in our estimate of \(p\).</p>
+</div>
+
+<div class="box eg"><span class="tag">Example: smokers (slide 31)</span>
+<p>To study the proportion of smokers in a population, a survey has been conducted and 1000 samples have been obtained. Among them 170 are smokers. Construct the 90% CI for the smoker proportion.</p>
+<p><b>Answer.</b> We have \(n=1000\), a realisation of \(\hat p=170/1000=0.17\), and \(z_{\alpha/2}\approx1.645\). Thus the 90% CI is</p>
+\[ \begin{aligned} &\Big(0.17-1.645\sqrt{\tfrac{0.17(0.83)}{1000}},\\ &\qquad 0.17+1.645\sqrt{\tfrac{0.17(0.83)}{1000}}\Big) \end{aligned} \]
+<p>or about \((0.1505,\ 0.1895)\). (Working: \(0.17\times0.83=0.1411\); \(\sqrt{0.0001411}\approx0.01188\); \(1.645\times0.01188\approx0.0195\).)</p>
+</div>
+<p class="slidefix"><b>Note on slide 31.</b> The slide gives \((0.1504,\ 0.1895)\). The lower end is \(0.17-0.019540=0.150460\), which rounds to 0.1505; the slide has cut it off at 0.1504. Either is accepted as an approximation; the exam would accept the unevaluated expression.</p>
+
+<div class="box eg"><span class="tag">Exercise 4.9 (slide 32), solved</span>
+<p>In a random sample of 500 families owning personal computers, it was found that 340 families do not own a Mac. Find a 95% C.I. for the actual proportion \(p\) of families that do not own a Mac.</p>
+<p><b>Solution.</b> \(\hat p=\frac{340}{500}=0.68\), \(1-\hat p=0.32\), \(z_{0.025}=1.96\). Standard error</p>
+\[ \sqrt{\frac{0.68\times0.32}{500}}=\sqrt{0.0004352}\approx0.02086. \]
+<p>Half-width \(1.96\times0.02086\approx0.0409\). The 95% CI is about \((0.639,\ 0.721)\).</p>
+</div>
+
+<div class="box thm"><span class="tag">Method: CI for a proportion</span>
+<ol class="steps">
+<li>\(\hat p=\dfrac{\text{number of successes}}{n}\). "Success" is whatever the question asks the proportion of (smokers, infected, defective, heads).</li>
+<li>\(z_{\alpha/2}\) from the table (section 6).</li>
+<li>Write \(\hat p\pm z_{\alpha/2}\sqrt{\hat p(1-\hat p)/n}\). Use \(\hat p\), never \(p\), under the root.</li>
+<li>Round numbers that are friendly without a calculator: \(\sqrt{0.16/10000}=0.004\), \(\sqrt{0.09/10000}=0.003\).</li>
+</ol>
+</div>
+<div class="box eg"><span class="tag">Past-paper examples</span>
+<p><b>Dec 2022 Q8.</b> 1900 infected out of 10000; 95% CI. \(\hat p=0.19\): \(0.19\pm1.96\sqrt{\frac{0.19\times0.81}{10000}}\), about \((0.1823,\ 0.1977)\).</p>
+<p><b>May 2018 Q7.</b> 500 heads in 5000 tosses; 95% CI for \(p\). \(\hat p=0.1\): \(0.1\pm1.96\sqrt{\frac{0.1\times0.9}{5000}}\), about \((0.0917,\ 0.1083)\).</p>
+<p><b>May 2017 Q7.</b> 1000 of 10000 families own cars; 90% CI. \(\hat p=0.1\), standard error \(\sqrt{0.09/10000}=0.003\): \(0.1\pm1.645(0.003)=0.1\pm0.004935\), that is \((0.095065,\ 0.104935)\).</p>
+<p><b>Dec 2024 Q17(b).</b> 110 smokers out of 1000; 93% CI. \(\hat p=0.11\), \(z_{0.035}\approx1.81\): \(0.11\pm1.81\sqrt{\frac{0.11\times0.89}{1000}}\), about \((0.0921,\ 0.1279)\).</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts</span>
+<p>Slide 30's "hard to simplify" inequality can in fact be solved: squaring \(|\hat p-p|\lt z\sqrt{p(1-p)/n}\) gives a quadratic inequality in \(p\), whose solution is called the <b>Wilson interval</b>. For the large \(n\) of proportion questions in past papers (\(n\ge1000\)) its end points differ from slide 30's by about 0.001 or less, and the course uses the simpler plug-in interval of slide 30, so that is what you should write.</p>
+<p>A common rule of thumb for the normal approximation to be good: at least about 10 successes and 10 failures (\(n\hat p\ge10\) and \(n(1-\hat p)\ge10\)). Every past-paper question satisfies this easily.</p>
+</div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Choosing the sample size</h2>
+<p>Slide 33 opens 4.6, More exercises. Its two exercises turn the CI around: instead of "here is the sample, find the interval", they ask "how big must the sample be for the interval to be this short?". Past papers ask this often (Dec 2023 Q9(c), May 2019 Q10, Dec 2017 Q8(b)).</p>
+<div class="box thm"><span class="tag">Width and margin of error</span>
+<p>The interval \(\bar x\pm z_{\alpha/2}\frac{\sigma}{\sqrt n}\) has <b>half-width</b> (also called the <b>margin of error</b>) and <b>width</b> (length)</p>
+\[ E=z_{\alpha/2}\frac{\sigma}{\sqrt n}, \]
+\[ \text{width}=2E=2z_{\alpha/2}\frac{\sigma}{\sqrt n}. \]
+<p>To make the margin at most a target \(E_0\), solve \(z_{\alpha/2}\frac{\sigma}{\sqrt n}\le E_0\) for \(n\):</p>
+\[ \sqrt n\ge\frac{z_{\alpha/2}\,\sigma}{E_0}\quad\Longleftrightarrow\quad n\ge\Big(\frac{z_{\alpha/2}\,\sigma}{E_0}\Big)^2. \]
+<p>Then round <b>up</b> to the next whole number.</p>
+<p class="word"><b>In words:</b> the width shrinks like \(1/\sqrt n\). To halve the width you need four times as many observations. Rounding down would give an interval slightly too wide.</p>
+</div>
+<div class="warn box"><span class="tag">Trap: "within ±500" versus "length 500"</span>
+<p>"Estimate within \(\pm E_0\)" bounds the <b>half</b>-width: \(z\sigma/\sqrt n\le E_0\). "Interval of length at most \(\ell\)" bounds the <b>full</b> width: \(2z\sigma/\sqrt n\le\ell\). Read which one the question means.</p>
+</div>
+
+<div class="figure"><p class="ttl">Margin of error against sample size</p>
+<canvas class="plot" id="fW" style="height:250px"></canvas>
+<div class="ctrl">
+<label>σ <input type="range" id="fW-s" min="500" max="4000" step="100" value="2000"></label>
+<label>level <select id="fW-lv"><option value="1.645">90%</option><option value="1.96" selected>95%</option><option value="2.575">99%</option></select></label>
+<label>target ±E₀ <input type="range" id="fW-e" min="200" max="1500" step="50" value="400"></label>
+</div>
+<div class="readout" id="fW-out"></div>
+<p class="cap">The curve is \(E=z_{\alpha/2}\sigma/\sqrt n\); the dashed line is the target \(E_0\). The smallest whole \(n\) where the curve is at or below the line is the sample size needed. Halve the target: the required \(n\) roughly quadruples.</p></div>
+
+<div class="box eg"><span class="tag">Exercise 4.10 (slide 33), solved</span>
+<p>Let \(\bar x\) be the observed mean of a random sample of size \(n\) from a distribution having mean \(\mu\) and known variance \(\sigma^2\). Find \(n\) so that \(\bar x-\sigma/4\) to \(\bar x+\sigma/4\) is an approximate 95% confidence interval for \(\mu\).</p>
+<p><b>Solution.</b> The 95% CI is \(\bar x\pm1.96\frac{\sigma}{\sqrt n}\). Match the half-widths:</p>
+\[ 1.96\frac{\sigma}{\sqrt n}=\frac{\sigma}{4}\ \Longrightarrow\ \sqrt n=4(1.96)=7.84. \]
+<p>So \(n=7.84^2\approx61.5\). Since \(n\) is a whole number, take \(n=62\) (then \(1.96\sigma/\sqrt{62}\approx0.249\sigma\le\sigma/4\), so \(\bar x\pm\sigma/4\) has confidence at least 95%); \(n\approx61\) is also an acceptable "approximate" answer. Note that \(\sigma\) cancels: the answer does not depend on the unknown size of \(\sigma\).</p>
+</div>
+
+<div class="box eg"><span class="tag">Exercise 4.11 (slide 33), solved</span>
+<p>Assume a binomial model for a certain random variable. If we desire a 90% confidence interval for \(p\) that is at most 0.02 in length, find \(n\). [Hint: note that \(\sqrt{\frac yn\big(1-\frac yn\big)}\le\sqrt{\frac12\big(1-\frac12\big)}\).] Answer printed on the slide: 6765.</p>
+<p><b>Solution.</b> Here \(y\) is the number of successes, so \(\frac yn=\hat p\). The 90% CI for \(p\) has length</p>
+\[ 2(1.645)\sqrt{\frac{\hat p(1-\hat p)}n}. \]
+<p>We do not know \(\hat p\) before sampling, so use the hint: \(\hat p(1-\hat p)\le\frac14\) for every \(\hat p\), because \(\hat p(1-\hat p)=\frac14-\big(\hat p-\frac12\big)^2\). So the length is at most</p>
+\[ 2(1.645)\sqrt{\frac{1}{4n}}=\frac{1.645}{\sqrt n}. \]
+<p>We need \(\frac{1.645}{\sqrt n}\le0.02\), that is \(\sqrt n\ge82.25\), so \(n\ge82.25^2=6765.0625\). The smallest whole number is \(n=6766\).</p>
+</div>
+<p class="slidefix"><b>Note on slide 33.</b> The boxed answer is 6765. Since \(82.25^2=6765.0625\), \(n=6765\) gives length \(1.645/\sqrt{6765}\approx0.0200001\), a hair over 0.02; strictly the smallest \(n\) is 6766. The slide has rounded \(6765.06\) to the nearest whole number instead of up. In an exam, show \(n\ge82.25^2\) and round up.</p>
+
+<div class="box eg"><span class="tag">Past-paper examples</span>
+<p><b>May 2019 Q10.</b> Sample from \(N(\mu,4)\). The 99% CI is \(\bar X\pm2.575\cdot\frac{2}{\sqrt n}\), width \(\frac{4(2.575)}{\sqrt n}=\frac{10.3}{\sqrt n}\). Width \(\lt0.7\) needs \(\sqrt n\gt\frac{10.3}{0.7}\approx14.71\), \(n\gt216.5\): \(n\ge217\).</p>
+<p><b>Dec 2017 Q8(b)(ii).</b> \(\sigma=0.01\) mm, 95%, length \(\le10^{-3}\): \(\frac{2(1.96)(0.01)}{\sqrt n}\le0.001\), \(\sqrt n\ge39.2\), \(n\ge1536.64\): \(n=1537\).</p>
+</div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>More exercises: Poisson mean and tacks</h2>
+<p>Slide 34 closes the chapter with two more exercises. The first shows a useful idea: when the variance of a distribution is a function of its mean, estimate the variance from the mean.</p>
+<div class="box eg"><span class="tag">Exercise 4.12 (slide 34), solved</span>
+<p>It is known that a random variable \(X\) has a Poisson distribution with parameter \(\mu\). A sample of 200 observations from this distribution has a mean equal to 3.4. Construct an approximate 90% confidence interval for \(\mu\). Answer printed on the slide: \((3.19,\ 3.61)\).</p>
+<p><b>Solution.</b> For a Poisson(\(\mu\)) variable, \(E(X)=\mu\) and \(\operatorname{Var}(X)=\mu\) (P3). So \(\sigma=\sqrt\mu\) is unknown, but since \(n=200\) is large we may replace it by an estimate. The natural estimate of \(\sigma^2=\mu\) is \(\bar x=3.4\) (we are not given \(s\)). By the CLT,</p>
+\[ \bar x\pm z_{0.05}\sqrt{\frac{\bar x}{n}}=3.4\pm1.645\sqrt{\frac{3.4}{200}}. \]
+<p>\(\sqrt{0.017}\approx0.1304\) and \(1.645\times0.1304\approx0.2145\), so the 90% CI is about \((3.19,\ 3.61)\), matching the slide.</p>
+<p class="word"><b>In words:</b> same recipe as section 8, but the "sample standard deviation" comes from the model: for Poisson data the variance equals the mean.</p>
+</div>
+<div class="box eg"><span class="tag">Exercise 4.13 (slide 34), solved</span>
+<p>When 100 tacks were thrown on a table, 60 of them landed point up. Obtain a 95% confidence interval for the probability that a tack of this type lands point up. Assume independence.</p>
+<p><b>Solution.</b> Each tack is a Bernoulli trial ("point up" = success), so use section 9. \(\hat p=\frac{60}{100}=0.6\), \(\hat p(1-\hat p)=0.24\), \(z_{0.025}=1.96\):</p>
+\[ 0.6\pm1.96\sqrt{\frac{0.24}{100}}=0.6\pm1.96(0.04899). \]
+<p>The half-width is about \(0.0960\), so the 95% CI is about \((0.504,\ 0.696)\).</p>
+</div>
+<p>The same "variance from the model" idea appears in Dec 2025 Q28(a)(ii) (exam taster): exponential outputs with rate \(\lambda=\frac12\) have mean \(\frac1\lambda=2\) and standard deviation \(\frac1\lambda=2\), so \(\sigma=2\) is known from the model.</p>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Summary</h2>
+<ul class="list">
+<li>A <b>parameter</b> \(\theta\) is an unknown number in a known family of distributions, \(f(u;\theta)\) or \(p(x;\theta)\), \(\theta\in\Theta\) (the parameter space).</li>
+<li>A <b>random sample</b> \(X_1,\dots,X_n\) is i.i.d. copies of \(X\); capital letters are random, lower case \(x_1,\dots,x_n\) are the observed values.</li>
+<li>A <b>statistic</b> is a function of the sample only (no unknown parameters). An <b>estimator</b> is a statistic used to guess \(\theta\) (a random variable); an <b>estimate</b> is its value (a number).</li>
+<li>\(T\) is <b>unbiased</b> for \(\theta\) if \(E(T)=\theta\). \(\bar X\) is unbiased for \(\mu\), \(S^2=\frac1{n-1}\sum(X_i-\bar X)^2\) for \(\sigma^2\) (any distribution), \(\hat p\) for \(p\); with \(\mu\) known, \(W^2=\frac1n\sum(X_i-\mu)^2\) for \(\sigma^2\).</li>
+<li>\(E(\bar X)=\mu\), \(\operatorname{Var}(\bar X)=\sigma^2/n\): the sample mean gets more accurate as \(n\) grows.</li>
+<li>A \((1-\alpha)100\%\) <b>CI</b> \((L,U)\) has random end points with \(P(\theta\in(L,U))=1-\alpha\). Meaning: about \((1-\alpha)100\%\) of intervals from repeated samples trap \(\theta\). It is <b>not</b> the probability that \(\theta\) is in one computed interval.</li>
+<li>\(z_{\alpha/2}\) satisfies \(P(|Z|\lt z_{\alpha/2})=1-\alpha\), that is \(\Phi(z_{\alpha/2})=1-\frac\alpha2\). 90%: 1.645; 95%: 1.96; 99%: 2.575.</li>
+</ul>
+<div class="box thm"><span class="tag">The three intervals</span>
+<div class="scroll"><table>
+<tr><th>unknown</th><th>when</th><th>\((1-\alpha)100\%\) CI</th></tr>
+<tr><td>\(\mu\)</td><td>\(\sigma\) known (slide 22)</td><td>\(\bar x\pm z_{\alpha/2}\dfrac{\sigma}{\sqrt n}\)</td></tr>
+<tr><td>\(\mu\)</td><td>\(\sigma\) unknown, use \(s\) (slide 25)</td><td>\(\bar x\pm z_{\alpha/2}\dfrac{s}{\sqrt n}\)</td></tr>
+<tr><td>\(p\)</td><td>proportion (slide 30)</td><td>\(\hat p\pm z_{\alpha/2}\sqrt{\dfrac{\hat p(1-\hat p)}n}\)</td></tr>
+</table></div>
+<p>All three are "estimate \(\pm\ z_{\alpha/2}\times\) standard error". Sample size for margin \(\le E_0\): \(n\ge(z_{\alpha/2}\sigma/E_0)^2\), rounded up; for a proportion with no estimate yet, use \(\hat p(1-\hat p)\le\frac14\).</p>
+</div>
+<div class="box thm"><span class="tag">Method: any CI question in the exam</span>
+<ol class="steps">
+<li>Decide what is estimated: a mean (data are measurements) or a proportion (data are counts of yes/no).</li>
+<li>For a mean: is \(\sigma\) given (population SD, "SD unchanged", "\(N(\mu,25)\)", or from the model)? Use it. Otherwise use \(s\) (take \(\sqrt{\ }\) of a sample variance).</li>
+<li>\(z_{\alpha/2}\): solve \(\Phi(z)=1-\frac\alpha2\) in the table; state the value.</li>
+<li>Write estimate \(\pm\ z_{\alpha/2}\times\) standard error as an interval \((\ell,u)\). An unevaluated expression is accepted when the paper says so.</li>
+<li>If asked to interpret: "about \((1-\alpha)100\%\) of intervals constructed this way from repeated samples would contain the true value".</li>
+</ol>
+</div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Common mistakes</h2>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Dividing by \(n\) instead of \(\sqrt n\): \(\bar x\pm1.96\frac{\sigma}{n}\); or by \(\sqrt n\) twice in the proportion interval.</span>
+<span class="ok">✔</span><span>The standard error of a mean is \(\sigma/\sqrt n\); of a proportion \(\sqrt{\hat p(1-\hat p)/n}\) (the \(n\) is inside the root, once).</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Using \(\Phi(z)=1-\alpha\) (for 90%, \(z=1.28\)), or \(\Phi(z)=\) the level itself.</span>
+<span class="ok">✔</span><span>Two tails share \(\alpha\): solve \(\Phi(z)=1-\frac\alpha2\). For 90%, \(\Phi(z)=0.95\), \(z=1.645\).</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Using the variance where the standard deviation belongs: from "\(N(\mu,25)\)" or "sample variance 4", writing \(\frac{25}{\sqrt n}\) or \(\frac{4}{\sqrt n}\).</span>
+<span class="ok">✔</span><span>\(N(\mu,25)\) means \(\sigma^2=25\), \(\sigma=5\). Sample variance 4 means \(s=2\).</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>"There is a 95% probability that \(\mu\) is in \((593.8,606.2)\)", or "95% of the data lie in the interval".</span>
+<span class="ok">✔</span><span>\(\mu\) is fixed; the 95% describes the procedure: about 95% of intervals from repeated samples trap \(\mu\) (slides 16, 22, 27). The interval is about the mean, not individual values.</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Computing the sample variance with \(n\) in the denominator.</span>
+<span class="ok">✔</span><span>\(s^2=\frac1{n-1}\sum(x_i-\bar x)^2\) (unbiased, slides 9 to 11).</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>In sample-size questions, rounding \(n\) down (\(n\ge43.3\Rightarrow n=43\)), or mixing up half-width and full length.</span>
+<span class="ok">✔</span><span>Always round <b>up</b>. "Within \(\pm E\)" is the half-width; "length at most \(\ell\)" is the full width \(2z\sigma/\sqrt n\).</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Putting the unknown \(p\) under the square root in the final answer, or using \(p=0.5\) when \(\hat p\) is known.</span>
+<span class="ok">✔</span><span>Use the observed \(\hat p\) (slide 30). \(\frac14\) is only for planning a sample size before any data exist (Exercise 4.11).</span>
+</div></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Find the mistake</h2>
+<p class="muted">Written for these notes (the handout has no exercises of this kind).</p>
+<div class="q"><p class="qh">1. A sample of 25 from a population with \(\sigma=10\) has \(\bar x=50\). A student's 95% CI:</p>
+<div class="handwork">
+\[ 50\pm1.96\cdot\frac{10}{25}=50\pm0.784, \]
+\[ \text{CI}=(49.216,\ 50.784). \]
+</div>
+<details><summary>Hint</summary><div><p>What is the standard deviation of \(\bar X\)?</p></div></details>
+<details><summary>Answer</summary><div><p>The student divided by \(n=25\) instead of \(\sqrt n=5\). Correct: \(50\pm1.96\cdot\frac{10}{5}=50\pm3.92\), so \((46.08,\ 53.92)\).</p></div></details></div>
+<div class="q"><p class="qh">2. For a 90% CI a student writes: "\(\alpha=0.1\), so I need \(\Phi(z)=0.9\); the table gives \(z=1.28\)."</p>
+<details><summary>Hint</summary><div><p>Draw the normal curve with the central 90% shaded. How much area is to the left of the right-hand cut?</p></div></details>
+<details><summary>Answer</summary><div><p>The left of the right-hand cut holds the central 90% plus the left tail 5%: \(\Phi(z)=0.95\), so \(z_{0.05}=1.645\). With 1.28 the central area would be only 80%.</p></div></details></div>
+<div class="q"><p class="qh">3. In a survey 120 out of 400 people say yes. A student's 95% CI for the proportion:</p>
+<div class="handwork">
+\[ \hat p=0.3,\quad 0.3\pm1.96\cdot\frac{\sqrt{0.3\times0.7}}{400}, \]
+\[ \text{CI}\approx(0.2978,\ 0.3022). \]
+</div>
+<details><summary>Hint</summary><div><p>Where should the \(n\) be?</p></div></details>
+<details><summary>Answer</summary><div><p>\(n\) belongs <b>inside</b> the square root: \(\sqrt{0.21/400}=\frac{\sqrt{0.21}}{20}\approx0.02291\). Correct CI: \(0.3\pm1.96(0.02291)=0.3\pm0.0449\), about \((0.255,\ 0.345)\). An interval only \(\pm0.002\) wide from 400 people should have looked suspicious.</p></div></details></div>
+<div class="q"><p class="qh">4. Data 4, 6, 8, 10 from a population with unknown \(\sigma\). A student finds \(\bar x=7\) and</p>
+<div class="handwork">
+\[ s^2=\frac{9+1+1+9}{4}=5,\quad s=\sqrt5. \]
+</div>
+<details><summary>Hint</summary><div><p>Which denominator makes \(S^2\) unbiased (slides 9 to 11)?</p></div></details>
+<details><summary>Answer</summary><div><p>Divide by \(n-1=3\): \(s^2=\frac{20}{3}\approx6.67\), \(s\approx2.58\). Dividing by \(n\) underestimates \(\sigma^2\) on average by the factor \(\frac{n-1}n\).</p></div></details></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1. Let \(X_1,X_2,X_3\) be a random sample with mean \(\mu\). Which of \(T_1=\frac{X_1+X_2}2\), \(T_2=X_1+X_2-X_3\), \(T_3=2X_1\) are unbiased estimators of \(\mu\)?</p>
+<details><summary>Answer</summary><div><p>\(E(T_1)=\frac{\mu+\mu}2=\mu\) and \(E(T_2)=\mu+\mu-\mu=\mu\): both unbiased. \(E(T_3)=2\mu\ne\mu\): biased. (Unbiased is not the same as good: \(T_2\) has variance \(3\sigma^2\), worse than a single observation.)</p></div></details></div>
+<div class="q"><p class="qh">2. Is \(\dfrac{\bar X-\mu}{\sigma/\sqrt n}\) a statistic when \(\mu\) and \(\sigma\) are unknown? Is \(\bar X\pm1.96\,\sigma/\sqrt n\) a pair of statistics when \(\sigma\) is known?</p>
+<details><summary>Answer</summary><div><p>No: it contains the unknown \(\mu\) (and \(\sigma\)). Yes: with \(\sigma\) known, \(L\) and \(U\) depend only on the sample, as Definition 4.4 requires.</p></div></details></div>
+<div class="q"><p class="qh">3. Find \(z_{\alpha/2}\) for a 96% confidence interval from the table (\(\Phi(2.05)=0.9798\), \(\Phi(2.06)=0.9803\)).</p>
+<details><summary>Answer</summary><div><p>\(\alpha=0.04\), so \(\Phi(z)=0.98\). 0.98 lies between the two entries, nearer to 0.9798: \(z_{0.02}\approx2.05\) (interpolation: \(2.05+0.01\times\frac25=2.054\)).</p></div></details></div>
+<div class="q"><p class="qh">4. With everything else unchanged, what happens to the width of a CI for \(\mu\) if (a) the sample size is multiplied by 4, (b) the level goes from 95% to 99%?</p>
+<details><summary>Answer</summary><div><p>(a) Width is proportional to \(1/\sqrt n\), so it halves. (b) It is multiplied by \(\frac{2.575}{1.96}\approx1.31\): higher confidence costs a wider interval.</p></div></details></div>
+<div class="q"><p class="qh">5. A 95% CI for \(\mu\) (σ known) is \((10,\ 14)\). What are \(\bar x\) and the 90% CI from the same data?</p>
+<details><summary>Answer</summary><div><p>The centre is \(\bar x=12\) and the half-width \(1.96\frac{\sigma}{\sqrt n}=2\), so \(\frac{\sigma}{\sqrt n}=\frac{2}{1.96}\). The 90% half-width is \(1.645\times\frac{2}{1.96}\approx1.679\): the 90% CI is about \((10.32,\ 13.68)\).</p></div></details></div>
+<div class="q"><p class="qh">6. Two researchers each compute a 95% CI for the same \(\mu\) from independent samples. What is the probability (before sampling) that both intervals trap \(\mu\)?</p>
+<details><summary>Answer</summary><div><p>Independent samples give independent events, each of probability 0.95: \(0.95^2=0.9025\). So even "95%" intervals miss quite often when many are computed, as the section 5 figure shows.</p></div></details></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span>Exam taster</h2>
+<p>Real past-paper questions, about one per question type of this chapter, newest first within each type, so you can see how the exam asks about it. Each has a hint and the final answer; the full working and the standard method for each type are in the <a href="guide-P4.html">P4 exam guide</a>.</p>
+<p class="muted">This chapter's three question types (CI for a mean, including sample size and interpretation; CI for a proportion; point estimation) account for 27 question parts in 23 questions of the past papers (Dec 2012 to May 2026). Nearly every Part II paper ends with a confidence interval. Since Dec 2022 there are no calculators: the paper gives the standard normal table and usually says "a final expression suffices".</p>
+
+<div class="q" id="t1"><p class="src"><b>Dec 2025 Q25</b><span>2 marks · multiple choice</span><a class="guide" href="guide-P4.html#P4-1">Guide · P4.1 Confidence interval for a mean</a></p>
+<p class="qh">A 95% confidence interval for the mean height of students is (165 cm, 175 cm). Which is the correct interpretation?</p>
+<p>(A) There is a 95% chance that the true mean is in the interval. &nbsp; (B) 95% of students have heights in the interval. &nbsp; (C) If sampling were repeated many times, 95% of the computed intervals would contain the true mean. &nbsp; (D) The sample mean is 170 with 95% certainty.</p>
+<details><summary>Hint</summary><div><p>Which quantity is random, the interval or the true mean? Re-read slides 15, 16 and 27 (sections 5 and 8).</p></div></details>
+<details><summary>Answer</summary><div><p><b>(C)</b>. (A) treats the fixed mean as random; (B) confuses the mean with individuals; (D): the sample mean is exactly 170, the centre, with no uncertainty.</p><p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t2"><p class="src"><b>Dec 2025 Q28(a)(ii)</b><span>part of a 10-mark question</span><a class="guide" href="guide-P4.html#P4-1">Guide · P4.1 Confidence interval for a mean</a></p>
+<p class="qh">The daily energy output (MWh) of a wind turbine follows an exponential distribution with rate \(\lambda=\frac12\); \(X_1,\dots,X_n\) are the outputs of different turbines. A sample of \(n=64\) turbines has observed mean \(\bar x=2.1\).</p>
+<p class="qh">(a)(i) Approximate \(P(1.75\lt\bar X\lt2.25)\). (ii) Construct an 88% confidence interval for the true mean.</p>
+<p class="muted">Only (a)(ii) belongs to this chapter; (a)(i) is a CLT probability (P3).</p>
+<details><summary>Hint</summary><div><p>An exponential distribution with rate \(\lambda\) has mean \(\frac1\lambda\) and standard deviation \(\frac1\lambda\), so \(\sigma\) is known from the model (section 11). For 88%, solve \(\Phi(z)=0.94\) in the table (section 6).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\sigma=2\), \(z_{0.06}\approx1.555\) (between \(\Phi(1.55)=0.9394\) and \(\Phi(1.56)=0.9406\)):</p>
+\[ 2.1\pm1.555\cdot\frac{2}{\sqrt{64}}=2.1\pm0.389, \]
+<p>about \((1.711,\ 2.489)\). (If you treat \(\sigma\) as unknown, there is no \(s\) given, so the model value is the intended one.)</p>
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t3"><p class="src"><b>Dec 2023 Q9</b><span>10 marks</span><a class="guide" href="guide-P4.html#P4-1">Guide · P4.1 Confidence interval for a mean</a></p>
+<p class="qh">(a) [4 marks] A random sample of 64 one-bedroom apartments in Central has a mean monthly rent of HKD 10000. The population standard deviation is HKD 2000. Construct a 95% confidence interval for the population mean.</p>
+<p class="qh">(b) [3 marks] A friend says "the mean will fall within the calculated confidence interval 95% of the time." Do you agree? Explain.</p>
+<p class="qh">(c) [3 marks] What sample size is needed to estimate the mean within \(\pm\)HKD 500 with 90% confidence? Answer as a rational number.</p>
+<details><summary>Hint</summary><div><p>(a) \(\sigma\) is known: section 7. (b) What is fixed and what varies from sample to sample? (c) "Within \(\pm500\)" is the half-width: solve \(z_{0.05}\frac{\sigma}{\sqrt n}\le500\) and round up (section 10).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) \(10000\pm1.96\cdot\frac{2000}{8}=10000\pm490\): \((9510,\ 10490)\).</p>
+<p>(b) Disagree. The population mean is a fixed number; it does not "fall" anywhere. The 95% means that about 95% of intervals computed in this way from repeated samples would contain the mean.</p>
+<p>(c) \(n\ge\big(\frac{1.645\times2000}{500}\big)^2=6.58^2=43.2964\), so \(n=44\).</p>
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t4"><p class="src"><b>May 2026 Q9(b)</b><span>part of a 10-mark question</span><a class="guide" href="guide-P4.html#P4-2">Guide · P4.2 Confidence interval for a proportion</a></p>
+<p class="qh">(a) Find \(k\) such that \(P(|Z|\lt k)=0.97\), where \(Z\sim N(0,1)\).</p>
+<p class="qh">(b) To estimate the proportion of infected persons in a population during a pandemic, a survey obtained 10,000 samples; 2,000 are infected. Use the standard normal table to construct a 97% confidence interval for the proportion of infected persons.</p>
+<p class="muted">Part (a) is the critical value of section 6; part (b) belongs to this chapter's type P4.2.</p>
+<details><summary>Hint</summary><div><p>The \(k\) of part (a) is \(z_{0.015}\): \(\Phi(k)=0.985\). Then use slide 30's interval with \(\hat p=\frac{2000}{10000}\). The square root comes out exactly.</p></div></details>
+<details><summary>Answer</summary><div><p>\(k=2.17\), \(\hat p=0.2\), \(\sqrt{\frac{0.2\times0.8}{10000}}=\frac{0.4}{100}=0.004\):</p>
+\[ 0.2\pm2.17(0.004)=0.2\pm0.00868, \]
+<p>so the 97% CI is \((0.19132,\ 0.20868)\).</p>
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t5"><p class="src"><b>Dec 2021 Q8</b><span>10 marks</span><a class="guide" href="guide-P4.html#P4-3">Guide · P4.3 Point estimation</a></p>
+<p class="qh">A biased coin, which shows heads with probability \(p\), is flipped independently 1000 times and shows 400 heads. What would your estimate of \(p\) be? Justify your answer.</p>
+<details><summary>Hint</summary><div><p>Record each flip as \(X_i=1\) (head) or 0. Which statistic estimates \(p\), and what are its mean and variance (sections 3 and 9)?</p></div></details>
+<details><summary>Answer</summary><div><p>\(\hat p=\frac{400}{1000}=0.4\). Justification: \(\hat p=\bar X\) with \(E(\hat p)=p\) (unbiased) and \(\operatorname{Var}(\hat p)=\frac{p(1-p)}{1000}\le\frac1{4000}\), so by the law of large numbers the sample proportion is close to \(p\).</p>
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+</section>
+
+</main>
+</div>
+<script>
+(function(){
+/* ===== MATH1853 shared helpers (TEMPLATE, frozen after the L1 pilot) ===== */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const PI=Math.PI;
+const $=id=>document.getElementById(id);
+
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+const piTicks=(lo,hi)=>{const out=[];const L={'-4':'−2π','-3':'−3π/2','-2':'−π','-1':'−π/2','0':'0','1':'π/2','2':'π','3':'3π/2','4':'2π','5':'5π/2'};for(let k=Math.ceil(lo/(PI/2));k<=Math.floor(hi/(PI/2));k++)out.push([k*PI/2,L[k]||'']);return out;};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+
+/* ---------- exact fractions for readouts: frac(0.75) -> "3/4" ---------- */
+function frac(v,maxDen=60){
+  if(!isFinite(v))return '∞';
+  const s=v<0?'−':'';v=Math.abs(v);
+  for(let d=1;d<=maxDen;d++){const n=Math.round(v*d);if(Math.abs(n/d-v)<1e-9)return s+(d===1?String(n):n+'/'+d);}
+  return s+fmt(v,4);
+}
+/* entry formatter for matrices: numbers, or strings such as "3/2", "λ−5" */
+const ent=v=>typeof v==='number'?frac(v):String(v).replace(/-/g,'−');
+
+
+/* matrix as an HTML table: matHTML(M,{aug:true, hl:[rows], hl2:[rows], piv:[[r,c]]}) */
+function matHTML(M,o={}){
+  const nc=M[0].length, aug=o.aug!==false, pv=new Set((o.piv||[]).map(p=>p[0]+','+p[1]));
+  let h='<table class="mat"><tbody>';
+  M.forEach((row,r)=>{
+    const cls=(o.hl||[]).includes(r)?' class="hl"':(o.hl2||[]).includes(r)?' class="hl2"':'';
+    h+=`<tr${cls}>`+row.map((v,c)=>{
+      const cl=[]; if(aug&&c===nc-1)cl.push('aug'); if(pv.has(r+','+c))cl.push('piv'); if(v===0||v==='0')cl.push('zero');
+      return `<td${cl.length?' class="'+cl.join(' ')+'"':''}>${ent(v)}</td>`;}).join('')+'</tr>';
+  });
+  return h+'</tbody></table>';
+}
+
+/* ---------- row-reduction player ----------
+   rrPlayer('id',{title, aug:true, steps:[{M:[[..]], op:'R₂ ← R₂ − 5R₁', why:'...', hl:[1], hl2:[2], piv:[[0,0]]}]})
+   aug: last column is the right-hand side (drawn after a bar). Rows/cols in hl/piv are 0-based. */
+function rrPlayer(id,cfg){
+  const host=$(id); if(!host) return;
+  host.classList.add('rr');
+  host.innerHTML=(cfg.title?`<p class="ttl">${cfg.title}</p>`:'')+
+    `<div class="op" aria-live="polite"></div><div class="stage"></div><p class="why"></p>`+
+    `<div class="bar"><button type="button" data-a="first" aria-label="Back to the start">⟲ Start</button>`+
+    `<button type="button" data-a="prev" aria-label="Previous step">◀ Back</button><span class="count"></span>`+
+    `<button type="button" data-a="next" aria-label="Next step">Next ▶</button></div>`;
+  let k=0; const S=cfg.steps, aug=cfg.aug!==false;
+  function render(){
+    const st=S[k], h=matHTML(st.M,{aug,hl:st.hl,hl2:st.hl2,piv:st.piv});
+    host.querySelector('.stage').innerHTML=h;
+    host.querySelector('.op').textContent=st.op||(k===0?'Start':'');
+    host.querySelector('.why').innerHTML=st.why||'';
+    host.querySelector('.count').textContent=`step ${k} of ${S.length-1}`;
+    host.querySelector('[data-a=prev]').disabled=k===0;
+    host.querySelector('[data-a=first]').disabled=k===0;
+    host.querySelector('[data-a=next]').disabled=k===S.length-1;
+  }
+  host.addEventListener('click',e=>{const a=e.target.closest('button');if(!a)return;
+    const t=a.dataset.a; if(t==='next')k=Math.min(S.length-1,k+1); if(t==='prev')k=Math.max(0,k-1); if(t==='first')k=0; render();});
+  render();
+}
+
+/* ---------- 3D view with drag-to-rotate ----------
+   view3d('canvasId',{scale, yaw, pitch, draw:(V)=>{ V.axes(L,labels); V.line(p,q,color,w,dash); V.poly([p..],color,alpha); V.point(p,color,label) }})
+   Points are [x,y,z]; z is drawn upwards. Primitives are depth-sorted (painter's algorithm). Returns {redraw}. */
+function view3d(id,o){
+  const cv=$(id); if(!cv) return {redraw(){},setView(){}};
+  let yaw=o.yaw??-0.9, pitch=o.pitch??0.45, drag=null;
+  function redraw(){
+    const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight; if(!W||!H)return;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+    g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+    const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+    const s=(o.scale||1)*Math.min(W,H)/2.2, c=(typeof o.center==='function'?o.center():o.center)||[0,0,0];
+    const P=p=>{const x=p[0]-c[0],y=p[1]-c[1],z=p[2]-c[2];
+      const X1=x*cy-y*sy, Y1=x*sy+y*cy;            /* turn about the vertical axis */
+      const Y2=Y1*cp-z*sp, Z2=Y1*sp+z*cp;           /* tilt towards the viewer */
+      return [W/2+X1*s, H/2-Z2*s, Y2];};
+    const prims=[];
+    const V={
+      P,
+      line(p,q,color,w=2,dash){const a=P(p),b=P(q);prims.push({d:(a[2]+b[2])/2,f(){g.strokeStyle=color;g.lineWidth=w;g.setLineDash(dash||[]);g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.stroke();g.setLineDash([]);}});},
+      poly(pts,color,alpha=.25){const q=pts.map(P),d=q.reduce((t,v)=>t+v[2],0)/q.length;prims.push({d,f(){g.globalAlpha=alpha;g.fillStyle=color;g.beginPath();q.forEach((v,i)=>i?g.lineTo(v[0],v[1]):g.moveTo(v[0],v[1]));g.closePath();g.fill();g.globalAlpha=1;}});},
+      point(p,color,label,r=5){const a=P(p);prims.push({d:a[2]-1e3,f(){g.beginPath();g.arc(a[0],a[1],r,0,7);g.fillStyle=color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();
+        if(label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=color;g.textAlign='left';g.textBaseline='bottom';g.fillText(label,a[0]+8,a[1]-6);}}});},
+      text(p,str,color){const a=P(p);prims.push({d:a[2]-1e3,f(){g.font='12px Inter, system-ui, sans-serif';g.fillStyle=color||css('--muted');g.textAlign='center';g.textBaseline='middle';g.fillText(str,a[0],a[1]);}});},
+      axes(L=3,lab=['x₁','x₂','x₃']){const A=css('--axis');
+        [[L,0,0],[0,L,0],[0,0,L]].forEach((e,i)=>{V.line([-e[0],-e[1],-e[2]].map((v,j)=>v+c[j]*0),e,A,1.2);V.text(e.map(v=>v*1.1),lab[i],A);});}
+    };
+    o.draw(V);
+    prims.sort((a,b)=>b.d-a.d).forEach(p=>p.f());
+    g.font='11px Inter, system-ui, sans-serif';g.fillStyle=css('--muted');g.textAlign='right';g.textBaseline='bottom';g.fillText('drag to turn',W-8,H-6);
+  }
+  const pos=e=>e.touches?[e.touches[0].clientX,e.touches[0].clientY]:[e.clientX,e.clientY];
+  cv.addEventListener('pointerdown',e=>{drag=pos(e);cv.setPointerCapture&&cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!drag)return;const p=pos(e);yaw+=(p[0]-drag[0])*0.01;pitch=Math.max(-1.45,Math.min(1.45,pitch+(p[1]-drag[1])*0.01));drag=p;redraw();});
+  ['pointerup','pointercancel','pointerleave'].forEach(t=>cv.addEventListener(t,()=>drag=null));
+  redraws.push(redraw);
+  return {redraw,setView(y,p){yaw=y;pitch=p;redraw();}};
+}
+
+/* plane a·x = b drawn as a square patch around point p0 (half-width h), tiled so depth sorting works */
+function planePatch(V,a,b,p0,h,color,alpha=.22,n=6){
+  const nn=Math.hypot(...a), u0=Math.abs(a[2])<0.9*nn?[0,0,1]:[1,0,0];
+  const cr=(x,y)=>[x[1]*y[2]-x[2]*y[1],x[2]*y[0]-x[0]*y[2],x[0]*y[1]-x[1]*y[0]];
+  const nz=v=>{const L=Math.hypot(...v);return v.map(t=>t/L);};
+  const u=nz(cr(a,u0)), w=nz(cr(a,u));
+  const t=(b-a.reduce((s,ai,i)=>s+ai*p0[i],0))/(nn*nn), c=p0.map((v,i)=>v+t*a[i]);
+  const at=(i,j)=>c.map((v,k)=>v+(-h+2*h*i/n)*u[k]+(-h+2*h*j/n)*w[k]);
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++)V.poly([at(i,j),at(i+1,j),at(i+1,j+1),at(i,j+1)],color,alpha);
+  [[0,0,n,0],[n,0,n,n],[n,n,0,n],[0,n,0,0]].forEach(e=>V.line(at(e[0],e[1]),at(e[2],e[3]),color,1.2));
+}
+
+/* ===== page figures ===== */
+/* ===== P4 Statistical inference: figures ===== */
+/* seeded random numbers, so every visit (and every screenshot) starts with the same draw */
+function rng(seed){let a=seed>>>0;return ()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};}
+let R=rng(1);
+const gauss=()=>{let u=0;while(u===0)u=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*PI*R());};
+/* standard normal cdf (Abramowitz-Stegun 26.2.17, error below 1e-7) */
+function Phi(z){const s=z<0?-1:1;z=Math.abs(z);const t=1/(1+0.2316419*z),d=0.3989422804*Math.exp(-z*z/2);
+  const p=d*t*(0.31938153+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));return s>0?1-p:p;}
+const phi=x=>Math.exp(-x*x/2)/Math.sqrt(2*PI);
+
+/* ---------- Fig fCI: one hundred intervals (slides 15, 16, 22) ---------- */
+let ciData=null, ciTot=0, ciHit=0;
+function ciDraw(){
+  const n=+$('fCI-n').value, mu=600, sg=20; const out=[];
+  for(let k=0;k<100;k++){let s=0,q=0;const xs=[];for(let i=0;i<n;i++){const x=mu+sg*gauss();xs.push(x);s+=x;}
+    const m=s/n; xs.forEach(x=>q+=(x-m)*(x-m)); out.push({m,s:Math.sqrt(q/(n-1))});}
+  ciData=out; ciTot=0; ciHit=0; ciCount(true);
+}
+function ciCount(add){
+  const z=+$('fCI-lv').value, n=+$('fCI-n').value, useS=$('fCI-c').value==='s';
+  let h=0; ciData.forEach(d=>{const e=z*(useS?d.s:20)/Math.sqrt(n);d.lo=d.m-e;d.hi=d.m+e;d.hit=d.lo<600&&600<d.hi;if(d.hit)h++;});
+  if(add){ciTot+=100;ciHit+=h;}
+  ciData.h=h;
+}
+function drawCI(){
+  if(!ciData) ciDraw();
+  const n=+$('fCI-n').value, w=n===10?40:20, A=css('--accent'), C2=css('--c2'), I=css('--ink');
+  const segs=ciData.map((d,k)=>({x1:d.lo,y1:k+1,x2:d.hi,y2:k+1,color:d.hit?A:C2,width:d.hit?1.6:2.4}));
+  segs.push({x1:600,y1:0,x2:600,y2:101.5,color:I,width:1.6});
+  const pts=ciData.map((d,k)=>({x:d.m,y:k+1,color:d.hit?A:C2,r:1.6}));
+  const xs=[];for(let v=600-w;v<=600+w;v+=w/4)xs.push([v,String(v)]);
+  plot($('fCI'),{xmin:600-w,xmax:600+w,ymin:0,ymax:101.5,xticks:xs,yticks:[[1,'1'],[25,'25'],[50,'50'],[75,'75'],[100,'100']],segs,pts});
+  const lv=$('fCI-lv').selectedOptions[0].text;
+  $('fCI-out').innerHTML=`this draw: <b>${ciData.h} of 100</b> intervals trap μ (aim: about ${lv.replace('%','')})`+
+    `<br>all draws since the last change of settings: <b>${ciHit} of ${ciTot}</b> = ${fmt(100*ciHit/ciTot,1)}%`;
+}
+$('fCI-go').addEventListener('click',()=>{const t=ciTot,h=ciHit;ciDraw();ciTot+=t;ciHit+=h;drawCI();});
+['fCI-lv','fCI-c'].forEach(id=>$(id).addEventListener('input',()=>{ciTot=0;ciHit=0;ciCount(true);drawCI();}));
+$('fCI-n').addEventListener('input',()=>{ciDraw();drawCI();});
+redraws.push(drawCI);
+
+/* ---------- Fig fZ: central area and z(α/2) (slides 18-20) ---------- */
+function zInv(p){let lo=-8,hi=8;for(let i=0;i<80;i++){const m=(lo+hi)/2;if(Phi(m)<p)lo=m;else hi=m;}return (lo+hi)/2;}
+function drawZ(){
+  const c=+$('fZ-c').value/100, a=1-c, z=zInv(1-a/2), A=css('--accent'), S=css('--accent-soft');
+  const segs=[];for(let i=0;i<=240;i++){const x=-z+2*z*i/240;segs.push({x1:x,y1:0,x2:x,y2:phi(x),color:S,width:2});}
+  segs.push({x1:-z,y1:0,x2:-z,y2:phi(z),color:A,width:1.5,dash:[4,3]},{x1:z,y1:0,x2:z,y2:phi(z),color:A,width:1.5,dash:[4,3]});
+  plot($('fZ'),{xmin:-3.6,xmax:3.6,ymin:0,ymax:0.45,xstep:1,yticks:[[0.1,'0.1'],[0.2,'0.2'],[0.3,'0.3'],[0.4,'0.4']],segs,
+    curves:[{f:phi,color:css('--ink'),width:2}],
+    pts:[{x:z,y:phi(z),color:A,r:4,label:'z = '+fmt(z,3)},{x:-z,y:phi(z),color:A,r:4,label:'−'+fmt(z,3),align:'right'}]});
+  const lo=Math.floor(z*100)/100, hi=lo+0.01;
+  $('fZ-out').innerHTML=`level ${fmt(100*c,1)}% → α = ${fmt(a,3)}, α/2 = ${fmt(a/2,4)}, look for Φ(z) = 1 − α/2 = <b>${fmt(1-a/2,4)}</b>`+
+    `<br>table: Φ(${lo.toFixed(2)}) = ${Phi(lo).toFixed(4)}, Φ(${hi.toFixed(2)}) = ${Phi(hi).toFixed(4)} → <b>z<sub>α/2</sub> ≈ ${fmt(z,3)}</b>`;
+}
+$('fZ-c').addEventListener('input',drawZ); redraws.push(drawZ);
+
+/* ---------- Fig fW: margin of error against n (slide 33) ---------- */
+function drawW(){
+  const sg=+$('fW-s').value, z=+$('fW-lv').value, E0=+$('fW-e').value;
+  const nreq=Math.ceil((z*sg/E0)**2-1e-9), nmax=Math.max(60,Math.min(1600,Math.ceil(nreq*1.6/20)*20));
+  const ymax=Math.max(E0*2.2,z*sg/Math.sqrt(4)*0.6), st=ymax>2000?500:ymax>800?200:100;
+  const xs=nmax>400?(nmax>1000?200:100):20;
+  plot($('fW'),{xmin:0,xmax:nmax,ymin:0,ymax:ymax,xstep:xs,ystep:st,
+    curves:[{f:n=>n>=1?z*sg/Math.sqrt(n):NaN,color:css('--accent'),from:1}],
+    segs:[{x1:0,y1:E0,x2:nmax,y2:E0,color:css('--c2'),width:1.6,dash:[6,4]}],
+    pts:[{x:nreq,y:z*sg/Math.sqrt(nreq),color:css('--c2'),r:5,label:'n = '+nreq}]});
+  $('fW-out').innerHTML=`margin z·σ/√n ≤ ${E0} needs √n ≥ ${fmt(z,3)}×${sg}/${E0} = ${fmt(z*sg/E0,4)}, so n ≥ ${fmt((z*sg/E0)**2,4)} → <b>n = ${nreq}</b>`;
+}
+['fW-s','fW-lv','fW-e'].forEach(id=>$(id).addEventListener('input',drawW)); redraws.push(drawW);
+
+/* ===== redraw on resize / theme / fonts ===== */
+const all=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+all();
+let t; window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(all,120);});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);}catch(e){}
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+<script>
+/* MATH1853 bundle navigation. Link targets are fixed (notes: note-<CH>.html#sN; guides: guide-<CH>.html#<CH>-<n>; earlier-syllabus page: guide-beyond.html#B-<CH>-<n>), so hrefs are written directly in the HTML. This script only marks the current section in the contents rail. */
+(function(){
+  var links=[].slice.call(document.querySelectorAll('nav.toc a[href^="#"]'));
+  if(!links.length||!('IntersectionObserver' in window))return;
+  var map={};links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a;});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.removeAttribute('aria-current');});var a=map[e.target.id];if(a)a.setAttribute('aria-current','true');}});},{rootMargin:'0px 0px -70% 0px'});
+  Object.keys(map).forEach(function(id){var s=document.getElementById(id);if(s)io.observe(s);});
+})();
+</script>
+</body>
+</html>

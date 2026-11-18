@@ -1,0 +1,1049 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH2413 S5 · Deflection of Beams</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH2413 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Statics · S5</p>
+  <ol>
+    <li><a href="#s0">0 · Where this sits</a></li>
+    <li><a href="#s1">1 · Bending recap</a></li>
+    <li><a href="#s2">2 · Strain, stress, neutral axis</a></li>
+    <li><a href="#s3">3 · Two assumptions</a></li>
+    <li><a href="#s4">4 · The law \(EIw''=M\)</a></li>
+    <li><a href="#s5">5 · Boundary conditions</a></li>
+    <li><a href="#s6">6 · One region: cantilevers</a></li>
+    <li><a href="#s7">7 · Two regions: point load</a></li>
+    <li><a href="#s8">8 · Macaulay brackets</a></li>
+    <li><a href="#s9">9 · Superposition</a></li>
+    <li><a href="#s10">10 · Statically indeterminate beams</a></li>
+    <li><a href="#s11">11 · Deflection explorer</a></li>
+    <li><a href="#s12">12 · Summary</a></li>
+    <li><a href="#s13">13 · Common mistakes</a></li>
+    <li><a href="#s14">14 · Find the mistake</a></li>
+    <li><a href="#s15">15 · Concept checks</a></li>
+    <li><a href="#s16">16 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-S5.html">Exam guide · S5</a><a href="note-S4.html">← S4</a><a href="note-S6.html">Next: S6 →</a></nav>
+  <span class="course">MECH2413 · Engineering Mechanics · Statics chapter 5</span>
+  <h1>Deflection of Beams</h1>
+  <p class="lede">Every slide of the Statics chapter 5 handout (22 slides) explained from scratch: how bending stresses lead to the law \(EIw''=M\), boundary and matching conditions, deflection by integration in one region and in several regions, and superposition. Because the exam also asks for Macaulay-bracket deflections and statically indeterminate beams (propped cantilevers, spring supports), those are added as clearly labelled "Beyond the handouts" sections. Every worked example has a sketch, a free-body diagram and a plotted deflection curve.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>In <a href="note-S2.html">S2</a> you found the bending moment \(M(x)\) inside a beam; in <a href="note-S4.html">S4</a> you turned it into bending stress. This chapter asks the last question about a beam: <b>how far does it bend?</b> (slide 2: "the geometric result of a beam being stressed"). The answer matters for two reasons. A floor that sags 3 cm feels unsafe even when the steel is far from breaking, so designers limit deflection directly. And a beam with "too many" supports (S1 Section 11) cannot be solved by equilibrium alone; the missing equation comes from deflection.</p>
+<p>The handout's plan (slide 2):</p>
+<ol class="steps">
+<li>a summary of the important equations of ordinary bending theory (Sections 1–4);</li>
+<li>deflection in a <b>single region</b>: one equation for the whole beam (Section 6);</li>
+<li>deflection in <b>multiple regions</b>: one equation per region, joined by matching conditions (Section 7);</li>
+<li><b>superposition</b>: adding up simple cases (Section 9).</li>
+</ol>
+<div class="box def"><span class="tag">Definitions · deflection, slope, elastic line</span>
+<p>As a beam bends, each point of its axis moves sideways (across the beam) by a small distance \(w(x)\), the <b>deflection</b>. The bent axis is called the <b>deflection curve</b> or <b>elastic line</b> (slide 11). Its gradient \(w'(x)=\mathrm dw/\mathrm dx\) is the <b>slope</b>: for small bending it equals the angle (in radians) through which the beam has turned at \(x\).</p></div>
+
+<div class="box conv"><span class="tag">Sign convention for this chapter</span>
+<ul class="list">
+<li>\(x\) runs along the beam from the left end (or from the support named in the example), pointing right.</li>
+<li><b>Bending moment</b> \(M\): positive <b>sagging</b> (smile), exactly as in S2. Shear \(V\): positive clockwise; load \(q\): positive down.</li>
+<li><b>Deflection</b> \(w\): positive <b>upward</b>. So a beam that sags has \(w\lt0\), and the law is written exactly as on the slides, \(EIw''=M\). A negative answer means the point moves <b>down</b>.</li>
+<li>Slope \(w'\): positive when the beam rises to the right (turned anticlockwise).</li>
+</ul></div>
+<p class="flag">the handout's figures draw the \(z\)-axis and \(w\) pointing <b>down</b> (the Gross et al. style), but its equations (\(EIw''=M\), \(w_{\max}=-Fl^3/3EI\) for a cantilever pushed down) only agree with sagging-positive \(M\) if \(w\) is measured <b>up</b>. These notes use \(w\) up so that every slide equation and answer stays exactly as printed. If you prefer \(w\) down, write \(EIw''=-M\); every deflection keeps its size and only changes sign. In the exam, state which you use.</p>
+<div id="fig-conv"></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Ordinary bending: equilibrium and stress resultants (slides 3–4)</h2>
+<div class="box def"><span class="tag">Definition · ordinary (uniaxial) bending</span>
+<p><b>Ordinary bending</b> is bending in one plane only: the loads act in the \(x\)–\(z\) plane, which is a plane of symmetry of the cross-section, so the beam bends in that plane without twisting. Every beam in this course is of this kind.</p></div>
+<p>Slide 3 recalls the slice of length \(\mathrm dx\) from S2: shear \(V\) and moment \(M\) on its left face, \(V+\mathrm dV\) and \(M+\mathrm dM\) on its right face, and the load \(q\) on top. Equilibrium of the slice gave</p>
+\[\frac{\mathrm dV}{\mathrm dx}=-q,\qquad\frac{\mathrm dM}{\mathrm dx}=V.\]
+<p class="word"><b>In words:</b> a downward load makes the shear fall; the shear is the slope of the moment diagram (<a href="note-S2.html#s9">S2 Section 9</a>).</p>
+<div id="fig-s1-el"></div>
+<p>Slide 4 reminds us where \(N\), \(V\) and \(M\) come from. Over the cut face, each small patch \(\mathrm dA\) at height \(z\) carries a <b>normal stress</b> \(\sigma\) (pulling along \(x\)) and a <b>shear stress</b> \(\tau\) (along \(z\)). Adding them up:</p>
+\[\begin{aligned}N&=\int\sigma\,\mathrm dA,\qquad V=\int\tau\,\mathrm dA,\\ M&=\int z\,\sigma\,\mathrm dA.\end{aligned}\]
+<p class="word"><b>In words:</b> the normal force is the total of the normal stresses; the shear force is the total of the shear stresses; the bending moment is the total turning effect of the normal stresses about the axis (each stress times its lever arm \(z\)).</p>
+<div class="box def"><span class="tag">Definitions · stress</span>
+<p><b>Stress</b> is force per unit area (unit Pa = N/m², usually MPa). <b>Normal stress</b> \(\sigma\) acts perpendicular to a surface (stretching or squashing it); <b>shear stress</b> \(\tau\) acts along the surface (trying to slide it). See <a href="note-S3.html">S3</a>.</p></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Strain, stress and the neutral axis (slides 5–6)</h2>
+<p>Inside the beam, describe the movement of each point by two <b>displacements</b>: \(u(x,z)\) along \(x\) and \(w(x,z)\) along \(z\). Slide 5 shows how a small element \(\mathrm dx\times\mathrm dz\) deforms:</p>
+<div id="fig-s2-el"></div>
+<div class="box def"><span class="tag">Definitions · strain and shear strain (slide 5)</span>
+\[\varepsilon=\frac{\partial u}{\partial x},\qquad\gamma=\frac{\partial w}{\partial x}+\frac{\partial u}{\partial z}.\]
+<p class="word"><b>In words:</b> the <b>strain</b> \(\varepsilon\) is the stretch per unit length: the element of length \(\mathrm dx\) gets longer by \(\mathrm du=\varepsilon\,\mathrm dx\). The <b>shear strain</b> \(\gamma\) is the loss of the right angle at a corner (in radians): one edge tilts by \(\partial w/\partial x\), the other by \(\partial u/\partial z\).</p>
+<p>(\(\partial/\partial x\) is a <b>partial derivative</b>: differentiate with respect to \(x\) while holding \(z\) fixed.)</p></div>
+<p>For an elastic material, stress is proportional to strain (<b>Hooke's law</b>, <a href="note-S3.html">S3</a>):</p>
+\[\begin{aligned}\sigma&=E\varepsilon=E\frac{\partial u}{\partial x},\\ \tau&=G\gamma=G\left(\frac{\partial w}{\partial x}+\frac{\partial u}{\partial z}\right).\end{aligned}\]
+<p class="word"><b>In words:</b> stress = stiffness × strain. \(E\) is <b>Young's modulus</b> (stiffness in stretching, about 200 GPa for steel); \(G\) is the <b>shear modulus</b> (stiffness in shearing).</p>
+<div class="box def"><span class="tag">Definition · neutral axis (slide 6)</span>
+<p>The <b>neutral axis</b> is the line in the cross-section along which there is <b>no longitudinal stress or strain</b>: fibres there neither stretch nor shorten. If the section is symmetric, the material is <b>isotropic</b> (same properties in every direction) and the beam is straight before bending, the neutral axis passes through the <b>centroid</b> of the section (<a href="note-S1.html#s8">S1 Section 8</a>).</p></div>
+<p>Section 4 shows <i>why</i> it is the centroid. We measure \(z\) from the neutral axis, so \(z=0\) on it.</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Two kinematic assumptions (slides 7–9)</h2>
+<p>To find the deflection we need to know how the cross-sections move. Slide 7 shows a point \(P\) at depth \(z\) in a section; after bending it has moved to \(P'\): down by \(w\), and sideways because the section has tilted by an angle \(\psi\). The handout makes two assumptions (slide 8):</p>
+<div class="box thm"><span class="tag">Assumption 1 · the beam does not get thinner or thicker</span>
+<p>Every point of a cross-section has the <b>same deflection</b>, so \(w\) depends on \(x\) only:</p>
+\[w=w(x),\qquad\varepsilon_z=\frac{\partial w}{\partial z}=0.\]
+<p class="word"><b>In words:</b> the height of the beam does not change when it bends; the whole section moves sideways together.</p></div>
+<div class="box thm"><span class="tag">Assumption 2 · plane sections remain plane</span>
+<p>A cross-section that was a flat plane stays a flat plane; it only <b>rotates</b> through a small angle \(\psi(x)\). So a point at distance \(z\) from the axis moves along the beam by (slide 9)</p>
+\[u(x,z)=\psi(x)\,z,\qquad\frac{\partial u}{\partial z}=\psi(x).\]
+<p class="word"><b>In words:</b> the sideways shift grows linearly with distance from the neutral axis, like the pages of a closed book that slide over each other when you bend it: the further a page is from the middle, the more it slides.</p></div>
+<div id="fig-s3"></div>
+<p>Both assumptions are accurate for a <b>slender</b> beam (long compared with its depth) of constant cross-section, or one that tapers only slightly (slide 9). A small angle means \(\psi\) in radians is much less than 1, so \(\sin\psi\approx\tan\psi\approx\psi\).</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · names</span>
+<p>These are the assumptions of <b>Euler–Bernoulli beam theory</b> (also called "engineering beam theory" or "ordinary bending theory"). Adding the rule that sections stay <b>perpendicular</b> to the bent axis (shear deformation neglected) is what gives \(w'=\psi\) in Section 4.</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>The moment–curvature law \(EIw''=M\) (slides 10–11)</h2>
+<p>Put the displacement \(u=z\psi\) into the stress–strain laws of Section 2 (slide 10):</p>
+\[\begin{aligned}\sigma&=E\frac{\partial u}{\partial x}=E\frac{\partial(\psi z)}{\partial x}\\&=Ez\psi',\\ \tau&=G\left(\frac{\partial w}{\partial x}+\frac{\partial u}{\partial z}\right)\\&=G(w'+\psi).\end{aligned}\]
+<p class="word"><b>In words:</b> the bending stress grows linearly with distance \(z\) from the neutral axis, at a rate set by how fast the sections rotate, \(\psi'\).</p>
+<p>Now add up the stresses over the section (slide 10):</p>
+\[N=\int\sigma\,\mathrm dA=E\psi'\int z\,\mathrm dA.\]
+<p>In pure bending there is no normal force, \(N=0\), so \(\int z\,\mathrm dA=0\). That integral is zero exactly when \(z\) is measured from the <b>centroid</b> of the section: this is why the neutral axis passes through the centroid (Section 2). For the moment:</p>
+\[M=\int z\sigma\,\mathrm dA=E\psi'\int z^2\,\mathrm dA=EI\psi'.\]
+<div class="box def"><span class="tag">Definitions · second moment of area, flexural rigidity</span>
+<p>\(I=\int z^2\,\mathrm dA\) is the <b>second moment of area</b> of the cross-section about its neutral axis (unit m⁴; see <a href="note-S4.html">S4</a>). For a rectangle of width \(b\) and depth \(h\), \(I=bh^3/12\).</p>
+<p>The product \(EI\) (unit N·m²) is the <b>flexural rigidity</b> or <b>bending stiffness</b> (slide 10): how hard the beam is to bend. Doubling the depth of a rectangular beam multiplies \(EI\) by 8.</p></div>
+<div class="box thm"><span class="tag">Result · constitutive equation for the bending moment (slide 10)</span>
+\[M=EI\psi'\]
+<p class="word"><b>In words:</b> the bending moment equals the bending stiffness times the rate at which the cross-sections rotate along the beam.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · link to S4</span>
+<p>Eliminating \(\psi'\) between \(\sigma=Ez\psi'\) and \(M=EI\psi'\) gives the bending-stress formula of S4, \(\sigma=\dfrac{Mz}{I}\). The quantity \(\psi'\approx w''\) is the <b>curvature</b> \(1/\rho\) of the bent axis (\(\rho\) = radius of curvature), so the law is also written \(\dfrac1\rho=\dfrac{M}{EI}\).</p></div>
+<h3>From rotation to deflection (slide 11)</h3>
+<p>If shear deformation is neglected (slender beam, Section 3), each cross-section stays perpendicular to the bent axis, so the angle it turns through equals the slope of the elastic line: \(w'=\psi\) (slide 11; the picture shows the section and the tangent to the axis turning through the same angle). Then \(\psi'=w''\) and</p>
+<div class="box thm"><span class="tag">Result · differential equation of the elastic line (slide 11)</span>
+\[\begin{aligned}EI\,w''(x)&=M(x),\\ EI\,w'(x)&=\int_0^xM\,\mathrm dx+C_1,\\ EI\,w(x)&=\int_0^x\!\mathrm dx\int_0^xM\,\mathrm dx\\&\quad+C_1x+C_2.\end{aligned}\]
+<p class="word"><b>In words:</b> bending stiffness × curvature = bending moment. Integrate the moment once to get the slope, twice to get the deflection; two constants of integration, \(C_1\) and \(C_2\), are fixed by the supports.</p></div>
+<div class="figure"><p class="ttl">Sign check · sagging moment, upward curvature</p>
+<div id="fig-s4-sign"></div>
+<p class="cap">Left: \(M\gt0\) (sagging) gives \(w''\gt0\): the curve is concave up, a smile. Right: \(M\lt0\) (hogging) gives \(w''\lt0\): a frown. With \(w\) measured up, the equation needs no minus sign.</p></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Boundary conditions (slides 12–13)</h2>
+<p>The two constants need two facts about the beam's ends. Slide 12 names two kinds:</p>
+<div class="box def"><span class="tag">Definitions · geometrical and statical boundary conditions</span>
+<ol class="steps">
+<li><b>Geometrical (kinematic) boundary conditions</b> state something about the <b>movement</b>: the deflection \(w\) or the slope \(w'\). Example: a pin stops the end moving, \(w=0\).</li>
+<li><b>Statical boundary conditions</b> state something about the <b>stress resultants</b> \(V\) or \(M\). Example: a free end carries no moment, \(M=0\).</li>
+</ol>
+<p class="word"><b>In words:</b> supports tell you where the beam cannot go (geometry) or what it cannot carry (statics). In this chapter's method \(M(x)\) is already known from statics, so it is the <b>geometrical</b> conditions that fix \(C_1\) and \(C_2\).</p></div>
+<div class="box ready"><span class="tag">Boundary-condition table · slide 13</span>
+<div class="scroll"><table>
+<tr><th>Support</th><th>\(w\)</th><th>\(w'\)</th><th>\(M\)</th><th>\(V\)</th></tr>
+<tr><td>pin (or roller)</td><td><b>0</b></td><td>\(\ne0\)</td><td><b>0</b></td><td>\(\ne0\)</td></tr>
+<tr><td>parallel motion (slides vertically, cannot turn)</td><td>\(\ne0\)</td><td><b>0</b></td><td>\(\ne0\)</td><td><b>0</b></td></tr>
+<tr><td>fixed end (clamped)</td><td><b>0</b></td><td><b>0</b></td><td>\(\ne0\)</td><td>\(\ne0\)</td></tr>
+<tr><td>free end</td><td>\(\ne0\)</td><td>\(\ne0\)</td><td><b>0</b></td><td><b>0</b></td></tr>
+</table></div>
+<p class="word"><b>In words:</b> every support gives exactly <b>two</b> zeros, one per row. A pin stops movement but lets the beam turn; a clamp stops both; a free end can move and turn but carries nothing; a parallel-motion support lets the end slide but not turn.</p></div>
+<div id="fig-s5"></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>The free end of a cantilever has <b>no</b> geometrical condition (it moves and turns). Both constants then come from the <b>fixed</b> end: \(w=0\) and \(w'=0\) there. Students often wrongly write \(w'=0\) at a pin; a pin lets the beam rotate.</p></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Single region: cantilevers (slides 14–16)</h2>
+<p>If one formula for \(M(x)\) holds along the whole beam, one integration does the job: <b>single-region</b> calculation.</p>
+<div class="box eg"><span class="tag">Worked example · slides 14–16 · cantilever with an end load</span>
+<p>A cantilever of length \(l\) and bending stiffness \(EI\) is clamped at \(x=0\) and carries a downward force \(F\) at its free end \(x=l\). Find the slope and deflection.</p>
+<div class="pair"><div><div id="fig-c1-sys"></div><p class="sub">System (slide 14)</p></div><div><div id="fig-c1-fbd"></div><p class="sub">Left piece of a cut at \(x\) (wall reactions \(F\) up, \(Fl\) anticlockwise)</p></div></div>
+<ol class="steps">
+<li><b>Moment.</b> Keep the piece to the <b>right</b> of the cut (only \(F\) acts on it). \(F\) is a distance \(l-x\) to the right of the cut and points down, so it bends the beam into a frown (hogging):
+\[M=-F(l-x).\]
+(From the left piece: \(M=F x-Fl\), the same.)</li>
+<li><b>Integrate twice</b> (slide 14):
+\[\begin{aligned}EIw''&=F(x-l),\\ EIw'&=F\left(\frac{x^2}{2}-lx\right)+C_1,\\ EIw&=F\left(\frac{x^3}{6}-\frac{lx^2}{2}\right)+C_1x+C_2.\end{aligned}\]</li>
+<li><b>Boundary conditions</b> at the clamp (slide 15): \(w'(0)=0\Rightarrow C_1=0\); \(w(0)=0\Rightarrow C_2=0\).</li>
+<li><b>Result</b> (slide 15):
+\[\begin{aligned}w'(x)&=\frac{F}{EI}\left(\frac{x^2}{2}-lx\right),\\ w(x)&=\frac{F}{EI}\left(\frac{x^3}{6}-\frac{lx^2}{2}\right).\end{aligned}\]</li>
+<li><b>Maximum values</b>, at the free end \(x=l\) (slide 16):
+\[w'_{\max}=-\frac{Fl^2}{2EI},\qquad w_{\max}=-\frac{Fl^3}{3EI}.\]</li>
+<li><b>Dimension check:</b> \(\dfrac{\mathrm N\cdot\mathrm m^3}{\mathrm N\,\mathrm m^2}=\mathrm m\) ✓. The minus signs mean the tip moves <b>down</b> and the beam slopes down to the right ✓.</li>
+</ol>
+<p>\(\boxed{w_{\max}=-\dfrac{Fl^3}{3EI}\ \ \text{(down)},\qquad w'_{\max}=-\dfrac{Fl^2}{2EI}}\)</p>
+<p class="word"><b>In words:</b> the tip of a cantilever drops by "force × length³ ÷ (3 × bending stiffness)". Double the length and the drop is 8 times bigger.</p>
+<div class="figure"><canvas class="plot" id="cv-c1" style="height:170px"></canvas><p class="cap">Deflection curve \(w\,EI/(Fl^3)\) against \(x/l\): zero value and zero slope at the wall, steepest at the tip, \(-1/3\) at the tip.</p></div></div>
+
+<div class="box eg"><span class="tag">Worked example · past paper Dec 2021 A3(b) · 10 marks · cantilever with a uniform load</span>
+<p>The cantilever beam \(AB\) of length \(L\) carries a uniformly distributed load of intensity \(w_0\), which includes the weight of the beam. The free end \(A\) is on the left (\(x=0\)) and the wall \(B\) on the right (\(x=L\)). Calculate the deflection of the beam.</p>
+<div class="pair"><div><div id="fig-c2-sys"></div><p class="sub">System</p></div><div><div id="fig-c2-fbd"></div><p class="sub">Left piece of a cut at \(x\)</p></div></div>
+<ol class="steps">
+<li><b>Moment</b> from the left piece (only the load \(w_0x\), acting at \(x/2\) from the cut, hogging): \(M=-\dfrac{w_0x^2}{2}\).</li>
+<li><b>Integrate:</b> \(EIw'=-\dfrac{w_0x^3}{6}+C_1\), \(EIw=-\dfrac{w_0x^4}{24}+C_1x+C_2\).</li>
+<li><b>Conditions at the wall</b> \(x=L\): \(w'(L)=0\Rightarrow C_1=\dfrac{w_0L^3}{6}\); \(w(L)=0\Rightarrow C_2=\dfrac{w_0L^4}{24}-\dfrac{w_0L^4}{6}=-\dfrac{w_0L^4}{8}\).</li>
+<li><b>Result:</b>
+\[w(x)=-\frac{w_0}{24EI}\left(x^4-4L^3x+3L^4\right).\]</li>
+<li><b>Check:</b> \(w(L)=-\frac{w_0}{24EI}(L^4-4L^4+3L^4)=0\) ✓; free end \(w(0)=-\dfrac{w_0L^4}{8EI}\) (down) ✓.</li>
+</ol>
+<p>\(\boxed{w(x)=-\dfrac{w_0}{24EI}\left(x^4-4L^3x+3L^4\right),\quad w_A=-\dfrac{w_0L^4}{8EI}}\)</p>
+<p class="muted">Here \(w_0\) is a load per length (kN/m), not a deflection; the paper's notation. Measured from the wall instead, the same curve is \(w=-\dfrac{w_0x^2}{24EI}(6L^2-4Lx+x^2)\).</p></div>
+<div class="box ready"><span class="tag">Ready results · cantilevers (length \(l\), tip values, downward loads)</span>
+<ul class="list"><li>End force \(F\): tip deflection \(\dfrac{Fl^3}{3EI}\) down, tip slope \(\dfrac{Fl^2}{2EI}\).</li>
+<li>Uniform load \(q\) over the whole length: tip deflection \(\dfrac{ql^4}{8EI}\) down, tip slope \(\dfrac{ql^3}{6EI}\).</li></ul></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Multiple regions: a point load on a simply supported beam (slides 17–20)</h2>
+<p>When the formula for \(M\) changes along the beam (at a point force, a couple, or where a distributed load starts or stops), integrate separately in each <b>region</b>. Each region brings two constants, so extra conditions are needed: the <b>matching conditions</b> at the point where the regions meet.</p>
+<div class="box eg"><span class="tag">Worked example · slides 17–20 · force \(F\) at \(x=a\)</span>
+<p>A simply supported beam (pin \(A\), roller \(B\)), span \(l=a+b\), bending stiffness \(EI\), carries a downward force \(F\) at \(x=a\). Find \(w\) and \(w'\) (slide 17).</p>
+<div class="pair"><div><div id="fig-p-sys"></div><p class="sub">System (slide 17)</p></div><div><div id="fig-p-fbd"></div><p class="sub">FBD: \(A=Fb/l\), \(B=Fa/l\) (S2 Section 2)</p></div></div>
+<ol class="steps">
+<li><b>Moment</b> (slide 18). The shear force jumps at \(x=a\), so \(M\) has two formulas (from <a href="note-S2.html#s2">S2 Section 2</a>):
+\[M(x)=\begin{cases}F\dfrac bl\,x, & 0\le x\le a,\\[4pt] F\dfrac al\,(l-x), & a\le x\le l.\end{cases}\]
+Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
+<li><b>Integrate in each region</b> (slide 19):
+<br>Region I:\[\begin{aligned}EIw_{\rm I}''&=F\tfrac bl x,\\ EIw_{\rm I}'&=F\tfrac bl\tfrac{x^2}{2}+C_1,\\ EIw_{\rm I}&=F\tfrac bl\tfrac{x^3}{6}+C_1x+C_2;\end{aligned}\]Region II:\[\begin{aligned}EIw_{\rm II}''&=F\tfrac al(l-x),\\ EIw_{\rm II}'&=-F\tfrac al\tfrac{(l-x)^2}{2}+C_3,\\ EIw_{\rm II}&=F\tfrac al\tfrac{(l-x)^3}{6}\\&\quad-C_3(l-x)+C_4.\end{aligned}\]
+<span class="muted">(Region II is integrated in powers of \((l-x)\), so that the roller condition at \(x=l\) is easy. Writing \(-C_3(l-x)\) instead of \(C_3x\) just moves a constant into \(C_4\).)</span></li>
+<li><b>Boundary conditions</b> (slide 20): \(w_{\rm I}(0)=0\Rightarrow C_2=0\); \(w_{\rm II}(l)=0\Rightarrow C_4=0\).</li>
+<li><b>Matching conditions</b> (slide 20). A real beam does not break or kink at the load, so the deflection and the slope are <b>continuous</b> at \(x=a\):
+\[\begin{aligned}w_{\rm I}(a)&=w_{\rm II}(a):\\ &F\tfrac bl\tfrac{a^3}{6}+C_1a=F\tfrac al\tfrac{b^3}{6}-C_3b,\\ w_{\rm I}'(a)&=w_{\rm II}'(a):\\ &F\tfrac bl\tfrac{a^2}{2}+C_1=-F\tfrac al\tfrac{b^2}{2}+C_3.\end{aligned}\]</li>
+<li><b>Solve</b> the two equations (slide 20):
+\[\begin{aligned}C_1&=-\frac{Fab(a+2b)}{6l},\\ C_3&=\frac{Fab(b+2a)}{6l}.\end{aligned}\]</li>
+</ol>
+<div class="box def"><span class="tag">Definition · matching (continuity) conditions for deflection</span>
+<p>At the boundary between two regions: \(w\) and \(w'\) are always continuous (the beam stays in one piece and has no kink) unless there is an internal <b>hinge</b>, where \(w'\) may jump. Compare <a href="note-S2.html#s11">S2 Section 11</a>, where \(V\) and \(M\) were matched.</p></div>
+<p><b>Final result</b> (written for these notes, by substituting the constants; \(a(a+2b)=l^2-b^2\)):</p>
+<p>\(0\le x\le a\):</p>\[w_{\rm I}(x)=-\frac{Fbx}{6lEI}\left(l^2-b^2-x^2\right),\]<p>\(a\le x\le l\):</p>\[\begin{aligned}w_{\rm II}(x)&=-\frac{Fa(l-x)}{6lEI}\\&\quad\times\left[l^2-a^2-(l-x)^2\right].\end{aligned}\]
+<p class="word"><b>In words:</b> region II is region I seen from the other end: swap \(a\) and \(b\) and measure from \(B\) instead of \(A\).</p>
+<div class="box thm"><span class="tag">Key values (written for these notes)</span>
+<p>Under the load:</p>\[w(a)=-\frac{Fa^2b^2}{3lEI}.\]<p>End slopes:</p>\[\begin{aligned}w'(0)&=-\frac{Fab(l+b)}{6lEI},\\ w'(l)&=\frac{Fab(l+a)}{6lEI}.\end{aligned}\]<p>Central load (\(a=b=\tfrac l2\)):</p>\[w_{\max}=-\frac{Fl^3}{48EI}.\]
+<p class="word"><b>In words:</b> a central load on a simply supported beam deflects it by \(Fl^3/48EI\): 16 times less than the same load on a cantilever of the same length.</p>
+<p>If \(a\ge b\), the largest deflection is in region I, where \(w_{\rm I}'=0\):</p>
+\[\begin{aligned}x_m&=\sqrt{\frac{l^2-b^2}{3}},\\ w_{\max}&=-\frac{Fb\,(l^2-b^2)^{3/2}}{9\sqrt3\,lEI}.\end{aligned}\]
+<p class="muted">The maximum is <b>not</b> under the load unless the load is central; it is always within about \(0.077l\) of mid-span.</p></div>
+<div class="figure"><p class="ttl">Try it · move the load</p>
+<div id="fig-p-live"></div>
+<canvas class="plot" id="cv-p-w" style="height:180px"></canvas>
+<div class="ctrl"><label>load position \(a/l\) <input type="range" id="pa" min="0.05" max="0.95" step="0.05" value="0.7"></label></div>
+<div class="readout" id="p-out"></div>
+<p class="cap">Deflection \(1000\,w\,EI/(Fl^3)\). The dot marks the load; the ring marks the maximum deflection. Watch the ring stay near mid-span while the load moves.</p></div>
+</div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Macaulay brackets for deflection <span class="pill">Beyond</span></h2>
+<div class="beyond box"><span class="tag">Beyond the handouts · why the exam needs this</span>
+<p>The deflection handout stops at two regions. With three or more load points the matching method needs 6, 8, … constants. Dec 2014 A1(c) asks for a deflection on a beam written with Macaulay brackets (<a href="note-S2.html#s7">S2 Section 7</a>), and the bracket method keeps <b>two constants for the whole beam</b>. Source: Hibbeler, <i>Mechanics of Materials</i>, ch. 12; Gere, ch. 9.</p></div>
+<div class="box thm"><span class="tag">Rule · integrating a Macaulay bracket</span>
+\[\int[x-a]^n\,\mathrm dx=\frac{[x-a]^{n+1}}{n+1}\qquad(n\ge0).\]
+<p class="word"><b>In words:</b> integrate a bracket like an ordinary power of \((x-a)\), and <b>keep the bracket</b>: never multiply it out. Because each bracket is zero (with zero slope) until \(x=a\), the matching conditions \(w_{\rm I}=w_{\rm II}\), \(w'_{\rm I}=w'_{\rm II}\) are satisfied automatically, and the same two constants \(C_1,C_2\) hold in every region.</p></div>
+<ol class="steps">
+<li>Write \(M(x)\) as one Macaulay expression, from the <b>left</b> end (S2 Section 7 table: force \(-P[x-a]\), clockwise couple \(+M_0[x-a]^0\), uniform load \(-\tfrac q2[x-a]^2\)).</li>
+<li>\(EIw''=M\); integrate twice, bracket by bracket, adding \(C_1x+C_2\) once.</li>
+<li>Use the two support conditions (usually \(w=0\) at each support) to find \(C_1,C_2\).</li>
+<li>Evaluate \(w\) where asked: brackets with \(x\lt a\) are zero.</li>
+</ol>
+<div class="box eg"><span class="tag">Worked example · written for these notes · the S2 Macaulay beam</span>
+<p>The beam of <a href="note-S2.html#s7">S2 Section 7</a>: span 10 m, pin at \(x=0\), roller at \(x=10\u{m}\), \(30\u{kN}\) at 3 m, \(50\u{kN}\) at 7 m; reactions \(36\u{kN}\) and \(44\u{kN}\). Find the deflection at 3 m, 5 m and 7 m and the largest deflection.</p>
+<div class="pair"><div><div id="fig-mc-sys"></div><p class="sub">System</p></div><div><div id="fig-mc-fbd"></div><p class="sub">FBD</p></div></div>
+<ol class="steps">
+<li>\(M=36x-30[x-3]-50[x-7]\ \mathrm{kN\,m}\) (S2).</li>
+<li>Integrate:
+\[\begin{aligned}EIw'&=18x^2-15[x-3]^2\\&\quad-25[x-7]^2+C_1,\\ EIw&=6x^3-5[x-3]^3\\&\quad-\tfrac{25}{3}[x-7]^3+C_1x+C_2.\end{aligned}\]</li>
+<li>\(w(0)=0\): every bracket is zero, so \(C_2=0\). \(w(10)=0\): \(6000-5(343)-\tfrac{25}{3}(27)+10C_1=0\Rightarrow 6000-1715-225+10C_1=0\Rightarrow C_1=-406\u{kN\,m^2}\).</li>
+<li>Values (\(EI\) in kN·m², \(w\) in m):
+\[\begin{aligned}EIw(3)&=162-1218\\&=-1056,\\ EIw(5)&=750-40-2030\\&=-1320,\\ EIw(7)&=2058-320-2842\\&=-1104.\end{aligned}\]</li>
+<li>Largest deflection where \(w'=0\). Try \(3\lt x\lt7\): \(18x^2-15(x-3)^2-406=0\Rightarrow 3x^2+90x-541=0\Rightarrow x=5.13\u{m}\), giving \(EIw=-1321\u{kN\,m^3}\).</li>
+<li><b>Check by superposition</b> (Section 9): the slide-20 formula for 30 kN at 3 m plus that for 50 kN at 7 m gives the same \(EIw(5)=-1320\) ✓.</li>
+</ol>
+<p>\(\boxed{w(5\u{m})=-\dfrac{1320\u{kN\,m^3}}{EI},\quad w_{\max}=-\dfrac{1321\u{kN\,m^3}}{EI}\text{ at }x=5.13\u{m}}\)</p>
+<p class="muted">For example, a steel beam with \(EI=20\u{MN\,m^2}=2\times10^4\u{kN\,m^2}\) sags \(1321/20000=0.066\u{m}=66\u{mm}\).</p>
+<div class="figure"><canvas class="plot" id="cv-mc-w" style="height:170px"></canvas><p class="cap">\(EIw\) (kN·m³) along the beam. One expression covers all three regions.</p></div></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>A couple term \(+M_0[x-a]^0\) integrates to \(M_0[x-a]\) and then \(\tfrac{M_0}{2}[x-a]^2\). Do not drop it because "a couple has no distance": in the deflection it does matter where the couple sits.</p></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>The method of superposition (slides 21–22)</h2>
+<p>Slide 21: a simply supported beam carries a line load \(q_1\) over its left part and a force \(F_2\) further right. Instead of a new calculation, split it into two simpler beams, one with only \(q_1\) and one with only \(F_2\), and <b>add</b> the results (slide 22):</p>
+<div id="fig-sup"></div>
+<div class="box thm"><span class="tag">Principle · superposition (slide 22)</span>
+\[\begin{aligned}w&=w_1+w_2,\quad w'=w_1'+w_2',\\ M&=M_1+M_2,\quad V=V_1+V_2.\end{aligned}\]
+<p class="word"><b>In words:</b> the effect of several loads together is the sum of their effects one at a time.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · why it works, and when it does not</span>
+<p>The equation \(EIw''=M\) is <b>linear</b>: if \(w_1\) solves it for \(M_1\) and \(w_2\) for \(M_2\), then \(w_1+w_2\) solves it for \(M_1+M_2\), with the same (zero) boundary conditions. This needs small deflections and a linear-elastic material. It fails if the beam yields, or if it deflects so much that the geometry changes (then the small-angle assumption of Section 3 is gone).</p></div>
+<div class="box ready"><span class="tag">Ready table · standard cases <span class="pill">Beyond</span> (magnitudes, downward loads, span \(l\))</span>
+<div class="scroll"><table>
+<tr><th>Beam and load</th><th>max deflection (down)</th><th>where</th><th>end slope</th></tr>
+<tr><td>cantilever, end force \(F\)</td><td>\(\dfrac{Fl^3}{3EI}\)</td><td>free end</td><td>\(\dfrac{Fl^2}{2EI}\) (free end)</td></tr>
+<tr><td>cantilever, uniform \(q\)</td><td>\(\dfrac{ql^4}{8EI}\)</td><td>free end</td><td>\(\dfrac{ql^3}{6EI}\) (free end)</td></tr>
+<tr><td>cantilever, end couple \(M_0\)</td><td>\(\dfrac{M_0l^2}{2EI}\)</td><td>free end</td><td>\(\dfrac{M_0l}{EI}\) (free end)</td></tr>
+<tr><td>simply supported, central force \(F\)</td><td>\(\dfrac{Fl^3}{48EI}\)</td><td>mid-span</td><td>\(\dfrac{Fl^2}{16EI}\)</td></tr>
+<tr><td>simply supported, force \(F\) at \(a\)</td><td>\(\dfrac{Fa^2b^2}{3lEI}\) under the load</td><td>max at \(\sqrt{(l^2-b^2)/3}\) (\(a\ge b\))</td><td>\(\dfrac{Fab(l+b)}{6lEI}\) at \(A\)</td></tr>
+<tr><td>simply supported, uniform \(q\)</td><td>\(\dfrac{5ql^4}{384EI}\)</td><td>mid-span</td><td>\(\dfrac{ql^3}{24EI}\)</td></tr>
+</table></div>
+<p class="muted">Sources: rows 1, 4, 5 from slides 14–20; rows 2, 6 derived in Sections 6 and 16; row 3 by integrating \(M=\)const. Same lists in Gere, Appendix G; Hibbeler, Appendix C.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes · superposition</span>
+<p>A simply supported beam of span 6 m carries a uniform load \(4\u{kN/m}\) over the whole span and \(10\u{kN}\) at mid-span. Find the mid-span deflection.</p>
+<div id="fig-sup2"></div>
+\[\begin{aligned}EIw_1&=\frac{5ql^4}{384}=\frac{5(4)(6^4)}{384}=67.5\u{kN\,m^3},\\ EIw_2&=\frac{Fl^3}{48}=\frac{10(6^3)}{48}=45\u{kN\,m^3},\\ EI|w|&=67.5+45=112.5\u{kN\,m^3}.\end{aligned}\]
+<p>\(\boxed{w_{\rm mid}=-\dfrac{112.5\u{kN\,m^3}}{EI}}\) (both maxima are at mid-span, so here they add directly; in general add the <b>functions</b>, then look for the maximum).</p></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Statically indeterminate beams <span class="pill">Beyond</span></h2>
+<div class="beyond box"><span class="tag">Beyond the handouts · why this section is here</span>
+<p>A beam with more supports than equilibrium can handle (degree of indeterminacy \(x\ge1\), <a href="note-S1.html#s11">S1 Section 11</a>) cannot be solved with statics alone. The handouts stop at determinate beams, but past papers ask for propped cantilevers (Dec 2018 A1(b), Dec 2015 A1(c)) and a spring-supported beam (May 2013 A3). The extra equation always comes from <b>deflection</b>: the beam must fit its supports. This is called a <b>compatibility condition</b>. Sources: Hibbeler ch. 12.8–12.9; Gere ch. 10.</p></div>
+<h3>Method A · integrate with the redundant reaction kept as an unknown</h3>
+<div class="box eg"><span class="tag">Worked example · written for these notes · propped cantilever with a uniform load</span>
+<p>A beam of span \(l\) is clamped at \(A\) (\(x=0\)) and rests on a roller at \(B\) (\(x=l\)); it carries a uniform load \(q_0\). Unknowns: \(A_V\), \(M_A\), \(B\) (three), but only two useful equilibrium equations: degree 1.</p>
+<div class="pair"><div><div id="fig-pc-sys"></div><p class="sub">System</p></div><div><div id="fig-pc-fbd"></div><p class="sub">FBD with the unknown roller force \(B\)</p></div></div>
+<ol class="steps">
+<li><b>Moment in terms of \(B\).</b> Keep the right piece (length \(l-x\)): \(B\) up at distance \(l-x\) (sagging), the load \(q_0(l-x)\) at half that distance (hogging):
+\[M=B(l-x)-\tfrac12q_0(l-x)^2.\]</li>
+<li><b>Integrate</b> (in powers of \(l-x\)):
+\[\begin{aligned}EIw'&=-\tfrac B2(l-x)^2+\tfrac{q_0}{6}(l-x)^3\\&\quad+C_1,\\ EIw&=\tfrac B6(l-x)^3-\tfrac{q_0}{24}(l-x)^4\\&\quad-C_1(l-x)+C_2.\end{aligned}\]</li>
+<li><b>Three geometrical conditions</b> for three unknowns \(C_1,C_2,B\): \(w(l)=0\Rightarrow C_2=0\); \(w'(0)=0\Rightarrow C_1=\tfrac B2l^2-\tfrac{q_0}6l^3\); \(w(0)=0\Rightarrow \tfrac B6l^3-\tfrac{q_0}{24}l^4-C_1l=0\).</li>
+<li>Substituting \(C_1\): \(\tfrac B6l^3-\tfrac B2l^3-\tfrac{q_0}{24}l^4+\tfrac{q_0}{6}l^4=0\Rightarrow -\tfrac B3+\tfrac{q_0l}{8}=0\Rightarrow B=\tfrac38q_0l\).</li>
+<li><b>Now statics</b> finishes the job: \(A_V=q_0l-B=\tfrac58q_0l\); \(M(0)=\tfrac38q_0l^2-\tfrac12q_0l^2=-\tfrac18q_0l^2\) (hogging at the wall).</li>
+</ol>
+<p>\(\boxed{B=\tfrac38q_0l,\quad A_V=\tfrac58q_0l,\quad M_A=\tfrac18q_0l^2\text{ (hogging)}}\)</p>
+<p>Also: \(V=q_0\left(\tfrac58l-x\right)\); the largest sagging moment is \(\tfrac{9}{128}q_0l^2\) at \(x=\tfrac58l\) (where \(V=0\)); the largest deflection is \(\dfrac{q_0l^4}{185EI}\) at \(x=0.578l\).</p>
+<div class="figure"><canvas class="plot" id="cv-pc-M" style="height:150px"></canvas><canvas class="plot" id="cv-pc-w" style="height:150px"></canvas>
+<p class="cap">Top: \(M/(q_0l^2)\): \(-\tfrac18\) at the clamp, \(+\tfrac9{128}\) at \(\tfrac58l\), 0 at the roller. Bottom: \(wEI/(q_0l^4)\).</p></div></div>
+<div class="box ready"><span class="tag">Alternative · integrate the load four times</span>
+<p>Dec 2018 A1(b) says "using the integral method". Then start from \(q\): \(V=-q_0x+C_1\), \(M=-\tfrac12q_0x^2+C_1x+C_2\), \(EIw'=\int M\,\mathrm dx+C_3\), \(EIw=\iint M+C_3x+C_4\), and use <b>four</b> conditions: \(w(0)=0\), \(w'(0)=0\) (clamp), \(w(l)=0\), \(M(l)=0\) (roller). It gives the same \(C_1=\tfrac58q_0l\), \(C_2=-\tfrac18q_0l^2\). (This is the exam taster below.)</p></div>
+
+<h3>Method B · compatibility by superposition</h3>
+<p>Remove the extra support, call its force \(B\) (the <b>redundant</b>), and demand that the deflections it removes add up to what the support allows.</p>
+<div id="fig-pc-comp"></div>
+\[\underbrace{-\frac{q_0l^4}{8EI}}_{\text{load alone}}+\underbrace{\frac{Bl^3}{3EI}}_{B\text{ alone}}=0\quad\Rightarrow\quad B=\frac38q_0l.\]
+<p class="word"><b>In words:</b> the roller must push the tip back up by exactly as much as the load pushed it down. Both terms come straight from the ready table (Section 9).</p>
+
+<div class="box eg"><span class="tag">Worked example · past paper May 2013 A3 · 20 marks <span class="older">older format</span> · spring support</span>
+<p>Figure A3 shows a uniformly distributed simply supported beam with an additional spring support at \(B\), which deflects 0.0005 mm per kgf. Assume that the elastic modulus and the second moment of area of the beam are 204 GPa and 9350 cm⁴, respectively. Determine (a) the deflection at \(B\) [14]; and (b) the maximum bending moment and its location [6].</p>
+<div id="fig-sp"></div>
+<p class="muted">Pin at \(A\), roller at \(C\), span 9 m (4.5 m + 4.5 m), spring at mid-span \(B\), uniform \(16\u{kN/m}\) over the whole span.</p>
+<ol class="steps">
+<li><b>Data in SI.</b> \(EI=204\times10^9\u{Pa}\times9350\times10^{-8}\u{m^4}=1.907\times10^7\u{N\,m^2}\). A kgf (kilogram-force) is the weight of 1 kg, \(9.807\u{N}\), so the spring stiffness is \(k=\dfrac{9.807\u{N}}{0.0005\times10^{-3}\u{m}}=1.961\times10^7\u{N/m}\).</li>
+<li><b>Compatibility.</b> Remove the spring, replace it by its upward force \(R\). The beam's mid-span deflection must equal the spring's compression \(R/k\):
+\[\frac{5qL^4}{384EI}-\frac{RL^3}{48EI}=\frac Rk.\]</li>
+<li>Numbers: \(\dfrac{5qL^4}{384EI}=\dfrac{5(16000)(9^4)}{384(1.907\times10^7)}=0.07166\u{m}\); \(\dfrac{L^3}{48EI}=7.96\times10^{-7}\u{m/N}\); \(\dfrac1k=5.10\times10^{-8}\u{m/N}\).
+\[\begin{aligned}R&=\frac{0.07166}{7.96\times10^{-7}+5.10\times10^{-8}}\\&=84.6\u{kN}.\end{aligned}\]</li>
+<li><b>(a)</b> \(\delta_B=\dfrac Rk=\dfrac{84.58\times10^3}{1.961\times10^7}=4.31\times10^{-3}\u{m}\).</li>
+<li><b>(b)</b> End reactions \(A=C=\tfrac12(16\times9-84.6)=29.7\u{kN}\). On \(AB\): \(M=29.7x-8x^2\) (kN·m). \(V=0\) at \(x=29.7/16=1.86\u{m}\): \(M=+27.6\u{kN\,m}\). At \(B\): \(M=29.7(4.5)-8(4.5)^2=-28.3\u{kN\,m}\) (hogging).</li>
+</ol>
+<p>\(\boxed{\delta_B=4.31\u{mm}\ \text{down};\quad |M|_{\max}=28.3\u{kN\,m}\ \text{(hogging) at }B}\)</p>
+<p class="word"><b>Sense check:</b> a rigid prop (\(k\to\infty\)) would take \(\tfrac58qL=90\u{kN}\); the springy prop takes slightly less, 84.6 kN ✓. Without it the beam would sag 71.7 mm; the spring cuts that to 4.3 mm.</p>
+<p class="flag">"deflects 0.0005 mm per kgf" is read as the spring's flexibility (compression per unit force), so \(k=1\u{kgf}/0.0005\u{mm}\).</p></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Deflection explorer</h2>
+<div class="figure"><p class="ttl">Try it · deflected shape and bending moment for the standard cases</p>
+<div class="ctrl"><label>case <select id="xsel">
+<option value="cf">cantilever, end force</option><option value="cq">cantilever, uniform load</option>
+<option value="sf" selected>simply supported, force at a</option><option value="sq">simply supported, uniform load</option>
+<option value="pq">propped cantilever, uniform load</option></select></label>
+<label>load position \(a/l\) <input type="range" id="xa" min="0.05" max="0.95" step="0.05" value="0.5"></label></div>
+<div id="fig-x-live"></div>
+<canvas class="plot" id="cv-x-M" style="height:150px"></canvas><canvas class="plot" id="cv-x-w" style="height:170px"></canvas>
+<div class="readout" id="x-out"></div>
+<p class="cap">\(M\) in units of \(Fl\) or \(q l^2\); \(w\) plotted ×1000 in units of \(Fl^3/EI\) or \(ql^4/EI\) (negative = down). Notice: \(w''\) has the same sign as \(M\) everywhere, so the curve is concave up (smile) where \(M\gt0\), concave down where \(M\lt0\), and has an inflection point where \(M=0\) (see the propped cantilever).</p></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>Assumptions</td><td>\(w=w(x)\); plane sections stay plane, \(u=z\psi\); \(w'=\psi\)</td><td>slender beam, small angles, shear deformation neglected</td></tr>
+<tr><td>Stiffness law</td><td>\(M=EI\psi'\), \(\sigma=Ez\psi'=Mz/I\)</td><td>moment = bending stiffness × rate of rotation</td></tr>
+<tr><td>Elastic line</td><td>\(EIw''=M\) (\(w\) up, \(M\) sagging +)</td><td>integrate \(M\) once for slope, twice for deflection</td></tr>
+<tr><td>Boundary conditions</td><td>pin \(w=0\); clamp \(w=w'=0\); free end none; parallel motion \(w'=0\)</td><td>two constants, two geometric facts</td></tr>
+<tr><td>Several regions</td><td>\(w\) and \(w'\) continuous at each region boundary</td><td>no break, no kink (except at a hinge)</td></tr>
+<tr><td>Macaulay <span class="pill">Beyond</span></td><td>\(\int[x-a]^n\mathrm dx=[x-a]^{n+1}/(n+1)\)</td><td>one expression, still only \(C_1, C_2\)</td></tr>
+<tr><td>Superposition</td><td>\(w=w_1+w_2\)</td><td>add simple cases; works because \(EIw''=M\) is linear</td></tr>
+<tr><td>Indeterminate <span class="pill">Beyond</span></td><td>compatibility: deflection at the extra support = 0 (or \(R/k\) for a spring)</td><td>the extra equation comes from the beam's shape</td></tr>
+<tr><td>Key numbers</td><td>cantilever \(Fl^3/3EI\), \(ql^4/8EI\); simply supported \(Fl^3/48EI\), \(5ql^4/384EI\)</td><td>a cantilever is 16 times floppier than a simply supported beam under a central load</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Writing \(w'=0\) at a pin or roller.</span>
+<span class="ok">✓</span><span>A pin lets the beam turn: only \(w=0\). Slope zero only at a clamp (or a parallel-motion support, or by symmetry at mid-span).</span>
+<span class="x">✗</span><span>Using conditions at the free end of a cantilever (\(w=0\) or \(w'=0\) there).</span>
+<span class="ok">✓</span><span>Both conditions come from the clamp, wherever it is. If the wall is at \(x=L\), use \(w(L)=w'(L)=0\) (Dec 2021 A3(b), Dec 2018 A2).</span>
+<span class="x">✗</span><span>Getting the sign of \(M\) wrong for a cantilever, so the tip "deflects upward".</span>
+<span class="ok">✓</span><span>A downward load on a cantilever is hogging, \(M\lt0\). Check: the answer must point the way the load pushes.</span>
+<span class="x">✗</span><span>Forgetting the matching conditions, or matching \(V\) and \(M\) instead of \(w\) and \(w'\).</span>
+<span class="ok">✓</span><span>In this chapter \(M\) is already known; match the deflection and the slope.</span>
+<span class="x">✗</span><span>Expanding Macaulay brackets before integrating, or adding a new constant in each region.</span>
+<span class="ok">✓</span><span>Integrate \([x-a]^n\) as a block; one \(C_1\) and one \(C_2\) for the whole beam.</span>
+<span class="x">✗</span><span>Mixing units: \(E\) in GPa with \(I\) in mm⁴ and \(L\) in m.</span>
+<span class="ok">✓</span><span>Convert everything to N and m first: \(1\u{mm^4}=10^{-12}\u{m^4}\), \(1\u{cm^4}=10^{-8}\u{m^4}\).</span>
+<span class="x">✗</span><span>Adding the maximum deflections of two load cases when the maxima sit in different places.</span>
+<span class="ok">✓</span><span>Add the functions \(w_1(x)+w_2(x)\), then look for the maximum.</span>
+<span class="x">✗</span><span>Treating a propped cantilever as determinate and "solving" it with equilibrium alone.</span>
+<span class="ok">✓</span><span>Count: 4 reactions, 3 equations. Keep the redundant as an unknown and use a deflection condition.</span>
+</div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Find the mistake</h2>
+<div class="q"><p class="qh">1 · A cantilever with the wall on the right</p>
+<p>"Free end at \(x=0\), wall at \(x=L\), end load \(F\) down at \(x=0\). \(M=-Fx\), so \(EIw'=-\tfrac F2x^2+C_1\), \(EIw=-\tfrac F6x^3+C_1x+C_2\). At the free end \(w'(0)=0\) and \(w(0)=0\), so \(C_1=C_2=0\) and \(w=-Fx^3/6EI\)."</p>
+<details><summary>Hint</summary><div><p>Which end is clamped?</p></div></details>
+<details><summary>Answer</summary><div><p>The conditions belong at the wall: \(w'(L)=0\Rightarrow C_1=\tfrac F2L^2\); \(w(L)=0\Rightarrow C_2=\tfrac F6L^3-\tfrac F2L^3=-\tfrac F3L^3\). Then \(w(0)=-\dfrac{FL^3}{3EI}\), the same tip deflection as slide 16, as it must be.</p></div></details></div>
+<div class="q"><p class="qh">2 · Macaulay constants</p>
+<p>"For the S2 beam (Section 8) I used \(C_1,C_2\) for \(0\lt x\lt3\), then new constants \(C_3,C_4\) for \(3\lt x\lt7\) and \(C_5,C_6\) for \(x\gt7\), and set \(w(0)=w(10)=0\). Two equations for six unknowns, so the problem cannot be solved."</p>
+<details><summary>Hint</summary><div><p>What do Macaulay brackets do to the matching conditions?</p></div></details>
+<details><summary>Answer</summary><div><p>With brackets kept intact the same two constants hold everywhere; continuity of \(w\) and \(w'\) at 3 m and 7 m is automatic. (If you do split into regions, you also get four matching equations: 6 equations, 6 unknowns.)</p></div></details></div>
+<div class="q"><p class="qh">3 · Superposition</p>
+<p>"Simply supported beam, \(l=6\u{m}\): 10 kN at 2 m from \(A\) and 10 kN at 4 m. Each alone gives \(w_{\max}=Fa^2b^2/3lEI=10(4)(16)/(18EI)=35.6/EI\), so together the maximum is \(71.1/EI\)."</p>
+<details><summary>Hint</summary><div><p>Is \(Fa^2b^2/3lEI\) the deflection at mid-span?</p></div></details>
+<details><summary>Answer</summary><div><p>\(Fa^2b^2/3lEI\) is the deflection <b>under each load</b>, not at mid-span, and the two loads sit at different points. By symmetry the maximum is at mid-span: each load gives there \(EIw_{\rm I}(3)\) with \(b=2\): \(\dfrac{10(2)(3)}{36}(36-4-9)=38.3\), so the total is \(\boxed{76.7/EI}\) (down) at mid-span.</p></div></details></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Which is stiffer?</p><p>Two beams of equal length carry the same central load: one simply supported, one a cantilever loaded at its tip. Ratio of their largest deflections?</p>
+<details><summary>Answer</summary><div><p>\(\dfrac{Fl^3/3EI}{Fl^3/48EI}=16\). The cantilever deflects 16 times more.</p></div></details></div>
+<div class="q"><p class="qh">2 · Doubling the depth</p><p>A rectangular beam's depth is doubled (width unchanged). By what factor does its deflection change?</p>
+<details><summary>Answer</summary><div><p>\(I=bh^3/12\) grows 8 times, so the deflection falls to \(\tfrac18\).</p></div></details></div>
+<div class="q"><p class="qh">3 · Inflection point</p><p>Where does the deflected shape of a propped cantilever under uniform load change from frown to smile?</p>
+<details><summary>Answer</summary><div><p>Where \(M=0\) (because \(w''=M/EI\)): \(-\tfrac12q_0x^2+\tfrac58q_0lx-\tfrac18q_0l^2=0\Rightarrow x=\tfrac l4\).</p></div></details></div>
+<div class="q"><p class="qh">4 · Counting constants</p><p>A beam has three regions and you integrate region by region. How many constants, and where do the equations come from?</p>
+<details><summary>Answer</summary><div><p>6 constants: 2 boundary conditions + 2 matching conditions (\(w\), \(w'\)) at each of the 2 region boundaries = 6.</p></div></details></div>
+<div class="q"><p class="qh">5 · Symmetry</p><p>A simply supported beam with a symmetric load: which condition at mid-span can replace one boundary condition?</p>
+<details><summary>Answer</summary><div><p>\(w'(l/2)=0\): the beam is horizontal at its line of symmetry. Then integrate over half the beam only.</p></div></details></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span>Exam taster</h2>
+<p>Real past-paper parts, about one per question type. Deflection usually appears in Question A2 or A3 as a 6–10 mark part after the shear-force and bending-moment diagrams. There is no formula sheet for Section A, so the standard results must be derived or remembered. Full method and more questions: <a href="guide-S5.html">Exam guide · S5</a>.</p>
+
+<div class="q"><div class="src"><b>Dec 2024 A2(c), (e)</b><span>7 + 2 marks</span><a class="guide" href="guide-S5.html#S5-1">S5.1 cantilever deflection</a></div>
+<p>The cantilever is clamped on the wall at the left end with the free end on the right-hand side, which is subjected to a concentrated force \(F_1\) as shown in Figure A2. (c) Determine the deflection of the cantilever as a function of \(x\), in terms of \(F_1\), \(L\) and any other quantities that are relevant. [7] (e) Calculate the maximum deflection of cantilever. A 150 cm long, 1 cm width, 1 cm thickness cantilever with a uniform cross-section is subjected to downward force of \(F_1=100\u{N}\) at right end. The Young's modulus is \(E=190\u{GPa}\). [2]</p>
+<div id="fig-t1"></div>
+<details><summary>Hint</summary><div><p>This is slides 14–16 exactly. For (e) you need \(I=wt^3/12\) (part (d)) in m⁴.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(c) \(M=-F_1(L-x)\); clamp \(w(0)=w'(0)=0\):</p>
+\[\boxed{\begin{aligned}w(x)&=\frac{F_1}{EI}\left(\frac{x^3}{6}-\frac{Lx^2}{2}\right),\\ w(L)&=-\frac{F_1L^3}{3EI}\end{aligned}}\]
+<p>(e) \(I=\dfrac{0.01(0.01)^3}{12}=8.33\times10^{-10}\u{m^4}\);</p>
+\[\begin{aligned}|w|_{\max}&=\frac{100(1.5)^3}{3(190\times10^9)(8.33\times10^{-10})}\\&=\boxed{0.711\u{m}}\end{aligned}\]<p>(down, at the free end).</p>
+<p class="flag">0.71 m on a 1.5 m beam is far beyond "small deflection", so the formula overestimates the real sag (and the steel would yield first: \(\sigma=Mz/I=900\u{MPa}\) at the wall). The paper wants the formula value; mentioning the limitation is a good extra line.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2018 A2(c), (d)</b><span>6 + 3 marks</span><a class="guide" href="guide-S5.html#S5-1">S5.1 cantilever deflection</a></div>
+<p>The cantilever in Figure A2 is subjected to a distributed load of constant force \(q\) per unit length. At the free end, it is supported by a point force \(P\). (c) Determine the deflection of the cantilever as a function of \(x\), in terms of \(q\), \(P\) and \(L\), and any other quantities that are relevant. [6] (d) Find the force \(P\) required to produce zero deflection at the free end. In this situation, what would be the magnitude and direction of the force and moment provided by the wall at the fixed end? [3]</p>
+<div id="fig-t2"></div>
+<details><summary>Hint</summary><div><p>Free end at \(x=0\), wall at \(x=L\): left piece gives \(M=Px-\tfrac12qx^2\). Both conditions at \(x=L\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(c) \(EIw'=\tfrac P2x^2-\tfrac q6x^3+C_1\), \(EIw=\tfrac P6x^3-\tfrac q{24}x^4+C_1x+C_2\); \(w'(L)=0\Rightarrow C_1=\tfrac q6L^3-\tfrac P2L^2\); \(w(L)=0\Rightarrow C_2=\tfrac P3L^3-\tfrac q8L^4\).</p>
+\[\boxed{\begin{aligned}EIw&=\tfrac P6x^3-\tfrac q{24}x^4\\&\quad+\left(\tfrac{qL^3}{6}-\tfrac{PL^2}{2}\right)x\\&\quad+\tfrac{PL^3}{3}-\tfrac{qL^4}{8}\end{aligned}}\]
+<p>(d) \(w(0)=0\Rightarrow \boxed{P=\tfrac38qL}\). Wall: force \(qL-P=\tfrac58qL\) upward; \(M(L)=-\tfrac18qL^2\) (hogging), so the wall applies a couple \(\tfrac18qL^2\) <b>clockwise</b> on the beam (it holds the right end level against the sag).</p>
+<p class="muted">This is the propped cantilever of Section 10 seen from the other end: same \(\tfrac38\), \(\tfrac58\), \(\tfrac18\).</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2017 A3(a)</b><span>10 marks</span><a class="guide" href="guide-S5.html#S5-2">S5.2 simply supported deflection</a></div>
+<p>Provided the flexural rigidity \(EI\) is known, solve the deflection for a simply supported beam that carries a uniformly distributed load. Determine the deflection in the middle of the beam when \(x=l/2\).</p>
+<div id="fig-t3"></div>
+<details><summary>Hint</summary><div><p>Reactions \(\tfrac12ql\) each; \(M=\tfrac q2x(l-x)\); conditions \(w(0)=w(l)=0\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(EIw''=\tfrac q2(lx-x^2)\Rightarrow EIw'=\tfrac q2\left(\tfrac{lx^2}{2}-\tfrac{x^3}{3}\right)+C_1\), \(EIw=\tfrac q2\left(\tfrac{lx^3}{6}-\tfrac{x^4}{12}\right)+C_1x+C_2\).</p>
+<p>\(w(0)=0\Rightarrow C_2=0\); \(w(l)=0\Rightarrow C_1=-\tfrac{ql^3}{24}\).</p>
+\[\boxed{\begin{aligned}w(x)&=-\frac{qx}{24EI}\left(l^3-2lx^2+x^3\right),\\ w\!\left(\tfrac l2\right)&=-\frac{5ql^4}{384EI}\end{aligned}}\]
+<p>(down). End slopes \(\mp\dfrac{ql^3}{24EI}\). Symmetry check: \(w'(l/2)=0\) ✓.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2018 A1(b)</b><span>5 marks</span><span>also Dec 2015 A1(d)</span><a class="guide" href="guide-S5.html#S5-3">S5.3 statically indeterminate beams</a></div>
+<p>A constant distributed load \(q_0\) is applied to the beam shown in Figure A1(b). Calculate the shear force and bending moment using the integral method.</p>
+<div id="fig-t4"></div>
+<details><summary>Hint</summary><div><p>Clamp at \(A\), roller at \(B\): indeterminate. Integrate \(q\) four times; four conditions \(w(0)=w'(0)=0\), \(w(l)=0\), \(M(l)=0\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(V=-q_0x+C_1\), \(M=-\tfrac12q_0x^2+C_1x+C_2\), \(EIw=-\tfrac{q_0}{24}x^4+\tfrac{C_1}6x^3+\tfrac{C_2}2x^2+C_3x+C_4\). Clamp: \(C_3=C_4=0\). \(M(l)=0\): \(C_2=\tfrac12q_0l^2-C_1l\). \(w(l)=0\): \(-\tfrac{q_0l^2}{24}+\tfrac{C_1l}{6}+\tfrac{C_2}{2}=0\Rightarrow C_1=\tfrac58q_0l\).</p>
+\[\boxed{\begin{aligned}V&=q_0\left(\tfrac58l-x\right),\\ M&=-\tfrac12q_0x^2+\tfrac58q_0lx-\tfrac18q_0l^2\end{aligned}}\]
+<p>Reactions \(A=\tfrac58q_0l\), \(B=\tfrac38q_0l\), clamp moment \(\tfrac18q_0l^2\) (hogging). Full working and diagrams: Section 10.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2014 A1(c)</b><span>5 marks</span><a class="guide" href="guide-S5.html#S5-4">S5.4 Macaulay deflection</a></div>
+<p>Figure A1 shows a 5.5 m long cantilever beam, which is subjected to a triangular distributed load of \(q(x)\) with \(q_0=10\u{kN/m}\) over 1.5 m of the beam between \(CD\) and a point load of 40 kN at \(E\). (c) Given the bending stiffness of beam \(EI\), determine the deflection at middle point between \(B\) and \(C\).</p>
+<div id="fig-t5"></div>
+<p class="flag">as in <a href="note-S1.html#s18">S1</a>: the figure (pin \(A\), roller \(C\), overhang \(CD\)) is used, not the word "cantilever"; the 40 kN on the 0.5 m bracket gives 40 kN down plus a 20 kN·m clockwise couple at \(B\). Reactions from part (a): \(A=13.125\u{kN}\), \(C=34.375\u{kN}\), both up.</p>
+<details><summary>Hint</summary><div><p>Write \(M\) with brackets from \(A\), integrate twice, use \(w(0)=0\) and \(w(4)=0\) (the two supports), then put \(x=3\). The triangle (slope \(k=\tfrac{20}3\u{kN/m^2}\)) only acts beyond \(x=4\), so it does not matter for \(x=3\) except through \(C\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[\begin{aligned}M&=13.125x-40[x-2]\\&\quad+20[x-2]^0+34.375[x-4]\\&\quad-\tfrac{k}{6}[x-4]^3,\\ EIw&=\tfrac{13.125}{6}x^3-\tfrac{20}{3}[x-2]^3\\&\quad+10[x-2]^2+\tfrac{34.375}{6}[x-4]^3\\&\quad-\tfrac{k}{120}[x-4]^5+C_1x+C_2.\end{aligned}\]
+<p>\(w(0)=0\Rightarrow C_2=0\). \(w(4)=0\): \(140-53.33+40+4C_1=0\Rightarrow C_1=-\tfrac{95}{3}=-31.67\u{kN\,m^2}\).</p>
+<p>At \(x=3\): \(EIw=59.06-6.67+10-95=-32.6\).</p>
+<p>\(\boxed{w(3\u{m})=-\dfrac{32.6\u{kN\,m^3}}{EI}\ \text{(down)}}\)</p></div></details></div>
+</section>
+</main>
+</div>
+
+<script>
+/* MECH2413 shared helpers (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-S5 figures (page-level helpers only; lib.js is frozen). w positive UP, M sagging positive. */
+const P=FBD.panels, D=FBD.draw;
+const bm=(x1,x2,y=0,h)=>({t:'beam',x1,x2,y,h});
+const hb=px=>5/px;
+const T=(x,y,s,cls,dx,dy)=>typeof dx==='string'?({t:'text',x,y,s,cls:cls||'it',anchor:dx}):({t:'text',x,y,s,cls:cls||'it',dx,dy});
+function cutFace(x,side,lbl){const s=side==='R'?1:-1,L=lbl||{};const out=[
+  {t:'force',x:x,y:0,ang:side==='R'?-90:90,len:32,k:'good',at:'tail',lbl:L.V===undefined?'V':L.V,dx:12*s},
+  {t:'moment',x:x,y:0,r:16,sense:side==='R'?'ccw':'cw',start:side==='R'?-70:250,k:'good',lbl:L.M===undefined?'M':L.M,dx:6*s,dy:-4}];
+  if(L.N)out.unshift({t:'force',x:x,y:0,ang:side==='R'?0:180,len:28,k:'good',at:'tail',lbl:'N',dy:-11});return out;}
+function nstep(span,n=4){const r=span/n,p=Math.pow(10,Math.floor(Math.log10(r))),m=r/p;return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p;}
+function dg(id,f,o){
+  const c=$(id); if(!c) return;
+  let lo=0,hi=0;for(let i=0;i<=400;i++){const x=o.x0+(o.x1-o.x0)*i/400,y=f(x);if(isFinite(y)){lo=Math.min(lo,y);hi=Math.max(hi,y);}}
+  if(o.ymin!==undefined)lo=o.ymin; if(o.ymax!==undefined)hi=o.ymax;
+  if(hi-lo<1e-9){hi=1;lo=-1;} const pad=(hi-lo)*0.14; lo-=lo<0?pad:pad*0.4; hi+=hi>0?pad:pad*0.4;
+  const col=o.color?css(o.color):css('--accent');
+  plot(c,{xmin:o.x0,xmax:o.x1,ymin:lo,ymax:hi,xstep:o.xstep||nstep(o.x1-o.x0,6),ystep:o.ystep||nstep(hi-lo),pl:o.pl||48,
+    curves:[{f,color:col,jumps:true,n:900}],fills:[{from:o.x0,to:o.x1,f:x=>{const y=f(x);return isFinite(y)?y:0;},color:col,alpha:.14}],
+    xlabel:o.xlabel||'x',ylabel:o.ylabel,pts:o.pts||[]});
+}
+const st=(x,a)=>x>=a?1:0, mb=(x,a,n)=>x<a?0:Math.pow(x-a,n);
+/* sampled deflected curve in world units: f(x) gives offset (already scaled) */
+const curve=(x1,x2,f,y0=0,n=40)=>{const p=[];for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n;p.push([x,y0+f(x)]);}return p;};
+const defl=(x1,x2,f,y0)=>({t:'line',p:curve(x1,x2,f,y0),cls:'faint'});
+/* spring (zig-zag) from (x,y1) down to (x,y2), ground below */
+function spring(x,y1,y2){const n=8,p=[[x,y1],[x,y1-0.12]];const h=(y1-y2-0.24)/n;for(let i=0;i<n;i++)p.push([x+(i%2?-0.16:0.16),y1-0.12-h*(i+0.5)]);p.push([x,y2+0.12],[x,y2]);
+  return [{t:'line',p,cls:'ink'},{t:'fixed',x,y:y2,side:'bottom',len:40}];}
+
+/* ---------- unit-load solutions (F=q=l=EI=1) ---------- */
+const W={
+  cf:{M:x=>-(1-x),w:x=>x*x*x/6-x*x/2},
+  cq:{M:x=>-(1-x)*(1-x)/2,w:x=>-x*x*(6-4*x+x*x)/24},
+  sq:{M:x=>x*(1-x)/2,w:x=>-x*(1-2*x*x+x*x*x)/24},
+  pq:{M:x=>-x*x/2+5*x/8-1/8,w:x=>-(x**4)/24+5*x**3/48-x*x/16},
+  sf:a=>{const b=1-a;return {M:x=>x<=a?b*x:a*(1-x),w:x=>x<=a?-b*x*(1-b*b-x*x)/6:-a*(1-x)*(1-a*a-(1-x)*(1-x))/6};}
+};
+
+/* ---------- Section 0 ---------- */
+D('fig-conv',{x0:-0.8,x1:8.6,y0:-1.6,y1:1.5,px:44,pad:10,maxw:470},[bm(0,8),{t:'pin',x:0,y:-0.11},{t:'roller',x:8,y:-0.11},
+  defl(0,8,x=>-0.9*Math.sin(Math.PI*x/8)),{t:'force',x:4,y:0.11,ang:-90,len:36,lbl:'F'},
+  {t:'force',x:5.6,y:0,ang:-90,len:26,k:'good',at:'tail',lbl:'w < 0',dx:28,dy:-6},{t:'axes',x:0.3,y:0.55,len:30,ly:'w'},
+  T(2.2,-1.25,'elastic line (w measured up)','lbl-dim')]);
+
+/* ---------- Section 1 ---------- */
+D('fig-s1-el',{x0:-1.4,x1:4.4,y0:-1.8,y1:2.2,px:48,pad:8,maxw:380},[{t:'rect',x:0,y:-0.4,w:3,h:0.8,cls:'member2'},{t:'dist',x1:0,x2:3,y:0.4,q1:30,q2:30,lbl:'q',lx:0,dx:-16,h:0},
+  {t:'force',x:-0.25,y:-0.4,ang:90,len:34,k:'good',at:'tail',lbl:'V',dx:-12,dy:30},{t:'moment',x:0,y:0,r:22,sense:'cw',start:250,k:'good',lbl:'M',dx:-14},
+  {t:'force',x:3,y:0.4,ang:-90,len:34,k:'good',at:'tail',lbl:'V+dV',dx:20},{t:'moment',x:3,y:0,r:22,sense:'ccw',start:-70,k:'good',lbl:'M+dM',dx:22},
+  {t:'dim',x1:0,x2:3,y:-1.5,lbl:'dx'}]);
+
+/* ---------- Section 2: element deformation ---------- */
+D('fig-s2-el',{x0:-1.4,x1:4.6,y0:-0.8,y1:3.3,px:52,pad:10,maxw:380},[
+  {t:'rect',x:0,y:0,w:2.4,h:1.6,cls:'faint'},T(1.2,0.8,'dx × dz','lbl-dim'),
+  {t:'poly',pts:[[0.3,0.2],[3.1,0.55],[3.55,2.15],[0.75,1.8]],cls:'member2'},
+  {t:'line',p:[[3.1,0.55],[3.55,2.15]],cls:'ink'},T(2.2,2.55,'right edge moved by du = ε dx','lbl-good'),
+  T(1.6,0.05,'tilt ∂w/∂x','lbl-dim'),T(0.25,1.25,'tilt ∂u/∂z','lbl-dim','end'),
+  {t:'axes',x:-0.3,y:-0.5,len:28,ly:'z'},T(2.2,3.05,'γ = loss of the right angle','lbl-good')]);
+
+/* ---------- Section 3: plane sections ---------- */
+P('fig-s3',[
+ {o:{x0:-0.4,x1:5.4,y0:-1.4,y1:1.4,px:40,pad:8},cap:'before: section is a vertical plane; \\(P\\) at depth \\(z\\)',items:[{t:'rect',x:0,y:-0.7,w:5,h:1.4,cls:'member2'},
+   {t:'line',p:[[2.5,-0.9],[2.5,0.9]],cls:'cut'},{t:'dot',x:2.5,y:-0.45,k:'force'},T(2.75,-0.45,'P','lbl-force','start'),{t:'line',p:[[0,0],[5,0]],cls:'faint'},T(4.6,0.18,'axis','lbl-dim')]},
+ {o:{x0:-0.4,x1:5.4,y0:-2.0,y1:1.2,px:40,pad:8},cap:'after: whole section moved down by \\(w\\) and turned by \\(\\psi\\); \\(P\\) shifts by \\(u=\\psi z\\)',items:[
+   {t:'line',p:curve(0,5,x=>-0.07*x*x),cls:'ink'},{t:'line',p:[[2.5,0],[2.5,-0.5]],cls:'faint'},
+   {t:'line',p:[[2.5-0.9*0.34,-0.4375+0.9*0.94],[2.5+0.9*0.34,-0.4375-0.9*0.94]],cls:'cut'},{t:'dot',x:2.5+0.45*0.34,y:-0.4375-0.45*0.94,k:'force'},
+   T(2.95,-0.95,'P′','lbl-force','start'),T(2.15,-0.1,'w','lbl-dim'),T(2.25,0.75,'ψ','lbl-good')]}
+]);
+
+/* ---------- Section 4: sign check ---------- */
+P('fig-s4-sign',[
+ {o:{x0:-0.6,x1:4.6,y0:-0.9,y1:1.3,px:40,pad:8},cap:'\\(M\\gt0\\): \\(w^{\\prime\\prime}\\gt0\\), smile',items:[{t:'line',p:curve(0,4,x=>0.12*(x-2)*(x-2)),cls:'ink'},
+   {t:'moment',x:0,y:0.48,r:16,sense:'cw',start:250,k:'good',lbl:'M'},{t:'moment',x:4,y:0.48,r:16,sense:'ccw',start:-70,k:'good',lbl:'M'}]},
+ {o:{x0:-0.6,x1:4.6,y0:-0.9,y1:1.3,px:40,pad:8},cap:'\\(M\\lt0\\): \\(w^{\\prime\\prime}\\lt0\\), frown',items:[{t:'line',p:curve(0,4,x=>0.48-0.12*(x-2)*(x-2)),cls:'ink'},
+   {t:'moment',x:0,y:0,r:16,sense:'ccw',start:-70,k:'good',lbl:'M'},{t:'moment',x:4,y:0,r:16,sense:'cw',start:250,k:'good',lbl:'M'}]}
+]);
+
+/* ---------- Section 5: supports ---------- */
+(function(){const o={x0:-1.3,x1:2.0,y0:-1.7,y1:1.1,px:36,pad:8},h=hb(36);
+ P('fig-s5',[
+  {o,cap:'pin / roller: \\(w=0\\), \\(M=0\\)',items:[bm(-1.2,1.8),{t:'pin',x:0,y:-h},defl(-1.2,1.8,x=>0.22*x)]},
+  {o,cap:'clamp: \\(w=0\\), \\(w^{\\prime}=0\\)',items:[{t:'fixed',x:0,y:0,side:'left',len:54},bm(0,1.8),defl(0,1.8,x=>-0.18*x*x)]},
+  {o,cap:'free end: \\(M=0\\), \\(V=0\\)',items:[bm(-1.2,0.9),defl(-1.2,0.9,x=>-0.1*(x+1.2)*(x+1.2)),T(1.15,0.0,'free','lbl-dim','start')]},
+  {o:{x0:-1.0,x1:2.0,y0:-1.7,y1:1.1,px:36,pad:8},cap:'parallel motion: \\(w^{\\prime}=0\\), \\(V=0\\)',items:[{t:'guide',x:0,y:0,side:'left'},bm(0,1.8),defl(0,1.8,x=>-0.5+0.08*x*x)]}
+ ]);})();
+
+/* ---------- Section 6: cantilevers ---------- */
+(function(){
+  const px=56,h=hb(px),o={x0:-0.7,x1:4.6,y0:-1.6,y1:1.4,px,pad:8,maxw:360};
+  D('fig-c1-sys',o,[{t:'fixed',x:0,y:0,side:'left',len:60},bm(0,4),{t:'force',x:4,y:h,ang:-90,len:42,lbl:'F'},defl(0,4,x=>-0.015*x*x*(3*4-x)/4),
+    T(-0.3,0.6,'A'),{t:'dim',x1:0,x2:4,y:-1.25,lbl:'l'},{t:'axes',x:0.25,y:0.55,len:24,ly:'w'}]);
+  D('fig-c1-fbd',o,[bm(0,2.4),{t:'force',x:0.05,y:-h,ang:90,len:40,k:'react',lbl:'F',dx:12},{t:'moment',x:0,y:0,r:20,sense:'ccw',start:-60,k:'react',lbl:'Fl',dx:-8},
+    ...cutFace(2.4,'R'),{t:'dim',x1:0,x2:2.4,y:-1.25,lbl:'x'}]);
+  const d=()=>dg('cv-c1',W.cf.w,{x0:0,x1:1,xstep:0.2,xlabel:'x / l',ylabel:'w EI / Fl³',color:'--c2',pts:[{x:1,y:-1/3,color:css('--c2'),label:'−1/3',align:'right',r:4}]});
+  redraws.push(d);d();
+  const o2={x0:-0.6,x1:4.8,y0:-1.6,y1:1.5,px:54,pad:8,maxw:360};
+  D('fig-c2-sys',o2,[bm(0,4),{t:'fixed',x:4,y:0,side:'right',len:60},{t:'dist',x1:0,x2:4,y:0,q1:24,q2:24,lbl:'w_0',lx:0,dx:-14},
+    defl(0,4,x=>-0.5*((x/4)**4-4*(x/4)+3)/3),T(-0.3,-0.4,'A'),T(4.3,0.6,'B'),{t:'dim',x1:0,x2:4,y:-1.3,lbl:'L'},{t:'axes',x:0.2,y:-0.95,len:22,ly:'y'}]);
+  D('fig-c2-fbd',o2,[bm(0,2.6),{t:'dist',x1:0,x2:2.6,y:0,q1:24,q2:24},{t:'force',x:1.3,y:1.2,ang:-90,len:20,k:'load',at:'tail',lbl:'w₀x',dx:22,dy:-4},
+    ...cutFace(2.6,'R'),{t:'dim',x1:0,x2:2.6,y:-1.3,lbl:'x'}]);
+})();
+
+/* ---------- Section 7: point load, multiple regions ---------- */
+(function(){
+  const px=46,h=hb(px),o={x0:-0.8,x1:6.8,y0:-1.7,y1:1.6,px,pad:8};
+  const dims=[{t:'dim',x1:0,x2:3.6,y:-1.35,lbl:'a'},{t:'dim',x1:3.6,x2:6,y:-1.35,lbl:'b'}];
+  D('fig-p-sys',o,[bm(0,6),{t:'pin',x:0,y:-h},{t:'roller',x:6,y:-h},{t:'force',x:3.6,y:h,ang:-90,len:42,lbl:'F'},T(-0.35,0.32,'A'),T(6.35,0.32,'B'),
+    T(1.8,0.5,'I','lbl-dim'),T(4.8,0.5,'II','lbl-dim'),...dims]);
+  D('fig-p-fbd',o,[bm(0,6),{t:'force',x:3.6,y:h,ang:-90,len:42,lbl:'F'},{t:'force',x:0,y:-h,ang:90,len:38,k:'react',lbl:'Fb/l'},{t:'force',x:6,y:-h,ang:90,len:38,k:'react',lbl:'Fa/l'},...dims]);
+  function live(){const a=+$('pa').value,b=1-a,c=W.sf(a);
+    let xm=0,wm=0;for(let i=0;i<=2000;i++){const x=i/2000,v=c.w(x);if(v<wm){wm=v;xm=x;}}
+    const s=-1.2/Math.max(1e-6,-wm)*0.02*50; // scale drawing
+    D('fig-p-live',{x0:-0.08,x1:1.08,y0:-0.28,y1:0.22,px:360,pad:6,maxw:440},[bm(0,1,0,8),{t:'pin',x:0,y:-0.012},{t:'roller',x:1,y:-0.012},
+      {t:'force',x:a,y:0.012,ang:-90,len:34,lbl:'F'},{t:'line',p:curve(0,1,x=>c.w(x)/(-wm)*0.16),cls:'cut'}]);
+    dg('cv-p-w',x=>1000*c.w(x),{x0:0,x1:1,xstep:0.1,xlabel:'x / l',ylabel:'1000 w EI / Fl³',color:'--c2',ymin:-24,ymax:0,ystep:5,
+      pts:[{x:a,y:1000*c.w(a),color:css('--c2'),r:4},{x:xm,y:1000*wm,color:css('--c2'),r:5,open:true}]});
+    $('p-out').innerHTML=`a/l = ${fmt(a,2)} · under the load w = <b>${fmt(c.w(a),5)}</b> Fl³/EI · max <b>${fmt(wm,5)}</b> Fl³/EI at x/l = <b>${fmt(xm,3)}</b>`;}
+  $('pa').addEventListener('input',live);redraws.push(live);live();
+})();
+
+/* ---------- Section 8: Macaulay ---------- */
+(function(){
+  const h=hb(38),o={x0:-0.8,x1:10.8,y0:-1.6,y1:1.7,px:38,pad:8};
+  const loads=[{t:'force',x:3,y:h,ang:-90,len:40,lbl:'30 kN'},{t:'force',x:7,y:h,ang:-90,len:40,lbl:'50 kN'}];
+  const dims=[{t:'dim',x1:0,x2:3,y:-1.3,lbl:'3 m'},{t:'dim',x1:3,x2:7,y:-1.3,lbl:'4 m'},{t:'dim',x1:7,x2:10,y:-1.3,lbl:'3 m'}];
+  D('fig-mc-sys',o,[bm(0,10),{t:'pin',x:0,y:-h},{t:'roller',x:10,y:-h},...loads,...dims]);
+  D('fig-mc-fbd',o,[bm(0,10),...loads,{t:'force',x:0,y:-h,ang:90,len:40,k:'react',lbl:'36 kN'},{t:'force',x:10,y:-h,ang:90,len:40,k:'react',lbl:'44 kN'},...dims]);
+  const w=x=>6*x**3-5*mb(x,3,3)-25/3*mb(x,7,3)-406*x;
+  const d=()=>dg('cv-mc-w',w,{x0:0,x1:10,xstep:1,xlabel:'x (m)',ylabel:'EI w (kN·m³)',color:'--c2',
+    pts:[{x:3,y:-1056,color:css('--c2'),label:'−1056',r:3.5},{x:5.134,y:w(5.134),color:css('--c2'),label:'−1321',r:4,align:'right'},{x:7,y:-1104,color:css('--c2'),label:'−1104',r:3.5}]});
+  redraws.push(d);d();
+})();
+
+/* ---------- Section 9: superposition ---------- */
+(function(){
+  const h=hb(26),o={x0:-0.6,x1:8.6,y0:-0.9,y1:2.0,px:26,pad:6};
+  const base=()=>[bm(0,8),{t:'pin',x:0,y:-h},{t:'roller',x:8,y:-h}];
+  const q=()=>({t:'dist',x1:0,x2:4,y:0,q1:22,q2:22,lbl:'q_1',lx:2}), f=()=>({t:'force',x:6,y:h,ang:-90,len:34,lbl:'F_2'});
+  P('fig-sup',[{o,cap:'the beam',items:[...base(),q(),f()]},{o,cap:'= \\(q_1\\) alone (\\(w_1\\))',items:[...base(),q()]},{o,cap:'+ \\(F_2\\) alone (\\(w_2\\))',items:[...base(),f()]}]);
+  D('fig-sup2',{x0:-0.6,x1:6.6,y0:-1.3,y1:1.9,px:46,pad:8,maxw:400},[bm(0,6),{t:'pin',x:0,y:-hb(46)},{t:'roller',x:6,y:-hb(46)},
+    {t:'dist',x1:0,x2:6,y:0,q1:22,q2:22,lbl:'4 kN/m',lx:1.2},{t:'force',x:3,y:0.6,ang:-90,len:24,lbl:'10 kN',dy:-4},{t:'dim',x1:0,x2:6,y:-1.0,lbl:'6 m'}]);
+})();
+
+/* ---------- Section 10: propped cantilever ---------- */
+(function(){
+  const px=54,h=hb(px),o={x0:-0.7,x1:4.6,y0:-1.5,y1:1.5,px,pad:8,maxw:360};
+  const q=()=>({t:'dist',x1:0,x2:4,y:0,q1:24,q2:24,lbl:'q_0',lx:2});
+  D('fig-pc-sys',o,[{t:'fixed',x:0,y:0,side:'left',len:56},bm(0,4),{t:'roller',x:4,y:-h},q(),defl(0,4,x=>-3.2*W.pq.w(x/4)*4),
+    T(-0.3,0.65,'A'),T(4.3,0.35,'B'),{t:'dim',x1:0,x2:4,y:-1.2,lbl:'l'}]);
+  D('fig-pc-fbd',o,[bm(0,4),q(),{t:'force',x:0.05,y:-h,ang:90,len:38,k:'react',lbl:'A_V',dx:14},{t:'moment',x:0,y:0,r:20,sense:'cw',start:200,k:'react',lbl:'M_A',dx:-8},
+    {t:'force',x:4,y:-h,ang:90,len:38,k:'react',lbl:'B'},{t:'dim',x1:0,x2:4,y:-1.2,lbl:'l'}]);
+  const d=()=>{dg('cv-pc-M',W.pq.M,{x0:0,x1:1,xstep:0.125,xlabel:'x / l',ylabel:'M / q₀l²',color:'--c4',pts:[{x:0.625,y:9/128,color:css('--c4'),label:'9/128',r:4},{x:0,y:-0.125,color:css('--c4'),label:'−1/8',r:4}]});
+    dg('cv-pc-w',W.pq.w,{x0:0,x1:1,xstep:0.125,xlabel:'x / l',ylabel:'w EI / q₀l⁴',color:'--c2',pts:[{x:0.5785,y:W.pq.w(0.5785),color:css('--c2'),label:'−1/185',r:4}]});};
+  redraws.push(d);d();
+  const oc={x0:-0.7,x1:4.8,y0:-1.4,y1:1.5,px:40,pad:8};
+  P('fig-pc-comp',[
+   {o:oc,cap:'load alone: tip down \\(q_0l^4/8EI\\)',items:[{t:'fixed',x:0,y:0,side:'left',len:44},bm(0,4),q(),defl(0,4,x=>-0.02*x*x*(96-16*x+x*x)/48)]},
+   {o:oc,cap:'\\(B\\) alone: tip up \\(Bl^3/3EI\\)',items:[{t:'fixed',x:0,y:0,side:'left',len:44},bm(0,4),{t:'force',x:4,y:-0.12,ang:90,len:36,k:'react',lbl:'B'},defl(0,4,x=>0.05*x*x*(12-x)/8*0.9)]},
+   {o:oc,cap:'sum: tip deflection 0',items:[{t:'fixed',x:0,y:0,side:'left',len:44},bm(0,4),{t:'roller',x:4,y:-0.12},q()]}]);
+  // spring-supported beam (May 2013 A3)
+  const p2=40,h2=hb(p2);
+  D('fig-sp',{x0:-0.8,x1:9.8,y0:-2.0,y1:1.6,px:p2,pad:8,maxw:460},[bm(0,9),{t:'pin',x:0,y:-h2},{t:'roller',x:9,y:-h2},...spring(4.5,-h2,-1.0),
+    {t:'dist',x1:0,x2:9,y:0,q1:22,q2:22,lbl:'16 kN/m',lx:2.2},T(-0.35,0.4,'A'),T(4.85,-0.45,'B'),T(9.35,0.4,'C'),
+    {t:'dim',x1:0,x2:4.5,y:-1.7,lbl:'4.5 m'},{t:'dim',x1:4.5,x2:9,y:-1.7,lbl:'4.5 m'}]);
+})();
+
+/* ---------- Section 11: explorer ---------- */
+(function(){
+  function live(){const k=$('xsel').value,a=+$('xa').value,c=k==='sf'?W.sf(a):W[k];
+    $('xa').disabled=(k!=='sf');
+    const it=[bm(0,1,0,8)],h=0.012;
+    if(k==='cf'||k==='cq'||k==='pq')it.push({t:'fixed',x:0,y:0,side:'left',len:48});else it.push({t:'pin',x:0,y:-h});
+    if(k==='sf'||k==='sq'||k==='pq')it.push({t:'roller',x:1,y:-h});
+    if(k==='cf')it.push({t:'force',x:1,y:h,ang:-90,len:34,lbl:'F'});
+    if(k==='sf')it.push({t:'force',x:a,y:h,ang:-90,len:34,lbl:'F'});
+    if(k==='cq'||k==='sq'||k==='pq')it.push({t:'dist',x1:0,x2:1,y:0,q1:20,q2:20,lbl:'q',lx:0.5});
+    let wm=0,xm=0;for(let i=0;i<=2000;i++){const x=i/2000,v=c.w(x);if(v<wm){wm=v;xm=x;}}
+    it.push({t:'line',p:curve(0,1,x=>c.w(x)/(-wm)*0.14),cls:'cut'});
+    D('fig-x-live',{x0:-0.1,x1:1.1,y0:-0.26,y1:0.24,px:360,pad:6,maxw:440},it);
+    const u=(k[1]==='q')?['ql²','ql⁴/EI']:['Fl','Fl³/EI'];
+    dg('cv-x-M',c.M,{x0:0,x1:1,xstep:0.1,xlabel:'x / l',ylabel:'M / '+u[0],color:'--c4'});
+    dg('cv-x-w',x=>1000*c.w(x),{x0:0,x1:1,xstep:0.1,xlabel:'x / l',ylabel:'1000 w / ('+u[1]+')',color:'--c2',pts:[{x:xm,y:1000*wm,color:css('--c2'),r:5,open:true}]});
+    $('x-out').innerHTML=`largest deflection <b>${fmt(wm,5)}</b> ${u[1]} (= 1/${fmt(-1/wm,1)}) at x/l = <b>${fmt(xm,3)}</b>`;}
+  $('xsel').addEventListener('input',live);$('xa').addEventListener('input',live);redraws.push(live);live();
+})();
+
+/* ---------- Exam taster ---------- */
+(function(){
+  const px=54,h=hb(px),o={x0:-0.7,x1:4.8,y0:-1.4,y1:1.4,px,pad:8,maxw:360};
+  D('fig-t1',{x0:-0.7,x1:6.6,y0:-1.4,y1:1.4,px:50,pad:8,maxw:440},[{t:'fixed',x:0,y:0,side:'left',len:56},bm(0,4),{t:'force',x:4,y:h,ang:-90,len:40,lbl:'F_1'},T(-0.3,0.65,'A'),T(4.3,0.35,'B'),
+    {t:'dim',x1:0,x2:4,y:-1.1,lbl:'L'},{t:'axes',x:0.2,y:-0.75,len:22},{t:'rect',x:5.3,y:-0.4,w:0.8,h:0.8,cls:'member2'},{t:'vdim',y1:-0.4,y2:0.4,x:6.35,lbl:'t'},{t:'dim',x1:5.3,x2:6.1,y:-0.8,lbl:'w',below:true}]);
+  D('fig-t2',o,[bm(0,4),{t:'fixed',x:4,y:0,side:'right',len:56},{t:'dist',x1:0,x2:4,y:0,q1:24,q2:24,lbl:'q',lx:2},{t:'force',x:0,y:-h,ang:90,len:40,lbl:'P',at:'tip',dx:-14},
+    {t:'dim',x1:0,x2:4,y:-1.1,lbl:'L'},{t:'axes',x:1.6,y:-0.5,len:20}]);
+  D('fig-t3',o,[bm(0,4),{t:'pin',x:0,y:-h},{t:'roller',x:4,y:-h},{t:'dist',x1:0,x2:4,y:0,q1:24,q2:24,lbl:'q',lx:2},T(-0.3,0.35,'A'),T(4.3,0.35,'B'),{t:'dim',x1:0,x2:4,y:-1.1,lbl:'l'}]);
+  D('fig-t4',o,[{t:'fixed',x:0,y:0,side:'left',len:56},bm(0,4),{t:'roller',x:4,y:-h},{t:'dist',x1:0,x2:4,y:0,q1:24,q2:24,lbl:'q_0',lx:2},T(-0.3,0.65,'A'),T(4.3,0.35,'B'),{t:'dim',x1:0,x2:4,y:-1.1,lbl:'l'}]);
+  const p3=46,h3=hb(p3);
+  D('fig-t5',{x0:-0.6,x1:6.1,y0:-1.7,y1:2.7,px:p3,pad:8,maxw:470},[bm(0,5.5),{t:'pin',x:0,y:-h3},{t:'roller',x:4,y:-h3},
+    {t:'line',p:[[2,h3],[2,0.9],[2.5,0.9]],cls:'ink'},{t:'hinge',x:2.5,y:0.9,r:2.5},{t:'force',x:2.5,y:0.9,ang:-90,len:40,lbl:'40 kN',dx:30,dy:16},
+    {t:'dist',x1:4,x2:5.5,y:0,q1:0,q2:44,lbl:'q_0 = 10 kN/m',lx:5.5,dx:-10},{t:'dot',x:3,y:0,k:'good'},T(3,0.35,'x = 3','lbl-good'),
+    T(-0.3,0.3,'A'),T(1.75,0.35,'B'),T(4.4,-0.45,'C'),T(5.75,0.1,'D'),T(2.5,1.15,'E',null,10),
+    {t:'dim',x1:0,x2:2,y:-1.35,lbl:'2 m'},{t:'dim',x1:2,x2:4,y:-1.35,lbl:'2 m'},{t:'dim',x1:4,x2:5.5,y:-1.35,lbl:'1.5 m'},{t:'dim',x1:2,x2:2.5,y:2.15,lbl:'0.5 m'}]);
+})();
+
+</script>
+</body></html>

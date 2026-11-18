@@ -1,0 +1,1410 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MECH2407 C2 · Multiple Integrals</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+/* MECH2407 house style (from the MATH1851 bundle): one 46rem reading column, sticky contents rail on wide screens,
+   teal accent, warm orange for "Beyond the handouts", dark mode through CSS variables. Figures read colours via css('--accent') etc. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf; --prev:#6a4c9c; --prev-soft:#efe9f8;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#7a4fc2;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518; --prev:#b9a2e6; --prev-soft:#2a2238;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#b79bff; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518; --prev:#b9a2e6; --prev-soft:#2a2238;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#b79bff; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:230px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible,nav.toc a.on{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+nav.toc .home{display:block;margin:0 0 12px 10px;font-size:12.5px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+header.top .crumbs{font-size:13px;display:flex;flex-wrap:wrap;gap:4px 14px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0;min-width:0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent} .beyond>.tag{color:var(--warm)}
+.box.prev{background:var(--prev-soft);border-color:transparent;border-left:4px solid var(--prev)} .box.prev>.tag{color:var(--prev)}
+.pill.prev{background:var(--prev-soft);color:var(--prev)}
+.analogy{border-left:4px solid var(--c3)} .analogy>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent)} .ready>.tag{color:var(--accent)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+.figure .pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+canvas.plot{width:100%;display:block;border-radius:4px;touch-action:none}
+canvas.plot.drag{cursor:grab}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+.ctrl button{font:inherit;font-size:.88rem;padding:4px 12px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums;overflow-x:auto}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px;min-width:0}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0;min-width:0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide,a.note{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+a.guide:hover,a.note:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+.boxed{border:1.5px solid var(--accent);border-radius:6px;padding:6px 10px;display:block;margin:8px 0;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+main svg[role="img"][aria-label] text{paint-order:stroke;stroke:var(--card);stroke-width:3.5px;stroke-linejoin:round}
+mjx-container svg text{stroke:none}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+footer.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px} .box,.q{padding:10px 10px} .figure{padding:10px} details{padding:0 10px} mjx-container[display="true"]{font-size:92%}}
+
+/* ---- exam-guide classes (added Phase 4; notes do not use them) ---- */
+.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:6px;padding:12px 16px;margin:14px 0;min-width:0}
+.card>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.card .row{display:grid;grid-template-columns:6.2rem 1fr;gap:4px 12px;padding:6px 0;border-top:1px solid var(--grid);min-width:0}
+.card .row>b{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+.card .row>div{min-width:0}
+@media (max-width:520px){.card .row{grid-template-columns:1fr}}
+.freq{font-family:var(--mono);font-size:12px;color:var(--muted);margin:2px 0 6px}
+.proc{border:1px solid var(--line);border-left:4px solid var(--c3,#2a9d6a);border-radius:6px;padding:10px 16px;margin:14px 0;background:var(--card);min-width:0}
+.proc>.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.marker{font-size:.9rem;background:var(--accent-soft);border-radius:6px;padding:6px 10px;margin:8px 0}
+.marker::before{content:"Marker note · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.alsoset{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 6px}
+.glance{width:100%;border-collapse:collapse;font-size:.92rem}
+.glance td,.glance th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{
+  pd:['\\frac{\\partial #1}{\\partial #2}',2], vb:['\\mathbf{#1}',1], grad:'\\nabla', R:'\\mathbb{R}',
+  ii:'\\mathbf{i}', jj:'\\mathbf{j}', kk:'\\mathbf{k}'}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="assets/mathjax/tex-svg.js"></script>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <a class="home" href="index.html">← Start Here</a>
+  <p class="h">Chapter 2</p>
+  <ol>
+    <li><a href="#s0">0 · Where this chapter sits</a></li>
+    <li><a href="#s1">1 · Double integrals</a></li>
+    <li><a href="#s2">2 · Change of variables, polar</a></li>
+    <li><a href="#s3">3 · Triple integrals</a></li>
+    <li><a href="#s4">4 · Cylindrical, spherical</a></li>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#mistakes">Common mistakes</a></li>
+    <li><a href="#find-mistake">Find the mistake</a></li>
+    <li><a href="#group-work">Practice problems</a></li>
+    <li><a href="#checks">Concept checks</a></li>
+    <li><a href="#taster">Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MECH2407 · Multivariable Calculus &amp; PDEs · Chapter 2</span>
+  <h1>Multiple Integrals</h1>
+  <p class="lede">Every page of the Chapter 2 handout explained from scratch, in handout order: double integrals, change of variables (including polar coordinates), triple integrals, and cylindrical and spherical coordinates. Every region of integration is drawn, every solid is a rotatable 3D picture, and every worked example is solved in full. Material the exam uses but the handout leaves out sits in orange "Beyond the handouts" boxes. The chapter ends with real past-paper questions, each linked to its exam-guide section.</p>
+  <div class="crumbs"><a href="index.html">← Start Here</a><a href="note-C1.html">← Previous: C1 Functions of Several Variables</a><a href="guide-C2.html">Exam guide for this chapter →</a><a href="note-C3a.html">Next: C3a Vector Differential Calculus →</a></div>
+</header>
+
+<section id="s0">
+<h2><span class="n">0</span>Where this chapter sits</h2>
+<p>In first-year calculus, \(\int_a^b f(x)\,dx\) adds up a quantity spread along a line: the area under a curve, the work done along a path, the mass of a thin rod. Engineering quantities are usually spread over a <b>plate</b> (a 2D region) or through a <b>solid</b> (a 3D region): the mass of a plate whose density varies, the volume of a tank, the moment of inertia of a shaft, the total charge in a cloud. This chapter builds the tools for adding up over 2D and 3D regions: <b>double</b> and <b>triple integrals</b>.</p>
+<p>The plan of the chapter:</p>
+<ol class="steps">
+  <li><b>§1</b> <b>Double integrals</b> \(\iint_R f\,dA\): what they mean (volume under a surface), how to compute them as two ordinary integrals one after the other, how to set the limits for a region that is not a rectangle, and how to swap the order of integration.</li>
+  <li><b>§2</b> <b>Change of variables</b> in double integrals: the <b>Jacobian</b>, mapping a region to a simpler one, and the most important special case, <b>polar coordinates</b> (moment of inertia of a pipe; the famous integral \(\int_0^\infty e^{-x^2}dx=\sqrt\pi/2\)).</li>
+  <li><b>§3</b> <b>Triple integrals</b> \(\iiint_D f\,dV\): volume, mass, moment of inertia, charge; limits for boxes and for solids bounded by surfaces.</li>
+  <li><b>§4</b> Change of variables in triple integrals: <b>cylindrical</b> and <b>spherical</b> coordinates, with their volume elements \(r\,dr\,d\theta\,dz\) and \(\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\).</li>
+</ol>
+<p><b>What you are assumed to know:</b> definite integrals and the standard techniques (substitution, integration by parts, partial fractions), \(2\times2\) and \(3\times3\) determinants, sketching straight lines, circles and parabolas, and from <a href="note-C1.html#s2">Chapter 1</a> how to take a partial derivative (differentiate with respect to one variable while the others are held constant). Nothing about multiple integrals is assumed.</p>
+<p><b>How the exam uses this chapter.</b> Across the 21 papers collected for this bundle, 51 question parts (about 335 marks) come from this chapter. The big one is <b>change of variables with a Jacobian</b> (type C2.2): it appears in 8 December sittings, usually as Q1(b) or Q2(a) worth 10–15 marks, in the fixed pattern "find the Jacobian, sketch the new region, evaluate". Polar coordinates (Dec 2023) and volumes or spherical coordinates in 3D (Dec 2014, Dec 2017) appear less often in December; triple integrals with Cartesian limits appear only in the May-format papers. The December formula sheet gives <b>nothing</b> from this chapter: no Jacobians, no polar or spherical volume elements. See the <a href="guide-C2.html">C2 exam guide</a>.</p>
+</section>
+
+<section id="s1">
+<h2><span class="n">1</span>Double integrals <span class="muted small">(handout §2.1, pp. 1–7)</span></h2>
+<h3>Starting point: the definite integral as a Riemann sum</h3>
+<p>For a function \(f(x)\) of one variable, chop the interval \([a,b]\) into \(n\) pieces at points</p>
+\[a=x_0\lt x_1\lt x_2\lt\dots\lt x_n=b.\]
+<p>In each piece \([x_{k-1},x_k]\) pick any sample point \(c_k\). Build a rectangle on that piece with height \(f(c_k)\) and width \(x_k-x_{k-1}\). The <b>definite integral</b> of \(f\) from \(a\) to \(b\) is the limit of the total of these rectangles:</p>
+\[\int_a^b f(x)\,dx=\lim_{n\to\infty}\sum_{k=1}^{n}f(c_k)\,(x_k-x_{k-1}),\]
+<p>taken so that \(\max\{x_k-x_{k-1}\}\to0\) as \(n\to\infty\) (every piece shrinks, not just most of them).</p>
+<p class="word"><b>In words:</b> integral = limit of the sum of (height × width) over thinner and thinner strips.</p>
+<div class="box def"><span class="tag">Definitions</span>
+<ul class="list">
+<li>The sum \(\sum f(c_k)(x_k-x_{k-1})\) is called a <b>Riemann sum</b>, and an integral defined as its limit is a <b>Riemann integral</b>.</li>
+<li>Geometrically, \(\int_a^b f\,dx\) is the area between the graph and the \(x\)-axis, between the lines \(x=a\) and \(x=b\). Rectangles below the axis (where \(f(c_k)\lt0\)) count as <b>negative</b> area, so strictly it is a <i>signed</i> area.</li>
+</ul>
+</div>
+<div class="figure">
+  <p class="ttl">Riemann sum for one variable</p>
+  <canvas class="plot" id="f-r1d" style="aspect-ratio:16/10" aria-label="Rectangles under a curve, some above and some below the x-axis"></canvas>
+  <div class="ctrl"><label>Number of rectangles \(n\) <input type="range" id="r1-n" min="2" max="40" step="1" value="8"></label></div>
+  <div class="readout" id="r1-out"></div>
+  <p class="cap">The \(k\)-th rectangle stands on \([x_{k-1},x_k]\) with height \(f(c_k)\), where \(c_k\) is the red dot (here the midpoint). Rectangles above the axis (teal) add area; those below (orange) subtract it. As \(n\) grows the sum settles on the integral.</p>
+</div>
+
+<h3>From area under a curve to volume under a surface</h3>
+<p>A function \(f(x,y)\) of two variables defines a surface \(z=f(x,y)\) (see <a href="note-C1.html#s1">Chapter 1 §1</a>). Take a region \(R\) of the \(xy\)-plane (the "floor") and stand a vertical wall on its boundary, like a cookie cutter pushed straight up. The surface, the wall and the floor enclose a solid. We want its volume.</p>
+<p>Divide \(R\) into \(n\) small rectangles. The \(k\)-th one has sides \(\Delta x_k\), \(\Delta y_k\), area \(\Delta A_k=\Delta x_k\,\Delta y_k\), and contains a chosen point \((x_k,y_k)\). A column standing on it with height \(f(x_k,y_k)\) has volume \(f(x_k,y_k)\,\Delta A_k\). Add up all the columns and let them shrink:</p>
+<div class="box def"><span class="tag">Definition (double integral)</span>
+\[\begin{aligned}\iint_R f(x,y)\,dR&=\iint_R f(x,y)\,dx\,dy\\&=\lim_{n\to\infty}\sum_{k=1}^{n}f(x_k,y_k)\,\Delta A_k,\end{aligned}\]
+<p>provided that \(\max\{\Delta A_k\}\to0\) (strictly, every little piece must shrink in all directions).</p>
+<p class="word"><b>In words:</b> double integral = limit of the sum of (height of surface × area of little floor tile) over all tiles; for \(f\ge0\) it is the volume of the solid between the floor region \(R\) and the surface.</p>
+<p>The little-area symbol is written in several ways that all mean the same: \(dR\), \(dA\), \(dS\), \(dx\,dy\). Such an integral is sometimes called an <b>iterated</b> or <b>repeated integral</b>, because (as we shall see) it is evaluated as two ordinary definite integrals, one inside the other.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Columns under a surface: the double Riemann sum</p>
+  <canvas class="plot" id="f-r2d" style="aspect-ratio:16/11" aria-label="Rectangular columns standing under a surface over a rectangle"></canvas>
+  <div class="ctrl"><label>Tiles per side \(n\) <input type="range" id="r2-n" min="2" max="9" step="1" value="4"></label>
+  <label><input type="checkbox" id="r2-s" checked> show surface</label></div>
+  <div class="readout" id="r2-out"></div>
+  <p class="cap">Surface \(z=2xy+y^2\) over the rectangle \(R:\ 1\le x\le2,\ 0\le y\le1\) (the surface of Example 2.1.2 below). Each column has base \(\Delta A_k=\Delta x\,\Delta y\) and height \(f(x_k,y_k)\) at the centre \((x_k,y_k)\) of its tile. The total column volume approaches the exact value \(11/6\approx1.8333\).</p>
+</div>
+<p>For a region that is not a rectangle, the same idea works: lay a grid over \(R\) and keep only the small rectangles that lie inside \(R\). As the grid gets finer, the kept rectangles fill \(R\) more and more completely.</p>
+<div class="figure">
+  <p class="ttl">A grid of tiles over a curved region \(R\)</p>
+  <canvas class="plot" id="f-grid" style="aspect-ratio:16/10" aria-label="Grid of small rectangles inside an elliptical region"></canvas>
+  <div class="ctrl"><label>Grid lines per unit <input type="range" id="gr-n" min="2" max="14" step="1" value="4"></label></div>
+  <div class="readout" id="gr-out"></div>
+  <p class="cap">Region \(R\): inside the ellipse \(x^2/9+y^2/4=1\) (blue). Shaded tiles lie wholly inside \(R\); the red tile is the \(k\)-th tile, of size \(\Delta x_k\times\Delta y_k\), containing the point \((x_k,y_k)\). The readout compares the total tile area with the exact area \(6\pi\) of the ellipse.</p>
+</div>
+<div class="box eg"><span class="tag">Example 2.1.1</span>
+<p>With \(f(x,y)\equiv1\) (the constant function 1),</p>
+\[\iint_S dS=\text{area of the region }S.\]
+<p class="word"><b>In words:</b> a solid of height 1 standing on \(S\) has volume = area of \(S\) × 1, so integrating 1 gives the area. This is how exam questions ask you to "find the area of the region using double integration".</p>
+</div>
+
+<h3>Rectangular regions: slicing into slabs (Fubini's theorem)</h3>
+<p>Let \(S\) be the rectangle \(a\le x\le b,\ c\le y\le d\). The region can be cut into thin strips in two ways:</p>
+<ul class="list">
+<li><b>horizontal strips</b>: \(y\) is fixed along the strip, \(x\) runs from \(a\) to \(b\); the strip has width \(\Delta y\);</li>
+<li><b>vertical strips</b>: \(x\) is fixed along the strip, \(y\) runs from \(c\) to \(d\); the strip has width \(\Delta x\).</li>
+</ul>
+<div class="figure">
+  <p class="ttl">Cutting the rectangle into horizontal or vertical strips</p>
+  <canvas class="plot" id="f-strips" style="aspect-ratio:16/10" aria-label="Rectangle with a horizontal or vertical strip"></canvas>
+  <div class="ctrl"><label>Strip <select id="st-sel"><option value="h">horizontal (x-direction)</option><option value="v">vertical (y-direction)</option></select></label>
+  <label>position <input type="range" id="st-p" min="0.05" max="0.95" step="0.01" value="0.45"></label></div>
+  <p class="cap">The rectangle \(a\le x\le b,\ c\le y\le d\). A horizontal strip at height \(y\) has thickness \(\Delta y\) and runs from \(x=a\) to \(x=b\). A vertical strip at position \(x\) has thickness \(\Delta x\) and runs from \(y=c\) to \(y=d\). The green dot is a typical point \((x,y)\) of the strip.</p>
+</div>
+<p>Each strip carries a thin <b>slab</b> of the solid under \(z=f(x,y)\). If the strip is horizontal (aligned with the \(x\)-direction, at height \(y\)), the face of the slab is the region under the curve \(z=f(x,y)\) with \(y\) frozen, and its area is</p>
+\[A(y)=\int_{x=a}^{b}f(x,y)\,dx.\]
+<p class="word"><b>In words:</b> cross-sectional area of the slab = ordinary integral along the strip, treating \(y\) as a constant.</p>
+<p>The slab has thickness \(\Delta y\), so its volume is about \(A(y)\,\Delta y\). Summing over slabs of infinitesimal width:</p>
+<div class="box thm"><span class="tag">Fubini's theorem (rectangles)</span>
+\[\begin{aligned}\iint_S f\,dx\,dy&=\int_{y=c}^{d}\left[\int_{x=a}^{b}f(x,y)\,dx\right]dy\\&\qquad(x\text{-direction first})\\&=\int_{x=a}^{b}\left[\int_{y=c}^{d}f(x,y)\,dy\right]dx\\&\qquad(y\text{-direction first})\end{aligned}\]
+<p class="word"><b>In words:</b> do the inner integral (with the other variable held constant), then integrate the answer over the outer variable. For a rectangle, either order gives the same answer, and the limits are just constants.</p>
+</div>
+<div class="figure">
+  <p class="ttl">A slab and its cross-section area (Example 2.1.2)</p>
+  <canvas class="plot" id="f-slab" style="aspect-ratio:16/11" aria-label="Slab under the surface z=2xy+y^2"></canvas>
+  <div class="ctrl"><label>Slab <select id="sb-sel"><option value="y">fix y (strip along x)</option><option value="x">fix x (strip along y)</option></select></label>
+  <label>position <input type="range" id="sb-p" min="0" max="1" step="0.01" value="0.6"></label></div>
+  <div class="readout" id="sb-out"></div>
+  <p class="cap">Surface \(z=2xy+y^2\) over \(1\le x\le2,\ 0\le y\le1\). The orange panel is the face of a slab; its area is \(A(y)=\int_1^2(2xy+y^2)\,dx=3y+y^2\) (or \(A(x)=\int_0^1(2xy+y^2)\,dy=x+\tfrac13\) for the other direction). The floor strip under it is drawn in red.</p>
+</div>
+<div class="box eg"><span class="tag">Example 2.1.2</span>
+<p><b>Evaluate \(\displaystyle\iint_S(2xy+y^2)\,dS\) where \(S\) is the rectangle \(1\le x\le2,\ 0\le y\le1\).</b></p>
+<p><b>Integrating in \(x\) first</b> (\(y\) held constant inside):</p>
+\[\begin{aligned}&\int_{y=0}^{1}\left[\int_{x=1}^{2}(2xy+y^2)\,dx\right]dy\\&=\int_{y=0}^{1}\Big[x^2y+xy^2\Big]_{x=1}^{2}dy\\&=\int_{0}^{1}(4y+2y^2-y-y^2)\,dy\\&=\int_0^1(3y+y^2)\,dy\\&=\left[\frac{3y^2}{2}+\frac{y^3}{3}\right]_0^1=\frac{11}{6}.\end{aligned}\]
+<p><b>Or integrating in \(y\) first</b> (\(x\) held constant inside):</p>
+\[\begin{aligned}&\int_{x=1}^{2}\left[\int_{y=0}^{1}(2xy+y^2)\,dy\right]dx\\&=\int_{x=1}^{2}\left[xy^2+\frac{y^3}{3}\right]_{y=0}^{1}dx\\&=\int_{1}^{2}\left(x+\frac13\right)dx\\&=\left[\frac{x^2}{2}+\frac x3\right]_1^2=\frac{11}{6}.\end{aligned}\]
+<p>Both orders give \(11/6\), as Fubini's theorem promises.</p>
+</div>
+
+<h3>Non-rectangular regions</h3>
+<p>Most regions are not rectangles, so the inner limits are no longer constants: they become functions of the outer variable.</p>
+<div class="box def"><span class="tag">Definition (y-simple region)</span>
+<p>A region \(R\) is <b>\(y\)-simple</b> if every line in the \(y\)-direction (vertical line) meets \(R\) in a single interval (or a single point, or not at all). Such a region can be described by</p>
+\[a\le x\le b,\qquad g_1(x)\le y\le g_2(x).\]
+<p class="word"><b>In words:</b> the region lies between a bottom curve \(y=g_1(x)\) and a top curve \(y=g_2(x)\), for \(x\) from \(a\) to \(b\). (Many books call this "type I".)</p>
+<p>In this case the vertical slab at \(x\) has cross-section area \(A(x)=\int_{g_1(x)}^{g_2(x)}f\,dy\), and</p>
+\[\begin{aligned}\iint_R f(x,y)\,dR&=\int_{x=a}^{b}A(x)\,dx\\&=\int_{x=a}^{b}\left[\int_{y=g_1(x)}^{g_2(x)}f(x,y)\,dy\right]dx.\end{aligned}\]
+</div>
+<div class="box def"><span class="tag">Definition (x-simple region)</span>
+<p>A region \(S\) is <b>\(x\)-simple</b> if every line in the \(x\)-direction (horizontal line) meets \(S\) in a single interval (or point, or not at all). Such a region can be described by</p>
+\[c\le y\le d,\qquad h_1(y)\le x\le h_2(y),\]
+<p>and then</p>
+\[\begin{aligned}\iint_R f(x,y)\,dR&=\int_{y=c}^{d}A(y)\,dy\\&=\int_{y=c}^{d}\left[\int_{x=h_1(y)}^{h_2(y)}f(x,y)\,dx\right]dy.\end{aligned}\]
+<p class="word"><b>In words:</b> the region lies between a left curve \(x=h_1(y)\) and a right curve \(x=h_2(y)\), for \(y\) from \(c\) to \(d\). (Many books call this "type II".)</p>
+</div>
+<p>A region is called <b>simple</b> if it is both \(x\)-simple and \(y\)-simple (for example a disc or the inside of an ellipse). Then either formula can be used, whichever is more convenient.</p>
+<div class="figure">
+  <p class="ttl">\(y\)-simple, \(x\)-simple and simple regions, with the solid above each</p>
+  <div class="pair">
+    <canvas class="plot" id="f-simp2" style="aspect-ratio:1/0.85" aria-label="Region in the xy-plane with a strip"></canvas>
+    <canvas class="plot" id="f-simp3" style="aspect-ratio:1/0.85" aria-label="Solid above the region with a slab"></canvas>
+  </div>
+  <div class="ctrl"><label>Region <select id="sp-sel"><option value="y">y-simple: g₁(x) ≤ y ≤ g₂(x)</option><option value="x">x-simple: h₁(y) ≤ x ≤ h₂(y)</option><option value="s">simple (an ellipse)</option></select></label>
+  <label>slice position <input type="range" id="sp-p" min="0.03" max="0.97" step="0.01" value="0.45"></label></div>
+  <p class="cap">Left: the floor region \(R\) (shaded) between its boundary curves, with the strip at the chosen position. Right: the solid between \(R\) and a surface \(z=f(x,y)\) (drag to rotate); the orange panel is the slab face of area \(A(x)\) (vertical strip) or \(A(y)\) (horizontal strip). For the ellipse both strip directions work: the menu option draws a vertical strip, but a horizontal one would also meet the region in one interval.</p>
+</div>
+<div class="box eg"><span class="tag">Example 2.1.3</span>
+<p><b>Evaluate \(\displaystyle\iint_S xy^2\,dS\) where \(S\) is the region bounded by \(y=0\), \(y=x^2\) and \(x=1\).</b></p>
+<p>A sketch of the region \(S\) is important, but it is not necessary to be able to visualise the surface \(z=f(x,y)\). The three curves enclose the curved triangle with corners \((0,0)\), \((1,0)\) and \((1,1)\): the \(x\)-axis along the bottom, the line \(x=1\) on the right, and the parabola \(y=x^2\) on the upper left. Two integration orders can be chosen, corresponding to slicing in the \(y\)- or \(x\)-direction (see the figure below).</p>
+<p><b>Vertical strips (integrate along the \(y\)-direction first).</b> At a fixed \(x\) between 0 and 1, the strip runs from the bottom \(y=0\) up to the parabola \(y=x^2\):</p>
+\[\begin{aligned}\iint_S xy^2\,dS&=\int_{x=0}^{1}\int_{y=0}^{x^2}xy^2\,dy\,dx\\&=\int_{x=0}^{1}\left[\frac{xy^3}{3}\right]_{0}^{x^2}dx\\&=\int_{x=0}^{1}\frac{x^7}{3}\,dx\\&=\left[\frac{x^8}{24}\right]_0^1=\frac1{24}.\end{aligned}\]
+<p><b>Horizontal strips (integrate along the \(x\)-direction first).</b> At a fixed \(y\) between 0 and 1, the strip runs from the parabola on the left (solve \(y=x^2\) for \(x\): \(x=\sqrt y\)) to the line \(x=1\) on the right:</p>
+\[\begin{aligned}\iint_S xy^2\,dS&=\int_{y=0}^{1}\int_{x=\sqrt y}^{1}xy^2\,dx\,dy\\&=\int_{y=0}^{1}\left[\frac{x^2y^2}{2}\right]_{\sqrt y}^{1}dy\\&=\int_{y=0}^{1}\left(\frac{y^2}{2}-\frac{y^3}{2}\right)dy\\&=\left[\frac{y^3}{6}-\frac{y^4}{8}\right]_0^1\\&=\frac16-\frac18=\frac1{24}.\end{aligned}\]
+</div>
+<div class="figure">
+  <p class="ttl">Example 2.1.3: the region and the two kinds of strip</p>
+  <canvas class="plot" id="f-ex213" style="aspect-ratio:16/11" aria-label="Region under y=x^2 from x=0 to 1 with a strip"></canvas>
+  <div class="ctrl"><label>Strip <select id="e3-sel"><option value="v">vertical (y-direction first)</option><option value="h">horizontal (x-direction first)</option></select></label>
+  <label>position <input type="range" id="e3-p" min="0.05" max="0.95" step="0.01" value="0.6"></label></div>
+  <div class="readout" id="e3-out"></div>
+  <p class="cap">The region \(S\) is bounded by \(y=0\) (bottom), \(x=1\) (right) and \(y=x^2\) (upper left), with corners \((0,0),(1,0),(1,1)\). A vertical strip goes from \(y=0\) up to \(y=x^2\); a horizontal strip goes from \(x=\sqrt y\) across to \(x=1\). The inner limits are read off where the strip enters and leaves the region.</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · reversing the order of integration</span>
+<p>Exam questions often give an iterated integral that cannot be done in the given order (the inner integral has no elementary antiderivative, like \(\int e^{y^3}dy\)) and ask you to <b>change the order</b>. The recipe:</p>
+<ol class="steps">
+<li>Read the region off the given limits: the outer limits give the range of the outer variable; the inner limits give the two boundary curves.</li>
+<li><b>Sketch the region</b>, labelling every boundary curve and every corner point.</li>
+<li>Draw a strip in the <i>other</i> direction. Read off its new inner limits (where it enters and leaves) and the new constant outer limits (the extreme values of the new outer variable).</li>
+<li>If the new strips enter or leave through different curves in different parts of the region, <b>split the region</b> into pieces and add the integrals.</li>
+</ol>
+<p><b>Worked example (written for these notes).</b> \(\displaystyle\int_{x=0}^{4}\int_{y=\sqrt x}^{2}e^{y^3}\,dy\,dx\). The inner integral is impossible as it stands. The region is \(0\le x\le4,\ \sqrt x\le y\le2\): above the curve \(y=\sqrt x\) (that is, \(x=y^2\)) and below \(y=2\), with corners \((0,0),(0,2),(4,2)\). A horizontal strip at height \(y\) runs from \(x=0\) to \(x=y^2\), for \(0\le y\le2\). So</p>
+\[\begin{aligned}\int_{0}^{4}\!\int_{\sqrt x}^{2}e^{y^3}dy\,dx&=\int_{0}^{2}\!\int_{0}^{y^2}e^{y^3}dx\,dy\\&=\int_0^2y^2e^{y^3}dy\\&=\left[\tfrac13e^{y^3}\right]_0^2=\frac{e^8-1}{3}.\end{aligned}\]
+<p><b>When a split is needed.</b> The region bounded by \(y=\sqrt x\), \(y=2-x\) and \(y=0\) has corners \((0,0),(2,0),(1,1)\). Horizontal strips (from \(x=y^2\) to \(x=2-y\), for \(0\le y\le1\)) need one integral:</p>
+\[\text{Area}=\int_{0}^{1}\big(2-y-y^2\big)\,dy=\frac76.\]
+<p>Vertical strips have a top curve that changes at \(x=1\) (the strip meets \(y=\sqrt x\) for \(x\lt1\) but \(y=2-x\) for \(x\gt1\)), so that order needs two pieces:</p>
+\[\int_0^1\!\!\int_0^{\sqrt x}dy\,dx+\int_1^2\!\!\int_0^{2-x}dy\,dx=\frac23+\frac12=\frac76.\]
+</div>
+<div class="figure">
+  <p class="ttl">Reversing the order: the two regions of the Beyond box</p>
+  <canvas class="plot" id="f-split" style="aspect-ratio:16/10" aria-label="Region between y = sqrt x and y = 2 - x, split at x = 1"></canvas>
+  <div class="ctrl"><label>Region <select id="sl-sel"><option value="a">∫₀⁴∫_{√x}² e^{y³} dy dx</option><option value="b">bounded by y = √x, y = 2 − x, y = 0</option></select></label>
+  <label>Strip <select id="sl-dir"><option value="h">horizontal</option><option value="v">vertical</option></select></label>
+  <label>position <input type="range" id="sl-p" min="0.03" max="0.97" step="0.01" value="0.7"></label></div>
+  <div class="readout" id="sl-out"></div>
+  <p class="cap">The readout gives the strip's limits. In the second region, move a vertical strip past \(x=1\) (dashed line) and watch its top boundary change from \(y=\sqrt x\) to \(y=2-x\): that is why the \(dy\,dx\) order needs two integrals.</p>
+</div>
+</section>
+
+<section id="s2">
+<h2><span class="n">2</span>Change of variables in double integrals <span class="muted small">(handout §2.2, pp. 7–9)</span></h2>
+<p>In first-year calculus, a substitution \(x=g(u)\) turns \(\int f(x)\,dx\) into \(\int f(g(u))\,g'(u)\,du\): the factor \(g'(u)\) says how much a small step \(du\) is stretched into a step \(dx\). Double integrals have the same idea. A clever choice of new variables can turn an awkward region (a slanted parallelogram, a disc) into a rectangle, or an awkward integrand into a simple one. The price is a stretching factor called the <b>Jacobian</b>.</p>
+<p>Start from the double integral</p>
+\[I=\iint_S f(x,y)\,dx\,dy.\]
+<div class="box thm"><span class="tag">Change of variables formula</span>
+<p>The change of variables \(x=x(u,v),\ y=y(u,v)\) gives</p>
+\[\begin{aligned}I=\iint_{S^*}&f\big(x(u,v),\,y(u,v)\big)\\&\times\left|\frac{\partial(x,y)}{\partial(u,v)}\right|du\,dv,\end{aligned}\]
+<p>where</p>
+\[J=\frac{\partial(x,y)}{\partial(u,v)}=\det\begin{pmatrix}\pd xu&\pd xv\\[4pt]\pd yu&\pd yv\end{pmatrix}\]
+<p>is called the <b>Jacobian</b> of the transformation. \(S^*\) is the region in the \(uv\)-plane that corresponds to the region \(S\) in the \(xy\)-plane (every point of \(S^*\) is sent by the formulas to a point of \(S\), and every point of \(S\) comes from exactly one point of \(S^*\)). The Jacobian is assumed to be nonzero except at isolated points, and the partial derivatives are assumed continuous.</p>
+<p class="word"><b>In words:</b> to change variables, (1) rewrite the integrand in \(u,v\); (2) replace the region \(S\) by its image \(S^*\); (3) replace \(dx\,dy\) by \(|J|\,du\,dv\), where \(|J|\) = (area of a little piece in the \(xy\)-plane) ÷ (area of the matching piece in the \(uv\)-plane). Note the <b>absolute value</b>: areas are never negative.</p>
+</div>
+<p>The determinant \(\det\begin{pmatrix}p&q\\r&s\end{pmatrix}=ps-qr\), so written out,</p>
+\[J=\pd xu\pd yv-\pd xv\pd yu.\]
+<p class="word"><b>In words:</b> Jacobian = (top-left × bottom-right) − (top-right × bottom-left) of the table of first partial derivatives; the rows are \(x\) and \(y\), the columns are \(u\) and \(v\).</p>
+<div class="figure">
+  <p class="ttl">A transformation carries the region \(S^*\) (in the \(uv\)-plane) onto \(S\) (in the \(xy\)-plane)</p>
+  <div class="pair">
+    <canvas class="plot" id="f-mapuv" style="aspect-ratio:1/0.9" aria-label="Region S star in the uv-plane with a grid"></canvas>
+    <canvas class="plot" id="f-mapxy" style="aspect-ratio:1/0.9" aria-label="Image region S in the xy-plane with the curved grid"></canvas>
+  </div>
+  <div class="ctrl"><label>Transformation <select id="mp-sel"><option value="lin">x = (u+2v)/3, y = (v−u)/3 (worked example below)</option><option value="pol">x = u cos v, y = u sin v (polar, u = r, v = θ)</option></select></label>
+  <label>\(u_0\) <input type="range" id="mp-u" min="0" max="1" step="0.01" value="0.45"></label>
+  <label>\(v_0\) <input type="range" id="mp-v" min="0" max="1" step="0.01" value="0.4"></label></div>
+  <div class="readout" id="mp-out"></div>
+  <p class="cap">Left: \(S^*\) in the \(uv\)-plane, a rectangle, with grid lines \(u=\text{const}\) (teal) and \(v=\text{const}\) (purple). Right: the image \(S\) in the \(xy\)-plane; each grid line is carried to a line or curve. The red cell of size \(\Delta u\times\Delta v\) at \((u_0,v_0)\) is carried to the red patch, whose area is about \(|J|\,\Delta u\,\Delta v\). The yellow dot and its image show a single point being carried across.</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · why the factor is |J|</span>
+<p>Near \((u_0,v_0)\), a small step \(\Delta u\) (with \(v\) fixed) moves the point \((x,y)\) by the vector \(\vb a=\left(\pd xu,\pd yu\right)\Delta u\), and a small step \(\Delta v\) moves it by \(\vb b=\left(\pd xv,\pd yv\right)\Delta v\). So the little \(\Delta u\times\Delta v\) rectangle is carried to (almost) a parallelogram with sides \(\vb a\) and \(\vb b\). The area of a parallelogram with sides \((a_1,a_2)\) and \((b_1,b_2)\) is \(|a_1b_2-a_2b_1|\) (the size of the 2D cross product), which gives</p>
+\[\begin{aligned}\Delta A&\approx\left|\pd xu\pd yv-\pd xv\pd yu\right|\Delta u\,\Delta v\\&=|J|\,\Delta u\,\Delta v.\end{aligned}\]
+<p class="word"><b>In words:</b> the Jacobian is the area magnification factor of the map at that point.</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · the exam routine for a u, v substitution</span>
+<p>In the exam the substitution is usually given the "wrong way round", as \(u=u(x,y),\ v=v(x,y)\), and the boundaries of \(S\) are lines like \(x+y=1\). Two facts make this quick:</p>
+<ol class="steps">
+<li><b>Reciprocal rule.</b> \(\dfrac{\partial(x,y)}{\partial(u,v)}=1\Big/\dfrac{\partial(u,v)}{\partial(x,y)}\). So you may compute the easy Jacobian of \(u,v\) with respect to \(x,y\) and flip it, without solving for \(x\) and \(y\). (It works because the two maps undo each other, and the determinant of a product of matrices is the product of the determinants.)</li>
+<li><b>Mapping the region.</b> Map every <b>boundary curve</b>, not just the corners: a boundary like \(x+y=1\) becomes \(v=1\) if \(v=x+y\). For a linear map, straight edges stay straight, so mapping the corners is enough; for a non-linear map, edges can bend, so map each edge (for example, \(y=0\) under \(u=2xy,\ v=x^2-y^2\) becomes \(u=0,\ v\ge0\)).</li>
+</ol>
+<p>Non-linear example (the type in Dec 2018 and Dec 2023): for \(u=2xy,\ v=x^2-y^2\),</p>
+\[\begin{aligned}\frac{\partial(u,v)}{\partial(x,y)}&=\det\begin{pmatrix}2y&2x\\2x&-2y\end{pmatrix}\\&=-4(x^2+y^2),\end{aligned}\]
+<p>and since \(u^2+v^2=(x^2+y^2)^2\),</p>
+\[\frac{\partial(x,y)}{\partial(u,v)}=-\frac{1}{4\sqrt{u^2+v^2}}.\]
+<details><summary>Show the calculation: why \(u^2+v^2=(x^2+y^2)^2\), and the flip</summary><div>
+<ol class="steps">
+<li>Square and add: \(u^2+v^2\) \(=(2xy)^2+(x^2-y^2)^2\) \(=4x^2y^2+x^4-2x^2y^2+y^4\).</li>
+<li>Collect: \(x^4+2x^2y^2+y^4=(x^2+y^2)^2\) (a perfect square, \((A+B)^2=A^2+2AB+B^2\) with \(A=x^2,\ B=y^2\)).</li>
+<li>Take the square root: \(x^2+y^2=\sqrt{u^2+v^2}\) (positive root, since \(x^2+y^2\ge0\)).</li>
+<li>Reciprocal rule: \(\dfrac{\partial(x,y)}{\partial(u,v)}\) \(=\dfrac{1}{-4(x^2+y^2)}\) \(=-\dfrac{1}{4\sqrt{u^2+v^2}}\). In the integral use the absolute value, \(\dfrac{1}{4\sqrt{u^2+v^2}}\).</li>
+</ol>
+<p>The point of this step: the integral is now written entirely in \(u\) and \(v\), with no \(x\) or \(y\) left over.</p>
+</div></details>
+</div>
+<div class="box eg"><span class="tag">Worked example (written for these notes)</span>
+<p><b>Evaluate \(\displaystyle\iint_S(x-2y)(x+y)\,dx\,dy\) where \(S\) is the parallelogram bounded by \(x-2y=0\), \(x-2y=4\), \(x+y=1\), \(x+y=4\).</b></p>
+<p>The boundary lines suggest \(u=x-2y,\ v=x+y\). Then \(S^*\) is the rectangle \(0\le u\le4,\ 1\le v\le4\) (each boundary line becomes one side). Solving: \(x=\tfrac13(u+2v),\ y=\tfrac13(v-u)\), the first transformation in the figure above. By the reciprocal rule,</p>
+\[\begin{aligned}\frac{\partial(u,v)}{\partial(x,y)}&=\det\begin{pmatrix}1&-2\\1&1\end{pmatrix}=3,\\ J=\frac{\partial(x,y)}{\partial(u,v)}&=\frac13.\end{aligned}\]
+<p>So</p>
+\[\begin{aligned}&\iint_S(x-2y)(x+y)\,dx\,dy\\&=\int_{v=1}^{4}\!\int_{u=0}^{4}uv\cdot\frac13\,du\,dv\\&=\frac13\cdot\frac{4^2}{2}\cdot\frac{4^2-1}{2}=20.\end{aligned}\]
+<details><summary>Show the calculation: solving for \(x,y\), the direct Jacobian, and the integral</summary><div>
+<ol class="steps">
+<li><b>Solve for \(x\) and \(y\).</b> \(u=x-2y\) and \(v=x+y\). Subtract the first from the second: \(v-u=3y\), so \(y=\frac{v-u}{3}\). Then \(x=v-y=v-\frac{v-u}{3}=\frac{u+2v}{3}\).</li>
+<li><b>Direct Jacobian (as a check on the reciprocal rule).</b> \(x_u=\frac13,\ x_v=\frac23,\ y_u=-\frac13,\ y_v=\frac13\), so \(J=\frac13\cdot\frac13-\frac23\cdot\left(-\frac13\right)=\frac19+\frac29=\frac13\). ✓</li>
+<li><b>Region.</b> The four boundary lines become \(u=0,\ u=4,\ v=1,\ v=4\): a rectangle, so all limits are constants.</li>
+<li><b>Integrand.</b> \((x-2y)(x+y)=u\cdot v\) directly from the definitions, so no substitution of \(x,y\) is needed.</li>
+<li><b>Integrate.</b> With constant limits and a product \(u\cdot v\), the double integral splits into a product of two single integrals: \(\frac13\int_0^4u\,du\int_1^4v\,dv\) \(=\frac13\cdot\left[\frac{u^2}{2}\right]_0^4\cdot\left[\frac{v^2}{2}\right]_1^4\) \(=\frac13\cdot8\cdot\frac{15}{2}\) \(=20\).</li>
+</ol>
+</div></details>
+</div>
+
+<h3>Polar coordinates</h3>
+<div class="box eg"><span class="tag">Example 2.2.1</span>
+<p><b>Find the moment of inertia of a hollow circular cylinder of inner radius \(a\), outer radius \(b\), height \(h\) and constant density \(\rho\) about the axis of the cylinder.</b></p>
+<p>The <b>moment of inertia</b> about an axis measures how hard it is to spin a body about that axis: each bit of mass \(\Delta m\) at distance \(d\) from the axis contributes \(d^2\,\Delta m\), so mass far from the axis counts more. The cross-section of the cylinder (cut perpendicular to its axis) is an annulus, a ring between the circles of radius \(a\) and \(b\) centred on the axis (figure below).</p>
+<p>Change to <b>polar coordinates</b>, where \(r\) is the distance from the origin and \(\theta\) the angle measured anticlockwise from the positive \(x\)-axis:</p>
+\[x=r\cos\theta,\qquad y=r\sin\theta.\]
+<p>The Jacobian is</p>
+\[\begin{aligned}J=\frac{\partial(x,y)}{\partial(r,\theta)}&=\det\begin{pmatrix}\pd xr&\pd x\theta\\[4pt]\pd yr&\pd y\theta\end{pmatrix}\\&=\det\begin{pmatrix}\cos\theta&-r\sin\theta\\ \sin\theta&r\cos\theta\end{pmatrix}\\&=r\cos^2\theta+r\sin^2\theta=r.\end{aligned}\]
+<p>In other words, \(dx\,dy\to r\,dr\,d\theta\). This corresponds to the elemental area in the \(r\theta\)-plane: a small Cartesian element is a rectangle with area \(\delta S=\delta x\,\delta y\), while a small polar element is a piece of a ring with sides \(\delta r\) (along the radius) and \(r\,\delta\theta\) (along the arc), so \(\delta S\approx r\,\delta r\,\delta\theta\).</p>
+<p class="word"><b>In words:</b> polar area element = (radial width) × (arc length) = \(\delta r\times r\,\delta\theta\). The factor \(r\) appears because arcs are longer further from the origin.</p>
+<p>The region of integration is now a rectangle (simple) in the \(r\theta\)-plane: \(0\le\theta\lt2\pi,\ a\le r\le b\). Each element of the cross-section, extended along the full height \(h\) of the cylinder, is a thin rod of mass \(\rho h\,r\,dr\,d\theta\) at distance \(r\) from the axis, contributing \(r^2\times\rho h\,r\,dr\,d\theta\). Thus the moment of inertia is</p>
+\[\begin{aligned}I&=\int_{r=a}^{b}\int_{\theta=0}^{2\pi}\rho h r^2\,r\,dr\,d\theta\\&=\rho h\big[\theta\big]_0^{2\pi}\left[\frac{r^4}{4}\right]_a^b\\&=\rho h\,2\pi\,\frac{b^4-a^4}{4}\\&=\frac M2\,(a^2+b^2),\end{aligned}\]
+<p>where the mass \(M\) is equal to \(\pi\rho h(b^2-a^2)\) (density × volume of the hollow cylinder). The last step uses \(b^4-a^4=(b^2-a^2)(b^2+a^2)\).</p>
+<p class="word"><b>In words:</b> moment of inertia of a pipe = half its mass × (inner radius² + outer radius²). Check: a solid cylinder (\(a=0\)) gives the familiar \(\tfrac12Mb^2\).</p>
+</div>
+<div class="figure">
+  <p class="ttl">Example 2.2.1: the hollow cylinder, its cross-section, and the cross-section as a rectangle in the \(r\theta\)-plane</p>
+  <canvas class="plot" id="f-pipe" style="aspect-ratio:16/10" aria-label="Rotatable hollow cylinder"></canvas>
+  <div class="pair">
+    <canvas class="plot" id="f-ann" style="aspect-ratio:1/0.95" aria-label="Annulus cross-section with a polar element"></canvas>
+    <canvas class="plot" id="f-annrt" style="aspect-ratio:1/0.95" aria-label="The annulus as a rectangle in the r theta plane"></canvas>
+  </div>
+  <div class="ctrl"><label>inner radius \(a\) <input type="range" id="an-a" min="0" max="1.6" step="0.05" value="0.9"></label>
+  <label>element at \(r\) <input type="range" id="an-r" min="0" max="1" step="0.01" value="0.6"></label>
+  <label>\(\theta\) <input type="range" id="an-t" min="0" max="6.2" step="0.05" value="0.9"></label></div>
+  <div class="readout" id="an-out"></div>
+  <p class="cap">Top: the hollow cylinder (outer radius \(b=2\), height \(h=1.5\); drag to rotate). Bottom left: its cross-section, the annulus \(a\le r\le b\), with one polar element (red) of sides \(\delta r\) and \(r\,\delta\theta\). Bottom right: in the \(r\theta\)-plane the same annulus is the rectangle \(a\le r\le b,\ 0\le\theta\lt2\pi\), and the element is a plain \(\delta r\times\delta\theta\) rectangle; the Jacobian \(r\) converts its area back.</p>
+</div>
+<div class="box eg"><span class="tag">Example 2.2.2</span>
+<p><b>Evaluate \(\displaystyle I=\int_0^\infty e^{-x^2}\,dx\).</b></p>
+<p>The function \(e^{-x^2}\) has no elementary antiderivative, so no first-year method works. The trick is to square \(I\) and turn it into a double integral. Since the name of the integration variable does not matter, \(I=\int_0^\infty e^{-y^2}dy\) as well, and</p>
+\[\begin{aligned}I^2&=\int_0^\infty e^{-x^2}dx\int_0^\infty e^{-y^2}dy\\&=\iint e^{-(x^2+y^2)}\,dx\,dy,\end{aligned}\]
+<p>where the region of integration is the whole first quadrant \(x\ge0,\ y\ge0\). In polar coordinates the first quadrant is \(0\le r\lt\infty,\ 0\le\theta\le\pi/2\), and \(x^2+y^2=r^2\), so</p>
+\[\begin{aligned}I^2&=\iint e^{-r^2}\,r\,dr\,d\theta\\&=\frac\pi2\left[-\frac{e^{-r^2}}{2}\right]_0^\infty=\frac\pi4.\end{aligned}\]
+<p>Hence \(I=\sqrt\pi/2\) (positive, since the integrand is positive).</p>
+<details><summary>Show the calculation: each step explained</summary><div>
+<ol class="steps">
+<li><b>Product → double integral.</b> \(\int_0^\infty e^{-x^2}dx\cdot\int_0^\infty e^{-y^2}dy\): the second integral is a constant as far as \(x\) is concerned, so it can be moved inside the first. That gives \(\int_0^\infty\!\int_0^\infty e^{-x^2}e^{-y^2}\,dy\,dx\), and \(e^{-x^2}e^{-y^2}=e^{-(x^2+y^2)}\) (add the exponents). This is Fubini's theorem used backwards, over the "rectangle" \(x\ge0,\ y\ge0\).</li>
+<li><b>To polar.</b> \(x^2+y^2=r^2\); \(dx\,dy\to r\,dr\,d\theta\) (Jacobian \(r\)); the first quadrant is \(0\le\theta\le\pi/2\), \(0\le r\lt\infty\) (every ray at an angle between 0 and \(\pi/2\) runs out to infinity).</li>
+<li><b>Separate.</b> The integrand \(re^{-r^2}\) does not depend on \(\theta\), so \(I^2\) \(=\int_0^{\pi/2}d\theta\cdot\int_0^\infty re^{-r^2}dr\) \(=\frac\pi2\int_0^\infty re^{-r^2}dr\).</li>
+<li><b>The \(r\)-integral.</b> Substitute \(w=r^2\), \(dw=2r\,dr\): \(\int_0^\infty re^{-r^2}dr\) \(=\frac12\int_0^\infty e^{-w}dw\) \(=\frac12\big[-e^{-w}\big]_0^\infty\) \(=\frac12(0-(-1))\) \(=\frac12\). (Equivalently, the antiderivative is \(-\frac12e^{-r^2}\), which tends to 0 as \(r\to\infty\) and equals \(-\frac12\) at \(r=0\).)</li>
+<li><b>Combine.</b> \(I^2=\frac\pi2\cdot\frac12=\frac\pi4\), and \(I=\sqrt{\pi/4}=\sqrt\pi/2\).</li>
+</ol>
+<p>Strictly, an integral to \(\infty\) means a limit: integrate over the quarter disc \(r\le R\) and let \(R\to\infty\), which is what the figure below shows.</p>
+</div></details>
+<p class="word"><b>In words:</b> the extra \(r\) from the Jacobian is exactly what makes \(e^{-r^2}\) integrable: \(\int re^{-r^2}dr=-\tfrac12e^{-r^2}\).</p>
+</div>
+<div class="figure">
+  <p class="ttl">Example 2.2.2: the surface \(z=e^{-(x^2+y^2)}\) over the first quadrant</p>
+  <canvas class="plot" id="f-gauss" style="aspect-ratio:16/11" aria-label="Bell-shaped surface over the first quadrant"></canvas>
+  <div class="ctrl"><label>quarter-disc radius \(R\) <input type="range" id="ga-R" min="0.2" max="3" step="0.05" value="1.2"></label></div>
+  <div class="readout" id="ga-out"></div>
+  <p class="cap">The region of integration is the whole first quadrant (the floor, shaded). The volume under the bell over the quarter disc \(r\le R\) (bright part) is \(\frac\pi4\big(1-e^{-R^2}\big)\), which tends to \(\frac\pi4\) as \(R\to\infty\). That volume is \(I^2\).</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · describing regions in polar coordinates</span>
+<p>To set up \(\iint f\,r\,dr\,d\theta\), sweep a ray out from the origin at angle \(\theta\): the inner limits are where the ray enters and leaves the region (as functions of \(\theta\)); the outer limits are the extreme angles. Useful facts:</p>
+<ul class="list">
+<li>\(x^2+y^2=a^2\) is \(r=a\); the line \(y=x\) (first quadrant) is \(\theta=\pi/4\); the vertical line \(x=a\) is \(r\cos\theta=a\), i.e. \(r=a\sec\theta\); the horizontal line \(y=a\) is \(r=a\csc\theta\).</li>
+<li>A circle through the origin, centre \((a,0)\), radius \(a\): \((x-a)^2+y^2\) \(=a^2\) \(\iff x^2+y^2\) \(=2ax\) \(\iff r\) \(=2a\cos\theta\), for \(-\pi/2\le\theta\le\pi/2\). Similarly centre \((0,a)\): \(r=2a\sin\theta\), \(0\le\theta\le\pi\). Check: \(\int_{-\pi/2}^{\pi/2}\int_0^{2a\cos\theta}r\,dr\,d\theta=\pi a^2\).</li>
+</ul>
+</div>
+<div class="figure">
+  <p class="ttl">Sweeping a ray: polar limits for a disc through the origin</p>
+  <canvas class="plot" id="f-offc" style="aspect-ratio:16/11" aria-label="Circle r=2a cos theta with a ray from the origin"></canvas>
+  <div class="ctrl"><label>ray angle \(\theta\) <input type="range" id="oc-t" min="-1.5" max="1.5" step="0.01" value="0.6"></label></div>
+  <div class="readout" id="oc-out"></div>
+  <p class="cap">The disc \((x-1)^2+y^2\le1\) (here \(a=1\)). Every ray from the origin at angle \(\theta\) between \(-\pi/2\) and \(\pi/2\) enters the disc at \(r=0\) and leaves at \(r=2\cos\theta\) (red segment).</p>
+</div>
+</section>
+
+<section id="s3">
+<h2><span class="n">3</span>Triple integrals <span class="muted small">(handout §2.3, pp. 10–13)</span></h2>
+<p>Suppose that a <b>scalar field</b> \(f(x,y,z)\) (a rule giving one number at every point, such as temperature or density) is defined at all points within a region \(D\) of three-dimensional space. Divide \(D\) into \(n\) small subregions; the \(k\)-th has volume \(\Delta V_k\) and contains a point \((x_k,y_k,z_k)\). Multiply the value of \(f\) there by the little volume, add up, and let the pieces shrink:</p>
+<div class="box def"><span class="tag">Definition (triple integral)</span>
+\[\begin{aligned}\iiint_D f(x,y,z)\,dV&=\iiint_D f(x,y,z)\,dx\,dy\,dz\\&=\lim_{n\to\infty}\sum_{k=1}^{n}f(x_k,y_k,z_k)\,\Delta V_k,\end{aligned}\]
+<p>provided that \(\max\{\Delta V_k\}\to0\) as \(n\to\infty\). Such an integral is often called a <b>volume integral</b>.</p>
+<p class="word"><b>In words:</b> triple integral = limit of the sum of (value of \(f\) at a point × volume of the little box around it) over all the boxes filling \(D\). There is no "height" picture any more (that would need 4 dimensions); think of \(f\) as a density and the integral as the total amount.</p>
+</div>
+<div class="figure">
+  <p class="ttl">One small box \(\Delta V_k=\Delta x_k\,\Delta y_k\,\Delta z_k\) inside a solid region \(D\)</p>
+  <canvas class="plot" id="f-dv" style="aspect-ratio:16/11" aria-label="Rotatable solid region with a small box inside"></canvas>
+  <p class="cap">The region \(D\) (a rounded blob, drawn see-through, with a quarter wedge cut away so the inside is visible). The red box, sitting in the cut-away corner, has sides \(\Delta x_k,\Delta y_k,\Delta z_k\) and contains the sample point \((x_k,y_k,z_k)\) (dot). Filling \(D\) with such boxes and adding \(f(x_k,y_k,z_k)\,\Delta V_k\) gives the Riemann sum.</p>
+</div>
+<div class="box eg"><span class="tag">Example 2.3.1 (what triple integrals measure)</span>
+<ol class="steps">
+<li>If \(f(x,y,z)\equiv1\), then \(\displaystyle\iiint_D dV=\) volume of the region \(D\).</li>
+<li>If \(f(x,y,z)=\rho\), and this scalar field gives the (mass) density at a point, then \(\displaystyle\iiint_D\rho\,dV=\) mass of the region \(D\).</li>
+<li>If \(f(x,y,z)=\rho d^2\), where \(d\) is the perpendicular distance of a point in the region \(D\) to a fixed axis, then \(\displaystyle\iiint_D\rho d^2\,dV=\) moment of inertia of the region \(D\) about the given axis. (For the \(z\)-axis, \(d^2=x^2+y^2\).)</li>
+<li>If \(f(x,y,z)=\rho\) is the charge density at a point, then \(\displaystyle\iiint_D\rho\,dV=\) total charge within the region \(D\).</li>
+</ol>
+<p class="word"><b>In words:</b> integrate "amount per unit volume" over a solid to get the total amount.</p>
+</div>
+
+<h3>Rectangular regions</h3>
+<p>For a box \(x_1\le x\le x_2,\ y_1\le y\le y_2,\ z_1\le z\le z_2\), all six limits are constants, and the triple integral is three ordinary integrals done one inside the other (in any order), each time holding the other variables constant.</p>
+<div class="box eg"><span class="tag">Example 2.3.2 (rectangular region)</span>
+<p><b>The density of a rectangular block bounded by the planes \(x=1\), \(x=2\), \(y=0\), \(y=3\), \(z=-1\) and \(z=0\) is given by the scalar function \(\rho(x,y,z)=x(y+1)-z\). Find the mass of the block.</b></p>
+<p>The block is \(1\le x\le2,\ 0\le y\le3,\ -1\le z\le0\): length 1 in \(x\), 3 in \(y\), and it hangs 1 unit below the \(xy\)-plane (figure below). The total mass is</p>
+\[\begin{aligned}M&=\iiint\big(x(y+1)-z\big)\,dz\,dy\,dx\\&=\int_{x=1}^{2}\!\left[\int_{y=0}^{3}\!\left[\int_{z=-1}^{0}\big(x(y+1)-z\big)dz\right]dy\right]dx\\&=\int_{1}^{2}\!\left[\int_{0}^{3}\left[x(y+1)z-\frac{z^2}{2}\right]_{-1}^{0}dy\right]dx\\&=\int_{1}^{2}\!\left[\int_{0}^{3}\left(x(y+1)+\frac12\right)dy\right]dx\\&=\int_{1}^{2}\left[\frac{xy^2}{2}+xy+\frac y2\right]_0^3dx\\&=\int_{1}^{2}\left(\frac92x+3x+\frac32\right)dx\\&=\left[\frac{15}{4}x^2+\frac32x\right]_1^2=\frac{51}{4}.\end{aligned}\]
+<p>(In the third line: at \(z=0\) the bracket is 0; at \(z=-1\) it is \(-x(y+1)-\tfrac12\); subtracting gives \(x(y+1)+\tfrac12\).)</p>
+</div>
+<div class="figure">
+  <p class="ttl">Example 2.3.2: the block \(1\le x\le2,\ 0\le y\le3,\ -1\le z\le0\)</p>
+  <canvas class="plot" id="f-block" style="aspect-ratio:16/11" aria-label="Rotatable rectangular block below the xy-plane"></canvas>
+  <div class="ctrl"><label>column at \(x\) <input type="range" id="bk-x" min="1" max="2" step="0.02" value="1.5"></label>
+  <label>\(y\) <input type="range" id="bk-y" min="0" max="3" step="0.05" value="1.5"></label></div>
+  <div class="readout" id="bk-out"></div>
+  <p class="cap">The block lies below the \(xy\)-plane, its faces shaded only to show depth. The innermost \(z\)-integral adds up density along the red vertical column at \((x,y)\), from \(z=-1\) to \(z=0\).</p>
+</div>
+
+<h3>Non-rectangular regions</h3>
+<div class="box eg"><span class="tag">Example 2.3.3 (non-rectangular regions)</span>
+<p>Suppose \(D\) is bounded above by the surface \(z=\Psi_2(x,y)\) and below by \(z=\Psi_1(x,y)\), and its <b>projection</b> onto the \(xy\)-plane (its "shadow" when lit from straight above) is described by</p>
+\[a_1\le x\le a_2,\qquad\varphi_1(x)\le y\le\varphi_2(x).\]
+<p>Then,</p>
+\[\begin{aligned}\iiint_D f\,dV=\int_{x=a_1}^{a_2}&\int_{y=\varphi_1(x)}^{\varphi_2(x)}\int_{z=\Psi_1(x,y)}^{\Psi_2(x,y)}\\&f(x,y,z)\,dz\,dy\,dx.\end{aligned}\]
+<p class="word"><b>In words:</b> innermost, run up a vertical column from the bottom surface to the top surface; then sweep the column across a strip of the shadow; then sweep the strip across the whole shadow. Limits get "more constant" as you move outward: the \(z\)-limits may depend on \(x\) and \(y\), the \(y\)-limits only on \(x\), the \(x\)-limits are numbers.</p>
+<p>The solid region depicted below is <b>\(z\)-simple</b> (every vertical line meets it in one interval) with its projected region \(y\)-simple (as defined in §1). Notice that in practice, it may be more convenient to project \(D\) onto the \(xz\)- or \(yz\)-planes instead.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Example 2.3.3: a \(z\)-simple solid, its column, and its projected region</p>
+  <div class="pair">
+    <canvas class="plot" id="f-zs3" style="aspect-ratio:1/0.9" aria-label="Solid between two surfaces with a vertical column"></canvas>
+    <canvas class="plot" id="f-zs2" style="aspect-ratio:1/0.9" aria-label="Projected region in the xy-plane"></canvas>
+  </div>
+  <div class="ctrl"><label>\(x\) <input type="range" id="zs-x" min="0.05" max="0.95" step="0.01" value="0.5"></label>
+  <label>\(y\) along the strip <input type="range" id="zs-y" min="0.05" max="0.95" step="0.01" value="0.5"></label></div>
+  <p class="cap">Left: the solid \(D\) between the bottom surface \(z=\Psi_1(x,y)\) (teal) and the top surface \(z=\Psi_2(x,y)\) (orange), with its shadow on the floor (green). The red column runs from \(\Psi_1\) to \(\Psi_2\) at the chosen \((x,y)\). Right: the projected region \(a_1\le x\le a_2,\ \varphi_1(x)\le y\le\varphi_2(x)\) with the strip at \(x\) and the column's foot (red dot).</p>
+</div>
+<div class="box eg"><span class="tag">Example 2.3.4</span>
+<p><b>Evaluate \(\displaystyle\iiint_D\frac{1}{(x+y+2z+1)^3}\,dV\) where \(D\) is the region enclosed by the planes \(x=0\), \(y=0\), \(z=0\) and \(x+y+z=1\).</b></p>
+<p>\(D\) is a <b>tetrahedron</b> (a solid with four triangular faces) with corners \((0,0,0)\), \((1,0,0)\), \((0,1,0)\), \((0,0,1)\). Its top face is the slanted plane \(z=1-x-y\); its shadow on the \(xy\)-plane is the triangle under the line \(y=1-x\) (where the slanted plane meets \(z=0\)). So</p>
+\[\begin{gathered}0\le x\le1,\quad0\le y\le1-x,\\0\le z\le1-x-y.\end{gathered}\]
+<p>We have</p>
+\[\begin{aligned}&\int_{x=0}^{1}\!\int_{y=0}^{1-x}\!\int_{z=0}^{1-x-y}\frac{dz\,dy\,dx}{(x+y+2z+1)^3}\\&=\frac14(\ln3-1)\approx0.0247.\end{aligned}\]
+<details><summary>Show the calculation: the three integrations, each step explained</summary><div>
+<p><b>Step 1: the \(z\)-integral</b> (\(x\) and \(y\) are constants). Let \(w=x+y+2z+1\), so \(dw=2\,dz\). Then</p>
+\[\int\frac{dz}{w^3}=\frac12\int w^{-3}\,dw=\frac12\cdot\frac{w^{-2}}{-2}=-\frac{1}{4w^2}.\]
+<p>Limits: at \(z=0\), \(w=x+y+1\); at \(z=1-x-y\), \(w\) \(=x+y+2(1-x-y)+1\) \(=3-x-y\). So</p>
+\[\begin{aligned}\Big[-\frac{1}{4w^2}\Big]_{z=0}^{1-x-y}&=\frac{1}{4(x+y+1)^2}\\&\quad-\frac{1}{4(3-x-y)^2}.\end{aligned}\]
+<p><b>Step 2: the \(y\)-integral</b> (\(x\) is a constant). Both terms are of the form \(1/(\text{linear in }y)^2\):</p>
+<ul class="list">
+<li>\(\int\frac{dy}{(x+y+1)^2}=-\frac{1}{x+y+1}\) (power rule; the inside has derivative \(+1\)).</li>
+<li>\(\int\frac{dy}{(3-x-y)^2}=+\frac{1}{3-x-y}\) (the inside has derivative \(-1\), which flips the sign).</li>
+</ul>
+\[\begin{aligned}&\int_0^{1-x}\Big(\frac{1}{4(x+y+1)^2}-\frac{1}{4(3-x-y)^2}\Big)dy\\&=\Big[-\frac{1}{4(x+y+1)}-\frac{1}{4(3-x-y)}\Big]_{y=0}^{1-x}.\end{aligned}\]
+<p>At \(y=1-x\): \(x+y+1=2\) and \(3-x-y=2\), giving \(-\frac18-\frac18=-\frac14\). At \(y=0\): \(-\frac{1}{4(x+1)}-\frac{1}{4(3-x)}\). Top minus bottom:</p>
+\[-\frac14+\frac{1}{4(x+1)}+\frac{1}{4(3-x)}.\]
+<p><b>Step 3: the \(x\)-integral.</b> \(\int\frac{dx}{x+1}=\ln(x+1)\) and \(\int\frac{dx}{3-x}=-\ln(3-x)\) (again the inside has derivative \(-1\)):</p>
+\[\begin{aligned}&\Big[-\frac x4+\frac14\ln(x+1)-\frac14\ln(3-x)\Big]_0^1\\&=\Big(-\frac14+\frac14\ln2-\frac14\ln2\Big)\\&\quad-\Big(0+0-\frac14\ln3\Big)=\frac14(\ln3-1).\end{aligned}\]
+<p>(\(\ln\) is the natural logarithm, written \(\log\) in some books.)</p>
+</div></details>
+</div>
+<div class="figure">
+  <p class="ttl">Example 2.3.4: the tetrahedron, a column and its floor strip</p>
+  <canvas class="plot" id="f-tet" style="aspect-ratio:16/11" aria-label="Rotatable tetrahedron with a vertical column"></canvas>
+  <div class="ctrl"><label>\(x\) <input type="range" id="tt-x" min="0.02" max="0.95" step="0.01" value="0.3"></label>
+  <label>\(y\) as a fraction of \(1-x\) <input type="range" id="tt-y" min="0.02" max="0.98" step="0.01" value="0.4"></label></div>
+  <div class="readout" id="tt-out"></div>
+  <p class="cap">The tetrahedron below the plane \(x+y+z=1\) (orange face) in the first octant. The floor triangle (green) is bounded by \(x=0\), \(y=0\) and \(y=1-x\). The purple floor strip at \(x\) runs from \(y=0\) to \(y=1-x\); the red column at \((x,y)\) runs from \(z=0\) up to \(z=1-x-y\).</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · setting limits for any solid, and changing the order</span>
+<p>The May papers ask you to "sketch the region and evaluate" (May 2015, 2016, 2017, 2022, 2024, 2025) and once to rewrite a triple integral in a different order (May 2021). The routine:</p>
+<ol class="steps">
+<li><b>Find the corners.</b> For planes, set two of \(x,y,z\) to zero in each equation to find where it meets the axes (\(x+2y+z=1\) meets them at \(x=1\), \(y=\tfrac12\), \(z=1\)).</li>
+<li><b>Choose the innermost variable</b> whose bottom and top surfaces are easy (usually \(z\)). Write them as \(z=\Psi_1(x,y)\) and \(z=\Psi_2(x,y)\).</li>
+<li><b>Find the shadow</b> on the plane of the other two variables: set \(\Psi_1=\Psi_2\) (where the top meets the bottom) to get its boundary. Sketch it.</li>
+<li>Set the shadow's limits exactly as for a double integral (§1).</li>
+<li><b>To change the order</b>, project onto a different coordinate plane and repeat. Example: \(\int_0^1\!\int_0^{1-x}\!\int_0^{2-2z}f\,dy\,dz\,dx\) describes \(0\) \(\le x\) \(\le1,\ 0\) \(\le z\) \(\le1-x,\ 0\) \(\le y\) \(\le2-2z\). The solid is bounded by \(x+z=1\), \(y+2z=2\) and the coordinate planes. With \(z\) innermost: \(z\) runs from 0 to the lower of the two planes, \(\min\!\big(1-x,\ 1-\tfrac y2\big)\), so the \(xy\)-shadow (the rectangle \(0\le x\le1,\ 0\le y\le2\)) must be split along \(y=2x\) where the two planes cross.</li>
+</ol>
+<p>Symmetry shortcut: if the region is symmetric under \(x\to-x\) and the integrand is odd in \(x\) (changes sign), the integral is zero, as in May 2025 Q3 (see the exam taster).</p>
+</div>
+</section>
+
+<section id="s4">
+<h2><span class="n">4</span>Change of variables in triple integrals: cylindrical and spherical coordinates <span class="muted small">(handout §2.4, pp. 13–17)</span></h2>
+<p>Everything in §2 carries over to three dimensions, with a \(3\times3\) Jacobian. If</p>
+\[I=\iiint_D f(x,y,z)\,dx\,dy\,dz,\]
+<p>then the change of variables \(x=x(u,v,w),\ y=y(u,v,w),\ z=z(u,v,w)\) gives</p>
+<div class="box thm"><span class="tag">Change of variables in a triple integral</span>
+\[\begin{aligned}I=\iiint_{D^*}&f\big(x(u,v,w),y(u,v,w),z(u,v,w)\big)\\&\times\left|\frac{\partial(x,y,z)}{\partial(u,v,w)}\right|du\,dv\,dw,\end{aligned}\]
+<p>where</p>
+\[J=\frac{\partial(x,y,z)}{\partial(u,v,w)}=\det\begin{pmatrix}\pd xu&\pd xv&\pd xw\\[4pt]\pd yu&\pd yv&\pd yw\\[4pt]\pd zu&\pd zv&\pd zw\end{pmatrix}\]
+<p>is the Jacobian of the transformation. \(D^*\) is the region in \(uvw\)-space corresponding to the region \(D\) in \(xyz\)-space. The Jacobian is assumed nonzero except at isolated points, and the partial derivatives are continuous.</p>
+<p class="word"><b>In words:</b> as in 2D, rewrite the integrand, replace the region by its image, and replace \(dx\,dy\,dz\) by \(|J|\,du\,dv\,dw\); now \(|J|\) is the <b>volume</b> magnification factor.</p>
+</div>
+
+<h3>Cylindrical polar coordinates</h3>
+<p>Cylindrical coordinates are polar coordinates in the \(xy\)-plane plus the ordinary height \(z\). A point \(P\) is located by: \(r\), its distance from the \(z\)-axis; \(\theta\), the angle from the positive \(x\)-axis to the vertical plane through \(P\) and the \(z\)-axis (measured anticlockwise seen from above); and \(z\), its height above the \(xy\)-plane. Drop a perpendicular from \(P\) to the point \((x,y,0)\) on the floor: that floor point has polar coordinates \((r,\theta)\).</p>
+<p>The transformation between rectangular coordinates and cylindrical polar coordinates is given by</p>
+\[x=r\cos\theta,\quad y=r\sin\theta,\quad z=z,\]
+<p>with</p>
+\[r\ge0,\quad0\le\theta\lt2\pi,\quad-\infty\lt z\lt\infty.\]
+<p class="word"><b>In words:</b> \(r\) = distance from the \(z\)-axis, \(\theta\) = compass direction around the axis, \(z\) = height. Note \(r=\sqrt{x^2+y^2}\), so \(x^2+y^2\) becomes \(r^2\).</p>
+<p>The following are a few special cases (the "coordinate surfaces", obtained by fixing one coordinate and letting the other two vary):</p>
+<div class="scroll"><table>
+<tr><th>Fix</th><th>Surface</th><th>Description</th></tr>
+<tr><td>\(r=\text{constant}=a\)</td><td>cylinder</td><td>circular cylinder of radius \(a\) around the \(z\)-axis, while \(\theta\) and \(z\) vary</td></tr>
+<tr><td>\(\theta=\text{constant}=\theta_0\)</td><td>half-plane</td><td>vertical half-plane hinged on the \(z\)-axis, while \(r\) and \(z\) vary</td></tr>
+<tr><td>\(z=\text{constant}=z_0\)</td><td>plane</td><td>horizontal plane at height \(z_0\), while \(r\) and \(\theta\) vary</td></tr>
+</table></div>
+<div class="figure">
+  <p class="ttl">Cylindrical coordinates \((r,\theta,z)\) of a point and its three coordinate surfaces</p>
+  <canvas class="plot" id="f-cyl" style="aspect-ratio:16/11" aria-label="Rotatable picture of cylindrical coordinates"></canvas>
+  <div class="ctrl"><label>\(r\) <input type="range" id="cy-r" min="0.3" max="1.8" step="0.05" value="1.2"></label>
+  <label>\(\theta\) <input type="range" id="cy-t" min="0" max="6.2" step="0.05" value="0.8"></label>
+  <label>\(z\) <input type="range" id="cy-z" min="0.2" max="1.8" step="0.05" value="1.1"></label>
+  <label><input type="checkbox" id="cy-s" checked> show surfaces</label></div>
+  <div class="readout" id="cy-out"></div>
+  <p class="cap">\(P\) (red) with its foot on the floor. The segment from the \(z\)-axis to the foot has length \(r\) and makes angle \(\theta\) with the \(x\)-axis; the vertical segment has length \(z\). Through \(P\) pass the cylinder \(r=\text{const}\) (purple), the half-plane \(\theta=\text{const}\) (orange) and the plane \(z=\text{const}\) (teal): \(P\) is where the three meet.</p>
+</div>
+<p>The Jacobian of the transformation is given by</p>
+\[\begin{aligned}J=\frac{\partial(x,y,z)}{\partial(r,\theta,z)}&=\det\begin{pmatrix}\cos\theta&-r\sin\theta&0\\ \sin\theta&r\cos\theta&0\\0&0&1\end{pmatrix}\\&=r\end{aligned}\]
+<p>(expanding along the last row leaves exactly the \(2\times2\) polar Jacobian of §2). Thus we have</p>
+\[dV=dx\,dy\,dz\;\to\;r\,dr\,d\theta\,dz.\]
+<p class="word"><b>In words:</b> a cylindrical volume element = polar area element \(r\,dr\,d\theta\) × height \(dz\): a small curved brick with sides \(dr\), \(r\,d\theta\) and \(dz\).</p>
+<div class="box eg"><span class="tag">Example 2.4.1</span>
+<p><b>Find the volume between the surface \(x^2+y^2=2\), \(z=x^2+y^2+2\) and the \(z=0\) plane.</b></p>
+<p>\(x^2+y^2=2\) is a vertical cylinder of radius \(\sqrt2\) about the \(z\)-axis; \(z=x^2+y^2+2\) is a bowl (paraboloid) whose lowest point is at height 2. The solid is the inside of the cylinder, from the floor \(z=0\) up to the bowl (figure below).</p>
+<p>In Cartesian coordinates we have (the shadow is the disc \(x^2+y^2\le2\))</p>
+\[\begin{aligned}\iiint_V1\,dV=\int_{x=-\sqrt2}^{\sqrt2}&\int_{y=-\sqrt{2-x^2}}^{\sqrt{2-x^2}}\\&\int_{z=0}^{x^2+y^2+2}1\,dz\,dy\,dx,\end{aligned}\]
+<p>which is unpleasant because of the square-root limits. In cylindrical polar coordinates the disc is simply \(0\le r\le\sqrt2,\ 0\le\theta\le2\pi\), and the top is \(z=r^2+2\):</p>
+\[\begin{aligned}\text{Volume}&=\int_{r=0}^{\sqrt2}\int_{\theta=0}^{2\pi}\int_{z=0}^{r^2+2}r\,dz\,d\theta\,dr\\&=\int_{r=0}^{\sqrt2}\int_{\theta=0}^{2\pi}(r^3+2r)\,d\theta\,dr\\&=2\pi\left[\frac{r^4}{4}+r^2\right]_0^{\sqrt2}=2\pi(1+2)\\&=6\pi.\end{aligned}\]
+</div>
+<div class="figure">
+  <p class="ttl">Example 2.4.1: inside the cylinder \(x^2+y^2=2\), between \(z=0\) and \(z=x^2+y^2+2\)</p>
+  <canvas class="plot" id="f-ex241" style="aspect-ratio:16/11" aria-label="Rotatable solid cylinder with a paraboloid top"></canvas>
+  <div class="ctrl"><label>column at \(r\) <input type="range" id="e41-r" min="0" max="1.41" step="0.01" value="0.9"></label></div>
+  <div class="readout" id="e41-out"></div>
+  <p class="cap">Side wall: the cylinder \(r=\sqrt2\) (purple); top: the bowl \(z=r^2+2\) (coloured by height); floor: the disc \(r\le\sqrt2\). The red column at distance \(r\) from the axis runs from \(z=0\) to \(z=r^2+2\): this is the innermost \(z\)-integral.</p>
+</div>
+
+<h3>Spherical polar coordinates</h3>
+<p>Spherical coordinates suit balls, spherical shells and cones with their tip at the origin. A point \(P\) is located by: \(\rho\) (Greek "rho"), its distance from the origin \(O\); \(\phi\) ("phi"), the angle between the positive \(z\)-axis and the line \(OP\) (like latitude, but measured down from the North Pole); and \(\theta\), the same angle as in cylindrical coordinates (like longitude). Dropping a perpendicular from \(P\) to the floor gives the foot at horizontal distance \(r=\rho\sin\phi\) from the origin; the height of \(P\) is \(z=\rho\cos\phi\).</p>
+<p>The transformation between rectangular coordinates and spherical polar coordinates is given by</p>
+\[\begin{gathered}x=\rho\sin\phi\cos\theta,\quad y=\rho\sin\phi\sin\theta,\\ z=\rho\cos\phi,\end{gathered}\]
+<p>with</p>
+\[\rho\ge0,\quad0\le\phi\le\pi,\quad0\le\theta\lt2\pi.\]
+<p class="word"><b>In words:</b> first go up the \(z\)-axis a distance \(\rho\), tip down by angle \(\phi\), then swing round by angle \(\theta\). Note \(\phi\) only runs from 0 (straight up) to \(\pi\) (straight down), not to \(2\pi\); and \(x^2+y^2+z^2=\rho^2\).</p>
+<p>The following are a few special cases:</p>
+<div class="scroll"><table>
+<tr><th>Fix</th><th>Surface</th><th>Description</th></tr>
+<tr><td>\(\rho=\text{constant}=a\)</td><td>sphere</td><td>sphere of radius \(a\) centred at the origin</td></tr>
+<tr><td>\(\phi=\text{constant}=\phi_0\)</td><td>cone</td><td>cone with tip at the origin, opening around the \(z\)-axis at half-angle \(\phi_0\) (upward if \(\phi_0\lt\pi/2\), the \(xy\)-plane if \(\phi_0=\pi/2\))</td></tr>
+<tr><td>\(\theta=\text{constant}=\theta_0\)</td><td>half-plane</td><td>the same vertical half-plane as in cylindrical coordinates</td></tr>
+</table></div>
+<div class="figure">
+  <p class="ttl">Spherical coordinates \((\rho,\phi,\theta)\) of a point and its three coordinate surfaces</p>
+  <canvas class="plot" id="f-sph" style="aspect-ratio:16/11" aria-label="Rotatable picture of spherical coordinates"></canvas>
+  <div class="ctrl"><label>\(\rho\) <input type="range" id="sh-r" min="0.4" max="1.8" step="0.05" value="1.4"></label>
+  <label>\(\phi\) <input type="range" id="sh-p" min="0.1" max="3.0" step="0.02" value="0.85"></label>
+  <label>\(\theta\) <input type="range" id="sh-t" min="0" max="6.2" step="0.05" value="0.7"></label>
+  <label><input type="checkbox" id="sh-s" checked> show surfaces</label></div>
+  <div class="readout" id="sh-out"></div>
+  <p class="cap">\(P\) (red) at distance \(\rho\) from \(O\). The angle \(\phi\) is measured from the positive \(z\)-axis down to \(OP\); the angle \(\theta\) is measured in the floor from the \(x\)-axis to the foot of \(P\). The dashed lines show the foot at horizontal distance \(r=\rho\sin\phi\) and the height \(z=\rho\cos\phi\). Surfaces through \(P\): the sphere \(\rho=\text{const}\) (teal), the cone \(\phi=\text{const}\) (purple), the half-plane \(\theta=\text{const}\) (orange).</p>
+</div>
+<p>The Jacobian of the transformation is given by</p>
+\[\begin{aligned}J&=\frac{\partial(x,y,z)}{\partial(\rho,\phi,\theta)}\\&=\begin{vmatrix}\sin\phi\cos\theta&\rho\cos\phi\cos\theta&-\rho\sin\phi\sin\theta\\ \sin\phi\sin\theta&\rho\cos\phi\sin\theta&\rho\sin\phi\cos\theta\\ \cos\phi&-\rho\sin\phi&0\end{vmatrix}\\&=\rho^2\sin\phi.\end{aligned}\]
+<details><summary>The determinant worked out (expanding along the bottom row)</summary><div>
+<p>The bottom row is \((\cos\phi,\ -\rho\sin\phi,\ 0)\). The cofactor of \(\cos\phi\) is</p>
+\[\begin{aligned}&+\begin{vmatrix}\rho\cos\phi\cos\theta&-\rho\sin\phi\sin\theta\\ \rho\cos\phi\sin\theta&\rho\sin\phi\cos\theta\end{vmatrix}\\&=\rho^2\sin\phi\cos\phi\,(\cos^2\theta+\sin^2\theta)\\&=\rho^2\sin\phi\cos\phi.\end{aligned}\]
+<p>The cofactor of \(-\rho\sin\phi\) (position row 3, column 2, sign \(-\)) is</p>
+\[\begin{aligned}&-\begin{vmatrix}\sin\phi\cos\theta&-\rho\sin\phi\sin\theta\\ \sin\phi\sin\theta&\rho\sin\phi\cos\theta\end{vmatrix}\\&=-\rho\sin^2\phi\,(\cos^2\theta+\sin^2\theta)=-\rho\sin^2\phi.\end{aligned}\]
+<p>So</p>
+\[\begin{aligned}J&=\cos\phi\cdot\rho^2\sin\phi\cos\phi+(-\rho\sin\phi)(-\rho\sin^2\phi)\\&=\rho^2\sin\phi\,(\cos^2\phi+\sin^2\phi)=\rho^2\sin\phi.\end{aligned}\]
+</div></details>
+<p>Thus we have</p>
+\[dV=dx\,dy\,dz\;\to\;\rho^2\sin\phi\,d\rho\,d\phi\,d\theta.\]
+<p class="word"><b>In words:</b> a spherical volume element is a small curved brick with sides \(d\rho\) (outward), \(\rho\,d\phi\) (along a line of longitude) and \(\rho\sin\phi\,d\theta\) (along a circle of latitude, whose radius is \(\rho\sin\phi\)); multiply the three. Since \(0\le\phi\le\pi\), \(\sin\phi\ge0\) and no absolute value is needed.</p>
+<div class="figure">
+  <p class="ttl">The spherical volume element (Beyond the handouts: where \(\rho^2\sin\phi\) comes from)</p>
+  <canvas class="plot" id="f-sphel" style="aspect-ratio:16/11" aria-label="Rotatable small spherical brick"></canvas>
+  <div class="ctrl"><label>\(\phi\) of the brick <input type="range" id="se-p" min="0.15" max="2.8" step="0.05" value="0.9"></label></div>
+  <div class="readout" id="se-out"></div>
+  <p class="cap">The brick \(\rho_0\) \(\le\rho\) \(\le\rho_0+\Delta\rho,\ \phi_0\) \(\le\phi\) \(\le\phi_0+\Delta\phi,\ \theta_0\) \(\le\theta\) \(\le\theta_0+\Delta\theta\) (red), drawn on a faint sphere. Its volume is close to \(\rho^2\sin\phi\,\Delta\rho\,\Delta\phi\,\Delta\theta\) evaluated at its centre (readout), because its edges have lengths about \(\Delta\rho\), \(\rho\,\Delta\phi\) and \(\rho\sin\phi\,\Delta\theta\). Move \(\phi\) towards the pole (\(\phi\to0\)): the brick gets thinner because circles of latitude shrink, which is the \(\sin\phi\) factor.</p>
+</div>
+<div class="box eg"><span class="tag">Example 2.4.2</span>
+<p><b>In a simple model of the charge distribution around the positively charged (\(Q\)) nucleus of the hydrogen atom, the charge density in the electron cloud at a distance \(\rho\) from the atom's centre is</b></p>
+\[\sigma(\rho)=-\frac{Q}{\pi a^3}e^{-2\rho/a},\]
+<p><b>where \(a\) is the Bohr radius. Determine the total charge in the electron cloud.</b></p>
+<p>The density depends only on the distance \(\rho\), so spherical coordinates are natural. "All space" is \(0\le\rho\lt\infty,\ 0\le\phi\le\pi,\ 0\le\theta\le2\pi\), and the integrand separates into a function of \(\rho\) times one of \(\phi\) times one of \(\theta\), so the triple integral is a product of three single integrals:</p>
+\[\begin{aligned}q&=\iiint_V\sigma\,dV\quad(V\text{ is all space})\\&=-\frac{Q}{\pi a^3}\int_{\theta=0}^{2\pi}\!\int_{\phi=0}^{\pi}\!\int_{\rho=0}^{\infty}\\&\qquad\quad e^{-2\rho/a}\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\\&=-\frac{Q}{\pi a^3}\int_{0}^{\infty}\rho^2e^{-2\rho/a}\,d\rho\\&\qquad\quad\times\int_{0}^{\pi}\sin\phi\,d\phi\int_0^{2\pi}d\theta\\&=-\frac{Q}{\pi a^3}\cdot\frac{a^3}{4}\cdot2\cdot2\pi=-Q.\end{aligned}\]
+<details><summary>Show the calculation: the two angle integrals and the radial integral (integration by parts twice)</summary><div>
+<p><b>Why it splits.</b> The limits are all constants and the integrand is (function of \(\rho\)) × (function of \(\phi\)) × 1, so the triple integral is a product of three single integrals.</p>
+<p><b>Angle integrals.</b> \(\int_0^\pi\sin\phi\,d\phi\) \(=[-\cos\phi]_0^\pi\) \(=-(-1)-(-1)\) \(=2\) and \(\int_0^{2\pi}d\theta=2\pi\).</p>
+<p><b>Radial integral.</b> Write \(c=2/a\) to keep the algebra short, so the integral is \(\int_0^\infty\rho^2e^{-c\rho}\,d\rho\). Integration by parts is \(\int u\,dv=uv-\int v\,du\).</p>
+<ol class="steps">
+<li>First time: \(u=\rho^2\) (gets simpler when differentiated), \(dv=e^{-c\rho}d\rho\), so \(du=2\rho\,d\rho\), \(v=-\frac1ce^{-c\rho}\):
+\[\int\rho^2e^{-c\rho}d\rho=-\frac{\rho^2}{c}e^{-c\rho}+\frac2c\int\rho\,e^{-c\rho}d\rho.\]</li>
+<li>Second time, on the new integral: \(u=\rho\), \(dv=e^{-c\rho}d\rho\):
+\[\begin{aligned}\int\rho\,e^{-c\rho}d\rho&=-\frac{\rho}{c}e^{-c\rho}+\frac1c\int e^{-c\rho}d\rho\\&=-\frac{\rho}{c}e^{-c\rho}-\frac{1}{c^2}e^{-c\rho}.\end{aligned}\]</li>
+<li>Put step 2 into step 1 and factor out \(-e^{-c\rho}\):
+\[\int\rho^2e^{-c\rho}d\rho=-e^{-c\rho}\Big(\frac{\rho^2}{c}+\frac{2\rho}{c^2}+\frac{2}{c^3}\Big).\]</li>
+<li>Back to \(a\): \(\frac1c=\frac a2,\ \frac1{c^2}=\frac{a^2}{4},\ \frac1{c^3}=\frac{a^3}{8}\), so the antiderivative is
+\[-\frac a2\,e^{-2\rho/a}\Big(\rho^2+a\rho+\frac{a^2}{2}\Big).\]</li>
+<li>Limits: as \(\rho\to\infty\) it tends to 0 (an exponential decay beats any polynomial); at \(\rho=0\) it equals \(-\frac a2\cdot\frac{a^2}{2}=-\frac{a^3}{4}\). So \(\int_0^\infty\rho^2e^{-2\rho/a}d\rho=0-\left(-\frac{a^3}{4}\right)=\frac{a^3}{4}\).</li>
+</ol>
+<p><b>Combine.</b> \(q\) \(=-\frac{Q}{\pi a^3}\cdot\frac{a^3}{4}\cdot2\cdot2\pi\) \(=-\frac{Q}{\pi a^3}\cdot\pi a^3\) \(=-Q\).</p>
+</div></details>
+<p class="word"><b>In words:</b> the electron cloud carries total charge \(-Q\), exactly cancelling the nucleus: the atom is neutral, as it should be.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Example 2.4.2: how the charge is spread out with distance</p>
+  <canvas class="plot" id="f-charge" style="aspect-ratio:16/10" aria-label="Charge per shell and cumulative charge versus distance"></canvas>
+  <div class="ctrl"><label>radius \(R\) (in units of \(a\)) <input type="range" id="ch-R" min="0.1" max="6" step="0.05" value="1.5"></label></div>
+  <div class="readout" id="ch-out"></div>
+  <p class="cap">Horizontal axis: distance \(\rho/a\). Teal: the charge in a thin shell, proportional to \(\rho^2e^{-2\rho/a}\) (the \(\rho^2\) is the Jacobian at work: shells further out are bigger); it peaks at \(\rho=a\), the Bohr radius. Orange: the fraction of the cloud's charge inside radius \(R\), equal to \(1-e^{-2R/a}\big(1+\frac{2R}{a}+\frac{2R^2}{a^2}\big)\), which climbs to 1 (the full \(-Q\)).</p>
+</div>
+<div class="box warn"><span class="tag">Watch out · letters change between books and papers</span>
+<p>This chapter uses \(\rho\) for the spherical distance, \(\phi\) for the angle from the \(z\)-axis and \(\theta\) for the angle round it. Dec 2017 Q2 uses \(r\) for the distance, \(\theta\) for the angle from the \(z\)-axis and \(\phi\) for the angle round it, so its Jacobian is written \(r^2\sin\theta\). Always check which angle is measured from the \(z\)-axis: that is the one inside the sine, and it runs from 0 to \(\pi\). Also, \(\rho\) is used for density in Example 2.2.1 and for distance here: read the context.</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · other axes and stretched coordinates</span>
+<ul class="list">
+<li><b>Cylinder about another axis.</b> If the solid is round about the \(y\)-axis (May 2023: bounded by \(y=x^2+z^2\) and \(y=4\)), use \(x=r\cos\theta,\ z=r\sin\theta,\ y=y\). The Jacobian is still \(r\), and \(x^2+z^2=r^2\).</li>
+<li><b>Ellipsoids</b> \(\frac{x^2}{a^2}+\frac{y^2}{b^2}+\frac{z^2}{c^2}\le1\) (Dec 2014): stretch first with \(x=au,\ y=bv,\ z=cw\). The Jacobian is \(\det\operatorname{diag}(a,b,c)=abc\), and the ellipsoid becomes the unit ball \(u^2+v^2+w^2\le1\), of volume \(\frac43\pi\). So</li>
+</ul>
+\[\text{Volume of ellipsoid}=abc\cdot\frac43\pi=\frac43\pi abc.\]
+<p class="word"><b>In words:</b> stretching by \(a\), \(b\), \(c\) in the three directions multiplies every volume by \(abc\).</p>
+</div>
+</section>
+
+<section id="summary">
+<h2><span class="n">◆</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Formula</th><th>In words</th></tr>
+<tr><td>Double integral</td><td>\(\iint_R f\,dA=\lim\sum f(x_k,y_k)\Delta A_k\)</td><td>volume under \(z=f\) over \(R\) (signed)</td></tr>
+<tr><td>Area</td><td>\(\iint_R1\,dA\)</td><td>integrate 1 to get area</td></tr>
+<tr><td>Fubini (rectangle)</td><td>\(\int_c^d\!\int_a^bf\,dx\,dy=\int_a^b\!\int_c^df\,dy\,dx\)</td><td>either order, constant limits</td></tr>
+<tr><td>\(y\)-simple region</td><td>\(\int_a^b\!\int_{g_1(x)}^{g_2(x)}f\,dy\,dx\)</td><td>vertical strips: bottom curve to top curve</td></tr>
+<tr><td>\(x\)-simple region</td><td>\(\int_c^d\!\int_{h_1(y)}^{h_2(y)}f\,dx\,dy\)</td><td>horizontal strips: left curve to right curve</td></tr>
+<tr><td>Change of variables (2D)</td><td>\(dx\,dy\to\left|\frac{\partial(x,y)}{\partial(u,v)}\right|du\,dv\)</td><td>Jacobian = area magnification</td></tr>
+<tr><td>Reciprocal rule (Beyond)</td><td>\(\frac{\partial(x,y)}{\partial(u,v)}=1\big/\frac{\partial(u,v)}{\partial(x,y)}\)</td><td>flip the easy Jacobian</td></tr>
+<tr><td>Polar</td><td>\(x=r\cos\theta,\ y=r\sin\theta\); \(dA=r\,dr\,d\theta\)</td><td>Jacobian \(r\)</td></tr>
+<tr><td>Gaussian integral</td><td>\(\int_0^\infty e^{-x^2}dx=\frac{\sqrt\pi}2\)</td><td>square it, go polar</td></tr>
+<tr><td>Triple integral</td><td>\(\int_{a_1}^{a_2}\!\int_{\varphi_1}^{\varphi_2}\!\int_{\Psi_1}^{\Psi_2}f\,dz\,dy\,dx\)</td><td>column, strip, shadow</td></tr>
+<tr><td>Meanings</td><td>\(\iiint dV,\ \iiint\rho\,dV,\ \iiint\rho d^2dV\)</td><td>volume, mass (or charge), moment of inertia</td></tr>
+<tr><td>Cylindrical</td><td>\(dV=r\,dr\,d\theta\,dz\)</td><td>polar + height</td></tr>
+<tr><td>Spherical</td><td>\(dV=\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\), \(0\le\phi\le\pi\)</td><td>\(\phi\) from the \(z\)-axis</td></tr>
+<tr><td>Results</td><td>pipe \(I=\frac M2(a^2+b^2)\); ellipsoid \(\frac43\pi abc\) (Beyond)</td><td>worth remembering</td></tr>
+</table></div>
+</section>
+
+<section id="mistakes">
+<h2><span class="n">◆</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Forgetting the Jacobian: writing \(dx\,dy=dr\,d\theta\) or \(dV=d\rho\,d\phi\,d\theta\). <b>Fix:</b> \(r\,dr\,d\theta\), \(r\,dr\,d\theta\,dz\), \(\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\); check with the area of a unit disc (\(\pi\), not \(2\pi\)).</span>
+<span class="x">✗</span><span>Using \(\frac{\partial(u,v)}{\partial(x,y)}\) where \(\frac{\partial(x,y)}{\partial(u,v)}\) is needed. <b>Fix:</b> \(dx\,dy\) needs "\(x,y\) on top"; if you computed the other one, take its reciprocal.</span>
+<span class="x">✗</span><span>Using a negative Jacobian as it is. <b>Fix:</b> take the absolute value \(|J|\) in the integral (but give \(J\) with its sign if the question asks for the Jacobian).</span>
+<span class="x">✗</span><span>Outer limits that depend on a variable, e.g. \(\int_0^{x}\!\int_0^1\dots dy\,dx\). <b>Fix:</b> the outermost limits must be numbers; each inner limit may only involve variables still to be integrated outside it.</span>
+<span class="x">✗</span><span>Reversing the order by swapping the limits as they stand. <b>Fix:</b> sketch the region, then read the new limits from a strip in the other direction; split the region if the strip's ends change curve.</span>
+<span class="x">✗</span><span>Mapping only the corners of a region under a non-linear transformation. <b>Fix:</b> map each boundary curve; edges may bend.</span>
+<span class="x">✗</span><span>Letting \(\phi\) run from 0 to \(2\pi\) in spherical coordinates. <b>Fix:</b> \(0\le\phi\le\pi\) covers the whole sphere; \(\theta\) runs from 0 to \(2\pi\).</span>
+<span class="x">✗</span><span>Forgetting to rewrite the integrand: leaving \(x^2+y^2\) instead of \(r^2\), or \(x-y\) instead of \(u\). <b>Fix:</b> after substituting, no \(x\) or \(y\) may remain.</span>
+<span class="ok">✓</span><span>Always sketch the region (markers give marks for it), label every boundary curve and corner, and draw the strip you are using.</span>
+</div>
+</section>
+
+<section id="find-mistake">
+<h2><span class="n">◆</span>Find the mistake</h2>
+<p class="muted small">Written for these notes. Each "solution" has one error. Find it before opening the answer.</p>
+<div class="q"><p class="qh">1. Polar coordinates</p>
+<p>"\(\displaystyle \iint_{x^2+y^2\le1}(x^2+y^2)\,dA\) \(\displaystyle =\int_0^{2\pi}\!\int_0^1r^2\,dr\,d\theta\) \(\displaystyle =2\pi\cdot\frac13\) \(\displaystyle =\frac{2\pi}3.\)"</p>
+<details><summary>Answer</summary><div><p>The Jacobian \(r\) is missing: \(dA=r\,dr\,d\theta\). Correct: \(\int_0^{2\pi}\!\int_0^1r^3\,dr\,d\theta=2\pi\cdot\frac14=\frac\pi2\).</p></div></details></div>
+<div class="q"><p class="qh">2. Reversing the order</p>
+<p>"\(\displaystyle \int_{x=0}^{1}\int_{y=x^2}^{1}x\,dy\,dx\) \(\displaystyle =\int_{y=0}^{1}\int_{x=0}^{y^2}x\,dx\,dy\) \(\displaystyle =\int_0^1\frac{y^4}{2}dy\) \(\displaystyle =\frac1{10}.\)"</p>
+<canvas class="plot" id="f-fm2" style="aspect-ratio:16/9;max-width:420px" aria-label="Region between y = x squared and y = 1"></canvas>
+<details><summary>Answer</summary><div><p>The region is \(0\le x\le1,\ x^2\le y\le1\) (above the parabola, below \(y=1\); shaded above). A horizontal strip at height \(y\) runs from \(x=0\) to the parabola, where \(x=\sqrt y\), not \(y^2\). Correct: \(\int_0^1\!\int_0^{\sqrt y}x\,dx\,dy=\int_0^1\frac y2dy=\frac14\) (the same as the original order: \(\int_0^1x(1-x^2)\,dx=\frac14\)).</p></div></details></div>
+<div class="q"><p class="qh">3. The Jacobian the wrong way round</p>
+<p>"Area of the region \(R\) between \(x+y=0\), \(x+y=2\), \(x-y=0\), \(x-y=1\): let \(u=x+y,\ v=x-y\), so \(R^*\) is \(0\le u\le2,\ 0\le v\le1\). \(\dfrac{\partial(u,v)}{\partial(x,y)}=\det\begin{pmatrix}1&1\\1&-1\end{pmatrix}=-2\), so the area is \(\int_0^2\!\int_0^1|{-2}|\,dv\,du=4\)."</p>
+<details><summary>Answer</summary><div><p>The factor needed is \(\left|\frac{\partial(x,y)}{\partial(u,v)}\right|=\frac1{|-2|}=\frac12\). Correct area: \(\frac12\times2\times1=1\). Sanity check: \(R\) is a rectangle (rotated by 45°) with sides \(\sqrt2\) and \(\frac1{\sqrt2}\), area 1.</p></div></details></div>
+</section>
+
+<section id="group-work">
+<h2><span class="n">◆</span>Practice problems</h2>
+<p class="muted small">The Chapter 2 handout has no group-work questions, so these are written for these notes, at least one per section. Answers checked in sympy.</p>
+<div class="q"><p class="qh">1. (§1) Evaluate \(\displaystyle\int_{y=0}^{1}\int_{x=y}^{1}e^{x^2}\,dx\,dy\) by reversing the order of integration.</p>
+<canvas class="plot" id="f-pp1" style="aspect-ratio:16/9;max-width:420px" aria-label="Triangle below y = x"></canvas>
+<details><summary>Hint</summary><div><p>The region (shaded) is the triangle \(0\le y\le x\le1\), with corners \((0,0),(1,0),(1,1)\). With vertical strips, \(y\) runs from 0 to \(x\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\displaystyle \int_0^1\!\int_0^xe^{x^2}dy\,dx\) \(\displaystyle =\int_0^1xe^{x^2}dx\) \(\displaystyle =\frac{e-1}{2}\) \(\displaystyle \approx0.859\).</p></div></details></div>
+<div class="q"><p class="qh">2. (§2) Let \(R\) be the rectangle bounded by \(x+y=0\), \(x+y=2\), \(x-y=0\), \(x-y=1\). Using \(u=x+y,\ v=x-y\), evaluate \(\displaystyle\iint_R(x+y)^2\,dx\,dy\).</p>
+<canvas class="plot" id="f-pp2" style="aspect-ratio:16/9;max-width:420px" aria-label="Tilted rectangle between four lines"></canvas>
+<details><summary>Hint</summary><div><p>\(R^*\) is \(0\le u\le2,\ 0\le v\le1\). \(x=\frac{u+v}2,\ y=\frac{u-v}2\) gives \(J=-\frac12\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\displaystyle\int_0^2\!\int_0^1u^2\cdot\frac12\,dv\,du=\frac12\cdot\frac83=\frac43\).</p></div></details></div>
+<div class="q"><p class="qh">3. (§2, polar) Evaluate \(\displaystyle\iint_Dx\,dA\) where \(D\) is the right half of the disc \(x^2+y^2\le4\) (\(x\ge0\)).</p>
+<canvas class="plot" id="f-pp3" style="aspect-ratio:16/9;max-width:420px" aria-label="Right half of a disc of radius 2"></canvas>
+<details><summary>Hint</summary><div><p>\(0\le r\le2,\ -\frac\pi2\le\theta\le\frac\pi2\); \(x\,dA=r\cos\theta\cdot r\,dr\,d\theta\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\displaystyle\int_{-\pi/2}^{\pi/2}\cos\theta\,d\theta\int_0^2r^2dr=2\cdot\frac83=\frac{16}3\).</p></div></details></div>
+<div class="q"><p class="qh">4. (§3) Evaluate \(\displaystyle\iiint_Tx\,dV\) where \(T\) is the tetrahedron bounded by \(x=0\), \(y=0\), \(z=0\) and \(x+y+z=2\).</p>
+<canvas class="plot" id="f-pp4" style="aspect-ratio:16/10;max-width:420px" aria-label="Tetrahedron with corners on the axes at 2"></canvas>
+<details><summary>Hint</summary><div><p>Same shape as Example 2.3.4, twice as big: \(0\) \(\le x\) \(\le2,\ 0\) \(\le y\) \(\le2-x,\ 0\) \(\le z\) \(\le2-x-y\). After the \(z\)- and \(y\)-integrals you get \(\frac12x(2-x)^2\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\displaystyle\int_0^2\frac{x(2-x)^2}{2}dx=\frac23\).</p></div></details></div>
+<div class="q"><p class="qh">5. (§4, cylindrical) Find the volume of the solid inside the cylinder \(x^2+y^2=1\), above \(z=0\) and below \(z=4-x^2-y^2\).</p>
+<canvas class="plot" id="f-pp5" style="aspect-ratio:16/10;max-width:420px" aria-label="Cylinder of radius 1 under a downward paraboloid"></canvas>
+<details><summary>Hint</summary><div><p>Like Example 2.4.1 with top \(z=4-r^2\): \(\int_0^{2\pi}\!\int_0^1(4-r^2)\,r\,dr\,d\theta\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(2\pi\left[2r^2-\frac{r^4}4\right]_0^1=2\pi\cdot\frac74=\frac{7\pi}2\).</p></div></details></div>
+<div class="q"><p class="qh">6. (§4, spherical) A ball of radius \(R\) has density \(k\rho\) (proportional to the distance \(\rho\) from its centre). Find its mass.</p>
+<details><summary>Hint</summary><div><p>\(\int_0^{2\pi}\!\int_0^\pi\!\int_0^Rk\rho\cdot\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\); the three integrals separate.</p></div></details>
+<details><summary>Answer</summary><div><p>\(k\cdot\frac{R^4}4\cdot2\cdot2\pi=k\pi R^4\).</p></div></details></div>
+</section>
+
+<section id="checks">
+<h2><span class="n">◆</span>Concept checks</h2>
+<p class="muted small">Written for these notes.</p>
+<div class="q"><p class="qh">1. A student computes the area of the unit disc as \(\int_0^{2\pi}\!\int_0^1dr\,d\theta\). What do they get, and what went wrong?</p>
+<details><summary>Answer</summary><div><p>\(2\pi\), but the area is \(\pi\). They forgot the Jacobian \(r\): \(\int_0^{2\pi}\!\int_0^1r\,dr\,d\theta=\pi\).</p></div></details></div>
+<div class="q"><p class="qh">2. Can \(\iint_Rf\,dA\) be negative? What does it mean then?</p>
+<details><summary>Answer</summary><div><p>Yes, if \(f\lt0\) on (most of) \(R\). It is then a signed volume: volume above the floor counts positive, volume below counts negative.</p></div></details></div>
+<div class="q"><p class="qh">3. Without integrating, find \(\displaystyle\iint_{x^2+y^2\le1}xy^2\,dA\).</p>
+<details><summary>Answer</summary><div><p>0. The disc is symmetric under \(x\to-x\) and \(xy^2\) changes sign, so the contributions from left and right halves cancel.</p></div></details></div>
+<div class="q"><p class="qh">4. Why does \(\int_0^1\!\int_y^1e^{x^2}dx\,dy\) have to be done in the other order?</p>
+<details><summary>Answer</summary><div><p>\(e^{x^2}\) has no elementary antiderivative in \(x\). In the other order the inner integral is in \(y\) (trivial), and it produces a factor \(x\) that makes \(\int xe^{x^2}dx\) easy.</p></div></details></div>
+<div class="q"><p class="qh">5. Which coordinates suit the solid cone \(x^2+y^2\le z^2,\ 0\le z\le1\)? Find its volume.</p>
+<details><summary>Answer</summary><div><p>Cylindrical: \(0\le r\le z\), \(0\le\theta\le2\pi\), \(0\le z\le1\). Volume \(=\int_0^1\!\int_0^{2\pi}\!\int_0^zr\,dr\,d\theta\,dz=\int_0^1\pi z^2dz=\frac\pi3\) (spherical with \(\phi\le\frac\pi4\) also works).</p></div></details></div>
+<div class="q"><p class="qh">6. In spherical coordinates, why is there no absolute value on \(\rho^2\sin\phi\)?</p>
+<details><summary>Answer</summary><div><p>Because \(0\le\phi\le\pi\), so \(\sin\phi\ge0\), and \(\rho^2\ge0\). The Jacobian is never negative on the allowed ranges.</p></div></details></div>
+</section>
+
+<section id="taster">
+<h2><span class="n">◆</span>Exam taster</h2>
+<p>Real past-paper questions, one per main question type of this chapter, December papers first (newest first), then May-format papers. Each has a hint and the final answer; the full worked solution with marker notes is in the exam guide (follow the tag). December papers: answer 4 of 5 questions, 25 marks each, 3 hours; the formula sheet gives <b>nothing from this chapter</b> (no Jacobians, no polar, cylindrical or spherical volume elements), so learn \(r\), \(r\) and \(\rho^2\sin\phi\) by heart. May-format papers have no formula sheet and ask you to "explain your reasonings with sketches".</p>
+
+<div class="q"><div class="src"><b>Dec 2025 Q1(b)</b><span>5 + 4 + 6 marks</span><a class="guide" href="guide-C2.html#C2-2">Guide C2.2 · change of variables</a></div>
+<p>Let \(S\) be the region in the \(XY\)-plane bounded by the lines \(y=x\), \(y=x-1\), \(y=1-x\), \(y=2-x\).</p>
+<p>(i) Sketch the transformed region of \(S\) in the \(UV\)-plane under the coordinate transformation \(x=\dfrac{u+v}{2}\), \(y=\dfrac{v-u}{2}\).</p>
+<p>(ii) Find the Jacobian of the transformation \(\dfrac{\partial(x,y)}{\partial(u,v)}\).</p>
+<p>(iii) Evaluate \(\displaystyle\iint_S(x-y)\,dS\).</p>
+<details><summary>Hint</summary><div><p>Solve for \(u\) and \(v\): \(u=x-y\), \(v=x+y\). Each boundary line then becomes \(u=\text{const}\) or \(v=\text{const}\). In (iii), \(x-y=u\).</p></div></details>
+<details><summary>Answer</summary><div><p>(i) \(S^*\) is the square \(0\le u\le1,\ 1\le v\le2\) (\(y=x\to u=0\), \(y=x-1\to u=1\), \(y=1-x\to v=1\), \(y=2-x\to v=2\)).</p><p>(ii) \(J=\det\begin{pmatrix}\frac12&\frac12\\-\frac12&\frac12\end{pmatrix}=\frac12\).</p><p>(iii) \(\displaystyle\int_1^2\!\int_0^1u\cdot\frac12\,du\,dv=\boxed{\tfrac14}\).</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2023 Q1(b)</b><span>4 + 3 + 6 marks</span><a class="guide" href="guide-C2.html#C2-3">Guide C2.3 · polar coordinates</a></div>
+<p>Let \(S\) be the region specified by \(\dfrac{a}{\sqrt2}\le x\le a\), \(\sqrt{a^2-x^2}\le y\le x\) where \(a\gt0\).</p>
+<p>(i) Sketch the region \(S\). (ii) Use polar coordinates to describe the region \(S\). (iii) Use polar coordinates to evaluate \(\displaystyle\iint_S\frac{1}{\sqrt{x^2+y^2}}\,dS\). (You may find the following fact useful: \(\int\sec\theta\,d\theta=\ln|\sec\theta+\tan\theta|+k\) where \(k\) is an arbitrary constant.)</p>
+<details><summary>Hint</summary><div><p>\(y\ge\sqrt{a^2-x^2}\) means outside the circle \(r=a\); \(y\le x\) means \(\theta\le\pi/4\); \(x\le a\) is the line \(r=a\sec\theta\). The corners are \((a,0)\), \((a,a)\) and \((a/\sqrt2,a/\sqrt2)\).</p></div></details>
+<details><summary>Answer</summary><div><p>(ii) \(0\le\theta\le\frac\pi4,\ a\le r\le a\sec\theta\).</p><p>(iii) \(\displaystyle \int_0^{\pi/4}\!\int_a^{a\sec\theta}\frac1r\,r\,dr\,d\theta\) \(\displaystyle =\int_0^{\pi/4}(a\sec\theta-a)\,d\theta\) \(\displaystyle =\boxed{a\Big(\ln(1+\sqrt2)-\frac\pi4\Big)}\) \(\displaystyle \approx0.0960a\).</p></div></details>
+<details><summary>Show the calculation (outline)</summary><div>
+<ol class="steps">
+<li>In polar form \(\sqrt{x^2+y^2}=r\), and \(dS=r\,dr\,d\theta\), so the integrand times the Jacobian is \(\frac1r\cdot r=1\).</li>
+<li>Inner integral: \(\int_a^{a\sec\theta}1\,dr=a\sec\theta-a\).</li>
+<li>Outer integral, using the given fact: \(\int_0^{\pi/4}(a\sec\theta-a)\,d\theta\) \(=a\Big[\ln|\sec\theta+\tan\theta|-\theta\Big]_0^{\pi/4}\).</li>
+<li>At \(\pi/4\): \(\sec\frac\pi4=\sqrt2\), \(\tan\frac\pi4=1\), giving \(\ln(\sqrt2+1)-\frac\pi4\). At 0: \(\ln(1+0)-0=0\). Subtract.</li>
+</ol>
+</div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2017 Q2(a)</b><span>5 + 6 + 6 marks</span><a class="guide" href="guide-C2.html#C2-5">Guide C2.5 · cylindrical / spherical</a></div>
+<p>Consider the transformation from Cartesian coordinates \((x,y,z)\) to spherical polar coordinates \((r,\theta,\phi)\): \(x=r\sin\theta\cos\phi\), \(y=r\sin\theta\sin\phi\), \(z=r\cos\theta\). Let \(D\) denote the spherical region with centre \((0,0,0)\) and radius \(a\).</p>
+<p>(i) Show that the Jacobian of the transformation is \(r^2\sin\theta\).</p>
+<p>(ii) Evaluate \(\displaystyle\iiint_D\frac{1}{x^2+y^2+z^2}\,dx\,dy\,dz\).</p>
+<p>(iii) Evaluate \(\displaystyle\iiint_Dx^2\,dx\,dy\,dz\). (Hint: The evaluation may be simplified by establishing a connection with \(\iiint_D(x^2+y^2+z^2)\,dx\,dy\,dz\).)</p>
+<details><summary>Hint</summary><div><p>Here \(\theta\) is the angle from the \(z\)-axis (the letters are swapped compared with §4). For (iii), by symmetry \(\iiint x^2=\iiint y^2=\iiint z^2\), so each is one third of \(\iiint r^2\,dV\).</p></div></details>
+<details><summary>Answer</summary><div><p>(i) Expand the \(3\times3\) determinant as in §4: \(J=r^2\sin\theta\).</p><p>(ii) \(\displaystyle\int_0^{2\pi}\!\int_0^\pi\!\int_0^a\frac1{r^2}r^2\sin\theta\,dr\,d\theta\,d\phi=\boxed{4\pi a}\).</p><p>(iii) \(\frac13\displaystyle\int_0^{2\pi}\!\int_0^\pi\!\int_0^ar^4\sin\theta\,dr\,d\theta\,d\phi\) \(=\frac13\cdot\frac{4\pi a^5}{5}\) \(=\boxed{\frac{4\pi a^5}{15}}\).</p></div></details>
+<details><summary>Show the calculation (outline)</summary><div>
+<ol class="steps">
+<li>(ii) \(x^2+y^2+z^2=r^2\), so the integrand times the Jacobian is \(\frac1{r^2}\cdot r^2\sin\theta=\sin\theta\). The limits are constants (\(0\le r\le a,\ 0\le\theta\le\pi,\ 0\le\phi\le2\pi\)), so it splits: \(\int_0^adr\cdot\int_0^\pi\sin\theta\,d\theta\cdot\int_0^{2\pi}d\phi=a\cdot2\cdot2\pi\).</li>
+<li>(iii) The ball looks the same if you swap the names \(x,y,z\), so \(\iiint x^2=\iiint y^2=\iiint z^2\). Their sum is \(\iiint(x^2+y^2+z^2)\,dV\) \(=\iiint r^2\cdot r^2\sin\theta\,dr\,d\theta\,d\phi\).</li>
+<li>That splits as \(\int_0^ar^4dr\cdot2\cdot2\pi=\frac{a^5}{5}\cdot4\pi\). One third of it is \(\frac{4\pi a^5}{15}\).</li>
+</ol>
+</div></details></div>
+
+<div class="q"><div class="src"><b>May 2025 Q3</b><span>10 marks</span><span class="older">May format</span><a class="guide" href="guide-C2.html#C2-4">Guide C2.4 · triple integrals</a></div>
+<p>Let \(D\) be the region in \(\R^3\) bounded by \(y=2-x^2\), \(y=2z\) and \(z=0\). Sketch \(D\) and evaluate \(\displaystyle I=\iiint_Dx\,dV\).</p>
+<details><summary>Hint</summary><div><p>Take \(z\) innermost: \(0\le z\le y/2\). The shadow on the \(xy\)-plane is under the parabola: \(-\sqrt2\le x\le\sqrt2,\ 0\le y\le2-x^2\). Then look at the symmetry in \(x\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\displaystyle I\) \(\displaystyle =\int_{-\sqrt2}^{\sqrt2}\!\int_0^{2-x^2}\!\int_0^{y/2}x\,dz\,dy\,dx\) \(\displaystyle =\int_{-\sqrt2}^{\sqrt2}\frac{x(2-x^2)^2}{4}\,dx\) \(\displaystyle =\boxed{0}\), because \(D\) is symmetric about the plane \(x=0\) and the integrand \(x\) is odd. (The volume of \(D\) is \(\frac{16\sqrt2}{15}\), a useful check of the limits.)</p></div></details>
+<details><summary>Show the calculation (outline)</summary><div>
+<ol class="steps">
+<li>\(z\)-integral (\(x,y\) constant): \(\int_0^{y/2}x\,dz=\frac{xy}{2}\).</li>
+<li>\(y\)-integral (\(x\) constant): \(\int_0^{2-x^2}\frac{xy}{2}\,dy=\frac x2\cdot\frac{(2-x^2)^2}{2}=\frac{x(2-x^2)^2}{4}\).</li>
+<li>\(x\)-integral: \(\frac{x(2-x^2)^2}{4}\) is odd (replacing \(x\) by \(-x\) changes its sign) and the interval \([-\sqrt2,\sqrt2]\) is symmetric about 0, so the left and right halves cancel: \(I=0\).</li>
+<li>Volume check: the same limits with integrand 1 give \(\int_{-\sqrt2}^{\sqrt2}\frac{(2-x^2)^2}{4}dx=\frac{16\sqrt2}{15}\), positive, so the limits describe a real solid.</li>
+</ol>
+</div></details></div>
+
+<div class="q"><div class="src"><b>May 2017 Q2(a)</b><span>6 marks</span><span class="older">May format</span><a class="guide" href="guide-C2.html#C2-1">Guide C2.1 · Cartesian double integrals</a></div>
+<p>Consider the double integral \(\displaystyle\int_{y=0}^{1}\int_{x=\sin^{-1}y}^{\pi/2}e^{\cos x}\,dx\,dy\) over the region in the \(xy\)-plane.</p>
+<p>(i) Sketch the region of integration in the \(xy\)-plane. (ii) Change the order of integration, hence, or otherwise, evaluate the double integral. (iii) Is the answer in part (ii) equal to the area of the region of integration? Justify your answer by finding the area of that region.</p>
+<details><summary>Hint</summary><div><p>\(x\ge\sin^{-1}y\) with \(0\le y\le1\) means \(y\le\sin x\): the region lies under the arch \(y=\sin x\) for \(0\le x\le\pi/2\). Vertical strips: \(0\le y\le\sin x\).</p></div></details>
+<details><summary>Answer</summary><div><p>(ii) \(\displaystyle \int_0^{\pi/2}\!\int_0^{\sin x}e^{\cos x}\,dy\,dx\) \(\displaystyle =\int_0^{\pi/2}e^{\cos x}\sin x\,dx\) \(\displaystyle =\boxed{e-1}\) \(\displaystyle \approx1.718\).</p><p>(iii) No: the area is \(\int_0^{\pi/2}\sin x\,dx=1\). The integral equals the area only when the integrand is 1; here it is \(e^{\cos x}\ne1\).</p></div></details></div>
+<p class="muted small">Other sittings of these types (Dec 2024 ellipse, Dec 2023 and Dec 2018 \(u=2xy,\ v=x^2-y^2\), Dec 2022, Dec 2021, Dec 2016, Dec 2015, Dec 2014, Dec 2014 ellipsoid volume, and the May papers) are solved in the <a href="guide-C2.html">C2 exam guide</a>.</p>
+</section>
+
+<footer class="foot">MECH2407 Revision Bundle · written for students revising on their own. Material in orange "Beyond the handouts" boxes is not in the course handouts. <a href="index.html">Start Here</a></footer>
+</main>
+</div>
+
+<script>
+/* ===== MV: shared plotting helpers (2D plot, 3D surface, contour map, vector field) ===== */
+window.MV=(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+function hex(c){c=c.replace('#','');if(c.length===3)c=c.split('').map(x=>x+x).join('');return [0,2,4].map(i=>parseInt(c.substr(i,2),16));}
+function mix(a,b,t){const A=hex(a),B=hex(b);return 'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')+')';}
+function ramp(t){t=Math.max(0,Math.min(1,t));return t<.5?mix(css('--accent'),css('--c3'),t*2):mix(css('--c3'),css('--warm'),(t-.5)*2);}
+function setup(cv){const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return null;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card');g.fillRect(0,0,W,H);g.font='11px Inter, system-ui, sans-serif';return {g,W,H};}
+function arrow(g,x1,y1,x2,y2,col,w,head){g.strokeStyle=col;g.fillStyle=col;g.lineWidth=w||2;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  const a=Math.atan2(y2-y1,x2-x1),L=head||8;g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-L*Math.cos(a-.4),y2-L*Math.sin(a-.4));g.lineTo(x2-L*Math.cos(a+.4),y2-L*Math.sin(a+.4));g.closePath();g.fill();}
+function label(g,t,x,y,col,align,bold){g.font=(bold?'600 ':'')+'12px Inter, system-ui, sans-serif';g.fillStyle=col;g.textAlign=align||'left';g.textBaseline='middle';g.save();g.strokeStyle=css('--card');g.lineWidth=3.5;g.lineJoin='round';g.strokeText(t,x,y);g.restore();g.fillText(t,x,y);g.font='11px Inter, system-ui, sans-serif';}
+
+/* ---- 2D axes. o: xmin,xmax,ymin,ymax,xstep,ystep,equal, curves[{f,color,dash,width,from,to}], param[{x(t),y(t),t0,t1,color}],
+   segs[{x1,y1,x2,y2,color,dash}], arrows[{x1,y1,x2,y2,color,label}], pts[{x,y,color,label,open}], extra(g,X,Y) ---- */
+function axes2d(cv,o){
+  const s=setup(cv);if(!s)return;const {g,W,H}=s;
+  const pl=34,pr=12,pt=12,pb=26;
+  if(o.equal){const sx=(W-pl-pr)/(o.xmax-o.xmin),sy=(H-pt-pb)/(o.ymax-o.ymin);if(sx>sy){const c=(o.xmin+o.xmax)/2,h=(W-pl-pr)/sy/2;o=Object.assign({},o,{xmin:c-h,xmax:c+h});}else{const c=(o.ymin+o.ymax)/2,h=(H-pt-pb)/sx/2;o=Object.assign({},o,{ymin:c-h,ymax:c+h});}}
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr), Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const xs=o.xstep||1,ys=o.ystep||1;
+  const xt=range(Math.ceil(o.xmin/xs)*xs,o.xmax,xs),yt=range(Math.ceil(o.ymin/ys)*ys,o.ymax,ys);
+  g.strokeStyle=css('--grid');g.lineWidth=1;
+  xt.forEach(v=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(v=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis');g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted');g.textAlign='center';g.textBaseline='top';
+  xt.forEach(v=>{if(v!==0)g.fillText(fmt(v,2),X(v),H-pb+6);});
+  g.textAlign='right';g.textBaseline='middle';yt.forEach(v=>{if(v!==0)g.fillText(fmt(v,2),pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr-2,Y(Math.max(o.ymin,Math.min(0,o.ymax)))-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,X(Math.max(o.xmin,Math.min(0,o.xmax)))+5,pt+2);}
+  g.save();g.beginPath();g.rect(pl,pt,W-pl-pr,H-pt-pb);g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{const a=c.from!==undefined?c.from:o.xmin,b=c.to!==undefined?c.to:o.xmax,N=c.n||600;
+    g.strokeStyle=c.color;g.lineWidth=c.width||2.4;g.setLineDash(c.dash||[]);g.beginPath();let pen=false,py=null;
+    for(let i=0;i<=N;i++){const x=a+(b-a)*i/N,y=c.f(x);if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*.5)pen=false;if(!pen){g.moveTo(X(x),Y(y));pen=true;}else g.lineTo(X(x),Y(y));py=y;}
+    g.stroke();g.setLineDash([]);});
+  (o.param||[]).forEach(c=>{const N=c.n||400;g.strokeStyle=c.color;g.lineWidth=c.width||2.4;g.setLineDash(c.dash||[]);g.beginPath();
+    for(let i=0;i<=N;i++){const t=c.t0+(c.t1-c.t0)*i/N;const x=c.x(t),y=c.y(t);i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y));}g.stroke();g.setLineDash([]);});
+  (o.segs||[]).forEach(q=>{g.strokeStyle=q.color;g.lineWidth=q.width||2;g.setLineDash(q.dash||[]);g.beginPath();g.moveTo(X(q.x1),Y(q.y1));g.lineTo(X(q.x2),Y(q.y2));g.stroke();g.setLineDash([]);});
+  if(o.extra)o.extra(g,X,Y);
+  g.restore();
+  (o.arrows||[]).forEach(a=>{arrow(g,X(a.x1),Y(a.y1),X(a.x2),Y(a.y2),a.color,a.width||2.2);if(a.label)label(g,a.label,X(a.x2)+6,Y(a.y2)-8,a.color,'left',true);});
+  (o.pts||[]).forEach(p=>{g.beginPath();g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label)label(g,p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-10,p.color,p.align||'left',true);});
+  return {X,Y,g};
+}
+
+/* ---- 3D surface z=f(x,y) (or parametric o.P), drag to rotate. o: f, x:[a,b], y:[c,d] (box), z:[lo,hi] (clip), n (grid), view {yaw,elev}, psurfs[{P,s,t,color,alpha}],
+   f2 (second surface, e.g. tangent plane), curves3d[{pts:[[x,y,z]...],color,width}], pts3d[{p:[x,y,z],color,label}],
+   arrows3d[{from,to,color,label}], labels {x,y,z}, alpha, mask(x,y)->bool ---- */
+function surface(cv,o){
+  if(!cv._view){cv._view=Object.assign({yaw:-0.65,elev:0.45},o.view||{});attachDrag(cv);}
+  cv._o=o;const s=setup(cv);if(!s)return;const {g,W,H}=s;const v=cv._view;
+  const [xa,xb]=o.x,[ya,yb]=o.y;let [za,zb]=o.z;
+  const nx=x=>2*(x-xa)/(xb-xa)-1, ny=y=>2*(y-ya)/(yb-ya)-1, zs=o.zscale||0.8, nz=z=>zs*(2*(z-za)/(zb-za)-1);
+  const cy=Math.cos(v.yaw),sy=Math.sin(v.yaw),ce=Math.cos(v.elev),se=Math.sin(v.elev);
+  const sc=Math.min(W,H)*0.33, ox=W/2, oy=H/2+H*0.03;
+  function P(x,y,z){const X=nx(x),Y=ny(y),Z=nz(z);const u=X*cy-Y*sy,d=X*sy+Y*cy;return [ox+sc*u, oy-sc*(Z*ce+d*se), d*ce-Z*se];}
+  // axes box floor + axes
+  g.lineWidth=1;g.strokeStyle=css('--grid');
+  const fl=[[xa,ya],[xb,ya],[xb,yb],[xa,yb],[xa,ya]].map(q=>P(q[0],q[1],za));
+  g.beginPath();fl.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();
+  const ax=[[P(xa,ya,za),P(xb,ya,za),o.labels?o.labels.x:'x'],[P(xa,ya,za),P(xa,yb,za),o.labels?o.labels.y:'y'],[P(xa,ya,za),P(xa,ya,zb),o.labels?o.labels.z:'z']];
+  ax.forEach(a=>{arrow(g,a[0][0],a[0][1],a[1][0],a[1][1],css('--axis'),1.3,6);label(g,a[2],a[1][0]+(a[1][0]>a[0][0]?6:-6),a[1][1]-6,css('--muted'),a[1][0]>a[0][0]?'left':'right');});
+  const quads=[];
+  function addGrid(pt,N,M,col,alpha,isMain){const G=[];
+    for(let i=0;i<=N;i++){G[i]=[];for(let j=0;j<=M;j++){const q=pt(i/N,j/M);const ok=q&&q.every(isFinite)&&q[2]>=za-1e-9&&q[2]<=zb+1e-9&&(!o.mask||o.mask(q[0],q[1]));G[i][j]={q,ok};}}
+    for(let i=0;i<N;i++)for(let j=0;j<M;j++){const c=[G[i][j],G[i+1][j],G[i+1][j+1],G[i][j+1]];if(c.some(q=>!q.ok))continue;
+      const pp=c.map(q=>P(q.q[0],q.q[1],q.q[2]));const zm=(c[0].q[2]+c[1].q[2]+c[2].q[2]+c[3].q[2])/4;
+      quads.push({pp,depth:(pp[0][2]+pp[1][2]+pp[2][2]+pp[3][2])/4,fill:col?col:ramp((zm-za)/(zb-za)),alpha,isMain});}}
+  function addSurf(f,col,alpha,isMain){const N=o.n||28;addGrid((u,w)=>{const x=xa+(xb-xa)*u,y=ya+(yb-ya)*w;return [x,y,f(x,y)];},N,N,col,alpha,isMain);}
+  // parametric piece: {P:(s,t)=>[x,y,z], s:[a,b], t:[c,d], n, m, color (css var; omit for height colours), alpha}
+  function addParam(q,isMain){const [sa,sb]=q.s,[ta,tb]=q.t;addGrid((u,w)=>q.P(sa+(sb-sa)*u,ta+(tb-ta)*w),q.n||24,q.m||48,q.color?css(q.color):null,q.alpha||(isMain?0.92:0.5),isMain);}
+  if(o.f)addSurf(o.f,null,o.alpha||0.92,true);
+  if(o.P)addParam(Object.assign({alpha:o.alpha||0.92},o.P),true);
+  if(o.f2)addSurf(o.f2,css(o.f2color||'--warm'),o.f2alpha||0.55,false);
+  (o.surfs||[]).forEach(q=>addSurf(q.f,css(q.color),q.alpha||0.5,false));
+  (o.psurfs||[]).forEach(q=>addParam(q,false));
+  quads.sort((a,b)=>b.depth-a.depth);
+  const line=css('--card');
+  quads.forEach(q=>{g.globalAlpha=q.alpha;g.fillStyle=q.fill;g.beginPath();q.pp.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();g.fill();
+    g.globalAlpha=q.isMain?0.35:0.2;g.strokeStyle=line;g.lineWidth=0.6;g.stroke();});
+  g.globalAlpha=1;
+  (o.curves3d||[]).forEach(c=>{g.strokeStyle=c.color;g.lineWidth=c.width||2.6;g.setLineDash(c.dash||[]);g.beginPath();c.pts.forEach((q,i)=>{const p=P(q[0],q[1],q[2]);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.stroke();g.setLineDash([]);});
+  (o.arrows3d||[]).forEach(a=>{const p=P(...a.from),q=P(...a.to);arrow(g,p[0],p[1],q[0],q[1],a.color,2.4);if(a.label)label(g,a.label,q[0]+6,q[1]-8,a.color,'left',true);});
+  (o.pts3d||[]).forEach(t=>{const p=P(...t.p);g.beginPath();g.arc(p[0],p[1],t.r||5,0,7);g.fillStyle=t.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();if(t.label)label(g,t.label,p[0]+8,p[1]-10,t.color,'left',true);});
+  g.fillStyle=css('--muted');g.font='11px Inter, system-ui, sans-serif';g.textAlign='right';g.textBaseline='bottom';g.fillText('drag to rotate',W-8,H-6);
+}
+function attachDrag(cv){cv.classList.add('drag');let d=null;
+  cv.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY,yaw:cv._view.yaw,elev:cv._view.elev};cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!d)return;cv._view.yaw=d.yaw-(e.clientX-d.x)*0.01;cv._view.elev=Math.max(-0.2,Math.min(1.45,d.elev+(e.clientY-d.y)*0.01));surface(cv,cv._o);});
+  ['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>{d=null;}));}
+
+/* ---- contour map of f(x,y). o: f, x,y ranges, levels [..], labels (bool), equal, plus any axes2d options (pts, arrows, curves, param) ---- */
+function contour(cv,o){
+  const base=Object.assign({xmin:o.x[0],xmax:o.x[1],ymin:o.y[0],ymax:o.y[1]},o);
+  base.extra=function(g,X,Y){
+    const N=o.n||120,[xa,xb]=[base.xmin,base.xmax],[ya,yb]=[base.ymin,base.ymax];const F=[];
+    for(let i=0;i<=N;i++){F[i]=[];for(let j=0;j<=N;j++)F[i][j]=o.f(xa+(xb-xa)*i/N,ya+(yb-ya)*j/N);}
+    const L=o.levels,lo=Math.min(...L),hi=Math.max(...L);
+    L.forEach(c=>{g.strokeStyle=o.color?css(o.color):ramp(hi>lo?(c-lo)/(hi-lo):0.5);g.lineWidth=1.8;g.beginPath();
+      for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+        const x0=xa+(xb-xa)*i/N,x1=xa+(xb-xa)*(i+1)/N,y0=ya+(yb-ya)*j/N,y1=ya+(yb-ya)*(j+1)/N;
+        const v=[F[i][j],F[i+1][j],F[i+1][j+1],F[i][j+1]],P=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]],e=[];
+        if(v.some(q=>!isFinite(q)))continue;
+        for(let k=0;k<4;k++){const a=v[k]-c,b=v[(k+1)%4]-c;if((a<0)!==(b<0)){const t=a/(a-b),A=P[k],B=P[(k+1)%4];e.push([A[0]+t*(B[0]-A[0]),A[1]+t*(B[1]-A[1])]);}}
+        for(let k=0;k+1<e.length;k+=2){g.moveTo(X(e[k][0]),Y(e[k][1]));g.lineTo(X(e[k+1][0]),Y(e[k+1][1]));}}
+      g.stroke();});
+    if(o.extra2)o.extra2(g,X,Y);
+  };
+  return axes2d(cv,base);
+}
+
+/* ---- vector field F(x,y) -> [u,v]. o: F, x,y ranges, n (arrows per side), plus axes2d options ---- */
+function field(cv,o){
+  const base=Object.assign({xmin:o.x[0],xmax:o.x[1],ymin:o.y[0],ymax:o.y[1],equal:true},o);
+  base.extra=function(g,X,Y){const n=o.n||13,[xa,xb]=o.x,[ya,yb]=o.y,h=Math.min((xb-xa),(yb-ya))/n;let mx=0;const A=[];
+    for(let i=0;i<=n;i++)for(let j=0;j<=n;j++){const x=xa+(xb-xa)*i/n,y=ya+(yb-ya)*j/n,F=o.F(x,y);const m=Math.hypot(F[0],F[1]);if(isFinite(m)){A.push([x,y,F,m]);mx=Math.max(mx,m);}}
+    A.forEach(([x,y,F,m])=>{if(m<1e-12)return;const L=0.42*h*(o.uniform?1:Math.sqrt(m/mx))/m;
+      arrow(g,X(x-F[0]*L),Y(y-F[1]*L),X(x+F[0]*L),Y(y+F[1]*L),ramp(m/mx),1.6,5);});
+    if(o.extra2)o.extra2(g,X,Y);};
+  return axes2d(cv,base);
+}
+
+function mount(id,draw){const el=document.getElementById(id);if(!el)return;const f=()=>draw(el);redraws.push(f);f();return f;}
+function slider(id,cb){const el=document.getElementById(id);if(el)el.addEventListener('input',cb);return el;}
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>redraws.forEach(f=>f()),120);});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>redraws.forEach(f=>f()));
+document.addEventListener('DOMContentLoaded',()=>{ // highlight current section in rail
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];if(!('IntersectionObserver' in window)||!links.length)return;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));}}),{rootMargin:'-20% 0px -70% 0px'});
+  links.forEach(a=>{const s=document.getElementById(a.getAttribute('href').slice(1));if(s)io.observe(s);});});
+return {css,fmt,range,mix,ramp,arrow,label,axes2d,surface,contour,field,mount,slider,redraw:()=>redraws.forEach(f=>f())};
+})();
+</script>
+<script>
+(function(){
+const {css,fmt,mount,surface,axes2d,label}=MV;
+const $=id=>document.getElementById(id);
+const lin=(a,b,n)=>Array.from({length:n+1},(_,i)=>a+(b-a)*i/n);
+const on=(ids,f)=>ids.forEach(id=>{const e=$(id);if(e)e.addEventListener('input',f);});
+/* 2D helpers (inside axes2d extra: g, X, Y) */
+function poly(g,X,Y,P,col,al,stroke){g.save();g.globalAlpha=al===undefined?0.3:al;g.fillStyle=col;g.beginPath();P.forEach((p,i)=>i?g.lineTo(X(p[0]),Y(p[1])):g.moveTo(X(p[0]),Y(p[1])));g.closePath();g.fill();
+  if(stroke){g.globalAlpha=1;g.strokeStyle=stroke;g.lineWidth=1.6;g.stroke();}g.restore();}
+const betweenX=(a,b,lo,hi,n=90)=>{const A=lin(a,b,n);return A.map(x=>[x,lo(x)]).concat(A.slice().reverse().map(x=>[x,hi(x)]));};
+const betweenY=(c,d,le,ri,n=90)=>{const A=lin(c,d,n);return A.map(y=>[le(y),y]).concat(A.slice().reverse().map(y=>[ri(y),y]));};
+function curve(g,X,Y,P,col,w,dash){g.save();g.strokeStyle=col;g.lineWidth=w||2.2;g.setLineDash(dash||[]);g.beginPath();P.forEach((p,i)=>i?g.lineTo(X(p[0]),Y(p[1])):g.moveTo(X(p[0]),Y(p[1])));g.stroke();g.restore();}
+const T=(g,s,x,y,col,al)=>label(g,s,x,y,col||css('--ink'),al||'left',true);
+/* 3D helpers: flat-colour parametric pieces for surface().psurfs */
+const ps=(P,s,t,color,alpha,n,m)=>({P,s,t,color,alpha,n:n||1,m:m||1});
+function boxFaces(x0,x1,y0,y1,z0,z1,col,al,topcol){return [
+  ps((s,t)=>[x0+(x1-x0)*s,y0+(y1-y0)*t,z1],[0,1],[0,1],topcol||col,al),
+  ps((s,t)=>[x0+(x1-x0)*s,y0+(y1-y0)*t,z0],[0,1],[0,1],col,al),
+  ps((s,t)=>[x0+(x1-x0)*s,y0,z0+(z1-z0)*t],[0,1],[0,1],col,al),
+  ps((s,t)=>[x0+(x1-x0)*s,y1,z0+(z1-z0)*t],[0,1],[0,1],col,al),
+  ps((s,t)=>[x0,y0+(y1-y0)*s,z0+(z1-z0)*t],[0,1],[0,1],col,al),
+  ps((s,t)=>[x1,y0+(y1-y0)*s,z0+(z1-z0)*t],[0,1],[0,1],col,al)];}
+function boxEdges(x0,x1,y0,y1,z0,z1,col,w){const C=[[x0,y0],[x1,y0],[x1,y1],[x0,y1],[x0,y0]];
+  return [{pts:C.map(c=>[c[0],c[1],z0]),color:col,width:w||1.4},{pts:C.map(c=>[c[0],c[1],z1]),color:col,width:w||1.4}]
+    .concat(C.slice(0,4).map(c=>({pts:[[c[0],c[1],z0],[c[0],c[1],z1]],color:col,width:w||1.4})));}
+
+/* ======================= §1 ======================= */
+/* 1D Riemann sum */
+const f1=x=>2*Math.sin(x-1.2)+0.6;
+const I1=(()=>{let s=0,N=4000;for(let i=0;i<N;i++)s+=f1(6*(i+.5)/N);return s*6/N;})();
+function drawR1(cv){const n=+$('r1-n').value,h=6/n;let S=0;
+  axes2d(cv,{xmin:-0.3,xmax:6.3,ymin:-2,ymax:3,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    curves:[{f:f1,color:css('--accent'),width:2.6}],
+    extra:(g,X,Y)=>{for(let k=0;k<n;k++){const a=k*h,c=a+h/2,v=f1(c);S+=v*h;
+      poly(g,X,Y,[[a,0],[a+h,0],[a+h,v],[a,v]],css(v>=0?'--accent':'--warm'),0.28,css(v>=0?'--accent':'--warm'));
+      curve(g,X,Y,[[c,0],[c,v]],css('--c2'),1.2,[3,3]);}
+      T(g,'a',X(0)+4,Y(0)+12,css('--muted'));T(g,'b',X(6)+4,Y(0)+12,css('--muted'));T(g,'y = f(x)',X(4.1),Y(2.85),css('--accent'));},
+    pts:lin(0,n-1,n-1).map(k=>({x:(k+.5)*h,y:f1((k+.5)*h),color:css('--c2'),r:n>20?2.5:4}))});
+  $('r1-out').innerHTML='n = '+n+' · Riemann sum = <b>'+fmt(S,4)+'</b> · integral ∫₀⁶ f dx ≈ '+fmt(I1,4);}
+if($('f-r1d')){on(['r1-n'],()=>drawR1($('f-r1d')));mount('f-r1d',drawR1);}
+
+/* 2D Riemann columns */
+const f2=(x,y)=>2*x*y+y*y;
+function drawR2(cv){const n=+$('r2-n').value,hx=1/n,hy=1/n;let S=0,P=[],E=[];
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++){const x0=1+i*hx,y0=j*hy,v=f2(x0+hx/2,y0+hy/2);S+=v*hx*hy;
+    P=P.concat(boxFaces(x0,x0+hx,y0,y0+hy,0,v,'--accent',0.8,'--c3'));}
+  surface(cv,{x:[1,2],y:[0,1],z:[0,5.2],zscale:0.75,view:{yaw:-0.85,elev:0.42},
+    f:$('r2-s').checked?f2:null,alpha:0.35,n:16,psurfs:P,
+    curves3d:[{pts:[[1,0,0],[2,0,0],[2,1,0],[1,1,0],[1,0,0]],color:css('--ink'),width:1.4}],
+    pts3d:[{p:[1+hx/2,hy/2,0],color:css('--c2'),label:'(xₖ, yₖ)',r:3.5}]});
+  $('r2-out').innerHTML=n+' × '+n+' = '+n*n+' columns · total column volume = <b>'+fmt(S,4)+'</b> · exact ∬ = 11/6 ≈ 1.8333';}
+if($('f-r2d')){on(['r2-n','r2-s'],()=>drawR2($('f-r2d')));$('r2-s').addEventListener('change',()=>drawR2($('f-r2d')));mount('f-r2d',drawR2);}
+
+/* grid over an ellipse */
+function drawGrid(cv){const n=+$('gr-n').value,h=1/n,inE=(x,y)=>x*x/9+y*y/4<=1;let cnt=0;
+  axes2d(cv,{xmin:-3.6,xmax:3.6,ymin:-2.5,ymax:2.5,equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    param:[{x:t=>3*Math.cos(t),y:t=>2*Math.sin(t),t0:0,t1:2*Math.PI,color:css('--accent'),width:2.4}],
+    extra:(g,X,Y)=>{const K=Math.ceil(3.6/h);let hi=null;
+      for(let i=-K;i<K;i++)for(let j=-K;j<K;j++){const x0=i*h,y0=j*h;
+        if(inE(x0,y0)&&inE(x0+h,y0)&&inE(x0,y0+h)&&inE(x0+h,y0+h)){cnt++;poly(g,X,Y,[[x0,y0],[x0+h,y0],[x0+h,y0+h],[x0,y0+h]],css('--c3'),0.28,css('--card'));
+          if(x0<=0.8&&0.8<x0+h&&y0<=0.6&&0.6<y0+h)hi=[x0,y0];}}
+      if(hi){poly(g,X,Y,[[hi[0],hi[1]],[hi[0]+h,hi[1]],[hi[0]+h,hi[1]+h],[hi[0],hi[1]+h]],css('--c2'),0.55,css('--c2'));
+        T(g,'ΔAₖ',X(hi[0]+h)+6,Y(hi[1]+h)-6,css('--c2'));}
+      T(g,'R',X(-2.2),Y(1),css('--c3'));}});
+  $('gr-out').innerHTML='tile size '+fmt(h,3)+' × '+fmt(h,3)+' · tiles inside R: '+cnt+' · total area = <b>'+fmt(cnt*h*h,3)+'</b> · exact area 6π ≈ 18.850';}
+if($('f-grid')){on(['gr-n'],()=>drawGrid($('f-grid')));mount('f-grid',drawGrid);}
+
+/* horizontal / vertical strips in a rectangle */
+function drawStrips(cv){const hz=$('st-sel').value==='h',p=+$('st-p').value,a=1,b=4,c=1,d=3,w=0.22;
+  axes2d(cv,{xmin:-0.4,xmax:5,ymin:-0.4,ymax:3.6,equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra:(g,X,Y)=>{poly(g,X,Y,[[a,c],[b,c],[b,d],[a,d]],css('--accent'),0.1,css('--c2'));
+      [[a,0,a,c],[b,0,b,c],[0,c,a,c],[0,d,a,d]].forEach(q=>curve(g,X,Y,[[q[0],q[1]],[q[2],q[3]]],css('--c2'),1,[3,3]));
+      T(g,'a',X(a)-4,Y(0)+12,css('--c2'));T(g,'b',X(b)-4,Y(0)+12,css('--c2'));T(g,'c',X(0)-14,Y(c),css('--c2'));T(g,'d',X(0)-14,Y(d),css('--c2'));
+      if(hz){const y0=c+(d-c)*p;poly(g,X,Y,[[a,y0-w/2],[b,y0-w/2],[b,y0+w/2],[a,y0+w/2]],css('--c4'),0.45,css('--c4'));T(g,'Δy',X(b)+6,Y(y0),css('--c4'));
+        T(g,'(x, y)',X(2.3)+8,Y(y0)+14,css('--c3'));}
+      else{const x0=a+(b-a)*p;poly(g,X,Y,[[x0-w/2,c],[x0+w/2,c],[x0+w/2,d],[x0-w/2,d]],css('--c4'),0.45,css('--c4'));T(g,'Δx',X(x0)-8,Y(c)+14,css('--c4'));
+        T(g,'(x, y)',X(x0)+10,Y(2.2),css('--c3'));}},
+    pts:[hz?{x:2.3,y:c+(d-c)*p,color:css('--c3'),r:4}:{x:a+(b-a)*p,y:2.2,color:css('--c3'),r:4}]});}
+if($('f-strips')){on(['st-sel','st-p'],()=>drawStrips($('f-strips')));mount('f-strips',drawStrips);}
+
+/* slab under Ex 2.1.2 surface */
+function drawSlab(cv){const fy=$('sb-sel').value==='y',p=+$('sb-p').value;let panel,strip,crv,txt;
+  if(fy){const y0=p;panel=ps((s,t)=>[1+s,y0,t*f2(1+s,y0)],[0,1],[0,1],'--warm',0.75,12,4);
+    strip=[[1,y0-0.03,0],[2,y0-0.03,0],[2,y0+0.03,0],[1,y0+0.03,0],[1,y0-0.03,0]];crv=lin(1,2,40).map(x=>[x,y0,f2(x,y0)]);
+    txt='y = '+fmt(y0,2)+' · A(y) = 3y + y² = <b>'+fmt(3*y0+y0*y0,4)+'</b> · ∫₀¹ A(y) dy = 11/6';}
+  else{const x0=1+p;panel=ps((s,t)=>[x0,s,t*f2(x0,s)],[0,1],[0,1],'--warm',0.75,12,4);
+    strip=[[x0-0.03,0,0],[x0+0.03,0,0],[x0+0.03,1,0],[x0-0.03,1,0],[x0-0.03,0,0]];crv=lin(0,1,40).map(y=>[x0,y,f2(x0,y)]);
+    txt='x = '+fmt(x0,2)+' · A(x) = x + 1/3 = <b>'+fmt(x0+1/3,4)+'</b> · ∫₁² A(x) dx = 11/6';}
+  surface(cv,{f:f2,x:[1,2],y:[0,1],z:[0,5.2],zscale:0.75,n:18,alpha:0.5,view:{yaw:-0.85,elev:0.4},psurfs:[panel],
+    curves3d:[{pts:[[1,0,0],[2,0,0],[2,1,0],[1,1,0],[1,0,0]],color:css('--axis'),width:1.2},{pts:strip,color:css('--c2'),width:2.4},{pts:crv,color:css('--accent'),width:3}]});
+  $('sb-out').innerHTML=txt;}
+if($('f-slab')){on(['sb-sel','sb-p'],()=>drawSlab($('f-slab')));mount('f-slab',drawSlab);}
+
+/* y-simple / x-simple / simple regions, 2D + 3D */
+const REG={
+  y:{k:'y',a:0.5,b:3.5,lo:x=>0.6+0.35*Math.sin(1.6*x),hi:x=>2.5+0.35*Math.sin(1.3*x+1),nlo:'y = g₁(x)',nhi:'y = g₂(x)',ends:['a','b']},
+  x:{k:'x',a:0.5,b:2.7,lo:y=>0.8+0.35*Math.sin(2*y),hi:y=>3.0+0.3*Math.cos(2.2*y),nlo:'x = h₁(y)',nhi:'x = h₂(y)',ends:['c','d']},
+  s:{k:'y',a:0.5,b:3.5,lo:x=>1.55-1.0*Math.sqrt(Math.max(0,1-((x-2)/1.5)**2)),hi:x=>1.55+1.0*Math.sqrt(Math.max(0,1-((x-2)/1.5)**2)),nlo:'',nhi:'',ends:['','']}};
+const fs3=(x,y)=>1.3+0.35*Math.sin(1.2*x)+0.25*Math.cos(1.5*y);
+const xy=(Rg,s,t)=>{const u=Rg.a+(Rg.b-Rg.a)*s,v=Rg.lo(u)+(Rg.hi(u)-Rg.lo(u))*t;return Rg.k==='y'?[u,v]:[v,u];};
+function drawSimp(){const Rg=REG[$('sp-sel').value],p=+$('sp-p').value,u0=Rg.a+(Rg.b-Rg.a)*p,lo=Rg.lo(u0),hi=Rg.hi(u0),w=0.12;
+  const cv2=$('f-simp2'),cv3=$('f-simp3');if(!cv2)return;
+  const P2=lin(0,1,90).map(s=>xy(Rg,s,0)).concat(lin(1,0,90).map(s=>xy(Rg,s,1)));
+  const sw=Rg.k==='y'?[[u0-w/2,lo],[u0+w/2,lo],[u0+w/2,hi],[u0-w/2,hi]]:[[lo,u0-w/2],[hi,u0-w/2],[hi,u0+w/2],[lo,u0+w/2]];
+  axes2d(cv2,{xmin:-0.2,xmax:4,ymin:-0.2,ymax:3.3,equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra:(g,X,Y)=>{poly(g,X,Y,P2,css('--c3'),0.25);
+      curve(g,X,Y,lin(0,1,90).map(s=>xy(Rg,s,0)),css('--accent'),2.4);curve(g,X,Y,lin(0,1,90).map(s=>xy(Rg,s,1)),css('--accent'),2.4);
+      poly(g,X,Y,sw,css('--c2'),0.5,css('--c2'));
+      if(Rg.k==='y'){[Rg.a,Rg.b].forEach((v,i)=>{curve(g,X,Y,[[v,0],[v,Rg.lo(v)]],css('--axis'),1,[3,3]);T(g,Rg.ends[i],X(v)-3,Y(0)+11,css('--accent'));});
+        T(g,Rg.nlo,X(2.7),Y(Rg.lo(2.7))+16,css('--accent'));T(g,Rg.nhi,X(1.2),Y(Rg.hi(1.2))-12,css('--accent'));}
+      else{[Rg.a,Rg.b].forEach((v,i)=>{curve(g,X,Y,[[0,v],[Rg.lo(v),v]],css('--axis'),1,[3,3]);T(g,Rg.ends[i],X(0)-12,Y(v),css('--accent'));});
+        T(g,Rg.nlo,X(Rg.lo(1.9))-6,Y(1.9),css('--accent'),'right');T(g,Rg.nhi,X(Rg.hi(1.3))+6,Y(1.3),css('--accent'));}
+      T(g,'R',X(2.1),Y(Rg.k==='y'?1.3:2.1),css('--c3'));}});
+  const top=ps((s,t)=>{const q=xy(Rg,s,t);return [q[0],q[1],fs3(q[0],q[1])];},[0,1],[0,1],null,0.85,26,10);delete top.color;
+  const wall=tt=>ps((s,t)=>{const q=xy(Rg,s,tt);return [q[0],q[1],t*fs3(q[0],q[1])];},[0,1],[0,1],'--c3',0.35,30,3);
+  const floor=ps((s,t)=>{const q=xy(Rg,s,t);return [q[0],q[1],0];},[0,1],[0,1],'--c3',0.3,20,4);
+  const panel=ps((s,t)=>{const v=lo+(hi-lo)*s,q=Rg.k==='y'?[u0,v]:[v,u0];return [q[0],q[1],t*fs3(q[0],q[1])];},[0,1],[0,1],'--warm',0.85,10,3);
+  surface(cv3,{x:[0,4],y:[0,3.3],z:[0,2.2],zscale:0.7,view:{yaw:-0.7,elev:0.45},psurfs:[floor,wall(0),wall(1),top,panel],
+    curves3d:[{pts:lin(0,1,60).map(s=>{const v=lo+(hi-lo)*s,q=Rg.k==='y'?[u0,v]:[v,u0];return [q[0],q[1],fs3(q[0],q[1])];}),color:css('--warm'),width:2.6}]});}
+if($('f-simp2')){on(['sp-sel','sp-p'],drawSimp);mount('f-simp2',drawSimp);mount('f-simp3',drawSimp);}
+
+/* Example 2.1.3 */
+function drawE213(cv){const v=$('e3-sel').value==='v',p=+$('e3-p').value,w=0.05;let out;
+  axes2d(cv,{xmin:-0.15,xmax:1.35,ymin:-0.12,ymax:1.18,equal:true,xstep:0.5,ystep:0.5,xlabel:'x',ylabel:'y',
+    extra:(g,X,Y)=>{poly(g,X,Y,betweenX(0,1,()=>0,x=>x*x),css('--c3'),0.25);
+      curve(g,X,Y,lin(0,1.05,60).map(x=>[x,x*x]),css('--accent'),2.4);curve(g,X,Y,[[1,0],[1,1]],css('--accent'),2.4);curve(g,X,Y,[[0,0],[1,0]],css('--accent'),3);
+      if(v){const x0=p;poly(g,X,Y,[[x0-w/2,0],[x0+w/2,0],[x0+w/2,x0*x0],[x0-w/2,x0*x0]],css('--c2'),0.55,css('--c2'));
+        out='vertical strip at x = '+fmt(x0,2)+': y from <b>0</b> to <b>x² = '+fmt(x0*x0,3)+'</b>; then x from 0 to 1';}
+      else{const y0=p;poly(g,X,Y,[[Math.sqrt(y0),y0-w/2],[1,y0-w/2],[1,y0+w/2],[Math.sqrt(y0),y0+w/2]],css('--c2'),0.55,css('--c2'));
+        out='horizontal strip at y = '+fmt(y0,2)+': x from <b>√y = '+fmt(Math.sqrt(y0),3)+'</b> to <b>1</b>; then y from 0 to 1';}
+      T(g,'y = x²',X(0.45),Y(0.38),css('--accent'),'right');T(g,'x = 1',X(1)+6,Y(0.55),css('--accent'));T(g,'y = 0',X(0.45),Y(0)+12,css('--accent'));T(g,'S',X(0.78),Y(0.22),css('--c3'));},
+    pts:[{x:0,y:0,color:css('--ink'),r:3.5},{x:1,y:0,color:css('--ink'),r:3.5,label:'(1, 0)'},{x:1,y:1,color:css('--ink'),r:3.5,label:'(1, 1)'}]});
+  $('e3-out').innerHTML=out;}
+if($('f-ex213')){on(['e3-sel','e3-p'],()=>drawE213($('f-ex213')));mount('f-ex213',drawE213);}
+
+/* reversing order: two regions */
+function drawSplit(cv){const A=$('sl-sel').value==='a',hz=$('sl-dir').value==='h',p=+$('sl-p').value;let out='';
+  const o=A?{xmin:-0.4,xmax:4.6,ymin:-0.3,ymax:2.5}:{xmin:-0.25,xmax:2.4,ymin:-0.2,ymax:1.35};
+  axes2d(cv,Object.assign(o,{equal:true,xstep:A?1:0.5,ystep:0.5,xlabel:'x',ylabel:'y',
+    extra:(g,X,Y)=>{const w=A?0.1:0.05;
+      if(A){poly(g,X,Y,betweenY(0,2,()=>0,y=>y*y),css('--c3'),0.25);curve(g,X,Y,lin(0,2.1,60).map(y=>[y*y,y]),css('--accent'),2.4);curve(g,X,Y,[[0,2],[4.3,2]],css('--accent'),2.4);
+        T(g,'y = √x  (x = y²)',X(2.3),Y(1.2),css('--accent'));T(g,'y = 2',X(1),Y(2)-10,css('--accent'));
+        if(hz){const y0=2*p;poly(g,X,Y,[[0,y0-w/2],[y0*y0,y0-w/2],[y0*y0,y0+w/2],[0,y0+w/2]],css('--c2'),0.55,css('--c2'));out='horizontal strip at y = '+fmt(y0,2)+': x from <b>0</b> to <b>y² = '+fmt(y0*y0,3)+'</b>; outer: 0 ≤ y ≤ 2';}
+        else{const x0=4*p;poly(g,X,Y,[[x0-w/2,Math.sqrt(x0)],[x0+w/2,Math.sqrt(x0)],[x0+w/2,2],[x0-w/2,2]],css('--c2'),0.55,css('--c2'));out='vertical strip at x = '+fmt(x0,2)+': y from <b>√x = '+fmt(Math.sqrt(x0),3)+'</b> to <b>2</b> (the given order)';}}
+      else{poly(g,X,Y,betweenY(0,1,y=>y*y,y=>2-y),css('--c3'),0.25);curve(g,X,Y,lin(0,1.15,60).map(x=>[x,Math.sqrt(x)]),css('--accent'),2.4);curve(g,X,Y,[[0.85,1.15],[2,0]],css('--accent'),2.4);
+        curve(g,X,Y,[[1,-0.2],[1,1.3]],css('--axis'),1.2,[5,4]);T(g,'y = √x',X(0.25),Y(0.62),css('--accent'));T(g,'y = 2 − x',X(1.5)+8,Y(0.6),css('--accent'));
+        if(hz){const y0=p;poly(g,X,Y,[[y0*y0,y0-w/2],[2-y0,y0-w/2],[2-y0,y0+w/2],[y0*y0,y0+w/2]],css('--c2'),0.55,css('--c2'));out='horizontal strip at y = '+fmt(y0,2)+': x from <b>y² = '+fmt(y0*y0,3)+'</b> to <b>2 − y = '+fmt(2-y0,3)+'</b>; one integral, 0 ≤ y ≤ 1';}
+        else{const x0=2*p,t=Math.min(Math.sqrt(x0),2-x0);poly(g,X,Y,[[x0-w/2,0],[x0+w/2,0],[x0+w/2,t],[x0-w/2,t]],css('--c2'),0.55,css('--c2'));
+          out='vertical strip at x = '+fmt(x0,2)+': y from <b>0</b> to <b>'+(x0<1?'√x':'2 − x')+' = '+fmt(t,3)+'</b> ('+(x0<1?'left piece, 0 ≤ x ≤ 1':'right piece, 1 ≤ x ≤ 2')+')';}}}}),
+    );
+  $('sl-out').innerHTML=out;}
+if($('f-split')){on(['sl-sel','sl-dir','sl-p'],()=>drawSplit($('f-split')));mount('f-split',drawSplit);}
+
+/* ======================= §2 ======================= */
+const MAPS={lin:{u:[0,4],v:[1,4],F:(u,v)=>[(u+2*v)/3,(v-u)/3],J:()=>1/3,box:{xmin:0,xmax:4.4,ymin:-1.3,ymax:1.7},uvbox:{xmin:-0.5,xmax:4.6,ymin:-0.2,ymax:4.6},ul:'u',vl:'v'},
+  pol:{u:[1,2],v:[0.2,1.4],F:(u,v)=>[u*Math.cos(v),u*Math.sin(v)],J:u=>u,box:{xmin:-0.3,xmax:2.3,ymin:-0.2,ymax:2.2},uvbox:{xmin:-0.2,xmax:2.5,ymin:-0.1,ymax:1.7},ul:'u = r',vl:'v = θ'}};
+function drawMap(){const M=MAPS[$('mp-sel').value],[ua,ub]=M.u,[va,vb]=M.v,du=(ub-ua)/8,dv=(vb-va)/8;
+  const u0=ua+(+$('mp-u').value)*(ub-ua-du),v0=va+(+$('mp-v').value)*(vb-va-dv);
+  const loop=(a,b,c,d,n)=>lin(0,1,n).map(t=>[a+(b-a)*t,c]).concat(lin(0,1,n).map(t=>[b,c+(d-c)*t]),lin(0,1,n).map(t=>[b+(a-b)*t,d]),lin(0,1,n).map(t=>[a,d+(c-d)*t]));
+  const cell=loop(u0,u0+du,v0,v0+dv,12),reg=loop(ua,ub,va,vb,40);
+  axes2d($('f-mapuv'),Object.assign({},M.uvbox,{equal:true,xstep:1,ystep:M===MAPS.pol?0.5:1,xlabel:M.ul,ylabel:M.vl,
+    extra:(g,X,Y)=>{poly(g,X,Y,reg,css('--c3'),0.22,css('--c3'));
+      lin(ua,ub,8).forEach(u=>curve(g,X,Y,[[u,va],[u,vb]],css('--accent'),1));lin(va,vb,8).forEach(v=>curve(g,X,Y,[[ua,v],[ub,v]],css('--c4'),1));
+      poly(g,X,Y,cell,css('--c2'),0.6,css('--c2'));T(g,'S*',X(ua+0.2*(ub-ua)),Y(va+0.85*(vb-va)),css('--c3'));},
+    pts:[{x:u0,y:v0,color:'#e0b400',r:4.5}]}));
+  const img=P=>P.map(p=>M.F(p[0],p[1]));const ci=img(cell);let A=0;for(let i=0;i<ci.length;i++){const p=ci[i],q=ci[(i+1)%ci.length];A+=p[0]*q[1]-q[0]*p[1];}A=Math.abs(A)/2;
+  const p0=M.F(u0,v0);
+  axes2d($('f-mapxy'),Object.assign({},M.box,{equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra:(g,X,Y)=>{poly(g,X,Y,img(reg),css('--c3'),0.22,css('--c3'));
+      lin(ua,ub,8).forEach(u=>curve(g,X,Y,lin(va,vb,30).map(v=>M.F(u,v)),css('--accent'),1));lin(va,vb,8).forEach(v=>curve(g,X,Y,lin(ua,ub,30).map(u=>M.F(u,v)),css('--c4'),1));
+      poly(g,X,Y,ci,css('--c2'),0.6,css('--c2'));const c=img(reg)[Math.round(reg.length*0.55)];T(g,'S',X(M.F((ua+ub)/2,(va+vb)/2)[0])+14,Y(M.F((ua+ub)/2,(va+vb)/2)[1])-14,css('--c3'));},
+    pts:[{x:p0[0],y:p0[1],color:'#e0b400',r:4.5}]}));
+  $('mp-out').innerHTML='(u₀, v₀) = ('+fmt(u0,3)+', '+fmt(v0,3)+') → (x, y) = ('+fmt(p0[0],3)+', '+fmt(p0[1],3)+') · J = '+fmt(M.J(u0,v0),4)+
+    '<br>cell ΔuΔv = '+fmt(du*dv,4)+' · image area = <b>'+fmt(A,4)+'</b> ≈ |J|ΔuΔv = '+fmt(Math.abs(M.J(u0+du/2,v0+dv/2))*du*dv,4);}
+if($('f-mapuv')){on(['mp-sel','mp-u','mp-v'],drawMap);mount('f-mapuv',drawMap);mount('f-mapxy',drawMap);}
+
+/* Example 2.2.1: pipe, annulus, r-theta rectangle */
+const PB=2,PH=1.5;
+function drawPipe(){const a=+$('an-a').value,b=PB,re=a+(b-a)*(+$('an-r').value)*0.9,dr=(b-a)*0.1,th=+$('an-t').value,dt=0.3;
+  const cyl=(R,col,al)=>ps((t,z)=>[R*Math.cos(t),R*Math.sin(t),z],[0,2*Math.PI],[0,PH],col,al,40,3);
+  const ann=(z,col,al)=>ps((r,t)=>[r*Math.cos(t),r*Math.sin(t),z],[a,b],[0,2*Math.PI],col,al,3,40);
+  const P=[cyl(b,'--accent',0.45),ann(PH,'--c3',0.55),ann(0,'--c3',0.35)];if(a>0.02)P.push(cyl(a,'--warm',0.6));
+  P.push(ps((r,t)=>[r*Math.cos(t),r*Math.sin(t),PH+0.003],[re,re+dr],[th,th+dt],'--c2',0.95,2,4));
+  surface($('f-pipe'),{x:[-2.2,2.2],y:[-2.2,2.2],z:[0,2.2],zscale:0.55,view:{yaw:-0.6,elev:0.5},psurfs:P,
+    curves3d:[{pts:[[0,0,-0.2],[0,0,2.1]],color:css('--ink'),width:1.4,dash:[5,4]}],pts3d:[{p:[0,0,2.1],color:css('--ink'),label:'axis',r:2}]});
+  const sector=lin(th,th+dt,10).map(t=>[re*Math.cos(t),re*Math.sin(t)]).concat(lin(th+dt,th,10).map(t=>[(re+dr)*Math.cos(t),(re+dr)*Math.sin(t)]));
+  axes2d($('f-ann'),{xmin:-2.3,xmax:2.3,ymin:-2.3,ymax:2.3,equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra:(g,X,Y)=>{g.save();g.globalAlpha=0.3;g.fillStyle=css('--c3');g.beginPath();lin(0,2*Math.PI,80).forEach((t,i)=>i?g.lineTo(X(b*Math.cos(t)),Y(b*Math.sin(t))):g.moveTo(X(b),Y(0)));
+      if(a>0.02)lin(2*Math.PI,0,80).forEach((t,i)=>i?g.lineTo(X(a*Math.cos(t)),Y(a*Math.sin(t))):g.moveTo(X(a),Y(0)));g.fill('evenodd');g.restore();
+      curve(g,X,Y,lin(0,2*Math.PI,80).map(t=>[b*Math.cos(t),b*Math.sin(t)]),css('--accent'),2);if(a>0.02)curve(g,X,Y,lin(0,2*Math.PI,80).map(t=>[a*Math.cos(t),a*Math.sin(t)]),css('--warm'),2);
+      poly(g,X,Y,sector,css('--c2'),0.7,css('--c2'));curve(g,X,Y,[[0,0],[re*Math.cos(th),re*Math.sin(th)]],css('--ink'),1.2,[4,3]);
+      T(g,'a',X(a)+3,Y(0)+11,css('--warm'));T(g,'b',X(b)+3,Y(0)+11,css('--accent'));T(g,'r',X(re*Math.cos(th)/2)-10,Y(re*Math.sin(th)/2)-6,css('--ink'));}});
+  axes2d($('f-annrt'),{xmin:-0.2,xmax:2.4,ymin:-0.4,ymax:7,xstep:0.5,ystep:1,xlabel:'r',ylabel:'θ',
+    extra:(g,X,Y)=>{poly(g,X,Y,[[a,0],[b,0],[b,2*Math.PI],[a,2*Math.PI]],css('--c3'),0.3,css('--c3'));
+      curve(g,X,Y,[[0,2*Math.PI],[a,2*Math.PI]],css('--axis'),1,[3,3]);T(g,'2π',X(0)+4,Y(2*Math.PI)-8,css('--muted'));
+      poly(g,X,Y,[[re,th],[re+dr,th],[re+dr,th+dt],[re,th+dt]],css('--c2'),0.7,css('--c2'));T(g,'a',X(a)-3,Y(0)+11,css('--warm'));T(g,'b',X(b)-3,Y(0)+11,css('--accent'));}});
+  const I=Math.PI*(b**4-a**4)/2;
+  $('an-out').innerHTML='element at r = '+fmt(re,2)+': area ≈ r δr δθ = '+fmt(re*dr*dt,4)+' (δr = '+fmt(dr,3)+', δθ = 0.3) · with ρ = h = 1: I = 2π(b⁴ − a⁴)/4 = <b>'+fmt(I,3)+'</b> = (M/2)(a² + b²)';}
+if($('f-pipe')){on(['an-a','an-r','an-t'],drawPipe);mount('f-pipe',drawPipe);mount('f-ann',drawPipe);mount('f-annrt',drawPipe);}
+
+/* Example 2.2.2: Gaussian */
+function drawGauss(cv){const R=+$('ga-R').value,G=(r,t)=>[r*Math.cos(t),r*Math.sin(t),Math.exp(-r*r)];
+  const bright=ps(G,[0,R],[0,Math.PI/2],null,0.9,14,16);delete bright.color;
+  surface(cv,{x:[0,3],y:[0,3],z:[0,1.05],zscale:0.6,view:{yaw:-0.75,elev:0.45},P:{P:G,s:[R,3],t:[0,Math.PI/2],n:16,m:16,color:'--axis',alpha:0.3},
+    psurfs:[bright,ps((r,t)=>[r*Math.cos(t),r*Math.sin(t),0],[0,3],[0,Math.PI/2],'--c3',0.18,6,10),ps((r,t)=>[r*Math.cos(t),r*Math.sin(t),0.001],[0,R],[0,Math.PI/2],'--c3',0.45,4,10)],
+    curves3d:[{pts:lin(0,Math.PI/2,30).map(t=>G(R,t)),color:css('--c2'),width:2.6},{pts:lin(0,Math.PI/2,30).map(t=>[R*Math.cos(t),R*Math.sin(t),0]),color:css('--c2'),width:1.6}]});
+  $('ga-out').innerHTML='R = '+fmt(R,2)+' · volume over quarter disc = (π/4)(1 − e^(−R²)) = <b>'+fmt(Math.PI/4*(1-Math.exp(-R*R)),5)+'</b> → π/4 ≈ 0.78540';}
+if($('f-gauss')){on(['ga-R'],()=>drawGauss($('f-gauss')));mount('f-gauss',drawGauss);}
+
+/* off-centre circle */
+function drawOffc(cv){const t=+$('oc-t').value,re=2*Math.cos(t);
+  axes2d(cv,{xmin:-0.5,xmax:2.6,ymin:-1.3,ymax:1.3,equal:true,xstep:0.5,ystep:0.5,xlabel:'x',ylabel:'y',
+    param:[{x:s=>1+Math.cos(s),y:s=>Math.sin(s),t0:0,t1:2*Math.PI,color:css('--accent'),width:2.4}],
+    extra:(g,X,Y)=>{poly(g,X,Y,lin(0,2*Math.PI,80).map(s=>[1+Math.cos(s),Math.sin(s)]),css('--c3'),0.22);
+      curve(g,X,Y,[[0,0],[3*Math.cos(t),3*Math.sin(t)]],css('--axis'),1.2,[5,4]);curve(g,X,Y,[[0,0],[re*Math.cos(t),re*Math.sin(t)]],css('--c2'),3.2);
+      T(g,'r = 2 cos θ',X(1.75),Y(0.95),css('--accent'));},
+    pts:[{x:re*Math.cos(t),y:re*Math.sin(t),color:css('--c2'),r:4},{x:1,y:0,color:css('--ink'),r:3,label:'(1, 0)'}]});
+  $('oc-out').innerHTML='θ = '+fmt(t,2)+' rad · ray leaves the disc at r = 2 cos θ = <b>'+fmt(re,3)+'</b>';}
+if($('f-offc')){on(['oc-t'],()=>drawOffc($('f-offc')));mount('f-offc',drawOffc);}
+
+/* ======================= §3 ======================= */
+mount('f-dv',cv=>{const B=(p,t)=>{const s=1+0.12*Math.cos(3*t)*Math.sin(p)+0.08*Math.cos(2*p);return [1.6*s*Math.sin(p)*Math.cos(t),1.3*s*Math.sin(p)*Math.sin(t),1.1*s*Math.cos(p)];};
+  const x0=0.35,y0=0.3,z0=0.25,h=0.28;
+  surface(cv,{x:[-2,2],y:[-2,2],z:[-1.4,1.4],zscale:0.7,view:{yaw:-0.75,elev:0.38},
+    psurfs:[ps(B,[0,Math.PI],[Math.PI/2,2*Math.PI],'--c3',0.3,18,36),ps((p,t)=>{const q=B(p,0);return [q[0]*t,0,q[2]];},[0,Math.PI],[0,1],'--c3',0.25,18,4),
+      ps((p,t)=>{const q=B(p,Math.PI/2);return [0,q[1]*t,q[2]];},[0,Math.PI],[0,1],'--c3',0.25,18,4)].concat(boxFaces(x0,x0+h,y0,y0+h,z0,z0+h,'--c2',0.85)),
+    curves3d:boxEdges(x0,x0+h,y0,y0+h,z0,z0+h,css('--c2'),1.2),
+    pts3d:[{p:[x0+h/2,y0+h/2,z0+h/2],color:css('--ink'),r:3,label:'(xₖ, yₖ, zₖ)'},{p:[-1.2,-0.9,0.6],color:css('--c3'),r:0.1,label:'D'}]});});
+
+function drawBlock(cv){const x=+$('bk-x').value,y=+$('bk-y').value,rho=(x,y,z)=>x*(y+1)-z,lo=1,hi=9;
+  const face=(P)=>{const q=ps(P,[0,1],[0,1],null,0.85,6,10);delete q.color;return q;};
+  surface(cv,{x:[0,2.4],y:[0,3.4],z:[-1.5,1],zscale:0.6,view:{yaw:-0.95,elev:0.42},
+    psurfs:[ps((s,t)=>[1+s,3*t,0],[0,1],[0,1],'--accent',0.35,4,8),ps((s,t)=>[1+s,3*t,-1],[0,1],[0,1],'--warm',0.35,4,8),
+      ps((s,t)=>[1+s,0,-t],[0,1],[0,1],'--accent',0.3,4,4),ps((s,t)=>[1+s,3,-t],[0,1],[0,1],'--warm',0.45,4,4),
+      ps((s,t)=>[1,3*s,-t],[0,1],[0,1],'--c3',0.35,8,4),ps((s,t)=>[2,3*s,-t],[0,1],[0,1],'--warm',0.45,8,4)],
+    curves3d:boxEdges(1,2,0,3,-1,0,css('--c4'),1.4).concat([{pts:[[x,y,-1],[x,y,0]],color:css('--c2'),width:4}]),
+    pts3d:[{p:[1,0,0],color:css('--ink'),r:3,label:'x = 1'},{p:[2,0,0],color:css('--ink'),r:3,label:'x = 2'},{p:[1,3,0],color:css('--ink'),r:3,label:'y = 3'},{p:[1,0,-1],color:css('--ink'),r:3,label:'z = −1'}]});
+  $('bk-out').innerHTML='column at (x, y) = ('+fmt(x,2)+', '+fmt(y,2)+'): ∫₋₁⁰ ρ dz = x(y+1) + 1/2 = <b>'+fmt(x*(y+1)+0.5,3)+'</b> · total mass M = 51/4 = 12.75';}
+if($('f-block')){on(['bk-x','bk-y'],()=>drawBlock($('f-block')));mount('f-block',drawBlock);}
+
+/* Example 2.3.3 general z-simple solid */
+const ZA=[0.6,3.0],ph1=x=>0.7+0.3*Math.sin(2*x),ph2=x=>2.4+0.3*Math.cos(1.7*x),Ps1=(x,y)=>0.6+0.15*Math.sin(x+y),Ps2=(x,y)=>1.8+0.3*Math.cos(1.2*x)-0.15*(y-1.5)**2;
+function drawZS(){const x0=ZA[0]+(ZA[1]-ZA[0])*(+$('zs-x').value),y0=ph1(x0)+(ph2(x0)-ph1(x0))*(+$('zs-y').value);
+  const XY=(s,t)=>{const x=ZA[0]+(ZA[1]-ZA[0])*s;return [x,ph1(x)+(ph2(x)-ph1(x))*t];};
+  const wall=tt=>ps((s,t)=>{const q=XY(s,tt);return [q[0],q[1],Ps1(...q)+(Ps2(...q)-Ps1(...q))*t];},[0,1],[0,1],'--c4',0.22,24,3);
+  const endw=ss=>ps((s,t)=>{const q=XY(ss,s);return [q[0],q[1],Ps1(...q)+(Ps2(...q)-Ps1(...q))*t];},[0,1],[0,1],'--c4',0.22,8,3);
+  surface($('f-zs3'),{x:[0,3.4],y:[0,3.2],z:[0,2.4],zscale:0.7,view:{yaw:-0.7,elev:0.42},
+    psurfs:[ps((s,t)=>{const q=XY(s,t);return [q[0],q[1],0];},[0,1],[0,1],'--c3',0.35,16,6),ps((s,t)=>{const q=XY(s,t);return [q[0],q[1],Ps1(...q)];},[0,1],[0,1],'--accent',0.55,16,8),
+      wall(0),wall(1),endw(0),endw(1),ps((s,t)=>{const q=XY(s,t);return [q[0],q[1],Ps2(...q)];},[0,1],[0,1],'--warm',0.6,16,8)],
+    curves3d:[{pts:[[x0,y0,0],[x0,y0,Ps1(x0,y0)]],color:css('--c2'),width:1.2,dash:[4,3]},{pts:[[x0,y0,Ps1(x0,y0)],[x0,y0,Ps2(x0,y0)]],color:css('--c2'),width:4.5},
+      {pts:[[x0,ph1(x0),0],[x0,ph2(x0),0]],color:css('--c2'),width:2}],
+    pts3d:[{p:[x0,y0,Ps2(x0,y0)],color:css('--warm'),r:3,label:'z = Ψ₂'},{p:[x0,y0,Ps1(x0,y0)],color:css('--accent'),r:3,label:'z = Ψ₁'}]});
+  axes2d($('f-zs2'),{xmin:-0.2,xmax:3.4,ymin:-0.2,ymax:3.2,equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra:(g,X,Y)=>{poly(g,X,Y,betweenX(ZA[0],ZA[1],ph1,ph2),css('--c3'),0.3,css('--c3'));
+      curve(g,X,Y,[[x0,ph1(x0)],[x0,ph2(x0)]],css('--c2'),3);
+      ZA.forEach((v,i)=>{curve(g,X,Y,[[v,0],[v,ph1(v)]],css('--axis'),1,[3,3]);T(g,i?'a₂':'a₁',X(v)-6,Y(0)+11,css('--accent'));});
+      T(g,'y = φ₁(x)',X(1.9),Y(ph1(1.9))+16,css('--accent'));T(g,'y = φ₂(x)',X(1.2),Y(ph2(1.2))-12,css('--accent'));T(g,'projected region',X(1.9),Y(1.6),css('--c3'),'center');},
+    pts:[{x:x0,y:y0,color:css('--c2'),r:4.5}]});}
+if($('f-zs3')){on(['zs-x','zs-y'],drawZS);mount('f-zs3',drawZS);mount('f-zs2',drawZS);}
+
+/* Example 2.3.4 tetrahedron */
+function drawTet(cv){const x0=+$('tt-x').value,y0=(1-x0)*(+$('tt-y').value),zt=1-x0-y0;
+  surface(cv,{x:[0,1.15],y:[0,1.15],z:[0,1.15],zscale:0.8,view:{yaw:-0.75,elev:0.38},
+    psurfs:[ps((s,t)=>[s,(1-s)*t,0],[0,1],[0,1],'--c3',0.4,8,8),ps((s,t)=>[s,(1-s)*t,1-s-(1-s)*t],[0,1],[0,1],'--warm',0.45,8,8),
+      ps((s,t)=>[0,s,(1-s)*t],[0,1],[0,1],'--accent',0.2,8,6),ps((s,t)=>[s,0,(1-s)*t],[0,1],[0,1],'--accent',0.2,8,6)],
+    curves3d:[{pts:[[1,0,0],[0,1,0],[0,0,1],[1,0,0]],color:css('--warm'),width:1.8},{pts:[[x0,0,0],[x0,1-x0,0]],color:css('--c4'),width:4},
+      {pts:[[x0,y0,0],[x0,y0,zt]],color:css('--c2'),width:4.5},{pts:[[x0,1-x0,0],[x0,0,1-x0]],color:css('--c4'),width:1.2,dash:[4,3]}],
+    pts3d:[{p:[1,0,0],color:css('--ink'),r:3,label:'(1,0,0)'},{p:[0,1,0],color:css('--ink'),r:3,label:'(0,1,0)'},{p:[0,0,1],color:css('--ink'),r:3,label:'(0,0,1)'},{p:[x0,y0,zt],color:css('--c2'),r:3.5}]});
+  $('tt-out').innerHTML='x = '+fmt(x0,2)+': y from 0 to 1 − x = '+fmt(1-x0,2)+' · at y = '+fmt(y0,2)+': z from 0 to <b>1 − x − y = '+fmt(zt,3)+'</b>';}
+if($('f-tet')){on(['tt-x','tt-y'],()=>drawTet($('f-tet')));mount('f-tet',drawTet);}
+
+/* ======================= §4 ======================= */
+const arc3=(f,a,b,n)=>lin(a,b,n||30).map(f);
+function drawCyl(cv){const r=+$('cy-r').value,t=+$('cy-t').value,z=+$('cy-z').value,S=$('cy-s').checked,c=Math.cos(t),s=Math.sin(t);
+  const P=S?[ps((u,w)=>[r*Math.cos(u),r*Math.sin(u),w],[0,2*Math.PI],[0,2],'--c4',0.25,36,4),ps((u,w)=>[u*c,u*s,w],[0,2],[0,2],'--warm',0.3,4,4),
+    ps((u,w)=>[u*Math.cos(w),u*Math.sin(w),z],[0,2],[0,2*Math.PI],'--accent',0.22,4,36)]:[];
+  surface(cv,{x:[-2,2],y:[-2,2],z:[0,2],zscale:0.6,view:{yaw:-0.55,elev:0.42},psurfs:P,
+    curves3d:[{pts:[[0,0,0],[r*c,r*s,0]],color:css('--c2'),width:2.6},{pts:[[r*c,r*s,0],[r*c,r*s,z]],color:css('--c2'),width:2.6},
+      {pts:[[r*c,r*s,0],[r*c,0,0]],color:css('--axis'),width:1,dash:[4,3]},{pts:[[r*c,r*s,0],[0,r*s,0]],color:css('--axis'),width:1,dash:[4,3]},
+      {pts:arc3(u=>[0.45*Math.cos(u),0.45*Math.sin(u),0],0,t),color:css('--ink'),width:1.6},{pts:[[0,0,0],[0,0,2]],color:css('--ink'),width:1.2}],
+    pts3d:[{p:[r*c,r*s,z],color:css('--c2'),label:'P(r, θ, z)'},{p:[r*c/2,r*s/2,0],color:css('--c2'),r:0.1,label:'r'},{p:[r*c,r*s,z/2],color:css('--c2'),r:0.1,label:'z'},
+      {p:[0.55*Math.cos(t/2),0.55*Math.sin(t/2),0],color:css('--ink'),r:0.1,label:'θ'}]});
+  $('cy-out').innerHTML='(r, θ, z) = ('+fmt(r,2)+', '+fmt(t,2)+', '+fmt(z,2)+') → (x, y, z) = (<b>'+fmt(r*c,3)+'</b>, <b>'+fmt(r*s,3)+'</b>, <b>'+fmt(z,3)+'</b>)';}
+if($('f-cyl')){on(['cy-r','cy-t','cy-z'],()=>drawCyl($('f-cyl')));$('cy-s').addEventListener('change',()=>drawCyl($('f-cyl')));mount('f-cyl',drawCyl);}
+
+function drawE241(cv){const r0=+$('e41-r').value,R=Math.SQRT2;
+  const top=ps((r,t)=>[r*Math.cos(t),r*Math.sin(t),r*r+2],[0,R],[0,2*Math.PI],null,0.9,8,40);delete top.color;
+  surface(cv,{x:[-1.6,1.6],y:[-1.6,1.6],z:[0,4.2],zscale:0.75,view:{yaw:-0.6,elev:0.35},
+    psurfs:[ps((t,z)=>[R*Math.cos(t),R*Math.sin(t),z],[0,2*Math.PI],[0,4],'--c4',0.3,40,6),top,ps((r,t)=>[r*Math.cos(t),r*Math.sin(t),0],[0,R],[0,2*Math.PI],'--c3',0.35,3,40)],
+    curves3d:[{pts:[[r0,0,0],[r0,0,r0*r0+2]],color:css('--c2'),width:4.5},{pts:[[0,0,0],[r0,0,0]],color:css('--c2'),width:1.5,dash:[4,3]}],
+    pts3d:[{p:[0,0,2],color:css('--ink'),r:3,label:'(0, 0, 2)'},{p:[r0,0,r0*r0+2],color:css('--c2'),r:3.5}]});
+  $('e41-out').innerHTML='column at r = '+fmt(r0,2)+': z from 0 to r² + 2 = <b>'+fmt(r0*r0+2,3)+'</b> · volume = 2π∫₀^√2 (r³ + 2r) dr = 6π ≈ 18.850';}
+if($('f-ex241')){on(['e41-r'],()=>drawE241($('f-ex241')));mount('f-ex241',drawE241);}
+
+function drawSph(cv){const R=+$('sh-r').value,p=+$('sh-p').value,t=+$('sh-t').value,S=$('sh-s').checked,sp=Math.sin(p),cp=Math.cos(p),c=Math.cos(t),s=Math.sin(t);
+  const X=[R*sp*c,R*sp*s,R*cp],L=2;
+  const P=S?[ps((a,b)=>[R*Math.sin(a)*Math.cos(b),R*Math.sin(a)*Math.sin(b),R*Math.cos(a)],[0,Math.PI],[0,2*Math.PI],'--accent',0.2,18,36),
+    ps((u,b)=>[u*sp*Math.cos(b),u*sp*Math.sin(b),u*cp],[0,L],[0,2*Math.PI],'--c4',0.25,4,36),ps((u,w)=>[u*c,u*s,w],[0,L],[-L,L],'--warm',0.25,4,4)]:[];
+  surface(cv,{x:[-2,2],y:[-2,2],z:[-2,2],zscale:0.8,view:{yaw:-0.55,elev:0.35},psurfs:P,
+    curves3d:[{pts:[[0,0,0],X],color:css('--c2'),width:2.8},{pts:[X,[X[0],X[1],0]],color:css('--axis'),width:1.2,dash:[4,3]},{pts:[[0,0,0],[X[0],X[1],0]],color:css('--axis'),width:1.4,dash:[4,3]},
+      {pts:[[0,0,-2],[0,0,2]],color:css('--ink'),width:1.2},{pts:arc3(a=>[0.5*Math.sin(a)*c,0.5*Math.sin(a)*s,0.5*Math.cos(a)],0,p),color:css('--ink'),width:1.6},
+      {pts:arc3(b=>[0.4*Math.cos(b),0.4*Math.sin(b),0],0,t),color:css('--ink'),width:1.6}],
+    pts3d:[{p:X,color:css('--c2'),label:'P(ρ, φ, θ)'},{p:[X[0]/2,X[1]/2,X[2]/2],color:css('--c2'),r:0.1,label:'ρ'},
+      {p:[0.6*Math.sin(p/2)*c,0.6*Math.sin(p/2)*s,0.6*Math.cos(p/2)],color:css('--ink'),r:0.1,label:'φ'},{p:[0.5*Math.cos(t/2),0.5*Math.sin(t/2),0],color:css('--ink'),r:0.1,label:'θ'}]});
+  $('sh-out').innerHTML='(ρ, φ, θ) = ('+fmt(R,2)+', '+fmt(p,2)+', '+fmt(t,2)+') → (x, y, z) = (<b>'+fmt(X[0],3)+'</b>, <b>'+fmt(X[1],3)+'</b>, <b>'+fmt(X[2],3)+'</b>) · r = ρ sin φ = '+fmt(R*sp,3);}
+if($('f-sph')){on(['sh-r','sh-p','sh-t'],()=>drawSph($('f-sph')));$('sh-s').addEventListener('change',()=>drawSph($('f-sph')));mount('f-sph',drawSph);}
+
+function drawSphEl(cv){const p0=+$('se-p').value,r0=1.2,dr=0.3,dp=0.3,t0=0.4,dt=0.5;
+  const SP=(r,p,t)=>[r*Math.sin(p)*Math.cos(t),r*Math.sin(p)*Math.sin(t),r*Math.cos(p)];
+  const F=[ps((p,t)=>SP(r0,p,t),[p0,p0+dp],[t0,t0+dt],'--c2',0.75,4,6),ps((p,t)=>SP(r0+dr,p,t),[p0,p0+dp],[t0,t0+dt],'--c2',0.75,4,6),
+    ps((r,t)=>SP(r,p0,t),[r0,r0+dr],[t0,t0+dt],'--c2',0.75,2,6),ps((r,t)=>SP(r,p0+dp,t),[r0,r0+dr],[t0,t0+dt],'--c2',0.75,2,6),
+    ps((r,p)=>SP(r,p,t0),[r0,r0+dr],[p0,p0+dp],'--c2',0.75,2,4),ps((r,p)=>SP(r,p,t0+dt),[r0,r0+dr],[p0,p0+dp],'--c2',0.75,2,4),
+    ps((p,t)=>SP(r0,p,t),[0,Math.PI],[0,2*Math.PI],'--accent',0.12,16,32)];
+  surface(cv,{x:[-1.6,1.6],y:[-1.6,1.6],z:[-1.6,1.6],zscale:0.8,view:{yaw:-0.35,elev:0.3},psurfs:F,
+    curves3d:[{pts:[[0,0,0],SP(r0,p0,t0)],color:css('--axis'),width:1.2,dash:[4,3]},{pts:[[0,0,-1.6],[0,0,1.6]],color:css('--ink'),width:1.2},
+      {pts:arc3(t=>SP(r0,p0,t),0,2*Math.PI,60),color:css('--c4'),width:1.2,dash:[3,3]}]});
+  let V=0;const N=40;for(let i=0;i<N;i++)for(let j=0;j<N;j++){const r=r0+dr*(i+.5)/N,p=p0+dp*(j+.5)/N;V+=r*r*Math.sin(p)*(dr/N)*(dp/N)*dt;}
+  $('se-out').innerHTML='ρ₀ = 1.2, Δρ = 0.3, Δφ = 0.3, Δθ = 0.5 · φ₀ = '+fmt(p0,2)+' · ρ² sin φ ΔρΔφΔθ at the brick centre = '+fmt((r0+dr/2)**2*Math.sin(p0+dp/2)*dr*dp*dt,4)+' · true brick volume = <b>'+fmt(V,4)+'</b>';}
+if($('f-sphel')){on(['se-p'],()=>drawSphEl($('f-sphel')));mount('f-sphel',drawSphEl);}
+
+function drawCharge(cv){const R=+$('ch-R').value,sh=t=>4*t*t*Math.exp(-2*t),cum=t=>1-Math.exp(-2*t)*(1+2*t+2*t*t);
+  axes2d(cv,{xmin:0,xmax:6,ymin:0,ymax:1.08,xstep:1,ystep:0.25,xlabel:'ρ / a',ylabel:'',
+    curves:[{f:sh,color:css('--accent'),width:2.6},{f:cum,color:css('--warm'),width:2.6}],
+    extra:(g,X,Y)=>{poly(g,X,Y,[[0,0]].concat(lin(0,R,60).map(t=>[t,sh(t)]),[[R,0]]),css('--accent'),0.25);curve(g,X,Y,[[R,0],[R,1.08]],css('--axis'),1.2,[4,3]);
+      T(g,'charge per shell ∝ ρ²e^(−2ρ/a)',X(2.2),Y(0.42),css('--accent'));T(g,'fraction inside radius R',X(3),Y(0.9),css('--warm'));},
+    pts:[{x:R,y:cum(R),color:css('--warm')},{x:1,y:sh(1),color:css('--accent'),label:'peak at ρ = a',align:'right'}]});
+  $('ch-out').innerHTML='R = '+fmt(R,2)+'a · charge inside the sphere of radius R = <b>'+fmt(cum(R),4)+'</b> × (−Q)';}
+if($('f-charge')){on(['ch-R'],()=>drawCharge($('f-charge')));mount('f-charge',drawCharge);}
+/* ======================= tail ======================= */
+const small=(id,o,ex)=>mount(id,cv=>axes2d(cv,Object.assign({equal:true,xstep:0.5,ystep:0.5,xlabel:'x',ylabel:'y',extra:ex},o)));
+small('f-fm2',{xmin:-0.2,xmax:1.4,ymin:-0.1,ymax:1.2},(g,X,Y)=>{poly(g,X,Y,betweenX(0,1,x=>x*x,()=>1),css('--c3'),0.3);curve(g,X,Y,lin(0,1.05,50).map(x=>[x,x*x]),css('--accent'),2.2);
+  curve(g,X,Y,[[0,1],[1.2,1]],css('--accent'),2.2);T(g,'y = x²  (x = √y)',X(0.62),Y(0.3),css('--accent'));T(g,'y = 1',X(1.05),Y(1)-9,css('--accent'));});
+small('f-pp1',{xmin:-0.2,xmax:1.4,ymin:-0.1,ymax:1.2},(g,X,Y)=>{poly(g,X,Y,[[0,0],[1,0],[1,1]],css('--c3'),0.3,css('--accent'));
+  T(g,'y = x',X(0.42),Y(0.55),css('--accent'),'right');T(g,'x = 1',X(1)+5,Y(0.5),css('--accent'));});
+small('f-pp2',{xmin:-0.3,xmax:1.9,ymin:-0.8,ymax:1.2},(g,X,Y)=>{poly(g,X,Y,[[0,0],[1,1],[1.5,0.5],[0.5,-0.5]],css('--c3'),0.3,css('--accent'));
+  T(g,'x − y = 0',X(0.35),Y(0.55),css('--accent'),'right');T(g,'x + y = 2',X(1.3)+6,Y(0.9),css('--accent'));T(g,'x + y = 0',X(0.2),Y(-0.4),css('--accent'),'right');T(g,'x − y = 1',X(1.1)+6,Y(-0.1),css('--accent'));});
+small('f-pp3',{xmin:-0.5,xmax:2.6,ymin:-2.2,ymax:2.2,xstep:1,ystep:1},(g,X,Y)=>{poly(g,X,Y,lin(-Math.PI/2,Math.PI/2,60).map(t=>[2*Math.cos(t),2*Math.sin(t)]),css('--c3'),0.3,css('--accent'));
+  T(g,'x² + y² = 4',X(1.5)+4,Y(1.6),css('--accent'));T(g,'D',X(0.8),Y(0.2),css('--c3'));});
+mount('f-pp4',cv=>surface(cv,{x:[0,2.2],y:[0,2.2],z:[0,2.2],zscale:0.8,view:{yaw:-0.75,elev:0.38},
+  psurfs:[ps((s,t)=>[2*s,2*(1-s)*t,0],[0,1],[0,1],'--c3',0.4,6,6),ps((s,t)=>[2*s,2*(1-s)*t,2-2*s-2*(1-s)*t],[0,1],[0,1],'--warm',0.5,6,6)],
+  curves3d:[{pts:[[2,0,0],[0,2,0],[0,0,2],[2,0,0]],color:css('--warm'),width:1.8}],
+  pts3d:[{p:[2,0,0],color:css('--ink'),r:3,label:'(2,0,0)'},{p:[0,2,0],color:css('--ink'),r:3,label:'(0,2,0)'},{p:[0,0,2],color:css('--ink'),r:3,label:'(0,0,2)'}]}));
+mount('f-pp5',cv=>{const top=ps((r,t)=>[r*Math.cos(t),r*Math.sin(t),4-r*r],[0,1],[0,2*Math.PI],null,0.9,6,36);delete top.color;
+  surface(cv,{x:[-1.2,1.2],y:[-1.2,1.2],z:[0,4.2],zscale:0.75,view:{yaw:-0.6,elev:0.35},
+    psurfs:[ps((t,z)=>[Math.cos(t),Math.sin(t),z*(4-1)],[0,2*Math.PI],[0,1],'--c4',0.3,36,4),top,ps((r,t)=>[r*Math.cos(t),r*Math.sin(t),0],[0,1],[0,2*Math.PI],'--c3',0.35,3,36)],
+    pts3d:[{p:[0,0,4],color:css('--ink'),r:3,label:'(0, 0, 4)'}]});});
+
+
+
+
+})();
+
+</script>
+</body>
+</html>

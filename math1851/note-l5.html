@@ -1,0 +1,953 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH1851 L5 · The Derivative</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (46rem) with a sticky contents rail on wide screens; graphs inline beside the maths they explain; practice and past papers at the end. Palette and type match the MECH2407 notes. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Lecture 5</p>
+  <ol>
+    <li><a href="#s0">0 · Where we are</a></li>
+    <li><a href="#s1">1 · What is a tangent line?</a></li>
+    <li><a href="#s2">2 · Tangent line by definition</a></li>
+    <li><a href="#s3">3 · The derivative</a></li>
+    <li><a href="#s4">4 · Graphs of f and f′</a></li>
+    <li><a href="#s5">5 · Differentiability and where it fails</a></li>
+    <li><a href="#s6">6 · Differentiability ⇒ continuity</a></li>
+    <li><a href="#s7">7 · Summary</a></li>
+    <li><a href="#s8">8 · Common mistakes</a></li>
+    <li><a href="#s9">9 · Find the mistake</a></li>
+    <li><a href="#s10">10 · Group work</a></li>
+    <li><a href="#s11">11 · Concept checks</a></li>
+    <li><a href="#pastpaper">12 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MATH1851 · Calculus · Lecture 5</span>
+  <h1>The Derivative</h1>
+  <p class="lede">Every slide of Lecture 5 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this lecture.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this lecture sits</h2>
+<p>Lectures 1 to 4 were all about <b>limits</b>: what value \(f(x)\) approaches as \(x\) approaches a number (Lecture 1), the Sandwich Theorem and \(\lim_{x\to0}\frac{\sin x}{x}=1\) (Lecture 2), limits involving infinity and asymptotes (Lecture 3), and <b>continuity</b> (Lecture 4). This lecture uses limits to answer a new question: <b>how steep is a curve at one single point?</b> The answer is the <b>derivative</b>, the central idea of the whole calculus half of the course.</p>
+
+<h3>Recall from Lecture 4 (slide 2)</h3>
+<div class="box thm"><span class="tag">Theorem (Continuity Test) · recall</span>
+<p>A function \(f(x)\) is continuous at \(x=c\) if and only if it meets all three conditions:</p>
+<ol class="steps"><li>\(f(c)\) is defined;</li><li>\(\lim_{x\to c}f(x)\) exists;</li><li>\(\lim_{x\to c}f(x)=f(c)\).</li></ol>
+<p class="word"><b>In words:</b> there is a dot at \(x=c\), the curve heads towards one height from both sides, and that height is exactly where the dot is. (No hole, no jump, no blow-up.)</p></div>
+<div class="box thm"><span class="tag">Theorem (Intermediate Value Theorem) · recall</span>
+<p>A function \(y=f(x)\) that is continuous on a closed interval \([a,b]\) takes on every value between \(f(a)\) and \(f(b)\). In other words, if \(y_0\) is any value between \(f(a)\) and \(f(b)\), then there exists \(c\in[a,b]\) such that</p>
+\[f(c)=y_0.\]
+<p class="word"><b>In words:</b> a curve you can draw without lifting your pen cannot get from height \(f(a)\) to height \(f(b)\) without passing through every height in between.</p></div>
+<p>Both return in this lecture: the Continuity Test is used whenever we check differentiability at a "join" of a piecewise function, because (Section 6) a function must be continuous at a point before it can have a derivative there.</p>
+
+<h3>Admin slides (slides 1, 3 to 6)</h3>
+<ul class="list">
+<li><b>Review questions (slide 3):</b> in class, short review questions were run as live polls on the Ed discussion platform (linked from the HKU Moodle course page). The concept checks in Section 11 play that role here.</li>
+<li><b>Textbook (slide 4):</b> "Tangents and the Derivative at a Point" is §2.1 of the custom textbook (§3.1 in MyLab); "The Derivative as a Function" is §2.2 (§3.2 in MyLab).</li>
+<li><b>Learning objectives (slide 5):</b> (1) use limits to compute the slope of the tangent line at a point; (2) use the definition to compute the derivative of a function; (3) apply the theorem "Differentiability Implies Continuity" correctly.</li>
+<li><b>Lecture timeline (slide 6):</b> tangents (10 min), definition of derivative (10 min), differentiability implies continuity (10 min), group work and discussion (20 min).</li>
+</ul>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>What is a tangent line? From secants to tangents</h2>
+
+<h3>Tangents according to Euclid (slide 7)</h3>
+<p>The ancient Greek mathematician Euclid (the slide shows a papyrus fragment of his <i>Elements</i>) described a <b>tangent</b> to a circle as a line that touches the circle exactly once. For a circle this works perfectly: the tangent at a point is the line that just grazes the circle there, perpendicular to the radius (you met this in HKDSE geometry).</p>
+<p>The slide then asks: <b>what about more complicated curves?</b> "Touches exactly once" turns out to be the wrong test, in both directions. Use the selector in the first figure below.</p>
+
+<div class="figure"><p class="ttl">Does "touches exactly once" define a tangent?</p>
+<canvas class="plot" id="euc" style="aspect-ratio:16/10" aria-label="Circle, cubic and parabola with candidate tangent lines"></canvas>
+<div class="ctrl"><label for="euc-s">Curve <select id="euc-s">
+<option value="circ">Circle (Euclid's picture)</option>
+<option value="cub">Cubic y = x³, tangent at (1, 1)</option>
+<option value="par">Parabola y = x², vertical line x = 1</option>
+</select></label></div>
+<div class="legend"><span style="--k:var(--accent)">curve</span><span style="--k:var(--c3)">line</span></div>
+<div class="readout" id="euc-out"></div>
+<p class="cap">First option: the circle, where "touches once" works. Second option: the line \(y=3x-2\) is clearly the tangent to \(y=x^3\) at \((1,1)\), yet it meets the curve a second time at \((-2,-8)\). Last option: the vertical line \(x=1\) meets \(y=x^2\) only once, yet it cuts straight through the curve and is not a tangent.</p></div>
+
+<p>So we need a better definition, one that only looks at the curve <b>near</b> the point. The idea is to approach the tangent with lines we already know how to handle: secant lines.</p>
+
+<div class="box def"><span class="tag">Definition · secant line</span>
+<p>A <b>secant line</b> (or <b>chord</b> extended to a full line) of a curve is the straight line through two points \(P\) and \(Q\) on the curve. Its slope is</p>
+\[m_{PQ}=\frac{\Delta y}{\Delta x}=\frac{y_Q-y_P}{x_Q-x_P}.\]
+<p class="word"><b>In words:</b> slope of secant = (change in height) ÷ (change in horizontal position) between the two points.</p>
+<p>Here \(\Delta\) (Greek capital delta) means "change in": \(\Delta x=x_Q-x_P\) is the horizontal step from \(P\) to \(Q\), and \(\Delta y=y_Q-y_P\) is the vertical step.</p></div>
+
+<h3>Secant lines to \(f(x)=x^2\) near \((1,1)\) (slide 8)</h3>
+<p>Fix \(P=(1,1)\) on the parabola \(y=x^2\) and pick a second point \(Q=(x,x^2)\) closer and closer to \(P\). For example with \(Q=(1.5,\,2.25)\):</p>
+\[m_{PQ}=\frac{2.25-1}{1.5-1}=\frac{1.25}{0.5}=2.5,\]
+<p>and the secant line through \(P\) with that slope is \(y=2.5(x-1)+1\) (point–slope form: \(y-y_P=m(x-x_P)\)). Repeating for points on both sides of \(P\):</p>
+<div class="scroll"><table>
+<thead><tr><th>\(P\)</th><th>\(Q\)</th><th>\(\Delta x\)</th><th>\(m_{PQ}\)</th><th>Secant line</th></tr></thead>
+<tbody>
+<tr><td>(1, 1)</td><td>(1.5, 2.25)</td><td>0.5</td><td>2.5</td><td>\(y=2.5(x-1)+1\)</td></tr>
+<tr><td>(1, 1)</td><td>(1.1, 1.21)</td><td>0.1</td><td>2.1</td><td>\(y=2.1(x-1)+1\)</td></tr>
+<tr><td>(1, 1)</td><td>(1.01, 1.0201)</td><td>0.01</td><td>2.01</td><td>\(y=2.01(x-1)+1\)</td></tr>
+<tr><td>(1, 1)</td><td>(1.001, 1.002001)</td><td>0.001</td><td>2.001</td><td>\(y=2.001(x-1)+1\)</td></tr>
+<tr><td>(1, 1)</td><td>(0.999, 0.998001)</td><td>−0.001</td><td>1.999</td><td>\(y=1.999(x-1)+1\)</td></tr>
+<tr><td>(1, 1)</td><td>(0.99, 0.9801)</td><td>−0.01</td><td>1.99</td><td>\(y=1.99(x-1)+1\)</td></tr>
+<tr><td>(1, 1)</td><td>(0.9, 0.81)</td><td>−0.1</td><td>1.9</td><td>\(y=1.9(x-1)+1\)</td></tr>
+<tr><td>(1, 1)</td><td>(0.5, 0.25)</td><td>−0.5</td><td>1.5</td><td>\(y=1.5(x-1)+1\)</td></tr>
+</tbody></table></div>
+<p style="font-size:.92rem;color:var(--muted)">Slide check: the slide's table has a few typos in the lower half. It lists \(\Delta x\) as positive for the points to the left of \(P\) (it should be negative, since \(x_Q\lt 1\)); it gives the slopes for \(Q=(0.99,0.9801)\) and \(Q=(0.9,0.81)\) as 0.99 and 0.9 (correct values 1.99 and 1.9); and it writes the secant for \(Q=(0.999,\dots)\) as \(y=1.99(x-1)+1\) instead of \(1.999\). The table above uses the corrected values (each checked by computing \((x_Q^2-1)/(x_Q-1)\)).</p>
+<p>The pattern: from the right the slopes are 2.5, 2.1, 2.01, 2.001; from the left they are 1.5, 1.9, 1.99, 1.999. Both sides close in on <b>2</b>. In fact, for \(x\ne1\),</p>
+\[m_{PQ}=\frac{x^2-1}{x-1}=\frac{(x-1)(x+1)}{x-1}=x+1,\]
+<p>which approaches \(1+1=2\) as \(x\to1\) (a Lecture 1 style limit: factor and cancel).</p>
+
+<h3>Tangent line to \(f(x)=x^2\) at \((1,1)\) (slide 9)</h3>
+\[m=\lim_{\Delta x\to0}m_{PQ}=2\]
+<p class="word"><b>In words:</b> slope of the tangent = the value the secant slopes approach as the second point slides onto the first.</p>
+<p>The tangent line is the line through \((1,1)\) with slope 2: \(y-1=2(x-1)\), i.e.</p>
+\[y=2x-1.\]
+<p>Drag the slider in the next figure (choose the first option) to watch the red secant swing into the dashed green tangent as \(h\) (the same thing as \(\Delta x\)) shrinks to 0.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>The tangent line, defined with a limit</h2>
+
+<div class="box def"><span class="tag">Definition (slide 10)</span>
+<p>The <b>tangent line</b> to the curve \(y=f(x)\) at the point \(P(x_0,f(x_0))\) is the line through \(P\) with <b>slope</b></p>
+\[m=\lim_{h\to0}\frac{f(x_0+h)-f(x_0)}{h},\]
+<p>provided that the limit exists.</p>
+<p class="word"><b>In words:</b> slope of tangent at \(P\) = limit, as the horizontal step \(h\) shrinks to zero, of (rise from \(P\) to the nearby point) ÷ (horizontal step).</p></div>
+<p>How this comes from the secant picture (slide 10's figure, redrawn below): take the nearby point \(Q\) a horizontal distance \(h\) from \(P\), so \(Q=(x_0+h,\;f(x_0+h))\). Then</p>
+<ul class="list">
+<li><b>Slope of secant line:</b>
+\[\begin{aligned}m_{PQ}&=\frac{f(x_0+h)-f(x_0)}{(x_0+h)-x_0}\\&=\frac{f(x_0+h)-f(x_0)}{h}.\end{aligned}\]
+<p class="word"><b>In words:</b> secant slope = (height at \(Q\) − height at \(P\)) ÷ (position of \(Q\) − position of \(P\)).</p>
+The bottom simplifies to \(h\). This fraction is called the <b>difference quotient</b>. \(h\) may be positive (\(Q\) to the right of \(P\)) or negative (\(Q\) to the left), but never 0: at \(h=0\) the fraction is \(\frac00\), meaningless. That is exactly why we need a limit, not substitution.</li>
+<li><b>Equation of tangent line:</b> once \(m\) is known, use point–slope form
+\[y-f(x_0)=m(x-x_0).\]
+<p class="word"><b>In words:</b> (height − height of \(P\)) = slope × (position − position of \(P\)).</p></li>
+</ul>
+<p>"Provided that the limit exists" matters: if the secant slopes do not settle on one finite number, the curve has <b>no</b> (non-vertical) tangent line at \(P\). Section 5 shows how this can fail.</p>
+
+<div class="figure"><p class="ttl">Secant line → tangent line as \(h\to0\)</p>
+<canvas class="plot" id="sec" style="aspect-ratio:16/10" aria-label="Curve with a secant line through P and Q and the tangent at P"></canvas>
+<div class="ctrl"><label for="sec-s">Curve <select id="sec-s">
+<option value="sq">f(x) = x² at P(1, 1) (slides 8–9)</option>
+<option value="rt">f(x) = √x at P(4, 2) (slide 11)</option>
+<option value="ir">f(x) = 1/√x at P(4, ½) (group work 1)</option>
+</select></label>
+<label for="sec-h">h <input type="range" id="sec-h" min="-1" max="1" step="0.01" value="0.8"></label></div>
+<div class="legend"><span style="--k:var(--accent)">y = f(x)</span><span style="--k:var(--c2)">secant PQ</span><span style="--k:var(--c3)">tangent at P</span><span style="--k:var(--c4)">h and f(x₀+h) − f(x₀)</span></div>
+<div class="readout" id="sec-out"></div>
+<p class="cap">The slide's picture is redrawn. The orange dashed legs are the "run" \(h\) and the "rise" \(f(x_0+h)-f(x_0)\). Slide \(h\) towards 0 from either side: the difference quotient in the readout approaches the tangent slope. At exactly \(h=0\) there is no second point and the quotient is \(\frac00\).</p></div>
+
+<div class="box eg"><span class="tag">Example (slide 11)</span>
+<p><b>Use the definition to find an equation of the tangent line to the curve \(f(x)=\sqrt x\) at \((4,2)\).</b></p>
+<p><b>Step 1: slope from the definition</b> with \(x_0=4\), \(f(4)=2\):</p>
+\[m=\lim_{h\to0}\frac{\sqrt{4+h}-2}{h}.\]
+<p>Substituting \(h=0\) gives \(\frac00\), so rationalise the numerator (multiply top and bottom by the conjugate \(\sqrt{4+h}+2\), a Lecture 1 technique):</p>
+\[\begin{aligned}
+m&=\lim_{h\to0}\frac{(\sqrt{4+h}-2)(\sqrt{4+h}+2)}{h(\sqrt{4+h}+2)}\\
+&=\lim_{h\to0}\frac{(4+h)-4}{h(\sqrt{4+h}+2)}\\
+&=\lim_{h\to0}\frac{h}{h(\sqrt{4+h}+2)}\\
+&=\lim_{h\to0}\frac{1}{\sqrt{4+h}+2}\\
+&=\frac{1}{2+2}=\frac14.
+\end{aligned}\]
+<p>(Cancelling \(h\) is allowed because \(h\ne0\) while we take the limit.)</p>
+<p><b>Step 2: equation.</b> \(y-2=\frac14(x-4)\), so</p>
+\[y=\frac14x+1.\]
+<p class="word"><b>In words:</b> at \(x=4\) the square-root curve rises a quarter of a unit for every unit you move right.</p></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>The derivative: at a point, and as a function</h2>
+
+<h3>Slope of tangent = derivative at a point (slide 12)</h3>
+<div class="box def"><span class="tag">Definition (slide 12)</span>
+<p>The <b>derivative</b> of a function \(f\) at a point \(x_0\), denoted \(f'(x_0)\), is</p>
+\[f'(x_0)=\lim_{h\to0}\frac{f(x_0+h)-f(x_0)}{h},\]
+<p>provided this limit exists. \(f'(x_0)\) is read as "\(f\) prime at \(x_0\)".</p>
+<p class="word"><b>In words:</b> derivative at a point = the limit of the difference quotient = the slope of the tangent there.</p></div>
+<p>It is the same limit as the tangent slope in Section 2, now given its own name and symbol. The slide lists three interpretations of the one number \(f'(x_0)\):</p>
+<ul class="list">
+<li><b>the slope of the tangent</b> to the curve \(y=f(x)\) at \(x=x_0\);</li>
+<li><b>the slope of the graph</b> of \(y=f(x)\) at \(x=x_0\) (the "steepness of the curve itself" at that point, since near \(P\) the curve and its tangent are almost indistinguishable: zoom in far enough on a smooth curve and it looks straight);</li>
+<li><b>the instantaneous rate of change</b> of \(f(x)\) at \(x=x_0\).</li>
+</ul>
+<p><b>Instantaneous rate of change, by analogy.</b> If \(f(t)\) is the distance (km) a car has travelled after \(t\) hours, the difference quotient \(\frac{f(t_0+h)-f(t_0)}{h}\) is the <b>average speed</b> over the time interval from \(t_0\) to \(t_0+h\). Making the interval shorter and shorter gives the speed at the instant \(t_0\), which is what the speedometer shows. So: average rate of change = slope of secant; instantaneous rate of change = slope of tangent = derivative.</p>
+<p>In the secant figure above, the readout's "tangent slope" is \(f'(x_0)\): \(f'(1)=2\) for \(x^2\), \(f'(4)=\frac14\) for \(\sqrt x\).</p>
+
+<h3>The derivative as a function (slide 13)</h3>
+<div class="box def"><span class="tag">Definition (slide 13)</span>
+<p>The <b>derivative of a function \(f(x)\) with respect to the variable \(x\)</b> is the function \(f'(x)\) whose value at \(x\) is</p>
+\[f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}{h},\]
+<p>provided this limit exists.</p>
+<p class="word"><b>In words:</b> instead of finding the slope at one fixed point, keep the point general (call it \(x\)); the answer is a formula that gives the slope at every \(x\) at once.</p></div>
+<p>For example, for \(f(x)=x^2\):</p>
+\[\begin{aligned}
+f'(x)&=\lim_{h\to0}\frac{(x+h)^2-x^2}{h}\\
+&=\lim_{h\to0}\frac{2xh+h^2}{h}\\
+&=\lim_{h\to0}(2x+h)=2x.
+\end{aligned}\]
+<p>So the slope of \(y=x^2\) at any \(x\) is \(2x\); at \(x=1\) this gives 2, matching slide 9. "With respect to \(x\)" just names the input variable whose small change \(h\) we are making.</p>
+<p>The new function \(f'\) has its own domain: the set of \(x\) where the limit exists. It can be smaller than the domain of \(f\) (Example on slide 14 below).</p>
+
+<h4>Alternate formula</h4>
+\[f'(x_0)=\lim_{x\to x_0}\frac{f(x)-f(x_0)}{x-x_0}\]
+<p class="word"><b>In words:</b> slope at \(x_0\) = limit, as a moving point \(x\) approaches \(x_0\), of (change in \(f\)) ÷ (change in \(x\)).</p>
+<p>This is the same limit with the substitution \(x=x_0+h\): as \(h\to0\), \(x\to x_0\), and \(h=x-x_0\). Use whichever is easier. (The slide writes the left side as \(f'(x)\); since \(x\) is the moving variable inside the limit, the value being computed is really \(f'(x_0)\), the derivative at the fixed point \(x_0\). These notes write \(f'(x_0)\) to avoid confusion.) For example \(f'(1)\) for \(x^2\) is \(\lim_{x\to1}\frac{x^2-1}{x-1}=2\), exactly the computation of Section 1.</p>
+
+<h4>Alternate notations</h4>
+\[\begin{aligned}f'(x)&=y'=\frac{dy}{dx}=\frac{df}{dx}\\&=\frac{d}{dx}f(x)=Df(x)=D_xf(x)\end{aligned}\]
+<p class="word"><b>In words:</b> all of these mean the same thing, "the derivative of \(f\) (or of \(y\)) with respect to \(x\)".</p>
+<ul class="list">
+<li>\(f'(x)\), \(y'\): <b>prime notation</b> (Lagrange). Short; used when the variable is obvious.</li>
+<li>\(\frac{dy}{dx}\), \(\frac{df}{dx}\): <b>Leibniz notation</b>, read "dee y by dee x". It is a reminder of where the derivative comes from: the limit of \(\frac{\Delta y}{\Delta x}\) as \(\Delta x\to0\). It is <b>one symbol</b>, not a fraction you can cancel \(d\)'s in.</li>
+<li>\(\frac{d}{dx}f(x)\): the instruction "take the derivative with respect to \(x\) of …", handy for writing e.g. \(\frac{d}{dx}(x^2)=2x\). The derivative at a point is written \(\left.\frac{dy}{dx}\right|_{x=x_0}\).</li>
+<li>\(Df(x)\), \(D_xf(x)\): <b>operator notation</b>; \(D\) is the "differentiate" operation, and the subscript \(x\) names the variable.</li>
+</ul>
+
+<h4>Higher derivatives</h4>
+<p>Since \(f'\) is itself a function, we can differentiate it again.</p>
+<ul class="list">
+<li><b>Second derivative:</b>
+\[f''(x)=y''=\frac{d^2y}{dx^2}\]
+<p class="word"><b>In words:</b> second derivative = derivative of the derivative = rate of change of the slope.</p></li>
+<li><b>\(n\)th derivative:</b> differentiate \(n\) times.
+\[f^{(n)}(x)=y^{(n)}=\frac{d^ny}{dx^n}\]
+<p class="word"><b>In words:</b> the \(n\)th derivative = the result of applying "take the derivative" \(n\) times in a row.</p>
+The bracket in \(f^{(n)}\) shows it is a count of derivatives, not a power. For \(n\ge4\) people write \(f^{(4)}\) rather than \(f''''\).</li>
+</ul>
+<p>Analogy: if \(f(t)\) is position, \(f'(t)\) is velocity and \(f''(t)\) is acceleration (how fast the velocity changes). For \(f(x)=x^2\): \(f'(x)=2x\), \(f''(x)=2\), \(f'''(x)=0\).</p>
+
+<div class="box eg"><span class="tag">Example: derivative by definition (slide 14)</span>
+<p><b>Use the definition to compute the derivative of \(f(x)=\sqrt{x-9}\).</b></p>
+<p style="font-size:.92rem;color:var(--muted)">Reading: the square root covers \(x-9\) on the slide image (the extracted slide text could also be read as \(\sqrt x-9\)). The slide's version, \(\sqrt{x-9}\), is used.</p>
+<p>The domain of \(f\) is \(x\ge9\). For \(x\gt9\):</p>
+\[f'(x)=\lim_{h\to0}\frac{\sqrt{x+h-9}-\sqrt{x-9}}{h}.\]
+<p>This is \(\frac00\) at \(h=0\), so multiply top and bottom by the conjugate \(\sqrt{x+h-9}+\sqrt{x-9}\):</p>
+\[\begin{aligned}
+f'(x)&=\lim_{h\to0}\frac{(x+h-9)-(x-9)}{h\left(\sqrt{x+h-9}+\sqrt{x-9}\right)}\\
+&=\lim_{h\to0}\frac{h}{h\left(\sqrt{x+h-9}+\sqrt{x-9}\right)}\\
+&=\lim_{h\to0}\frac{1}{\sqrt{x+h-9}+\sqrt{x-9}}\\
+&=\frac{1}{2\sqrt{x-9}}.
+\end{aligned}\]
+\[f'(x)=\frac{1}{2\sqrt{x-9}},\qquad x\gt9.\]
+<p class="word"><b>In words:</b> the slope of the curve \(y=\sqrt{x-9}\) at \(x\) is one over twice the height of the curve there.</p>
+<p><b>Domain of \(f'\):</b> the formula needs \(x\gt9\) (at \(x=9\) we would divide by 0). At \(x=9\) the difference quotient is \(\frac{\sqrt h}{h}=\frac1{\sqrt h}\to\infty\) as \(h\to0^+\), so \(f'(9)\) does not exist: the curve leaves its starting point straight upwards (a vertical tangent). So the domain of \(f\) is \([9,\infty)\) but the domain of \(f'\) is \((9,\infty)\).</p></div>
+
+<div class="figure"><p class="ttl">\(f(x)=\sqrt{x-9}\) and its derivative</p>
+<canvas class="plot" id="ex3" style="aspect-ratio:16/10" aria-label="Graph of root of x minus 9 and of its derivative"></canvas>
+<div class="ctrl"><label for="ex3-x">x <input type="range" id="ex3-x" min="9.05" max="15" step="0.05" value="11"></label></div>
+<div class="legend"><span style="--k:var(--accent)">f(x) = √(x−9)</span><span style="--k:var(--c3)">f′(x) = 1/(2√(x−9))</span><span style="--k:var(--c2)">tangent at x</span></div>
+<div class="readout" id="ex3-out"></div>
+<p class="cap">As \(x\) moves towards 9 the tangent gets steeper and \(f'(x)\) shoots up: at \(x=9\) the slope is infinite, so \(f'(9)\) does not exist.</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Reading the graph of \(f'\) from the graph of \(f\)</h2>
+<h3>Comparison of graphs of \(f\) and \(f'\) (slide 15)</h3>
+<p>The slide shows a wavy curve \(f\) (falls, bottoms out, rises, small hump, small dip, rises steeply) beside its derivative \(f'\). It asks:</p>
+<ul class="list"><li><b>Where is the slope of \(f(x)\) positive? Negative? Zero?</b></li><li><b>How does this relate to the graph of \(f'(x)\)?</b></li></ul>
+<div class="figure"><p class="ttl">The graph of \(f\) (top) and of \(f'\) (bottom)</p>
+<canvas class="plot" id="fpa" style="aspect-ratio:16/8" aria-label="Quartic curve f with a tangent line"></canvas>
+<canvas class="plot" id="fpb" style="aspect-ratio:16/8;margin-top:6px" aria-label="Its derivative, a cubic"></canvas>
+<div class="ctrl"><label for="fp-x">x <input type="range" id="fp-x" min="-3" max="2.6" step="0.02" value="-1"></label></div>
+<div class="legend"><span style="--k:var(--accent)">f</span><span style="--k:var(--c3)">f′</span><span style="--k:var(--c2)">tangent to f / matching point on f′</span></div>
+<div class="readout" id="fp-out"></div>
+<p class="cap">The slide's picture is redrawn (a quartic with turning points at about \(x=-2.2,\;0.5,\;1.7\)). The <b>height</b> of the green graph at \(x\) equals the <b>slope</b> of the blue graph at \(x\).</p></div>
+<p><b>Answers.</b></p>
+<ul class="list">
+<li>Where \(f\) is <b>going uphill</b> (increasing), its tangent slopes up, so \(f'(x)\gt0\): the graph of \(f'\) is <b>above</b> the \(x\)-axis. Here: roughly \(-2.2\lt x\lt0.5\) and \(x\gt1.7\).</li>
+<li>Where \(f\) is <b>going downhill</b> (decreasing), \(f'(x)\lt0\): \(f'\) is <b>below</b> the axis. Here: \(x\lt-2.2\) and \(0.5\lt x\lt1.7\).</li>
+<li>At the <b>turning points</b> (bottom of a valley, top of a hump) the tangent is horizontal, so \(f'(x)=0\): \(f'\) <b>crosses the \(x\)-axis</b> there (\(x\approx-2.2,\,0.5,\,1.7\)).</li>
+<li><b>How steep</b> \(f\) is becomes <b>how high or low</b> \(f'\) is: \(f\) is very steep at the far left and far right, so \(f'\) is large in size there; the gentle hump and dip of \(f\) give a small wiggle of \(f'\) near the axis.</li>
+</ul>
+
+<h3>Example: given \(f\), sketch \(f'\) (slide 16)</h3>
+<p>The slide gives the graph of \(f\) and an empty pair of axes for sketching \(f'\). The curve comes down steeply from the top left, flattens out <b>momentarily</b> as it passes through the origin (horizontal tangent, but it keeps going down), reaches a single valley at about \(x=1.8\), then climbs steeply and crosses the \(x\)-axis again.</p>
+<div class="figure"><p class="ttl">Given \(f\), sketch \(f'\)</p>
+<canvas class="plot" id="sk" style="aspect-ratio:16/10" aria-label="Graph of f with flat point at origin and a minimum, and its derivative"></canvas>
+<div class="ctrl"><label for="sk-s">Show <select id="sk-s"><option value="f">f only (the question)</option><option value="both">f and the sketch of f′</option></select></label></div>
+<div class="legend"><span style="--k:var(--accent)">f</span><span style="--k:var(--c3)">f′</span></div>
+<div class="readout" id="sk-out"></div>
+<p class="cap">The slide's picture is redrawn with a function of the same shape (\(f(x)=\frac{x^3(x-2.4)}{3}\)); only the shape matters for a sketch.</p></div>
+<p><b>Solution (how to sketch).</b></p>
+<ol class="steps">
+<li>Mark where \(f\) has a horizontal tangent: at \(x=0\) and at the valley \(x\approx1.8\). These are the zeros of \(f'\).</li>
+<li>Left of 0, \(f\) falls, steeply far left and gently near 0: \(f'\) is negative, very negative far left, rising to 0 at \(x=0\).</li>
+<li>Between 0 and 1.8, \(f\) still falls (steepest somewhere in the middle, around \(x\approx1.2\)): \(f'\) is negative again, dipping to a minimum and coming back to 0 at 1.8. So at \(x=0\) the graph of \(f'\) only <b>touches</b> the axis (it does not cross), because \(f\) is decreasing on both sides.</li>
+<li>Right of 1.8, \(f\) rises more and more steeply: \(f'\) is positive and increases rapidly.</li>
+</ol>
+<p>Key lesson: a horizontal tangent does not always mean a hump or valley; at \(x=0\) here \(f\) just pauses, and \(f'\) touches zero without changing sign.</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Differentiability on an interval, and where it fails</h2>
+<p><b>Differentiable at \(c\)</b> simply means \(f'(c)\) exists, i.e. the limit of the difference quotient at \(c\) exists (as a finite number).</p>
+<h3>Interval notation</h3>
+<p>\([a,b]\) is the <b>closed interval</b> \(a\le x\le b\) (endpoints included); \((a,b)\) is the <b>open interval</b> \(a\lt x\lt b\) (endpoints excluded); \([a,b)\) includes \(a\) but not \(b\); \((a,\infty)\) means \(x\gt a\).</p>
+<h3>One-sided derivatives</h3>
+<p>At an endpoint of an interval you can only step in one direction. Using the one-sided limits of Lecture 1 (\(h\to0^+\): \(h\) small and positive; \(h\to0^-\): \(h\) small and negative):</p>
+<p>Right-hand derivative at \(a\):</p>
+\[\lim_{h\to0^+}\frac{f(a+h)-f(a)}{h}\]
+<p>Left-hand derivative at \(b\):</p>
+\[\lim_{h\to0^-}\frac{f(b+h)-f(b)}{h}\]
+<p class="word"><b>In words:</b> right-hand derivative = slope measured only with points to the right; left-hand derivative = slope measured only with points to the left.</p>
+<p>At an interior point, \(f'(c)\) exists exactly when both one-sided derivatives exist and are equal (just as a two-sided limit exists when both one-sided limits exist and agree, Lecture 1). This is the standard test at the join of a piecewise function.</p>
+
+<div class="box def"><span class="tag">Definition (slide 17)</span>
+<p>A function \(f(x)\) is <b>differentiable on an interval \([a,b]\)</b> if it meets the following three conditions.</p>
+<ol class="steps">
+<li><b>Differentiability at all \(c\in(a,b)\):</b> the limit below exists for every \(c\) strictly between \(a\) and \(b\).
+\[\lim_{h\to0}\frac{f(c+h)-f(c)}{h}\]</li>
+<li><b>Differentiability at the left endpoint \(a\):</b> the right-hand limit exists.
+\[\lim_{h\to0^+}\frac{f(a+h)-f(a)}{h}\]</li>
+<li><b>Differentiability at the right endpoint \(b\):</b> the left-hand limit exists.
+\[\lim_{h\to0^-}\frac{f(b+h)-f(b)}{h}\]</li>
+</ol>
+<p class="word"><b>In words:</b> a proper slope at every inside point, and a one-sided slope at each end (using only points that lie inside the interval).</p>
+<p>(The slide lists the three limits; "meets the condition" means each limit <b>exists</b>.)</p>
+<p>Finally, the slide notes: a <b>differentiable function</b> is one that is differentiable at every point of its domain. (So when a function is simply called "differentiable", with no interval mentioned, its whole domain is meant.)</p></div>
+
+<h3>When does differentiability fail? (slide 18)</h3>
+<p>The slide shows four pictures. In each, the difference quotient at the special point fails to approach a single finite number.</p>
+<div class="cases">
+<div><b>Discontinuity</b>The graph jumps. One side's secants become vertical-ish and their slopes blow up. (Section 6: no continuity, no derivative.)</div>
+<div><b>Vertical tangent</b>The curve is continuous but becomes vertical at the point, e.g. \(y=\sqrt[3]{x}\) at 0. Secant slopes \(\to+\infty\) (or \(-\infty\)) from both sides: infinite slope is not a number, so no derivative.</div>
+<div><b>Corner</b>Two different straight-ish directions meet, e.g. \(y=|x|\) at 0. Left slope \(-1\), right slope \(+1\): they disagree.</div>
+<div><b>Cusp</b>A sharp point where both sides become vertical, but in opposite directions, e.g. \(y=x^{2/3}\) at 0: slopes \(\to-\infty\) from the left and \(+\infty\) from the right.</div>
+</div>
+<div class="figure"><p class="ttl">Four ways the derivative at 0 can fail: left and right secants</p>
+<canvas class="plot" id="fail" style="aspect-ratio:16/10" aria-label="Function with a problem at x equals 0, with left and right secant lines"></canvas>
+<div class="ctrl"><label for="fail-s">Case <select id="fail-s">
+<option value="corner">Corner: y = |x|</option>
+<option value="vert">Vertical tangent: y = ∛x</option>
+<option value="cusp">Cusp: y = x^(2/3)</option>
+<option value="jump">Discontinuity: jump at 0</option>
+</select></label>
+<label for="fail-h">step size |h| <input type="range" id="fail-h" min="0.02" max="1.5" step="0.01" value="1"></label></div>
+<div class="legend"><span style="--k:var(--accent)">y = f(x)</span><span style="--k:var(--c2)">secant to the right (h &gt; 0)</span><span style="--k:var(--c4)">secant to the left (h &lt; 0)</span></div>
+<div class="readout" id="fail-out"></div>
+<p class="cap">The slide's four pictures, as formulas. Shrink \(|h|\): in no case do the left and right difference quotients approach the same finite number. For the jump, the function is \(-1\) for \(x\lt0\) and \(1\) for \(x\ge0\) (solid dot at \((0,1)\)).</p></div>
+<p>Exact values (check with the readout): for \(|x|\), the right quotient is \(\frac{|h|}{h}=1\) and the left one is \(-1\). For \(\sqrt[3]x\), both equal \(h^{-2/3}\to+\infty\). For \(x^{2/3}\), they are \(h^{-1/3}\), giving \(+\infty\) from the right and \(-\infty\) from the left. For the jump, the right quotient is \(\frac{1-1}{h}=0\) but the left is \(\frac{-1-1}{h}=-\frac2h\to+\infty\) as \(h\to0^-\).</p>
+
+<div class="box eg"><span class="tag">Example (slide 19)</span>
+<p>The graph of \(f(x)\) is shown (redrawn below). (a) Find the intervals on which \(f\) is continuous. (b) Find the intervals on which \(f\) is differentiable. (c) Find the points where \(f\) is not differentiable.</p>
+<div class="figure"><p class="ttl">The graph from slide 19</p>
+<canvas class="plot" id="g19" style="aspect-ratio:16/11" aria-label="Piecewise graph on minus 2 to 3 with cusp, jump, corner and vertical tangent"></canvas>
+<div class="ctrl"><label for="g19-s">Show <select id="g19-s"><option value="plain">graph only (the question)</option><option value="mark">mark the trouble points</option></select></label></div>
+<div class="readout" id="g19-out"></div>
+<p class="cap">Description of the slide's graph: domain \(-2\lt x\le3\). From an open circle at \((-2,-1)\) the curve rises to a sharp point at \((-1,0)\), falls to an open circle at \((0,-1)\). A solid dot sits at \((0,0)\); a straight segment rises from it to \((1,1)\); then a curved arc falls, becoming vertical as it crosses \((2,0)\), and levels out to a solid dot at \((3,-1)\).</p></div>
+<p><b>(a) Continuity.</b> At \(x=0\) the curve from the left heads to height \(-1\), but \(f(0)=0\): a jump, so \(f\) is not continuous at 0. Everywhere else the graph is unbroken. (\(x=-2\) is not in the domain.) Taking the right-hand limit at 0 (\(f(x)\to0=f(0)\)) and the left-hand limit at 3 (\(f(x)\to-1=f(3)\)) as the endpoint conditions (Lecture 4):</p>
+\[f \text{ is continuous on } (-2,0) \text{ and on } [0,3].\]
+<p><b>(c) Points where \(f\) is not differentiable</b> (answered before (b) as it makes (b) easy):</p>
+<ul class="list">
+<li>\(x=-1\): <b>cusp</b> (both sides become vertical, in opposite directions);</li>
+<li>\(x=0\): <b>discontinuity</b> (jump), so certainly not differentiable;</li>
+<li>\(x=1\): <b>corner</b> (the segment has slope 1, the arc leaves with a different slope);</li>
+<li>\(x=2\): <b>vertical tangent</b>.</li>
+</ul>
+<p><b>(b) Differentiability.</b> Remove those points from the domain:</p>
+\[(-2,-1),\;(-1,0),\;(0,1),\;(1,2),\;(2,3)\]
+<p>On each of these open intervals the curve is smooth. Using the one-sided endpoint conditions of slide 17 you may also include an endpoint where the one-sided derivative exists: \(f\) is differentiable on \([0,1]\) (right-hand slope 1 at 0, left-hand slope 1 at 1), on \([1,2)\) (the arc has a finite slope leaving \(x=1\)), and on \((2,3]\) (left-hand slope at the endpoint 3 is 0, where the arc flattens out). Both forms describe the same facts; the open-interval list is the usual answer.</p>
+<p style="font-size:.92rem;color:var(--muted)">The slide gives no answers; the readings above come from the picture (the exact slope of the arc at \(x=1\) and \(x=3\) cannot be read off precisely, but only "finite or not" matters).</p></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Differentiability implies continuity</h2>
+<div class="box thm"><span class="tag">Theorem: Differentiability Implies Continuity (slide 20)</span>
+<p>If \(f\) is differentiable at \(c\), then \(f\) is continuous at \(c\).</p>
+<p class="word"><b>In words:</b> if a curve has a proper (finite, non-vertical) tangent at a point, it cannot have a hole, jump or blow-up there.</p></div>
+<div class="box beyond"><span class="tag">Beyond the handouts · why it is true</span>
+<p>For \(h\ne0\), write the change in \(f\) as (difference quotient) × \(h\):</p>
+\[f(c+h)-f(c)=\frac{f(c+h)-f(c)}{h}\cdot h.\]
+<p>As \(h\to0\), the fraction tends to the number \(f'(c)\) and \(h\) tends to 0, so the product tends to \(f'(c)\cdot0=0\). Hence \(\lim_{h\to0}f(c+h)=f(c)\), which is continuity at \(c\).</p></div>
+<p><b>The useful way round (the contrapositive).</b> The theorem says "differentiable ⇒ continuous". Logically the same statement is: <b>if \(f\) is not continuous at \(c\), then \(f\) is not differentiable at \(c\)</b>. This is why "Discontinuity" was on the list of failures in Section 5. In exam questions about a piecewise function, check continuity at the join first; if it fails, you are done (not differentiable). If continuity holds, then compare the left and right derivatives.</p>
+
+<div class="box eg"><span class="tag">Example (slide 21)</span>
+<p><b>If \(g\) is differentiable at \(x=0\), find the value of \(c\).</b></p>
+\[g(x)=\begin{cases}cx, & x\lt0\\ x^2-3x, & x\ge0\end{cases}\]
+<p><b>Step 1: continuity at 0</b> (needed by the theorem). \(g(0)=0^2-3(0)=0\). Left limit: \(\lim_{x\to0^-}cx=0\). Right limit: \(\lim_{x\to0^+}(x^2-3x)=0\). All equal, so \(g\) is continuous at 0 for every \(c\). This gives no information about \(c\).</p>
+<p><b>Step 2: one-sided derivatives at 0.</b> Use the definition with \(g(0)=0\).</p>
+\[\lim_{h\to0^-}\frac{g(h)-g(0)}{h}=\lim_{h\to0^-}\frac{ch-0}{h}=c\]
+\[\begin{aligned}\lim_{h\to0^+}\frac{g(h)-g(0)}{h}&=\lim_{h\to0^+}\frac{h^2-3h}{h}\\&=\lim_{h\to0^+}(h-3)=-3\end{aligned}\]
+<p><b>Step 3: match them.</b> Differentiable at 0 means the two are equal:</p>
+\[c=-3,\qquad g'(0)=-3.\]
+<p class="word"><b>In words:</b> the straight piece on the left must have exactly the same slope as the parabola has as it starts at \(x=0\).</p></div>
+<div class="figure"><p class="ttl">Choosing \(c\) to remove the corner</p>
+<canvas class="plot" id="gc" style="aspect-ratio:16/10" aria-label="Piecewise function g with adjustable slope c"></canvas>
+<div class="ctrl"><label for="gc-c">c <input type="range" id="gc-c" min="-6" max="2" step="0.5" value="0"></label></div>
+<div class="legend"><span style="--k:var(--accent)">y = g(x)</span><span style="--k:var(--c3)">tangent direction of the parabola at 0 (slope −3)</span></div>
+<div class="readout" id="gc-out"></div>
+<p class="cap">For every \(c\) the two pieces meet at the origin (continuous), but only \(c=-3\) removes the corner.</p></div>
+
+<h3>Does continuity ⇒ differentiability? (slide 22)</h3>
+<p>The slide asks the converse question. <b>No.</b> \(f(x)=|x|\) is continuous at 0 (no break: both sides approach 0 \(=f(0)\)), but it is not differentiable at 0 (corner: left slope \(-1\), right slope \(+1\)). The vertical tangent \(\sqrt[3]x\) and the cusp \(x^{2/3}\) from Section 5 are further continuous but non-differentiable examples.</p>
+<div class="box warn"><span class="tag">Trap</span><p>Differentiable ⇒ continuous: <b>true</b>. Continuous ⇒ differentiable: <b>false</b>. Not continuous ⇒ not differentiable: <b>true</b> (same as the first). Not differentiable ⇒ not continuous: <b>false</b> (e.g. \(|x|\)).</p></div>
+<div class="box beyond"><span class="tag">Beyond the handouts</span><p>It can be much worse than one corner: there are functions (first found by Weierstrass in 1872) that are continuous everywhere yet differentiable nowhere, like a coastline that stays jagged however far you zoom in.</p></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Summary (slide 23)</h2>
+<ul class="list">
+<li>The slope of the tangent line to a curve at a point is the <b>derivative</b>.</li>
+<li>The derivative of a function \(f\) at \(x_0\) is the slope of the tangent to the curve \(y=f(x)\) at \(x_0\).</li>
+<li>By definition, the derivative of \(f(x)\) is the function
+\[f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}{h},\]
+provided this limit exists.
+<p class="word"><b>In words:</b> derivative = limit of (rise ÷ run) as the run shrinks to 0.</p></li>
+<li>Differentiability implies continuity, but continuity does not imply differentiability.</li>
+</ul>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Common mistakes (slide 25)</h2>
+<p>The slide restates the theorem (correct ✓): if \(f\) is differentiable at \(c\), then \(f\) is continuous at \(c\). Then two mistakes:</p>
+<div class="box"><div class="mistake">
+<span class="x">✗</span><span><b>Assuming the converse of the theorem is true.</b> "\(f(x)=|x|\) is continuous at \(x=0\), so \(f(x)=|x|\) is differentiable at \(x=0\)." Wrong: the <b>converse</b> (the statement with "if" and "then" swapped: continuous ⇒ differentiable) is false. \(|x|\) has a corner at 0: right-hand difference quotient \(\frac{|h|}{h}=1\), left-hand \(-1\). <span class="ok">✓</span> Continuity is necessary for differentiability, not sufficient.</span>
+<span class="x">✗</span><span><b>Mistaking \(\lim_{x\to c^-}f'(x)=\lim_{x\to c^+}f'(x)\) to imply \(f'(c)\) exists.</b> Suppose
+\[f(x)=\begin{cases}1, & x\ne0\\ 0, & x=0.\end{cases}\]
+For every \(x\ne0\), \(f\) is constant (flat) near \(x\), so \(f'(x)=0\). Hence \(\lim_{x\to0^-}f'(x)=0=\lim_{x\to0^+}f'(x)\). The wrong conclusion is "so \(f'(0)\) exists". <span class="ok">✓</span> In fact \(f\) is not even continuous at 0 (\(\lim_{x\to0}f(x)=1\ne0=f(0)\)), so \(f'(0)\) does not exist. Directly: \(\frac{f(h)-f(0)}{h}=\frac1h\), which tends to \(+\infty\) from the right and \(-\infty\) from the left. Moral: \(f'(c)\) is defined by the difference quotient <b>at \(c\)</b>, which uses the value \(f(c)\); limits of \(f'(x)\) at nearby points ignore \(f(c)\).</span>
+<span class="x">✗</span><span><span class="pill">Written for these notes</span> Substituting \(h=0\) into the difference quotient and writing \(f'(x_0)=\frac00\) or "undefined". <span class="ok">✓</span> \(\frac00\) is a signal to simplify (factor, cancel \(h\), rationalise), then take the limit.</span>
+<span class="x">✗</span><span><span class="pill">Written for these notes</span> Writing \(f(x+h)=f(x)+h\) (e.g. \((x+h)^2=x^2+h\)). <span class="ok">✓</span> \(f(x+h)\) means substitute \(x+h\) for every \(x\): \((x+h)^2=x^2+2xh+h^2\).</span>
+<span class="x">✗</span><span><span class="pill">Written for these notes</span> At the join of a piecewise function, using the wrong piece for \(f(c)\). <span class="ok">✓</span> \(f(c)\) comes from whichever piece has the "\(\le\)" or "\(\ge\)" sign; it appears in <b>both</b> one-sided difference quotients.</span>
+</div></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Find the mistake (slide 24)</h2>
+<p><b>Question.</b> Use the definition of derivative to show that \(f(x)\) is differentiable at \(x=1\).</p>
+\[f(x)=\begin{cases}\frac12x+\frac52, & x\lt1\\ 2+\sqrt x, & x\ge1\end{cases}\]
+<p><b>A student's work</b> (handwritten on the slide, transcribed faithfully):</p>
+<div class="handwork">
+\[\lim_{x\to1^-}f(x)=\lim_{x\to1^-}\tfrac12x+\tfrac52=\tfrac12+\tfrac52=3\]
+\[\lim_{x\to1^+}f(x)=\lim_{x\to1^+}2+\sqrt x=3=\lim_{x\to1^-}f(x)\]
+<p>∴ \(\lim_{x\to1}f(x)\) exist and \(f(x)\) is continuous at \(x=1\)</p>
+\[\begin{aligned}f'(x)&=(2+\sqrt x)'\\&=\tfrac12x^{-\frac12}\\&=\frac1{2\sqrt x}\end{aligned}\]
+\[f'(1)=\frac12\]
+</div>
+<details><summary>Hint 1</summary><div><p>Re-read the instruction: "use the <b>definition</b> of derivative". Which method did the student use for \(f'\)?</p></div></details>
+<details><summary>Hint 2</summary><div><p>The formula \(2+\sqrt x\) only describes \(f\) for \(x\ge1\). What does \(f\) look like just to the left of 1? Does the student's working ever look at the slope from the left?</p></div></details>
+<details><summary>Answer</summary><div>
+<p><b>Mistakes.</b></p>
+<ol class="steps">
+<li>The continuity part is nearly fine (both one-sided limits are 3), but to conclude continuity one must also state \(f(1)=2+\sqrt1=3\) and that the limit equals it (Continuity Test, Lecture 4). Continuity is necessary but, by itself, proves nothing about differentiability.</li>
+<li>The student differentiated the formula \(2+\sqrt x\) with a rule instead of using the definition, as the question demands. (The rule \(\frac{d}{dx}\sqrt x=\frac{1}{2\sqrt x}\) has not even been established yet at this point; differentiation rules are Lecture 6.)</li>
+<li>Most importantly, the formula \(2+\sqrt x\) is only valid for \(x\ge1\), so it can only give the <b>right-hand</b> slope at 1. The left-hand slope (from the line \(\frac12x+\frac52\)) is never checked. Without showing both one-sided derivatives are equal, differentiability at the join is not proved. The final number \(\frac12\) happens to be correct, but the argument is not.</li>
+</ol>
+<p><b>Correct solution.</b> \(f(1)=3\). Left-hand derivative (for \(h\lt0\), \(1+h\lt1\), use the line):</p>
+\[\begin{aligned}&\lim_{h\to0^-}\frac{f(1+h)-f(1)}{h}\\&=\lim_{h\to0^-}\frac{\frac12(1+h)+\frac52-3}{h}\\&=\lim_{h\to0^-}\frac{\frac12h}{h}=\frac12\end{aligned}\]
+<p>Right-hand derivative (for \(h\gt0\), use \(2+\sqrt x\)), rationalising:</p>
+\[\begin{aligned}&\lim_{h\to0^+}\frac{2+\sqrt{1+h}-3}{h}\\&=\lim_{h\to0^+}\frac{\sqrt{1+h}-1}{h}\\&=\lim_{h\to0^+}\frac{(1+h)-1}{h(\sqrt{1+h}+1)}\\&=\lim_{h\to0^+}\frac1{\sqrt{1+h}+1}=\frac12\end{aligned}\]
+<p>Both one-sided derivatives equal \(\frac12\), so \(f\) is differentiable at \(x=1\) with</p>
+\[f'(1)=\frac12.\]
+</div></details>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Group work (slide 26)</h2>
+
+<div class="q"><p class="qh">1. Use the definition to find an equation of the tangent line to the curve \(f(x)=\dfrac1{\sqrt x}\) at \(\left(4,\tfrac12\right)\).</p>
+<details><summary>Hint</summary><div><p>Set up \(\lim_{h\to0}\frac{\frac1{\sqrt{4+h}}-\frac12}{h}\). Combine the two fractions on top over the common denominator \(2\sqrt{4+h}\), then rationalise by multiplying by \(2+\sqrt{4+h}\). The secant figure in Section 2 (third option) shows the slope numerically.</p></div></details>
+<details><summary>Answer</summary><div>
+\[\begin{aligned}m&=\lim_{h\to0}\frac{\frac{1}{\sqrt{4+h}}-\frac12}{h}\\&=\lim_{h\to0}\frac{2-\sqrt{4+h}}{2h\sqrt{4+h}}\\&=\lim_{h\to0}\frac{4-(4+h)}{2h\sqrt{4+h}\,(2+\sqrt{4+h})}\\&=\lim_{h\to0}\frac{-1}{2\sqrt{4+h}\,(2+\sqrt{4+h})}\\&=\frac{-1}{2\cdot2\cdot4}=-\frac1{16}\end{aligned}\]
+<p>Tangent: \(y-\frac12=-\frac1{16}(x-4)\), i.e.</p>
+\[y=-\frac1{16}x+\frac34.\]
+</div></details></div>
+
+<div class="q"><p class="qh">2. Use the definition to compute the first and second derivative of \(f(x)=x^2-9\).</p>
+<details><summary>Hint</summary><div><p>First find \(f'(x)\) from \(\lim_{h\to0}\frac{f(x+h)-f(x)}{h}\); the \(-9\)'s cancel. Then apply the same definition to the function \(f'(x)\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[\begin{aligned}f'(x)&=\lim_{h\to0}\frac{(x+h)^2-9-(x^2-9)}{h}\\&=\lim_{h\to0}\frac{2xh+h^2}{h}\\&=\lim_{h\to0}(2x+h)=2x\end{aligned}\]
+\[\begin{aligned}f''(x)&=\lim_{h\to0}\frac{2(x+h)-2x}{h}\\&=\lim_{h\to0}\frac{2h}{h}=2\end{aligned}\]
+<p>So \(f'(x)=2x\) and \(f''(x)=2\).</p>
+</div></details></div>
+
+<div class="q"><p class="qh">3. Match the graph of each function in (a)–(d) with the graph of its derivative in I–IV.</p>
+<div class="figure"><p class="ttl">Functions (a)–(d) (blue) and derivatives I–IV (red)</p>
+<canvas class="plot" id="match" style="aspect-ratio:10/16" aria-label="Eight small graphs: four functions and four derivatives"></canvas>
+<p class="cap">The slide's eight pictures are redrawn (same shapes; no scales are given on the slide). (a) falls, valley left of 0, rises through 0, hump right of 0, falls. (b) zig-zag of straight segments: up, then down through 0, then up. (c) a negative "upside-down bell" with lowest point on the \(y\)-axis, flattening towards 0 on both sides. (d) an "M" shape: hump, dip touching the origin, hump. I: an S-shaped wave, negative dip left of 0, through 0, positive hump right, both tails tending to 0. II: a downward parabola with vertex on the positive \(y\)-axis. III: high on the left, falling to a dip, rising through 0 to a hump, then falling steeply. IV: three horizontal steps: high, low (between two values of \(x\)), high, with open circles at the breaks.</p></div>
+<details><summary>Hint</summary><div><p>For each of (a)–(d), mark where the curve has a horizontal tangent (these are where the derivative is 0) and where it rises (derivative above the axis) or falls (below). A graph made of straight pieces has a derivative made of horizontal pieces.</p></div></details>
+<details><summary>Answer</summary><div>
+<ul class="list">
+<li><b>(a) → II.</b> (a) falls, rises, falls, with horizontal tangents at the valley and the hump; so \(f'\) is negative, positive, negative with two zeros: the downward parabola.</li>
+<li><b>(b) → IV.</b> Straight pieces have constant slope: positive, negative, positive; at the corners the derivative does not exist (open circles).</li>
+<li><b>(c) → I.</b> (c) falls for \(x\lt0\) and rises for \(x\gt0\), flattening at both ends: derivative negative then positive, zero at 0, tending to 0 far out.</li>
+<li><b>(d) → III.</b> (d) rises, falls, rises, falls (three horizontal tangents, one at the origin): derivative positive, negative, positive, negative with three zeros, one at 0.</li>
+</ul>
+<p style="font-size:.9rem;color:var(--muted)">Check with formulas of the same shapes: (a) \(3x-x^3\) gives \(3-3x^2\); (c) \(-\frac1{1+x^2}\) gives \(\frac{2x}{(1+x^2)^2}\); (d) \(2x^2-x^4\) gives \(4x-4x^3\).</p>
+</div></details></div>
+
+<div class="q"><p class="qh">4. Evaluate \(a\) and \(b\) so that</p>
+\[f(x)=\begin{cases}ax+b, & x\le1\\ x^2+1, & x\gt1\end{cases}\]
+<p class="qh">is differentiable for all \(x\).</p>
+<details><summary>Hint</summary><div><p>Away from \(x=1\) each piece is a polynomial and is fine. At \(x=1\): first make \(f\) continuous (Section 6), giving one equation; then make the left and right derivatives equal, giving a second. Note \(f(1)=a+b\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p><b>Continuity at 1:</b> \(f(1)=a+b\), \(\lim_{x\to1^+}(x^2+1)=2\), so \(a+b=2\).</p>
+<p><b>Left derivative:</b> \(\lim_{h\to0^-}\frac{a(1+h)+b-(a+b)}{h}=\lim_{h\to0^-}\frac{ah}{h}=a\).</p>
+<p><b>Right derivative</b> (using \(a+b=2\)):</p>
+\[\begin{aligned}\lim_{h\to0^+}\frac{(1+h)^2+1-2}{h}&=\lim_{h\to0^+}\frac{2h+h^2}{h}\\&=\lim_{h\to0^+}(2+h)=2\end{aligned}\]
+<p>Equal: \(a=2\), then \(b=2-a=0\).</p>
+\[a=2,\qquad b=0\]
+<p>(Check: \(f(x)=2x\) for \(x\le1\) is the tangent line of \(x^2+1\) at \((1,2)\).)</p>
+</div></details></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Concept checks</h2>
+<div class="q"><p class="qh"><span class="pill">Written for these notes</span> 1. If \(f'(3)=0\), describe the tangent line to \(y=f(x)\) at \(x=3\). Must \(x=3\) be the top of a hump or bottom of a valley?</p>
+<details><summary>Answer</summary><div><p>The tangent is horizontal: \(y=f(3)\). No: it need not be a hump or valley; e.g. \(y=x^3\) at \(x=0\) (or the curve of slide 16 at 0) has a horizontal tangent but keeps going in the same direction.</p></div></details></div>
+<div class="q"><p class="qh"><span class="pill">Written for these notes</span> 2. Write down two different limits, each equal to \(f'(2)\) for \(f(x)=x^3\), and evaluate one of them.</p>
+<details><summary>Answer</summary><div>
+\[f'(2)=\lim_{h\to0}\frac{(2+h)^3-8}{h}=\lim_{x\to2}\frac{x^3-8}{x-2}\]
+<p>Second form: \(x^3-8=(x-2)(x^2+2x+4)\), so the limit is \(4+4+4=12\). So \(f'(2)=12\).</p></div></details></div>
+<div class="q"><p class="qh"><span class="pill">Written for these notes</span> 3. Is \(f(x)=x|x|\) differentiable at \(x=0\)? (It looks like \(|x|\), which has a corner.)</p>
+<details><summary>Answer</summary><div><p>Yes. \(\frac{f(h)-f(0)}{h}=\frac{h|h|}{h}=|h|\to0\) from both sides, so \(f'(0)=0\). The extra factor \(x\) flattens the corner out. (The graph is \(x^2\) for \(x\ge0\) and \(-x^2\) for \(x\lt0\).)</p></div></details></div>
+<div class="q"><p class="qh"><span class="pill">Written for these notes</span> 4. True or false: (i) if \(f\) is not continuous at \(c\), then \(f\) is not differentiable at \(c\); (ii) if \(f\) is not differentiable at \(c\), then \(f\) is not continuous at \(c\).</p>
+<details><summary>Answer</summary><div><p>(i) True: it is the contrapositive of "differentiable ⇒ continuous". (ii) False: \(|x|\) at 0 is continuous but not differentiable.</p></div></details></div>
+<div class="q"><p class="qh"><span class="pill">Written for these notes</span> 5. A function satisfies \(f'(x)=0\) for every \(x\ne0\). Can you conclude that \(f'(0)\) exists?</p>
+<details><summary>Answer</summary><div><p>No. The example from slide 25 (\(f=1\) for \(x\ne0\), \(f(0)=0\)) has \(f'(x)=0\) for all \(x\ne0\) but is not continuous at 0, so \(f'(0)\) does not exist. Only the difference quotient at 0 itself decides.</p></div></details></div>
+<div class="q"><p class="qh"><span class="pill">Written for these notes</span> 6. The graph of \(f\) rises up to a smooth hump at \(x=1\) and falls afterwards. What is the sign of \(f'\) just left of 1, at 1, and just right of 1?</p>
+<details><summary>Answer</summary><div><p>Positive, zero, negative. So the graph of \(f'\) crosses the \(x\)-axis downwards at \(x=1\).</p></div></details></div>
+</section>
+
+<!-- ============ EXAM ============ -->
+<section id="pastpaper"><h2><span class="n">12</span>Exam taster</h2>
+<p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
+<p style="font-size:.92rem;color:var(--muted)">Lecture 5's question types appear 7 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide. Two more questions of the type "Is a piecewise function differentiable at the join?", Dec 2020 Q4(c) and Dec 2021 Q2(c), are in the Lecture 7 note, because they also need Lecture 7 material.</p>
+
+<div class="q"><p class="src"><b>Dec 2025 MC2</b><span>2 pts</span><a class="guide" data-guide="L5.3">Guide · L5.3 Spot which derivative a limit represents</a></p>
+<p class="qh">The following limit represents the derivative of some function \(f\) at some point \(a\):</p>
+\[\lim_{h\to0}\frac{\cos\left(\frac\pi3+h\right)-\frac12}{h}\]
+<p>What is the function \(f(x)\) and the point \(a\)?</p>
+<p>(A) \(f(x)=\cos x\), \(a=\frac\pi3\)<br>(B) \(f(x)=\cos x\), \(a=\frac12\)<br>(C) \(f(x)=\cos\left(x+\frac\pi3\right)\), \(a=\frac\pi3\)<br>(D) \(f(x)=\cos\frac\pi3\), \(a=h\)<br>(E) \(f(x)=\sin x\), \(a=\frac\pi3\)</p>
+<details><summary>Hint</summary><div><p>Match with \(\lim_{h\to0}\frac{f(a+h)-f(a)}{h}\): what plays the role of \(a+h\) inside the function, and is \(\frac12\) equal to \(f(a)\) for that \(f\) and \(a\)?</p></div></details>
+<details><summary>Answer</summary><div><p><b>(A)</b> \(f(x)=\cos x\), \(a=\frac\pi3\) (since \(\cos\frac\pi3=\frac12\)). (The limit's value is \(f'(\frac\pi3)=-\frac{\sqrt3}2\), not asked.)</p>
+<p style="font-size:.9rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2025 Q1(b)</b><span>Q1 total 10%</span><a class="guide" data-guide="L5.1">Guide · L5.1 Derivative straight from the definition (including functional equations)</a></p>
+<p class="qh">Suppose \(f\) is a function that satisfies</p>
+\[f(x+y)=f(x)+f(y)+x^2y+xy^2\]
+<p>for any real numbers \(x\) and \(y\). Assume \(f'(0)=1\). Show that \(f\) is differentiable at every real number \(x\), and evaluate \(f'(x)\). [Hint: Calculate \(f(0)\) and recall the definition of differentiability.]</p>
+<details><summary>Hint</summary><div><p>Put \(x=y=0\) to get \(f(0)\). Then in \(\frac{f(x+h)-f(x)}{h}\), use the given equation with \(y=h\) to replace \(f(x+h)\); one of the leftover terms is \(\frac{f(h)-f(0)}{h}\), whose limit is \(f'(0)\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(f(0)=0\), and the limit of the difference quotient exists for every \(x\), with</p>
+\[f'(x)=1+x^2.\]
+<p style="font-size:.9rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2019 Q2(c)</b><span>Q2 total 10%</span><a class="guide" data-guide="L5.2">Guide · L5.2 Is a piecewise function differentiable at the join?</a></p>
+<p class="qh">Let</p>
+\[f(x)=\begin{cases}\dfrac{(x+b)^{3/2}-x^{3/2}}{b}, & x\ge0\\[2mm] 2+x\sin\dfrac bx, & x\lt0\end{cases}\]
+<p>where \(b\gt0\) is a constant.</p>
+<p>(c) Determine the value of \(b\) such that \(f\) is differentiable at \(x=0\), and evaluate \(f'(0)\) when exists. [Show your calculation.]</p>
+<details><summary>Hint</summary><div><p>Differentiable needs continuous first: \(f(0)=\frac{b^{3/2}}{b}=\sqrt b\), and the left-hand limit is 2 (Sandwich Theorem on \(x\sin\frac bx\), Lecture 2). That fixes \(b\). Then compute the left- and right-hand difference quotients at 0 for that \(b\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>Continuity forces \(b=4\) (so \(f(0)=2\)). For \(b=4\) the right-hand derivative is \(\frac34\), but the left-hand difference quotient is \(\frac{2+h\sin(4/h)-2}{h}=\sin\frac4h\), which has no limit as \(h\to0^-\). So <b>there is no value of \(b\)</b> for which \(f\) is differentiable at 0, and \(f'(0)\) does not exist.</p>
+<p style="font-size:.9rem;color:var(--muted)">Checked with a computer algebra system. The left piece \(2+x\sin\frac bx\) has been checked against the original paper: as printed, continuity forces \(b=4\), but the left difference quotient \(\sin\frac4h\) has no limit, so no value of \(b\) works. Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2017 Q2</b><span>10%</span><span class="older">older format</span><a class="guide" data-guide="L5.2">Guide · L5.2 Is a piecewise function differentiable at the join?</a></p>
+<p class="qh">Define</p>
+\[g(x)=\begin{cases}\cos x, & x\lt0\\ 1, & x=0\\ 1+\sin x, & x\gt0\end{cases}\]
+<p>Is \(g\) continuous at \(x=0\)? Is \(g\) differentiable at \(x=0\)? Give precise reasons to justify your conclusions.</p>
+<details><summary>Hint</summary><div><p>Use the Continuity Test (Lecture 4) with \(g(0)=1\). For differentiability, compute \(\lim_{h\to0^-}\frac{\cos h-1}{h}\) and \(\lim_{h\to0^+}\frac{\sin h}{h}\) (Lecture 2 limits).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>Continuous at 0 (both one-sided limits equal \(1=g(0)\)). Not differentiable at 0: left-hand derivative \(0\), right-hand derivative \(1\).</p>
+<p style="font-size:.9rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+</section>
+</main>
+</div>
+<script>
+(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const PI=Math.PI;
+const $=id=>document.getElementById(id);
+
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+const piTicks=(lo,hi)=>{const out=[];const L={'-4':'−2π','-3':'−3π/2','-2':'−π','-1':'−π/2','0':'0','1':'π/2','2':'π','3':'3π/2','4':'2π','5':'5π/2'};for(let k=Math.ceil(lo/(PI/2));k<=Math.floor(hi/(PI/2));k++)out.push([k*PI/2,L[k]||'']);return out;};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+
+/* ---------- Euclid ---------- */
+function drawEuc(){
+  const v=$('euc-s').value, A=css('--accent'), G=css('--c3'), R=css('--c2');
+  if(v==='circ'){
+    const r=1.5, a=PI/4, px=r*Math.cos(a), py=r*Math.sin(a);
+    // tangent: perpendicular to radius, slope -1
+    plot($('euc'),{xmin:-3.2,xmax:3.2,ymin:-2,ymax:2,xstep:1,ystep:1,
+      curves:[{f:x=>Math.sqrt(Math.max(0,r*r-x*x)),from:-r,to:r,color:A,n:900},{f:x=>-Math.sqrt(Math.max(0,r*r-x*x)),from:-r,to:r,color:A,n:900},
+              {f:x=>py-(x-px),color:G}],
+      segs:[{x1:0,y1:0,x2:px,y2:py,color:css('--muted'),width:1.4,dash:[4,4]}],
+      pts:[{x:px,y:py,color:R,label:'touches once',align:'left'}]});
+    $('euc-out').innerHTML='Circle x² + y² = 2.25: the tangent meets it at exactly <b>one</b> point and is perpendicular to the radius. Euclid\'s test works here.';
+  } else if(v==='cub'){
+    plot($('euc'),{xmin:-2.6,xmax:2.2,ymin:-10,ymax:6,xstep:1,ystep:2,
+      curves:[{f:x=>x*x*x,color:A},{f:x=>3*x-2,color:G}],
+      pts:[{x:1,y:1,color:R,label:'P(1, 1)',align:'right'},{x:-2,y:-8,color:R,label:'(−2, −8)'}]});
+    $('euc-out').innerHTML='Line y = 3x − 2 is the tangent to y = x³ at P(1, 1), yet it meets the curve <b>twice</b>. "Touches once" wrongly rejects it.';
+  } else {
+    plot($('euc'),{xmin:-2.2,xmax:2.2,ymin:-1,ymax:4.5,xstep:1,ystep:1,
+      curves:[{f:x=>x*x,color:A}],
+      segs:[{x1:1,y1:-5,x2:1,y2:10,color:G,width:2.4}],
+      pts:[{x:1,y:1,color:R,label:'(1, 1)'}]});
+    $('euc-out').innerHTML='Vertical line x = 1 meets y = x² only <b>once</b>, but it cuts through the curve: not a tangent. "Touches once" wrongly accepts it.';
+  }
+}
+$('euc-s').addEventListener('input',drawEuc); redraws.push(drawEuc);
+
+/* ---------- Secant -> tangent ---------- */
+const SEC={
+  sq:{f:x=>x*x,x0:1,m:2,mt:'2',hr:1,box:[-0.8,2.5,-0.6,4.4],xs:0.5,ys:1,name:'x²'},
+  rt:{f:x=>Math.sqrt(x),x0:4,m:0.25,mt:'1/4',hr:3,box:[0,8,0,3.2],xs:1,ys:0.5,name:'√x'},
+  ir:{f:x=>1/Math.sqrt(x),x0:4,m:-1/16,mt:'−1/16',hr:3,box:[0.5,8,0,1.2],xs:1,ys:0.2,name:'1/√x'}
+};
+let secLast='sq';
+function drawSec(){
+  const k=$('sec-s').value, S=SEC[k], sl=$('sec-h');
+  if(k!==secLast){sl.min=-S.hr; sl.max=S.hr; sl.step=S.hr/100; sl.value=0.8*S.hr; secLast=k;}
+  const h=+sl.value, x0=S.x0, y0=S.f(x0), [a,b,c,d]=S.box;
+  const A=css('--accent'),R=css('--c2'),G=css('--c3'),O=css('--c4');
+  const o={xmin:a,xmax:b,ymin:c,ymax:d,xstep:S.xs,ystep:S.ys,curves:[{f:S.f,from:Math.max(a,0.02),color:A},{f:x=>y0+S.m*(x-x0),color:G,dash:[7,5],width:2}],pts:[{x:x0,y:y0,color:A,label:'P',align:'right'}],segs:[]};
+  let txt;
+  if(Math.abs(h)<1e-9){
+    txt='h = 0: there is no second point Q, and the quotient is 0/0. Use the limit: tangent slope f′('+x0+') = <b>'+S.mt+'</b>';
+  } else {
+    const x1=x0+h, y1=S.f(x1), q=(y1-y0)/h;
+    o.curves.push({f:x=>y0+q*(x-x0),color:R,width:2});
+    o.segs.push({x1:x0,y1:y0,x2:x1,y2:y0,color:O,dash:[4,3],width:1.8},{x1:x1,y1:y0,x2:x1,y2:y1,color:O,dash:[4,3],width:1.8});
+    o.pts.push({x:x1,y:y1,color:R,label:'Q'});
+    txt='f(x) = '+S.name+', P = ('+x0+', '+fmt(y0,4)+'), h = '+fmt(h,3)+', Q = ('+fmt(x1,3)+', '+fmt(y1,4)+')<br>difference quotient [f(x₀+h) − f(x₀)]/h = <b>'+fmt(q,5)+'</b> &nbsp;·&nbsp; tangent slope f′('+x0+') = '+S.mt+' = '+fmt(S.m,5);
+  }
+  plot($('sec'),o); $('sec-out').innerHTML=txt;
+}
+$('sec-s').addEventListener('input',drawSec); $('sec-h').addEventListener('input',drawSec); redraws.push(drawSec);
+
+/* ---------- sqrt(x-9) ---------- */
+function drawEx3(){
+  const x0=+$('ex3-x').value, f=x=>Math.sqrt(x-9), fp=x=>1/(2*Math.sqrt(x-9));
+  const m=fp(x0), y0=f(x0);
+  plot($('ex3'),{xmin:8,xmax:16,ymin:0,ymax:3.5,xstep:1,ystep:0.5,
+    curves:[{f:x=>x>=9?f(x):NaN,from:9,color:css('--accent'),n:1500},{f:x=>x>9.001?fp(x):NaN,from:9.001,color:css('--c3'),n:1500},{f:x=>y0+m*(x-x0),color:css('--c2'),width:1.6}],
+    pts:[{x:x0,y:y0,color:css('--accent')},{x:x0,y:m,color:css('--c3')},{x:9,y:0,color:css('--accent'),r:4}]});
+  $('ex3-out').innerHTML='x = '+fmt(x0,2)+': f(x) = '+fmt(y0,4)+', slope of tangent f′(x) = 1/(2√(x−9)) = <b>'+fmt(m,4)+'</b>';
+}
+$('ex3-x').addEventListener('input',drawEx3); redraws.push(drawEx3);
+
+/* ---------- f and f' (slide 15) ---------- */
+const Fq=x=>(x**4/4-1.995*x*x+1.87*x+3.957)/2.5, Fqp=x=>(x**3-3.99*x+1.87)/2.5;
+function drawFp(){
+  const x0=+$('fp-x').value, y0=Fq(x0), m=Fqp(x0), R=css('--c2');
+  plot($('fpa'),{xmin:-3.2,xmax:2.8,ymin:-2.5,ymax:4,xstep:1,ystep:1,
+    curves:[{f:Fq,color:css('--accent')},{f:x=>y0+m*(x-x0),from:x0-0.7,to:x0+0.7,color:R,width:2}],
+    pts:[{x:x0,y:y0,color:R,label:'f',align:'left'}]});
+  plot($('fpb'),{xmin:-3.2,xmax:2.8,ymin:-3,ymax:3,xstep:1,ystep:1,
+    curves:[{f:Fqp,color:css('--c3')}],
+    segs:[{x1:x0,y1:0,x2:x0,y2:m,color:R,dash:[4,3],width:1.5}],
+    pts:[{x:x0,y:m,color:R,label:"f′",align:'left'}]});
+  const s=Math.abs(m)<0.06?'≈ 0: horizontal tangent, f′ crosses the axis':(m>0?'positive: f is rising, f′ is above the axis':'negative: f is falling, f′ is below the axis');
+  $('fp-out').innerHTML='x = '+fmt(x0,2)+': slope of f = height of f′ = <b>'+fmt(m,3)+'</b> ('+s+')';
+}
+$('fp-x').addEventListener('input',drawFp); redraws.push(drawFp);
+
+/* ---------- given f sketch f' (slide 16) ---------- */
+function drawSk(){
+  const both=$('sk-s').value==='both';
+  const f=x=>x**3*(x-2.4)/3, fp=x=>(4*x**3-7.2*x*x)/3;
+  const cs=[{f:f,color:css('--accent')}]; const pts=[];
+  if(both){cs.push({f:fp,color:css('--c3')}); pts.push({x:0,y:0,color:css('--c3'),label:'f′(0)=0'},{x:1.8,y:0,color:css('--c3'),label:'f′(1.8)=0'});}
+  plot($('sk'),{xmin:-1.5,xmax:3,ymin:-3,ymax:3,xstep:0.5,ystep:1,curves:cs,pts:pts});
+  $('sk-out').innerHTML=both?'f′ is negative for x &lt; 1.8 (touching 0 at x = 0 without changing sign), zero at the valley x = 1.8, positive afterwards.':'Sketch f′ yourself first: where is the tangent horizontal? Where does f rise or fall?';
+}
+$('sk-s').addEventListener('input',drawSk); redraws.push(drawSk);
+
+/* ---------- failure cases ---------- */
+const FAIL={
+  corner:{f:x=>Math.abs(x),box:[-2,2,-1,2.2],nm:'|x|'},
+  vert:{f:x=>Math.cbrt(x),box:[-2,2,-1.6,1.6],nm:'∛x'},
+  cusp:{f:x=>Math.cbrt(x*x),box:[-2,2,-0.6,2],nm:'x^(2/3)'},
+  jump:{f:x=>x>=0?1:-1,box:[-2,2,-1.8,1.8],nm:'jump'}
+};
+function drawFail(){
+  const k=$('fail-s').value, F=FAIL[k], h=+$('fail-h').value, [a,b,c,d]=F.box;
+  const y0=F.f(0), qr=(F.f(h)-y0)/h, ql=(F.f(-h)-y0)/(-h);
+  const R=css('--c2'),O=css('--c4'),A=css('--accent');
+  const curves = k==='jump' ? [{f:x=>1,from:0,to:b,color:A},{f:x=>-1,from:a,to:0,color:A}] : [{f:F.f,color:A,n:1400}];
+  curves.push({f:x=>y0+qr*x,color:R,width:1.8},{f:x=>y0+ql*x,color:O,width:1.8,dash:[6,4]});
+  const pts=[{x:h,y:F.f(h),color:R},{x:-h,y:F.f(-h),color:O},{x:0,y:y0,color:A}];
+  if(k==='jump') pts.push({x:0,y:-1,color:A,open:true});
+  plot($('fail'),{xmin:a,xmax:b,ymin:c,ymax:d,xstep:0.5,ystep:0.5,curves:curves,pts:pts});
+  const verdict={corner:'right → 1, left → −1: they disagree (corner)',vert:'both → +∞: slope infinite (vertical tangent)',cusp:'right → +∞, left → −∞ (cusp)',jump:'right → 0 but left → +∞ (discontinuity)'}[k];
+  $('fail-out').innerHTML='|h| = '+fmt(h,2)+': right quotient [f(h) − f(0)]/h = <b>'+fmt(qr,3)+'</b>, left quotient [f(−h) − f(0)]/(−h) = <b>'+fmt(ql,3)+'</b><br>As |h| → 0: '+verdict+'. So f′(0) does not exist.';
+}
+$('fail-s').addEventListener('input',drawFail); $('fail-h').addEventListener('input',drawFail); redraws.push(drawFail);
+
+/* ---------- slide 19 graph ---------- */
+function drawG19(){
+  const A=css('--accent'), R=css('--c2'), mark=$('g19-s').value==='mark';
+  const pts=[{x:-2,y:-1,color:A,open:true},{x:0,y:-1,color:A,open:true},{x:0,y:0,color:A},{x:3,y:-1,color:A}];
+  if(mark){pts.push({x:-1,y:0,color:R,label:'cusp',r:4},{x:1,y:1,color:R,label:'corner',r:4},{x:2,y:0,color:R,label:'vertical tangent',r:4},{x:0,y:0.03,color:R,label:'jump',align:'right',r:4});}
+  plot($('g19'),{xmin:-2.4,xmax:3.4,ymin:-1.5,ymax:1.5,xstep:1,ystep:1,
+    curves:[{f:x=>-Math.sqrt(Math.abs(x+1)),from:-2,to:0,color:A,n:1500},{f:x=>x,from:0,to:1,color:A},
+            {f:x=>Math.sqrt(Math.max(0,1-(x-1)**2)),from:1,to:2,color:A,n:1500},{f:x=>-Math.sqrt(Math.max(0,1-(x-3)**2)),from:2,to:3,color:A,n:1500}],
+    pts:pts});
+  $('g19-out').innerHTML=mark?'Not differentiable at x = −1 (cusp), 0 (jump), 1 (corner), 2 (vertical tangent). Continuous on (−2, 0) and [0, 3].':'Domain −2 &lt; x ≤ 3. Open circles at (−2, −1) and (0, −1); solid dots at (0, 0) and (3, −1).';
+}
+$('g19-s').addEventListener('input',drawG19); redraws.push(drawG19);
+
+/* ---------- g with slope c ---------- */
+function drawGc(){
+  const c=+$('gc-c').value;
+  plot($('gc'),{xmin:-2,xmax:4,ymin:-3,ymax:3,xstep:1,ystep:1,
+    curves:[{f:x=>c*x,from:-2,to:0,color:css('--accent')},{f:x=>x*x-3*x,from:0,to:4,color:css('--accent')},{f:x=>-3*x,from:-1.2,to:1.2,color:css('--c3'),dash:[6,4],width:1.6}],
+    pts:[{x:0,y:0,color:css('--accent')}]});
+  $('gc-out').innerHTML='c = '+fmt(c,1)+': left-hand derivative = c = <b>'+fmt(c,1)+'</b>, right-hand derivative = <b>−3</b> → '+(c===-3?'equal: g is differentiable at 0, g′(0) = −3':'different: corner, g′(0) does not exist');
+}
+$('gc-c').addEventListener('input',drawGc); redraws.push(drawGc);
+
+/* ---------- matching (8 small panels) ---------- */
+function drawMatch(){
+  const cv=$('match'), dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight; if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const B=css('--accent'), P=css('--c2');
+  const pb=x=>x<-1?x+2:(x<1?-x:x-2);
+  const step=x=>(x<-1||x>1)?1:-1;
+  const panels=[
+    ['(a)',x=>3*x-x**3,B,[-2.4,2.4,-4,4]],['(b)',pb,B,[-2.2,2.2,-1.6,1.6]],
+    ['(c)',x=>-1/(1+x*x),B,[-4,4,-1.6,1]],['(d)',x=>2*x*x-x**4,B,[-1.8,1.8,-2,1.6]],
+    ['I',x=>2*x/(1+x*x)**2,P,[-4,4,-1,1]],['II',x=>3-3*x*x,P,[-2.4,2.4,-8,5]],
+    ['III',x=>4*x-4*x**3,P,[-1.8,1.8,-4,4]],['IV',step,P,[-2.2,2.2,-1.8,1.8]]];
+  const cw=W/2, ch=H/4;
+  panels.forEach((p,i)=>{
+    const [lab,f,col,[xa,xb,ya,yb]]=p, ox=(i%2)*cw, oy=Math.floor(i/2)*ch, pad=14;
+    const X=x=>ox+pad+(x-xa)/(xb-xa)*(cw-2*pad), Y=y=>oy+pad+8+(yb-y)/(yb-ya)*(ch-2*pad-8);
+    g.strokeStyle=css('--axis'); g.lineWidth=1;
+    g.beginPath(); g.moveTo(X(xa),Y(0)); g.lineTo(X(xb),Y(0)); g.moveTo(X(0),Y(ya)); g.lineTo(X(0),Y(yb)); g.stroke();
+    g.fillStyle=css('--ink'); g.font='600 12px Inter, system-ui, sans-serif'; g.textAlign='left'; g.textBaseline='top'; g.fillText(lab,ox+4,oy+4);
+    g.fillStyle=css('--muted'); g.font='11px Inter, system-ui, sans-serif'; g.fillText('x',X(xb)-8,Y(0)+3); g.fillText('y',X(0)+4,Y(yb)-2);
+    g.save(); g.beginPath(); g.rect(ox+pad,oy+pad+8,cw-2*pad,ch-2*pad-8); g.clip();
+    g.strokeStyle=col; g.lineWidth=2.2;
+    if(lab==='IV'){
+      [[xa,-1],[-1,1],[1,xb]].forEach(([u,v])=>{const y=step((u+v)/2);g.beginPath();g.moveTo(X(u),Y(y));g.lineTo(X(v),Y(y));g.stroke();});
+      g.restore();
+      [[-1,1],[1,1],[-1,-1],[1,-1]].forEach(([x,y])=>{g.beginPath();g.arc(X(x),Y(y),3.5,0,7);g.fillStyle=css('--card');g.fill();g.strokeStyle=col;g.lineWidth=1.8;g.stroke();});
+      return;
+    }
+    g.beginPath(); const N=300; for(let j=0;j<=N;j++){const x=xa+(xb-xa)*j/N, y=f(x); if(j===0)g.moveTo(X(x),Y(y)); else g.lineTo(X(x),Y(y));} g.stroke();
+    g.restore();
+  });
+  g.strokeStyle=css('--line'); g.lineWidth=1;
+  g.beginPath(); g.moveTo(cw,0); g.lineTo(cw,H); for(let r=1;r<4;r++){g.moveTo(0,r*ch);g.lineTo(W,r*ch);} g.stroke();
+}
+redraws.push(drawMatch);
+
+const all=()=>redraws.forEach(f=>{try{f();}catch(e){}});
+all();
+let t; window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(all,120);});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);}catch(e){}
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+<script>
+/* MATH1851 bundle links: fills hrefs for a.note[data-note] and a.guide[data-guide], links "Lx guide" mentions, adds an index link on guide pages. */
+(function(){
+var B="",N={"L1": "note-L1.html", "L2": "note-L2.html", "L3": "note-L3.html", "L4": "note-L4.html", "L5": "note-L5.html", "L6": "note-L6.html", "L7": "note-L7.html", "L8": "note-L8.html", "L9": "note-L9.html", "L10": "note-L10.html", "L11": "note-L11.html", "L12": "note-L12.html", "L13": "note-L13.html", "L14": "note-L14.html", "L15": "note-L15.html", "L16": "note-L16.html", "L17": "note-L17.html", "O1": "note-O1.html", "O2": "note-O2.html", "O3": "note-O3.html", "O4": "note-O4.html", "LT": "note-LT.html"},G={"L1": "guide-L1.html", "L2": "guide-L2.html", "L3": "guide-L3.html", "L4": "guide-L4.html", "L5": "guide-L5.html", "L6": "guide-L6.html", "L7": "guide-L7.html", "L8": "guide-L8.html", "L9": "guide-L9.html", "L10": "guide-L10.html", "L12": "guide-L12.html", "L13": "guide-L13.html", "L14": "guide-L14.html", "L15": "guide-L15.html", "L16": "guide-L16.html", "L17": "guide-L17.html", "O1": "guide-O1.html", "O2": "guide-O2.html", "O3": "guide-O3.html", "O4": "guide-O4.html", "LT": "guide-LT.html"},M={"LT#forward|forward transforms and shifts": "LT#s4", "LT#partial-fractions|partial fractions": "LT#s10", "LT#second-shift|second shift and the step function": "LT#s5", "LT#repeated-factors|repeated factors and the first shift": "LT#s10", "LT#convolution|convolution": "LT#s6", "LT#s5|solving ODEs by Laplace": "LT#s12", "LT#s6|convolution and integral equations": "LT#s11", "L1#s4|limit laws": "L1#s5", "L1#s5|direct substitution": "L1#s6", "L1#s6|removing the 0/0 by algebra": "L1#s7", "L1#s7|one-sided limits": "L1#s3", "L1#s8|absolute values and piecewise functions": "L1#s3", "L2#s2|the Sandwich Theorem": "L2#s1", "L2#s3|x sin(1/x) and other examples": "L2#s2", "L2#s4|the limit sin x / x": "L2#s3", "L1#s5|one-sided limits": "L1#s3", "L3#s2|infinite limits": "L3#s1", "L3#s3|limits at infinity": "L3#s2", "L1#s6|conjugates": "L1#s7", "L3#s4|asymptotes": "L3#s5", "L9#s3|asymptotes in curve sketching": "L9#s8", "L4#s2|continuity at a point": "L4#s1", "L4#s4|continuity of combinations": "L4#s5", "L4#s3|one-sided limits and continuity": "L4#s1", "L4#s5|limits of composite functions": "L4#s7", "L4#s6|types of discontinuity": "L4#s3", "L4#s7|the Intermediate Value Theorem": "L4#s8", "L5#s2|definition of the derivative": "L5#s3", "L5#s3|one-sided derivatives": "L5#s5", "L5#s4|differentiable implies continuous": "L5#s6", "L6#s2|product and quotient rules": "L6#s2", "L6#s4|chain rule": "L6#s5", "L6#s5|implicit differentiation": "L6#s6", "L6#s6|tangent lines": "L5#s2", "L7#s5|logarithmic differentiation": "L7#s4", "L7#s4|derivatives of ln and exp": "L7#s3", "L7#s4|derivatives of exp, ln and aˣ": "L7#s3", "L7#s6|derivatives of inverse trig functions": "L7#s6", "L7#s2|derivative of an inverse function": "L7#s2", "L7#s1|one-to-one functions and inverses": "L7#s1", "L7#s5|graphs and limits of eˣ and ln x": "L7#s3", "L4#s2|continuity of composite functions": "L4#s6", "L8#s2|absolute extrema and the Extreme Value Theorem": "L8#s3", "L8#s3|critical points": "L8#s4", "L8#s4|Rolle's Theorem": "L8#s6", "L8#s5|the Mean Value Theorem": "L8#s7", "L8#s6|counting roots with Rolle's Theorem": "L8#s9", "L4#s5|the Intermediate Value Theorem": "L4#s8", "L8#s7|consequences of the MVT": "L8#s8", "L9#s2|increasing, decreasing and the first derivative test": "L9#s2", "L9#s3|concavity and inflection points": "L9#s7", "L9#s5|curve sketching checklist": "L9#s8", "L9#s2|sign of f′ and monotonicity": "L9#s1", "L9#s3|concavity from f′": "L9#s4", "L12#s4|area functions": "L12#s7", "L9#s5|curve sketching from f′ and f″": "L9#s9", "L9#s6|applied optimisation": "L9#s3", "L8#s2|absolute extrema on an interval": "L8#s5", "L9#s3|what f′ and f″ say about a graph": "L9#s4", "L10#s3|L'Hôpital's Rule": "L10#s3", "L10#s2|classifying forms": "L10#s2", "L10#s4|∞ − ∞ forms": "L10#s5", "L10#s5|0 · ∞ forms": "L10#s5", "L10#s6|indeterminate powers": "L10#s6", "L10#s7|L'Hôpital with an unknown function": "L10#s3", "L10#s8|L'Hôpital at a join": "L10#s3", "L4#s2|continuity": "L4#s1", "L5#s2|derivative by definition": "L5#s3", "L12#s4|FTC Part I": "L12#s7", "L6#s5|chain rule": "L6#s5", "L12#s2|Riemann sums and the definite integral": "L12#s1", "L11#s5|sigma notation and area": "L11#s6", "L12#s5|the area function": "L12#s7", "L12#s4|the Fundamental Theorem of Calculus": "L12#s7", "L12#s6|average value": "L12#s6", "L13#s2|substitution": "L13#s2", "L13#s3|substitution in definite integrals": "L13#s5", "L13#s4|integration by parts": "L13#s7", "L13#s5|repeated parts, ln and inverse trig": "L13#s8", "L13#s6|by parts with an unknown function": "L13#s7", "L13#s7|reduction formulas": "L13#s8", "L13#s8|the x → a − x substitution": "L13#s5", "L14#s2|partial fractions": "L14#s5", "L14#s3|repeated and quadratic factors": "L14#s5", "L14#s4|trig integrals": "L14#s3", "L14#s5|trig substitution": "L14#s4", "L15#s2|parametric curves": "L15#s1", "L15#s3|slope of a parametric curve": "L15#s3", "L15#s4|polar coordinates": "L15#s5", "L15#s5|sketching polar curves and symmetry": "L15#s7", "L15#s6|slope of a polar curve": "L15#s8", "L16#s1|area between curves": "L16#s1", "L16#s2|discs and washers": "L16#s4", "L16#s3|cylindrical shells": "L16#s5", "L16#s4|choosing discs or shells": "L16#s6", "L16#s5|volume by slicing": "L16#s3", "L17#s2|arc length": "L17#s2", "L17#s3|parametric and polar length": "L17#s3", "L14#s4|trig substitution": "L14#s4", "L17#s4|surface area": "L17#s6", "L16#s3|solids of revolution": "L16#s4", "O1#separable|separable equations": "O1#s6", "O1#linear|linear equations and the integrating factor": "O1#s5", "O1#exact|exact equations": "O1#s8", "O2#homogeneous|homogeneous equations": "O2#s5", "O2#bernoulli|Bernoulli equations": "O2#s1", "O2#riccati|Riccati equations": "O2#s2", "O2#shift|shift substitution": "O2#s6", "O2#reduction|reduction of order": "O2#s7", "O3#roots|root cases": "O3#s4", "O3#constant|constant coefficients": "O3#s3", "O3#higher|higher-order equations": "O3#s7", "O3#euler|Cauchy–Euler": "O3#s10", "O4#s2|undetermined coefficients": "O4#s2", "O4#s3|when the trial clashes": "O4#s3", "O4#s4|initial value problems": "O4#s4", "O4#variation-of-parameters|variation of parameters": "O4#s6", "O4#vop-cauchy-euler|VoP for Cauchy–Euler": "O4#s7", "O3#cauchy-euler|Cauchy–Euler homogeneous": "O3#s10", "O4#d-operator|D-operator method": "O4#s5"},IDX="index.html#part2";
+function ext(a,u){a.href=u;}
+function go(){
+  var h=document.querySelector("nav.toc .h"),m0=h&&/Exam guide\s*·\s*([A-Z0-9]+)/i.exec(h.textContent),self=m0?m0[1].toUpperCase():null,isGuide=!!(h&&/Exam guide/i.test(h.textContent));
+  document.querySelectorAll("a.note[data-note]").forEach(function(a){
+    var k=a.getAttribute("data-note"),t=a.textContent.replace(/\s+/g," ").replace(/^\s*Chapter note\s*·?\s*/,"").trim();
+    var v=M[k+"|"+t]||k,p=v.split("#"),c=p[0];
+    if(!N[c])return;
+    ext(a,B+N[c]+(p[1]&&p[1]!=="top"?"#"+p[1]:""));
+  });
+  document.querySelectorAll("a.guide[data-guide]").forEach(function(a){
+    var g=a.getAttribute("data-guide"),h=g.indexOf("#")>=0,c=h?g.split("#")[0]:g.split(".")[0],f=h?g.split("#")[1]:g.replace(".","");
+    if(!G[c])return;
+    ext(a,B+G[c]+"#"+f);
+  });
+  if(!isGuide)return;
+  var main=document.querySelector("main");
+  if(!main)return;
+  var top=main.querySelector("header.top");
+  if(top&&IDX&&self!=="INDEX"){var p=document.createElement("p");p.className="muted";var a=document.createElement("a");ext(a,B+IDX);a.textContent="← All exam-guide pages and the exam format";p.appendChild(a);top.appendChild(p);}
+  var re=/\b(L1[0-7]|L[1-9]|O[1-4]|LT) guide\b/g,skip={A:1,SCRIPT:1,STYLE:1,H1:1,H2:1,CODE:1,"MJX-CONTAINER":1,SUMMARY:1};
+  var w=document.createTreeWalker(main,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    for(var e=n.parentNode;e&&e!==main;e=e.parentNode){if(skip[e.nodeName])return NodeFilter.FILTER_REJECT;}
+    re.lastIndex=0;return re.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP;}});
+  var list=[],n;while((n=w.nextNode()))list.push(n);
+  list.forEach(function(n){
+    var s=n.nodeValue,f=document.createDocumentFragment(),last=0,m;re.lastIndex=0;
+    while((m=re.exec(s))){
+      var c=m[1];if(c===self||!G[c])continue;
+      f.appendChild(document.createTextNode(s.slice(last,m.index)));
+      var a=document.createElement("a");ext(a,B+G[c]);a.textContent=m[0];f.appendChild(a);last=m.index+m[0].length;
+    }
+    if(last===0)return;
+    f.appendChild(document.createTextNode(s.slice(last)));n.parentNode.replaceChild(f,n);
+  });
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
+})();
+</script>
+</html>

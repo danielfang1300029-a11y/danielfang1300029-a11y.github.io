@@ -1,0 +1,1411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MECH2407 C3a · Vector Differential Calculus</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+/* MECH2407 house style (from the MATH1851 bundle): one 46rem reading column, sticky contents rail on wide screens,
+   teal accent, warm orange for "Beyond the handouts", dark mode through CSS variables. Figures read colours via css('--accent') etc. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf; --prev:#6a4c9c; --prev-soft:#efe9f8;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#7a4fc2;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518; --prev:#b9a2e6; --prev-soft:#2a2238;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#b79bff; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518; --prev:#b9a2e6; --prev-soft:#2a2238;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#b79bff; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:230px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible,nav.toc a.on{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+nav.toc .home{display:block;margin:0 0 12px 10px;font-size:12.5px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+header.top .crumbs{font-size:13px;display:flex;flex-wrap:wrap;gap:4px 14px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0;min-width:0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent} .beyond>.tag{color:var(--warm)}
+.box.prev{background:var(--prev-soft);border-color:transparent;border-left:4px solid var(--prev)} .box.prev>.tag{color:var(--prev)}
+.pill.prev{background:var(--prev-soft);color:var(--prev)}
+.analogy{border-left:4px solid var(--c3)} .analogy>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent)} .ready>.tag{color:var(--accent)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+.figure .pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+canvas.plot{width:100%;display:block;border-radius:4px;touch-action:none}
+canvas.plot.drag{cursor:grab}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+.ctrl button{font:inherit;font-size:.88rem;padding:4px 12px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums;overflow-x:auto}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px;min-width:0}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0;min-width:0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide,a.note{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+a.guide:hover,a.note:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+.boxed{border:1.5px solid var(--accent);border-radius:6px;padding:6px 10px;display:block;margin:8px 0;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+main svg[role="img"][aria-label] text{paint-order:stroke;stroke:var(--card);stroke-width:3.5px;stroke-linejoin:round}
+mjx-container svg text{stroke:none}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+footer.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px} .box,.q{padding:10px 10px} .figure{padding:10px} details{padding:0 10px} mjx-container[display="true"]{font-size:92%}}
+
+/* ---- exam-guide classes (added Phase 4; notes do not use them) ---- */
+.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:6px;padding:12px 16px;margin:14px 0;min-width:0}
+.card>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.card .row{display:grid;grid-template-columns:6.2rem 1fr;gap:4px 12px;padding:6px 0;border-top:1px solid var(--grid);min-width:0}
+.card .row>b{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+.card .row>div{min-width:0}
+@media (max-width:520px){.card .row{grid-template-columns:1fr}}
+.freq{font-family:var(--mono);font-size:12px;color:var(--muted);margin:2px 0 6px}
+.proc{border:1px solid var(--line);border-left:4px solid var(--c3,#2a9d6a);border-radius:6px;padding:10px 16px;margin:14px 0;background:var(--card);min-width:0}
+.proc>.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.marker{font-size:.9rem;background:var(--accent-soft);border-radius:6px;padding:6px 10px;margin:8px 0}
+.marker::before{content:"Marker note · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.alsoset{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 6px}
+.glance{width:100%;border-collapse:collapse;font-size:.92rem}
+.glance td,.glance th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{
+  pd:['\\frac{\\partial #1}{\\partial #2}',2], vb:['\\mathbf{#1}',1], grad:'\\nabla', R:'\\mathbb{R}',
+  ii:'\\mathbf{i}', jj:'\\mathbf{j}', kk:'\\mathbf{k}'}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="assets/mathjax/tex-svg.js"></script>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <a class="home" href="index.html">← Start Here</a>
+  <p class="h">Chapter 3a</p>
+  <ol>
+    <li><a href="#s0">0 · Where this chapter sits</a></li>
+    <li><a href="#s1">1 · Vector functions, velocity</a></li>
+    <li><a href="#s2">2 · Vector fields</a></li>
+    <li><a href="#s3">3 · Gradient and ∇</a></li>
+    <li><a href="#s4">4 · Divergence</a></li>
+    <li><a href="#s5">5 · Curl</a></li>
+    <li><a href="#s6">6 · Identities, ∇ rules</a></li>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#mistakes">Common mistakes</a></li>
+    <li><a href="#find-mistake">Find the mistake</a></li>
+    <li><a href="#group-work">Practice problems</a></li>
+    <li><a href="#checks">Concept checks</a></li>
+    <li><a href="#taster">Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MECH2407 · Multivariable Calculus &amp; PDEs · Chapter 3a</span>
+  <h1>Vector Differential Calculus</h1>
+  <p class="lede">The first part of Chapter 3 (Vector Analysis), explained from scratch in the order of the course: vector functions and the velocity of a moving point, vector fields, the gradient and the operator \(\nabla\), divergence (sources and sinks) and curl (rotation), and the identities that tie them together. Every field is drawn and can be probed, every space curve is a rotatable 3D picture, and every example is solved in full; long calculations sit in "Show the calculation" tabs with a reason for each line. Material the exam uses but the course handouts leave out (polar unit vectors, identities with \(\vb r\) and \(r\), proofs of the \(\nabla\) rules) sits in orange "Beyond the handouts" boxes. The chapter ends with real past-paper questions, each linked to its exam-guide section.</p>
+  <div class="crumbs"><a href="index.html">← Start Here</a><a href="note-C2.html">← Previous: C2 Multiple Integrals</a><a href="guide-C3a.html">Exam guide for this chapter →</a><a href="note-C3b.html">Next: C3b Line Integrals →</a></div>
+</header>
+
+<section id="s0">
+<h2><span class="n">0</span>Where this chapter sits</h2>
+<p>Chapters 1 and 2 dealt with <b>scalar</b> quantities: a single number at each point, such as a temperature \(T(x,y,z)\) or a density. Many engineering quantities are <b>vectors</b> (they have a size and a direction): the velocity of a particle, the velocity of water at each point of a pipe, the gravitational pull at each point around the Earth, an electric or magnetic field. This chapter is about differentiating such vector quantities. It answers three questions:</p>
+<ul class="list">
+<li>A point moves along a curve in space. How do we describe its path, its velocity and its acceleration? (<b>Vector functions</b>, §1.)</li>
+<li>A vector is attached to every point of a region (a <b>vector field</b>, §2). How do we measure whether the field is spreading out from a point (like water from a tap) or swirling around it (like water going down a drain)? (<b>Divergence</b> and <b>curl</b>, §4 and §5.)</li>
+<li>How are these related to the gradient of Chapter 1? (The operator \(\nabla\), §3, and the identities of §6.)</li>
+</ul>
+<p>The plan of the chapter:</p>
+<ol class="steps">
+  <li><b>§1</b> Vector functions \(\vb F(t)\): limits, continuity, derivatives and integrals, done one component at a time; position, velocity \(d\vb r/dt\) (tangent to the path) and acceleration \(d^2\vb r/dt^2\); the product and chain rules. Beyond: polar unit vectors \(\vb u_r,\vb u_\theta\).</li>
+  <li><b>§2</b> Vector fields: pipe flow, gravity, the gradient of a temperature.</li>
+  <li><b>§3</b> The gradient written with the vector operator \(\nabla=\ii\,\partial/\partial x+\jj\,\partial/\partial y+\kk\,\partial/\partial z\) ("del").</li>
+  <li><b>§4</b> Divergence \(\nabla\cdot\vb F\): net outflow per unit volume; sources, sinks, solenoidal (divergence-free) fields; the field of a point charge.</li>
+  <li><b>§5</b> Curl \(\nabla\times\vb F\): circulation per unit area; the paddle-wheel picture; irrotational fields; the magnetic field of a wire.</li>
+  <li><b>§6</b> Two important identities, \(\nabla\cdot(\nabla\times\vb F)=0\) and \(\nabla\times(\nabla f)=\vb 0\), and eight rules for \(\nabla\) acting on sums and products.</li>
+</ol>
+<p><b>What you are assumed to know:</b> vectors in \(\R^3\) with \(\ii,\jj,\kk\), the dot and cross products and \(3\times3\) determinants, differentiation and integration of functions of one variable, and from <a href="note-C1.html#s2">Chapter 1</a> partial derivatives and from <a href="note-C1.html#s6">Chapter 1 §6</a> the gradient. Nothing about vector fields is assumed.</p>
+<p><b>How the exam uses this chapter.</b> Across the 21 papers collected for this bundle, 29 question parts (about 119 marks) come from this chapter, all in December papers. Three types recur:</p>
+<ul class="list">
+<li><b>C3a.1 Compute div and curl</b> of a given field (11 parts in 5 sittings, usually the 3–5 mark opening part of Q2, Q3 or Q4, often followed by a line or surface integral from Chapters 3b/3c).</li>
+<li><b>C3a.2 Vector identities and proofs</b> with the position vector \(\vb r=x\ii+y\jj+z\kk\), its length \(r\), products \(\phi\vb F\), and fields written in polar form (14 parts in 6 sittings, about 69 marks: the heaviest type). The identities in §3–§6 and the "ready-made results" box in §6 are the toolkit.</li>
+<li><b>C3a.3 Vector functions and space curves</b>: parametrise a curve, find a tangent vector, derive the polar unit vectors (4 parts, Dec 2022, with a repeat from Dec 2017).</li>
+</ul>
+<p>The December formula sheet does not list the div or curl formulas or the identities, so learn them. See the <a href="guide-C3a.html">C3a exam guide</a>.</p>
+</section>
+
+<section id="s1">
+<h2><span class="n">1</span>Vector functions: differentiation and integration <span class="muted small">(handout §3.1, pp. 1–3)</span></h2>
+<p>A <b>scalar-valued function</b> \(f(t)\) gives one number for each value of \(t\). A <b>vector function</b> gives one <b>vector</b> for each value of \(t\). If \(f_1(t)\), \(f_2(t)\), \(f_3(t)\) are scalar-valued functions, then</p>
+\[\vb F(t)=f_1(t)\,\ii+f_2(t)\,\jj+f_3(t)\,\kk\]
+<p>is a vector function of \(t\). The functions \(f_1(t)\), \(f_2(t)\) and \(f_3(t)\) are called the <b>components</b> of the vector function \(\vb F\).</p>
+<p class="word"><b>In words:</b> a vector function is three ordinary functions bundled together, one for each direction \(\ii,\jj,\kk\).</p>
+<p>The key idea of this whole section: <b>everything (limits, continuity, derivatives, integrals) is done one component at a time</b>, because \(\ii,\jj,\kk\) are fixed vectors that never change with \(t\).</p>
+
+<h3>Limits and continuity</h3>
+<p>The definitions of limits and continuity for vector functions are virtually identical with the corresponding definitions for scalar functions. Let \(\vb F(t)=f_1(t)\ii+f_2(t)\jj+f_3(t)\kk\). Then \(\vb F\) has a limit at \(t_0\) if and only if \(f_1\), \(f_2\) and \(f_3\) have limits at \(t_0\). In that case,</p>
+\[\begin{aligned}\lim_{t\to t_0}\vb F(t)=&\Big[\lim_{t\to t_0}f_1(t)\Big]\ii+\Big[\lim_{t\to t_0}f_2(t)\Big]\jj\\&+\Big[\lim_{t\to t_0}f_3(t)\Big]\kk.\end{aligned}\]
+<p class="word"><b>In words:</b> the limit of a vector function is the vector of the limits of its components.</p>
+<div class="box def"><span class="tag">Definition (continuity)</span>
+<p>A vector function \(\vb F(t)\) is <b>continuous</b> at a point \(t_0\) if</p>
+\[\lim_{t\to t_0}\vb F(t)=\vb F(t_0),\]
+<p>and this is equivalent to having each of the component functions continuous at \(t_0\).</p>
+<p class="word"><b>In words:</b> \(\vb F\) is continuous at \(t_0\) when its value at \(t_0\) is what nearby values approach; geometrically, the tip of the arrow \(\vb F(t)\) moves without jumps.</p>
+</div>
+
+<h3>The derivative</h3>
+<div class="box def"><span class="tag">Definition (derivative of a vector function)</span>
+\[\begin{aligned}\frac{d}{dt}\vb F(t)&=\lim_{\delta t\to0}\frac{\vb F(t+\delta t)-\vb F(t)}{\delta t}\\&=\frac{df_1}{dt}\ii+\frac{df_2}{dt}\jj+\frac{df_3}{dt}\kk.\end{aligned}\]
+<p>If the limit exists, that is if \(\vb F'(t)\) exists, we say that \(\vb F\) is <b>differentiable</b> at \(t_0\). This is true if and only if \(f_1\), \(f_2\) and \(f_3\) are differentiable at \(t_0\).</p>
+<p class="word"><b>In words:</b> derivative of a vector function = (change in the vector) ÷ (change in \(t\)), in the limit; in practice, differentiate each component.</p>
+</div>
+<details><summary>Show the calculation: why the derivative is taken component by component</summary><div>
+<ol class="steps">
+<li>Write out the difference: \(\vb F(t+\delta t)-\vb F(t)\) \(=[f_1(t+\delta t)-f_1(t)]\ii\) \(+\:[f_2(t+\delta t)-f_2(t)]\jj\) \(+\:[f_3(t+\delta t)-f_3(t)]\kk\). <i>Why:</i> vectors are subtracted component by component, and \(\ii,\jj,\kk\) are the same at \(t\) and at \(t+\delta t\).</li>
+<li>Divide by the number \(\delta t\): each bracket is divided by \(\delta t\). <i>Why:</i> dividing a vector by a number divides each component.</li>
+<li>Let \(\delta t\to0\): by the limit rule above, the limit of the vector is the vector of the limits, and each limit \(\lim\frac{f_k(t+\delta t)-f_k(t)}{\delta t}\) is the ordinary derivative \(f_k'(t)\).</li>
+</ol></div></details>
+
+<div class="box eg"><span class="tag">Example 3.1.1 · position, velocity, acceleration</span>
+<p>It is common to use vector functions to describe vectors in 3D space. If</p>
+\[\vb r(t)=x(t)\,\ii+y(t)\,\jj+z(t)\,\kk\]
+<p>is the <b>position vector</b> of a moving point (the arrow from the origin \(O\) to the point), where \(t\) represents time, then when \(t\) varies from \(t=a\) to \(t=b\), say, \(\vb r(t)\) traces out a <b>path</b> or <b>curve in space</b> (a <b>space curve</b>). The tip of the arrow \(\vb r(t)\) slides along the curve from \(\vb r(a)\) to \(\vb r(b)\); see the 3D figure below.</p>
+<p>The derivative function</p>
+\[\frac{d\vb r}{dt}=\lim_{\delta t\to0}\frac{\vb r(t+\delta t)-\vb r(t)}{\delta t}=\lim_{\delta t\to0}\frac{\delta\vb r}{\delta t}\]
+<p>represents the <b>velocity</b> of the point and is a vector <b>tangential to the path</b> at the point (it touches the curve there and points the way the point is moving). Similarly \(\dfrac{d^2\vb r}{dt^2}\) represents the <b>acceleration</b> of the point.</p>
+<p class="word"><b>In words:</b> velocity = rate of change of position, and it points along the path; acceleration = rate of change of velocity.</p>
+<p><b>Why tangential?</b> \(\delta\vb r=\vb r(t+\delta t)-\vb r(t)\) is the arrow from the point at time \(t\) to the point at time \(t+\delta t\): a <b>chord</b> of the curve (the red arrow in the 2D figure below). Dividing by the number \(\delta t\) does not change its direction. As \(\delta t\to0\) the second point slides back to the first, and the chord turns into the tangent line.</p>
+</div>
+<div class="figure">
+  <p class="ttl">A space curve traced by the position vector \(\vb r(t)\), with velocity and acceleration</p>
+  <canvas class="plot" id="f-curve" style="aspect-ratio:16/11" aria-label="Rotatable space curve with position, velocity and acceleration vectors"></canvas>
+  <div class="ctrl"><label>Curve <select id="cv-sel"><option value="ex">Example 3.1.2: e^(−t) i + 2cos3t j + 3sin3t k</option><option value="hel">helix: cos t i + sin t j + t/4 k</option><option value="ex3">Example 3.1.3: (2−2cos t) i + (sin t − t) j + 3t² k</option></select></label>
+  <label>time \(t\) <input type="range" id="cv-t" min="0" max="1" step="0.005" value="0.12"></label>
+  <label><input type="checkbox" id="cv-a" checked> show acceleration</label></div>
+  <div class="readout" id="cv-out"></div>
+  <p class="cap">Drag to rotate. The blue curve is the path from \(\vb r(a)\) to \(\vb r(b)\). The dashed pink arrows are the position vectors \(\vb r(a)\) and \(\vb r(b)\) of the end points; the solid pink arrow is \(\vb r(t)\) for the time on the slider. The red arrow is the velocity \(d\vb r/dt\), drawn from the moving point: it is always tangent to the path. The green arrow is the acceleration \(d^2\vb r/dt^2\) (scaled down to fit). The velocity and acceleration arrows are scaled for display; the readout gives their true values.</p>
+</div>
+<div class="figure">
+  <p class="ttl">The chord \(\delta\vb r=\vb r(t+\delta t)-\vb r(t)\) turns into the tangent as \(\delta t\to0\)</p>
+  <canvas class="plot" id="f-chord" style="aspect-ratio:16/10" aria-label="Two position vectors and the chord between them"></canvas>
+  <div class="ctrl"><label>\(\delta t\) <input type="range" id="ch-d" min="0.02" max="1.2" step="0.01" value="0.9"></label></div>
+  <div class="readout" id="ch-out"></div>
+  <p class="cap">From the origin \(O\), the pink arrows are \(\vb r(t)\) and \(\vb r(t+\delta t)\). The red arrow joining their tips is \(\delta\vb r=\vb r(t+\delta t)-\vb r(t)\) (pink + red = pink, the triangle rule for adding vectors). Shrink \(\delta t\): the red chord swings onto the dashed tangent line, so \(\delta\vb r/\delta t\) tends to a tangent vector, the velocity.</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 3.1.2</span>
+<p><b>A particle moves such that its position vector at time \(t\) is \(\vb r=e^{-t}\ii+2\cos3t\,\jj+3\sin3t\,\kk\). Determine its velocity and acceleration at time \(t=0\).</b></p>
+<p>The velocity of the particle is given by differentiating each component (chain rule: \(\frac{d}{dt}\cos3t=-3\sin3t\), \(\frac d{dt}\sin3t=3\cos3t\)):</p>
+\[\vb v=\frac{d\vb r}{dt}=-e^{-t}\ii-6\sin3t\,\jj+9\cos3t\,\kk.\]
+<p>At time \(t=0\) (\(e^0=1,\ \sin0=0,\ \cos0=1\)) we have</p>
+\[\vb v(0)=-\ii+9\kk,\]
+<p>with magnitude \(\sqrt{(-1)^2+0^2+9^2}=\sqrt{82}\) and along the direction (unit vector) \(\dfrac1{\sqrt{82}}(-\ii+9\kk)\). The acceleration is given by differentiating again:</p>
+\[\vb a=\frac{d^2\vb r}{dt^2}=e^{-t}\ii-18\cos3t\,\jj-27\sin3t\,\kk.\]
+<p>At time \(t=0\) we have</p>
+\[\vb a(0)=\ii-18\jj,\]
+<p>with magnitude \(\sqrt{1+324}=\sqrt{325}\) and along the direction \(\dfrac1{\sqrt{325}}(\ii-18\jj)\).</p>
+<p class="word"><b>In words:</b> magnitude = length of the vector (square root of the sum of squared components); direction = the vector divided by its length (a unit vector).</p>
+</div>
+
+<h3>Rules of differentiation</h3>
+<p>The usual rules of differentiation apply. For vector functions \(\vb a(t)\), \(\vb b(t)\), a scalar function \(f(t)\) and a constant \(c\):</p>
+<div class="box thm"><span class="tag">Differentiation rules</span>
+\[\begin{aligned}\frac{d}{dt}(\vb a+\vb b)&=\frac{d\vb a}{dt}+\frac{d\vb b}{dt}\\ \frac{d}{dt}(c\,\vb a)&=c\,\frac{d\vb a}{dt}\quad(c\text{ constant})\\ \frac{d}{dt}(f\vb a)&=f\frac{d\vb a}{dt}+f'\,\vb a\end{aligned}\]
+<p>and also</p>
+\[\begin{aligned}\frac{d}{dt}(\vb a\cdot\vb b)&=\frac{d\vb a}{dt}\cdot\vb b+\vb a\cdot\frac{d\vb b}{dt}\\ \frac{d}{dt}(\vb a\times\vb b)&=\frac{d\vb a}{dt}\times\vb b+\vb a\times\frac{d\vb b}{dt}\end{aligned}\]
+<p class="word"><b>In words:</b> the product rule works for all three kinds of product (number × vector, dot, cross): differentiate one factor at a time and add. For the cross product <b>keep the order</b> of the factors, because \(\vb a\times\vb b=-\vb b\times\vb a\).</p>
+</div>
+<details><summary>Show the calculation: proof of the dot-product rule (the others go the same way)</summary><div>
+<ol class="steps">
+<li>Write \(\vb a\cdot\vb b=a_1b_1+a_2b_2+a_3b_3\). <i>Why:</i> definition of the dot product; this is now an ordinary scalar function of \(t\).</li>
+<li>Differentiate with the ordinary product rule: \((a_1b_1)'=a_1'b_1+a_1b_1'\), and the same for the other two terms.</li>
+<li>Regroup: \((a_1'b_1+a_2'b_2+a_3'b_3)\) \(+\:(a_1b_1'+a_2b_2'+a_3b_3')\) \(=\vb a'\cdot\vb b+\vb a\cdot\vb b'\). <i>Why:</i> each bracket is again a dot product.</li>
+<li>For the cross product, do the same with each component of \(\vb a\times\vb b\) (e.g. the \(\ii\)-component \(a_2b_3-a_3b_2\)); regrouping gives \(\vb a'\times\vb b+\vb a\times\vb b'\) with the factors in the same order.</li>
+</ol></div></details>
+<div class="box beyond"><span class="tag">Beyond the handouts · a vector of constant length is perpendicular to its derivative</span>
+<p>If \(|\vb a(t)|\) is constant, then \(\vb a\cdot\vb a=|\vb a|^2\) is constant, so by the dot-product rule \(0=\frac d{dt}(\vb a\cdot\vb a)=2\vb a\cdot\vb a'\), i.e. \(\vb a\perp\vb a'\).</p>
+<p class="word"><b>In words:</b> a vector that only turns (never stretches) changes at right angles to itself. Examples: the velocity of a point moving round a circle is perpendicular to its position vector; the polar unit vectors below.</p>
+</div>
+
+<h3>The chain rule; partial derivatives; integration</h3>
+<p>If \(\vb r=\vb G(s)\) and \(s=f(t)\), the <b>chain rule</b> gives</p>
+\[\frac{d\vb r}{dt}=\frac{d\vb G(s)}{ds}\frac{ds}{dt}=\vb G'(s)f'(t)=\vb G'(f(t))\,f'(t).\]
+<p class="word"><b>In words:</b> to differentiate a vector function of a function, differentiate the outside (with respect to \(s\)) and multiply by the derivative of the inside, exactly as for scalar functions. (Example: a point that runs along the curve \(\vb G(s)\) at a varying pace \(s=f(t)\) has velocity \(\vb G'(s)\times\) its pace \(f'(t)\).)</p>
+<p>If \(\vb F=f_1\ii+f_2\jj+f_3\kk\) where \(f_1,f_2,f_3\) are functions of several variables \(t_1,t_2,\dots,t_n\), then partial derivatives are defined in the obvious way as</p>
+\[\pd{\vb F}{t_i}=\pd{f_1}{t_i}\ii+\pd{f_2}{t_i}\jj+\pd{f_3}{t_i}\kk.\]
+<p class="word"><b>In words:</b> to take \(\partial/\partial t_i\) of a vector, take \(\partial/\partial t_i\) of each component, holding the other variables fixed (as in <a href="note-C1.html#s2">Chapter 1</a>).</p>
+<p>Furthermore, <b>integration</b> of vector functions can be defined as termwise integration of its components:</p>
+\[\begin{aligned}\int_a^b\vb F(t)\,dt&=\int_a^b(f_1\ii+f_2\jj+f_3\kk)\,dt\\&=\Big(\int_a^bf_1\,dt\Big)\ii+\Big(\int_a^bf_2\,dt\Big)\jj\\&\quad+\Big(\int_a^bf_3\,dt\Big)\kk.\end{aligned}\]
+<p class="word"><b>In words:</b> integrate each component. An indefinite integral has a <b>constant vector</b> \(\vb c\) of integration (one constant per component), fixed by a starting condition.</p>
+<div class="box eg"><span class="tag">Example 3.1.3</span>
+<p><b>If a particle moves with velocity \(\vb v(t)=2\sin t\,\ii+(\cos t-1)\,\jj+6t\,\kk\) and \(\vb r(0)=\vb 0\), determine its position vector at time \(t\).</b></p>
+<p>Since velocity is the derivative of position, position is the integral of velocity:</p>
+\[\begin{aligned}\vb r(t)&=\int\frac{d\vb r}{dt}\,dt\\&=\int(2\sin t\,\ii+(\cos t-1)\jj+6t\,\kk)\,dt\\&=-2\cos t\,\ii+(\sin t-t)\jj+3t^2\kk+\vb c,\end{aligned}\]
+<p>where \(\vb c\) is a constant vector. At \(t=0\) (\(\cos0=1\), \(\sin0=0\)) we have \(\vb 0=-2\ii+\vb c\) and hence \(\vb c=2\ii\). Thus</p>
+\[\vb r=(2-2\cos t)\,\ii+(\sin t-t)\,\jj+3t^2\,\kk.\]
+<p class="word"><b>In words:</b> integrate each component, then choose the constant vector so that the starting position is right. Check: differentiating gives back \(\vb v\), and \(\vb r(0)=\vb 0\). (This path is the third option in the 3D figure above.)</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · a curve given as the intersection of two surfaces</span>
+<p>The exam sometimes defines a curve as the set of points lying on two surfaces at once and asks for a parametrisation \(\vb r(t)\) and a tangent vector. Method: let one coordinate be \(t\) (or use an angle for a circle), solve the two equations for the other two coordinates, then differentiate.</p>
+<p><b>Example (written for these notes).</b> The cylinder \(x^2+y^2=1\) meets the plane \(z=x+y\) in a closed curve (an ellipse). On the cylinder, \(x=\cos t,\ y=\sin t\); the plane then gives \(z=\cos t+\sin t\). So</p>
+\[\begin{aligned}\vb r(t)=\;&\cos t\,\ii+\sin t\,\jj\\&+(\cos t+\sin t)\,\kk,\\&0\le t\le2\pi,\end{aligned}\]
+\[\frac{d\vb r}{dt}=-\sin t\,\ii+\cos t\,\jj+(\cos t-\sin t)\,\kk.\]
+<p>At \((1,0,1)\) (\(t=0\)) the tangent vector is \(\jj+\kk\). Check: it is perpendicular to the plane's normal \(-\ii-\jj+\kk\) (the gradient of \(z-x-y\), see §3), as a curve lying in the plane must be.</p>
+</div>
+
+<h3>Polar unit vectors</h3>
+<div class="box beyond"><span class="tag">Beyond the handouts · polar unit vectors \(\vb u_r\) and \(\vb u_\theta\)</span>
+<p>In polar coordinates a point is located by its distance \(r\) from the origin and the angle \(\theta\) from the positive \(x\)-axis: \(x=r\cos\theta,\ y=r\sin\theta\). At each point there are two natural directions:</p>
+<ul class="list">
+<li>\(\vb u_r\) (also written \(\vb e_r\) or \(\hat{\vb r}\)): the unit vector pointing the way you move when \(r\) increases with \(\theta\) fixed (straight out along the radius);</li>
+<li>\(\vb u_\theta\) (also \(\vb e_\theta\)): the unit vector pointing the way you move when \(\theta\) increases with \(r\) fixed (anticlockwise round the circle, at right angles to the radius).</li>
+</ul>
+<div class="box thm"><span class="tag">Result</span>
+\[\begin{aligned}\vb u_r&=\cos\theta\,\ii+\sin\theta\,\jj,\\ \vb u_\theta&=-\sin\theta\,\ii+\cos\theta\,\jj.\end{aligned}\]
+<p class="word"><b>In words:</b> \(\vb u_r\) is the unit vector at angle \(\theta\); \(\vb u_\theta\) is \(\vb u_r\) turned \(90^\circ\) anticlockwise. Unlike \(\ii\) and \(\jj\), they <b>change direction from point to point</b>.</p>
+</div>
+<details><summary>Show the calculation: deriving \(\vb u_r\) and \(\vb u_\theta\) (two ways)</summary><div>
+<p><b>Geometric way</b> (as expected in the exam, with the figure below):</p>
+<ol class="steps">
+<li>\(\vb u_r\) points along \(\overrightarrow{OP}=x\ii+y\jj=r\cos\theta\,\ii+r\sin\theta\,\jj\). <i>Why:</i> moving out along the radius is moving along \(OP\).</li>
+<li>Divide by the length \(|OP|=r\) to get a unit vector: \(\vb u_r=\cos\theta\,\ii+\sin\theta\,\jj\).</li>
+<li>\(\vb u_\theta\) is perpendicular to \(\vb u_r\) and points anticlockwise, i.e. it makes angle \(\theta+\frac\pi2\) with the \(x\)-axis: \(\vb u_\theta=\cos(\theta+\tfrac\pi2)\ii+\sin(\theta+\tfrac\pi2)\jj\).</li>
+<li>Use \(\cos(\theta+\frac\pi2)=-\sin\theta\) and \(\sin(\theta+\frac\pi2)=\cos\theta\): \(\vb u_\theta=-\sin\theta\,\ii+\cos\theta\,\jj\).</li>
+</ol>
+<p><b>Calculus way</b>: take the position vector \(\vb R=r\cos\theta\,\ii+r\sin\theta\,\jj\).</p>
+<ol class="steps">
+<li>\(\pd{\vb R}{r}=\cos\theta\,\ii+\sin\theta\,\jj\), which has length \(\sqrt{\cos^2\theta+\sin^2\theta}=1\). <i>Why:</i> \(\partial\vb R/\partial r\) is the direction of motion when only \(r\) changes; it is already a unit vector, so it is \(\vb u_r\).</li>
+<li>\(\pd{\vb R}{\theta}=-r\sin\theta\,\ii+r\cos\theta\,\jj\), of length \(r\). <i>Why:</i> direction of motion when only \(\theta\) changes.</li>
+<li>Divide by its length \(r\): \(\vb u_\theta=-\sin\theta\,\ii+\cos\theta\,\jj\).</li>
+<li>Check: \(\vb u_r\cdot\vb u_\theta=-\cos\theta\sin\theta+\sin\theta\cos\theta=0\), so they are perpendicular.</li>
+</ol></div></details>
+<p>Because they turn with \(\theta\), their derivatives are not zero:</p>
+\[\frac{d\vb u_r}{d\theta}=\vb u_\theta,\qquad\frac{d\vb u_\theta}{d\theta}=-\vb u_r.\]
+<p class="word"><b>In words:</b> turning the angle a little turns \(\vb u_r\) towards \(\vb u_\theta\), and \(\vb u_\theta\) towards \(-\vb u_r\) (each is perpendicular to its own derivative, as constant-length vectors must be).</p>
+<p>Solving the result for \(\ii,\jj\) gives \(\ii=\cos\theta\,\vb u_r-\sin\theta\,\vb u_\theta\), \(\jj=\sin\theta\,\vb u_r+\cos\theta\,\vb u_\theta\): this is how a Cartesian field is rewritten in polar form (§4).</p>
+<p>For a point moving with \(r=r(t)\), \(\theta=\theta(t)\), its position is \(\vb r=r\,\vb u_r\) and</p>
+\[\vb v=\frac{d\vb r}{dt}=\dot r\,\vb u_r+r\dot\theta\,\vb u_\theta\]
+<p>(dots mean \(d/dt\)).</p>
+<p class="word"><b>In words:</b> velocity = (rate of moving outwards) along the radius + (distance × rate of turning) around the circle.</p>
+<details><summary>Show the calculation: velocity in polar form</summary><div>
+<ol class="steps">
+<li>\(\vb r=r\,\vb u_r\). <i>Why:</i> the position vector has length \(r\) and points along \(\vb u_r\).</li>
+<li>Product rule \(\frac d{dt}(f\vb a)=f\frac{d\vb a}{dt}+f'\vb a\): \(\vb v=\dot r\,\vb u_r+r\,\frac{d\vb u_r}{dt}\).</li>
+<li>Chain rule: \(\frac{d\vb u_r}{dt}=\frac{d\vb u_r}{d\theta}\frac{d\theta}{dt}=\dot\theta\,\vb u_\theta\). <i>Why:</i> \(\vb u_r\) depends on \(t\) only through \(\theta\).</li>
+<li>Substitute: \(\vb v=\dot r\,\vb u_r+r\dot\theta\,\vb u_\theta\). (Differentiating once more gives the acceleration \((\ddot r-r\dot\theta^2)\vb u_r+(r\ddot\theta+2\dot r\dot\theta)\vb u_\theta\).)</li>
+</ol></div></details>
+</div>
+<div class="figure">
+  <p class="ttl">Polar unit vectors at a point \(P(r,\theta)\): they turn as the point moves</p>
+  <canvas class="plot" id="f-polar" style="aspect-ratio:1/0.85;max-width:520px;margin:0 auto" aria-label="Point P with radius r, angle theta and the unit vectors u_r and u_theta"></canvas>
+  <div class="ctrl"><label>\(\theta\) <input type="range" id="po-t" min="0" max="6.28" step="0.01" value="0.75"></label>
+  <label>\(r\) <input type="range" id="po-r" min="0.6" max="2.4" step="0.01" value="1.8"></label>
+  <label><input type="checkbox" id="po-m" checked> show \(\vb u_r,\vb u_\theta\) at other points</label></div>
+  <div class="readout" id="po-out"></div>
+  <p class="cap">The segment \(OP\) has length \(r\) and makes angle \(\theta\) with the \(x\)-axis; the dashed lines give \(x=r\cos\theta\) and \(y=r\sin\theta\). At \(P\), \(\vb u_r\) (red) continues outward along the radius and \(\vb u_\theta\) (green) is perpendicular to it, pointing anticlockwise. The faint pairs at other points on the same circle show that the pair turns with \(\theta\), whereas \(\ii\) and \(\jj\) are the same everywhere.</p>
+</div>
+</section>
+
+<section id="s2">
+<h2><span class="n">2</span>Vector fields <span class="muted small">(handout §3.2, p. 4)</span></h2>
+<p>Consider a 2D flow of water along a duct (a pipe seen from the side), as in the figure below. Fluid enters on the left (inflow) and leaves on the right (outflow). Mark out an imaginary closed curve inside the duct, called a <b>control surface</b> (in 2D it is a curve; in 3D it would be a closed surface). At every point inside it the water has a velocity, drawn as an arrow whose length shows the speed and whose direction shows where the water is going there.</p>
+<div class="figure">
+  <p class="ttl">Pipe flow: a velocity field inside a control surface</p>
+  <canvas class="plot" id="f-pipe" style="aspect-ratio:2.55/1" aria-label="Flow along a duct with velocity arrows inside a closed control surface"></canvas>
+  <div class="ctrl"><label>wobble in the flow <input type="range" id="pf-w" min="0" max="1" step="0.01" value="0.5"></label></div>
+  <p class="cap">The duct walls are the hatched lines. Fluid comes in on the left (red arrow) and leaves on the right (yellow arrow). The red closed curve is the control surface; the arrows inside are the velocity vectors at a grid of points, faster in the middle of the duct than near the walls. The slider adds some cross-flow so that the arrows are not all parallel, as in a real, slightly disturbed flow.</p>
+</div>
+<p>The velocity at each point within the region enclosed by the control surface forms a <b>velocity field</b>. Another example from daily experience (though we are not always aware of it) is gravitational attraction. The force of attraction towards a spherical object, such as the Earth, can be pictured by drawing at each point an arrow whose length and direction represent the magnitude and direction of the force on a unit mass placed there: every arrow points towards the centre, and the arrows get shorter further away (the force falls off like \(1/(\text{distance})^2\)). This forms the <b>gravitational force field</b>. Other examples are electric and magnetic fields.</p>
+<div class="box def"><span class="tag">Definition (vector field)</span>
+<p>In general, a <b>vector field</b> \(\vb F\) consists of two parts: a collection of points, the <b>domain</b> \(D\) (a subset of the plane or of space), and a rule which assigns to each point in \(D\) one and only one vector. In other words, if \(D\) is a subset of \(\R^3\), then a vector field on \(D\) is a function</p>
+\[\begin{aligned}\vb F(x,y,z)=\;&M(x,y,z)\,\ii+N(x,y,z)\,\jj\\&+P(x,y,z)\,\kk.\end{aligned}\]
+<p>A <b>two-dimensional</b> vector field thus has the form</p>
+\[\vb F(x,y)=M(x,y)\,\ii+N(x,y)\,\jj.\]
+<p class="word"><b>In words:</b> a vector field is an arrow at every point; each component \(M,N,P\) is an ordinary function of position, giving the \(x\)-, \(y\)- and \(z\)-parts of the arrow there.</p>
+</div>
+<div class="box analogy"><span class="tag">Analogy</span>
+<p>A <b>scalar field</b> is like a weather map of temperatures: one number written at each town. A <b>vector field</b> is like a wind map: a little arrow at each town showing which way and how hard the wind blows. Compare §1: a vector function \(\vb r(t)\) gives one vector for each <b>time</b>; a vector field gives one vector for each <b>point</b>.</p>
+</div>
+<div class="figure">
+  <p class="ttl">A gallery of vector fields (2D), with a probe point</p>
+  <canvas class="plot" id="f-fields" style="aspect-ratio:1/0.9;max-width:560px;margin:0 auto" aria-label="Vector field arrows with a probe point"></canvas>
+  <div class="ctrl"><label>Field <select id="fg-sel">
+    <option value="grav">gravity, or grad T of Example 3.2.1: −r/r³</option>
+    <option value="rot">rotation: −y i + x j</option>
+    <option value="uni">uniform: i + 0.5 j</option>
+    <option value="shear">shear flow: y i</option>
+    <option value="src">spreading out: x i + y j</option></select></label>
+  <label>probe \(x\) <input type="range" id="fg-x" min="-2" max="2" step="0.05" value="1.2"></label>
+  <label>probe \(y\) <input type="range" id="fg-y" min="-2" max="2" step="0.05" value="0.8"></label></div>
+  <div class="readout" id="fg-out"></div>
+  <p class="cap">Arrows are drawn at a grid of points; colour and length grow with the size of the vector (lengths are scaled to fit). The black arrow is the vector at the probe point, whose value the readout gives. The gravity field (a section through the plane \(z=0\)) points inwards everywhere and is strongest near the centre (the centre itself is excluded: the field is not defined there).</p>
+</div>
+<div class="box eg"><span class="tag">Example 3.2.1</span>
+<p><b>The distribution of temperature</b></p>
+\[T(x,y,z)=\frac{1}{\sqrt{x^2+y^2+z^2}}\]
+<p><b>in space forms a scalar field, while the temperature gradient</b></p>
+\[\begin{aligned}\operatorname{grad}T&=\pd Tx\ii+\pd Ty\jj+\pd Tz\kk\\&=-\frac{x\ii+y\jj+z\kk}{\sqrt{(x^2+y^2+z^2)^3}}\end{aligned}\]
+<p><b>forms a vector field.</b></p>
+<p>Here \(T=1/r\) where \(r=\sqrt{x^2+y^2+z^2}\) is the distance from the origin: hottest near the origin, cooling with distance. The gradient (defined in <a href="note-C1.html#s6">Chapter 1 §6</a> and again in §3 below) is the vector of partial derivatives; it points in the direction in which \(T\) increases fastest, here straight towards the origin.</p>
+<p class="word"><b>In words:</b> differentiating a scalar field (one number per point) with grad produces a vector field (one arrow per point). This \(\operatorname{grad}T=-\vb r/r^3\) has exactly the shape of the gravity field: an inverse-square field pointing at the origin (first option in the gallery above).</p>
+</div>
+<details><summary>Show the calculation: the partial derivatives of \(T=(x^2+y^2+z^2)^{-1/2}\)</summary><div>
+<ol class="steps">
+<li>Write \(T=(x^2+y^2+z^2)^{-1/2}\). <i>Why:</i> a power is easier to differentiate than a fraction with a root.</li>
+<li>\(\pd Tx\) \(=-\tfrac12(x^2+y^2+z^2)^{-3/2}\cdot2x\) \(=-\dfrac{x}{(x^2+y^2+z^2)^{3/2}}\). <i>Why:</i> chain rule, holding \(y,z\) constant; the derivative of the inside \(x^2+y^2+z^2\) with respect to \(x\) is \(2x\).</li>
+<li>By the symmetry of \(T\) in \(x,y,z\): \(\pd Ty=-\dfrac{y}{(\cdots)^{3/2}}\), \(\pd Tz=-\dfrac{z}{(\cdots)^{3/2}}\).</li>
+<li>Collect: \(\operatorname{grad}T=-\dfrac{x\ii+y\jj+z\kk}{(x^2+y^2+z^2)^{3/2}}=-\dfrac{\vb r}{r^3}\), and \((\cdots)^{3/2}=\sqrt{(\cdots)^3}\).</li>
+</ol></div></details>
+<div class="box beyond"><span class="tag">Beyond the handouts · sketching a 2D field by hand</span>
+<p>Pick a few points (on the axes and on a circle are good choices), work out \(\vb F\) there, and draw each arrow starting at its point. For example, for \(\vb F=-y\ii+x\jj\): at \((1,0)\) the arrow is \(\jj\) (up), at \((0,1)\) it is \(-\ii\) (left), at \((-1,0)\) it is \(-\jj\) (down), at \((0,-1)\) it is \(\ii\) (right): an anticlockwise swirl, with \(|\vb F|=\sqrt{x^2+y^2}\) growing with distance from the origin. A useful check: \(\vb F\cdot(x\ii+y\jj)=0\), so every arrow is at right angles to the radius, i.e. tangent to a circle about the origin.</p>
+</div>
+</section>
+
+<section id="s3">
+<h2><span class="n">3</span>The gradient and the vector operator \(\nabla\) <span class="muted small">(handout §3.2, pp. 4–5)</span></h2>
+<p>Consider the <b>gradient</b> of a scalar field \(\varphi(x,y,z)\), defined as</p>
+\[\operatorname{grad}\varphi=\pd{\varphi}{x}\ii+\pd{\varphi}{y}\jj+\pd{\varphi}{z}\kk,\]
+<p>which is an example of a vector field. It gives the <b>magnitude and direction of the greatest rate of change</b> of \(\varphi\) at a point \((x,y,z)\): it points in the direction in which \(\varphi\) increases fastest, and its length is that fastest rate of increase.</p>
+<p class="word"><b>In words:</b> the gradient is the "uphill arrow": its components are the three partial derivatives, its direction is straight uphill, and its length is how steep uphill is.</p>
+<p>This was met in <a href="note-C1.html#s6">Chapter 1 §6</a>: there, the rate of change of \(\varphi\) in the direction of a unit vector \(\vb u\) (the <b>directional derivative</b>) was shown to be \(\vb u\cdot\operatorname{grad}\varphi=|\operatorname{grad}\varphi|\cos\alpha\), where \(\alpha\) is the angle between \(\vb u\) and \(\operatorname{grad}\varphi\). It is largest, equal to \(|\operatorname{grad}\varphi|\), when \(\alpha=0\), i.e. when \(\vb u\) points along the gradient; and it is zero when \(\vb u\) is perpendicular to the gradient, i.e. along a <b>level curve</b> (a curve on which \(\varphi\) is constant), so the gradient is perpendicular to the level curves. The figure shows both facts.</p>
+<div class="figure">
+  <p class="ttl">Gradient arrows over a contour map: perpendicular to the level curves, pointing uphill</p>
+  <canvas class="plot" id="f-gradc" style="aspect-ratio:1/0.9;max-width:560px;margin:0 auto" aria-label="Contour map with gradient arrows"></canvas>
+  <div class="ctrl"><label>Function <select id="gc-sel"><option value="ell">φ = x² + 2y² (a bowl)</option><option value="sad">φ = x² − y² (a saddle)</option><option value="xy">φ = xy</option><option value="T">φ = 1/√(x² + y² + 1) (a hot spot)</option></select></label>
+  <label>point \(x\) <input type="range" id="gc-x" min="-1.8" max="1.8" step="0.05" value="0.9"></label>
+  <label>point \(y\) <input type="range" id="gc-y" min="-1.8" max="1.8" step="0.05" value="0.6"></label></div>
+  <div class="readout" id="gc-out"></div>
+  <p class="cap">Coloured curves: level curves \(\varphi=\text{const}\) (blue = low, orange = high). Grey arrows: \(\operatorname{grad}\varphi\) at a grid of points (scaled to fit). At the chosen point (black), the red arrow is \(\operatorname{grad}\varphi\) and the dashed line is the tangent to the level curve through the point: the two are always at right angles.</p>
+</div>
+
+<h3>The operator \(\nabla\)</h3>
+<p>If we define the <b>vector operator</b></p>
+\[\nabla\equiv\ii\pd{}{x}+\jj\pd{}{y}+\kk\pd{}{z}\]
+<p>(analogous to \(D\equiv\dfrac{d}{dx}\) for ODEs), known as <b>del</b> or <b>nabla</b>, then we may write</p>
+\[\operatorname{grad}\varphi=\nabla\varphi.\]
+<p class="word"><b>In words:</b> \(\nabla\) is not a vector on its own; it is an instruction, "take \(\partial/\partial x\), \(\partial/\partial y\), \(\partial/\partial z\) of whatever comes next and use them as the \(\ii,\jj,\kk\) components". An <b>operator</b> is a rule that turns one function into another, as \(D\) turns \(y\) into \(y'\).</p>
+<p>Notice that \(\nabla\varphi\) is a kind of derivative for a scalar field. There are two types of derivatives for a <b>vector</b> field which make use of the operator \(\nabla\), obtained by treating \(\nabla\) like a vector in a dot product and in a cross product:</p>
+<div class="cases">
+<div><b>\(\nabla\varphi\) = grad \(\varphi\)</b>scalar in → vector out (§3)</div>
+<div><b>\(\nabla\cdot\vb F\) = div \(\vb F\)</b>vector in → scalar out (§4)</div>
+<div><b>\(\nabla\times\vb F\) = curl \(\vb F\)</b>vector in → vector out (§5)</div>
+</div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Order matters: \(\nabla\cdot\vb F\) is a number-valued function, but \(\vb F\cdot\nabla=M\pd{}{x}+N\pd{}{y}+P\pd{}{z}\) is a new operator waiting for something to act on (it appears in identity 8 of §6). Likewise grad acts only on scalars and div, curl act only on vectors: "grad of a vector" and "curl of a scalar" are meaningless in this course.</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · gradients of the position vector and its length</span>
+<p>Exam proofs (type C3a.2) are full of the <b>position vector</b> \(\vb r=x\ii+y\jj+z\kk\) and its length \(r=|\vb r|=\sqrt{x^2+y^2+z^2}\) (the distance from the origin). These gradients are worth knowing by heart (here \(\vb v\) is a constant vector and \(n\) any number; \(r\ne0\)):</p>
+\[\begin{aligned}\nabla r&=\frac{\vb r}{r},\qquad\nabla\Big(\frac1r\Big)=-\frac{\vb r}{r^3},\\ \nabla(r^n)&=n\,r^{n-2}\,\vb r,\\ \nabla f(r)&=f'(r)\,\frac{\vb r}{r},\\ \nabla(\vb v\cdot\vb r)&=\vb v.\end{aligned}\]
+<p class="word"><b>In words:</b> any function of the distance \(r\) alone has a gradient pointing straight out from the origin (\(\vb r/r\) is the unit vector outwards), with size equal to its ordinary derivative \(f'(r)\). The gradient of \(\vb v\cdot\vb r=ax+by+cz\) is the constant vector \(\vb v\).</p>
+<details><summary>Show the calculation: \(\nabla r\), \(\nabla(r^n)\), \(\nabla f(r)\), \(\nabla(\vb v\cdot\vb r)\)</summary><div>
+<ol class="steps">
+<li>\(r^2=x^2+y^2+z^2\). Differentiate both sides with respect to \(x\): \(2r\pd rx=2x\), so \(\pd rx=\dfrac xr\). <i>Why:</i> implicit differentiation; easier than differentiating the square root.</li>
+<li>Similarly \(\pd ry=\dfrac yr\), \(\pd rz=\dfrac zr\). So \(\nabla r=\dfrac{x\ii+y\jj+z\kk}{r}=\dfrac{\vb r}{r}\).</li>
+<li>For any differentiable \(f\): \(\pd{}{x}f(r)=f'(r)\pd rx=f'(r)\dfrac xr\). <i>Why:</i> chain rule, \(f\) depends on \(x\) only through \(r\). Collecting the three components: \(\nabla f(r)=f'(r)\dfrac{\vb r}{r}\).</li>
+<li>Take \(f(r)=r^n\): \(f'(r)=nr^{n-1}\), so \(\nabla(r^n)=nr^{n-1}\dfrac{\vb r}{r}=nr^{n-2}\vb r\). With \(n=-1\): \(\nabla(1/r)=-r^{-3}\vb r\) (this is Example 3.2.1 again).</li>
+<li>\(\vb v\cdot\vb r=ax+by+cz\) for \(\vb v=a\ii+b\jj+c\kk\). Its partial derivatives are \(a,b,c\). So \(\nabla(\vb v\cdot\vb r)=a\ii+b\jj+c\kk=\vb v\).</li>
+</ol></div></details>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · the gradient is normal to level surfaces</span>
+<p>In 3D, \(\varphi(x,y,z)=c\) is a <b>level surface</b>. If a curve \(\vb r(t)\) lies on it, then \(\varphi(\vb r(t))=c\) for all \(t\); differentiating with the chain rule gives \(\nabla\varphi\cdot\dfrac{d\vb r}{dt}=0\). So \(\nabla\varphi\) is perpendicular to the velocity of every curve in the surface: it is a <b>normal vector</b> to the surface. (For \(T=1/r\) the level surfaces are spheres about the origin and \(\nabla T=-\vb r/r^3\) points along the radius, perpendicular to them.) This is how the exam finds normals to surfaces and checks whether a curve is tangent to a surface (Dec 2022 Q2(b)).</p>
+</div>
+</section>
+
+<section id="s4">
+<h2><span class="n">4</span>Divergence: flux, sources and sinks <span class="muted small">(handout §3.3, pp. 5–7)</span></h2>
+<div class="box def"><span class="tag">Definition (divergence)</span>
+<p>If \(\vb F(x,y,z)\) \(=M(x,y,z)\,\ii+N(x,y,z)\,\jj+P(x,y,z)\,\kk\) is a vector field, then its <b>divergence</b> is defined as</p>
+\[\operatorname{div}\vb F=\pd Mx+\pd Ny+\pd Pz.\]
+<p>In terms of the operator \(\nabla\) we may write</p>
+\[\begin{aligned}\nabla\cdot\vb F&=\Big(\ii\pd{}{x}+\jj\pd{}{y}+\kk\pd{}{z}\Big)\\&\quad\cdot(M\ii+N\jj+P\kk)\\&=\pd Mx+\pd Ny+\pd Pz.\end{aligned}\]
+<p>That is, \(\nabla\cdot\vb F=\operatorname{div}\vb F\). Note that \(\operatorname{div}\vb F\) is a <b>scalar field</b>.</p>
+<p class="word"><b>In words:</b> divergence = (how fast the \(x\)-part changes in the \(x\)-direction) + (\(y\)-part in the \(y\)-direction) + (\(z\)-part in the \(z\)-direction). "Dot" \(\nabla\) with \(\vb F\): multiply matching components and add. The answer is one number at each point, not a vector.</p>
+</div>
+<div class="box eg"><span class="tag">Example 3.3.1</span>
+<p><b>The divergence of the vector field \(\vb F=x^2z\,\ii-2y^3z^2\,\jj+xyz^2\,\kk\) is given by</b></p>
+\[\operatorname{div}\vb F=\nabla\cdot\vb F=2xz-6y^2z^2+2xyz.\]
+<p>Term by term: \(\pd{}{x}(x^2z)=2xz\) (\(z\) held constant); \(\pd{}{y}(-2y^3z^2)=-6y^2z^2\); \(\pd{}{z}(xyz^2)=2xyz\).</p>
+<p class="word"><b>In words:</b> differentiate each component only with respect to its own variable (\(M\) by \(x\), \(N\) by \(y\), \(P\) by \(z\)) and add.</p>
+</div>
+
+<h3>Physical interpretation of div</h3>
+<p>The idea of divergence is probably most easily illustrated by considering the motion of an <b>incompressible fluid</b> (one whose density cannot change, for example water), where we take the vector field to be the velocity \(\vb v=v_1\ii+v_2\jj+v_3\kk\) of the fluid.</p>
+<p>Consider a small imaginary rectangular box of dimensions \(\delta x\), \(\delta y\) and \(\delta z\) centred at \((x,y,z)\) in the fluid (figure below). We consider the flow of fluid through this box. The volume of fluid crossing a surface in unit time is an example of <b>flux</b> (flux = flow rate through a surface).</p>
+<div class="figure">
+  <p class="ttl">Flux through a small box centred at \((x,y,z)\)</p>
+  <canvas class="plot" id="f-box" style="aspect-ratio:16/11" aria-label="Rotatable small box with flow arrows through the two faces perpendicular to the x-axis"></canvas>
+  <div class="ctrl"><label>\(\partial v_1/\partial x\) <input type="range" id="bx-k" min="-1" max="1" step="0.05" value="0.6"></label></div>
+  <div class="readout" id="bx-out"></div>
+  <p class="cap">Drag to rotate. The box has edges \(\delta x,\delta y,\delta z\) and centre (centroid) \((x,y,z)\) (black dot); corners \(A,B,C,D\) (teal) and \(A',B',C',D'\) (grey) are labelled. The face \(ABCD\) is on the positive \(x\) side (at \(x+\delta x/2\), right); the face \(A'B'C'D'\) is the opposite face (at \(x-\delta x/2\), shaded). The red arrows show the \(x\)-velocity \(v_1\) at the centres of these two faces: \(v_1(x-\tfrac{\delta x}2,y,z)\) carries fluid <b>in</b> through \(A'B'C'D'\) and \(v_1(x+\tfrac{\delta x}2,y,z)\) carries it <b>out</b> through \(ABCD\). The slider sets how fast \(v_1\) grows with \(x\): when it grows, more leaves than enters.</p>
+</div>
+<p>Taking the midpoint of a face as a representative point, the flux through the face \(ABCD\) <b>out</b> of the box is</p>
+\[v_1\Big(x+\frac{\delta x}{2},y,z\Big)\,\delta y\,\delta z.\]
+<p class="word"><b>In words:</b> flux through a face = (velocity component straight through the face) × (area of the face). The face \(ABCD\) has area \(\delta y\,\delta z\).</p>
+<p>Notice that \(v_2\) and \(v_3\) are parallel to \(ABCD\) and make no contribution (flow sliding along a face does not cross it). Similarly the flux through face \(A'B'C'D'\) <b>into</b> the box is</p>
+\[v_1\Big(x-\frac{\delta x}{2},y,z\Big)\,\delta y\,\delta z,\]
+<p>and the net flux <b>out</b> of the box along the \(x\)-direction, using Taylor's theorem about \((x,y,z)\), is</p>
+\[\begin{aligned}&\Big[v_1\Big(x+\frac{\delta x}2,y,z\Big)-v_1\Big(x-\frac{\delta x}2,y,z\Big)\Big]\delta y\,\delta z\\&=\pd{v_1}{x}\,\delta x\,\delta y\,\delta z+\text{higher order terms}.\end{aligned}\]
+<details><summary>Show the calculation: the Taylor step</summary><div>
+<ol class="steps">
+<li>Taylor's theorem in one variable (only \(x\) changes, \(y,z\) fixed): \(v_1(x+h,y,z)\) \(=v_1(x,y,z)\) \(+\:h\pd{v_1}x(x,y,z)\) \(+\:\tfrac{h^2}2\dfrac{\partial^2v_1}{\partial x^2}\) \(+\:\cdots\)</li>
+<li>With \(h=+\frac{\delta x}2\): \(v_1(x+\tfrac{\delta x}2,\dots)\) \(=v_1+\tfrac{\delta x}2\pd{v_1}x+\tfrac{\delta x^2}8\dfrac{\partial^2v_1}{\partial x^2}+\cdots\)</li>
+<li>With \(h=-\frac{\delta x}2\): \(v_1(x-\tfrac{\delta x}2,\dots)\) \(=v_1-\tfrac{\delta x}2\pd{v_1}x+\tfrac{\delta x^2}8\dfrac{\partial^2v_1}{\partial x^2}-\cdots\)</li>
+<li>Subtract: the \(v_1\) terms cancel, the two \(\tfrac{\delta x}2\pd{v_1}x\) terms add to \(\delta x\pd{v_1}x\), the \(\delta x^2\) terms cancel. What is left beyond \(\delta x\pd{v_1}x\) is of order \(\delta x^3\).</li>
+<li>Multiply by the face area \(\delta y\,\delta z\): net outflow in the \(x\)-direction \(=\pd{v_1}x\,\delta x\,\delta y\,\delta z+\) (terms with higher powers of the small lengths).</li>
+</ol></div></details>
+<p>Similarly by considering the two other pairs of faces, we have that the total flux out of the box is</p>
+\[\Big[\pd{v_1}x+\pd{v_2}y+\pd{v_3}z\Big]\delta x\,\delta y\,\delta z+\cdots\]
+<p>If we consider the flux per unit volume (divide by the volume \(\delta x\,\delta y\,\delta z\)) and take the limit as the volume of the box shrinks to zero, we obtain</p>
+\[\operatorname{div}\vb v=\pd{v_1}x+\pd{v_2}y+\pd{v_3}z\]
+<p>as a measure of the <b>net outward flux per unit volume</b> at a point \((x,y,z)\).</p>
+<p class="word"><b>In words:</b> divergence at a point = (fluid leaving a tiny box around the point − fluid entering it) ÷ (volume of the box), per unit time.</p>
+<div class="box def"><span class="tag">Sources, sinks, solenoidal</span>
+<ul class="list">
+<li><b>Positive</b> divergence indicates a <b>source</b> of fluid at the point (more flows out than in, as if a tap were there).</li>
+<li><b>Negative</b> divergence indicates a <b>sink</b> (more flows in than out, as if a drain were there).</li>
+<li>When \(\operatorname{div}\vb v=0\), the vector field is said to be <b>divergence-free</b> or <b>solenoidal</b> (in fluid mechanics, the fluid is said to be <b>incompressible</b>: whatever flows into any small box flows out again).</li>
+</ul>
+<p>If \(\vb E\) is an electric field, then \(\operatorname{div}\vb E\) measures the <b>charge density</b> at a point (in SI units it equals charge density ÷ \(\epsilon_0\)): electric field lines start on positive charges (sources) and end on negative ones (sinks).</p>
+</div>
+<div class="figure">
+  <p class="ttl">Source, sink and divergence-free flows: net outflow through a small circle</p>
+  <canvas class="plot" id="f-src" style="aspect-ratio:1/0.9;max-width:560px;margin:0 auto" aria-label="Vector field with a small test circle and outflow readout"></canvas>
+  <div class="ctrl"><label>Field <select id="sr-sel">
+    <option value="src">source: x i + y j</option><option value="sink">sink: −x i − y j</option><option value="rot">swirl: −y i + x j</option><option value="xi">stretching: x i</option><option value="uni">uniform: i + 0.5 j</option><option value="x2">speeding up: x² i</option><option value="pt">2D point source: (x i + y j)/(x² + y²)</option></select></label>
+  <label>circle centre \(x\) <input type="range" id="sr-x" min="-1.6" max="1.6" step="0.05" value="0.6"></label>
+  <label>\(y\) <input type="range" id="sr-y" min="-1.6" max="1.6" step="0.05" value="0.4"></label>
+  <label>radius <input type="range" id="sr-r" min="0.05" max="0.8" step="0.01" value="0.4"></label></div>
+  <div class="readout" id="sr-out"></div>
+  <p class="cap">The dashed circle is a test "control surface". Small arrows on it show the outward (red) or inward (teal) part of the flow crossing it. The readout adds them up (net outflow, computed numerically) and divides by the area of the circle: as the circle shrinks, this tends to the divergence at its centre. The source (arrows leaving the point, like water from a tap) and the sink (arrows converging, like a drain) are the two basic pictures; the swirl and the uniform flow have zero divergence (what goes in comes out); "stretching" \(x\ii\) has divergence 1 everywhere even though its arrows never spread apart sideways; the 2D point source has zero divergence everywhere except at the origin, so a circle avoiding the origin gives 0 and a circle around it gives \(2\pi\).</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 3.3.2</span>
+<p><b>The electric field at position \(\vb r\) due to a point charge \(Q\) at \((0,0,0)\) is given by</b></p>
+\[\vb E=\frac{Q}{4\pi\epsilon_0}\frac{\vb r}{r^3}=\frac{Q}{4\pi\epsilon_0}\frac{x\ii+y\jj+z\kk}{(x^2+y^2+z^2)^{3/2}}.\]
+<p>(\(\epsilon_0\) is a physical constant, the permittivity of free space.) The divergence of \(\vb E\) is given by</p>
+\[\begin{aligned}\operatorname{div}\vb E&=\nabla\cdot\vb E\\&=\frac{Q}{4\pi\epsilon_0}\pd{}{x}\Big[\frac{x}{(x^2+y^2+z^2)^{3/2}}\Big]\\&\quad+\text{similar terms}\\&=\frac{Q}{4\pi\epsilon_0}\Big[\frac1{r^3}+x\cdot\frac{-3}{2}\cdot\frac{2x}{r^5}\Big]\\&\quad+\text{similar terms}\\&=\frac{Q}{4\pi\epsilon_0}\Big[\frac{3}{r^3}-3\,\frac{x^2+y^2+z^2}{r^5}\Big]\\&=0\quad\text{except at the origin.}\end{aligned}\]
+<p>Hence \(\vb E\) is solenoidal (for \(\vb r\ne\vb 0\)), which is consistent with the interpretation above: there is no charge anywhere except at the origin. Notice that the gravitational force field for a point mass also follows a similar inverse-square law, and hence the gravitational vector field is also solenoidal (away from the mass).</p>
+<p class="word"><b>In words:</b> an inverse-square field pointing away from (or towards) one point has zero divergence everywhere except at that point: the arrows spread out, but they weaken at exactly the rate that keeps the total flow through any sphere the same.</p>
+</div>
+<details><summary>Show the calculation: \(\nabla\cdot(\vb r/r^3)=0\) line by line</summary><div>
+<ol class="steps">
+<li>The \(x\)-term: \(\pd{}{x}\big(x\,r^{-3}\big)=1\cdot r^{-3}+x\cdot\pd{}{x}(r^{-3})\). <i>Why:</i> product rule; \(r\) depends on \(x\) too, so it cannot be treated as a constant.</li>
+<li>\(\pd{}{x}(r^{-3})\) \(=\pd{}{x}(x^2+y^2+z^2)^{-3/2}\) \(=-\tfrac32(x^2+y^2+z^2)^{-5/2}\cdot2x\) \(=-\dfrac{3x}{r^5}\). <i>Why:</i> chain rule (this is the term \(x\cdot\frac{-3}2\cdot\frac{2x}{r^5}\) in the second line above).</li>
+<li>So the \(x\)-term is \(\dfrac1{r^3}-\dfrac{3x^2}{r^5}\). The "similar terms" are \(\dfrac1{r^3}-\dfrac{3y^2}{r^5}\) and \(\dfrac1{r^3}-\dfrac{3z^2}{r^5}\). <i>Why:</i> the field is symmetric in \(x,y,z\).</li>
+<li>Add: \(\dfrac3{r^3}-\dfrac{3(x^2+y^2+z^2)}{r^5}=\dfrac3{r^3}-\dfrac{3r^2}{r^5}=0\). <i>Why:</i> \(x^2+y^2+z^2=r^2\).</li>
+<li>At the origin \(r=0\) and \(\vb E\) is not defined, so the result holds only for \(\vb r\ne\vb 0\).</li>
+</ol></div></details>
+<div class="figure">
+  <p class="ttl">Example 3.3.2: the field of a point charge, and the flux through spheres around it</p>
+  <canvas class="plot" id="f-charge" style="aspect-ratio:16/11" aria-label="Rotatable 3D arrows of a point-charge field on two spheres"></canvas>
+  <div class="ctrl"><label>sphere radius \(R\) <input type="range" id="eq-R" min="0.5" max="1.1" step="0.01" value="0.8"></label></div>
+  <div class="readout" id="eq-out"></div>
+  <p class="cap">Drag to rotate. The charge sits at the origin (red dot). Arrows show \(\vb E\) at points on a sphere of radius \(R\) (teal) and on a sphere of twice that radius (purple): every arrow points straight out, and arrows on the outer sphere are a quarter as long (inverse square). The outer sphere has four times the area, so the total outflow through both spheres is the same, \(Q/\epsilon_0\): nothing is created or lost in between, which is what \(\operatorname{div}\vb E=0\) says.</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · divergences with \(\vb r\) and \(r\)</span>
+<p>For \(\vb r=x\ii+y\jj+z\kk\), \(r=|\vb r|\), a constant vector \(\vb v\) and a function \(h\):</p>
+\[\begin{aligned}\nabla\cdot\vb r&=3,\\ \nabla\cdot\big(h(r)\,\vb r\big)&=r\,h'(r)+3h(r),\\ \nabla\cdot(r^n\vb r)&=(n+3)\,r^n,\\ \nabla\cdot(\vb v\times\vb r)&=0.\end{aligned}\]
+<p class="word"><b>In words:</b> the position field spreads out at rate 3 everywhere (1 per direction); multiplying it by \(r^n\) changes the rate to \((n+3)r^n\), which is zero exactly for \(n=-3\): this is the inverse-square field of Example 3.3.2 again.</p>
+<details><summary>Show the calculation: \(\nabla\cdot\vb r\), \(\nabla\cdot(h(r)\vb r)\), \(\nabla\cdot(r^n\vb r)\), \(\nabla\cdot(\vb v\times\vb r)\)</summary><div>
+<ol class="steps">
+<li>\(\nabla\cdot\vb r\) \(=\pd xx+\pd yy+\pd zz\) \(=1+1+1\) \(=3\).</li>
+<li>Product rule 4 of §6, \(\nabla\cdot(f\vb F)=\nabla f\cdot\vb F+f\,\nabla\cdot\vb F\), with \(f=h(r)\), \(\vb F=\vb r\): \(\nabla\cdot(h\vb r)=\nabla h\cdot\vb r+3h\).</li>
+<li>From §3, \(\nabla h(r)=h'(r)\dfrac{\vb r}{r}\), so \(\nabla h\cdot\vb r\) \(=h'(r)\dfrac{\vb r\cdot\vb r}{r}\) \(=h'(r)\dfrac{r^2}{r}\) \(=r\,h'(r)\). <i>Why:</i> \(\vb r\cdot\vb r=r^2\).</li>
+<li>Hence \(\nabla\cdot(h(r)\vb r)=r\,h'(r)+3h(r)\). With \(h=r^n\): \(r\cdot nr^{n-1}+3r^n=(n+3)r^n\).</li>
+<li>\(\vb v\times\vb r\) \(=(bz-cy)\ii\) \(+\:(cx-az)\jj\) \(+\:(ay-bx)\kk\) for \(\vb v=a\ii+b\jj+c\kk\). The \(\ii\)-component has no \(x\), the \(\jj\)-component no \(y\), the \(\kk\)-component no \(z\), so each term of the divergence is 0.</li>
+</ol></div></details>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · divergence of a 2D field in polar form</span>
+<p>A 2D field \(\vb F=M\ii+N\jj\) can be rewritten with the polar unit vectors of §1. If \(P(r,\theta)=M(r\cos\theta,r\sin\theta)\) and \(Q(r,\theta)=N(r\cos\theta,r\sin\theta)\), then</p>
+\[\begin{aligned}\vb F&=v\,\vb u_r+w\,\vb u_\theta,\quad\text{where}\\ v&=P\cos\theta+Q\sin\theta,\\ w&=-P\sin\theta+Q\cos\theta,\end{aligned}\]
+<p>(\(v\) is the outward part of the field, \(w\) the anticlockwise part), and</p>
+\[\operatorname{div}\vb F=\pd vr+\frac vr+\frac1r\pd w\theta.\]
+<p class="word"><b>In words:</b> in polar form, divergence = (how fast the outward part grows outwards) + (outward part ÷ \(r\), because circles get longer as \(r\) grows) + (how fast the round-the-circle part changes going round, per unit arc length).</p>
+<details><summary>Show the calculation: the polar form of \(\vb F\) and of \(\operatorname{div}\vb F\)</summary><div>
+<ol class="steps">
+<li>Substitute \(\ii=\cos\theta\,\vb u_r-\sin\theta\,\vb u_\theta\) and \(\jj=\sin\theta\,\vb u_r+\cos\theta\,\vb u_\theta\) (§1) into \(\vb F=P\ii+Q\jj\): \(\vb F\) \(=(P\cos\theta+Q\sin\theta)\vb u_r\) \(+\:(-P\sin\theta+Q\cos\theta)\vb u_\theta\). This gives \(v\) and \(w\).</li>
+<li>Invert: \(P=v\cos\theta-w\sin\theta\), \(Q=v\sin\theta+w\cos\theta\). <i>Why:</i> rotating back by \(-\theta\) (check by substituting into step 1).</li>
+<li>Chain rule from <a href="note-C1.html#s3">Chapter 1</a> (as in Dec 2022 Q1(a)(ii)): \(\pd{}{x}=\cos\theta\pd{}{r}-\dfrac{\sin\theta}{r}\pd{}{\theta}\), \(\pd{}{y}=\sin\theta\pd{}{r}+\dfrac{\cos\theta}{r}\pd{}{\theta}\).</li>
+<li>Apply to \(M_x+N_y=\pd Px+\pd Qy\): the \(\partial/\partial r\) parts give \(\cos\theta\,\pd Pr+\sin\theta\,\pd Qr=\pd vr\) (because \(\cos\theta P_r+\sin\theta Q_r\) is \(\partial_r\) of \(P\cos\theta+Q\sin\theta\), \(\theta\) being held fixed).</li>
+<li>The \(\partial/\partial\theta\) parts give \(\dfrac1r\big(-\sin\theta\,P_\theta+\cos\theta\,Q_\theta\big)\). Now \(\pd w\theta\) \(=-\sin\theta P_\theta\) \(+\:\cos\theta Q_\theta\) \(-\:P\cos\theta\) \(-\:Q\sin\theta\) \(=(-\sin\theta P_\theta+\cos\theta Q_\theta)-v\). So this part is \(\dfrac1r\Big(\pd w\theta+v\Big)\).</li>
+<li>Add: \(\operatorname{div}\vb F=\pd vr+\dfrac vr+\dfrac1r\pd w\theta\). (Similarly, the \(\kk\)-component of curl is \(\pd wr+\dfrac wr-\dfrac1r\pd v\theta\).)</li>
+</ol></div></details>
+<p>Check with the source field \(x\ii+y\jj=r\,\vb u_r\): \(v=r,\ w=0\), so \(\operatorname{div}=1+1+0=2\), matching \(\pd{x}{x}+\pd yy=2\).</p>
+</div>
+</section>
+
+<section id="s5">
+<h2><span class="n">5</span>Curl: circulation and rotation <span class="muted small">(handout §3.4, pp. 7–10)</span></h2>
+<div class="box def"><span class="tag">Definition (curl)</span>
+<p>Let \(\vb F=M\ii+N\jj+P\kk\) be a vector field as before; then</p>
+\[\begin{aligned}\operatorname{curl}\vb F=&\Big(\pd Py-\pd Nz\Big)\ii+\Big(\pd Mz-\pd Px\Big)\jj\\&+\Big(\pd Nx-\pd My\Big)\kk.\end{aligned}\]
+<p>Using the \(\nabla\) operator, we have</p>
+\[\operatorname{curl}\vb F=\nabla\times\vb F=\begin{vmatrix}\ii&\jj&\kk\\[2pt]\pd{}{x}&\pd{}{y}&\pd{}{z}\\[4pt]M&N&P\end{vmatrix}.\]
+<p>Notice that \(\operatorname{curl}\vb F\) is a <b>vector field</b>.</p>
+<p class="word"><b>In words:</b> curl is "\(\nabla\) cross \(\vb F\)": expand the determinant along its top row exactly as for an ordinary cross product, but where the cross product would multiply, the middle row <b>differentiates</b> the bottom row. Each component compares how two components of \(\vb F\) change across each other.</p>
+</div>
+<details><summary>Show the calculation: expanding the determinant (and where the minus sign on \(\jj\) comes from)</summary><div>
+<ol class="steps">
+<li>Expand along the top row with the signs \(+\,-\,+\): \(\ii\begin{vmatrix}\partial_y&\partial_z\\N&P\end{vmatrix}-\jj\begin{vmatrix}\partial_x&\partial_z\\M&P\end{vmatrix}+\kk\begin{vmatrix}\partial_x&\partial_y\\M&N\end{vmatrix}\). <i>Why:</i> cofactor expansion of a \(3\times3\) determinant; cross out the row and column of each top entry.</li>
+<li>Each \(2\times2\) "determinant" is (top-left acting on bottom-right) − (top-right acting on bottom-left): \(\begin{vmatrix}\partial_y&\partial_z\\N&P\end{vmatrix}=\pd Py-\pd Nz\). <i>Why:</i> the operator in the middle row always acts on the function in the bottom row, never the other way round.</li>
+<li>\(\jj\): \(-\Big(\pd Px-\pd Mz\Big)=\pd Mz-\pd Px\). <i>Why:</i> the middle sign of the expansion is minus; distributing it gives the order in the definition.</li>
+<li>\(\kk\): \(\pd Nx-\pd My\).</li>
+<li>Memory aid: the \(\ii\),\(\jj\),\(\kk\) components follow the cycle \(x\to y\to z\to x\): the \(\ii\)-component uses \(y,z\) (\(\partial_yP-\partial_zN\)), the \(\jj\)-component uses \(z,x\) (\(\partial_zM-\partial_xP\)), the \(\kk\)-component uses \(x,y\) (\(\partial_xN-\partial_yM\)).</li>
+</ol></div></details>
+<div class="box eg"><span class="tag">Example 3.4.1</span>
+<p><b>The curl of the vector field \(\vb F=x^2z\,\ii-2y^3z^2\,\jj+xyz^2\,\kk\) (the field of Example 3.3.1) is given by</b></p>
+\[\begin{aligned}\operatorname{curl}\vb F&=\nabla\times\vb F=\begin{vmatrix}\ii&\jj&\kk\\[2pt]\pd{}{x}&\pd{}{y}&\pd{}{z}\\[4pt]x^2z&-2y^3z^2&xyz^2\end{vmatrix}\\&=(xz^2+4y^3z)\,\ii+(x^2-yz^2)\,\jj.\end{aligned}\]
+<details><summary>Show the calculation: the three components</summary><div>
+<ol class="steps">
+<li>\(\ii\): \(\pd{}{y}(xyz^2)-\pd{}{z}(-2y^3z^2)\) \(=xz^2-(-4y^3z)\) \(=xz^2+4y^3z\). <i>Why:</i> \(\partial_yP-\partial_zN\); \(x,z\) are constants in \(\partial_y\), and \(\partial_z(z^2)=2z\).</li>
+<li>\(\jj\): \(\pd{}{z}(x^2z)-\pd{}{x}(xyz^2)=x^2-yz^2\). <i>Why:</i> \(\partial_zM-\partial_xP\).</li>
+<li>\(\kk\): \(\pd{}{x}(-2y^3z^2)-\pd{}{y}(x^2z)=0-0=0\). <i>Why:</i> \(N\) has no \(x\) and \(M\) has no \(y\).</li>
+</ol></div></details>
+<p class="word"><b>In words:</b> the \(\kk\)-component vanishes, so this field has no swirl about vertical axes; its swirl is about axes in the direction \((xz^2+4y^3z)\ii+(x^2-yz^2)\jj\), which changes from point to point.</p>
+</div>
+
+<h3>Physical interpretation of curl</h3>
+<p>Again we shall illustrate the idea of curl using the 2D motion of a fluid with velocity \(\vb v=v_1(x,y)\,\ii+v_2(x,y)\,\jj\). Consider just the \(xy\)-plane and a small imaginary rectangle \(ABCD\) of sides \(\delta x\) and \(\delta y\) centred at \((x,y)\), traversed anticlockwise \(A\to B\to C\to D\to A\) (Figure 3.1, redrawn below). We measure how much the fluid pushes along each side in the direction of travel, using the velocity at the midpoint of each side.</p>
+<div class="figure">
+  <p class="ttl">Figure 3.1: circulation around a small rectangle</p>
+  <canvas class="plot" id="f-rect" style="aspect-ratio:1/0.85;max-width:560px;margin:0 auto" aria-label="Small rectangle ABCD in a flow with the flow along each side"></canvas>
+  <div class="ctrl"><label>Field <select id="rc-sel"><option value="shear">shear flow: v = y i</option><option value="rot">rotation: v = −y i + x j</option><option value="uni">uniform: v = i + 0.5 j</option><option value="src">spreading: v = x i + y j</option></select></label>
+  <label>size <input type="range" id="rc-h" min="0.2" max="1.6" step="0.02" value="1.2"></label></div>
+  <div class="readout" id="rc-out"></div>
+  <p class="cap">The rectangle \(ABCD\) has centre \((x,y)\) (here \((0.4,0.3)\)), width \(\delta x\) and height \(\delta y\). On each side the thick arrow shows the velocity component along the side, in the direction of travel \(A\to B\to C\to D\) when positive (red) and against it when negative (teal). Along \(AB\) the relevant velocity is \(v_1(x,y-\tfrac{\delta y}2)\); along \(CD\) (travelled leftwards) it is \(-v_1(x,y+\tfrac{\delta y}2)\). The readout adds up length × component around the loop (the circulation) and divides by the area.</p>
+</div>
+<p>We have</p>
+\[\begin{aligned}\text{flow along }AB&=(\text{length of }AB)\\&\quad\times(\text{velocity comp. along }AB)\\&=v_1\Big(x,y-\frac{\delta y}2\Big)\delta x,\\ \text{flow along }CD&=-v_1\Big(x,y+\frac{\delta y}2\Big)\delta x,\end{aligned}\]
+<p>(the minus sign because \(CD\) is travelled in the \(-x\) direction), so</p>
+\[\begin{aligned}\text{sum of flow}&=\Big[v_1\Big(x,y-\frac{\delta y}2\Big)\\&\qquad-v_1\Big(x,y+\frac{\delta y}2\Big)\Big]\delta x\\&=-\pd{v_1}{y}\,\delta x\,\delta y+\cdots\end{aligned}\]
+<details><summary>Show the calculation: the Taylor step for \(AB+CD\), and \(BC+DA\)</summary><div>
+<ol class="steps">
+<li>Taylor in \(y\) only: \(v_1(x,y\mp\tfrac{\delta y}2)\) \(=v_1(x,y)\mp\tfrac12\delta y\,\pd{v_1}y(x,y)+\cdots\)</li>
+<li>Subtract (lower minus upper): \(\big[v_1-\tfrac12\delta y\,\partial_yv_1\big]-\big[v_1+\tfrac12\delta y\,\partial_yv_1\big]\) \(=-\delta y\,\pd{v_1}y\). <i>Why:</i> the \(v_1\) terms cancel and the two half-terms add.</li>
+<li>Multiply by the length \(\delta x\): \(-\pd{v_1}y\delta x\,\delta y\).</li>
+<li>Sides \(BC\) (travelled upwards, at \(x+\tfrac{\delta x}2\)) and \(DA\) (downwards, at \(x-\tfrac{\delta x}2\)): flow \(=\big[v_2(x+\tfrac{\delta x}2,y)-v_2(x-\tfrac{\delta x}2,y)\big]\delta y\) \(=+\pd{v_2}x\delta x\,\delta y+\cdots\) by the same Taylor step in \(x\).</li>
+</ol></div></details>
+<p>Similarly the sum of flows along \(BC\) and \(DA\) is</p>
+\[\pd{v_2}{x}\,\delta x\,\delta y+\cdots\]
+<p>The total <b>circulation</b> (net flow around a closed path) around the rectangle is</p>
+\[\Big(\pd{v_2}x-\pd{v_1}y\Big)\delta x\,\delta y+\cdots\]
+<p>If we consider circulation per unit area and take the limit as the area of the rectangle shrinks to zero, we have</p>
+\[\pd{v_2}x-\pd{v_1}y.\]
+<p class="word"><b>In words:</b> this number = (circulation around a tiny loop) ÷ (area of the loop): how strongly the flow goes round the point anticlockwise.</p>
+<p>If this quantity is positive / negative / zero, a small <b>paddle wheel</b> placed in the fluid at the point \(P\) would rotate anticlockwise / clockwise / remain stationary. This is the third component of \(\operatorname{curl}\vb v\),</p>
+\[\Big(\pd{v_2}x-\pd{v_1}y\Big)\kk.\]
+<p>The rotational speed of the paddle wheel is proportional to the magnitude of \(\operatorname{curl}\vb v\) (in fact, its angular velocity is half of it; see the Beyond box below).</p>
+<div class="figure">
+  <p class="ttl">The paddle wheel test</p>
+  <canvas class="plot" id="f-paddle" style="aspect-ratio:1/0.9;max-width:560px;margin:0 auto" aria-label="Vector field with a paddle wheel at a probe point"></canvas>
+  <div class="ctrl"><label>Field <select id="pw-sel"><option value="shear">shear flow: y i</option><option value="rot">rotation: −y i + x j</option><option value="vort">vortex: (−y i + x j)/(x² + y²)</option><option value="uni">uniform: i + 0.5 j</option><option value="cw">clockwise: y i − x j</option></select></label>
+  <label>wheel at \(x\) <input type="range" id="pw-x" min="-1.6" max="1.6" step="0.05" value="0.8"></label>
+  <label>\(y\) <input type="range" id="pw-y" min="-1.6" max="1.6" step="0.05" value="0.6"></label>
+  <label>time <input type="range" id="pw-t" min="0" max="6" step="0.02" value="1"></label></div>
+  <div class="readout" id="pw-out"></div>
+  <p class="cap">A four-bladed paddle wheel (dark blades on a hub, its axis pointing out of the page) is held at a point but free to spin. Its angle after the chosen time is \(\tfrac12(\operatorname{curl}\vb v)_k\times\) time, and the curved red arrow shows the sense of rotation. The shear flow \(y\ii\) has straight, parallel arrows, yet its curl is \(-\kk\): the faster flow on the upper blades turns the wheel clockwise. The vortex swirls round the origin, yet away from the origin its curl is zero: the wheel is carried round but does not spin about its own axis.</p>
+</div>
+<p>In general for a three-dimensional flow, we obtain the full expression for \(\operatorname{curl}\vb v\), which picks out the <b>direction of the axis</b> about which the fluid rotates most rapidly, and \(|\operatorname{curl}\vb v|\) is a measure of the speed of this rotation (right-hand rule: curl the fingers of your right hand with the flow, and your thumb points along \(\operatorname{curl}\vb v\)).</p>
+<div class="figure">
+  <p class="ttl">In 3D, curl points along the axis of rotation</p>
+  <canvas class="plot" id="f-axis" style="aspect-ratio:16/11" aria-label="Rotatable picture of fluid circulating in a tilted plane with the curl vector along the axis"></canvas>
+  <div class="ctrl"><label>tilt of the axis <input type="range" id="ax-t" min="0" max="1.4" step="0.01" value="0.6"></label>
+  <label>turn of the axis <input type="range" id="ax-p" min="0" max="6.28" step="0.01" value="0.8"></label></div>
+  <div class="readout" id="ax-out"></div>
+  <p class="cap">Drag to rotate. The fluid turns as a rigid body with angular velocity \(\vec\omega\) about the blue axis, so its velocity is \(\vb v=\vec\omega\times\vb r\). The dark rings are paths of fluid particles (circles in the plane perpendicular to the axis) with red arrows showing the direction of motion. The blue arrow is \(\operatorname{curl}\vb v=2\vec\omega\): perpendicular to the rings, by the right-hand rule.</p>
+</div>
+<div class="box def"><span class="tag">Irrotational fields</span>
+<p>When \(\operatorname{curl}\vb v=\vb 0\), the vector field is said to be <b>irrotational</b> (a term which is used even if \(\vb v\) is not a velocity field). If \(\vb H\) is a magnetic field vector, \(\operatorname{curl}\vb H\) measures the <b>current density</b> at a point (electric current per unit cross-sectional area flowing there).</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 3.4.2</span>
+<p><b>Consider a long straight current-carrying conductor (a wire along the \(z\)-axis) with circular cross-section of radius \(R\). Then the magnetic field \(\vb H\) is</b></p>
+\[\vb H=\begin{cases}\dfrac{-y\ii+x\jj}{2\pi r^2}&\text{outside the conductor}\\[12pt]\dfrac{-y\ii+x\jj}{2\pi R^2}&\text{inside the conductor}\end{cases}\]
+<p><b>where \(r=\sqrt{x^2+y^2}\).</b> (Here \(r\) is the distance from the axis of the wire, and the total current is 1 unit, flowing in the \(+z\) direction.) The field circles the wire anticlockwise; its strength \(|\vb H|\) is \(\frac{r}{2\pi R^2}\) inside (growing from 0 at the axis) and \(\frac1{2\pi r}\) outside (dying away), the two agreeing at \(r=R\).</p>
+<p>Outside the conductor, we have</p>
+\[\begin{aligned}&\operatorname{curl}\vb H=\nabla\times\vb H\\&=\begin{vmatrix}\ii&\jj&\kk\\[2pt]\pd{}{x}&\pd{}{y}&\pd{}{z}\\[4pt]-\dfrac{y}{2\pi r^2}&\dfrac{x}{2\pi r^2}&0\end{vmatrix}\\&=\Big[\frac1{2\pi r^2}-\frac{2x^2}{2\pi r^4}\\&\qquad+\frac1{2\pi r^2}-\frac{2y^2}{2\pi r^4}\Big]\kk=\vb 0.\end{aligned}\]
+<details><summary>Show the calculation: curl \(\vb H\) outside the conductor</summary><div>
+<ol class="steps">
+<li>\(M=-\dfrac{y}{2\pi(x^2+y^2)}\), \(N=\dfrac{x}{2\pi(x^2+y^2)}\), \(P=0\). <i>Why:</i> read off the components.</li>
+<li>\(\ii\) and \(\jj\) components: \(\partial_yP-\partial_zN=0-0\) and \(\partial_zM-\partial_xP=0-0\). <i>Why:</i> \(P=0\) and \(M,N\) do not contain \(z\).</li>
+<li>\(\pd Nx\) \(=\dfrac{1}{2\pi}\cdot\dfrac{(x^2+y^2)\cdot1-x\cdot2x}{(x^2+y^2)^2}\) \(=\dfrac1{2\pi r^2}-\dfrac{2x^2}{2\pi r^4}\). <i>Why:</i> quotient rule.</li>
+<li>\(\pd My\) \(=-\dfrac1{2\pi}\cdot\dfrac{(x^2+y^2)\cdot1-y\cdot2y}{(x^2+y^2)^2}\) \(=-\dfrac1{2\pi r^2}+\dfrac{2y^2}{2\pi r^4}\).</li>
+<li>\(\kk\): \(\pd Nx-\pd My\) \(=\dfrac{2}{2\pi r^2}-\dfrac{2(x^2+y^2)}{2\pi r^4}\) \(=\dfrac1{\pi r^2}-\dfrac{1}{\pi r^2}\) \(=0\). <i>Why:</i> \(x^2+y^2=r^2\).</li>
+</ol></div></details>
+<p>Inside the conductor, we have</p>
+\[\begin{aligned}\operatorname{curl}\vb H&=\begin{vmatrix}\ii&\jj&\kk\\[2pt]\pd{}{x}&\pd{}{y}&\pd{}{z}\\[4pt]-\dfrac{y}{2\pi R^2}&\dfrac{x}{2\pi R^2}&0\end{vmatrix}\\&=\Big(\frac1{2\pi R^2}+\frac1{2\pi R^2}\Big)\kk=\frac{\kk}{\pi R^2}=\vb J,\end{aligned}\]
+<p>where \(\vb J\) is the <b>current density</b> in the conductor (total current 1 spread evenly over the area \(\pi R^2\)). The magnetic field above, outside the conductor, is irrotational.</p>
+<p class="word"><b>In words:</b> curl \(\vb H\) is nonzero exactly where current flows (inside the wire) and zero where there is none (outside), even though the field circles the wire everywhere.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Example 3.4.2: the magnetic field around and inside a wire</p>
+  <div class="pair">
+    <canvas class="plot" id="f-wire" style="aspect-ratio:1/1" aria-label="Field arrows circling a disc of radius R"></canvas>
+    <canvas class="plot" id="f-wireg" style="aspect-ratio:1/1" aria-label="Graph of field strength against distance from the axis"></canvas>
+  </div>
+  <div class="ctrl"><label>radius \(R\) <input type="range" id="wr-R" min="0.4" max="1.4" step="0.02" value="0.9"></label>
+  <label>probe distance \(r\) <input type="range" id="wr-r" min="0.05" max="2.4" step="0.01" value="1.5"></label></div>
+  <div class="readout" id="wr-out"></div>
+  <p class="cap">Left: cross-section of the wire (yellow disc of radius \(R\)) with \(\vb H\) at a grid of points (scaled), circling anticlockwise; the black arrow is \(\vb H\) at the probe point. Right: \(|\vb H|\) against \(r\): a straight rise inside, \(r/(2\pi R^2)\), and a \(1/(2\pi r)\) decay outside; the shaded strip is the inside of the wire, where \(\operatorname{curl}\vb H=\kk/(\pi R^2)\).</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · curls with \(\vb r\), and why curl = twice the spin</span>
+<p>For \(\vb r=x\ii+y\jj+z\kk\), \(r=|\vb r|\), any function \(h\) and constant vectors \(\vb v\), \(\vec\omega\):</p>
+\[\begin{aligned}\nabla\times\vb r&=\vb 0,\\ \nabla\times\big(h(r)\,\vb r\big)&=\vb 0,\\ \nabla\times(\vb v\times\vb r)&=2\vb v.\end{aligned}\]
+<p class="word"><b>In words:</b> any field pointing straight out from the origin with a strength depending only on \(r\) has no swirl. A rigid rotation \(\vb v=\vec\omega\times\vb r\) (angular velocity \(\vec\omega\)) has curl \(2\vec\omega\): curl measures twice the local angular velocity, which is why the paddle wheel turns at half the curl.</p>
+<details><summary>Show the calculation: \(\nabla\times\vb r\), \(\nabla\times(h(r)\vb r)\), \(\nabla\times(\vb v\times\vb r)\)</summary><div>
+<ol class="steps">
+<li>\(\nabla\times\vb r\): \(\ii\)-component \(\partial_y z-\partial_z y=0\), and similarly the others are 0. <i>Why:</i> each component of \(\vb r\) depends only on its own variable.</li>
+<li>Product rule 6 of §6: \(\nabla\times(h\vb r)\) \(=\nabla h\times\vb r+h\,\nabla\times\vb r\) \(=h'(r)\dfrac{\vb r}{r}\times\vb r+\vb 0\) \(=\vb 0\). <i>Why:</i> \(\nabla h(r)=h'(r)\vb r/r\) (§3), and the cross product of parallel vectors is \(\vb 0\).</li>
+<li>\(\vb v\times\vb r\) \(=(bz-cy)\ii\) \(+\:(cx-az)\jj\) \(+\:(ay-bx)\kk\) for \(\vb v=a\ii+b\jj+c\kk\).</li>
+<li>\(\ii\): \(\partial_y(ay-bx)-\partial_z(cx-az)\) \(=a+a\) \(=2a\). \(\jj\): \(\partial_z(bz-cy)-\partial_x(ay-bx)\) \(=b+b\) \(=2b\). \(\kk\): \(\partial_x(cx-az)-\partial_y(bz-cy)\) \(=c+c\) \(=2c\).</li>
+<li>So \(\nabla\times(\vb v\times\vb r)=2(a\ii+b\jj+c\kk)=2\vb v\).</li>
+</ol></div></details>
+</div>
+</section>
+
+<section id="s6">
+<h2><span class="n">6</span>Two important identities, and rules for \(\nabla\) <span class="muted small">(handout §3.5, pp. 10–11)</span></h2>
+<p>An <b>identity</b> is an equation that holds for every field, not just for particular ones. Two of them say that applying two of the operators grad, div, curl in a row can give zero automatically.</p>
+<div class="box thm"><span class="tag">Identity 1</span>
+\[\nabla\cdot(\nabla\times\vb F)=0\quad\text{or}\quad\operatorname{div}\operatorname{curl}\vb F=0,\]
+<p>or in words: <b>the curl of a vector field is solenoidal</b>.</p>
+<p class="word"><b>In words:</b> a swirl field produced by taking a curl has no sources or sinks.</p>
+</div>
+<p>Let \(\vb F=M\ii+N\jj+P\kk\); then</p>
+\[\begin{aligned}\nabla\times\vb F=&\Big(\pd Py-\pd Nz\Big)\ii+\Big(\pd Mz-\pd Px\Big)\jj\\&+\Big(\pd Nx-\pd My\Big)\kk.\end{aligned}\]
+<p>Hence,</p>
+\[\begin{aligned}\nabla\cdot(\nabla\times\vb F)=&\pd{}{x}\Big(\pd Py-\pd Nz\Big)\\&+\pd{}{y}\Big(\pd Mz-\pd Px\Big)\\&+\pd{}{z}\Big(\pd Nx-\pd My\Big)\\=&\Big(\frac{\partial^2P}{\partial x\partial y}-\frac{\partial^2P}{\partial y\partial x}\Big)\\&+\Big(\frac{\partial^2M}{\partial y\partial z}-\frac{\partial^2M}{\partial z\partial y}\Big)\\&+\Big(\frac{\partial^2N}{\partial z\partial x}-\frac{\partial^2N}{\partial x\partial z}\Big)\\=&\;0\end{aligned}\]
+<p>when the second-order mixed partial derivatives are continuous.</p>
+<details><summary>Show the calculation: why everything cancels</summary><div>
+<ol class="steps">
+<li>Divergence of a vector = \(\partial_x\)(its \(\ii\)-part) + \(\partial_y\)(its \(\jj\)-part) + \(\partial_z\)(its \(\kk\)-part). Apply this to the three brackets of \(\nabla\times\vb F\). <i>Why:</i> definition of div (§4).</li>
+<li>Expand: \(\partial_x\partial_yP\) \(-\:\partial_x\partial_zN\) \(+\:\partial_y\partial_zM\) \(-\:\partial_y\partial_xP\) \(+\:\partial_z\partial_xN\) \(-\:\partial_z\partial_yM\). Six terms, each a mixed second derivative.</li>
+<li>Regroup by function: \(P\) appears as \(\partial_x\partial_yP-\partial_y\partial_xP\), \(M\) as \(\partial_y\partial_zM-\partial_z\partial_yM\), \(N\) as \(\partial_z\partial_xN-\partial_x\partial_zN\).</li>
+<li>Each pair is zero by the <b>equality of mixed partial derivatives</b> (<a href="note-C1.html#s2">Chapter 1</a>): if the second partial derivatives are continuous, the order of differentiation does not matter, e.g. \(\dfrac{\partial^2P}{\partial x\partial y}=\dfrac{\partial^2P}{\partial y\partial x}\).</li>
+</ol></div></details>
+<div class="box thm"><span class="tag">Identity 2</span>
+\[\nabla\times(\nabla f)=\vb 0\quad\text{or}\quad\operatorname{curl}\operatorname{grad}f=\vb 0,\]
+<p>or in words: <b>the gradient of a scalar field is irrotational</b>.</p>
+<p class="word"><b>In words:</b> a field made by taking the gradient of something has no swirl: walking round any small loop on a hillside, you climb exactly as much as you descend.</p>
+</div>
+<p>Let \(\nabla f=\pd fx\ii+\pd fy\jj+\pd fz\kk\) and hence</p>
+\[\begin{aligned}\nabla\times(\nabla f)&=\begin{vmatrix}\ii&\jj&\kk\\[2pt]\pd{}{x}&\pd{}{y}&\pd{}{z}\\[4pt]\pd fx&\pd fy&\pd fz\end{vmatrix}\\&=\Big(\frac{\partial^2f}{\partial y\partial z}-\frac{\partial^2f}{\partial z\partial y}\Big)\ii\\&\quad+\Big(\frac{\partial^2f}{\partial z\partial x}-\frac{\partial^2f}{\partial x\partial z}\Big)\jj\\&\quad+\Big(\frac{\partial^2f}{\partial x\partial y}-\frac{\partial^2f}{\partial y\partial x}\Big)\kk\\&=\vb 0\end{aligned}\]
+<p>when the second-order mixed partial derivatives are continuous.</p>
+<details><summary>Show the calculation: the three components</summary><div>
+<ol class="steps">
+<li>Here \(M=f_x,\ N=f_y,\ P=f_z\). <i>Why:</i> the components of \(\nabla f\).</li>
+<li>\(\ii\): \(\partial_yP-\partial_zN=\partial_y(f_z)-\partial_z(f_y)\): the same mixed derivative taken in two orders.</li>
+<li>\(\jj\): \(\partial_zM-\partial_xP=\partial_z(f_x)-\partial_x(f_z)\). \(\kk\): \(\partial_xN-\partial_yM=\partial_x(f_y)-\partial_y(f_x)\).</li>
+<li>Each difference is 0 by equality of mixed partials (continuous second derivatives).</li>
+</ol></div></details>
+<div class="figure">
+  <p class="ttl">The two identities seen numerically</p>
+  <div class="pair">
+    <canvas class="plot" id="f-cg" style="aspect-ratio:1/1" aria-label="A gradient field over its contours with a small test loop"></canvas>
+    <canvas class="plot" id="f-dc" style="aspect-ratio:1/1" aria-label="A curl field with a small test circle"></canvas>
+  </div>
+  <div class="ctrl"><label>test loop at \(x\) <input type="range" id="id-x" min="-1.5" max="1.5" step="0.05" value="0.5"></label>
+  <label>\(y\) <input type="range" id="id-y" min="-1.5" max="1.5" step="0.05" value="-0.4"></label>
+  <label>radius <input type="range" id="id-r" min="0.1" max="0.9" step="0.01" value="0.5"></label></div>
+  <div class="readout" id="id-out"></div>
+  <p class="cap">Left: \(\nabla f\) for \(f=\sin x\cos y+0.3x^2\) (arrows) over the contours of \(f\). The circulation of \(\nabla f\) around the dashed test loop is always 0 (up to rounding), wherever the loop is put and however big: curl grad \(f=\vb 0\). Right: \(\vb F=\nabla\times(\psi\kk)=\pd\psi y\ii-\pd\psi x\jj\) for \(\psi=\sin x\cos y+0.3x^2\), a field that is itself a curl; its net outflow through the same loop is always 0: div curl \(=0\). (The two fields are the same arrows turned through \(90^\circ\).)</p>
+</div>
+
+<h3>Useful results involving \(\nabla\)</h3>
+<p>Let \(f\) and \(g\) be scalar fields and \(\vb v\) and \(\vb w\) be vector fields.</p>
+<div class="box thm"><span class="tag">Rules for \(\nabla\)</span>
+\[\begin{aligned}&1.\ \ \nabla(f+g)=\nabla f+\nabla g\\ &2.\ \ \nabla(fg)=f\nabla g+g\nabla f\\ &3.\ \ \nabla\cdot(\vb v+\vb w)=\nabla\cdot\vb v+\nabla\cdot\vb w\\ &4.\ \ \nabla\cdot(f\vb v)=\nabla f\cdot\vb v+f\,\nabla\cdot\vb v\\ &5.\ \ \nabla\times(\vb v+\vb w)=\nabla\times\vb v+\nabla\times\vb w\\ &6.\ \ \nabla\times(f\vb v)=\nabla f\times\vb v+f\,\nabla\times\vb v\\ &7.\ \ \nabla\cdot(\vb v\times\vb w)=\vb w\cdot(\nabla\times\vb v)\\&\qquad\qquad-\vb v\cdot(\nabla\times\vb w)\\ &8.\ \ \nabla\times(\vb v\times\vb w)=\vb v(\nabla\cdot\vb w)-\vb w(\nabla\cdot\vb v)\\&\qquad\qquad+(\vb w\cdot\nabla)\vb v-(\vb v\cdot\nabla)\vb w\end{aligned}\]
+<p class="word"><b>In words:</b> grad, div and curl are <b>linear</b> (rules 1, 3, 5: the derivative of a sum is the sum of the derivatives), and each obeys a <b>product rule</b> (2, 4, 6: differentiate one factor at a time, keeping the type of product). In rule 8, \((\vb w\cdot\nabla)\vb v\) means the operator \(w_1\partial_x+w_2\partial_y+w_3\partial_z\) applied to each component of \(\vb v\).</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · proofs of the product rules (asked in Dec 2024)</span>
+<p>The course lists these rules without proof; the exam has asked for proofs of rules 4 and 6 (with \(\phi\) for \(f\) and \(\vb F=M\ii+N\jj+P\kk\) for \(\vb v\)). The method is always the same: write out the components, use the ordinary product rule on each, and regroup.</p>
+<details><summary>Show the calculation: proof of rule 4, \(\nabla\cdot(\phi\vb F)=\nabla\phi\cdot\vb F+\phi\,\nabla\cdot\vb F\)</summary><div>
+<ol class="steps">
+<li>\(\phi\vb F=\phi M\ii+\phi N\jj+\phi P\kk\). <i>Why:</i> multiplying a vector by a scalar multiplies each component.</li>
+<li>\(\nabla\cdot(\phi\vb F)\) \(=\pd{}{x}(\phi M)+\pd{}{y}(\phi N)+\pd{}{z}(\phi P)\). <i>Why:</i> definition of div.</li>
+<li>Product rule on each: \(\big(\phi_xM+\phi M_x\big)\) \(+\:\big(\phi_yN+\phi N_y\big)\) \(+\:\big(\phi_zP+\phi P_z\big)\).</li>
+<li>Regroup: \(\big(\phi_xM+\phi_yN+\phi_zP\big)\) \(+\:\phi\big(M_x+N_y+P_z\big)\).</li>
+<li>Recognise: the first bracket is \((\phi_x,\phi_y,\phi_z)\cdot(M,N,P)=\nabla\phi\cdot\vb F\); the second is \(\phi\,\nabla\cdot\vb F\). ∎</li>
+</ol></div></details>
+<details><summary>Show the calculation: proof of rule 6, \(\nabla\times(\phi\vb F)=\nabla\phi\times\vb F+\phi\,\nabla\times\vb F\)</summary><div>
+<ol class="steps">
+<li>\(\ii\)-component of \(\nabla\times(\phi\vb F)\): \(\pd{}{y}(\phi P)-\pd{}{z}(\phi N)\). <i>Why:</i> curl formula with components \(\phi M,\phi N,\phi P\).</li>
+<li>Product rule: \(\phi_yP+\phi P_y-\phi_zN-\phi N_z\) \(=(\phi_yP-\phi_zN)+\phi(P_y-N_z)\).</li>
+<li>Recognise: \(\phi_yP-\phi_zN\) is the \(\ii\)-component of \(\nabla\phi\times\vb F=\begin{vmatrix}\ii&\jj&\kk\\\phi_x&\phi_y&\phi_z\\M&N&P\end{vmatrix}\), and \(P_y-N_z\) is the \(\ii\)-component of \(\nabla\times\vb F\).</li>
+<li>The \(\jj\)- and \(\kk\)-components work the same way (cycle \(x\to y\to z\to x\)): \(\jj\): \((\phi_zM-\phi_xP)+\phi(M_z-P_x)\); \(\kk\): \((\phi_xN-\phi_yM)+\phi(N_x-M_y)\). ∎</li>
+</ol></div></details>
+<details><summary>Show the calculation: proof of rule 7, \(\nabla\cdot(\vb v\times\vb w)=\vb w\cdot(\nabla\times\vb v)-\vb v\cdot(\nabla\times\vb w)\)</summary><div>
+<ol class="steps">
+<li>\(\vb v\times\vb w\) \(=(v_2w_3-v_3w_2)\ii\) \(+\:(v_3w_1-v_1w_3)\jj\) \(+\:(v_1w_2-v_2w_1)\kk\).</li>
+<li>Its divergence: \(\partial_x(v_2w_3-v_3w_2)\) \(+\:\partial_y(v_3w_1-v_1w_3)\) \(+\:\partial_z(v_1w_2-v_2w_1)\); product rule gives 12 terms.</li>
+<li>Collect the 6 terms where a component of \(\vb v\) is differentiated: \(w_1(\partial_yv_3-\partial_zv_2)\) \(+\:w_2(\partial_zv_1-\partial_xv_3)\) \(+\:w_3(\partial_xv_2-\partial_yv_1)\) \(=\vb w\cdot(\nabla\times\vb v)\).</li>
+<li>The other 6 (a component of \(\vb w\) differentiated): \(-v_1(\partial_yw_3-\partial_zw_2)\) \(-\:v_2(\partial_zw_1-\partial_xw_3)\) \(-\:v_3(\partial_xw_2-\partial_yw_1)\) \(=-\vb v\cdot(\nabla\times\vb w)\). ∎</li>
+</ol></div></details>
+<details><summary>Show the calculation: proof of rule 8 (the \(\ii\)-component)</summary><div>
+<ol class="steps">
+<li>\(\ii\)-component of \(\nabla\times(\vb v\times\vb w)\): \(\partial_y(v_1w_2-v_2w_1)-\partial_z(v_3w_1-v_1w_3)\). <i>Why:</i> curl formula with the components of \(\vb v\times\vb w\) from rule 7.</li>
+<li>Product rule: \(w_2\partial_yv_1\) \(+\:v_1\partial_yw_2\) \(-\:w_1\partial_yv_2\) \(-\:v_2\partial_yw_1\) \(-\:w_1\partial_zv_3\) \(-\:v_3\partial_zw_1\) \(+\:w_3\partial_zv_1\) \(+\:v_1\partial_zw_3\).</li>
+<li>Add and subtract \(v_1\partial_xw_1\) and \(w_1\partial_xv_1\) (this changes nothing) and group: \(v_1(\partial_xw_1+\partial_yw_2+\partial_zw_3)\) \(-\:w_1(\partial_xv_1+\partial_yv_2+\partial_zv_3)\) \(+\:(w_1\partial_x+w_2\partial_y+w_3\partial_z)v_1\) \(-\:(v_1\partial_x+v_2\partial_y+v_3\partial_z)w_1\).</li>
+<li>That is the \(\ii\)-component of \(\vb v(\nabla\cdot\vb w)\) \(-\:\vb w(\nabla\cdot\vb v)\) \(+\:(\vb w\cdot\nabla)\vb v\) \(-\:(\vb v\cdot\nabla)\vb w\). The \(\jj\)- and \(\kk\)-components follow by cycling \(x\to y\to z\). ∎</li>
+</ol></div></details>
+<p>Rule 2 is the ordinary product rule in each component: \(\partial_x(fg)=f\,\partial_xg+g\,\partial_xf\), and so on.</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · second derivatives: the Laplacian</span>
+<p>Of the combinations of two operators, two vanish (Identities 1 and 2) and two are meaningless (curl of a scalar, grad of a vector). The important survivor is</p>
+\[\nabla\cdot(\nabla f)=\frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2}+\frac{\partial^2f}{\partial z^2}\equiv\nabla^2f,\]
+<p>the <b>Laplacian</b> of \(f\) ("del squared \(f\)"). It appears in the heat, wave and Laplace equations of the PDE chapters (C5). Two more identities that sometimes appear: \(\nabla\times(\nabla\times\vb F)=\nabla(\nabla\cdot\vb F)-\nabla^2\vb F\) (with \(\nabla^2\) applied to each component), and \(\tfrac12\nabla(\vb F\cdot\vb F)=(\vb F\cdot\nabla)\vb F+\vb F\times(\nabla\times\vb F)\) (Dec 2023 Q4(b) is built on this one).</p>
+<p class="word"><b>In words:</b> the Laplacian = div of grad = sum of the three unmixed second derivatives; it compares a value with the average of its neighbours.</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · the converses (preview of Chapter 3b)</span>
+<p>Identity 2 says: if \(\vb F=\nabla\phi\) then \(\nabla\times\vb F=\vb 0\). The converse is also true on a region with no holes: if \(\nabla\times\vb F=\vb 0\) there, then \(\vb F=\nabla\phi\) for some scalar \(\phi\) (a <b>potential</b>), and \(\vb F\) is called <b>conservative</b>. This is the basis of the "find \(\phi\) with \(\nabla\phi=\vb F\)" questions in <a href="note-C3b.html">Chapter 3b</a>. A region with a hole can break it: the vortex field \(\dfrac{-y\ii+x\jj}{x^2+y^2}\) has zero curl away from the origin but is not a gradient on the whole punctured plane.</p>
+<p>Similarly, Identity 1 says a curl is always solenoidal, and (on suitable regions) a solenoidal field is the curl of some field.</p>
+</div>
+
+<div class="box ready"><span class="tag">Ready-made results (\(\vb r=x\ii+y\jj+z\kk\), \(r=|\vb r|\ne0\), \(\vb v\) constant)</span>
+<div class="scroll"><table>
+<tr><th>Expression</th><th>Result</th><th>Where</th></tr>
+<tr><td>\(\nabla r\), \(\nabla(1/r)\)</td><td>\(\vb r/r\), \(\ -\vb r/r^3\)</td><td>§3</td></tr>
+<tr><td>\(\nabla(r^n)\), \(\nabla f(r)\)</td><td>\(nr^{n-2}\vb r\), \(\ f'(r)\,\vb r/r\)</td><td>§3</td></tr>
+<tr><td>\(\nabla(\vb v\cdot\vb r)\)</td><td>\(\vb v\)</td><td>§3</td></tr>
+<tr><td>\(\nabla\cdot\vb r\), \(\nabla\times\vb r\)</td><td>\(3\), \(\ \vb 0\)</td><td>§4, §5</td></tr>
+<tr><td>\(\nabla\cdot(h(r)\vb r)\)</td><td>\(rh'(r)+3h(r)\)</td><td>§4</td></tr>
+<tr><td>\(\nabla\cdot(r^n\vb r)\)</td><td>\((n+3)r^n\); zero for \(n=-3\)</td><td>§4</td></tr>
+<tr><td>\(\nabla\times(h(r)\vb r)\)</td><td>\(\vb 0\)</td><td>§5</td></tr>
+<tr><td>\(\nabla\cdot(\vb v\times\vb r)\), \(\nabla\times(\vb v\times\vb r)\)</td><td>\(0\), \(\ 2\vb v\)</td><td>§4, §5</td></tr>
+</table></div>
+</div>
+</section>
+
+<section id="summary">
+<h2><span class="n">◆</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Formula</th><th>In words</th></tr>
+<tr><td>Vector function</td><td>\(\vb F(t)=f_1\ii+f_2\jj+f_3\kk\)</td><td>limits, derivatives, integrals component by component</td></tr>
+<tr><td>Velocity, acceleration</td><td>\(\vb v=\dfrac{d\vb r}{dt}\), \(\vb a=\dfrac{d^2\vb r}{dt^2}\)</td><td>velocity is tangent to the path</td></tr>
+<tr><td>Product rules</td><td>\((f\vb a)'\), \((\vb a\cdot\vb b)'\), \((\vb a\times\vb b)'\)</td><td>one factor at a time; keep cross-product order</td></tr>
+<tr><td>Chain rule</td><td>\(\frac{d}{dt}\vb G(f(t))=\vb G'(f(t))f'(t)\)</td><td>as for scalars</td></tr>
+<tr><td>Polar unit vectors (Beyond)</td><td>\(\vb u_r=\cos\theta\ii+\sin\theta\jj\), \(\vb u_\theta=-\sin\theta\ii+\cos\theta\jj\)</td><td>turn with \(\theta\): \(\vb u_r'=\vb u_\theta\), \(\vb u_\theta'=-\vb u_r\)</td></tr>
+<tr><td>Vector field</td><td>\(\vb F=M\ii+N\jj+P\kk\), each a function of \((x,y,z)\)</td><td>an arrow at every point</td></tr>
+<tr><td>Del</td><td>\(\nabla=\ii\partial_x+\jj\partial_y+\kk\partial_z\)</td><td>an operator, not a vector</td></tr>
+<tr><td>Gradient</td><td>\(\nabla\varphi=\varphi_x\ii+\varphi_y\jj+\varphi_z\kk\)</td><td>uphill arrow, normal to level surfaces</td></tr>
+<tr><td>Divergence</td><td>\(\nabla\cdot\vb F=M_x+N_y+P_z\) (scalar)</td><td>net outflow per unit volume; \(\gt0\) source, \(\lt0\) sink</td></tr>
+<tr><td>Solenoidal</td><td>\(\nabla\cdot\vb F=0\)</td><td>divergence-free, incompressible</td></tr>
+<tr><td>Curl</td><td>\(\nabla\times\vb F=\begin{vmatrix}\ii&\jj&\kk\\\partial_x&\partial_y&\partial_z\\M&N&P\end{vmatrix}\) (vector)</td><td>circulation per unit area; axis of swirl</td></tr>
+<tr><td>2D curl</td><td>\((N_x-M_y)\kk\)</td><td>paddle wheel: \(\gt0\) anticlockwise</td></tr>
+<tr><td>Irrotational</td><td>\(\nabla\times\vb F=\vb 0\)</td><td>no local spin</td></tr>
+<tr><td>Identities</td><td>\(\nabla\cdot(\nabla\times\vb F)=0\), \(\nabla\times(\nabla f)=\vb 0\)</td><td>mixed partials cancel</td></tr>
+<tr><td>Product rules for \(\nabla\)</td><td>\(\nabla\cdot(f\vb v)=\nabla f\cdot\vb v+f\nabla\cdot\vb v\); \(\nabla\times(f\vb v)=\nabla f\times\vb v+f\nabla\times\vb v\)</td><td>plus rules 1–3, 5, 7, 8 in §6</td></tr>
+<tr><td>Examples</td><td>\(\nabla\cdot(\vb r/r^3)=0\); wire: \(\nabla\times\vb H=\vb 0\) outside, \(\kk/(\pi R^2)\) inside</td><td>point charge solenoidal; curl = current density</td></tr>
+<tr><td>\(\vb r\)-results (Beyond)</td><td>\(\nabla r^n=nr^{n-2}\vb r\), \(\nabla\cdot(r^n\vb r)=(n+3)r^n\), \(\nabla\times(h(r)\vb r)=\vb 0\), \(\nabla\times(\vb v\times\vb r)=2\vb v\)</td><td>see the ready-made box in §6</td></tr>
+</table></div>
+</section>
+
+<section id="mistakes">
+<h2><span class="n">◆</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Getting the sign of the \(\jj\)-component of curl wrong (writing \(\partial_xP-\partial_zM\)). <b>Fix:</b> the cofactor expansion has signs \(+\,-\,+\); or use the cycle: \(\jj\)-component \(=\partial_zM-\partial_xP\).</span>
+<span class="x">✗</span><span>Treating \(r\) as a constant when differentiating, e.g. \(\partial_x(x/r^3)=1/r^3\). <b>Fix:</b> \(r\) depends on \(x\): \(\partial r/\partial x=x/r\); use the product rule.</span>
+<span class="x">✗</span><span>Giving div as a vector or curl as a number. <b>Fix:</b> div \(\vb F\) is a scalar; curl \(\vb F\) is a vector (in 2D, write it as \((\dots)\kk\)).</span>
+<span class="x">✗</span><span>Writing meaningless combinations such as curl(div \(\vb F\)) or grad \(\vb F\). <b>Fix:</b> grad acts on scalars; div and curl act on vectors. Check the type at each step.</span>
+<span class="x">✗</span><span>In div, differentiating each component by the wrong variable (\(\partial M/\partial y\) etc.). <b>Fix:</b> div pairs \(M\) with \(x\), \(N\) with \(y\), \(P\) with \(z\); the "cross" derivatives belong to curl.</span>
+<span class="x">✗</span><span>Forgetting that \(\vb u_r\) and \(\vb u_\theta\) change: \(\frac{d}{dt}(r\vb u_r)=\dot r\vb u_r\). <b>Fix:</b> \(\frac{d\vb u_r}{dt}=\dot\theta\vb u_\theta\), so \(\vb v=\dot r\vb u_r+r\dot\theta\vb u_\theta\).</span>
+<span class="x">✗</span><span>Concluding "arrows are parallel, so curl = 0" or "arrows are parallel, so div = 0". <b>Fix:</b> shear flow \(y\ii\) has parallel arrows but curl \(-\kk\); \(x\ii\) has parallel arrows but div 1. Compute; don't eyeball.</span>
+<span class="x">✗</span><span>Quoting \(\nabla\cdot(\vb r/r^3)=0\) at the origin. <b>Fix:</b> the field is undefined there; state "for \(\vb r\ne\vb 0\)".</span>
+<span class="ok">✓</span><span>In proofs, write out components \(M,N,P\), apply the ordinary product rule, then regroup and name what you see (\(\nabla\phi\cdot\vb F\), \(\phi\nabla\times\vb F\), …). State "mixed partials equal (continuous second derivatives)" when you use it.</span>
+</div>
+</section>
+
+<section id="find-mistake">
+<h2><span class="n">◆</span>Find the mistake</h2>
+<p class="muted small">Written for these notes. Each "solution" has one error. Find it before opening the answer.</p>
+<div class="q"><p class="qh">1. A curl</p>
+<p>"For \(\vb F=yz\,\ii+3xz\,\jj+z^2\,\kk\): \(\nabla\times\vb F\) \(=(0-3x)\ii+(0-y)\jj+(3z-z)\kk\) \(=-3x\,\ii-y\,\jj+2z\,\kk\)."</p>
+<details><summary>Answer</summary><div><p>The \(\jj\)-component: it is \(\partial_zM-\partial_xP\) \(=\partial_z(yz)-\partial_x(z^2)\) \(=y-0\) \(=y\). The student used \(\partial_xP-\partial_zM\) (forgot the minus sign of the middle cofactor). Correct: \(\nabla\times\vb F=-3x\,\ii+y\,\jj+2z\,\kk\).</p></div></details></div>
+<div class="q"><p class="qh">2. A divergence with \(r\)</p>
+<p>"\(\nabla\cdot\dfrac{\vb r}{r^3}\) \(=\pd{}{x}\Big(\dfrac x{r^3}\Big)+\pd{}{y}\Big(\dfrac y{r^3}\Big)+\pd{}{z}\Big(\dfrac z{r^3}\Big)\) \(=\dfrac1{r^3}+\dfrac1{r^3}+\dfrac1{r^3}\) \(=\dfrac3{r^3}\)."</p>
+<details><summary>Answer</summary><div><p>\(r^3\) was treated as a constant. By the product and chain rules, \(\pd{}{x}\big(\frac x{r^3}\big)=\frac1{r^3}-\frac{3x^2}{r^5}\). Adding the three terms gives \(\frac3{r^3}-\frac{3r^2}{r^5}=0\) (for \(\vb r\ne\vb 0\)), as in Example 3.3.2.</p></div></details></div>
+<div class="q"><p class="qh">3. Velocity in polar form</p>
+<p>"A bead moves on a rod spinning at constant rate \(\dot\theta=\omega\), with \(r=t\). Its position is \(\vb r=r\vb u_r=t\,\vb u_r\), so its velocity is \(\vb v=\vb u_r\), of speed 1."</p>
+<details><summary>Answer</summary><div><p>\(\vb u_r\) turns with \(\theta\), so it must be differentiated too: \(\vb v=\dot r\,\vb u_r+r\dot\theta\,\vb u_\theta=\vb u_r+t\omega\,\vb u_\theta\), of speed \(\sqrt{1+\omega^2t^2}\).</p></div></details></div>
+</section>
+
+<section id="group-work">
+<h2><span class="n">◆</span>Practice problems (written for these notes)</h2>
+<p class="muted small">The Chapter 3a handout has no group-work questions, so these are written for these notes, at least one per section. Answers checked in sympy.</p>
+<div class="q"><p class="qh">1. (§1) A particle has position \(\vb r(t)=\cos t\,\ii+\sin t\,\jj+t\,\kk\) (a helix). Find its velocity, acceleration and speed, and show that the velocity and acceleration are always perpendicular.</p>
+<details><summary>Hint</summary><div><p>Differentiate each component twice. Perpendicular means dot product zero.</p></div></details>
+<details><summary>Answer</summary><div><p>\(\vb v=-\sin t\,\ii+\cos t\,\jj+\kk\), \(\vb a=-\cos t\,\ii-\sin t\,\jj\), speed \(|\vb v|=\sqrt{\sin^2t+\cos^2t+1}=\sqrt2\) (constant), \(\vb v\cdot\vb a=\sin t\cos t-\sin t\cos t+0=0\). (Constant speed means \(\vb v\cdot\vb v\) is constant, so \(\vb v\perp\vb v'\), as in §1.)</p></div></details></div>
+<div class="q"><p class="qh">2. (§1) A particle has acceleration \(\vb a(t)=6t\,\ii+2\,\jj\), initial velocity \(\vb v(0)=\ii\) and initial position \(\vb r(0)=\vb 0\). Find \(\vb v(t)\) and \(\vb r(t)\).</p>
+<details><summary>Hint</summary><div><p>Integrate component by component twice, fixing the constant vector each time, as in Example 3.1.3.</p></div></details>
+<details><summary>Answer</summary><div><p>\(\vb v=3t^2\ii+2t\jj+\vb c\), \(\vb v(0)=\vb c=\ii\), so \(\vb v=(3t^2+1)\ii+2t\jj\). Then \(\vb r=(t^3+t)\ii+t^2\jj+\vb d\) with \(\vb d=\vb 0\): \(\vb r=(t^3+t)\ii+t^2\jj\).</p></div></details></div>
+<div class="q"><p class="qh">3. (§2) Show that every vector of the field \(\vb F=\dfrac{-y\ii+x\jj}{\sqrt{x^2+y^2}}\) (defined away from the origin) has length 1 and is tangent to the circle about the origin through its point. Sketch the field.</p>
+<canvas class="plot" id="f-pp3" style="aspect-ratio:1/1;max-width:340px" aria-label="Unit-length anticlockwise swirl field"></canvas>
+<details><summary>Hint</summary><div><p>Compute \(|\vb F|\) and \(\vb F\cdot(x\ii+y\jj)\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(|\vb F|=\sqrt{y^2+x^2}/\sqrt{x^2+y^2}=1\); \(\vb F\cdot(x\ii+y\jj)\) \(=(-xy+xy)/\sqrt{x^2+y^2}\) \(=0\), so \(\vb F\) is perpendicular to the radius, i.e. tangent to the circle. It circulates anticlockwise with all arrows the same length (figure).</p></div></details></div>
+<div class="q"><p class="qh">4. (§3) For \(\varphi=x^2y+yz^3\), find \(\nabla\varphi\) at \((1,-1,1)\), the direction in which \(\varphi\) increases fastest there, and that fastest rate.</p>
+<details><summary>Hint</summary><div><p>\(\nabla\varphi=(2xy,\ x^2+z^3,\ 3yz^2)\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\nabla\varphi(1,-1,1)=-2\ii+2\jj-3\kk\); fastest increase along \(\frac1{\sqrt{17}}(-2\ii+2\jj-3\kk)\), at rate \(\sqrt{4+4+9}=\sqrt{17}\).</p></div></details></div>
+<div class="q"><p class="qh">5. (§4) (a) Find \(\nabla\cdot(r^2\vb r)\), where \(\vb r=x\ii+y\jj+z\kk\). (b) Find the constant \(a\) for which \(\vb F=(x+3y)\ii+(y-2z)\jj+(x+az)\kk\) is solenoidal.</p>
+<details><summary>Hint</summary><div><p>(a) Either expand \((x^2+y^2+z^2)(x,y,z)\) or use \(\nabla\cdot(r^n\vb r)=(n+3)r^n\). (b) Set the divergence to zero.</p></div></details>
+<details><summary>Answer</summary><div><p>(a) \(5r^2=5(x^2+y^2+z^2)\). (b) \(\nabla\cdot\vb F=1+1+a=0\), so \(a=-2\).</p>
+<details><summary>Show the calculation: (a) directly</summary><div><ol class="steps">
+<li>\(r^2\vb r\) \(=(x^2+y^2+z^2)x\,\ii\) \(+\:(x^2+y^2+z^2)y\,\jj\) \(+\:(x^2+y^2+z^2)z\,\kk\).</li>
+<li>\(\partial_x\big[(x^2+y^2+z^2)x\big]\) \(=2x\cdot x+(x^2+y^2+z^2)\) \(=3x^2+y^2+z^2\). <i>Why:</i> product rule.</li>
+<li>Similarly \(x^2+3y^2+z^2\) and \(x^2+y^2+3z^2\). Sum: \(5(x^2+y^2+z^2)=5r^2\).</li></ol></div></details></div></details></div>
+<div class="q"><p class="qh">6. (§5) Find the curls of \(\vb F=yz\,\ii+xz\,\jj+xy\,\kk\) and \(\vb G=-y\,\ii+x\,\jj+z\,\kk\). Which is irrotational? Which way would a paddle wheel with a vertical axis turn in \(\vb G\)?</p>
+<details><summary>Hint</summary><div><p>Use the cycle: \(\ii\): \(\partial_yP-\partial_zN\), \(\jj\): \(\partial_zM-\partial_xP\), \(\kk\): \(\partial_xN-\partial_yM\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\nabla\times\vb F\) \(=(x-x)\ii+(y-y)\jj+(z-z)\kk\) \(=\vb 0\): irrotational (indeed \(\vb F=\nabla(xyz)\)). \(\nabla\times\vb G=2\kk\): the wheel turns anticlockwise (seen from above).</p></div></details></div>
+<div class="q"><p class="qh">7. (§6) (a) For \(\vb F=xy\,\ii+yz\,\jj+zx\,\kk\), compute \(\nabla\times\vb F\) and check that its divergence is 0. (b) Show that \(\nabla\times(f\nabla f)=\vb 0\) for any scalar field \(f\) with continuous second derivatives.</p>
+<details><summary>Hint</summary><div><p>(b) Use rule 6 with \(\vb v=\nabla f\), then Identity 2 and the fact that \(\vb a\times\vb a=\vb 0\).</p></div></details>
+<details><summary>Answer</summary><div><p>(a) \(\nabla\times\vb F=-y\,\ii-z\,\jj-x\,\kk\), whose divergence is \(0+0+0=0\). (b) \(\nabla\times(f\nabla f)\) \(=\nabla f\times\nabla f+f\,\nabla\times(\nabla f)\) \(=\vb 0+f\cdot\vb 0\) \(=\vb 0\).</p>
+<details><summary>Show the calculation: (a) component by component</summary><div><ol class="steps">
+<li>\(\ii\): \(\partial_y(zx)-\partial_z(yz)=0-y=-y\).</li>
+<li>\(\jj\): \(\partial_z(xy)-\partial_x(zx)=0-z=-z\).</li>
+<li>\(\kk\): \(\partial_x(yz)-\partial_y(xy)=0-x=-x\).</li>
+<li>Divergence: \(\partial_x(-y)+\partial_y(-z)+\partial_z(-x)=0\). <i>Why:</i> each component does not contain its own variable.</li></ol></div></details></div></details></div>
+</section>
+
+<section id="checks">
+<h2><span class="n">◆</span>Concept checks</h2>
+<p class="muted small">Written for these notes.</p>
+<div class="q"><p class="qh">1. Which of these make sense, and is each a scalar or a vector field: \(\nabla(\nabla\cdot\vb F)\), \(\nabla\cdot(\nabla f)\), \(\nabla\times(\nabla\cdot\vb F)\), \(\nabla\cdot(\nabla\times\vb F)\), \(\nabla(\nabla f)\)?</p>
+<details><summary>Answer</summary><div><p>\(\nabla(\nabla\cdot\vb F)\): vector (grad of a scalar). \(\nabla\cdot(\nabla f)\): scalar, the Laplacian. \(\nabla\times(\nabla\cdot\vb F)\): meaningless (curl of a scalar). \(\nabla\cdot(\nabla\times\vb F)\): scalar, always 0. \(\nabla(\nabla f)\): meaningless in this course (grad of a vector).</p></div></details></div>
+<div class="q"><p class="qh">2. The field \(\vb F=x\,\ii\) has all its arrows parallel to the \(x\)-axis. Is its divergence zero?</p>
+<details><summary>Answer</summary><div><p>No: \(\nabla\cdot\vb F=1\) everywhere. The flow speeds up as \(x\) increases, so more leaves the right face of any small box than enters the left face: a source everywhere.</p></div></details></div>
+<div class="q"><p class="qh">3. In the shear flow \(\vb v=y\,\ii\) all streamlines are straight. Is it irrotational?</p>
+<details><summary>Answer</summary><div><p>No: \(\nabla\times\vb v=-\kk\). A paddle wheel feels faster flow on its upper blades than on its lower ones and turns clockwise.</p></div></details></div>
+<div class="q"><p class="qh">4. Give a non-constant field that is both solenoidal and irrotational.</p>
+<details><summary>Answer</summary><div><p>For example \(\vb F=2x\,\ii-2y\,\jj\) (the gradient of \(x^2-y^2\)): \(\nabla\cdot\vb F=2-2=0\), \(\nabla\times\vb F=\vb 0\). Another: the vortex field \(\dfrac{y\ii-x\jj}{x^2+y^2}\) away from the origin (Dec 2023 Q4(a)(i)).</p></div></details></div>
+<div class="q"><p class="qh">5. Without computing, what is \(\nabla\times\vb F\) if \(\vb F=\nabla\big(e^{xyz}\sin(x+z)\big)\)? What is \(\nabla\cdot\big(\nabla\times(x^5y\,\ii+\cos z\,\jj)\big)\)?</p>
+<details><summary>Answer</summary><div><p>\(\vb 0\) (curl grad = 0) and \(0\) (div curl = 0); both functions have continuous second derivatives.</p></div></details></div>
+<div class="q"><p class="qh">6. Why is \(d\vb u_r/d\theta\) perpendicular to \(\vb u_r\), and what is it?</p>
+<details><summary>Answer</summary><div><p>\(\vb u_r\) has constant length 1, so \(\vb u_r\cdot\vb u_r=1\) and differentiating gives \(2\vb u_r\cdot\vb u_r'=0\). Explicitly \(\frac{d}{d\theta}(\cos\theta\ii+\sin\theta\jj)\) \(=-\sin\theta\ii+\cos\theta\jj\) \(=\vb u_\theta\).</p></div></details></div>
+</section>
+
+<section id="taster">
+<h2><span class="n">◆</span>Exam taster</h2>
+<p>Real past-paper questions, one per question type of this chapter, plus a second part of the heaviest type (C3a.2), newest first. All come from December papers (answer 4 of 5 questions, 25 marks each, 3 hours); this chapter has no May-format questions in the collection. The formula sheet gives <b>nothing from this chapter</b>: learn the div and curl formulas and the identities. Each question has a hint and the final answer; full worked solutions with marker notes are in the exam guide (follow the tag).</p>
+
+<div class="q"><div class="src"><b>Dec 2025 Q2(a)(i)</b><span>4 marks</span><a class="guide" href="guide-C3a.html#C3a-1">Guide C3a.1 · compute div and curl</a></div>
+<p>Let \(\vb F(x,y,z)\) \(=(2xy+z)\,\ii+(x^2+z^2)\,\jj+(x+2yz)\,\kk\) be a vector field defined on \(\R^3\). Find \(\operatorname{curl}(\vb F)\).</p>
+<details><summary>Hint</summary><div><p>\(M=2xy+z\), \(N=x^2+z^2\), \(P=x+2yz\). Expand the determinant; watch the sign of the \(\jj\)-component. (The next part of the question uses the answer to find a potential.)</p></div></details>
+<details><summary>Answer</summary><div><p>\(\operatorname{curl}\vb F\) \(=(2z-2z)\ii+(1-1)\jj+(2x-2x)\kk\) \(=\boxed{\vb 0}\): the field is irrotational.</p>
+<details><summary>Show the calculation: outline</summary><div><ol class="steps">
+<li>\(\ii\): \(\partial_y(x+2yz)-\partial_z(x^2+z^2)\) \(=2z-2z\) \(=0\).</li>
+<li>\(\jj\): \(\partial_z(2xy+z)-\partial_x(x+2yz)\) \(=1-1\) \(=0\).</li>
+<li>\(\kk\): \(\partial_x(x^2+z^2)-\partial_y(2xy+z)\) \(=2x-2x\) \(=0\).</li></ol></div></details></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2024 Q3(b)</b><span>4 + 4 + 4 marks</span><a class="guide" href="guide-C3a.html#C3a-2">Guide C3a.2 · identities and proofs</a></div>
+<p>Let \(\phi\) be a scalar field, \(\vb F=M\ii+N\jj+P\kk\) be a vector field, \(\vb r=x\ii+y\jj+z\kk\), and \(r=|\vb r|\).</p>
+<p>(i) Prove that \(\nabla\cdot(\phi\vb F)=\phi\,\nabla\cdot\vb F+\vb F\cdot\nabla\phi\).</p>
+<p>(ii) Prove that \(\operatorname{curl}(\phi\vb F)=\operatorname{grad}(\phi)\times\vb F+\phi\operatorname{curl}(\vb F)\).</p>
+<p>(iii) Find \(\operatorname{div}\Big(\dfrac{\vb r}{r^3}\Big)\).</p>
+<details><summary>Hint</summary><div><p>(i), (ii): write \(\phi\vb F=\phi M\ii+\phi N\jj+\phi P\kk\), apply the ordinary product rule to each derivative, regroup. (iii): use (i) with \(\phi=r^{-3}\), \(\vb F=\vb r\), and \(\nabla r^{-3}=-3r^{-5}\vb r\), \(\nabla\cdot\vb r=3\).</p></div></details>
+<details><summary>Answer</summary><div><p>(i), (ii): proofs exactly as for rules 4 and 6 in §6. (iii) \(\operatorname{div}(\vb r/r^3)=\boxed{0}\) for \(\vb r\ne\vb 0\).</p>
+<details><summary>Show the calculation: outline of (iii) using (i)</summary><div><ol class="steps">
+<li>Take \(\phi=r^{-3}\), \(\vb F=\vb r\) in (i): \(\nabla\cdot(r^{-3}\vb r)=r^{-3}\,\nabla\cdot\vb r+\vb r\cdot\nabla(r^{-3})\).</li>
+<li>\(\nabla\cdot\vb r=3\) and \(\nabla(r^{-3})=-3r^{-5}\vb r\) (from \(\nabla r^n=nr^{n-2}\vb r\)).</li>
+<li>So the divergence is \(3r^{-3}-3r^{-5}(\vb r\cdot\vb r)\) \(=3r^{-3}-3r^{-5}r^2\) \(=0\).</li></ol></div></details></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2022 Q1(a)(i)</b><span>4 marks</span><span>also Dec 2017 Q1(a)(i)</span><a class="guide" href="guide-C3a.html#C3a-3">Guide C3a.3 · vector functions, polar unit vectors</a></div>
+<p>Let \(x=r\cos\theta\) and \(y=r\sin\theta\) be the transformation formulae between Cartesian coordinates \((x,y)\) and polar coordinates \((r,\theta)\). Let \(\vb u_r\) and \(\vb u_\theta\) be the unit vectors in positive directions at \((r,\theta)\) as shown in Figure Q1. Show that</p>
+\[\begin{gathered}\vb u_r=\cos\theta\,\ii+\sin\theta\,\jj,\\ \vb u_\theta=-\sin\theta\,\ii+\cos\theta\,\jj.\end{gathered}\]
+<canvas class="plot" id="f-q1" style="aspect-ratio:1/0.8;max-width:380px" aria-label="Figure Q1: point at distance r and angle theta with unit vectors u_r and u_theta"></canvas>
+<p class="muted small">Figure Q1 (redrawn): the point at distance \(r\) from \(O\) at angle \(\theta\) from the \(X\)-axis, with horizontal distance \(x\) and height \(y\); \(\vb u_r\) continues outward along the radius and \(\vb u_\theta\) is perpendicular to it, pointing in the direction of increasing \(\theta\).</p>
+<details><summary>Hint</summary><div><p>\(\vb u_r\) is the position vector \(x\ii+y\jj\) divided by its length \(r\). \(\vb u_\theta\) makes angle \(\theta+\pi/2\) with the \(X\)-axis (or: normalise \(\partial(x\ii+y\jj)/\partial\theta\)).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\vb u_r=\dfrac{x\ii+y\jj}{r}=\cos\theta\,\ii+\sin\theta\,\jj\); \(\vb u_\theta\) \(=\cos(\theta+\tfrac\pi2)\ii+\sin(\theta+\tfrac\pi2)\jj\) \(=-\sin\theta\,\ii+\cos\theta\,\jj\). Full derivation (both methods) in the "Show the calculation" tab of §1.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2022 Q3(b)</b><span>3 + 5 marks</span><a class="guide" href="guide-C3a.html#C3a-2">Guide C3a.2 · identities and proofs</a></div>
+<p>Let \(\vb r=x\ii+y\jj+z\kk\) and \(r=|\vb r|=\sqrt{x^2+y^2+z^2}\). A vector field \(\vb V\) is given by \(\vb V=h(r)\,\vb r\).</p>
+<p>(i) Evaluate \(\nabla\times\vb V\).</p>
+<p>(ii) If \(\nabla\cdot\vb V=0\), find \(h(r)\) given that \(h(1)=1\).</p>
+<details><summary>Hint</summary><div><p>Use the product rules with \(\nabla h(r)=h'(r)\,\vb r/r\). In (ii) you get a separable first-order ODE for \(h\).</p></div></details>
+<details><summary>Answer</summary><div><p>(i) \(\nabla\times\vb V=\boxed{\vb 0}\). (ii) \(rh'+3h=0\Rightarrow h=C/r^3\), and \(h(1)=1\) gives \(\boxed{h(r)=1/r^3}\).</p>
+<details><summary>Show the calculation: outline</summary><div><ol class="steps">
+<li>(i) \(\nabla\times(h\vb r)\) \(=\nabla h\times\vb r+h\,\nabla\times\vb r\) \(=h'(r)\frac{\vb r}{r}\times\vb r+\vb 0\) \(=\vb 0\). <i>Why:</i> parallel vectors have zero cross product; \(\nabla\times\vb r=\vb 0\).</li>
+<li>(ii) \(\nabla\cdot(h\vb r)\) \(=\nabla h\cdot\vb r+3h\) \(=h'(r)\frac{r^2}{r}+3h\) \(=rh'+3h\).</li>
+<li>Set to 0: \(\dfrac{h'}{h}\) \(=-\dfrac3r\) \(\Rightarrow\ln|h|\) \(=-3\ln r+c\) \(\Rightarrow h\) \(=Cr^{-3}\).</li>
+<li>\(h(1)=C=1\).</li></ol></div></details></div></details></div>
+<p class="muted small">Other sittings of these types (Dec 2025 Q3(b), Q4(a); Dec 2024 Q3(a); Dec 2023 Q3(a), Q4(a), Q4(b); Dec 2022 Q2(b)(iii)–(v); Dec 2018 Q2(b); Dec 2017 Q1(a)(iii)–(iv), Q2(b); Dec 2016; Dec 2015; Dec 2014 Q4(a)) are solved in the <a href="guide-C3a.html">C3a exam guide</a>.</p>
+</section>
+
+<footer class="foot">MECH2407 Revision Bundle · written for students revising on their own. Material in orange "Beyond the handouts" boxes is not in the course handouts. <a href="index.html">Start Here</a></footer>
+</main>
+</div>
+
+<script>
+/* ===== MV: shared plotting helpers (2D plot, 3D surface, contour map, vector field) ===== */
+window.MV=(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+function hex(c){c=c.replace('#','');if(c.length===3)c=c.split('').map(x=>x+x).join('');return [0,2,4].map(i=>parseInt(c.substr(i,2),16));}
+function mix(a,b,t){const A=hex(a),B=hex(b);return 'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')+')';}
+function ramp(t){t=Math.max(0,Math.min(1,t));return t<.5?mix(css('--accent'),css('--c3'),t*2):mix(css('--c3'),css('--warm'),(t-.5)*2);}
+function setup(cv){const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return null;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card');g.fillRect(0,0,W,H);g.font='11px Inter, system-ui, sans-serif';return {g,W,H};}
+function arrow(g,x1,y1,x2,y2,col,w,head){g.strokeStyle=col;g.fillStyle=col;g.lineWidth=w||2;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  const a=Math.atan2(y2-y1,x2-x1),L=head||8;g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-L*Math.cos(a-.4),y2-L*Math.sin(a-.4));g.lineTo(x2-L*Math.cos(a+.4),y2-L*Math.sin(a+.4));g.closePath();g.fill();}
+function label(g,t,x,y,col,align,bold){g.font=(bold?'600 ':'')+'12px Inter, system-ui, sans-serif';g.fillStyle=col;g.textAlign=align||'left';g.textBaseline='middle';g.save();g.strokeStyle=css('--card');g.lineWidth=3.5;g.lineJoin='round';g.strokeText(t,x,y);g.restore();g.fillText(t,x,y);g.font='11px Inter, system-ui, sans-serif';}
+
+/* ---- 2D axes. o: xmin,xmax,ymin,ymax,xstep,ystep,equal, curves[{f,color,dash,width,from,to}], param[{x(t),y(t),t0,t1,color}],
+   segs[{x1,y1,x2,y2,color,dash}], arrows[{x1,y1,x2,y2,color,label}], pts[{x,y,color,label,open}], extra(g,X,Y) ---- */
+function axes2d(cv,o){
+  const s=setup(cv);if(!s)return;const {g,W,H}=s;
+  const pl=34,pr=12,pt=12,pb=26;
+  if(o.equal){const sx=(W-pl-pr)/(o.xmax-o.xmin),sy=(H-pt-pb)/(o.ymax-o.ymin);if(sx>sy){const c=(o.xmin+o.xmax)/2,h=(W-pl-pr)/sy/2;o=Object.assign({},o,{xmin:c-h,xmax:c+h});}else{const c=(o.ymin+o.ymax)/2,h=(H-pt-pb)/sx/2;o=Object.assign({},o,{ymin:c-h,ymax:c+h});}}
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr), Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const xs=o.xstep||1,ys=o.ystep||1;
+  const xt=range(Math.ceil(o.xmin/xs)*xs,o.xmax,xs),yt=range(Math.ceil(o.ymin/ys)*ys,o.ymax,ys);
+  g.strokeStyle=css('--grid');g.lineWidth=1;
+  xt.forEach(v=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(v=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis');g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted');g.textAlign='center';g.textBaseline='top';
+  xt.forEach(v=>{if(v!==0)g.fillText(fmt(v,2),X(v),H-pb+6);});
+  g.textAlign='right';g.textBaseline='middle';yt.forEach(v=>{if(v!==0)g.fillText(fmt(v,2),pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr-2,Y(Math.max(o.ymin,Math.min(0,o.ymax)))-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,X(Math.max(o.xmin,Math.min(0,o.xmax)))+5,pt+2);}
+  g.save();g.beginPath();g.rect(pl,pt,W-pl-pr,H-pt-pb);g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{const a=c.from!==undefined?c.from:o.xmin,b=c.to!==undefined?c.to:o.xmax,N=c.n||600;
+    g.strokeStyle=c.color;g.lineWidth=c.width||2.4;g.setLineDash(c.dash||[]);g.beginPath();let pen=false,py=null;
+    for(let i=0;i<=N;i++){const x=a+(b-a)*i/N,y=c.f(x);if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*.5)pen=false;if(!pen){g.moveTo(X(x),Y(y));pen=true;}else g.lineTo(X(x),Y(y));py=y;}
+    g.stroke();g.setLineDash([]);});
+  (o.param||[]).forEach(c=>{const N=c.n||400;g.strokeStyle=c.color;g.lineWidth=c.width||2.4;g.setLineDash(c.dash||[]);g.beginPath();
+    for(let i=0;i<=N;i++){const t=c.t0+(c.t1-c.t0)*i/N;const x=c.x(t),y=c.y(t);i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y));}g.stroke();g.setLineDash([]);});
+  (o.segs||[]).forEach(q=>{g.strokeStyle=q.color;g.lineWidth=q.width||2;g.setLineDash(q.dash||[]);g.beginPath();g.moveTo(X(q.x1),Y(q.y1));g.lineTo(X(q.x2),Y(q.y2));g.stroke();g.setLineDash([]);});
+  if(o.extra)o.extra(g,X,Y);
+  g.restore();
+  (o.arrows||[]).forEach(a=>{arrow(g,X(a.x1),Y(a.y1),X(a.x2),Y(a.y2),a.color,a.width||2.2);if(a.label)label(g,a.label,X(a.x2)+6,Y(a.y2)-8,a.color,'left',true);});
+  (o.pts||[]).forEach(p=>{g.beginPath();g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label)label(g,p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-10,p.color,p.align||'left',true);});
+  return {X,Y,g};
+}
+
+/* ---- 3D surface z=f(x,y) (or parametric o.P), drag to rotate. o: f, x:[a,b], y:[c,d] (box), z:[lo,hi] (clip), n (grid), view {yaw,elev}, psurfs[{P,s,t,color,alpha}],
+   f2 (second surface, e.g. tangent plane), curves3d[{pts:[[x,y,z]...],color,width}], pts3d[{p:[x,y,z],color,label}],
+   arrows3d[{from,to,color,label}], labels {x,y,z}, alpha, mask(x,y)->bool ---- */
+function surface(cv,o){
+  if(!cv._view){cv._view=Object.assign({yaw:-0.65,elev:0.45},o.view||{});attachDrag(cv);}
+  cv._o=o;const s=setup(cv);if(!s)return;const {g,W,H}=s;const v=cv._view;
+  const [xa,xb]=o.x,[ya,yb]=o.y;let [za,zb]=o.z;
+  const nx=x=>2*(x-xa)/(xb-xa)-1, ny=y=>2*(y-ya)/(yb-ya)-1, zs=o.zscale||0.8, nz=z=>zs*(2*(z-za)/(zb-za)-1);
+  const cy=Math.cos(v.yaw),sy=Math.sin(v.yaw),ce=Math.cos(v.elev),se=Math.sin(v.elev);
+  const sc=Math.min(W,H)*0.33, ox=W/2, oy=H/2+H*0.03;
+  function P(x,y,z){const X=nx(x),Y=ny(y),Z=nz(z);const u=X*cy-Y*sy,d=X*sy+Y*cy;return [ox+sc*u, oy-sc*(Z*ce+d*se), d*ce-Z*se];}
+  // axes box floor + axes
+  g.lineWidth=1;g.strokeStyle=css('--grid');
+  const fl=[[xa,ya],[xb,ya],[xb,yb],[xa,yb],[xa,ya]].map(q=>P(q[0],q[1],za));
+  g.beginPath();fl.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();
+  const ax=[[P(xa,ya,za),P(xb,ya,za),o.labels?o.labels.x:'x'],[P(xa,ya,za),P(xa,yb,za),o.labels?o.labels.y:'y'],[P(xa,ya,za),P(xa,ya,zb),o.labels?o.labels.z:'z']];
+  ax.forEach(a=>{arrow(g,a[0][0],a[0][1],a[1][0],a[1][1],css('--axis'),1.3,6);label(g,a[2],a[1][0]+(a[1][0]>a[0][0]?6:-6),a[1][1]-6,css('--muted'),a[1][0]>a[0][0]?'left':'right');});
+  const quads=[];
+  function addGrid(pt,N,M,col,alpha,isMain){const G=[];
+    for(let i=0;i<=N;i++){G[i]=[];for(let j=0;j<=M;j++){const q=pt(i/N,j/M);const ok=q&&q.every(isFinite)&&q[2]>=za-1e-9&&q[2]<=zb+1e-9&&(!o.mask||o.mask(q[0],q[1]));G[i][j]={q,ok};}}
+    for(let i=0;i<N;i++)for(let j=0;j<M;j++){const c=[G[i][j],G[i+1][j],G[i+1][j+1],G[i][j+1]];if(c.some(q=>!q.ok))continue;
+      const pp=c.map(q=>P(q.q[0],q.q[1],q.q[2]));const zm=(c[0].q[2]+c[1].q[2]+c[2].q[2]+c[3].q[2])/4;
+      quads.push({pp,depth:(pp[0][2]+pp[1][2]+pp[2][2]+pp[3][2])/4,fill:col?col:ramp((zm-za)/(zb-za)),alpha,isMain});}}
+  function addSurf(f,col,alpha,isMain){const N=o.n||28;addGrid((u,w)=>{const x=xa+(xb-xa)*u,y=ya+(yb-ya)*w;return [x,y,f(x,y)];},N,N,col,alpha,isMain);}
+  // parametric piece: {P:(s,t)=>[x,y,z], s:[a,b], t:[c,d], n, m, color (css var; omit for height colours), alpha}
+  function addParam(q,isMain){const [sa,sb]=q.s,[ta,tb]=q.t;addGrid((u,w)=>q.P(sa+(sb-sa)*u,ta+(tb-ta)*w),q.n||24,q.m||48,q.color?css(q.color):null,q.alpha||(isMain?0.92:0.5),isMain);}
+  if(o.f)addSurf(o.f,null,o.alpha||0.92,true);
+  if(o.P)addParam(Object.assign({alpha:o.alpha||0.92},o.P),true);
+  if(o.f2)addSurf(o.f2,css(o.f2color||'--warm'),o.f2alpha||0.55,false);
+  (o.surfs||[]).forEach(q=>addSurf(q.f,css(q.color),q.alpha||0.5,false));
+  (o.psurfs||[]).forEach(q=>addParam(q,false));
+  quads.sort((a,b)=>b.depth-a.depth);
+  const line=css('--card');
+  quads.forEach(q=>{g.globalAlpha=q.alpha;g.fillStyle=q.fill;g.beginPath();q.pp.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();g.fill();
+    g.globalAlpha=q.isMain?0.35:0.2;g.strokeStyle=line;g.lineWidth=0.6;g.stroke();});
+  g.globalAlpha=1;
+  (o.curves3d||[]).forEach(c=>{g.strokeStyle=c.color;g.lineWidth=c.width||2.6;g.setLineDash(c.dash||[]);g.beginPath();c.pts.forEach((q,i)=>{const p=P(q[0],q[1],q[2]);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.stroke();g.setLineDash([]);});
+  (o.arrows3d||[]).forEach(a=>{const p=P(...a.from),q=P(...a.to);arrow(g,p[0],p[1],q[0],q[1],a.color,2.4);if(a.label)label(g,a.label,q[0]+6,q[1]-8,a.color,'left',true);});
+  (o.pts3d||[]).forEach(t=>{const p=P(...t.p);g.beginPath();g.arc(p[0],p[1],t.r||5,0,7);g.fillStyle=t.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();if(t.label)label(g,t.label,p[0]+8,p[1]-10,t.color,'left',true);});
+  g.fillStyle=css('--muted');g.font='11px Inter, system-ui, sans-serif';g.textAlign='right';g.textBaseline='bottom';g.fillText('drag to rotate',W-8,H-6);
+}
+function attachDrag(cv){cv.classList.add('drag');let d=null;
+  cv.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY,yaw:cv._view.yaw,elev:cv._view.elev};cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!d)return;cv._view.yaw=d.yaw-(e.clientX-d.x)*0.01;cv._view.elev=Math.max(-0.2,Math.min(1.45,d.elev+(e.clientY-d.y)*0.01));surface(cv,cv._o);});
+  ['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>{d=null;}));}
+
+/* ---- contour map of f(x,y). o: f, x,y ranges, levels [..], labels (bool), equal, plus any axes2d options (pts, arrows, curves, param) ---- */
+function contour(cv,o){
+  const base=Object.assign({xmin:o.x[0],xmax:o.x[1],ymin:o.y[0],ymax:o.y[1]},o);
+  base.extra=function(g,X,Y){
+    const N=o.n||120,[xa,xb]=[base.xmin,base.xmax],[ya,yb]=[base.ymin,base.ymax];const F=[];
+    for(let i=0;i<=N;i++){F[i]=[];for(let j=0;j<=N;j++)F[i][j]=o.f(xa+(xb-xa)*i/N,ya+(yb-ya)*j/N);}
+    const L=o.levels,lo=Math.min(...L),hi=Math.max(...L);
+    L.forEach(c=>{g.strokeStyle=o.color?css(o.color):ramp(hi>lo?(c-lo)/(hi-lo):0.5);g.lineWidth=1.8;g.beginPath();
+      for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+        const x0=xa+(xb-xa)*i/N,x1=xa+(xb-xa)*(i+1)/N,y0=ya+(yb-ya)*j/N,y1=ya+(yb-ya)*(j+1)/N;
+        const v=[F[i][j],F[i+1][j],F[i+1][j+1],F[i][j+1]],P=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]],e=[];
+        if(v.some(q=>!isFinite(q)))continue;
+        for(let k=0;k<4;k++){const a=v[k]-c,b=v[(k+1)%4]-c;if((a<0)!==(b<0)){const t=a/(a-b),A=P[k],B=P[(k+1)%4];e.push([A[0]+t*(B[0]-A[0]),A[1]+t*(B[1]-A[1])]);}}
+        for(let k=0;k+1<e.length;k+=2){g.moveTo(X(e[k][0]),Y(e[k][1]));g.lineTo(X(e[k+1][0]),Y(e[k+1][1]));}}
+      g.stroke();});
+    if(o.extra2)o.extra2(g,X,Y);
+  };
+  return axes2d(cv,base);
+}
+
+/* ---- vector field F(x,y) -> [u,v]. o: F, x,y ranges, n (arrows per side), plus axes2d options ---- */
+function field(cv,o){
+  const base=Object.assign({xmin:o.x[0],xmax:o.x[1],ymin:o.y[0],ymax:o.y[1],equal:true},o);
+  base.extra=function(g,X,Y){const n=o.n||13,[xa,xb]=o.x,[ya,yb]=o.y,h=Math.min((xb-xa),(yb-ya))/n;let mx=0;const A=[];
+    for(let i=0;i<=n;i++)for(let j=0;j<=n;j++){const x=xa+(xb-xa)*i/n,y=ya+(yb-ya)*j/n,F=o.F(x,y);const m=Math.hypot(F[0],F[1]);if(isFinite(m)){A.push([x,y,F,m]);mx=Math.max(mx,m);}}
+    A.forEach(([x,y,F,m])=>{if(m<1e-12)return;const L=0.42*h*(o.uniform?1:Math.sqrt(m/mx))/m;
+      arrow(g,X(x-F[0]*L),Y(y-F[1]*L),X(x+F[0]*L),Y(y+F[1]*L),ramp(m/mx),1.6,5);});
+    if(o.extra2)o.extra2(g,X,Y);};
+  return axes2d(cv,base);
+}
+
+function mount(id,draw){const el=document.getElementById(id);if(!el)return;const f=()=>draw(el);redraws.push(f);f();return f;}
+function slider(id,cb){const el=document.getElementById(id);if(el)el.addEventListener('input',cb);return el;}
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>redraws.forEach(f=>f()),120);});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>redraws.forEach(f=>f()));
+document.addEventListener('DOMContentLoaded',()=>{ // highlight current section in rail
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];if(!('IntersectionObserver' in window)||!links.length)return;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));}}),{rootMargin:'-20% 0px -70% 0px'});
+  links.forEach(a=>{const s=document.getElementById(a.getAttribute('href').slice(1));if(s)io.observe(s);});});
+return {css,fmt,range,mix,ramp,arrow,label,axes2d,surface,contour,field,mount,slider,redraw:()=>redraws.forEach(f=>f())};
+})();
+</script>
+<script>
+(function(){
+const {css,fmt,mount,surface,axes2d,field,contour,label,arrow}=MV;
+const $=id=>document.getElementById(id);
+const lin=(a,b,n)=>Array.from({length:n+1},(_,i)=>a+(b-a)*i/n);
+const on=(ids,f)=>ids.forEach(id=>{const e=$(id);if(e){e.addEventListener('input',f);e.addEventListener('change',f);}});
+const T=(g,s,x,y,col,al)=>label(g,s,x,y,col||css('--ink'),al||'left',true);
+function curve(g,X,Y,P,col,w,dash){g.save();g.strokeStyle=col;g.lineWidth=w||2.2;g.setLineDash(dash||[]);g.beginPath();P.forEach((p,i)=>i?g.lineTo(X(p[0]),Y(p[1])):g.moveTo(X(p[0]),Y(p[1])));g.stroke();g.restore();}
+function poly(g,X,Y,P,col,al,stroke){g.save();g.globalAlpha=al===undefined?0.3:al;g.fillStyle=col;g.beginPath();P.forEach((p,i)=>i?g.lineTo(X(p[0]),Y(p[1])):g.moveTo(X(p[0]),Y(p[1])));g.closePath();g.fill();
+  if(stroke){g.globalAlpha=1;g.strokeStyle=stroke;g.lineWidth=1.6;g.stroke();}g.restore();}
+function arr(g,X,Y,x1,y1,x2,y2,col,w,head){arrow(g,X(x1),Y(y1),X(x2),Y(y2),col,w||2.2,head||8);}
+function dot(g,X,Y,x,y,col,r){g.beginPath();g.arc(X(x),Y(y),r||4,0,7);g.fillStyle=col;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.2;g.stroke();}
+function circ(g,X,Y,cx,cy,rad,col,w,dash){g.save();g.strokeStyle=col;g.lineWidth=w||1.6;g.setLineDash(dash||[]);g.beginPath();
+  for(let i=0;i<=120;i++){const a=2*Math.PI*i/120;const px=X(cx+rad*Math.cos(a)),py=Y(cy+rad*Math.sin(a));i?g.lineTo(px,py):g.moveTo(px,py);}g.stroke();g.restore();}
+/* numerical tools for 2D fields */
+function outflow(F,cx,cy,rad){let s=0;const N=360;for(let i=0;i<N;i++){const a=2*Math.PI*(i+.5)/N,c=Math.cos(a),q=Math.sin(a);const f=F(cx+rad*c,cy+rad*q);s+=(f[0]*c+f[1]*q)*rad*2*Math.PI/N;}return s;}
+function circul(F,cx,cy,rad){let s=0;const N=360;for(let i=0;i<N;i++){const a=2*Math.PI*(i+.5)/N,c=Math.cos(a),q=Math.sin(a);const f=F(cx+rad*c,cy+rad*q);s+=(-f[0]*q+f[1]*c)*rad*2*Math.PI/N;}return s;}
+function div2(F,x,y){const h=1e-4;return (F(x+h,y)[0]-F(x-h,y)[0])/(2*h)+(F(x,y+h)[1]-F(x,y-h)[1])/(2*h);}
+function curl2(F,x,y){const h=1e-4;return (F(x+h,y)[1]-F(x-h,y)[1])/(2*h)-(F(x,y+h)[0]-F(x,y-h)[0])/(2*h);}
+
+/* ======================= §1 ======================= */
+const CURVES={
+  ex:{r:t=>[Math.exp(-t),2*Math.cos(3*t),3*Math.sin(3*t)],v:t=>[-Math.exp(-t),-6*Math.sin(3*t),9*Math.cos(3*t)],a:t=>[Math.exp(-t),-18*Math.cos(3*t),-27*Math.sin(3*t)],
+      t0:0,t1:2.1,box:{x:[0,1.3],y:[-2.4,2.4],z:[-3.4,3.4]},name:'Example 3.1.2'},
+  hel:{r:t=>[Math.cos(t),Math.sin(t),t/4],v:t=>[-Math.sin(t),Math.cos(t),0.25],a:t=>[-Math.cos(t),-Math.sin(t),0],t0:0,t1:4*Math.PI,box:{x:[-1.3,1.3],y:[-1.3,1.3],z:[0,3.4]},name:'helix'},
+  ex3:{r:t=>[2-2*Math.cos(t),Math.sin(t)-t,3*t*t],v:t=>[2*Math.sin(t),Math.cos(t)-1,6*t],a:t=>[2*Math.cos(t),-Math.sin(t),6],t0:0,t1:3,box:{x:[0,4.4],y:[-3.2,0.6],z:[0,28]},name:'Example 3.1.3'}};
+function drawCurve(cv){const C=CURVES[$('cv-sel').value],t=C.t0+(C.t1-C.t0)*(+$('cv-t').value),B=C.box;
+  const ts=lin(C.t0,C.t1,400),pts=ts.map(C.r);
+  const span=[B.x[1]-B.x[0],B.y[1]-B.y[0],B.z[1]-B.z[0]];
+  // scale an arrow so that it is about 30% of the box in normalised units
+  const sc=(w,frac)=>{const nn=Math.hypot(w[0]/span[0],w[1]/span[1],w[2]/span[2])||1;return w.map(c=>c*frac/nn);};
+  const p=C.r(t),vv=C.v(t),aa=C.a(t),V=sc(vv,0.32),A=sc(aa,0.22);
+  const ar=[{from:[0,0,0],to:p,color:css('--c4'),label:'r(t)'},{from:p,to:[p[0]+V[0],p[1]+V[1],p[2]+V[2]],color:css('--c2'),label:'v'}];
+  if($('cv-a').checked)ar.push({from:p,to:[p[0]+A[0],p[1]+A[1],p[2]+A[2]],color:css('--c3'),label:'a'});
+  const pa=C.r(C.t0),pb=C.r(C.t1);
+  surface(cv,Object.assign({},B,{view:{yaw:-0.75,elev:0.35},
+    curves3d:[{pts,color:css('--accent'),width:2.6},{pts:[[0,0,0],pa],color:css('--c4'),width:1.4,dash:[5,4]},{pts:[[0,0,0],pb],color:css('--c4'),width:1.4,dash:[5,4]}],
+    arrows3d:ar,pts3d:[{p:[0,0,0],color:css('--ink'),label:'O',r:3.5},{p:pa,color:css('--c4'),label:'r(a)',r:3.5},{p:pb,color:css('--c4'),label:'r(b)',r:3.5},{p,color:css('--c2'),r:4.5}]}));
+  const sp=Math.hypot(...vv),am=Math.hypot(...aa);
+  $('cv-out').innerHTML=C.name+' · t = '+fmt(t,2)+' · r = ('+p.map(c=>fmt(c,2)).join(', ')+') · v = ('+vv.map(c=>fmt(c,2)).join(', ')+'), speed <b>'+fmt(sp,3)+'</b> · a = ('+aa.map(c=>fmt(c,2)).join(', ')+'), |a| = '+fmt(am,3);}
+if($('f-curve')){on(['cv-sel','cv-t','cv-a'],()=>drawCurve($('f-curve')));mount('f-curve',drawCurve);}
+
+/* chord -> tangent */
+const cr=t=>[t,-1.5+0.18*t*t];
+function drawChord(cv){const d=+$('ch-d').value,t0=1.2,p=cr(t0),q=cr(t0+d);
+  axes2d(cv,{xmin:-0.5,xmax:3.9,ymin:-1.9,ymax:0.6,equal:true,xstep:10,ystep:10,
+    extra:(g,X,Y)=>{curve(g,X,Y,lin(0.1,3.6,120).map(cr),css('--accent'),2.6);
+      const m=0.36*t0;curve(g,X,Y,[[p[0]-1.2,p[1]-1.2*m],[p[0]+2.4,p[1]+2.4*m]],css('--muted'),1.3,[5,4]);
+      arr(g,X,Y,0,0,p[0],p[1],css('--c4'),2);arr(g,X,Y,0,0,q[0],q[1],css('--c4'),2);arr(g,X,Y,p[0],p[1],q[0],q[1],css('--c2'),2.4);
+      dot(g,X,Y,0,0,css('--ink'),3.5);T(g,'O',X(0)-14,Y(0)-2);
+      T(g,'r(t)',X(p[0]/2)-40,Y(p[1]/2),css('--c4'));T(g,'r(t+δt)',X(q[0]/2)+4,Y(q[1]/2)-14,css('--c4'));
+      T(g,'δr = r(t+δt) − r(t)',X((p[0]+q[0])/2)+10,Y((p[1]+q[1])/2)+14,css('--c2'));T(g,'tangent',X(p[0]+2.0),Y(p[1]+2.0*m)-12,css('--muted'));}});
+  const ch=[(q[0]-p[0])/d,(q[1]-p[1])/d];
+  $('ch-out').innerHTML='δt = '+fmt(d,2)+' · δr/δt = ('+fmt(ch[0],3)+', '+fmt(ch[1],3)+') → velocity dr/dt = (1, '+fmt(0.36*t0,3)+') as δt → 0';}
+if($('f-chord')){on(['ch-d'],()=>drawChord($('f-chord')));mount('f-chord',drawChord);}
+
+/* polar unit vectors */
+function drawPolar(cv){const th=+$('po-t').value,r=+$('po-r').value,x=r*Math.cos(th),y=r*Math.sin(th);
+  axes2d(cv,{xmin:-2.9,xmax:2.9,ymin:-2.9,ymax:2.9,equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra:(g,X,Y)=>{circ(g,X,Y,0,0,r,css('--grid'),1.4,[4,4]);
+      if($('po-m').checked)for(let k=0;k<8;k++){const a=k*Math.PI/4;if(Math.abs(((a-th)%(2*Math.PI)+2*Math.PI)%(2*Math.PI))<0.15)continue;
+        const px=r*Math.cos(a),py=r*Math.sin(a);g.globalAlpha=0.35;
+        arr(g,X,Y,px,py,px+0.6*Math.cos(a),py+0.6*Math.sin(a),css('--c2'),1.6,6);arr(g,X,Y,px,py,px-0.6*Math.sin(a),py+0.6*Math.cos(a),css('--c3'),1.6,6);g.globalAlpha=1;}
+      curve(g,X,Y,[[x,0],[x,y]],css('--muted'),1.2,[4,3]);curve(g,X,Y,[[0,y],[x,y]],css('--muted'),1.2,[4,3]);
+      curve(g,X,Y,[[0,0],[x,y]],css('--ink'),2);
+      g.save();g.strokeStyle=css('--warm');g.lineWidth=1.6;g.beginPath();g.arc(X(0),Y(0),26,-th,0,false);g.stroke();g.restore();
+      T(g,'θ',X(0)+32*Math.cos(th/2),Y(0)-32*Math.sin(th/2),css('--warm'),'center');
+      T(g,'r',X(x/2)-14*Math.sin(th),Y(y/2)-14*Math.cos(th),css('--ink'),'center');
+      const ux=[Math.cos(th),Math.sin(th)],ut=[-Math.sin(th),Math.cos(th)];
+      arr(g,X,Y,x,y,x+0.9*ux[0],y+0.9*ux[1],css('--c2'),2.6);arr(g,X,Y,x,y,x+0.9*ut[0],y+0.9*ut[1],css('--c3'),2.6);
+      T(g,'u_r',X(x+1.0*ux[0]),Y(y+1.0*ux[1])-8,css('--c2'),'center');T(g,'u_θ',X(x+1.05*ut[0]),Y(y+1.05*ut[1])-8,css('--c3'),'center');
+      dot(g,X,Y,x,y,css('--ink'),4.5);T(g,'P',X(x)+8,Y(y)+12);
+      arr(g,X,Y,-2.6,-2.5,-1.9,-2.5,css('--muted'),1.8,6);arr(g,X,Y,-2.6,-2.5,-2.6,-1.8,css('--muted'),1.8,6);
+      T(g,'i',X(-1.85),Y(-2.5)-8,css('--muted'));T(g,'j',X(-2.6)+6,Y(-1.75),css('--muted'));}});
+  $('po-out').innerHTML='θ = '+fmt(th,2)+' rad · u_r = ('+fmt(Math.cos(th),3)+', '+fmt(Math.sin(th),3)+') · u_θ = ('+fmt(-Math.sin(th),3)+', '+fmt(Math.cos(th),3)+') · u_r·u_θ = <b>0</b>';}
+if($('f-polar')){on(['po-t','po-r','po-m'],()=>drawPolar($('f-polar')));mount('f-polar',drawPolar);}
+
+/* ======================= §2 ======================= */
+function drawPipe(cv){const w=+$('pf-w').value;
+  const U=(x,y)=>{const e=1-(y-2)*(y-2);return [1.5*e*(1+0.25*w*Math.sin(1.7*x+3*y)),0.9*w*e*Math.sin(1.3*x-2.2*y+0.6)];};
+  const blob=a=>{const rr=1+0.12*Math.sin(3*a)+0.08*Math.cos(2*a);return [5.4+2.3*rr*Math.cos(a),2+0.78*rr*Math.sin(a)];};
+  const inside=(x,y)=>{const a=Math.atan2((y-2)/0.78,(x-5.4)/2.3),b=blob(a);return Math.hypot((x-5.4)/2.3,(y-2)/0.78)<Math.hypot((b[0]-5.4)/2.3,(b[1]-2)/0.78)*0.97;};
+  axes2d(cv,{xmin:0.2,xmax:10.6,ymin:0.4,ymax:3.6,equal:true,xstep:100,ystep:100,
+    extra:(g,X,Y)=>{[1,3].forEach(yw=>{curve(g,X,Y,[[2.6,yw],[8.4,yw]],css('--ink'),2.4);
+        for(let xx=2.7;xx<8.4;xx+=0.18){const s=yw===3?1:-1;curve(g,X,Y,[[xx,yw],[xx+0.12,yw+s*0.12]],css('--muted'),1);}});
+      const P=lin(0,2*Math.PI,120).map(blob);curve(g,X,Y,P,css('--c2'),2);
+      let mx=0;const A=[];for(let x=3.3;x<=7.6;x+=0.42)for(let y=1.4;y<=2.6;y+=0.2){if(!inside(x,y))continue;const f=U(x,y);A.push([x,y,f]);mx=Math.max(mx,Math.hypot(f[0],f[1]));}
+      A.forEach(([x,y,f])=>{const L=0.34/mx;arr(g,X,Y,x-f[0]*L,y-f[1]*L,x+f[0]*L,y+f[1]*L,css('--accent'),1.6,6);});
+      const big=(x0,col)=>{poly(g,X,Y,[[x0,1.85],[x0+1.2,1.85],[x0+1.2,1.7],[x0+1.7,2],[x0+1.2,2.3],[x0+1.2,2.15],[x0,2.15]],col,0.9,css('--ink'));};
+      big(0.6,css('--c2'));big(8.65,'#e8c62a');
+      T(g,'INFLOW',X(1.3),Y(1.45),css('--c3'),'center');T(g,'OUTFLOW',X(9.45),Y(1.45),css('--c3'),'center');
+      T(g,'Pipe flow',X(5.5),Y(3.35),css('--accent'),'center');
+      T(g,'control surface',X(3.0),Y(0.62),css('--c2'),'center');curve(g,X,Y,[[3.2,0.75],[4.3,1.4]],css('--c2'),1);
+      T(g,'velocity vectors',X(7.9),Y(0.62),css('--accent'),'center');curve(g,X,Y,[[7.7,0.75],[6.9,1.6]],css('--accent'),1);}});}
+if($('f-pipe')){on(['pf-w'],()=>drawPipe($('f-pipe')));mount('f-pipe',drawPipe);}
+
+const FIELDS={grav:{F:(x,y)=>{const r=Math.hypot(x,y);return r<0.5?[NaN,NaN]:[-x/r**3,-y/r**3];},s:'−r/r³'},
+  rot:{F:(x,y)=>[-y,x],s:'−y i + x j'},uni:{F:()=>[1,0.5],s:'i + 0.5 j'},shear:{F:(x,y)=>[y,0],s:'y i'},src:{F:(x,y)=>[x,y],s:'x i + y j'}};
+function drawFields(cv){const k=$('fg-sel').value,F=FIELDS[k].F,x0=+$('fg-x').value,y0=+$('fg-y').value,f=F(x0,y0);
+  field(cv,{F,x:[-2.2,2.2],y:[-2.2,2.2],n:12,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra2:(g,X,Y)=>{if(k==='grav'){g.save();g.globalAlpha=0.25;g.fillStyle=css('--accent');g.beginPath();g.arc(X(0),Y(0),Math.abs(X(0.35)-X(0)),0,7);g.fill();g.restore();T(g,'mass',X(0),Y(0),css('--accent'),'center');}
+      const m=Math.hypot(f[0],f[1]);if(isFinite(m)&&m>1e-9)arr(g,X,Y,x0,y0,x0+0.7*f[0]/m,y0+0.7*f[1]/m,css('--ink'),2.6);dot(g,X,Y,x0,y0,css('--ink'),4);}});
+  $('fg-out').innerHTML=isFinite(f[0])?'F = '+FIELDS[k].s+' · at ('+fmt(x0,2)+', '+fmt(y0,2)+'): F = (<b>'+fmt(f[0],3)+'</b>, <b>'+fmt(f[1],3)+'</b>), |F| = '+fmt(Math.hypot(f[0],f[1]),3):'probe is inside the mass (field not drawn there)';}
+if($('f-fields')){on(['fg-sel','fg-x','fg-y'],()=>drawFields($('f-fields')));mount('f-fields',drawFields);}
+
+/* ======================= §3 ======================= */
+const GF={ell:{f:(x,y)=>x*x+2*y*y,g:(x,y)=>[2*x,4*y],L:[0.25,0.75,1.5,2.5,3.5,5]},
+  sad:{f:(x,y)=>x*x-y*y,g:(x,y)=>[2*x,-2*y],L:[-3,-2,-1,-0.4,0,0.4,1,2,3]},
+  xy:{f:(x,y)=>x*y,g:(x,y)=>[y,x],L:[-2,-1,-0.5,-0.15,0.15,0.5,1,2]},
+  T:{f:(x,y)=>1/Math.sqrt(x*x+y*y+1),g:(x,y)=>{const q=Math.pow(x*x+y*y+1,-1.5);return [-x*q,-y*q];},L:[0.35,0.42,0.5,0.6,0.7,0.8,0.9]}};
+function drawGradc(cv){const k=$('gc-sel').value,G=GF[k],x0=+$('gc-x').value,y0=+$('gc-y').value,gv=G.g(x0,y0),m=Math.hypot(gv[0],gv[1]);
+  contour(cv,{f:G.f,x:[-2,2],y:[-2,2],levels:G.L,equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra2:(g,X,Y)=>{let mx=0;const A=[];for(let i=-6;i<=6;i++)for(let j=-6;j<=6;j++){const x=i/3,y=j/3,q=G.g(x,y);A.push([x,y,q]);mx=Math.max(mx,Math.hypot(q[0],q[1]));}
+      A.forEach(([x,y,q])=>{const mm=Math.hypot(q[0],q[1]);if(mm<1e-9)return;const L=0.14*Math.sqrt(mm/mx)/mm;arr(g,X,Y,x-q[0]*L,y-q[1]*L,x+q[0]*L,y+q[1]*L,css('--axis'),1.3,5);});
+      if(m>1e-9){const u=[gv[0]/m,gv[1]/m];curve(g,X,Y,[[x0-0.9*u[1],y0+0.9*u[0]],[x0+0.9*u[1],y0-0.9*u[0]]],css('--ink'),1.4,[5,4]);
+        arr(g,X,Y,x0,y0,x0+0.75*u[0],y0+0.75*u[1],css('--c2'),2.8);T(g,'∇φ',X(x0+0.85*u[0]),Y(y0+0.85*u[1]),css('--c2'),'center');}
+      dot(g,X,Y,x0,y0,css('--ink'),4.5);}});
+  $('gc-out').innerHTML='at ('+fmt(x0,2)+', '+fmt(y0,2)+'): φ = '+fmt(G.f(x0,y0),3)+' · ∇φ = ('+fmt(gv[0],3)+', '+fmt(gv[1],3)+') · greatest rate of increase |∇φ| = <b>'+fmt(m,3)+'</b> · rate along the level curve = <b>0</b>';}
+if($('f-gradc')){on(['gc-sel','gc-x','gc-y'],()=>drawGradc($('f-gradc')));mount('f-gradc',drawGradc);}
+
+/* ======================= §4 ======================= */
+function drawBox(cv){const k=+$('bx-k').value,x0=1,x1=2,y0=0.9,y1=2.1,z0=1.05,z1=1.95,yc=1.5,zc=1.5,vin=1-0.5*k,vout=1+0.5*k;
+  const E=[];const C=[[y0,z0],[y1,z0],[y1,z1],[y0,z1],[y0,z0]];
+  [x0,x1].forEach(xx=>E.push({pts:C.map(c=>[xx,c[0],c[1]]),color:css('--ink'),width:1.4}));
+  C.slice(0,4).forEach(c=>E.push({pts:[[x0,c[0],c[1]],[x1,c[0],c[1]]],color:css('--ink'),width:1.4}));
+  const L=0.75;
+  surface(cv,{x:[0,3],y:[0.3,2.7],z:[0.6,2.4],view:{yaw:-0.35,elev:0.32},labels:{x:'X',y:'Y',z:'Z'},
+    psurfs:[{P:(s,t)=>[x0,y0+(y1-y0)*s,z0+(z1-z0)*t],s:[0,1],t:[0,1],color:'--axis',alpha:0.45,n:1,m:1}],curves3d:E,
+    arrows3d:[{from:[x0-L*vin,yc,zc],to:[x0,yc,zc],color:css('--c2')},{from:[x1,yc,zc],to:[x1+L*vout,yc,zc],color:css('--c2')}],
+    pts3d:[{p:[x0-L*vin,yc,2.25],color:css('--c2'),r:0.1,label:'in: v₁(x−δx/2,y,z)'},{p:[x1+L*vout-0.3,yc,2.25],color:css('--c2'),r:0.1,label:'out: v₁(x+δx/2,y,z)'},{p:[1.5,yc,zc],color:css('--ink'),r:3.5},
+      {p:[x1,y0,z0],color:css('--accent'),r:2.5,label:'A'},{p:[x1,y1,z0],color:css('--accent'),r:2.5,label:'B'},{p:[x1,y1,z1],color:css('--accent'),r:2.5,label:'C'},{p:[x1,y0,z1],color:css('--accent'),r:2.5,label:'D'},
+      {p:[x0,y0,z0],color:css('--muted'),r:2.5,label:'A′'},{p:[x0,y1,z0],color:css('--muted'),r:2.5,label:'B′'},{p:[x0,y1,z1],color:css('--muted'),r:2.5,label:'C′'},{p:[x0,y0,z1],color:css('--muted'),r:2.5,label:'D′'}]});
+  $('bx-out').innerHTML='δx = 1, δy = 1.2, δz = 0.9 (face area 1.08) · v₁ = 1 + '+fmt(k,2)+'(x − centre) · in through A′B′C′D′: '+fmt(vin*1.08,3)+' · out through ABCD: '+fmt(vout*1.08,3)+' · net out = <b>'+fmt((vout-vin)*1.08,3)+'</b> = (∂v₁/∂x) δx δy δz';}
+if($('f-box')){on(['bx-k'],()=>drawBox($('f-box')));mount('f-box',drawBox);}
+
+const SF={src:{F:(x,y)=>[x,y],s:'x i + y j'},sink:{F:(x,y)=>[-x,-y],s:'−x i − y j'},rot:{F:(x,y)=>[-y,x],s:'−y i + x j'},xi:{F:(x,y)=>[x,0],s:'x i'},
+  uni:{F:()=>[1,0.5],s:'i + 0.5 j'},x2:{F:(x,y)=>[x*x,0],s:'x² i'},pt:{F:(x,y)=>{const q=x*x+y*y;return q<0.04?[NaN,NaN]:[x/q,y/q];},s:'(x i + y j)/(x² + y²)',pt:true}};
+function drawSrc(cv){const k=$('sr-sel').value,S=SF[k],cx=+$('sr-x').value,cy=+$('sr-y').value,R=+$('sr-r').value;
+  const Fs=S.pt?(x,y)=>{const q=x*x+y*y;return [x/q,y/q];}:S.F;
+  const out=outflow(Fs,cx,cy,R),hasO=S.pt&&Math.hypot(cx,cy)<R;
+  field(cv,{F:S.F,x:[-2,2],y:[-2,2],n:12,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra2:(g,X,Y)=>{circ(g,X,Y,cx,cy,R,css('--ink'),1.6,[5,4]);
+      for(let i=0;i<16;i++){const a=2*Math.PI*i/16,c=Math.cos(a),s=Math.sin(a),px=cx+R*c,py=cy+R*s,f=Fs(px,py),fn=f[0]*c+f[1]*s;if(!isFinite(fn))continue;
+        const L=Math.max(-0.35,Math.min(0.35,0.18*fn));if(Math.abs(L)<0.01)continue;arr(g,X,Y,px,py,px+L*c,py+L*s,css(fn>0?'--c2':'--accent'),1.8,5);}
+      dot(g,X,Y,cx,cy,css('--ink'),3);}});
+  const area=Math.PI*R*R,dv=S.pt?(hasO?NaN:0):div2(Fs,cx,cy);
+  $('sr-out').innerHTML='F = '+S.s+' · net outflow through the circle = '+fmt(out,4)+' · ÷ area '+fmt(area,3)+' = <b>'+fmt(out/area,3)+'</b> · div F at the centre = '+(S.pt&&hasO?'undefined (origin inside: outflow = 2π)':fmt(dv,3));}
+if($('f-src')){on(['sr-sel','sr-x','sr-y','sr-r'],()=>drawSrc($('f-src')));mount('f-src',drawSrc);}
+
+function drawCharge(cv){const R=+$('eq-R').value,c=0.26;const A=[],C=[];
+  const N=14,ga=Math.PI*(3-Math.sqrt(5));const dirs=[];for(let i=0;i<N;i++){const zz=1-2*(i+.5)/N,rr=Math.sqrt(1-zz*zz);dirs.push([rr*Math.cos(ga*i),rr*Math.sin(ga*i),zz]);}
+  [[R,'--accent'],[2*R,'--c4']].forEach(([rad,col])=>{dirs.forEach(d=>{const L=c/(rad*rad)*1.0;A.push({from:d.map(q=>q*rad),to:d.map(q=>q*(rad+L)),color:css(col)});});
+    const ring=(f)=>({pts:lin(0,2*Math.PI,80).map(f),color:css(col),width:1.1});
+    C.push(ring(a=>[rad*Math.cos(a),rad*Math.sin(a),0]),ring(a=>[rad*Math.cos(a),0,rad*Math.sin(a)]),ring(a=>[0,rad*Math.cos(a),rad*Math.sin(a)]));});
+  surface(cv,{x:[-2.4,2.4],y:[-2.4,2.4],z:[-2.4,2.4],view:{yaw:-0.6,elev:0.35},curves3d:C,arrows3d:A,pts3d:[{p:[0,0,0],color:css('--c2'),r:5,label:'Q'}]});
+  const E1=1/(4*Math.PI*R*R),E2=1/(4*Math.PI*4*R*R);
+  $('eq-out').innerHTML='(units with Q/ε₀ = 1) · R = '+fmt(R,2)+': |E| = '+fmt(E1,4)+', area 4πR² = '+fmt(4*Math.PI*R*R,3)+', outflow <b>'+fmt(E1*4*Math.PI*R*R,3)+'</b> · 2R: |E| = '+fmt(E2,4)+', area = '+fmt(16*Math.PI*R*R,3)+', outflow <b>'+fmt(E2*16*Math.PI*R*R,3)+'</b>';}
+if($('f-charge')){on(['eq-R'],()=>drawCharge($('f-charge')));mount('f-charge',drawCharge);}
+
+/* ======================= §5 ======================= */
+const RF={shear:{F:(x,y)=>[y,0],c:-1},rot:{F:(x,y)=>[-y,x],c:2},uni:{F:()=>[1,0.5],c:0},src:{F:(x,y)=>[x,y],c:0}};
+function drawRect(cv){const k=$('rc-sel').value,F=RF[k].F,h=+$('rc-h').value,dx=h,dy=0.75*h,xc=0.4,yc=0.3;
+  const xa=xc-dx/2,xb=xc+dx/2,ya=yc-dy/2,yb=yc+dy/2;
+  const sides=[{m:[xc,ya],d:[1,0],c:F(xc,ya)[0],L:dx,n:'AB'},{m:[xb,yc],d:[0,1],c:F(xb,yc)[1],L:dy,n:'BC'},{m:[xc,yb],d:[-1,0],c:-F(xc,yb)[0],L:dx,n:'CD'},{m:[xa,yc],d:[0,-1],c:-F(xa,yc)[1],L:dy,n:'DA'}];
+  axes2d(cv,{xmin:-0.6,xmax:1.5,ymin:-0.5,ymax:1.2,equal:true,xstep:0.5,ystep:0.5,xlabel:'X',ylabel:'Y',
+    extra:(g,X,Y)=>{poly(g,X,Y,[[xa,ya],[xb,ya],[xb,yb],[xa,yb]],css('--accent'),0.08,css('--accent'));
+      sides.forEach(s=>{const L=Math.max(-0.45*s.L,Math.min(0.45*s.L,0.6*s.c*Math.min(1,s.L)));if(Math.abs(L)<0.005)return;
+        arr(g,X,Y,s.m[0]-L*s.d[0],s.m[1]-L*s.d[1],s.m[0]+L*s.d[0],s.m[1]+L*s.d[1],css(s.c>0?'--c2':'--accent'),3,9);});
+      T(g,'A',X(xa)-12,Y(ya)+10);T(g,'B',X(xb)+6,Y(ya)+10);T(g,'C',X(xb)+6,Y(yb)-10);T(g,'D',X(xa)-12,Y(yb)-10);
+      T(g,'δx',X(xc),Y(ya)+14,css('--muted'),'center');T(g,'δy',X(xb)+16,Y(yc),css('--muted'));
+      dot(g,X,Y,xc,yc,css('--c2'),4);T(g,'(x, y)',X(xc),Y(yc)-14,css('--ink'),'center');}});
+  let circ_=0;sides.forEach(s=>circ_+=s.c*s.L);
+  $('rc-out').innerHTML=sides.map(s=>s.n+': '+fmt(s.c*s.L,3)).join(' · ')+' · circulation = '+fmt(circ_,3)+' · ÷ area '+fmt(dx*dy,3)+' = <b>'+fmt(circ_/(dx*dy),3)+'</b> · ∂v₂/∂x − ∂v₁/∂y = '+RF[k].c;}
+if($('f-rect')){on(['rc-sel','rc-h'],()=>drawRect($('f-rect')));mount('f-rect',drawRect);}
+
+const PF={shear:{F:(x,y)=>[y,0]},rot:{F:(x,y)=>[-y,x]},vort:{F:(x,y)=>{const q=x*x+y*y;return q<0.09?[NaN,NaN]:[-y/q,x/q];},v:true},uni:{F:()=>[1,0.5]},cw:{F:(x,y)=>[y,-x]}};
+function drawPaddle(cv){const k=$('pw-sel').value,P=PF[k],x0=+$('pw-x').value,y0=+$('pw-y').value,t=+$('pw-t').value;
+  const nearO=P.v&&Math.hypot(x0,y0)<0.3,cu=nearO?NaN:curl2((x,y)=>{if(P.v){const q=x*x+y*y;return [-y/q,x/q];}return P.F(x,y);},x0,y0),ang=0.5*(isFinite(cu)?cu:0)*t;
+  field(cv,{F:P.F,x:[-2,2],y:[-2,2],n:12,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra2:(g,X,Y)=>{const s=Math.abs(X(1)-X(0)),cxp=X(x0),cyp=Y(y0),Rb=0.42*s;
+      g.save();g.translate(cxp,cyp);g.rotate(-ang);
+      g.strokeStyle=css('--ink');g.lineWidth=1.4;for(let i=0;i<4;i++){g.save();g.rotate(i*Math.PI/2);g.fillStyle=css('--c4');g.globalAlpha=0.85;g.fillRect(0.2*Rb,-0.09*Rb,0.8*Rb,0.18*Rb);g.globalAlpha=1;g.restore();}
+      g.beginPath();g.arc(0,0,0.14*Rb,0,7);g.fillStyle=css('--ink');g.fill();g.restore();
+      if(isFinite(cu)&&Math.abs(cu)>1e-6){g.save();g.strokeStyle=css('--c2');g.fillStyle=css('--c2');g.lineWidth=2;const r2=1.2*Rb,anti=cu>0;
+        const a0=anti?0.3:2.8,a1=anti?2.8:0.3;g.beginPath();g.arc(cxp,cyp,r2,-a0,-a1,anti);g.stroke();
+        const ex=cxp+r2*Math.cos(-a1),ey=cyp+r2*Math.sin(-a1),tg=anti?[-Math.sin(-a1),Math.cos(-a1)]:[Math.sin(-a1),-Math.cos(-a1)];
+        const tx=-tg[0],ty=-tg[1];g.beginPath();g.moveTo(ex,ey);g.lineTo(ex-8*tx+4*ty,ey-8*ty-4*tx);g.lineTo(ex-8*tx-4*ty,ey-8*ty+4*tx);g.closePath();g.fill();g.restore();}}});
+  const sense=!isFinite(cu)?'wheel too close to the origin (field undefined there)':Math.abs(cu)<1e-6?'remains stationary':(cu>0?'turns anticlockwise':'turns clockwise');
+  $('pw-out').innerHTML='(curl v)·k = ∂v₂/∂x − ∂v₁/∂y at ('+fmt(x0,2)+', '+fmt(y0,2)+') = <b>'+(isFinite(cu)?fmt(cu,3):'—')+'</b> · the wheel '+sense+(isFinite(cu)?' · angle turned = ½ curl × time = '+fmt(ang,2)+' rad':'');}
+if($('f-paddle')){on(['pw-sel','pw-x','pw-y','pw-t'],()=>drawPaddle($('f-paddle')));mount('f-paddle',drawPaddle);}
+
+function drawAxis(cv){const a=+$('ax-t').value,p=+$('ax-p').value,n=[Math.sin(a)*Math.cos(p),Math.sin(a)*Math.sin(p),Math.cos(a)];
+  const cr=(u,v)=>[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]],nrm=u=>{const m=Math.hypot(...u);return u.map(q=>q/m);};
+  const e1=nrm(Math.abs(n[2])<0.9?cr(n,[0,0,1]):cr(n,[1,0,0])),e2=cr(n,e1);const C=[],A=[];
+  [[1.5,0],[0.85,0.25]].forEach(([rad,off])=>{const pt=t=>[0,1,2].map(i=>off*n[i]+rad*(Math.cos(t)*e1[i]+Math.sin(t)*e2[i]));
+    C.push({pts:lin(0,2*Math.PI,90).map(pt),color:css('--ink'),width:2});
+    [0.4,2.0,3.6,5.2].forEach(t=>{const q=pt(t),d=[0,1,2].map(i=>-Math.sin(t)*e1[i]+Math.cos(t)*e2[i]);A.push({from:q,to:q.map((c,i)=>c+0.45*d[i]),color:css('--c2')});});});
+  C.push({pts:[n.map(q=>-1.8*q),n.map(q=>1.0*q)],color:css('--accent'),width:1.2,dash:[5,4]});
+  A.push({from:[0,0,0],to:n.map(q=>1.9*q),color:css('--accent'),label:'curl v = 2ω'});
+  surface(cv,{x:[-2,2],y:[-2,2],z:[-2,2],view:{yaw:-0.6,elev:0.3},curves3d:C,arrows3d:A});
+  $('ax-out').innerHTML='axis direction n = ('+n.map(q=>fmt(q,2)).join(', ')+') · with ω = 1·n: v = ω × r, curl v = <b>2n</b> = ('+n.map(q=>fmt(2*q,2)).join(', ')+')';}
+if($('f-axis')){on(['ax-t','ax-p'],()=>drawAxis($('f-axis')));mount('f-axis',drawAxis);}
+
+function Hf(R){return (x,y)=>{const q=x*x+y*y;if(q<1e-6)return [0,0];const d=q<R*R?2*Math.PI*R*R:2*Math.PI*q;return [-y/d,x/d];};}
+function drawWire(){const R=+$('wr-R').value,r=+$('wr-r').value,H=Hf(R),h=H(r*Math.cos(0.6),r*Math.sin(0.6)),m=Math.hypot(h[0],h[1]);
+  const cv=$('f-wire');field(cv,{F:H,x:[-2.5,2.5],y:[-2.5,2.5],n:12,xstep:1,ystep:1,xlabel:'X',ylabel:'Y',
+    extra2:(g,X,Y)=>{g.save();g.globalAlpha=0.35;g.fillStyle='#f2d22e';g.beginPath();g.arc(X(0),Y(0),Math.abs(X(R)-X(0)),0,7);g.fill();g.restore();circ(g,X,Y,0,0,R,css('--accent'),2);
+      arr(g,X,Y,0,0,R*Math.cos(2.4),R*Math.sin(2.4),css('--c2'),1.6,6);T(g,'R',X(0.5*R*Math.cos(2.4))-10,Y(0.5*R*Math.sin(2.4))-8,css('--c2'));
+      const px=r*Math.cos(0.6),py=r*Math.sin(0.6);if(m>1e-9)arr(g,X,Y,px,py,px-0.7*Math.sin(0.6),py+0.7*Math.cos(0.6),css('--ink'),2.6);dot(g,X,Y,px,py,css('--ink'),4);}});
+  axes2d($('f-wireg'),{xmin:0,xmax:2.5,ymin:0,ymax:0.45,xstep:0.5,ystep:0.1,xlabel:'r',ylabel:'|H|',
+    curves:[{f:x=>x<R?x/(2*Math.PI*R*R):1/(2*Math.PI*x),color:css('--accent'),width:2.6,from:0,to:2.5}],
+    extra:(g,X,Y)=>{poly(g,X,Y,[[0,0],[R,0],[R,0.45],[0,0.45]],'#f2d22e',0.3);T(g,'inside',X(R/2),Y(0.42),css('--muted'),'center');T(g,'outside',X((R+2.5)/2),Y(0.42),css('--muted'),'center');},
+    pts:[{x:r,y:m,color:css('--ink')}]});
+  $('wr-out').innerHTML='r = '+fmt(r,2)+(r<R?' (inside)':' (outside)')+' · |H| = '+fmt(m,4)+' · curl H = <b>'+(r<R?fmt(1/(Math.PI*R*R),4)+' k = k/(πR²)':'0')+'</b>';}
+if($('f-wire')){on(['wr-R','wr-r'],drawWire);mount('f-wire',drawWire);mount('f-wireg',drawWire);}
+
+/* ======================= §6 ======================= */
+const fI=(x,y)=>Math.sin(x)*Math.cos(y)+0.3*x*x,gI=(x,y)=>[Math.cos(x)*Math.cos(y)+0.6*x,-Math.sin(x)*Math.sin(y)],cI=(x,y)=>{const q=gI(x,y);return [q[1],-q[0]];};
+function arrowsGrid(g,X,Y,F,col){let mx=0;const A=[];for(let i=-6;i<=6;i++)for(let j=-6;j<=6;j++){const x=i*0.33,y=j*0.33,q=F(x,y);A.push([x,y,q]);mx=Math.max(mx,Math.hypot(q[0],q[1]));}
+  A.forEach(([x,y,q])=>{const mm=Math.hypot(q[0],q[1]);if(mm<1e-9)return;const L=0.15*Math.sqrt(mm/mx)/mm;arr(g,X,Y,x-q[0]*L,y-q[1]*L,x+q[0]*L,y+q[1]*L,col,1.4,5);});}
+function drawIdent(){const cx=+$('id-x').value,cy=+$('id-y').value,R=+$('id-r').value;
+  contour($('f-cg'),{f:fI,x:[-2.1,2.1],y:[-2.1,2.1],levels:[-0.8,-0.4,0,0.4,0.8,1.2,1.6],equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra2:(g,X,Y)=>{arrowsGrid(g,X,Y,gI,css('--axis'));circ(g,X,Y,cx,cy,R,css('--ink'),1.8,[5,4]);T(g,'∇f',X(-1.9),Y(1.85),css('--ink'));}});
+  axes2d($('f-dc'),{xmin:-2.1,xmax:2.1,ymin:-2.1,ymax:2.1,equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra:(g,X,Y)=>{arrowsGrid(g,X,Y,cI,css('--c4'));circ(g,X,Y,cx,cy,R,css('--ink'),1.8,[5,4]);T(g,'∇×(ψk)',X(-1.9),Y(1.85),css('--ink'));}});
+  $('id-out').innerHTML='left: circulation of ∇f round the loop = <b>'+fmt(circul(gI,cx,cy,R),6)+'</b> (outflow would be '+fmt(outflow(gI,cx,cy,R),3)+') · right: net outflow of ∇×(ψk) = <b>'+fmt(outflow(cI,cx,cy,R),6)+'</b> (circulation would be '+fmt(circul(cI,cx,cy,R),3)+')';}
+if($('f-cg')){on(['id-x','id-y','id-r'],drawIdent);mount('f-cg',drawIdent);mount('f-dc',drawIdent);}
+
+/* ======================= tail ======================= */
+if($('f-pp3'))mount('f-pp3',cv=>field(cv,{F:(x,y)=>{const q=Math.hypot(x,y);return q<0.15?[NaN,NaN]:[-y/q,x/q];},x:[-2,2],y:[-2,2],n:10,uniform:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+  extra2:(g,X,Y)=>{circ(g,X,Y,0,0,1.2,css('--muted'),1,[4,4]);}}));
+function drawQ1(cv){const th=0.7,r=2.2,x=r*Math.cos(th),y=r*Math.sin(th);
+  axes2d(cv,{xmin:-0.5,xmax:3.2,ymin:-0.4,ymax:2.6,equal:true,xstep:10,ystep:10,xlabel:'X',ylabel:'Y',
+    extra:(g,X,Y)=>{curve(g,X,Y,[[0,0],[x,y]],css('--ink'),2);curve(g,X,Y,[[x,y],[x,0]],css('--muted'),1.3,[5,4]);
+      curve(g,X,Y,[[x-0.15,0],[x-0.15,0.15],[x,0.15]],css('--muted'),1);
+      g.save();g.strokeStyle=css('--warm');g.lineWidth=1.5;g.beginPath();g.arc(X(0),Y(0),28,-th,0);g.stroke();g.restore();
+      T(g,'θ',X(0)+36*Math.cos(th/2),Y(0)-36*Math.sin(th/2),css('--warm'),'center');
+      T(g,'r',X(x/2)-12,Y(y/2)-8,css('--ink'),'center');T(g,'x',X(x/2),Y(0)+12,css('--muted'),'center');T(g,'y',X(x)+10,Y(y/2),css('--muted'));
+      const u=[Math.cos(th),Math.sin(th)],w=[-Math.sin(th),Math.cos(th)];
+      arr(g,X,Y,x,y,x+0.75*u[0],y+0.75*u[1],css('--c2'),2.4);arr(g,X,Y,x,y,x+0.75*w[0],y+0.75*w[1],css('--c3'),2.4);
+      const a=0.16;curve(g,X,Y,[[x+a*u[0],y+a*u[1]],[x+a*u[0]+a*w[0],y+a*u[1]+a*w[1]],[x+a*w[0],y+a*w[1]]],css('--muted'),1);
+      T(g,'u_r',X(x+0.85*u[0])+4,Y(y+0.85*u[1]),css('--c2'));T(g,'u_θ',X(x+0.85*w[0])-4,Y(y+0.85*w[1])-6,css('--c3'),'right');
+      dot(g,X,Y,x,y,css('--ink'),4);T(g,'O',X(0)-12,Y(0)+10);}});}
+if($('f-q1'))mount('f-q1',drawQ1);
+
+
+})();
+
+</script>
+</body>
+</html>

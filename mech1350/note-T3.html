@@ -1,0 +1,1513 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH1350 T3 · Heat transfer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH1350 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --purple:#6d3fb2; --purple-soft:#efe8fa; --green:#1f7a4d; --green-soft:#e3f4ea;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+/* ---- MECH1350 additions ---- */
+.box.prev,.prev.box{background:var(--purple-soft);border-color:transparent;border-left:4px solid var(--purple)} .prev>.tag{color:var(--purple)}
+section.prev-sec{border-top:3px solid var(--purple)} section.prev-sec>h2 .n{color:var(--purple)}
+section.prev-sec>.prevbar{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin:-8px 0 8px}
+.beyond{border-left:4px solid var(--warm)}
+.banner{background:var(--warm-soft);border:1px solid var(--warm);border-radius:8px;padding:10px 14px;font-size:.95rem}
+.banner b{color:var(--warm)}
+.conv{background:var(--green-soft);border-color:transparent;border-left:4px solid var(--green)} .conv>.tag{color:var(--green)}
+details.calc{border-left:3px solid var(--accent)}
+details.calc>summary{color:var(--accent);font-weight:500}
+details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.calc .why{color:var(--muted);font-size:.9rem}
+table.tbl td,table.tbl th{padding:6px 8px}
+.circuit{width:100%;height:auto;display:block}
+.circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
+.circuit .r{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+.circuit .node{fill:var(--ink)}
+.circuit text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.circuit .q{stroke:var(--c2);fill:var(--c2)}
+
+/* ---- exam-guide classes (promoted from guide-T3 pilot, Gate D 2026-11-17) ---- */
+.mem{border:2px solid var(--c3);background:var(--card)} .mem>.tag{color:var(--c3)}
+.mem table td{padding:5px 8px;font-size:.92rem}
+.proc{border-left:4px solid var(--accent)} .proc>.tag{color:var(--accent)}
+.skel{border-left:4px solid var(--purple)} .skel>.tag{color:var(--purple)}
+.recap{font-size:.95rem;background:var(--accent-soft);border-radius:6px;padding:8px 12px;margin:8px 0 14px}
+.recap a{font-family:var(--mono);font-size:12px;white-space:nowrap}
+details.hint>summary{color:var(--muted)}
+details.hint>summary::before{content:"Hint · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.sol{border-left:3px solid var(--accent)}
+details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.mnote{font-size:.9rem;border-left:3px solid var(--warm);padding-left:10px;color:var(--muted)}
+.mnote b{color:var(--warm);font-weight:600}
+.q .part{font-weight:600;margin-top:14px}
+.q .opts{list-style:none;padding-left:.4rem;margin:6px 0}
+.q .opts li{margin:3px 0}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
+.stats span{font-size:.88rem;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted)}
+.stats b{color:var(--ink);font-family:var(--display)}
+.small{font-size:.88rem}
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/es5/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents"><p class="h">Thermal science · T3</p><ol>
+  <li><a href="#s0">0 · Where this sits</a></li>
+  <li><a href="#s1">1 · Three modes</a></li>
+  <li><a href="#s2">2 · Heat, heat rate, flux</a></li>
+  <li><a href="#s3">3 · Conduction &amp; gradient</a></li>
+  <li><a href="#s4">4 · Conductivity \(k\)</a></li>
+  <li><a href="#s5">5 · Thermal resistance</a></li>
+  <li><a href="#s6">6 · Composite slab</a></li>
+  <li><a href="#s7">7 · Series &amp; parallel</a></li>
+  <li><a href="#s8">8 · Examples 1–4</a></li>
+  <li><a href="#s9">9 · Insulation design</a></li>
+  <li><a href="#s10">10 · Drawing circuits</a></li>
+  <li><a href="#s11">11 · Convection</a></li>
+  <li><a href="#s12">12 · Convection + conduction</a></li>
+  <li><a href="#s13">13 · Typical \(h\) values</a></li>
+  <li><a href="#s14">14 · Black-body radiation</a></li>
+  <li><a href="#s15">15 · Grey bodies, emissivity</a></li>
+  <li><a href="#s16">16 · Radiation coefficient</a></li>
+  <li><a href="#s17">17 · Full combined wall</a></li>
+  <li><a href="#s18">18 · Summary</a></li>
+  <li><a href="#s19">19 · Common mistakes</a></li>
+  <li><a href="#s20">20 · Find the mistake</a></li>
+  <li><a href="#s21">21 · Concept checks</a></li>
+  <li><a href="#s22">22 · Exam taster</a></li>
+</ol></nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-T3.html">Exam guide · T3</a><a href="note-T2.html">← T2</a><a href="note-T4.html">Next: T4 →</a></nav>
+  <span class="course">MECH1350 · Thermal science · chapter 3</span>
+  <h1>Heat transfer: conduction, convection and radiation</h1>
+  <p class="lede">How heat moves by conduction, convection and radiation, and how to solve any wall as a thermal resistance circuit. Every slide and all twelve handout examples, explained from scratch.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>T1–T2 described a substance's <b>state</b>; this chapter asks <b>how fast heat moves</b> from hot to cold. T4 then combines heat and work in the laws of thermodynamics.</p>
+<p><b>In the exam:</b> one of the most reliable sources of Section A marks, usually a 6–15 mark composite-wall question plus short questions on \(h\) and emissivity. See the <a href="guide-T3.html">T3 exam guide</a>.</p>
+<p class="muted small">Source: Lecture Note 3, Part 1 (Dr Match W. L. Ko), 50 slides; slide numbers = printed numbers = PDF pages.</p>
+
+<div class="box conv"><span class="tag">Sign convention for this chapter</span>
+<ul class="list">
+<li><b>Heat flows from hot to cold</b>, never the other way by itself. Draw the heat-flow arrow from the hotter side to the colder side.</li>
+<li>A heat rate \(q\) is <b>positive in the direction of the arrow</b> you drew. If you guessed the direction wrong, \(q\) comes out negative: the heat really flows the other way, with the same size.</li>
+<li>In \(q=\Delta T/R\), \(\Delta T\) is "upstream temperature minus downstream temperature" (the side the arrow starts from, minus the side it points to), so it is positive when the arrow is right.</li>
+<li>Walking along the arrow through a resistance \(R\), the temperature <b>drops</b> by \(qR\): \(T_\text{next}=T-qR\).</li>
+<li>A temperature <b>difference</b> is the same in °C and in K (a change of 1 °C is a change of 1 K), so \(k\), \(h\) and \(R\) may be quoted "per °C" or "per K" interchangeably. But <b>radiation</b> uses absolute temperatures: every \(T\) inside \(T^4\) must be in kelvin (\(T/\mathrm K = T/^\circ\mathrm C + 273.15\)).</li>
+<li>Everything is <b>steady</b> (nothing changes with time) and <b>one-dimensional</b> (heat flows straight through the wall, along \(x\)), as in every handout example.</li>
+</ul></div>
+
+<h3>Symbols used throughout</h3>
+<div class="scroll"><table class="tbl">
+<tr><th>Symbol</th><th>Meaning</th><th>Unit</th></tr>
+<tr><td>\(Q\)</td><td>heat (an amount of thermal energy transferred)</td><td>J</td></tr>
+<tr><td>\(q=\dot Q=Q/t\)</td><td>heat (flow) rate: heat per second</td><td>W = J/s</td></tr>
+<tr><td>\(Q''=q/A\)</td><td>heat flux: heat rate per square metre of surface</td><td>W/m²</td></tr>
+<tr><td>\(k\) (the handout sometimes writes \(\lambda\))</td><td>thermal conductivity of a solid</td><td>W/(m·K)</td></tr>
+<tr><td>\(L\), \(\Delta x\)</td><td>thickness of a layer (length of the heat path)</td><td>m</td></tr>
+<tr><td>\(A\)</td><td>area the heat crosses (perpendicular to the flow)</td><td>m²</td></tr>
+<tr><td>\(h\)</td><td>convective heat transfer coefficient</td><td>W/(m²·K)</td></tr>
+<tr><td>\(h_\text{rad}\)</td><td>radiant heat transfer coefficient</td><td>W/(m²·K)</td></tr>
+<tr><td>\(R\), \(R_\text{th}\)</td><td>thermal resistance</td><td>K/W (= °C/W)</td></tr>
+<tr><td>\(\sigma\)</td><td>Stefan–Boltzmann constant, \(5.6703\times10^{-8}\)</td><td>W/(m²·K⁴)</td></tr>
+<tr><td>\(\varepsilon\)</td><td>emissivity (0 to 1)</td><td>none</td></tr>
+<tr><td>\(T_\infty\)</td><td>temperature of a fluid "far" from the surface (the bulk fluid)</td><td>°C or K</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Heat transfer and its three modes</h2>
+<div class="box def"><span class="tag">Definition · heat transfer (slide 4)</span>
+<p><b>Heat transfer</b> is the study of how <b>thermal energy</b> (the energy of the random jiggling of molecules) moves from one place to another because of a <b>temperature difference</b>. It happens in three ways, called <b>modes</b>:</p>
+<ul class="list">
+<li><b>Conduction</b>: energy passed on by <b>molecular interaction</b>, molecule to neighbouring molecule, through a material that stays still (a solid, or a fluid at rest).</li>
+<li><b>Convection</b>: energy carried by <b>fluid motion</b>: a moving liquid or gas picks up heat at a hot surface and carries it away.</li>
+<li><b>Radiation</b>: energy carried by <b>electromagnetic waves</b> (mainly infrared light). It needs no material at all and crosses a vacuum, which is how sunlight reaches the Earth.</li>
+</ul></div>
+<div id="fig-modes"></div>
+<p class="muted">The three modes, drawn for these notes. Left: a metal rod in a flame gets hot along its length (conduction). Middle: air heated by a hot plate rises and is replaced by cooler air (convection). Right: a hot body sends infrared waves across empty space to a cooler one (radiation).</p>
+<p>Slide 4 shows four everyday scenes where all three modes act at once:</p>
+<ul class="list">
+<li><b>A campfire.</b> A hand holding a metal poker in the fire feels the handle warm up (conduction along the poker). A hand held above the flames feels the rising hot air (convection). A hand held to the side, out of the rising air, still feels warm (radiation from the glowing fire).</li>
+<li><b>A heated house in winter.</b> A heater warms the room air, which circulates around the room (convection); heat leaks out through the walls and roof (conduction); the sun warms the roof (radiation). The picture marks 70 °F (21 °C) inside and 30 °F (−1 °C) outside.</li>
+<li><b>A lizard on a rock.</b> It gains heat from the sun (radiation) and from the warm rock under its belly (conduction), loses heat to the breeze (convection) and by evaporation of moisture.</li>
+<li><b>The Earth.</b> Heat moves out from the hot core by conduction and by slow convection of the molten mantle, and the Earth radiates heat into space.</li>
+</ul>
+<p>Slide 5 lists machines designed around <b>convection</b>: a water kettle ("water boiler"), the heat exchanger (finned coil) in an air conditioner, a computer case with fans, a pressure cooker, a car engine (cooled by circulating coolant) and a room radiator ("heater"). In each one a fluid carries the heat to or from a surface.</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · describing a heating process step by step</span>
+<p>An exam favourite (May 2019 Q2, 8 marks) asks you to describe heating soup on a stove, mode by mode. The pattern: <b>(1)</b> the stove element radiates and conducts heat to the pot base; <b>(2)</b> heat conducts through the metal base; <b>(3)</b> soup touching the base is heated by conduction, becomes less dense and rises, cooler soup sinks: natural <b>convection</b> currents mix the pot; <b>(4)</b> at the base, bubbles of vapour form once the soup reaches its boiling point; the pot also loses heat from its sides and lid by convection and radiation. Draw the pot with arrows for each step. The full answer skeleton is in the exam guide.</p></div>
+
+<h3>Thinking of heat flow like electricity (slide 6)</h3>
+<p>Slide 6 previews the main tool of the chapter. A wall made of four blocks (\(R_1\) across the whole height, then \(R_2\) on top of \(R_3\), then \(R_4\)) between temperatures \(T_1\) and \(T_2\) is drawn next to an <b>electric circuit</b>: resistor \(R_1\), then \(R_2\) and \(R_3\) side by side, then \(R_4\). Heat squeezing through a block is like current through a resistor: the harder the block is to get through, the bigger its "resistance". Sections 5–10 build this idea up.</p>
+<div class="pair">
+<div><div id="fig-s1-wall"></div><p class="sub">The wall of slide 6: heat \(q\) flows from \(T_1\) to \(T_2\).</p></div>
+<div><div id="fig-s1-circ"></div><p class="sub">Its "thermal circuit": blocks one after another are in series; blocks side by side are in parallel.</p></div>
+</div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Heat, heat rate and heat flux (slide 7)</h2>
+<div class="box def"><span class="tag">Definitions · three ways to measure "how much heat"</span>
+<ul class="list">
+<li><b>Heat</b> \(Q\): the amount of thermal energy transferred. Unit: joule (J).</li>
+<li><b>Heat flow rate</b> (heat rate) \(q\), also written \(\dot Q\) ("Q-dot", the dot means "per second"): heat transferred per unit time, \(q=Q/t\). Unit: J/s = watt (W).</li>
+<li><b>Heat flux</b> \(Q''\) ("Q double-prime"): heat rate through a surface <b>per square metre</b> of that surface. Unit: W/m².</li>
+</ul></div>
+<div class="box thm"><span class="tag">Result · heat flux</span>
+\[Q''=\frac{\dot Q}{A}=\frac{q}{A}\]
+<p class="word"><b>In words:</b> heat flux = heat rate ÷ area it passes through.</p></div>
+<p class="word"><b>Analogy:</b> think of rain. \(Q\) is the total litres of rain that fell, \(q\) is litres per second falling on your whole roof, and \(Q''\) is the rain intensity (litres per second per square metre), which is the same for a small roof and a large one. Flux is useful because it does not depend on how big the wall is: double the wall area and \(q\) doubles, but \(Q''\) stays the same.</p>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A 500 W heater runs for one hour. The heat delivered is \(Q=qt=500\times3600\u{J}\), which is \(1.8\times10^{6}\u{J}=1.8\u{MJ}\). If a window of area 1.5 m² lets out \(4500\u{W}\), the heat flux through it is \(Q''=4500/1.5=3000\u{W/m^2}\).</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Read the question's units. "Rate of heat loss per unit area" means flux (W/m²); "heat flow rate across the wall" means \(q\) (W). Several handout examples set \(A=1\u{m^2}\), so the two numbers are equal there, but in exam walls \(A\) is 10–20 m².</p></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Conduction and the temperature gradient (slides 8–10)</h2>
+<h3>What conduction depends on (slide 8)</h3>
+<p>Slide 8 shows a close-up of a surface between a hotter region (left) and a colder region (right). A <b>high-energy</b> (fast) molecule from the hot side collides with a <b>low-energy</b> (slow) molecule near the surface; after the collision the slow one moves faster. Energy has crossed the surface although no molecule travelled far. Repeated billions of times, this is <b>heat conduction</b> \(Q\) from hot to cold.</p>
+<div id="fig-molecules"></div>
+<p>The rate of conduction depends on four things (slide 8):</p>
+<ol class="steps">
+<li>the <b>temperature gradient</b> \(\Delta T/\Delta x\) (how steeply temperature changes with distance);</li>
+<li>the <b>cross-section area</b> \(A\) the heat crosses;</li>
+<li>the <b>path length</b> \(L\) (thickness);</li>
+<li>the <b>material</b>, through its <b>thermal conductivity</b> \(k\).</li>
+</ol>
+<p>It does <b>not</b> depend on the mass of the material (May 2023 Q1 asked exactly this).</p>
+
+<h3>Temperature gradient (slide 9)</h3>
+<div class="box def"><span class="tag">Definition · temperature gradient</span>
+<p>The <b>temperature gradient</b> between two points \(A\) and \(B\) a distance \(\Delta x\) apart is the temperature change per unit length:</p>
+\[\text{gradient}=\frac{\Delta T}{\Delta x}=\frac{T_B-T_A}{\Delta x}\quad(\mathrm{K/m}).\]
+<p>It says in which direction, and how quickly, temperature changes at a place. It is the "slope" of the graph of \(T\) against position \(x\).</p></div>
+<p>Heat always flows <b>down</b> the gradient, from hotter to colder, until the temperature difference has disappeared and the two places are in <b>thermal equilibrium</b> (same temperature). (Slide 9 says "temperature always flows"; it means <b>heat</b> flows. Temperature is a property of a place; heat is what moves.)</p>
+
+<h3>Steady conduction gives a straight-line profile (slide 10)</h3>
+<div class="box def"><span class="tag">Definition · steady state</span>
+<p>A process is <b>steady</b> (in <b>steady state</b>) when nothing at any point changes with time: every temperature stays fixed, even though heat keeps flowing through.</p></div>
+<p>Slide 10 shows a bar between a hot object (left, red) and a cold object (right, blue), both kept at constant temperature. Look at one thin slice of the bar, thickness \(\mathrm dx\) (mass \(\mathrm dm\)). Heat \(\dot Q_x\) enters its left face and \(\dot Q_{x+\mathrm dx}\) leaves its right face.</p>
+<div id="fig-steady"></div>
+<div class="box thm"><span class="tag">Result · steady 1-D conduction, no heat generated inside</span>
+\[\frac{\mathrm d^2T}{\mathrm dx^2}=0\quad\Longrightarrow\quad T(x)\ \text{is a straight line}\]
+<p class="word"><b>In words:</b> in steady state, with no heat made inside the material, the temperature falls in a straight line through a uniform layer.</p></div>
+<details class="calc"><summary>why the profile must be a straight line</summary><div>
+<p>1. Steady state: the slice's temperature is not changing, so its stored energy is not changing. <span class="why">Energy in = energy out for the slice.</span></p>
+<p>2. So \(\dot Q_x=\dot Q_{x+\mathrm dx}\): the same heat rate crosses every slice. <span class="why">No heat is made or absorbed inside (no "heat generation").</span></p>
+<p>3. The heat rate through a slice is proportional to the local slope \(\mathrm dT/\mathrm dx\) (Section 4: \(q=-kA\,\mathrm dT/\mathrm dx\)). With \(k\) and \(A\) the same everywhere, equal \(q\) means equal slope everywhere.</p>
+<p>4. A constant slope means \(\mathrm d^2T/\mathrm dx^2=0\) (the slope does not change), and a graph with constant slope is a straight line: \(T=T_1+(\text{slope})\,x\).</p>
+</div></details>
+<p>Because the profile is straight, any temperature inside the layer follows by <b>linear interpolation</b> (slide 10). With \(T_1\) on the hot face, \(T_2\) on the cold face, total thickness \(\Delta x\), and \(T_x\) at distance \(\Delta x_1\) from the hot face (\(\Delta x_2\) from the cold face):</p>
+\[\frac{T_2-T_1}{\Delta x}=\frac{T_x-T_1}{\Delta x_1}=\frac{T_2-T_x}{\Delta x_2}\]
+<p class="word"><b>In words:</b> the slope is the same whether you measure it over the whole layer or over either part.</p>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A 0.1 m thick plate has faces at \(T_1=100\)&nbsp;°C and \(T_2=20\)&nbsp;°C. Find the temperature 25 mm from the hot face.</p>
+\[\begin{aligned}T_x&=T_1+\frac{T_2-T_1}{\Delta x}\,\Delta x_1\\&=100+\frac{-80}{0.1}(0.025)\\&=\boxed{80\ ^\circ\mathrm C}\end{aligned}\]
+<p>The gradient is \(-800\u{K/m}\): the temperature falls 8 °C every centimetre.</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Thermal conductivity and the conduction law (slides 11–12)</h2>
+<p>Slide 11 shows the classic experiment. A metal bar of cross-section area \(A\) and length \(L\) is wrapped in <b>lagging</b> (insulation, so no heat escapes from its sides). A <b>heater</b> at the left end keeps that end at \(T_1\); <b>cooling water</b> flowing through a <b>sink</b> at the right end keeps it at \(T_2\). The heat carried away by the water (from its flow rate and temperature rise) equals the heat rate through the bar.</p>
+<div id="fig-apparatus"></div>
+<p>Experiments like this show (slide 11):</p>
+<ul class="list">
+<li>\(q\) is proportional to the temperature difference per length: \(q\propto (T_1-T_2)/L\) (twice the difference or half the length: twice the heat);</li>
+<li>\(q\) is proportional to the area: \(q\propto A\) (two bars side by side carry twice the heat).</li>
+</ul>
+<p>Combining the two and naming the constant of proportionality \(k\):</p>
+<div class="box thm"><span class="tag">Law · conduction through a plane layer (Fourier's law)</span>
+\[q=\frac{Q}{t}=kA\,\frac{T_1-T_2}{L}=kA\,\frac{\Delta T}{L}\]
+\[Q''=\frac{q}{A}=k\,\frac{T_1-T_2}{L}\]
+<p class="word"><b>In words:</b> conduction heat rate = conductivity × area × (temperature difference ÷ thickness). Flux = conductivity × temperature drop per metre.</p></div>
+<div class="box def"><span class="tag">Definition · thermal conductivity \(k\)</span>
+<p>The <b>thermal conductivity</b> \(k\) is a property of the material: the heat rate (W) through a 1 m² by 1 m thick block with a 1 K temperature difference across it. Unit: W/(m·K) = W/(m·°C). Large \(k\) (metals) = good conductor; small \(k\) (wood, foam, still air) = good <b>insulator</b>.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · the minus sign and typical values</span>
+<p>Textbooks write Fourier's law as \(q=-kA\,\mathrm dT/\mathrm dx\): the minus sign says heat flows towards <i>decreasing</i> temperature. The handout writes \(T_1-T_2\) (hot minus cold) instead, which already makes \(q\) positive. Typical \(k\) in W/(m·K) near room temperature: copper ≈ 400, aluminium ≈ 200 (alloys 50–200), steel ≈ 15–50, glass ≈ 0.8–1, concrete ≈ 1–1.5, common brick ≈ 0.7, water ≈ 0.6, wood ≈ 0.1–0.2, mineral wool / foam ≈ 0.03–0.07, still air ≈ 0.026.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · why metals conduct faster than wood</span>
+<p>(Asked in Dec 2018 Q1(b), 10 marks.) Heat is carried through solids in two ways. <b>(1) Lattice vibrations:</b> atoms are bonded to their neighbours, so a vibrating atom shakes the next one, passing energy along like a wave in a chain of springs. All solids do this. <b>(2) Free electrons:</b> metals have electrons that are not tied to one atom and move fast through the whole metal. They pick up energy in hot regions and carry it quickly to cold regions, colliding with atoms there. This is why good electrical conductors are also good heat conductors. Wood has no free electrons and is porous (full of trapped air, \(k\approx0.026\)), so it conducts only by slow lattice vibrations through a tangled structure: its \(k\) is hundreds of times smaller (Dec 2018 gives 54 for an aluminium alloy, 0.147 for wood: a factor of about 370).</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A single-glazed window is 4 mm thick, area 1.5 m², glass \(k=0.8\u{W/(m\,K)}\). Its inner surface is at 20 °C and its outer surface at 5 °C. Find the heat rate.</p>
+\[q=kA\frac{\Delta T}{L}=0.8(1.5)\frac{20-5}{0.004}=\boxed{4500\u{W}}\]
+<p>That is huge. Section 12 shows why a real window loses far less: the thin layers of still air on each side, not the glass, set the heat rate.</p></div>
+<h3>Melting ice by conduction (slide 12)</h3>
+<p>Slide 12 is a still from a video (link on the slide): two similar-looking dark blocks, each with a rubber ring on top to hold an ice cube, and a stopwatch reading 0.0. Both blocks are at room temperature.</p>
+<p class="flag">the video itself is not part of the handout; the description that follows is of the standard version of this demonstration (one aluminium block, one plastic block).</p>
+<p>The ice on the <b>aluminium</b> block melts in a minute or two; the ice on the <b>plastic</b> block hardly melts. Aluminium's high \(k\) lets heat from the whole block flow quickly into the ice; plastic's low \(k\) lets only a trickle through. The same idea explains why a metal block <i>feels</i> colder than a plastic one at the same temperature: it pulls heat out of your hand faster.</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Thermal resistance and the electrical analogy (slides 13–14)</h2>
+<p>Rearranging the conduction law (slide 13):</p>
+\[k=\frac{q\,L}{A\,\Delta T}\quad\mathrm{W/(m\,K)}\]
+<div class="box thm"><span class="tag">Result · thermal resistance of a conducting layer</span>
+\[R=\frac{\Delta T}{q}=\frac{L}{kA}\quad(\mathrm{K/W})\]
+<p class="word"><b>In words:</b> thermal resistance = temperature difference needed per watt of heat flow = thickness ÷ (conductivity × area).</p></div>
+<div class="box def"><span class="tag">Definition · thermal resistance</span>
+<p>The <b>thermal resistance</b> \(R\) (or \(R_\text{th}\)) between two surfaces is the temperature difference between them that drives a heat rate of 1 W (slide 13). A thick layer (large \(L\)), a poor conductor (small \(k\)) or a small area all make \(R\) large, so less heat gets through for the same temperature difference. Unit: K/W, written °C/W in the handout (the same thing).</p></div>
+<p>Then \(q=\Delta T/R\), which has exactly the shape of <b>Ohm's law</b> for an electric circuit, \(I=V/R_\text{elect}\). Slide 14 draws a wire with a battery and a resistor beside a slab between two temperatures, and lists the matching quantities:</p>
+<div class="scroll"><table class="tbl">
+<tr><th>Electric circuit</th><th>Heat ("thermal") circuit</th></tr>
+<tr><td>current \(I\) (A)</td><td>heat flow rate \(q=\dot Q\) (W)</td></tr>
+<tr><td>voltage (potential difference) \(V\) (V)</td><td>temperature difference \(\Delta T\) (K)</td></tr>
+<tr><td>constant-current source</td><td>heat source (e.g. a heater of fixed power)</td></tr>
+<tr><td>electric resistance \(R_\text{elect}\) (Ω)</td><td>thermal resistance \(R_\text{th}\) (K/W)</td></tr>
+<tr><td>\(V=IR_\text{elect}\)</td><td>\(\Delta T=\dot Q\,R_\text{th}\)</td></tr>
+</table></div>
+<div id="fig-ohm"></div>
+<p>So everything you know from HKDSE Physics about resistors carries over: resistances <b>one after another</b> add (series); resistances <b>side by side</b> combine by reciprocals (parallel); the "voltage drop" across each resistor is (current) × (its resistance). A <b>node</b> (dot in the circuit) is a place with one temperature, such as a surface or an interface between layers.</p>
+<div class="box warn"><span class="tag">Watch</span>
+<p>\(R=L/(kA)\) has the area <b>inside</b>. Some handout examples quote "\(AR\)" (unit m²·K/W, the resistance of 1 m² of wall) instead. Keep track of which one you have: \(q=\Delta T/R\) but \(Q''=\Delta T/(AR)\).</p></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Conduction through a composite slab (slides 15–18)</h2>
+<div class="box def"><span class="tag">Definition · composite slab (composite wall)</span>
+<p>A <b>composite slab</b> is a wall made of several layers of different materials pressed together, such as brick + insulation + plaster. Heat crosses the layers one after another.</p></div>
+<p><b>Problem (slide 15).</b> Two layers, conductivities \(k_1,k_2\), thicknesses \(L_1,L_2\), the same area \(A\). The left face is at \(T_L\), the right face at \(T_R\) (\(T_L\gt T_R\)). Assume steady, one-dimensional heat flow. Find the heat rate \(q\), the temperature \(T_i\) at the <b>interface</b> (the contact plane between the layers), and the temperature \(T_x\) anywhere.</p>
+<div class="pair">
+<div><div id="fig-s6-slab"></div><p class="sub">Slide 15: two layers; the temperature falls in a straight line in each, with a kink at the interface.</p></div>
+<div><div id="fig-s6-circ"></div><p class="sub">Its circuit: two resistances in series.</p></div>
+</div>
+<h3>Heat rate and interface temperature (slide 16)</h3>
+<p>In steady state the <b>same</b> heat rate \(q\) crosses layer 1 and layer 2: heat cannot pile up at the interface (if more came in than went out, the interface would warm up, which is not steady). So</p>
+\[q=\frac{T_L-T_R}{R_\text{resultant}}=\frac{T_L-T_i}{R_1}=\frac{T_i-T_R}{R_2}\]
+\[R_1=\frac{L_1}{k_1A},\qquad R_2=\frac{L_2}{k_2A}\]
+\[R_\text{resultant}=R_1+R_2\]
+<div class="box thm"><span class="tag">Result · series layers</span>
+<p class="word"><b>In words:</b> the same heat rate goes through every layer in series; the total resistance is the sum; each layer's temperature drop is \(q\) times its own resistance, so the layer with the biggest \(R\) takes the biggest share of the temperature drop.</p></div>
+<details class="calc"><summary>the interface temperature \(T_i\)</summary><div>
+<p>1. Total resistance \(R_1+R_2\) and \(q=(T_L-T_R)/(R_1+R_2)\). <span class="why">Series resistances add.</span></p>
+<p>2. Walk from the left face through layer 1: \(T_i=T_L-qR_1\). <span class="why">Temperature drops by \(qR\) across a resistance, in the direction of flow.</span></p>
+<p>3. Substitute \(q\):</p>
+\[\begin{aligned}T_i&=T_L-\frac{R_1}{R_1+R_2}(T_L-T_R)\\&=\frac{R_2T_L+R_1T_R}{R_1+R_2}.\end{aligned}\]
+<p>4. Check: if \(R_1=0\) (layer 1 a perfect conductor) then \(T_i=T_L\); if \(R_2=0\) then \(T_i=T_R\). <span class="why">The interface sits close to the face of the layer with the smaller resistance.</span></p>
+</div></details>
+<h3>Temperature anywhere (slide 17)</h3>
+<p>Inside each layer the profile is a straight line (Section 3). Measuring \(x\) from the left face:</p>
+\[0\lt x\lt L_1:\quad T_x=T_L+\frac{T_i-T_L}{L_1}\,x\]
+\[L_1\lt x\lt L_1+L_2:\]
+\[T_x=T_i+\frac{T_R-T_i}{L_2}(x-L_1)\]
+<p class="word"><b>In words:</b> start at the temperature at the start of the layer and add (slope of that layer) × (distance into that layer).</p>
+<p class="flag">slide 17 writes the second range as "\(L_1\lt x\lt L_2\)"; it means \(L_1\lt x\lt L_1+L_2\) (from the interface to the right face).</p>
+<h3>Any number of layers (slide 18)</h3>
+<p>Each layer has its own constant gradient, so the method extends to three or more layers. With faces at \(T_1,T_2,T_3,T_4\) and thicknesses \(L_1,L_2,L_3\):</p>
+\[\text{slab 1: }T_x=T_1+\frac{T_2-T_1}{L_1}x\]
+\[\text{slab 2: }T_x=T_2+\frac{T_3-T_2}{L_2}(x-L_1)\]
+\[\text{slab 3: }T_x=T_3+\frac{T_4-T_3}{L_3}(x-L_1-L_2)\]
+<p>Slide 18's picture shows a steep drop across a thin dark slab 1, a gentle slope through a thick light slab 2 and a steep drop across thin slab 3. Steep slope = low \(k\) (the same \(q\) needs a steep gradient to push through a poor conductor, since \(q/A=k\times\text{slope}\)).</p>
+<div class="figure" id="fig-wallsim"><p class="ttl">Try it · temperature profile through a three-layer wall</p>
+<canvas class="plot" id="cv-wall" style="height:270px"></canvas>
+<div class="ctrl">
+<label>\(k_1\) <input type="range" id="w-k1" min="-2" max="2" step="0.005" value="-1.155"></label>
+<label>\(k_2\) <input type="range" id="w-k2" min="-2" max="2" step="0.005" value="-0.155"></label>
+<label>\(k_3\) <input type="range" id="w-k3" min="-2" max="2" step="0.005" value="-1.155"></label>
+<label>\(L_2\) <input type="range" id="w-L2" min="0.02" max="0.3" step="0.01" value="0.1"></label>
+</div>
+<div class="readout" id="out-wall"></div>
+<p class="cap">Starts as Example 2 (Section 8): insulation \(k=0.07\), 3 cm / brick \(k=0.7\), 10 cm / insulation 3 cm, faces at 150 °C and 10 °C, per 1 m². The \(k\) sliders are logarithmic (0.01 to 100 W/(m·K)). Make one layer a good conductor: its line goes almost flat, and the other layers take the whole temperature drop.</p></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Series and parallel thermal resistances (slides 19–20)</h2>
+<div class="box thm"><span class="tag">Result · combining resistances (slide 19)</span>
+\[R_\text{series}=R_1+R_2+R_3+\cdots\]
+\[\frac{1}{R_\text{parallel}}=\frac{1}{R_1}+\frac{1}{R_2}+\frac{1}{R_3}+\cdots\]
+<p class="word"><b>In words:</b> layers one after another along the heat path: add the resistances. Paths side by side (heat can take either one): add the reciprocals, then take the reciprocal of the sum. A parallel combination is always <b>smaller</b> than its smallest member: an extra path can only make it easier for heat to get through.</p></div>
+<p>For two in parallel, the shortcut "product over sum" is quicker: \(R_\text{par}=\dfrac{R_1R_2}{R_1+R_2}\) (e.g. 2 and 3 give 6/5 = 1.2).</p>
+<p>Slide 19's picture: a wall of thickness \(\Delta x\) between \(T_A\) and \(T_B\), built as three horizontal strips stacked on top of each other: material 1 (area \(A_1\)) on top, material 2 (\(A_2\)) in the middle, material 3 (\(A_3\)) at the bottom. Heat \(Q\) flows left to right through all three at once. Each strip has \(R_{t,i}=\Delta x/(k_iA_i)\) and the three are in <b>parallel</b> between nodes \(T_A\) and \(T_B\).</p>
+<div class="pair">
+<div><div id="fig-s7-wall"></div><p class="sub">Slide 19: three materials side by side across the flow.</p></div>
+<div><div id="fig-s7-circ"></div><p class="sub">Three resistances in parallel between \(T_A\) and \(T_B\).</p></div>
+</div>
+<h3>A bolt through insulation (slide 20)</h3>
+<p>Slide 20's example of parallel resistance: a metal <b>bolt</b> passing through an insulating layer. The handout draws it three ways: the physical wall (insulation \(k_1\) with a bolt \(k_2\) through it), the two heat paths (through the insulation and through the bolt, side by side), and the circuit (\(R_1\) and \(R_2\) in parallel). With conduction resistances \(R=L/(kA)\) for each path:</p>
+\[\frac{1}{R_\text{th,parallel}}=\frac{1}{R_1}+\frac{1}{R_2}=\frac{k_1A_1}{L_1}+\frac{k_2A_2}{L_2}\]
+\[\dot Q=\dot Q_1+\dot Q_2\]
+<p class="word"><b>In words:</b> the total heat rate is the sum of the heat through each path; each path's "conductance" \(kA/L\) adds.</p>
+<div id="fig-s7-bolt"></div>
+<div class="box eg"><span class="tag">Example · written for these notes · how much do bolts matter?</span>
+<p>A 1 m² panel of insulation (\(k=0.04\u{W/(m\,K)}\), 5 cm thick) is held by steel bolts (\(k=45\)) whose total cross-section is 0.002 m² (0.2% of the area). The faces are at 20 °C and 0 °C. Find the heat rate with and without the bolts.</p>
+<ol class="steps">
+<li>Insulation path: \(A_1=1-0.002=0.998\u{m^2}\), \(R_1=\dfrac{0.05}{0.04(0.998)}=1.2525\u{K/W}\).</li>
+<li>Bolt path: \(R_2=\dfrac{0.05}{45(0.002)}=0.5556\u{K/W}\). The bolts, only 0.2% of the area, have a <i>smaller</i> resistance than all the insulation.</li>
+<li>Heat through each (same \(\Delta T=20\u{K}\) across both): \(q_1=20/1.2525=15.97\u{W}\), \(q_2=20/0.5556=36.0\u{W}\).</li>
+<li>Total \(q=51.97\u{W}\) (or \(20/R_\text{par}\) with \(R_\text{par}=0.3849\u{K/W}\)). Without bolts: \(20/(0.05/0.04)=16.0\u{W}\).</li>
+</ol>
+<p>\(\boxed{q\approx52\u{W}\text{ with bolts, }16\u{W}\text{ without}}\): the bolts carry 69% of the heat. Engineers call such a path a <b>thermal bridge</b>.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · when is "parallel" exact?</span>
+<p>Treating side-by-side materials as parallel resistors assumes each one has the <b>same</b> temperature on its left face and the same on its right face (the nodes of the circuit). Really, heat also leaks sideways between a good and a poor conductor, so the answer is an approximation; it is the standard one, and it is what every exam question expects.</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Handout examples 1–4: walls in series (slides 21–27)</h2>
+<div class="box eg"><span class="tag">Worked example 1 · slide 21 · composite slab with three layers</span>
+<p>Three layers (green, pink, blue) of conductivities \(k_1,k_2,k_3\) and thicknesses \(\Delta x_1,\Delta x_2,\Delta x_3\), all of area \(A\), carry a known heat rate \(\dot Q\) from face \(A\) (temperature \(T_A\)) to face \(B\) (\(T_B\)). Find \(T_A-T_B\).</p>
+<div id="fig-ex1"></div>
+<ol class="steps">
+<li>Three layers one after another: series. \(R_\text{th,total}=R_\text{th,1}+R_\text{th,2}+R_\text{th,3}\).</li>
+<li>Each layer: \(R=\Delta x/(kA)\), so</li>
+</ol>
+\[R_\text{th,total}=\frac{\Delta x_1}{k_1A}+\frac{\Delta x_2}{k_2A}+\frac{\Delta x_3}{k_3A}\]
+<p>3. "Ohm's law": \(\boxed{T_A-T_B=\dot Q\times R_\text{th,total}}\)</p></div>
+
+<div class="box eg"><span class="tag">Worked example 2 · slides 22–23 · brick wall insulated on both sides</span>
+<p>A brick wall 0.1 m thick (\(k_2=0.7\u{W/(m\,{}^\circ C)}\)) has 0.03 m of insulation (\(k_1=k_3=0.07\)) on each side. The outer face of the left insulation is at \(T_1=150\)&nbsp;°C and the outer face of the right insulation at \(T_4=10\)&nbsp;°C. Calculate the heat flux.</p>
+<div class="pair">
+<div><div id="fig-ex2"></div></div>
+<div><div id="fig-ex2c"></div></div>
+</div>
+<ol class="steps">
+<li>Series: \(R_\text{resultant}=R_1+R_2+R_3\) with each \(R=L/(kA)\). The area is not given, so work per square metre with \(AR=L/k\).</li>
+<li>\(AR_1=AR_3=\dfrac{0.03}{0.07}=0.4286\) and \(AR_2=\dfrac{0.1}{0.7}=0.1429\), both in m²·°C/W.</li>
+<li>Sum: \(AR=0.4286+0.1429+0.4286\), which is \(1.000\u{m^2\,{}^\circ C/W}\).</li>
+<li>Flux: \(Q''=\dfrac{T_1-T_4}{AR}=\dfrac{150-10}{1.000}\), so \(\boxed{Q''=140\u{W/m^2}}\).</li>
+</ol>
+<p class="flag">the handout rounds the three terms to 0.42 + 0.42 + 0.14 = 0.98 and gets 142 W/m². With unrounded values the sum is exactly 1.000 (0.03/0.07 = 3/7, 0.1/0.7 = 1/7, total 7/7), so 140 W/m² is the precise answer. Keep 3–4 significant figures in intermediate steps.</p>
+<details class="calc"><summary>the two interface temperatures (not asked, but good practice)</summary><div>
+<p>Walk along the flow, dropping \(Q''\times AR\) across each layer:</p>
+<p>\(T_2=150-140(0.4286)=90\)&nbsp;°C. <span class="why">Left insulation takes 60 °C.</span></p>
+<p>\(T_3=90-140(0.1429)=70\)&nbsp;°C. <span class="why">The brick takes only 20 °C: high \(k\), small \(R\).</span></p>
+<p>\(T_4=70-140(0.4286)=10\)&nbsp;°C ✓ <span class="why">Arrives at the given right-face temperature, so the arithmetic is right.</span></p>
+</div></details></div>
+
+<div class="box eg"><span class="tag">Worked example 3 · slides 24–25 · temperature at a point inside an oven wall</span>
+<p>An oven's inside is kept at 850 °C. Its walls are 500 mm thick, \(k=0.3\u{W/(m\,{}^\circ C)}\), and the outside wall surface is at 250 °C. Wall area 1 m². Find the thermal resistance, the heat flow rate, and the temperature 200 mm from the inner side.</p>
+<div id="fig-ex3"></div>
+<p class="flag">"interior maintained at 850 °C" is used, as the handout does, as the inner <b>surface</b> temperature (no convection film inside).</p>
+<ol class="steps">
+<li>\(R_\text{th}=\dfrac{L}{kA}=\dfrac{0.5}{0.3\times1}=1.667\u{{}^\circ C/W}\).</li>
+<li>\(\dot Q=\dfrac{T_1-T_2}{R_\text{th}}=\dfrac{850-250}{1.667}=360\u{W}\).</li>
+<li>Linear profile, at \(x=0.2\u{m}\) from the inside:</li>
+</ol>
+\[\begin{aligned}T_x&=T_1+\frac{T_2-T_1}{L}x\\&=850+\frac{250-850}{0.5}(0.2)\\&=850-240=610\ {}^\circ\mathrm C\end{aligned}\]
+\[\boxed{\begin{aligned}R_\text{th}&=1.667\u{{}^\circ C/W},\quad \dot Q=360\u{W}\\ T_{0.2}&=610\ {}^\circ\mathrm C\end{aligned}}\]
+<p class="muted">Check with the circuit method: the first 0.2 m is a resistance \(0.2/(0.3\times1)=0.667\u{{}^\circ C/W}\); \(850-360(0.667)=610\)&nbsp;°C. Same answer: "walking along the circuit" and "linear interpolation" are the same idea.</p></div>
+
+<div class="box eg"><span class="tag">Worked example 4 · slides 26–27 · slab heated by a radiant flux</span>
+<p>A plane slab 60 cm thick, \(k=17.5\u{W/(m\,{}^\circ C)}\), absorbs a net radiant heat flux \(Q''=530\u{W/m^2}\) on its left face. The right face is held at \(T_2=38\)&nbsp;°C. Steady state, no heat generation. Find the temperature at the mid-plane (30 cm in) and the maximum temperature in the slab.</p>
+<div id="fig-ex4"></div>
+<ol class="steps">
+<li>Steady state: all the absorbed energy is conducted through the slab, so the conducted flux is 530 W/m².</li>
+<li>Conduction law in flux form, \(Q''=k(T_1-T_2)/L\):
+\[\begin{aligned}530&=\frac{17.5(T_1-38)}{0.6}\\T_1-38&=\frac{530(0.6)}{17.5}=18.17\\T_1&=56.2\ {}^\circ\mathrm C\end{aligned}\]</li>
+<li>Heat flows from left to right, so the left face is the hottest point: \(T_\text{max}=T_1=56.2\)&nbsp;°C.</li>
+<li>Mid-plane: \(T_x=56.17+\dfrac{38-56.17}{0.6}(0.3)=47.1\)&nbsp;°C (exactly halfway between, since 0.3 m is half of 0.6 m).</li>
+</ol>
+\[\boxed{T_\text{mid}=47.1\ {}^\circ\mathrm C,\quad T_\text{max}=56.2\ {}^\circ\mathrm C}\]
+<p>The maximum is on the left (heated) face.</p></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Insulation design: examples 5 and 6 (slides 28–31)</h2>
+<p>These two examples work "backwards": the heat rate or a target reduction is known and a property of one layer (its \(k\) or its thickness) is the unknown. This is exam type <a href="guide-T3.html#T3-4">T3.4</a>.</p>
+<div class="box eg"><span class="tag">Worked example 5 · slides 28–29 · finding the insulation's conductivity</span>
+<p>A house wall in a cold region has three layers: (a) 15 cm of outer brickwork, \(k=0.75\u{W/(m\,{}^\circ C)}\); (b) 1.25 cm of inner wooden panelling, \(k=0.2\); (c) a 7.5 cm intermediate layer of insulation, whose resistance is <b>twice</b> that of the brick. Inside surface 20 °C, outside surface −15 °C, area 1 m². Find the heat loss per unit area and the conductivity of the insulation.</p>
+<div id="fig-ex5"></div>
+<ol class="steps">
+<li>\(R_\text{brick}=\dfrac{0.15}{0.75(1)}=0.2\u{{}^\circ C/W}\); \(R_\text{wood}=\dfrac{0.0125}{0.2(1)}=0.0625\u{{}^\circ C/W}\).</li>
+<li>\(R_\text{insul}=2R_\text{brick}=0.4\u{{}^\circ C/W}\).</li>
+<li>Series: \(R_\text{total}=0.2+0.0625+0.4\), so \(R_\text{total}=0.6625\u{{}^\circ C/W}\).</li>
+<li>Heat loss per unit area:
+\[\begin{aligned}Q''&=\frac{T_\text{inner}-T_\text{outer}}{R_\text{total}A}\\&=\frac{20-(-15)}{0.6625(1)}=52.83\u{W/m^2}\end{aligned}\]</li>
+<li>From \(R=L/(kA)\), rearranged for \(k\):
+\[\begin{aligned}k_\text{insul}&=\frac{L_\text{insul}}{R_\text{insul}A}=\frac{0.075}{0.4(1)}\\&=0.1875\u{W/(m\,{}^\circ C)}\end{aligned}\]</li>
+</ol>
+\[\boxed{\begin{aligned}Q''&=52.8\u{W/m^2}\\k_\text{insul}&=0.1875\u{W/(m\,{}^\circ C)}\end{aligned}}\]
+<details class="calc"><summary>the temperatures inside this wall</summary><div>
+<p>Walk from inside (20 °C) to outside along the flow:</p>
+<p>after the wood: \(20-52.83(0.0625)=16.70\)&nbsp;°C <span class="why">drop 3.30 °C</span></p>
+<p>after the insulation: \(16.70-52.83(0.4)=-4.43\)&nbsp;°C <span class="why">drop 21.13 °C: the biggest resistance takes the biggest drop</span></p>
+<p>after the brick: \(-4.43-52.83(0.2)=-15.00\)&nbsp;°C ✓ <span class="why">drop 10.57 °C, arriving at the outside temperature</span></p>
+</div></details></div>
+
+<div class="box eg"><span class="tag">Worked example 6 · slides 30–31 · insulation thickness for a 75% cut</span>
+<p>An exterior wall is 10 cm of common brick (\(k=0.75\)) followed by 4 cm of gypsum plaster (\(k=0.5\)), area 1 m². What thickness of loosely packed rock-wool insulation (\(k=0.065\)) must be added to reduce the heat loss (or gain) through the wall by 75%? Steady state, no heat generation.</p>
+<div id="fig-ex6"></div>
+<ol class="steps">
+<li>\(R_\text{brick}=\dfrac{0.1}{0.75(1)}=0.1333\u{{}^\circ C/W}\); \(R_\text{plaster}=\dfrac{0.04}{0.5(1)}=0.08\u{{}^\circ C/W}\); \(R_\text{wool}=\dfrac{L_\text{wool}}{0.065(1)}=15.38\,L_\text{wool}\).</li>
+<li>Without wool, for an overall temperature difference \(\Delta T\): \(\dot Q_\text{no wool}=\dfrac{\Delta T}{0.1333+0.08}=4.6875\,\Delta T\).</li>
+<li>"Reduced by 75%" means 25% is left: \(\dot Q_\text{with}=0.25\,\dot Q_\text{no wool}\), which is \(1.172\,\Delta T\).</li>
+<li>With wool, the same heat rate written with the new total resistance:
+\[\frac{\Delta T}{0.2133+15.38L_\text{wool}}=1.172\,\Delta T\]
+\(\Delta T\) cancels:</li>
+</ol>
+\[0.2133+15.38\,L_\text{wool}=\frac{1}{1.172}=0.8533\]
+<p>\(\boxed{L_\text{wool}=\dfrac{0.64}{15.38}=0.0416\u{m}\approx4.2\u{cm}}\)</p>
+<p class="flag">the handout rounds \(1/0.2133\) to 4.70 and gets 0.042 m; the unrounded answer is 0.0416 m. Both round to 4.2 cm. (The last sentence of the slide 30 question, about a "radiant source", is copied from Example 4 and does not apply here.)</p>
+<div class="box ready"><span class="tag">Ready answer · the faster route for "reduce the heat by f"</span>
+<p>Same \(\Delta T\) before and after, so \(q\propto1/R_\text{total}\):</p>
+\[R_\text{new}=\frac{R_\text{old}}{1-f}\]
+<p>Then the added layer's resistance is \(R_\text{new}-R_\text{old}\), and \(L=kA(R_\text{new}-R_\text{old})\) or \(k=L/[A(R_\text{new}-R_\text{old})]\). For Example 6: \(R_\text{new}=0.2133/0.25=0.8533\), added \(0.64\u{{}^\circ C/W}\), \(L=0.065(1)(0.64)=0.0416\u{m}\).</p></div></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>"Reduced <b>by</b> 75%" leaves 25% (multiply \(q\) by 0.25, so \(R\) by 4). "Reduced <b>to</b> 75%" leaves 75%. Writing \(R_\text{new}=R_\text{old}/0.75\) for "by 75%" gives a wool layer ten times too thin (4.6 mm).</p></div>
+<h3>Which layer should you thicken?</h3>
+<p>May 2021 Q1(d) asked, without calculation, which one layer of a wall to make 50% thicker to cut the heat loss most. Thickening a layer by 50% multiplies <b>its</b> \(R=L/(kA)\) by 1.5, so it adds half of that layer's resistance to the total. The biggest addition comes from the layer with the <b>largest</b> \(L/(kA)\): usually the low-\(k\) insulation (large \(L/k\), and check its area too if layers have different areas). A thin metal layer is the worst choice: its \(R\) is tiny, so 50% more of it changes almost nothing.</p>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Drawing the thermal circuit (slide 32)</h2>
+<div class="box eg"><span class="tag">Worked example 7 · slide 32</span>
+<p>A composite wall of area \(A\) between \(T_1\) (left) and \(T_2\) (right) has material \(E\) across the whole height, then a middle column split into \(F\) (top) and \(G\) (bottom) with equal thicknesses \(L_F=L_G\), then material \(H\) across the whole height. The top and bottom edges are insulated (shaded). Here \(\lambda_E,\lambda_F,\lambda_G,\lambda_H\) are the <b>thermal resistances</b> of the plates. Draw the circuit and write the resultant resistance.</p>
+<div class="pair">
+<div><div id="fig-ex7"></div></div>
+<div><div id="fig-ex7c"></div></div>
+</div>
+<ol class="steps">
+<li>Follow the heat from left to right. It must go through \(E\) first: \(\lambda_E\) in series.</li>
+<li>Then it can go through <b>either</b> \(F\) or \(G\): two side-by-side paths between the same two planes, so \(\lambda_F\parallel\lambda_G\).</li>
+<li>Then through \(H\): \(\lambda_H\) in series.</li>
+</ol>
+\[R_\text{resultant}=\lambda_E+\Big(\frac{1}{\lambda_F}+\frac{1}{\lambda_G}\Big)^{-1}+\lambda_H\]
+<p class="flag">the symbol \(\lambda\) means a <b>resistance</b> in this example but a <b>conductivity</b> in Example 9 (slide 40). Always check which one a question means; in exam papers \(k\) is conductivity and resistances are \(R\).</p></div>
+<div class="box ready"><span class="tag">Ready answer · drawing any composite-wall circuit (exam type T3.2)</span>
+<ol class="steps">
+<li>Mark the heat-flow direction (hot side to cold side) and put a node at every temperature you know or are asked for: fluid temperatures, surfaces, interfaces.</li>
+<li>Fluid on a face: a convection resistance \(1/(hA)\) between \(T_\infty\) and the surface node (Section 12). If radiation also acts on that face, put \(1/(h_\text{rad}A)\) <b>in parallel</b> with it (Section 16).</li>
+<li>Each full-height layer: \(L/(kA)\) in series, with the whole area.</li>
+<li>A column split into parts stacked across the flow: one resistor per part, \(L/(k_iA_i)\) using <b>that part's own area</b>, all in parallel between the two planes of that column.</li>
+<li>Label every resistor (\(R_1\), \(R_\text{conv,o}\), …) and every node (\(T_{\infty,o}\), \(T_{s,o}\), …), and draw \(q\) with an arrow.</li>
+</ol></div>
+<p>The five-layer wall below has appeared, with new numbers, in May 2022, May 2023 and May 2025. Layer 3 is split into 3a and 3b; convection acts on both faces, and radiation joins convection on the right face.</p>
+<div class="pair">
+<div><div id="fig-s10-wall"></div><p class="sub">The exam's five-layer wall (layer widths not to scale).</p></div>
+<div><div id="fig-s10-circ"></div><p class="sub">Its circuit, heat flowing right to left.</p></div>
+</div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Convection and Newton's law of cooling (slides 33–36)</h2>
+<div class="box def"><span class="tag">Definition · convection (slide 33)</span>
+<p><b>Heat convection</b> is heat transfer due to <b>fluid motion</b>: a liquid or gas flowing past a surface. Right at the surface the fluid is still and heat enters it by conduction; the moving fluid then carries the warmed (or cooled) fluid away and brings fresh fluid in.</p></div>
+<p>Slide 33 shows the two kinds:</p>
+<div class="cases">
+<div><b>Forced convection</b>A fan (or pump, or wind) drives the fluid. Slide 33: a fan blows air at \(T_\infty\) across a hot plate at \(T_s\).</div>
+<div><b>Free (natural) convection</b>Nothing drives the fluid except buoyancy: fluid warmed at a hot surface becomes less dense and rises; cooler, denser fluid sinks to replace it. Slide 33: a pot of water on a gas flame, with warm molecules rising up the middle and cool molecules sinking, forming circulating "convection cells".</div>
+</div>
+<div id="fig-s11"></div>
+<p>Slide 34 is a still from a video "Exchange of hot and cold fluids": two bottles joined neck to neck, hot water dyed red in the upper bottle and cold water dyed blue in the lower one. With hot (less dense) water on top the two stay separate; with the bottles the other way round (cold on top), the dense cold water sinks and the hot water rises, and they mix quickly. That density-driven motion is natural convection.</p>
+<p class="flag">the slide shows only the hot-on-top arrangement; the cold-on-top half of the demonstration is described from the standard version of this video.</p>
+<div class="box thm"><span class="tag">Law · Newton's law of cooling (slide 35)</span>
+\[q=\frac{Q}{t}=hA\,(T_s-T_\infty)=hA\,\Delta T\]
+<p class="word"><b>In words:</b> convection heat rate = heat transfer coefficient × surface area × (surface temperature − fluid temperature).</p>
+<ul class="list">
+<li>\(q\): heat flow rate (W), from the surface to the fluid if \(T_s\gt T_\infty\).</li>
+<li>\(h\): the <b>convective heat transfer coefficient</b>, W/(m²·°C) (Section 13 gives typical values).</li>
+<li>\(A\): the area of the surface in contact with the fluid (m²).</li>
+<li>\(T_s\): the <b>surface</b> temperature where convection takes place.</li>
+<li>\(T_\infty\): the <b>free-stream</b> temperature: the temperature of the bulk fluid, far enough from the surface not to be affected by it.</li>
+</ul></div>
+<div class="box def"><span class="tag">Definition · heat transfer coefficient \(h\)</span>
+<p>\(h\) is the heat rate per square metre of surface per degree of difference between surface and fluid. It is <b>not</b> a property of the fluid alone: it depends on the fluid (air, water, oil), how fast and in what pattern it flows (free or forced, slow or fast), and the shape of the surface. Faster flow sweeps warm fluid away sooner, so \(h\) is larger.</p></div>
+<div class="box eg"><span class="tag">Worked example 8 · slide 36</span>
+<p>A fluid flows over a plane surface 1 m by 1 m. The surface is at 50 °C, the fluid at 20 °C, and \(h=2000\u{W/(m^2\,{}^\circ C)}\). Find the convective heat transfer from the surface.</p>
+\[\begin{aligned}q&=hA\Delta T\\&=2000(1\times1)(50-20)\\&=60\,000\u{W}=\boxed{60\u{kW}}\end{aligned}\]
+<p class="flag">the slide calls the fluid "the colder air", but \(h=2000\) is typical of flowing water (Section 13), not air (10–100).</p></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Convection resistance; convection plus conduction (slides 37–40)</h2>
+<p>Newton's law has the same shape as \(q=\Delta T/R\), so a fluid film also behaves like a resistor (slide 37):</p>
+<div class="box thm"><span class="tag">Result · convection resistance</span>
+\[R_\text{th,convection}=\frac{1}{hA}\]
+<p class="word"><b>In words:</b> the resistance of a fluid film = 1 ÷ (heat transfer coefficient × area). A weak coefficient (still air) gives a big resistance.</p></div>
+<p>Slide 38 puts the two side by side:</p>
+<div class="scroll"><table class="tbl">
+<tr><th></th><th>Conduction (inside a solid)</th><th>Convection (surface to fluid)</th></tr>
+<tr><td>Heat rate</td><td>\(q=kA\,\Delta T/L\)</td><td>\(q=hA\,\Delta T\)</td></tr>
+<tr><td>Resistance</td><td>\(R=L/(kA)\)</td><td>\(R=1/(hA)\)</td></tr>
+<tr><td>\(\Delta T\) is</td><td>between the two faces</td><td>between surface and bulk fluid</td></tr>
+</table></div>
+<h3>A wall with fluid on both sides (slide 39)</h3>
+<p>Slide 39: hot fluid at \(T_{\infty1}\) (coefficient \(h_1\)) on the left, two walls (\(k_1,L_1\) and \(k_2,L_2\)), cold fluid at \(T_{\infty2}\) (coefficient \(h_2\)) on the right. Heat \(\dot Q\) flows left to right through four resistances in series: left film, wall 1, wall 2, right film. The temperature drops in a curve through each fluid film (a thin "boundary layer" next to the surface) and in a straight line through each wall.</p>
+<div id="fig-s12"></div>
+<div id="fig-s12c"></div>
+<div class="box thm"><span class="tag">Result · plane wall between two fluids</span>
+\[\begin{aligned}R_\text{combine}&=R_\text{conv,1}+R_\text{wall,1}\\&\quad+R_\text{wall,2}+R_\text{conv,2}\\&=\frac{1}{h_1A}+\frac{L_1}{k_1A}+\frac{L_2}{k_2A}+\frac{1}{h_2A}\end{aligned}\]
+\[q=\frac{T_{\infty1}-T_{\infty2}}{R_\text{combine}}\]
+<p class="word"><b>In words:</b> fluid films are just more resistors in the series chain; the overall temperature difference is now fluid-to-fluid.</p></div>
+<div class="box eg"><span class="tag">Worked example 9 · slide 40 · three layers between two fluids</span>
+<p>Hot fluid (\(T_{\infty,1}\), \(h_1\)) flows up the left face of a wall made of segments \(A\), \(B\), \(C\) (conductivities \(\lambda_A,\lambda_B,\lambda_C\), thicknesses \(L_A,L_B,L_C\)); cold fluid (\(T_{\infty,4}\), \(h_4\)) flows up the right face. Cross-section area \(A\). Derive the overall thermal resistance.</p>
+<p>The picture shows the temperature falling from \(T_{\infty,1}\) to the surface temperature \(T_{s,1}\) through the hot film, then to \(T_2\), \(T_3\) and \(T_{s,4}\) through the three segments, then to \(T_{\infty,4}\) through the cold film. Five resistances in series:</p>
+\[\begin{aligned}R_\text{combine}&=R_\text{conv,1}+R_A+R_B\\&\quad+R_C+R_\text{conv,4}\\&=\frac{1}{h_1A}+\frac{L_A}{\lambda_AA}+\frac{L_B}{\lambda_BA}\\&\quad+\frac{L_C}{\lambda_CA}+\frac{1}{h_4A}\end{aligned}\]
+<p class="muted">Here \(\lambda\) is a conductivity (W/(m·K)), unlike Example 7.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes · the window again</span>
+<p>The window of Section 4 (glass 4 mm, \(k=0.8\), 1.5 m²) now separates room air at 20 °C (\(h_i=8\u{W/(m^2\,K)}\), still indoor air) from outside air at 5 °C (\(h_o=25\), windy). Find the heat rate.</p>
+<ol class="steps">
+<li>\(R_i=\dfrac{1}{8(1.5)}=0.0833\u{K/W}\); \(R_\text{glass}=\dfrac{0.004}{0.8(1.5)}=0.00333\u{K/W}\); \(R_o=\dfrac{1}{25(1.5)}=0.0267\u{K/W}\).</li>
+<li>\(R_\text{total}=0.1133\u{K/W}\); \(q=\dfrac{20-5}{0.1133}=\boxed{132\u{W}}\).</li>
+</ol>
+<p>Not 4500 W. The glass is only 3% of the total resistance; the two air films do almost all the insulating, and the glass surfaces are not at 20 °C and 5 °C but much closer together. That is why the boundary films must never be left out when the question gives \(h\).</p></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Typical values of the heat transfer coefficient (slide 41)</h2>
+<div class="scroll"><table class="tbl">
+<tr><th>Flow type (as on slide 41)</th><th>\(h\) (W/(m²·K))</th></tr>
+<tr><td>Forced convection; low-speed flow of air over a surface</td><td>10</td></tr>
+<tr><td>Forced convection; moderate-speed flow of air over a surface</td><td>100</td></tr>
+<tr><td>Forced convection; moderate-speed cross-flow of air over a cylinder</td><td>200</td></tr>
+<tr><td>Forced convection; moderate flow of water in a pipe</td><td>3000</td></tr>
+<tr><td>Forced convection; molten metals</td><td>2000 to 45 000</td></tr>
+<tr><td>Forced convection; boiling water in a pipe</td><td>50 000</td></tr>
+<tr><td>Forced convection; water and liquids</td><td>50 to 10 000</td></tr>
+<tr><td>Free convection; gases and dry vapours</td><td>5 to 37</td></tr>
+<tr><td>Free convection; water and liquids</td><td>50 to 3000</td></tr>
+<tr><td>Air</td><td>10 to 100</td></tr>
+<tr><td>Free convection; vertical plate in air with 30 °C temperature difference</td><td>5</td></tr>
+<tr><td>Boiling water</td><td>3000 to 100 000</td></tr>
+<tr><td>Water flowing in tubes</td><td>500 to 1200</td></tr>
+<tr><td>Condensing water vapour</td><td>5000 to 100 000</td></tr>
+<tr><td>Water in free convection</td><td>100 to 1200</td></tr>
+<tr><td>Oil in free convection</td><td>50 to 350</td></tr>
+<tr><td>Gas flow on tubes and between tubes</td><td>10 to 350</td></tr>
+</table></div>
+<p class="flag">the slide prints boiling water as "3.000 to 100.000" and condensing water vapour as "5.0 - 100.0". These use a full stop as the thousands separator (3.000 = 3000); the condensing entry has also lost a zero group. Standard tables give about 5000–100 000 for condensing steam, which matches "boiling and condensation" being the largest coefficients, as the exams expect.</p>
+<div class="box ready"><span class="tag">Ready answer · ranking heat transfer coefficients (exam type T3.5)</span>
+<p>From smallest to largest:</p>
+<p style="text-align:center"><b>free convection in gas</b> (≈ 5–25) &lt; <b>forced convection in gas</b> (≈ 10–200, more at higher speed) &lt; <b>free convection in liquids</b> &lt; <b>forced convection in liquids</b> &lt; <b>boiling and condensation</b> (≈ 3000–100 000)</p>
+<p>Reasons to quote: liquids conduct heat far better than gases and carry more heat per volume; faster flow thins the film of slow fluid at the surface; boiling and condensation absorb or release the large latent heat right at the surface.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Convection depends on: the fluid's speed (and whether it is forced or free), the fluid itself and its temperature, the surface area and shape. It does <b>not</b> depend on the surface's emissivity (that is radiation) or on how efficient the fan's motor is (only the air speed it produces matters). This was May 2024 Q2.</p></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Radiation and the black body (slides 42–44)</h2>
+<div class="box def"><span class="tag">Definition · thermal radiation (slide 42)</span>
+<p><b>Thermal radiation</b> is electromagnetic radiation emitted by <b>all</b> matter at a temperature above absolute zero, in the wavelength range 0.1 μm to 100 μm (from ultraviolet through visible light to infrared). At everyday temperatures it is mainly <b>infrared</b>. It is caused by the thermal agitation (random motion) of the molecules that make up the body: moving charges emit electromagnetic waves.</p></div>
+<p>Unlike conduction and convection, radiation needs no material in between, and it travels at the speed of light. Every body both emits radiation and absorbs radiation from its surroundings; the <b>net</b> heat transfer is the difference.</p>
+<div class="box def"><span class="tag">Definition · black body; absolute temperature</span>
+<p>A <b>black body</b> is an ideal surface that absorbs all radiation falling on it (none is reflected or transmitted) and, at a given temperature, emits the most radiation possible. Its name comes from the fact that, absorbing all visible light, it would look black when cold.</p>
+<p>The <b>absolute temperature</b> is the temperature measured from absolute zero, in kelvin: \(T/\mathrm K=T/{}^\circ\mathrm C+273.15\).</p></div>
+<div class="box thm"><span class="tag">Law · Stefan–Boltzmann (slide 43)</span>
+\[q=\sigma T^4A\quad\text{(one body)}\]
+\[q=\sigma\big(T_1^4-T_2^4\big)A\quad\text{(net, two bodies)}\]
+<p>with \(\sigma=5.6703\times10^{-8}\u{W/(m^2\,K^4)}\), the <b>Stefan–Boltzmann constant</b>; \(T\) the absolute temperature in K; \(A\) the surface area of the emitting body (m²).</p>
+<p class="word"><b>In words:</b> a black body radiates power proportional to its area and to the fourth power of its absolute temperature. The net exchange is "what body 1 emits minus what it receives back from body 2".</p></div>
+<p>The two-body formula is for a body 1 (area \(A\)) that "sees" only body 2, such as a small object inside a large room or vessel whose walls are at \(T_2\): every exam question of this kind (a pipe or column in a large enclosure) is set up this way.</p>
+<div class="box eg"><span class="tag">Worked example 10 · slide 44 · radiation from the sun</span>
+<p>The sun's surface is at 5800 K. Treating the sun as a black body, find the radiation energy emitted per unit area.</p>
+\[\begin{aligned}\frac{q}{A}&=\sigma T^4=(5.6703\times10^{-8})(5800)^4\\&=\boxed{6.42\times10^{7}\u{W/m^2}}\end{aligned}\]
+<p>Every square metre of the sun gives out about 64 MW.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Doubling the absolute temperature multiplies the emission by \(2^4=16\). Doubling a Celsius temperature means nothing here: 20 °C to 40 °C is only 293 K to 313 K, a 30% increase in emission. Always convert to kelvin <b>before</b> raising to the fourth power.</p></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Grey bodies and emissivity (slides 45–46)</h2>
+<p>Real surfaces are not perfect absorbers. Of the radiation falling on a surface (the <b>incident radiation</b> or <b>irradiation</b>), part is <b>reflected</b>, part is <b>absorbed</b>, and (for a see-through material) part is <b>transmitted</b> through it (slide 45 picture).</p>
+<div id="fig-s15"></div>
+<div class="box def"><span class="tag">Definition · grey body; emissivity</span>
+<p>A <b>grey body</b> emits a fixed fraction \(\varepsilon\) of what a black body at the same temperature would emit. \(\varepsilon\) is its <b>emissivity</b> (emissivity coefficient): \(\varepsilon=1\) for a black body, \(0\lt\varepsilon\lt1\) for real surfaces. It depends on the material, the surface finish and the temperature.</p></div>
+<div class="box thm"><span class="tag">Law · grey-body emission (slide 45)</span>
+\[q=\varepsilon\sigma T^4A\]
+<p class="word"><b>In words:</b> a real surface emits its emissivity times the black-body amount.</p></div>
+<p>Slide 46 lists emissivities:</p>
+<div class="scroll"><table class="tbl">
+<tr><th>Material</th><th>\(\varepsilon\)</th><th>Material</th><th>\(\varepsilon\)</th></tr>
+<tr><td>Unoxidised aluminium</td><td>0.02</td><td>Asphalt</td><td>0.93</td></tr>
+<tr><td>Oxidised aluminium</td><td>0.11</td><td>Red brick</td><td>0.93</td></tr>
+<tr><td>Heavily oxidised (aluminium)</td><td>0.31</td><td>Cast iron, turned and heated</td><td>0.6–0.7</td></tr>
+<tr><td>Roughly polished (aluminium)</td><td>0.18</td><td>Copper, electroplated</td><td>0.03</td></tr>
+<tr><td>Aluminium commercial sheet</td><td>0.09</td><td>Annealed copper</td><td>0.78</td></tr>
+<tr><td>Aluminium alloy 1100</td><td>0.05</td><td>Copper, polished</td><td>0.023–0.052</td></tr>
+<tr><td>Cotton cloth</td><td>0.77</td><td>Water</td><td>0.95–0.963</td></tr>
+</table></div>
+<div class="box ready"><span class="tag">Ready answer · emissivity rules of thumb (exam type T3.5)</span>
+<p><b>Shiny, polished, unoxidised metals: very low</b> (0.02–0.1). Oxidised or rough metals: higher (0.1–0.7). <b>Non-metals</b> (water, brick, asphalt, cloth, paint, skin): <b>high</b>, 0.75–0.96. From the table: aluminium (0.02–0.31) &lt; cast iron (0.6–0.7) &lt; cotton (0.77) &lt; brick and asphalt (0.93) &lt; water (0.95–0.96), the highest listed.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · good absorbers are good emitters</span>
+<p>For a grey surface the fraction it <b>absorbs</b> equals its emissivity (Kirchhoff's law). That is why shiny foil is used both to keep heat in (a polished surface emits little) and to keep radiant heat out (it reflects most of it). For a small grey body of area \(A\) inside large surroundings at \(T_\text{surr}\), the net radiation is \(q=\varepsilon\sigma(T_s^4-T_\text{surr}^4)A\): the handout's two-body formula with \(\varepsilon\) put in.</p></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span>Radiation as a resistance; convection and radiation together (slides 47–49)</h2>
+<p>Radiation is not proportional to \(\Delta T\) (it goes as \(T^4\)), but to fit it into a circuit we write it in the same form as Newton's law of cooling (slide 47):</p>
+<div class="box thm"><span class="tag">Definition and result · radiant heat transfer coefficient</span>
+\[q=\frac{Q}{t}=h_\text{rad}A\,(T_s-T_\text{surr})\]
+\[R_\text{th,radiation}=\frac{1}{h_\text{rad}A}\]
+<p>\(T_s\): temperature of the emitting surface; \(T_\text{surr}\): temperature of the surroundings; \(h_\text{rad}\): the <b>coefficient of radiant heat transfer</b>, W/(m²·°C).</p>
+<p class="word"><b>In words:</b> \(h_\text{rad}\) is "the radiation heat rate per square metre per degree of difference", chosen so that radiation looks like convection. To find it, compute the real radiation \(q\) from Stefan–Boltzmann (kelvin!), then divide by \(A(T_s-T_\text{surr})\).</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · a formula for \(h_\text{rad}\)</span>
+<p>Factorising \(T_s^4-T_\text{surr}^4\) (difference of two squares, twice):</p>
+\[h_\text{rad}=\varepsilon\sigma\big(T_s^2+T_\text{surr}^2\big)\big(T_s+T_\text{surr}\big)\]
+<p>So \(h_\text{rad}\) grows roughly like \(T^3\): about \(4\sigma T^3\approx6\u{W/(m^2\,K)}\) for a black surface near room temperature (300 K), but over 100 at 1000 K. Radiation is comparable to free convection at room temperature and dominates in furnaces.</p></div>
+<h3>Convection and radiation from the same surface (slide 48)</h3>
+<p>Slide 48: a solid's surface (area \(A_s\), temperature \(T_s\)) loses \(\dot Q\), which splits into \(\dot Q_\text{conv}\) to the air at \(T_\infty\) through \(R_\text{conv}\) and \(\dot Q_\text{rad}\) to the surroundings at \(T_\text{surr}\) through \(R_\text{rad}\). The two leave from the <b>same node</b> \(T_s\) and (when \(T_\infty=T_\text{surr}\)) arrive at the same temperature: they are in <b>parallel</b>.</p>
+<div class="pair">
+<div><div id="fig-s16"></div></div>
+<div><div id="fig-s16c"></div></div>
+</div>
+<div class="box thm"><span class="tag">Result · combined convection and radiation</span>
+\[\begin{aligned}\frac{1}{R_\text{combine}}&=\frac{1}{R_\text{conv}}+\frac{1}{R_\text{rad}}\\&=(h_\text{conv}+h_\text{rad})A_s\end{aligned}\]
+\[h_\text{combine}=h_\text{conv}+h_\text{rad}\]
+\[\dot Q=\dot Q_\text{conv}+\dot Q_\text{rad}=h_\text{combine}A_s\Delta T\]
+<p class="word"><b>In words:</b> on one face, convection and radiation are two side-by-side paths, so their coefficients simply add.</p></div>
+<div class="box eg"><span class="tag">Worked example 11 · slide 49</span>
+<p>A pipe of surface area 1 m², surface temperature 480 K, sits in a large enclosure whose walls are at 380 K. Treat the pipe surface as a black body. Find the coefficient of radiant heat transfer. If the total coefficient (radiation + convection) is 34.9 W/(m²·°C), find the convective coefficient.</p>
+<ol class="steps">
+<li>Net radiation (temperatures already in K):</li>
+</ol>
+\[\begin{aligned}\dot Q&=\sigma(T_1^4-T_2^4)A\\&=5.6703\times10^{-8}(480^4-380^4)(1)\\&=1828\u{W}\end{aligned}\]
+<p>2. Same \(\dot Q\) written with \(h_\text{rad}\): \(1828=h_\text{rad}(1)(480-380)\), so \(h_\text{rad}=18.3\u{W/(m^2\,{}^\circ C)}\).</p>
+<p>3. \(h_\text{total}=h_\text{rad}+h_\text{conv}\): \(34.9=18.3+h_\text{conv}\).</p>
+<p>\(\boxed{h_\text{rad}=18.3,\quad h_\text{conv}=16.6\u{W/(m^2\,{}^\circ C)}}\)</p>
+<p class="muted">The handout rounds \(\dot Q\) to 1830 W; unrounded it is 1827.7 W. \(h\) values are the same to 3 significant figures.</p>
+<details class="calc"><summary>the fourth powers, step by step</summary><div>
+<p>\(480^4=(480^2)^2=230\,400^2\), which is \(5.3084\times10^{10}\) <span class="why">square twice; a calculator's \(x^y\) key also works</span></p>
+<p>\(380^4=144\,400^2=2.0851\times10^{10}\)</p>
+<p>Difference \(=3.2233\times10^{10}\u{K^4}\); times \(\sigma\): \(5.6703\times10^{-8}\times3.2233\times10^{10}\), which is \(1827.7\u{W/m^2}\). <span class="why">\(10^{-8}\times10^{10}=10^{2}\)</span></p>
+<p>Divide by \(A\,\Delta T=1\times100\): \(h_\text{rad}=18.28\). <span class="why">A temperature <i>difference</i> of 100 K = 100 °C, so the unit W/(m²·°C) is fine.</span></p>
+</div></details></div>
+<div class="figure" id="fig-hrad"><p class="ttl">Try it · convection versus radiation from a surface</p>
+<canvas class="plot" id="cv-hrad" style="height:260px"></canvas>
+<div class="ctrl">
+<label>\(\varepsilon\) <input type="range" id="r-eps" min="0.05" max="1" step="0.01" value="1"></label>
+<label>\(T_\text{surr}\) (K) <input type="range" id="r-Tsur" min="250" max="600" step="5" value="380"></label>
+<label>\(h_\text{conv}\) <input type="range" id="r-h" min="2" max="60" step="0.1" value="16.6"></label>
+<label>\(T_s\) (K) <input type="range" id="r-Ts" min="260" max="1200" step="5" value="480"></label>
+</div>
+<div class="readout" id="out-hrad"></div>
+<p class="cap">The blue curve is \(h_\text{rad}=\varepsilon\sigma(T_s^2+T_\text{surr}^2)(T_s+T_\text{surr})\) against surface temperature; the red line is a fixed \(h_\text{conv}\); the dot marks your \(T_s\). It starts at Example 11 (black pipe at 480 K in a 380 K enclosure: \(h_\text{rad}=18.3\), \(h_\text{conv}=16.6\)). Raise \(T_s\) to see radiation take over; lower \(\varepsilon\) (a polished metal) to see it vanish.</p></div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17"><h2><span class="n">17</span>Everything together: example 12 (slide 50)</h2>
+<div class="box eg"><span class="tag">Worked example 12 · slide 50 · liquid, two-layer wall, air with radiation</span>
+<p>Heat flows from a liquid stream at \(T_y\) (coefficient \(h_y\)) through a composite wall (layer 1: \(k_1,\Delta x_1\); layer 2: \(k_2,\Delta x_2\); area \(A\)) to an air stream at \(T_z\) (coefficient \(h_z\)). The air side also exchanges radiation with surroundings at \(T_\text{surr}=T_z\). Write the heat flow.</p>
+<div id="fig-ex12"></div>
+<div id="fig-ex12c"></div>
+<p>Follow the heat: liquid film, layer 1, layer 2 in series; then on the air side, convection and radiation in parallel (same surface, same far temperature):</p>
+\[\dot Q=\frac{T_y-T_z}{R_\text{conv,y}+R_\text{cond,1}+R_\text{cond,2}+R_{z}}\]
+\[R_z=\Big[\frac{1}{R_\text{conv,z}}+\frac{1}{R_\text{rad}}\Big]^{-1}\]
+<p class="word"><b>In words:</b> heat rate = overall temperature difference ÷ (series sum, where the air-side pair is first combined in parallel). Slide 50 writes it in one line with braces and \((\ldots)^{-1}\) powers; it is the same thing.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes · example 12 with numbers</span>
+<p>Liquid at \(T_y=80\)&nbsp;°C, \(h_y=500\u{W/(m^2\,K)}\); layer 1 concrete, 10 cm, \(k_1=1.2\); layer 2 insulation, 5 cm, \(k_2=0.04\); air at \(T_z=20\)&nbsp;°C with \(h_\text{conv}=10\) and \(h_\text{rad}=6\u{W/(m^2\,K)}\); area 2 m². Find the heat rate, all the surface and interface temperatures, and how the heat leaving the air side is split between convection and radiation.</p>
+<ol class="steps">
+<li>Liquid film: \(R_y=\dfrac{1}{500(2)}=0.0010\u{K/W}\).</li>
+<li>Concrete: \(R_1=\dfrac{0.10}{1.2(2)}=0.04167\u{K/W}\).</li>
+<li>Insulation: \(R_2=\dfrac{0.05}{0.04(2)}=0.625\u{K/W}\).</li>
+<li>Air side, parallel: \(R_z=\dfrac{1}{(10+6)(2)}=0.03125\u{K/W}\).</li>
+<li>Total: add the four, \(R=0.6989\u{K/W}\).</li>
+<li>\(q=\dfrac{80-20}{0.6989}=\boxed{85.9\u{W}}\).</li>
+</ol>
+<details class="calc"><summary>walking through the circuit for the temperatures</summary><div>
+<p>Start at 80 °C and subtract \(qR\) at each resistor, in the direction of the flow:</p>
+<p>liquid-side surface: \(80-85.85(0.0010)=79.91\)&nbsp;°C <span class="why">the liquid film barely matters: \(h\) is large</span></p>
+<p>concrete/insulation interface: \(79.91-85.85(0.04167)=76.34\)&nbsp;°C</p>
+<p>air-side surface: \(76.34-85.85(0.625)=22.68\)&nbsp;°C <span class="why">the insulation takes 53.7 °C, 89% of the total 60 °C</span></p>
+<p>air: \(22.68-85.85(0.03125)=20.00\)&nbsp;°C ✓ <span class="why">returns exactly to \(T_z\): the arithmetic checks</span></p>
+<p>Split at the air side (both see 22.68 − 20 = 2.68 °C): \(q_\text{conv}=10(2)(2.68)=53.7\u{W}\), \(q_\text{rad}=6(2)(2.68)=32.2\u{W}\); sum 85.9 W ✓.</p>
+</div></details>
+<div id="fig-ex12p"></div>
+<p class="muted">The temperature profile: almost flat through the liquid film and concrete, a steep fall across the insulation, a small step at the air side.</p></div>
+<div class="box ready"><span class="tag">Ready answer · solving any circuit (exam type T3.3)</span>
+<ol class="steps">
+<li>Compute every resistance with its own area: \(L/(kA)\), \(1/(hA)\), \(1/(h_\text{rad}A)\).</li>
+<li>Combine each parallel group first (reciprocals), then add everything in series.</li>
+<li>\(q=(T_\text{hot}-T_\text{cold})/R_\text{total}\) using the two <b>known</b> end temperatures.</li>
+<li>For any inside temperature: start from a known end and subtract \(qR\) resistor by resistor; inside a layer, interpolate linearly (a point halfway through a layer is the average of its two faces).</li>
+<li>Check: walking to the far end must return the other known temperature.</li>
+</ol></div>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="s18"><h2><span class="n">18</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>Heat, rate, flux</td><td>\(q=Q/t\), \(Q''=q/A\)</td><td>J; J/s = W; W/m²</td></tr>
+<tr><td>Steady conduction</td><td>\(\mathrm d^2T/\mathrm dx^2=0\)</td><td>straight-line profile in each uniform layer</td></tr>
+<tr><td>Conduction</td><td>\(q=kA\,\Delta T/L\)</td><td>conductivity × area × drop ÷ thickness</td></tr>
+<tr><td>Convection</td><td>\(q=hA(T_s-T_\infty)\)</td><td>Newton's law of cooling</td></tr>
+<tr><td>Radiation</td><td>\(q=\varepsilon\sigma(T_1^4-T_2^4)A\)</td><td>kelvin only; \(\varepsilon=1\) black body</td></tr>
+<tr><td>Radiant coefficient</td><td>\(h_\text{rad}=q/[A(T_s-T_\text{surr})]\)</td><td>radiation written like convection</td></tr>
+<tr><td>Resistances</td><td>\(\dfrac{L}{kA}\), \(\dfrac{1}{hA}\), \(\dfrac{1}{h_\text{rad}A}\)</td><td>K/W; \(q=\Delta T/R\) (thermal Ohm's law)</td></tr>
+<tr><td>Series</td><td>\(R=R_1+R_2+\cdots\)</td><td>layers one after another; same \(q\) through each</td></tr>
+<tr><td>Parallel</td><td>\(1/R=1/R_1+1/R_2+\cdots\)</td><td>paths side by side (split layers; conv + rad on one face)</td></tr>
+<tr><td>Temperatures</td><td>\(T_\text{next}=T-qR\)</td><td>walk along the flow; interpolate inside a layer</td></tr>
+<tr><td>Insulation design</td><td>\(R_\text{new}=R_\text{old}/(1-f)\)</td><td>cut \(q\) by fraction \(f\): the added layer supplies the difference</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 19 ============ -->
+<section id="s19"><h2><span class="n">19</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Putting °C into \(\sigma T^4\) or \(\sigma(T_1^4-T_2^4)\).</span>
+<span class="ok">✓</span><span>Add 273.15 first; only differences \(T_s-T_\text{surr}\) may stay in °C.</span>
+<span class="x">✗</span><span>Using the whole wall area for each part of a split layer.</span>
+<span class="ok">✓</span><span>Each part uses its own area: \(R_{3a}=L/(k_{3a}A_{3a})\).</span>
+<span class="x">✗</span><span>Adding parallel resistances, or putting convection and radiation in series.</span>
+<span class="ok">✓</span><span>Side-by-side paths combine by reciprocals; on one face, \(h_\text{conv}+h_\text{rad}\).</span>
+<span class="x">✗</span><span>Leaving out the convection films when \(h\) is given (or adding one when a surface temperature is given).</span>
+<span class="ok">✓</span><span>A film \(1/(hA)\) sits between a fluid temperature \(T_\infty\) and a surface; if the surface temperature is given, there is no film beyond it.</span>
+<span class="x">✗</span><span>"Reduce by 75%" read as \(q_\text{new}=0.75\,q_\text{old}\).</span>
+<span class="ok">✓</span><span>"By 75%" leaves 25%: \(R_\text{new}=R_\text{old}/0.25\).</span>
+<span class="x">✗</span><span>Thinking more heat flows through the better conductor of two layers in series.</span>
+<span class="ok">✓</span><span>In series the same \(q\) crosses every layer; the poor conductor just needs a bigger temperature drop.</span>
+<span class="x">✗</span><span>Centimetres left in \(L/(kA)\).</span>
+<span class="ok">✓</span><span>Convert to metres: 5 cm = 0.05 m.</span>
+<span class="x">✗</span><span>Mixing up \(R\) (K/W) and \(AR\) (m²·K/W).</span>
+<span class="ok">✓</span><span>\(q=\Delta T/R\); flux \(Q''=\Delta T/(AR)\).</span>
+</div>
+</section>
+
+<!-- ============ 20 ============ -->
+<section id="s20"><h2><span class="n">20</span>Find the mistake</h2>
+<div class="q"><p class="qh">1 · A student's version of Example 11</p>
+<p>"Pipe at 207 °C, enclosure at 107 °C, black, 1 m². \(\dot Q=\sigma(207^4-107^4)(1)=96.7\u{W}\), so \(h_\text{rad}=96.7/100=0.97\u{W/(m^2\,{}^\circ C)}\)."</p>
+<details><summary>Hint</summary><div><p>What unit must the temperatures inside \(T^4\) be in?</p></div></details>
+<details><summary>Answer</summary><div><p>Stefan–Boltzmann needs <b>kelvin</b>: 480 K and 380 K give 1828 W and \(h_\text{rad}=18.3\), almost 19 times bigger. Only the difference \(T_s-T_\text{surr}=100\) in the denominator is the same in °C and K.</p></div></details></div>
+<div class="q"><p class="qh">2 · A student's split layer</p>
+<p>"May 2023 Q2: material 2 (\(k=0.6\), 5 cm) and material 3 (\(k=0.5\), 5 cm) are in parallel, wall area 10 m². \(R_2=0.05/(0.6\times10)=0.00833\), \(R_3=0.05/(0.5\times10)=0.01\), so \(R_{23}=0.00833+0.01=0.0183\u{K/W}\)."</p>
+<details><summary>Hint</summary><div><p>Two mistakes: which area does each material have, and how do parallel resistances combine?</p></div></details>
+<details><summary>Answer</summary><div><p>Material 2 occupies 7 m² and material 3 occupies 3 m²: \(R_2=0.05/(0.6\times7)=0.01190\), \(R_3=0.05/(0.5\times3)=0.03333\). Parallel:</p>
+\[\begin{aligned}R_{23}&=\Big(\frac{1}{0.01190}+\frac{1}{0.03333}\Big)^{-1}\\&=0.00877\u{K/W},\end{aligned}\]
+<p>smaller than either.</p></div></details></div>
+<div class="q"><p class="qh">3 · A student's Example 6</p>
+<p>"Cut the loss by 75%, so the new resistance is \(0.2133/0.75=0.2844\); the wool supplies \(0.0711\u{{}^\circ C/W}\), so \(L=0.065\times0.0711=4.6\u{mm}\)."</p>
+<details><summary>Hint</summary><div><p>After a 75% cut, what fraction of the heat is left?</p></div></details>
+<details><summary>Answer</summary><div><p>25% is left, so \(R_\text{new}=0.2133/0.25=0.8533\); the wool supplies 0.64 °C/W and \(L=0.0416\u{m}\) (4.2 cm). Sanity check: a 4.6 mm layer could not cut a brick wall's loss by three quarters.</p></div></details></div>
+</section>
+
+<!-- ============ 21 ============ -->
+<section id="s21"><h2><span class="n">21</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Two layers in series</p><p>A wall is a thin copper sheet bonded to a thick layer of foam. In steady state, is the heat rate larger through the copper, through the foam, or the same? Where is the temperature drop larger?</p>
+<details><summary>Answer</summary><div><p>The <b>same</b> heat rate: in steady state heat cannot build up at the interface. The temperature drop is much larger across the foam (bigger \(R=L/(kA)\)); the copper's drop is tiny.</p></div></details></div>
+<div class="q"><p class="qh">2 · Changing a slab</p><p>A slab's thickness is doubled and its area halved, with the same face temperatures. What happens to \(q\)? To the flux?</p>
+<details><summary>Answer</summary><div><p>\(q=kA\Delta T/L\) falls to \(\tfrac12\times\tfrac12=\tfrac14\). The flux \(q/A=k\Delta T/L\) halves (only the thickness matters).</p></div></details></div>
+<div class="q"><p class="qh">3 · A half-and-half layer</p><p>A layer of thickness \(L\) and area \(A\) is made of two materials side by side, each covering half the area, with \(k=1\) and \(k=3\u{W/(m\,K)}\). What single conductivity would carry the same heat?</p>
+<details><summary>Hint</summary><div><p>Parallel: conductances \(kA/L\) add.</p></div></details>
+<details><summary>Answer</summary><div><p>\(k_\text{eq}A/L=1(A/2)/L+3(A/2)/L\), so \(k_\text{eq}=2\u{W/(m\,K)}\), the area-weighted average. (In series, equal thicknesses, it would be \(1.5\): the poor conductor dominates.)</p></div></details></div>
+<div class="q"><p class="qh">4 · Fourth power</p><p>A black body at 27 °C is heated to 327 °C. By what factor does its emitted radiation increase?</p>
+<details><summary>Answer</summary><div><p>In kelvin: 300 K to 600 K, a factor 2, so emission rises by \(2^4=16\) (not \((327/27)^4\)).</p></div></details></div>
+<div class="q"><p class="qh">5 · Why add the coefficients?</p><p>Why is \(h_\text{combine}=h_\text{conv}+h_\text{rad}\) on one face, when resistances in a wall add instead?</p>
+<details><summary>Answer</summary><div><p>Convection and radiation leave the <b>same</b> surface at the same time by two different routes: parallel paths. In parallel, conductances \(hA=1/R\) add. Layers of a wall are crossed one after another: series, where resistances add.</p></div></details></div>
+<div class="q"><p class="qh">6 · Which layer to thicken?</p><p>A wall is 2 cm of steel (\(k=45\)), 5 cm of foam (\(k=0.03\)) and 10 cm of brick (\(k=0.7\)), all the same area. You may make one layer 50% thicker. Which one?</p>
+<details><summary>Answer</summary><div><p>The foam: \(L/k\) is 0.00044 for steel, 1.67 for foam, 0.14 for brick (per m²). Adding 50% of the largest one adds the most resistance.</p></div></details></div>
+</section>
+
+<!-- ============ 22 ============ -->
+<section id="s22"><h2><span class="n">22</span>Exam taster</h2>
+<p>Real past-paper parts (ENGG1350, the predecessor of MECH1350; same Section A structure), one per main question type in this chapter. Full methods, every other sitting, and more practice: <a href="guide-T3.html">Exam guide · T3</a>.</p>
+
+<div class="q"><div class="src"><b>May 2025 Q6(a)</b><span>3 marks</span><span>same wall: May 2023 Q3, May 2022 Q6</span><a class="guide" href="guide-T3.html#T3-2">T3.2 drawing the circuit</a></div>
+<p>Consider the composite wall consisting of multiple layers given in the diagram below. The wall has an area of 12 m². The layer 3a occupies 8 m² and the layer 3b occupies 4 m². The heat flows from right to left (from layer 5 to layer 1). The air temperatures on the left and right of the composite wall are kept constant at −10 °C and 20 °C. Heat conduction occurs inside the composite wall. Heat convection occurs between the outer air and the wall surface. The heat convection coefficients between the air and the wall on the left and the right are given by 70 W/m²·°C and 40 W/m²·°C, respectively. Moreover, the right side of the composite wall is subject to thermal radiation with a radiant heat transfer coefficient of 10 W/m²·°C. The thermal conductivity and the length of the different layers of the composite wall are given by the table below.</p>
+<div id="fig-t1"></div>
+<div class="scroll"><table class="tbl">
+<tr><th>Layer</th><th>1</th><th>2</th><th>3a</th><th>3b</th><th>4</th><th>5</th></tr>
+<tr><td>Thermal conductivity (W/m·°C)</td><td>1</td><td>0.4</td><td>3</td><td>1</td><td>0.5</td><td>1</td></tr>
+<tr><td>Length (cm)</td><td>5</td><td>2</td><td>3</td><td>3</td><td>2</td><td>1</td></tr>
+</table></div>
+<p>(a) Draw the thermal resistance circuit for the problem.</p>
+<details><summary>Hint</summary><div><p>Start at the hot air (right). Which two things act on the right face at the same time? Which layer is split, and what area does each part get?</p></div></details>
+<details><summary>Answer</summary><div>
+<div id="fig-t1a"></div>
+<p>From \(T_{\infty,i}=20\)&nbsp;°C: \(R_\text{conv,i}=1/(h_\text{conv,i}A)\) in <b>parallel</b> with \(R_\text{rad,i}=1/(h_\text{rad,i}A)\); then \(R_5\), \(R_4\) in series; then \(R_{3a}\parallel R_{3b}\) (areas 8 and 4 m²); then \(R_2\), \(R_1\); then \(R_\text{conv,o}=1/(h_\text{conv,o}A)\) to \(T_{\infty,o}=-10\)&nbsp;°C. Label the nodes and the heat-flow arrow (right to left).</p>
+<p class="flag">the radiation is taken to be exchanged with surroundings at the right-hand air temperature (20 °C), so both right-side paths end on the same node; the paper gives no separate surroundings temperature.</p></div></details>
+<p>(b) Calculate the heat flow rate across the wall. <span class="muted">(5 marks)</span> <a class="guide" href="guide-T3.html#T3-3">T3.3 solving the circuit</a></p>
+<details><summary>Hint</summary><div><p>Combine the right-face pair and the 3a/3b pair first. Lengths in metres. \(q=30/R_\text{total}\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>Right face (convection and radiation in parallel): \(R_i=1/[(40+10)(12)]\), which is \(1.667\times10^{-3}\). Layer 5: \(0.01/(1\times12)=8.33\times10^{-4}\). Layer 4: \(0.02/(0.5\times12)=3.333\times10^{-3}\).</p>
+<p>Layer 3: \(R_{3a}=0.03/(3\times8)=1.25\times10^{-3}\), \(R_{3b}=0.03/(1\times4)=7.5\times10^{-3}\), parallel \(1.071\times10^{-3}\).</p>
+<p>Layer 2: \(0.02/(0.4\times12)=4.167\times10^{-3}\). Layer 1: \(0.05/(1\times12)=4.167\times10^{-3}\). Left film: \(1/(70\times12)=1.190\times10^{-3}\) (all in °C/W).</p>
+<p>\(R_\text{total}=0.01643\u{{}^\circ C/W}\), so</p>
+\[\boxed{q=\frac{20-(-10)}{0.01643}\approx1826\u{W}}\]
+<p>flowing right to left.</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2023 Q2(b)</b><span>4 marks</span><span>same template: Dec 2022 Q6(b)</span><a class="guide" href="guide-T3.html#T3-4">T3.4 inverse design</a></div>
+<p>A composite wall is formed by four different materials as shown in the diagram below. The wall has a cross section area of 10 m². The material 2 occupies 7 m² and the material 3 occupies 3 m². Assume that pure heat conduction occurs at a steady rate, where heat convection and radiation can be neglected. The thermal conductivity and the length of the different materials of the composite wall are given by the table below.</p>
+<div id="fig-t2"></div>
+<div class="scroll"><table class="tbl">
+<tr><th>Material</th><th>1</th><th>2</th><th>3</th><th>4</th></tr>
+<tr><td>Thermal conductivity (W/m·°C)</td><td>0.75</td><td>0.6</td><td>0.5</td><td>?</td></tr>
+<tr><td>Length (cm)</td><td>10</td><td>5</td><td>5</td><td>8</td></tr>
+</table></div>
+<p>(a) Draw the thermal resistance circuit for the problem. <span class="muted">(2 marks)</span></p>
+<p>(b) If the heat transfer of the wall after adding material 4 is reduced by 40% compared to the heat transfer of the wall without material 4, what should be the thermal conductivity of material 4?</p>
+<details><summary>Hint</summary><div><p>Circuit: \(R_1\), then \(R_2\parallel R_3\), then \(R_4\). Same temperature difference before and after, so 60% of the heat means \(R_\text{new}=R_\text{old}/0.6\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(R_1=0.10/(0.75\times10)=0.01333\); \(R_2=0.05/(0.6\times7)=0.01190\); \(R_3=0.05/(0.5\times3)=0.03333\); parallel \(R_{23}=0.00877\). Series total \(R_\text{old}=0.02211\u{{}^\circ C/W}\).</p>
+<p>\(R_\text{new}=0.02211/0.6=0.03684\), so \(R_4=0.01474=\dfrac{0.08}{k_4(10)}\).</p>
+\[k_4=\frac{0.08}{10(0.01474)}\]
+\[\boxed{k_4\approx0.543\u{W/(m\,{}^\circ C)}}\]</div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2024 Q5(a)(b)</b><span>2 + 2 marks</span><span>same template: Dec 2023 Q5</span><a class="guide" href="guide-T3.html#T3-6">T3.6 radiant coefficient</a></div>
+<p>A column of 10 m² surface area with a surface temperature of 550 K is kept within a large vessel whose walls are at 300 K. Assume the column surface to be black body. The sum of heat transfer coefficient including the radiation and convection is 40 W/m²·°C. The Stefan–Boltzmann constant \(\sigma\) is given as \(5.6703\times10^{-8}\u{W/(m^2\cdot K^4)}\). The radiation energy per unit time is given by the formula \(q=\sigma(T_1^4-T_2^4)A\), where \(T_1\) and \(T_2\) are the temperatures in kelvin for body 1 and body 2.</p>
+<p>(a) Calculate the coefficient of radiant heat transfer. (b) Determine the convective heat transfer coefficient.</p>
+<details><summary>Hint</summary><div><p>Example 11 with new numbers: find \(q\), then divide by \(A(T_1-T_2)\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) Net radiation, temperatures already in kelvin:</p>
+\[\begin{aligned}q&=5.6703\times10^{-8}(550^4-300^4)(10)\\&=4.729\times10^{4}\u{W}\end{aligned}\]
+\[h_\text{rad}=\frac{47\,294}{10(550-300)}\]
+\[\boxed{h_\text{rad}=18.9\u{W/(m^2\,{}^\circ C)}}\]
+<p>(b) \(\boxed{h_\text{conv}=40-18.9=21.1\u{W/(m^2\,{}^\circ C)}}\)</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2025 Q2</b><span>3 marks</span><span>similar: May 2024 Q1</span><a class="guide" href="guide-T3.html#T3-5">T3.5 convection &amp; radiation concepts</a></div>
+<p>Arrange the following materials in the order of increasing emissivity coefficient for thermal radiation. (a) Aluminum (b) Liquid water (c) Cotton cloth</p>
+<details><summary>Hint</summary><div><p>Shiny metal or non-metal? Use the slide 46 table.</p></div></details>
+<details><summary>Answer</summary><div><p><b>(a) aluminium (0.02–0.31) &lt; (c) cotton cloth (0.77) &lt; (b) liquid water (0.95–0.96)</b></p><p>Metals (especially unoxidised) reflect most radiation and emit little; non-metals emit strongly, water most of all.</p></div></details></div>
+</section>
+</main></div>
+
+<script>
+/* MECH1350 shared helpers (from MECH2413) (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-T3 figures: thermal-circuit drawer (circ), wall/temperature-profile drawer (wall), scene sketches, two interactive plots.
+   New helpers (page-local): circ(el,spec) draws a thermal resistance circuit as SVG, horizontal when it fits, vertical on narrow screens;
+   wall(el,spec) draws a layered wall (split columns allowed) with optional fluids, labels and a temperature profile. */
+const NS='http://www.w3.org/2000/svg';
+function E(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)if(a[k]!==undefined)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+const INK='stroke:var(--ink);fill:none;stroke-width:1.6';
+const FILLS=['var(--grid)','var(--accent-soft)','var(--warm-soft)','var(--green-soft)','var(--purple-soft)','var(--card)'];
+/* text with subscripts: "T_{∞,o} = 5 °C", "R_3a"; a single letter before _ is set in italics */
+function tw(s,fs=13){const c=s.replace(/_\{([^}]*)\}/g,(m,a)=>'\u0001'.repeat(a.length)).replace(/_([A-Za-z0-9,∞]+)/g,(m,a)=>'\u0001'.repeat(a.length));
+  let w=0;for(const ch of c)w+=(ch==='\u0001'?0.72:1)*(/[ .,:·()′]/.test(ch)?0.33:0.6);return w*fs;}
+function T(p,x,y,s,o={}){
+  const t=E('text',{x,y,'text-anchor':o.a||'middle','dominant-baseline':'middle',style:`font-size:${o.fs||13}px;fill:${o.col||'var(--ink)'};${o.bold?'font-weight:600;':''}`},p);
+  const re=/([^_]*?)(?:_(\{[^}]*\}|[A-Za-z0-9,∞]+))/y; let i=0, m, lastSub=false;
+  const add=(str,sub,ital)=>{if(!str)return;const sp=E('tspan',{},t);sp.textContent=str;
+    if(sub){sp.setAttribute('dy',4);sp.setAttribute('font-size',(o.fs||13)*0.74);lastSub=true;} else if(lastSub){sp.setAttribute('dy',-4);lastSub=false;}
+    if(ital)sp.setAttribute('font-style','italic');};
+  while((m=re.exec(s))){ let pre=m[1]; const mm=/^(.*?)([A-Za-zαλεσΔ])$/.exec(pre);
+    if(mm&&(mm[1]===''||/[\s(=+−\-\/]$/.test(mm[1]))){add(mm[1]);add(mm[2],false,true);} else add(pre);
+    add(m[2].replace(/[{}]/g,''),true); i=re.lastIndex; }
+  add(s.slice(i)); if(o.it&&!s.includes('_'))t.setAttribute('font-style','italic'); return t;}
+function arrowHead(p,x,y,ux,uy,col,L=9,W=7){const bx=x-ux*L,by=y-uy*L,nx=-uy,ny=ux;E('polygon',{points:`${x},${y} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,style:`fill:${col};stroke:none`},p);}
+function arrow(p,x1,y1,x2,y2,col='var(--c2)',w=2.2){const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;
+  E('line',{x1,y1,x2:x2-ux*7,y2:y2-uy*7,style:`stroke:${col};stroke-width:${w}`},p);arrowHead(p,x2,y2,ux,uy,col);}
+function svgIn(el,W,H,alt){if(typeof el==='string')el=document.getElementById(el);el.innerHTML='';
+  const s=E('svg',{viewBox:`0 0 ${W} ${H}`,class:'circuit',role:'img','aria-label':alt||'diagram'});s.style.maxWidth=W+'px';s.style.margin='0 auto';el.appendChild(s);return s;}
+function wavy(p,x1,y1,x2,y2,col,amp=4,per=12){const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy,ny=ux;let d='';
+  for(let s=0;s<=L-8;s+=1){const w=amp*Math.sin(2*Math.PI*s/per);d+=(s?'L':'M')+(x1+ux*s+nx*w).toFixed(1)+','+(y1+uy*s+ny*w).toFixed(1);}
+  E('path',{d,style:`stroke:${col};stroke-width:1.8;fill:none`},p);arrowHead(p,x2,y2,ux,uy,col);}
+const figs=[]; const reg=f=>{figs.push(f);redraws.push(f);f();};
+let togT=null;document.addEventListener('toggle',()=>{clearTimeout(togT);togT=setTimeout(()=>figs.forEach(f=>{try{f();}catch(e){console.error(e);}}),60);},true);
+
+/* ---------------- circuit drawer ----------------
+ spec: {chain:[item...], L:'T_1', R:'T_2', dir:'right'|'left', q:'q', alt}
+ item: 'R_1' (resistor) | {n:'T_2'} (labelled node) | {par:['R_2','R_3']} or {par:[[...],[...]]} */
+function circ(id,spec){reg(()=>{
+  const el=document.getElementById(id); if(!el)return; const avail=el.clientWidth||el.parentElement.clientWidth||600;
+  const ZL=34,LEAD=14;
+  const isR=it=>typeof it==='string', isN=it=>it&&it.n!==undefined, isP=it=>it&&it.par;
+  const br=b=>Array.isArray(b)?b:[b];
+  function size(it,vert){ // returns [along, crossNeg, crossPos]
+    if(isR(it)) return vert?[ZL+2*LEAD,9,16+tw(it)]:[Math.max(ZL+2*LEAD,tw(it)+12),24,9];
+    if(isN(it)) return vert?[0,14+tw(it.n),5]:[0,5,22];
+    if(isP(it)){const bs=it.par.map(b=>chainSize(br(b),vert));const along=Math.max(...bs.map(b=>b[0]))+2*LEAD;
+      const gap=vert?14:8; let tot=0; bs.forEach(b=>tot+=b[1]+b[2]); tot+=gap*(bs.length-1); return [along,tot/2,tot/2,bs];}
+  }
+  function chainSize(ch,vert){let a=0,n=0,p=0;ch.forEach((it,i)=>{const s=size(it,vert);a+=s[0];n=Math.max(n,s[1]);p=Math.max(p,s[2]);});
+    a+=LEAD*Math.max(0,ch.filter(x=>!isN(x)).length-1)*0; return [a,n,p];}
+  function layout(vert){const cs=chainSize(spec.chain,vert);const endL=vert?24:Math.max(tw(spec.L||''),8)+12,endR=vert?24:Math.max(tw(spec.R||''),8)+12;
+    const qPad=spec.q?(vert?30:26):0;
+    if(!vert){const W=endL+cs[0]+endR+16,H=qPad+cs[1]+cs[2]+16;return {W,H,cs,endL,endR,qPad};}
+    const wL=Math.max(cs[1],tw(spec.L||'')/2+4,tw(spec.R||'')/2+4),W=qPad+wL+cs[2]+16,H=endL+cs[0]+endR+16;return {W,H,cs,endL,endR,qPad,wL};}
+  let vert=false, Lh=layout(false); if(Lh.W*0.78>avail){vert=true;}
+  const Lo=layout(vert); const svg=svgIn(el,Lo.W,Lo.H,spec.alt||'thermal resistance circuit');
+  const g=E('g',{},svg);
+  // map (s along, c cross) -> (x,y)
+  let s0,c0; if(!vert){s0=8+Lo.endL;c0=Lo.qPad+8+Lo.cs[1];} else {s0=8+Lo.endL;c0=Lo.qPad+8+Lo.wL;}
+  const P=(s,c)=>vert?[c0+c,s0+s]:[s0+s,c0+c];
+  const line=(s1,c1,s2,c2)=>{const [x1,y1]=P(s1,c1),[x2,y2]=P(s2,c2);E('line',{x1,y1,x2,y2,class:'w'},g);};
+  const dot=(s,c,open)=>{const [x,y]=P(s,c);E('circle',{cx:x,cy:y,r:open?3.6:3.2,style:open?'fill:var(--card);stroke:var(--ink);stroke-width:1.5':'fill:var(--ink)'},g);};
+  function drawR(s,c,len,lbl){const zs=s+(len-ZL)/2;line(s,c,zs,c);line(zs+ZL,c,s+len,c);
+    let d='';for(let i=0;i<=8;i++){const ss=zs+ZL*i/8,cc=c+(i===0||i===8?0:(i%2?-6:6));const [x,y]=P(ss,cc);d+=(i?'L':'M')+x+','+y;}
+    E('path',{d,class:'w'},g);
+    if(vert){const [x,y]=P(s+len/2,c+12);T(g,x,y,lbl,{a:'start'});}else{const [x,y]=P(s+len/2,c-16);T(g,x,y,lbl);}}
+  function drawItem(it,s,c){const sz=size(it,vert);
+    if(isR(it)){drawR(s,c,sz[0],it);return sz[0];}
+    if(isN(it)){dot(s,c);if(vert){const [x,y]=P(s,c-10);T(g,x,y,it.n,{a:'end'});}else{const [x,y]=P(s,c+15);T(g,x,y,it.n);}return 0;}
+    if(isP(it)){const bs=sz[3],gap=vert?14:8;let cc=c-sz[1];const mids=[];
+      bs.forEach((b,i)=>{const mid=cc+b[1];mids.push(mid);const ch=br(it.par[i]);const inner=b[0],off=(sz[0]-inner)/2;
+        line(s,mid,s+off,mid);let ss=s+off;ch.forEach(x=>{ss+=drawItem(x,ss,mid);});line(s+off+inner,mid,s+sz[0],mid);cc+=b[1]+b[2]+gap;});
+      line(s,mids[0],s,mids[mids.length-1]);line(s+sz[0],mids[0],s+sz[0],mids[mids.length-1]);dot(s,c);dot(s+sz[0],c);
+      // the junction dots sit on the centre line; draw centre-line stubs if branches straddle
+      return sz[0];}
+  }
+  let s=0; dot(0,0,true);
+  spec.chain.forEach((it,i)=>{if(isN(it)){const nx=spec.chain[i+1],pv=spec.chain[i-1];dot(s,0);
+      if(vert){const [x,y]=P(s-((nx&&isP(nx))?10:0)+((pv&&isP(pv))?12:0),-10);T(g,x,y,it.n,{a:'end'});}
+      else{const off=(nx&&isP(nx))?-5:(pv&&isP(pv))?5:0;const [x,y]=P(s+off,15);T(g,x,y,it.n,{a:off<0?'end':off>0?'start':'middle'});}return;}
+    const w=drawItem(it,s,0);s+=w;});
+  dot(s,0,true);
+  if(vert){let [x,y]=P(0,0);T(g,x,y-14,spec.L||'');[x,y]=P(s,0);T(g,x,y+15,spec.R||'');}
+  else{let [x,y]=P(0,0);T(g,x-8,y,spec.L||'',{a:'end'});[x,y]=P(s,0);T(g,x+8,y,spec.R||'',{a:'start'});}
+  if(spec.q){const back=spec.dir==='left';
+    if(!vert){const y=12,xm=s0+s/2;arrow(g,back?xm+30:xm-30,y,back?xm-30:xm+30,y);T(g,xm+(back?-40:40),y,spec.q,{a:back?'end':'start',col:'var(--c2)',bold:true});}
+    else{const x=12,ym=s0+s/2;arrow(g,x,back?ym+30:ym-30,x,back?ym-30:ym+30);T(g,x+2,back?ym-42:ym+42,spec.q,{col:'var(--c2)',bold:true});}}
+});}
+
+/* ---------------- wall drawer ----------------
+ spec: {cols:[{w,label,sub,f(fill idx),parts:[{h(frac),label,f}]}], H, left:[lines], right:[lines], top:[label per col], bottom:[...],
+        fluidL:{T}, fluidR:{T}, prof:{T:[T at each boundary], TL, TR (fluid temps), min, max, show:[labels at boundaries]},
+        q:{dir:'right'|'left',lbl}, dims:[label per col], ins:true (hatched insulated top/bottom), rad:'L'|'R', flux:'L' */
+function wall(id,spec){reg(()=>{
+  const H=spec.H||130,fs=12.5;const lw=spec.left?Math.max(...spec.left.map(s=>tw(s,fs)))+10:12, rw=spec.right?Math.max(...spec.right.map(s=>tw(s,fs)))+10:12;
+  const fl=spec.fluidL?42:0, fr=spec.fluidR?42:0; const Ww=spec.cols.reduce((a,c)=>a+c.w,0);
+  const x0=8+lw+fl+(spec.flux?36:0), top=(spec.q?30:12)+(spec.top?16:0)+(spec.rad?14:0), W=x0+Ww+fr+rw+8+(spec.rad==='R'?20:0), Ht=top+H+(spec.bottom?18:0)+(spec.dims?22:0)+10;
+  const svg=svgIn(id,W,Ht,spec.alt||'composite wall'); const g=E('g',{},svg);
+  if(spec.fluidL)E('rect',{x:x0-fl,y:top,width:fl,height:H,style:'fill:var(--accent-soft);opacity:.55'},g);
+  if(spec.fluidR)E('rect',{x:x0+Ww,y:top,width:fr,height:H,style:'fill:var(--accent-soft);opacity:.55'},g);
+  let x=x0; const bx=[x0];
+  spec.cols.forEach((c,i)=>{ if(c.parts){let y=top;c.parts.forEach(p=>{const h=p.h*H;E('rect',{x,y,width:c.w,height:h,style:`fill:${FILLS[p.f??(i%5)]};stroke:var(--ink);stroke-width:1.3`},g);
+        if(p.label)T(g,x+c.w/2,y+h/2,p.label,{fs});y+=h;});}
+    else{E('rect',{x,y:top,width:c.w,height:H,style:`fill:${FILLS[c.f??(i%5)]};stroke:var(--ink);stroke-width:1.3`},g);
+      if(c.label)T(g,x+c.w/2,top+(c.ly??0.5)*H,c.label,{fs});if(c.sub)T(g,x+c.w/2,top+(c.ly??0.5)*H+16,c.sub,{fs:11,col:'var(--muted)'});}
+    if(spec.top&&spec.top[i])T(g,x+c.w/2,top-9,spec.top[i],{fs});
+    if(spec.bottom&&spec.bottom[i])T(g,x+c.w/2,top+H+11,spec.bottom[i],{fs});
+    if(spec.dims&&spec.dims[i]){const yd=top+H+(spec.bottom?18:0)+10;E('line',{x1:x+2,y1:yd,x2:x+c.w-2,y2:yd,style:'stroke:var(--muted);stroke-width:1'},g);
+      arrowHead(g,x+1,yd,-1,0,'var(--muted)',6,5);arrowHead(g,x+c.w-1,yd,1,0,'var(--muted)',6,5);T(g,x+c.w/2,yd+10,spec.dims[i],{fs:11,col:'var(--muted)'});}
+    x+=c.w;bx.push(x);});
+  if(spec.ins){[top-6,top+H].forEach(y=>{E('rect',{x:x0,y,width:Ww,height:6,style:'fill:var(--line)'},g);for(let s=x0;s<x0+Ww;s+=7)E('line',{x1:s,y1:y+6,x2:s+6,y2:y,style:'stroke:var(--axis);stroke-width:1'},g);});}
+  if(spec.left)spec.left.forEach((s,i)=>T(g,x0-fl-6-(spec.flux?36:0),top+H/2+(i-(spec.left.length-1)/2)*17,s,{a:'end',fs}));
+  if(spec.right)spec.right.forEach((s,i)=>T(g,x0+Ww+fr+6,top+H/2+(spec.rad?14:0)+(i-(spec.right.length-1)/2)*17,s,{a:'start',fs}));
+  if(spec.fluidL&&spec.fluidL.up)[0.25,0.6].forEach(f=>arrow(g,x0-fl/2-6+f*14,top+H*0.85,x0-fl/2-6+f*14,top+H*0.55,'var(--accent)',1.6));
+  if(spec.fluidR&&spec.fluidR.up)[0.25,0.6].forEach(f=>arrow(g,x0+Ww+fr/2-6+f*14,top+H*0.85,x0+Ww+fr/2-6+f*14,top+H*0.55,'var(--accent)',1.6));
+  if(spec.rad){const R=spec.rad==='R';[0,1,2].forEach(i=>{const xs=R?x0+Ww+fr+34+i*10:x0-fl-34-i*10,ys=top-12+i*7;wavy(g,xs,ys,R?x0+Ww+3:x0-3,top+8+i*9,'var(--warm)',3,10);});}
+  if(spec.flux){[0.3,0.5,0.7].forEach(f=>arrow(g,x0-34,top+f*H,x0-3,top+f*H,'var(--warm)',2));}
+  if(spec.prof){const p=spec.prof,Y=t=>top+6+(p.max-t)/(p.max-p.min)*(H-12);let d='M'+bx[0]+','+Y(p.T[0]);
+    if(spec.fluidL&&p.TL!==undefined)d=`M${x0-fl},${Y(p.TL)} L${x0-fl+10},${Y(p.TL)} Q${x0-4},${Y(p.TL)} ${x0},${Y(p.T[0])}`;
+    p.T.forEach((t,i)=>{if(i)d+=` L${bx[i]},${Y(t)}`;});
+    if(spec.fluidR&&p.TR!==undefined)d+=` Q${bx[bx.length-1]+4},${Y(p.TR)} ${bx[bx.length-1]+fr-10},${Y(p.TR)} L${bx[bx.length-1]+fr},${Y(p.TR)}`;
+    E('path',{d,style:'stroke:var(--c2);stroke-width:2.4;fill:none'},g);
+    (p.show||[]).forEach((s,i)=>{if(!s)return;const xx=bx[i],yy=Y(p.T[i]);E('circle',{cx:xx,cy:yy,r:3.2,style:'fill:var(--c2)'},g);
+      const up=p.below&&p.below[i];T(g,xx+(p.dx&&p.dx[i]||0),yy+(up?14:-11),s,{fs:11.5,col:'var(--c2)',bold:true});});
+    (p.pts||[]).forEach(q=>{const xx=x0+q.x,yy=Y(q.T);E('circle',{cx:xx,cy:yy,r:3.2,style:'fill:var(--c2)'},g);T(g,xx+(q.dx||0),yy+(q.dy||-11),q.s,{fs:11.5,col:'var(--c2)',bold:true});});}
+  if(spec.q){const back=spec.q.dir==='left',xm=x0+Ww/2,y=12;arrow(g,back?xm+32:xm-32,y,back?xm-32:xm+32,y);T(g,xm+(back?-42:42),y,spec.q.lbl||'q',{a:back?'end':'start',col:'var(--c2)',bold:true});}
+});}
+function pairOf(id,fa,fb,ca,cb){const host=document.getElementById(id);host.innerHTML='';const w=document.createElement('div');w.className='pair';host.appendChild(w);
+  [[fa,ca],[fb,cb]].forEach(([f,c],i)=>{const d=document.createElement('div');w.appendChild(d);const s=document.createElement('div');s.id=id+'-p'+i;d.appendChild(s);
+    if(c){const p=document.createElement('p');p.className='sub';p.innerHTML=c;d.appendChild(p);}f(s.id);});}
+
+/* ================= Section 1 ================= */
+function panels3(id,fns){const host=document.getElementById(id);host.innerHTML='';const w=document.createElement('div');w.className='pair';w.style.gridTemplateColumns='repeat(auto-fit,minmax(230px,1fr))';host.appendChild(w);
+  fns.forEach((f,i)=>{const d=document.createElement('div');d.id=id+'-'+i;w.appendChild(d);reg(()=>f(d.id));});}
+panels3('fig-modes',[id=>{const g=E('g',{},svgIn(id,200,190,'conduction'));
+  T(g,100,14,'Conduction',{bold:true});E('path',{d:'M14,150 q10,-30 20,-8 q6,-34 18,-6 q8,-26 16,6 z',style:'fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.5'},g);
+  E('rect',{x:32,y:110,width:150,height:12,rx:3,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.3'},g);
+  arrow(g,60,92,170,92);T(g,115,76,'q along the rod',{fs:12,col:'var(--c2)'});T(g,40,172,'hot',{fs:12});T(g,160,142,'cooler end',{fs:12});},
+ id=>{const g=E('g',{},svgIn(id,200,190,'convection'));
+  T(g,100,14,'Convection',{bold:true});E('rect',{x:40,y:150,width:120,height:10,style:'fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.4'},g);T(g,100,174,'hot plate',{fs:12});
+  E('path',{d:'M75,145 C65,110 85,80 75,45',style:'stroke:var(--c2);stroke-width:2;fill:none'},g);arrowHead(g,75,45,0,-1,'var(--c2)');
+  E('path',{d:'M125,145 C135,110 115,80 125,45',style:'stroke:var(--c2);stroke-width:2;fill:none'},g);arrowHead(g,125,45,0,-1,'var(--c2)');
+  E('path',{d:'M22,50 C18,90 22,120 38,142',style:'stroke:var(--accent);stroke-width:1.8;fill:none;stroke-dasharray:5 3'},g);arrowHead(g,38,142,0.6,0.8,'var(--accent)');
+  E('path',{d:'M178,50 C182,90 178,120 162,142',style:'stroke:var(--accent);stroke-width:1.8;fill:none;stroke-dasharray:5 3'},g);arrowHead(g,162,142,-0.6,0.8,'var(--accent)');
+  T(g,100,34,'warm air rises',{fs:12,col:'var(--c2)'});T(g,100,100,'cool air',{fs:11,col:'var(--accent)'});T(g,100,114,'sinks',{fs:11,col:'var(--accent)'});},
+ id=>{const g=E('g',{},svgIn(id,200,190,'radiation'));
+  T(g,100,14,'Radiation',{bold:true});E('circle',{cx:36,cy:100,r:22,style:'fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.5'},g);T(g,36,100,'hot',{fs:12});
+  E('rect',{x:160,y:70,width:26,height:60,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.3'},g);T(g,173,145,'cool',{fs:12});
+  [80,100,120].forEach(y=>wavy(g,62,y,156,y,'var(--warm)'));T(g,100,172,'no material needed',{fs:12,col:'var(--muted)'});}]);
+wall('fig-s1-wall',{H:120,cols:[{w:60,label:'R_1',f:1},{w:60,parts:[{h:0.55,label:'R_2',f:2},{h:0.45,label:'R_3',f:3}]},{w:60,label:'R_4',f:4}],left:['T_1'],right:['T_2'],q:{dir:'right'}});
+circ('fig-s1-circ',{chain:['R_1',{par:['R_2','R_3']},'R_4'],L:'T_1',R:'T_2',q:'q'});
+
+/* ================= Section 3 ================= */
+reg(function(){const svg=svgIn('fig-molecules',420,170,'molecules colliding at a surface');const g=E('g',{},svg);
+  E('rect',{x:20,y:20,width:190,height:130,style:'fill:var(--warm-soft)'},g);E('rect',{x:210,y:20,width:190,height:130,style:'fill:var(--accent-soft)'},g);
+  E('line',{x1:210,y1:14,x2:210,y2:156,style:'stroke:var(--ink);stroke-width:1.4;stroke-dasharray:5 4'},g);T(g,210,8,'surface',{fs:11.5,col:'var(--muted)'});
+  T(g,70,40,'higher temperature',{fs:12});T(g,350,40,'lower temperature',{fs:12});
+  E('circle',{cx:150,cy:120,r:8,style:'fill:var(--c2)'},g);arrow(g,158,112,200,82);T(g,110,140,'fast molecule',{fs:11.5});
+  E('circle',{cx:235,cy:62,r:8,style:'fill:var(--accent)'},g);arrow(g,243,66,290,92,'var(--accent)');T(g,290,62,'slow molecule',{fs:11.5,a:'start'});T(g,300,108,'speeds up',{fs:11.5,a:'start',col:'var(--accent)'});
+  arrow(g,170,165-3,250,165-3,'var(--warm)',2.6);T(g,262,162,'Q',{a:'start',col:'var(--warm)',bold:true,it:true});
+});
+reg(function(){const svg=svgIn('fig-steady',460,270,'steady conduction in a bar');const g=E('g',{},svg);
+  const gr=E('linearGradient',{id:'gbar',x1:0,x2:1,y1:0,y2:0},E('defs',{},svg));E('stop',{offset:'0',style:'stop-color:var(--c2)'},gr);E('stop',{offset:'1',style:'stop-color:var(--accent)'},gr);
+  E('rect',{x:30,y:20,width:14,height:60,style:'fill:var(--c2)'},g);E('rect',{x:44,y:36,width:280,height:28,style:'fill:url(#gbar);opacity:.55;stroke:var(--ink);stroke-width:1.2'},g);
+  E('rect',{x:324,y:20,width:14,height:60,style:'fill:var(--accent)'},g);T(g,37,96,'hot object',{fs:12});T(g,331,96,'cold object',{fs:12});
+  E('rect',{x:170,y:32,width:26,height:36,style:'fill:none;stroke:var(--ink);stroke-width:1.4;stroke-dasharray:4 3'},g);T(g,183,24,'dx',{fs:12,it:true});
+  arrow(g,130,50,168,50);T(g,124,50,'Q̇_x',{a:'end',fs:12});arrow(g,198,50,236,50);T(g,242,50,'Q̇_{x+dx}',{a:'start',fs:12});
+  T(g,400,40,'steady:',{fs:12});T(g,400,58,'Q̇_x = Q̇_{x+dx}',{fs:12});
+  // profile graph
+  const gx=90,gy=130,gw=240,gh=110;E('line',{x1:gx,y1:gy,x2:gx,y2:gy+gh,class:'w'},g);E('line',{x1:gx+gw,y1:gy,x2:gx+gw,y2:gy+gh,class:'w'},g);
+  E('rect',{x:gx,y:gy,width:gw,height:gh,style:'fill:var(--grid);opacity:.6'},g);
+  E('line',{x1:gx,y1:gy+12,x2:gx+gw,y2:gy+gh-12,style:'stroke:var(--c2);stroke-width:2.4'},g);
+  const xx=gx+gw*0.38,yx=gy+12+(gh-24)*0.38;E('line',{x1:xx,y1:gy,x2:xx,y2:gy+gh,style:'stroke:var(--muted);stroke-dasharray:4 3'},g);E('circle',{cx:xx,cy:yx,r:3.4,style:'fill:var(--c2)'},g);
+  T(g,gx-6,gy+12,'T_1',{a:'end'});T(g,gx+gw+6,gy+gh-12,'T_2',{a:'start'});T(g,xx+8,yx-10,'T_x',{a:'start',col:'var(--c2)'});
+  T(g,(gx+xx)/2,gy+gh+12,'Δx_1',{fs:12});T(g,(xx+gx+gw)/2,gy+gh+12,'Δx_2',{fs:12});T(g,gx+gw+36,gy+60,'k',{it:true});
+  arrow(g,30,gy+55,gx-30,gy+55);T(g,30,gy+40,'Q/A',{a:'start',fs:12});arrow(g,gx+gw+50,gy+90,gx+gw+100,gy+90);
+});
+
+/* ================= Section 4, 5 ================= */
+reg(function(){const svg=svgIn('fig-apparatus',460,170,'conductivity apparatus');const g=E('g',{},svg);
+  E('rect',{x:30,y:40,width:40,height:90,style:'fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.5'},g);T(g,50,28,'heater',{fs:12});
+  E('rect',{x:70,y:56,width:260,height:12,style:'fill:var(--line)'},g);E('rect',{x:70,y:102,width:260,height:12,style:'fill:var(--line)'},g);T(g,200,46,'lagging (insulation)',{fs:12,col:'var(--muted)'});
+  E('rect',{x:70,y:68,width:260,height:34,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.2'},g);arrow(g,170,85,230,85);
+  E('rect',{x:330,y:40,width:50,height:90,style:'fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5'},g);T(g,355,85,'sink',{fs:12});
+  arrow(g,368,8,368,40,'var(--accent)',1.8);T(g,372,14,'cooling water in',{a:'start',fs:11.5});arrow(g,380,120,430,120,'var(--accent)',1.8);T(g,410,108,'out',{fs:11.5});
+  T(g,82,124,'T_1',{fs:12});T(g,318,124,'T_2',{fs:12});T(g,92,146,'area A',{fs:12});
+  E('line',{x1:72,y1:150,x2:328,y2:150,style:'stroke:var(--muted)'},g);arrowHead(g,71,150,-1,0,'var(--muted)',6,5);arrowHead(g,329,150,1,0,'var(--muted)',6,5);T(g,200,162,'L',{it:true,fs:12});
+});
+panels3('fig-ohm',[['electric','I','R_elect','V = I R_elect','',''],['thermal','q','R_th','ΔT = q R_th','T_A','T_B']].map(([ttl,cur,R,law,ta,tb])=>id=>{const g=E('g',{},svgIn(id,240,96,ttl+' circuit'));
+  const zig=(x,y)=>{let d=`M${x},${y}`;for(let i=1;i<=8;i++)d+=` L${x+i*5},${y+(i===8?0:(i%2?-6:6))}`;E('path',{d,class:'w'},g);};
+  T(g,120,12,ttl,{bold:true,fs:12});E('line',{x1:30,y1:50,x2:100,y2:50,class:'w'},g);zig(100,50);E('line',{x1:140,y1:50,x2:210,y2:50,class:'w'},g);
+  E('circle',{cx:30,cy:50,r:3.2,class:'node'},g);E('circle',{cx:210,cy:50,r:3.2,class:'node'},g);arrow(g,50,36,85,36);T(g,67,26,cur,{it:true,fs:12});T(g,120,30,R,{fs:12});
+  T(g,120,76,law,{fs:12});if(ta){T(g,30,66,ta,{fs:12});T(g,210,66,tb,{fs:12});}}));
+
+/* ================= Section 6 ================= */
+wall('fig-s6-slab',{H:120,cols:[{w:80,label:'k_1',f:0},{w:80,label:'k_2',f:2}],left:['T_L'],right:['T_R'],q:{dir:'right'},dims:['L_1','L_2'],
+  prof:{T:[100,70,20],min:10,max:105,show:['','T_i',''],dx:[0,14,0]}});
+circ('fig-s6-circ',{chain:['R_1',{n:'T_i'},'R_2'],L:'T_L',R:'T_R',q:'q'});
+reg(function(){const cv=document.getElementById('cv-wall');if(!cv)return;
+  const k=[0,1,2].map(i=>+Math.pow(10,+$('w-k'+(i+1)).value).toPrecision(2)),L=[0.03,+$('w-L2').value,0.03];
+  const AR=L.map((l,i)=>l/k[i]),tot=AR[0]+AR[1]+AR[2],qf=140/tot;const Ts=[150];AR.forEach(r=>Ts.push(Ts[Ts.length-1]-qf*r));
+  const xs=[0,L[0],L[0]+L[1],L[0]+L[1]+L[2]],X=xs[3];
+  const cols=[css('--accent'),css('--warm'),css('--c3')];
+  plot(cv,{xmin:0,xmax:X,ymin:0,ymax:160,xstep:X>0.25?0.05:0.02,ystep:20,pl:36,xlabel:'x (m)',ylabel:'T (°C)',
+    fills:[0,1,2].map(i=>({from:xs[i],to:xs[i+1],f:()=>160,color:cols[i],alpha:.13})),
+    segs:[0,1,2].map(i=>({x1:xs[i],y1:Ts[i],x2:xs[i+1],y2:Ts[i+1],color:css('--c2'),width:2.6})),
+    pts:[{x:xs[1],y:Ts[1],color:css('--c2'),label:fmt(Ts[1],1)+' °C'},{x:xs[2],y:Ts[2],color:css('--c2'),label:fmt(Ts[2],1)+' °C'}]});
+  $('out-wall').innerHTML=`k = ${k.map(v=>fmt(v,3)).join(', ')} W/(m·K) · per m²: R = ${AR.map(v=>fmt(v,4)).join(' + ')} = <b>${fmt(tot,4)}</b> K·m²/W<br>flux q/A = 140 / ${fmt(tot,4)} = <b>${fmt(qf,1)} W/m²</b> · interfaces <b>${fmt(Ts[1],1)} °C</b> and <b>${fmt(Ts[2],1)} °C</b>`;
+});
+['w-k1','w-k2','w-k3','w-L2'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Section 7 ================= */
+wall('fig-s7-wall',{H:132,cols:[{w:110,parts:[{h:0.3,label:'k_1, A_1',f:3},{h:0.4,label:'k_2, A_2',f:2},{h:0.3,label:'k_3, A_3',f:1}]}],left:['T_A'],right:['T_B'],q:{dir:'right',lbl:'Q'},dims:['Δx'],ins:true});
+circ('fig-s7-circ',{chain:[{par:['R_{t,1}','R_{t,2}','R_{t,3}']}],L:'T_A',R:'T_B',q:'Q'});
+pairOf('fig-s7-bolt',id=>{reg(function(){const svg=svgIn(id,250,150,'bolt through insulation');const g=E('g',{},svg);
+    E('rect',{x:90,y:10,width:60,height:130,style:'fill:var(--warm-soft);stroke:var(--ink);stroke-width:1.3'},g);
+    E('rect',{x:70,y:66,width:110,height:16,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.3'},g);
+    E('path',{d:'M70,58 a14,16 0 0 0 0,32 z',style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.3'},g);E('rect',{x:150,y:60,width:12,height:28,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.3'},g);
+    T(g,120,30,'k_1',{});T(g,120,120,'k_1',{});T(g,205,74,'bolt k_2',{a:'start',fs:12});arrow(g,20,40,85,40);arrow(g,20,74,62,74);T(g,40,28,'q_1',{fs:12});T(g,40,96,'q_2',{fs:12});
+  });},id=>circ(id,{chain:[{par:['R_1 (insulation)','R_2 (bolt)']}],L:'',R:'',q:'Q̇'}),'Slide 20: a bolt through an insulating layer.','Two paths in parallel.');
+
+/* ================= Section 8 ================= */
+pairOf('fig-ex1',id=>wall(id,{H:100,cols:[{w:60,label:'k_1',f:3},{w:90,label:'k_2',f:2},{w:60,label:'k_3',f:1}],left:['T_A'],right:['T_B'],q:{dir:'right',lbl:'Q̇'},dims:['Δx_1','Δx_2','Δx_3']}),
+  id=>circ(id,{chain:['R_{th,1}','R_{th,2}','R_{th,3}'],L:'T_A',R:'T_B'}),'Slide 21: three layers, area A.','Three resistances in series.');
+wall('fig-ex2',{H:130,cols:[{w:40,label:'ins.',ly:0.85,f:3},{w:120,label:'brick',sub:'k = 0.7',ly:0.7,f:2},{w:40,label:'ins.',ly:0.85,f:3}],left:['T_1 = 150 °C'],right:['T_4 = 10 °C'],q:{dir:'right'},dims:['0.03 m','0.1 m','0.03 m'],
+  prof:{T:[150,90,70,10],min:0,max:160,show:['','90 °C','70 °C',''],dx:[0,22,-22,0]}});
+circ('fig-ex2c',{chain:['R_1',{n:'T_2'},'R_2',{n:'T_3'},'R_3'],L:'T_1',R:'T_4',q:'q'});
+wall('fig-ex3',{H:120,cols:[{w:200,label:'k = 0.3 W/(m·°C)',ly:0.85,f:1}],left:['850 °C'],right:['250 °C'],q:{dir:'right'},dims:['500 mm'],
+  prof:{T:[850,250],min:200,max:900,pts:[{x:80,T:610,s:'610 °C at 200 mm',dx:62,dy:-4}]}});
+wall('fig-ex4',{H:120,cols:[{w:200,label:'k = 17.5',ly:0.85,f:0}],left:['Q″ = 530 W/m²'],right:['T_2 = 38 °C'],flux:true,dims:['60 cm'],
+  prof:{T:[56.17,38],min:30,max:62,show:['T_1 = 56.2 °C',''],dx:[52,0],below:[false,false],pts:[{x:100,T:47.09,s:'47.1 °C (mid-plane)',dy:-17,dx:44}]}});
+
+/* ================= Section 9 ================= */
+wall('fig-ex5',{H:130,cols:[{w:110,label:'brick',sub:'k = 0.75',f:2},{w:60,label:'insul.',sub:'k = ?',f:3},{w:24,label:'',f:1}],left:['outside','−15 °C'],right:['inside','20 °C'],q:{dir:'left'},
+  dims:['15 cm','7.5 cm','1.25'],bottom:['','','wood'],prof:{T:[-15,-4.43,16.70,20],min:-20,max:24,show:['','−4.4 °C','16.7 °C',''],dx:[0,26,-30,0],below:[false,true,false,false]}});
+wall('fig-ex6',{H:120,cols:[{w:100,label:'brick',sub:'10 cm',f:2},{w:40,label:'',f:0},{w:70,label:'rock',sub:'wool, L = ?',f:3}],bottom:['k = 0.75','plaster','k = 0.065'],dims:['','4 cm','']});
+
+/* ================= Section 10 ================= */
+wall('fig-ex7',{H:110,cols:[{w:70,label:'E',sub:'λ_E',f:0},{w:90,parts:[{h:0.45,label:'F (λ_F)',f:2},{h:0.55,label:'G (λ_G)',f:1}]},{w:80,label:'H',sub:'λ_H',f:3}],left:['T_1'],right:['T_2'],ins:true,dims:['L_E','L_F = L_G','L_H'],q:{dir:'right',lbl:'q_x'}});
+circ('fig-ex7c',{chain:['λ_E',{par:['λ_F','λ_G']},'λ_H'],L:'T_1',R:'T_2',q:'q_x'});
+wall('fig-s10-wall',{H:120,cols:[{w:70,label:'1',f:0},{w:22,label:'2',f:2},{w:34,parts:[{h:0.62,label:'3a',f:1},{h:0.38,label:'3b',f:3}]},{w:26,label:'4',f:4},{w:12,label:'',f:2}],
+  bottom:['','','','','5'],left:['T_{∞,o}','h_{conv,o}'],right:['T_{∞,i}','h_{conv,i}','h_{rad,i}'],q:{dir:'left'},rad:'R'});
+circ('fig-s10-circ',{chain:['R_{conv,o}','R_1','R_2',{par:['R_{3a}','R_{3b}']},'R_4','R_5',{par:['R_{conv,i}','R_{rad,i}']}],L:'T_{∞,o}',R:'T_{∞,i}',q:'q',dir:'left'});
+
+/* ================= Section 11 ================= */
+panels3('fig-s11',[id=>{const g=E('g',{},svgIn(id,260,180,'forced convection'));
+  T(g,130,12,'forced: fan blows air over a plate',{fs:12,bold:true});
+  E('circle',{cx:30,cy:90,r:6,style:'fill:var(--ink)'},g);[[-1,-1],[1,1],[-1,1],[1,-1]].forEach(([a,b])=>E('ellipse',{cx:30+a*14,cy:90+b*14,rx:10,ry:5,transform:`rotate(${a*b>0?45:-45} ${30+a*14} ${90+b*14})`,style:'fill:var(--accent-soft);stroke:var(--accent)'},g));
+  E('line',{x1:30,y1:96,x2:30,y2:150,class:'w'},g);T(g,30,164,'T_∞',{fs:12});
+  [62,90,118].forEach(y=>wavy(g,60,y,170,y+6,'var(--accent)',3,14));
+  E('polygon',{points:'110,130 230,130 210,148 90,148',style:'fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.4'},g);T(g,170,166,'hot plate, T_s',{fs:12});},
+ id=>{const g=E('g',{},svgIn(id,260,190,'free convection'));
+  T(g,130,12,'free: buoyancy cells in a pot',{fs:12,bold:true});
+  E('path',{d:'M50,40 L50,140 Q50,150 60,150 L200,150 Q210,150 210,140 L210,40',style:INK},g);E('rect',{x:51,y:55,width:158,height:94,style:'fill:var(--accent-soft);opacity:.6'},g);
+  [90,170].forEach(cx=>E('ellipse',{cx,cy:102,rx:26,ry:34,style:'fill:none;stroke:var(--axis);stroke-width:1.4;stroke-dasharray:5 3'},g));
+  arrow(g,130,140,130,70,'var(--c2)',2.2);arrow(g,66,70,66,140,'var(--accent)',2.2);arrow(g,194,70,194,140,'var(--accent)',2.2);
+  T(g,130,30,'warm rises (middle)',{fs:11,col:'var(--c2)'});T(g,235,96,'cool',{fs:11,col:'var(--accent)'});T(g,235,110,'sinks',{fs:11,col:'var(--accent)'});
+  [100,130,160].forEach(x=>E('path',{d:`M${x-8},166 q8,-14 16,0`,style:'stroke:var(--warm);stroke-width:1.6;fill:none'},g));T(g,130,182,'flame heats the base',{fs:11.5,col:'var(--warm)'});}]);
+
+/* ================= Section 12 ================= */
+wall('fig-s12',{H:140,cols:[{w:80,label:'wall 1',sub:'k_1',ly:0.75,f:0},{w:80,label:'wall 2',sub:'k_2',ly:0.2,f:2}],fluidL:{up:true},fluidR:{up:true},left:['T_{∞1}','h_1'],right:['T_{∞2}','h_2'],q:{dir:'right',lbl:'Q̇'},dims:['L_1','L_2'],
+  prof:{T:[86,62,26],TL:100,TR:10,min:0,max:108,show:['T_1','T_2','T_3'],dx:[10,10,-10],below:[false,false,false]}});
+circ('fig-s12c',{chain:['1/(h_{1}A)',{n:'T_1'},'L_1/(k_{1}A)',{n:'T_2'},'L_2/(k_{2}A)',{n:'T_3'},'1/(h_{2}A)'],L:'T_{∞1}',R:'T_{∞2}',q:'Q̇'});
+
+/* ================= Section 15, 16 ================= */
+reg(function(){const svg=svgIn('fig-s15',380,190,'incident, reflected, absorbed, transmitted radiation');const g=E('g',{},svg);
+  E('rect',{x:120,y:90,width:180,height:40,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.3'},g);
+  arrow(g,130,10,208,88,'var(--warm)',2.4);T(g,124,18,'incident radiation',{a:'end',fs:12});
+  arrow(g,212,88,290,10,'var(--warm)',1.8);T(g,296,18,'reflected',{a:'start',fs:12});
+  E('path',{d:'M210,90 L232,112',style:'stroke:var(--warm);stroke-width:1.8;stroke-dasharray:4 3'},g);arrowHead(g,236,116,0.7,0.7,'var(--warm)');T(g,306,110,'absorbed',{a:'start',fs:12});
+  E('line',{x1:210,y1:92,x2:210,y2:160,style:'stroke:var(--warm);stroke-width:1.6;stroke-dasharray:4 3'},g);arrowHead(g,210,170,0,1,'var(--warm)');T(g,220,166,'transmitted',{a:'start',fs:12});
+});
+reg(function(){const svg=svgIn('fig-s16',300,170,'convection and radiation leaving one surface');const g=E('g',{},svg);
+  E('rect',{x:10,y:20,width:60,height:130,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.3'},g);T(g,40,100,'solid',{fs:12});T(g,80,100,'T_s',{a:'start'});T(g,82,140,'A_s',{a:'start',fs:12});
+  E('circle',{cx:110,cy:85,r:3.2,class:'node'},g);E('line',{x1:70,y1:85,x2:110,y2:85,class:'w'},g);arrow(g,74,72,104,72);T(g,90,62,'Q̇',{fs:12});
+  E('polyline',{points:'110,85 110,40 160,40',class:'w'},g);E('polyline',{points:'110,85 110,130 160,130',class:'w'},g);
+  const z=(x,y)=>{let d=`M${x},${y}`;for(let i=1;i<=8;i++)d+=` L${x+i*5},${y+(i===8?0:(i%2?-6:6))}`;E('path',{d,class:'w'},g);};
+  z(160,40);z(160,130);E('line',{x1:200,y1:40,x2:240,y2:40,class:'w'},g);E('line',{x1:200,y1:130,x2:240,y2:130,class:'w'},g);
+  E('circle',{cx:240,cy:40,r:3.2,class:'node'},g);E('circle',{cx:240,cy:130,r:3.2,class:'node'},g);T(g,248,40,'T_∞',{a:'start'});T(g,248,130,'T_surr',{a:'start'});
+  T(g,180,22,'R_conv',{fs:12});T(g,180,152,'R_rad',{fs:12});arrow(g,120,28,150,28,'var(--c2)',1.6);T(g,135,14,'Q̇_conv',{fs:11});arrow(g,120,118,150,118,'var(--c2)',1.6);T(g,135,106,'Q̇_rad',{fs:11});
+});
+circ('fig-s16c',{chain:[{par:['R_conv = 1/(h_conv A_s)','R_rad = 1/(h_rad A_s)']}],L:'T_s',R:'T_∞ = T_surr',q:'Q̇'});
+reg(function(){const cv=document.getElementById('cv-hrad');if(!cv)return;const S=5.6703e-8;
+  const eps=+$('r-eps').value,Tu=+$('r-Tsur').value,hc=+$('r-h').value,Ts=+$('r-Ts').value;
+  const hr=t=>eps*S*(t*t+Tu*Tu)*(t+Tu);const top=Math.max(hr(1200),hc)*1.1,ystep=top>120?40:top>60?20:10;
+  plot(cv,{xmin:250,xmax:1200,ymin:0,ymax:Math.ceil(top/ystep)*ystep,xstep:100,ystep,pl:38,xlabel:'T_s (K)',ylabel:'h (W/m²K)',
+    curves:[{f:hr,color:css('--accent')},{f:()=>hc,color:css('--c2'),dash:[6,4]}],pts:[{x:Ts,y:hr(Ts),color:css('--accent'),label:'h_rad = '+fmt(hr(Ts),1)}]});
+  const dT=Ts-Tu,qr=hr(Ts)*dT,qc=hc*dT,share=Math.abs(qr+qc)>1e-9?qr/(qr+qc):0;
+  $('out-hrad').innerHTML=`ε = ${fmt(eps,2)}, T<sub>s</sub> = ${Ts} K, T<sub>surr</sub> = T<sub>∞</sub> = ${Tu} K<br>h<sub>rad</sub> = <b>${fmt(hr(Ts),2)}</b>, h<sub>conv</sub> = <b>${fmt(hc,1)}</b>, h<sub>combine</sub> = <b>${fmt(hr(Ts)+hc,2)}</b> W/(m²·K)<br>per m²: q<sub>rad</sub> = ${fmt(qr,0)} W, q<sub>conv</sub> = ${fmt(qc,0)} W · radiation share <b>${fmt(100*share,0)}%</b>`;
+});
+['r-eps','r-Tsur','r-h','r-Ts'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Section 17 ================= */
+wall('fig-ex12',{H:120,cols:[{w:80,label:'k_1',f:3},{w:80,label:'k_2',f:1}],fluidL:{up:false},fluidR:{up:false},left:['T_y','h_y'],right:['T_z = T_surr','h_z'],dims:['Δx_1','Δx_2'],q:{dir:'right',lbl:'Q̇'},rad:'R'});
+circ('fig-ex12c',{chain:['R_{conv,y}','R_{cond,1}','R_{cond,2}',{par:['R_{conv,z}','R_rad']}],L:'T_y',R:'T_z',q:'Q̇'});
+wall('fig-ex12p',{H:140,cols:[{w:100,label:'',f:0},{w:90,label:'',f:1}],bottom:['concrete','insulation'],fluidL:{},fluidR:{},left:['liquid','80 °C'],right:['air','20 °C'],dims:['10 cm, k = 1.2','5 cm, k = 0.04'],
+  prof:{T:[79.91,76.34,22.68],TL:80,TR:20,min:15,max:85,show:['79.9','76.3','22.7'],dx:[-14,20,16],below:[false,false,false]}});
+
+/* ================= Exam taster ================= */
+const wall25={H:130,cols:[{w:76,label:'1',f:0},{w:24,label:'2',f:2},{w:34,parts:[{h:0.6,label:'',f:1},{h:0.4,label:'',f:3}]},{w:26,label:'',f:4},{w:12,label:'',f:2}],
+  top:['','','3a','',''],bottom:['1','2','3b','4','5'],left:['T_{∞,o} = −10 °C','h_{conv,o} =','70 W/m²·°C'],right:['T_{∞,i} = 20 °C','h_{conv,i} = 40','h_{rad,i} = 10','(W/m²·°C)'],rad:'R'};
+wall('fig-t1',wall25);
+circ('fig-t1a',{chain:['R_{conv,o}',{n:'T_{s,o}'},'R_1','R_2',{par:['R_{3a}','R_{3b}']},'R_4','R_5',{n:'T_{s,i}'},{par:['R_{conv,i}','R_{rad,i}']}],L:'T_{∞,o}',R:'T_{∞,i}',q:'q',dir:'left'});
+wall('fig-t2',{H:150,cols:[{w:80,label:'1',f:0},{w:52,parts:[{h:0.68,label:'2',f:2},{h:0.32,label:'3',f:1}]},{w:80,label:'4',f:3}]});
+
+</script>
+</body></html>

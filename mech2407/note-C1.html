@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MECH2407 C1 · Functions of Several Variables</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+/* MECH2407 house style (from the MATH1851 bundle): one 46rem reading column, sticky contents rail on wide screens,
+   teal accent, warm orange for "Beyond the handouts", dark mode through CSS variables. Figures read colours via css('--accent') etc. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf; --prev:#6a4c9c; --prev-soft:#efe9f8;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#7a4fc2;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518; --prev:#b9a2e6; --prev-soft:#2a2238;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#b79bff; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518; --prev:#b9a2e6; --prev-soft:#2a2238;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#b79bff; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:230px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible,nav.toc a.on{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+nav.toc .home{display:block;margin:0 0 12px 10px;font-size:12.5px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+header.top .crumbs{font-size:13px;display:flex;flex-wrap:wrap;gap:4px 14px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0;min-width:0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent} .beyond>.tag{color:var(--warm)}
+.box.prev{background:var(--prev-soft);border-color:transparent;border-left:4px solid var(--prev)} .box.prev>.tag{color:var(--prev)}
+.pill.prev{background:var(--prev-soft);color:var(--prev)}
+.analogy{border-left:4px solid var(--c3)} .analogy>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent)} .ready>.tag{color:var(--accent)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+.figure .pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+canvas.plot{width:100%;display:block;border-radius:4px;touch-action:none}
+canvas.plot.drag{cursor:grab}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+.ctrl button{font:inherit;font-size:.88rem;padding:4px 12px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums;overflow-x:auto}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px;min-width:0}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0;min-width:0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide,a.note{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+a.guide:hover,a.note:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+.boxed{border:1.5px solid var(--accent);border-radius:6px;padding:6px 10px;display:block;margin:8px 0;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+main svg[role="img"][aria-label] text{paint-order:stroke;stroke:var(--card);stroke-width:3.5px;stroke-linejoin:round}
+mjx-container svg text{stroke:none}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+footer.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px} .box,.q{padding:10px 10px} .figure{padding:10px} details{padding:0 10px} mjx-container[display="true"]{font-size:92%}}
+
+/* ---- exam-guide classes (added Phase 4; notes do not use them) ---- */
+.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:6px;padding:12px 16px;margin:14px 0;min-width:0}
+.card>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.card .row{display:grid;grid-template-columns:6.2rem 1fr;gap:4px 12px;padding:6px 0;border-top:1px solid var(--grid);min-width:0}
+.card .row>b{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+.card .row>div{min-width:0}
+@media (max-width:520px){.card .row{grid-template-columns:1fr}}
+.freq{font-family:var(--mono);font-size:12px;color:var(--muted);margin:2px 0 6px}
+.proc{border:1px solid var(--line);border-left:4px solid var(--c3,#2a9d6a);border-radius:6px;padding:10px 16px;margin:14px 0;background:var(--card);min-width:0}
+.proc>.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.marker{font-size:.9rem;background:var(--accent-soft);border-radius:6px;padding:6px 10px;margin:8px 0}
+.marker::before{content:"Marker note · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.alsoset{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 6px}
+.glance{width:100%;border-collapse:collapse;font-size:.92rem}
+.glance td,.glance th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{
+  pd:['\\frac{\\partial #1}{\\partial #2}',2], vb:['\\mathbf{#1}',1], grad:'\\nabla', R:'\\mathbb{R}',
+  ii:'\\mathbf{i}', jj:'\\mathbf{j}', kk:'\\mathbf{k}'}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="assets/mathjax/tex-svg.js"></script>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <a class="home" href="index.html">← Start Here</a>
+  <p class="h">Chapter 1</p>
+  <ol>
+    <li><a href="#s0">0 · Where this chapter sits</a></li>
+    <li><a href="#s1">1 · Several variables, level curves</a></li>
+    <li><a href="#s2">2 · Partial derivatives</a></li>
+    <li><a href="#s3">3 · The chain rule</a></li>
+    <li><a href="#s4">4 · Taylor's theorem</a></li>
+    <li><a href="#s5">5 · Maxima, minima, saddles</a></li>
+    <li><a href="#s6">6 · Directional derivative, gradient</a></li>
+    <li><a href="#s7">7 · Beyond: tangent planes</a></li>
+    <li><a href="#s8">8 · Out of 2026 syllabus: Lagrange</a></li>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#mistakes">Common mistakes</a></li>
+    <li><a href="#find-mistake">Find the mistake</a></li>
+    <li><a href="#group-work">Practice problems</a></li>
+    <li><a href="#checks">Concept checks</a></li>
+    <li><a href="#taster">Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MECH2407 · Multivariable Calculus &amp; PDEs · Chapter 1</span>
+  <h1>Functions of Several Variables</h1>
+  <p class="lede">Every page of the Chapter 1 handout explained from scratch, in handout order, with rotatable 3D graphs and contour maps. Every worked example from the handout is solved in full. Material the exam uses but the handout leaves out sits in orange "Beyond the handouts" boxes. The chapter ends with real past-paper questions, each linked to its exam-guide section.</p>
+  <div class="crumbs"><a href="index.html">← Start Here</a><a href="guide-C1.html">Exam guide for this chapter →</a><a href="note-C2.html">Next: C2 Multiple Integrals →</a></div>
+</header>
+
+<section id="s0">
+<h2><span class="n">0</span>Where this chapter sits</h2>
+<p>Everything you met in first-year calculus was about functions of <b>one</b> variable: \(y=f(x)\), one input, one output, a curve on paper. Real engineering quantities almost never depend on just one thing. The temperature in a room depends on where you stand <i>and</i> when you measure it; the stress in a beam depends on three position coordinates. This chapter rebuilds differentiation for functions with several inputs.</p>
+<p>The plan of the chapter:</p>
+<ol class="steps">
+  <li><b>§1</b> What a function of several variables is, and how to picture one (surfaces, contour maps, level surfaces).</li>
+  <li><b>§2</b> <b>Partial derivatives</b>: the rate of change when only one input moves.</li>
+  <li><b>§3</b> The <b>chain rule</b> when the inputs themselves depend on other variables, including a change of coordinates (for example to polar coordinates).</li>
+  <li><b>§4</b> <b>Taylor's theorem</b> in two variables: approximating a surface by a plane or a quadratic surface.</li>
+  <li><b>§5</b> <b>Maxima, minima and saddle points</b>, with the second-derivative test.</li>
+  <li><b>§6</b> The <b>directional derivative</b> and the <b>gradient</b>: the rate of change in any direction, and the direction of steepest increase.</li>
+  <li><b>§7</b> (Beyond the handouts) Tangent planes and normal lines to surfaces: not in the handout, but asked in every December paper.</li>
+  <li><b>§8</b> <span class="pill prev">Out of 2026 syllabus</span> <b>Lagrange multipliers</b> for optimisation with a constraint: previous content, asked in May 2022 and May 2026.</li>
+</ol>
+<p><b>What you are assumed to know:</b> single-variable differentiation (product, quotient and chain rules), Taylor/Maclaurin series of one variable, vectors in \(\R^3\) with \(\ii,\jj,\kk\), the dot product \(\vb a\cdot\vb b=|\vb a||\vb b|\cos\alpha\), and the equation of a straight line. Nothing about several variables is assumed.</p>
+<p><b>How the exam uses this chapter.</b> In every December paper since 2014, Q1 and usually part of Q2 come from this chapter: a chain-rule "show that" (often turning \(\pd{^2f}{x^2}+\pd{^2f}{y^2}\) into another coordinate system), a "find and classify the stationary points" question, and a gradient / directional derivative / tangent plane question. These three types alone are worth about 470 marks across the 21 papers collected for this bundle. See the <a href="guide-C1.html">C1 exam guide</a>.</p>
+</section>
+
+<section id="s1">
+<h2><span class="n">1</span>Functions of several variables, level curves and level surfaces <span class="muted small">(handout §1.1, pp. 1–4)</span></h2>
+<p>Many quantities in the physical world depend on more than one variable. Example 1.1.1 gives four:</p>
+<div class="box eg"><span class="tag">Example 1.1.1</span>
+<ol class="steps">
+<li>The height of the ground at map coordinates \((x,y)\): \(\;\text{height}=h(x,y)\).</li>
+<li>The temperature in a lecture room, which varies with position and time: \(\;\text{Temperature}=T(x,y,z,t)\).</li>
+<li>The volume of a rectangular box of length \(x\), width \(y\) and height \(z\): \(\;V=xyz\).</li>
+<li>The magnitude of the electric potential due to a uniformly charged spherical shell with total charge \(Q\):
+\[\begin{gathered}\varphi=\frac{Q}{4\pi\epsilon_0}\,\frac{1}{\sqrt{x^2+y^2+z^2}},\\ r=\sqrt{x^2+y^2+z^2}\gt R,\end{gathered}\]
+where \(R\) is the radius of the sphere and \(\epsilon_0\) is the permittivity (a constant of the material between the charges).</li>
+</ol>
+<p class="word"><b>In words:</b> potential = (charge ÷ 4π·permittivity) × 1 ÷ (distance from the centre), valid outside the shell.</p>
+</div>
+<p>These are all <b>scalar-valued</b> functions of real variables: the output is a single number (a <b>scalar</b>), not a vector. In general we write</p>
+\[\begin{gathered}z=f(x_1,x_2,\dots,x_n)\equiv f(\vb x),\\ \vb x=\begin{bmatrix}x_1&x_2&\cdots&x_n\end{bmatrix}^T\end{gathered}\]
+<div class="box def"><span class="tag">Definitions</span>
+<ul class="list">
+<li>\(x_1,\dots,x_n\) are the <b>independent variables</b>: the inputs you are free to choose.</li>
+<li>\(z\) is the <b>dependent variable</b>: the output, whose value depends on the inputs.</li>
+<li>\(f\) is a <b>scalar field</b>: a rule that attaches one number to every point of a region of space. "Field" just means "something defined at every point", like the temperature at every point of a room.</li>
+<li>The superscript \(T\) means <b>transpose</b>: the row of inputs is turned into a column vector. It is only a way of packing the inputs into one vector \(\vb x\).</li>
+</ul>
+</div>
+
+<h3>Picturing a function of two variables</h3>
+<p>For one variable, the graph \(y=f(x)\) is a curve. For two variables, the graph \(z=f(x,y)\) is a <b>surface</b> in 3D space: above each point \((x,y)\) of the floor, the surface sits at height \(z=f(x,y)\). Drawing a surface on flat paper is hard, so we use a second picture, borrowed from hiking maps.</p>
+<div class="box def"><span class="tag">Definition (level curve, contour map)</span>
+<p>A <b>level curve</b> of \(f(x,y)\) is the set of points \((x,y)\) for which</p>
+\[f(x,y)=c,\qquad c \text{ a constant.}\]
+<p>A collection of level curves (one for each of several values of \(c\)) forms a <b>contour map</b>.</p>
+<p class="word"><b>In words:</b> a level curve joins all the places on the floor where the surface has the same height \(c\).</p>
+</div>
+<div class="box eg"><span class="tag">Example 1.1.2 (contour maps)</span>
+<p><b>1. A hill.</b> Picture a single hill rising from flat ground at height 0 m to a summit a little above 1000 m. Slice it horizontally at heights 0 m, 500 m and 1000 m. Each slice cuts the hill in a closed loop: the 0 m loop is the outline of the hill's base, the 500 m loop is smaller, and the 1000 m loop is a small ring just below the summit. Now look straight down and draw all three loops on one flat map, each labelled with its height. That drawing is the contour map: three nested loops labelled 0 m, 500 m and 1000 m.</p>
+<p><b>2. \(f(x,y)=x^2+y^2\).</b> The surface is a bowl (a <b>paraboloid</b>). Its level curves \(x^2+y^2=c\) are circles centred at the origin with radius \(\sqrt c\). The levels \(c=1^2,\,2^2,\,3^2\) give circles of radius 1, 2 and 3. Seen from the side, these circles are horizontal rings on the bowl at heights 1, 4 and 9. The rings are equally spaced in radius but not in height, because the bowl gets steeper as you move out.</p>
+<p><b>3. \(f(x,y)=x^2-y^2\).</b> Its level curves \(x^2-y^2=c\) are hyperbolas. For \(c\gt0\) they open left and right (crossing the \(x\)-axis at \(x=\pm\sqrt c\)); for \(c\lt0\) they open up and down; for \(c=0\) they are the two crossing straight lines \(y=\pm x\). The contour map looks like a set of nested "X"-shaped curves centred on the origin.</p>
+<p>All three are in the figure below: choose them from the menu.</p>
+</div>
+<div class="box analogy"><span class="tag">Analogy</span>
+<p>This is exactly a hiking map. Loops crowded together mean steep ground; loops far apart mean gentle ground. A closed loop with nothing inside is a hilltop or the bottom of a dip.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Surface and contour map side by side (Examples 1.1.2 and 1.1.3)</p>
+  <div class="pair">
+    <canvas class="plot" id="f-surf" style="aspect-ratio:1/0.9" aria-label="Rotatable 3D surface"></canvas>
+    <canvas class="plot" id="f-cont" style="aspect-ratio:1/0.9" aria-label="Contour map of the same function"></canvas>
+  </div>
+  <div class="ctrl"><label>Function
+    <select id="f-sel">
+      <option value="hill">a hill (Ex 1.1.2, part 1)</option>
+      <option value="bowl" selected>f = x² + y² (Ex 1.1.2, part 2)</option>
+      <option value="saddle">f = x² − y² (Ex 1.1.2 part 3; Ex 1.1.3 part 1)</option>
+      <option value="cosxy">f = cos xy (Ex 1.1.3, part 2)</option>
+    </select></label>
+    <label>Highlight level <input type="range" id="f-c" min="0" max="1" step="0.01" value="0.5"></label>
+  </div>
+  <div class="readout" id="f-out"></div>
+  <p class="cap">Left: the surface \(z=f(x,y)\) (drag to rotate). The thick curve is the horizontal slice at height \(c\). Right: the contour map; the same slice appears as the thick level curve \(f(x,y)=c\). For the hill, the contours drawn are 0 m (the base), 500 m and 1000 m.</p>
+</div>
+<p>Computer-generated surface plots usually draw the lines on which \(x\) is constant and the lines on which \(y\) is constant. Together they form a mesh that shows the shape of the surface. The 3D picture above works the same way: each small patch is bounded by lines \(x=\)const and \(y=\)const.</p>
+<div class="box eg"><span class="tag">Example 1.1.3 (surface plots)</span>
+<p><b>1. \(z=x^2-y^2\)</b>, plotted for \(-2\le x\le2,\ -2\le y\le2\). The mesh shows a saddle: along the \(x\)-direction the surface curves upward (like \(z=x^2\)), along the \(y\)-direction it curves downward (like \(z=-y^2\)), and the two meet at a flat point at the origin. Heights run from \(-4\) (at \(y=\pm2,\ x=0\)) to \(4\) (at \(x=\pm2,\ y=0\)).</p>
+<p><b>2. \(z=\cos xy\)</b>, plotted for \(-3\le x\le3,\ -3\le y\le3\). Heights stay between \(-1\) and \(1\). Along both axes \(xy=0\), so \(z=1\): a flat ridge forms a cross through the origin. Moving away from the axes, \(z\) ripples down and up along the hyperbolas \(xy=\text{const}\) (troughs where \(xy=\pm\pi\), ridges where \(xy=\pm2\pi\)), and the ripples bunch together in the corners, where \(xy\) changes fastest.</p>
+<p>Choose "f = x² − y²" or "f = cos xy" in the figure above to see both.</p>
+</div>
+
+<h3>Functions of three variables: level surfaces</h3>
+<p>A function of three variables \(f(x,y,z)\) would need four dimensions to graph, so we cannot sketch its graph. Instead we look at where it takes a fixed value.</p>
+<div class="box def"><span class="tag">Definition (level surface)</span>
+<p>For any number \(c\), the set of points \((x,y,z)\) with \(f(x,y,z)=c\) is a <b>level surface</b> of \(f\). We name the surface by its equation \(f(x,y,z)=c\).</p>
+<p class="word"><b>In words:</b> a level surface is the 3D version of a level curve: all points in space where \(f\) has the same value.</p>
+</div>
+<p><b>Example.</b> Take \(f(x,y,z)=\sqrt{x^2+y^2+z^2}\), the distance from the origin. Its level surfaces \(\sqrt{x^2+y^2+z^2}=1,2,3\) are spheres of radius 1, 2 and 3 nested inside each other, like the layers of an onion.</p>
+<div class="figure">
+  <p class="ttl">Level surfaces of \(f=\sqrt{x^2+y^2+z^2}\): nested spheres (cut-away)</p>
+  <canvas class="plot" id="f-spheres" style="aspect-ratio:16/10" aria-label="Three nested hemispheres of radius 1, 2 and 3"></canvas>
+  <p class="cap">The upper halves of the spheres \(f=1,2,3\), with a quarter cut away so the inner ones show (drag to rotate). Every point on one sphere has the same value of \(f\).</p>
+</div>
+<p>Two names from physics:</p>
+<ul class="list">
+<li>A surface on which the temperature is constantly \(c\) is an <b>isothermal surface</b> ("iso" = equal, "thermal" = heat).</li>
+<li>A surface on which the voltage (potential) is constantly \(c\) is an <b>equipotential surface</b>. For the charged shell of Example 1.1.1, the equipotential surfaces are exactly these spheres, since \(\varphi\) depends only on \(\sqrt{x^2+y^2+z^2}\).</li>
+</ul>
+</section>
+
+<section id="s2">
+<h2><span class="n">2</span>Partial differentiation <span class="muted small">(handout §1.2, pp. 4–8)</span></h2>
+<p>Recall that for a function \(f(x)\) of one variable the derivative at \(x_0\) is</p>
+\[\frac{df}{dx}(x_0)=\lim_{h\to0}\frac{f(x_0+h)-f(x_0)}{h}.\]
+<p class="word"><b>In words:</b> derivative = limit of (change in output) ÷ (change in input) as the change in input shrinks to zero; geometrically, the slope of the tangent line.</p>
+<p>With two inputs there is no single "change in input": we could move in \(x\), in \(y\), or in any mixture. The simplest choice is to <b>move only one input and freeze all the others</b>.</p>
+<div class="box def"><span class="tag">Definition (partial derivatives)</span>
+<p>Hold \(y\) constant at \(y=y_0\). Then \(f(x,y_0)\) is a function of \(x\) alone, and its derivative at \(x_0\) is the <b>partial derivative of \(f\) with respect to \(x\)</b>, provided the limit exists:</p>
+\[\pd{f}{x}(x_0,y_0)=\lim_{h\to0}\frac{f(x_0+h,\,y_0)-f(x_0,\,y_0)}{h}.\]
+<p>Similarly, holding \(x=x_0\) fixed, the <b>partial derivative with respect to \(y\)</b> is</p>
+\[\pd{f}{y}(x_0,y_0)=\lim_{k\to0}\frac{f(x_0,\,y_0+k)-f(x_0,\,y_0)}{k}.\]
+<p class="word"><b>In words:</b> \(\partial f/\partial x\) = how fast \(f\) changes when you nudge \(x\) and keep \(y\) fixed; \(\partial f/\partial y\) = how fast \(f\) changes when you nudge \(y\) and keep \(x\) fixed. The curly \(\partial\) ("partial", "del" or "dee") warns you that other variables are being held still.</p>
+</div>
+<p><b>Picture.</b> Cut the surface \(z=f(x,y)\) with the vertical plane \(y=y_0\). The cut is a curve \(z=f(x,y_0)\) lying in that plane, and \(f_x(x_0,y_0)\) is the slope of its tangent line at the point \(P(x_0,y_0,f(x_0,y_0))\). Cutting instead with the plane \(x=x_0\) gives the curve \(z=f(x_0,y)\), whose slope is \(f_y(x_0,y_0)\). Move the point below to see both slices.</p>
+<div class="figure">
+  <p class="ttl">The two slices through \(P\) and their tangent lines</p>
+  <canvas class="plot" id="f-slice" style="aspect-ratio:16/11" aria-label="Surface with slices along x and y and tangent lines"></canvas>
+  <div class="ctrl"><label>\(x_0\) <input type="range" id="sl-x" min="-1.5" max="1.5" step="0.05" value="0.6"></label>
+  <label>\(y_0\) <input type="range" id="sl-y" min="-1.5" max="1.5" step="0.05" value="-0.4"></label></div>
+  <div class="readout" id="sl-out"></div>
+  <p class="cap">Surface \(f(x,y)=1+0.5x^2-0.4y^2+0.3xy\). Teal curve: slice \(y=y_0\), with tangent line of slope \(f_x\) (orange). Purple curve: slice \(x=x_0\), with tangent line of slope \(f_y\) (red).</p>
+</div>
+<h3>Notation</h3>
+<p>For \(z=f(x,y)\), all of these mean the same thing:</p>
+\[\begin{gathered}\pd{f}{x}(x,y)\equiv f_x(x,y)\equiv\pd{z}{x}(x,y)\\ \equiv z_x(x,y)\quad\text{or}\quad\left(\pd{f}{x}\right)_{y}\end{gathered}\]
+<p>The last form, with a subscript \(y\) outside the bracket, states explicitly that \(y\) is held constant. It matters when it is not obvious which variables are frozen (for example after a change of variables, §3).</p>
+<p><b>How to compute one:</b> treat every other variable as a constant number and differentiate with the ordinary single-variable rules.</p>
+
+<div class="box eg"><span class="tag">Example 1.2.1</span>
+<p><b>1.</b> \(f(x,y)=x^2y+y^3\sin x\). Treating \(y\) as a constant, then \(x\) as a constant:</p>
+\[\pd fx=2xy+y^3\cos x,\quad \pd fy=x^2+3y^2\sin x.\]
+<p><b>2.</b> \(f(x,y,z)=e^{2z}\cos xy\). With two variables frozen each time (and the chain rule for \(\cos xy\)):</p>
+\[\begin{aligned}f_x&=-e^{2z}\,y\sin xy,\\ f_y&=-e^{2z}\,x\sin xy,\\ f_z&=2e^{2z}\cos xy.\end{aligned}\]
+<p><b>3. (Function of a function.)</b> If \(f=f(u)\) and \(u=u(x,y)\), the single-variable chain rule applies with the other variable frozen:</p>
+\[\pd fx=\frac{df}{du}\left(\pd ux\right)_y,\quad \pd fy=\frac{df}{du}\left(\pd uy\right)_x.\]
+<p class="word"><b>In words:</b> outer derivative × inner partial derivative.</p>
+<p>If \(f=\ln u\) and \(u=\sqrt{x^2+y^2}\), then</p>
+\[\begin{aligned}\pd fx&=\frac1u\times\frac{1}{2\sqrt{x^2+y^2}}\times2x=\frac{x}{x^2+y^2},\\ \pd fy&=\frac{y}{x^2+y^2}.\end{aligned}\]
+<p><b>4. (Implicit function.)</b> Sometimes \(z\) is not given as a formula but is tied to \(x\) and \(y\) by an equation, here</p>
+\[x^3-xy^2+yz^2-z^3=5.\]
+<p>We still regard \(z=z(x,y)\) as a function of \(x\) and \(y\) (an <b>implicit function</b>: defined by an equation rather than an explicit formula). Differentiate both sides partially with respect to \(x\), holding \(y\) fixed but remembering that \(z\) changes with \(x\), so \(z^2\) and \(z^3\) need the chain rule:</p>
+\[\begin{gathered}3x^2-y^2+2zy\pd zx-3z^2\pd zx=0\\ \Longrightarrow\;\pd zx=\frac{y^2-3x^2}{2zy-3z^2},\end{gathered}\]
+<p>provided \(3z^2\ne2zy\) (otherwise we would divide by zero). Differentiating with respect to \(y\) instead (now \(-xy^2\) gives \(-2xy\), and \(yz^2\) needs the product rule):</p>
+\[\begin{gathered}0-2xy+2yz\pd zy+z^2-3z^2\pd zy=0\\ \Longrightarrow\;\pd zy=\frac{2xy-z^2}{2yz-3z^2},\end{gathered}\]
+<p>again provided \(3z^2\ne2zy\).</p>
+<details><summary>Show the calculation: both implicit derivatives, term by term</summary><div>
+<p><b>Differentiating with respect to \(x\)</b> (\(y\) is a constant; \(z=z(x,y)\) changes with \(x\)):</p>
+<ul class="list">
+<li>\(x^3\to3x^2\): ordinary power rule.</li>
+<li>\(-xy^2\to-y^2\): \(y^2\) is just a constant multiplier of \(x\).</li>
+<li>\(yz^2\to y\cdot2z\,\pd zx\): \(y\) is a constant; \(z^2\) needs the chain rule (derivative of \(z^2\) with respect to \(z\) is \(2z\), times \(\partial z/\partial x\) because \(z\) moves when \(x\) moves).</li>
+<li>\(-z^3\to-3z^2\,\pd zx\): same reason.</li>
+<li>\(5\to0\): a constant.</li>
+</ul>
+<p>Adding: \(3x^2-y^2+2yz\,z_x-3z^2\,z_x=0\). Collect the two terms containing \(z_x\) on one side and everything else on the other:</p>
+\[\begin{gathered}(2yz-3z^2)\,z_x=y^2-3x^2\\ \Longrightarrow\;z_x=\frac{y^2-3x^2}{2yz-3z^2}.\end{gathered}\]
+<p><b>Differentiating with respect to \(y\)</b> (\(x\) is now the constant):</p>
+<ul class="list">
+<li>\(x^3\to0\): no \(y\) in it.</li>
+<li>\(-xy^2\to-2xy\): power rule in \(y\), \(x\) a constant multiplier.</li>
+<li>\(yz^2\to z^2+y\cdot2z\,\pd zy\): <b>product rule</b>, because both factors \(y\) and \(z^2\) change with \(y\): (derivative of \(y\))·\(z^2\) + \(y\)·(derivative of \(z^2\)).</li>
+<li>\(-z^3\to-3z^2\,\pd zy\): chain rule.</li>
+</ul>
+<p>Adding and collecting the \(z_y\) terms:</p>
+\[\begin{gathered}-2xy+z^2+(2yz-3z^2)\,z_y=0\\ \Longrightarrow\;z_y=\frac{2xy-z^2}{2yz-3z^2}.\end{gathered}\]
+<p>Both divisions need \(2yz-3z^2\ne0\), which is the condition \(3z^2\ne2zy\) stated above.</p>
+</div></details>
+</div>
+
+<h3>Second and higher partial derivatives</h3>
+<p>The first partial derivatives are themselves functions of \(x\) and \(y\), so we can differentiate them again to get <b>second partial derivatives</b>:</p>
+\[\begin{aligned}
+f_{xx}&=\pd{^2f}{x^2}=\pd{}{x}\left(\pd fx\right)\\
+f_{yy}&=\pd{^2f}{y^2}=\pd{}{y}\left(\pd fy\right)\\
+f_{yx}&=\frac{\partial^2 f}{\partial x\,\partial y}=\pd{}{x}\left(\pd fy\right)\\
+f_{xy}&=\frac{\partial^2 f}{\partial y\,\partial x}=\pd{}{y}\left(\pd fx\right)
+\end{aligned}\]
+<p class="word"><b>In words:</b> in subscript notation, read left to right: \(f_{xy}\) means "first \(x\), then \(y\)". In \(\partial\) notation, read right to left: \(\frac{\partial^2f}{\partial y\,\partial x}\) means "first \(\partial x\) (nearest \(f\)), then \(\partial y\)". Both describe the same thing. \(f_{xy}\) and \(f_{yx}\) are the <b>mixed partial derivatives</b>.</p>
+<p>Higher-order partial derivatives (third, fourth, …) are defined in the same way.</p>
+<div class="box eg"><span class="tag">Example 1.2.2</span>
+<p>Let \(f(x,y)=\sin xy^2\). Then \(f_x=y^2\cos xy^2\) and \(f_y=2xy\cos xy^2\), and</p>
+\[\begin{aligned}
+f_{xx}&=-y^4\sin xy^2\\
+f_{xy}&=\pd{}{y}\big(y^2\cos xy^2\big)\\&=2y\cos xy^2-2xy^3\sin xy^2\\
+f_{yx}&=\pd{}{x}\big(2xy\cos xy^2\big)\\&=2y\cos xy^2-2xy^3\sin xy^2\\
+f_{yy}&=\pd{}{y}\big(2xy\cos xy^2\big)\\&=2x\cos xy^2-4x^2y^2\sin xy^2
+\end{aligned}\]
+<p>(\(f_{xy}\) uses the product rule on \(y^2\cdot\cos xy^2\); \(f_{yy}\) uses it on \(2xy\cdot\cos xy^2\).)</p>
+<details><summary>Show the calculation: all six derivatives, step by step</summary><div>
+<p>Throughout, write \(w=xy^2\) for the inside of the sine, so \(\pd wx=y^2\) and \(\pd wy=2xy\). The chain rule gives \(\pd{}{x}\sin w=\cos w\cdot y^2\), \(\pd{}{x}\cos w=-\sin w\cdot y^2\), and similarly with \(2xy\) for \(y\).</p>
+<ol class="steps">
+<li>\(f_x=\cos xy^2\cdot y^2=y^2\cos xy^2\) (outer derivative × \(\partial w/\partial x\)).</li>
+<li>\(f_y=\cos xy^2\cdot2xy=2xy\cos xy^2\) (outer derivative × \(\partial w/\partial y\)).</li>
+<li>\(f_{xx}=\pd{}{x}\big(y^2\cos xy^2\big)\): \(y^2\) is a constant here, so only \(\cos xy^2\) is differentiated: \(y^2\cdot(-\sin xy^2)\cdot y^2=-y^4\sin xy^2\).</li>
+<li>\(f_{xy}=\pd{}{y}\big(y^2\cos xy^2\big)\): both factors contain \(y\), so use the product rule:
+\[\begin{aligned}&\underbrace{2y}_{(y^2)'}\cos xy^2+y^2\underbrace{(-\sin xy^2)(2xy)}_{(\cos xy^2)'}\\&=2y\cos xy^2-2xy^3\sin xy^2.\end{aligned}\]</li>
+<li>\(f_{yx}=\pd{}{x}\big(2xy\cos xy^2\big)\): product rule in \(x\):
+\[\begin{aligned}&\underbrace{2y}_{(2xy)'}\cos xy^2+2xy\underbrace{(-\sin xy^2)(y^2)}_{(\cos xy^2)'}\\&=2y\cos xy^2-2xy^3\sin xy^2.\end{aligned}\]</li>
+<li>\(f_{yy}=\pd{}{y}\big(2xy\cos xy^2\big)\): product rule in \(y\):
+\[\begin{aligned}&\underbrace{2x}_{(2xy)'}\cos xy^2+2xy\underbrace{(-\sin xy^2)(2xy)}_{(\cos xy^2)'}\\&=2x\cos xy^2-4x^2y^2\sin xy^2.\end{aligned}\]</li>
+</ol>
+<p>Steps 4 and 5 give the same expression: \(f_{xy}=f_{yx}\).</p>
+</div></details>
+</div>
+<p>In this example the two mixed derivatives came out equal, \(f_{xy}=f_{yx}\). This happens for most functions met in engineering and science, but it is not always true. The precise condition:</p>
+<div class="box thm"><span class="tag">Theorem (equality of mixed partials, also called Clairaut's or Schwarz's theorem)</span>
+<p>If \(f,\ f_x,\ f_y,\ f_{xy}\) and \(f_{yx}\) are all defined in a neighbourhood of \((x_0,y_0)\) (a small disc around the point) and are continuous at \((x_0,y_0)\), then</p>
+\[f_{xy}(x_0,y_0)=f_{yx}(x_0,y_0).\]
+<p class="word"><b>In words:</b> for smooth functions, the order in which you take partial derivatives does not matter. Exam questions say "assume all partial derivatives are continuous" precisely so that you may use this.</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · when the order does matter</span>
+<p>The standard counterexample is \(f(x,y)=\dfrac{xy(x^2-y^2)}{x^2+y^2}\) with \(f(0,0)=0\). One finds \(f_x(0,y)=-y\) and \(f_y(x,0)=x\), so \(f_{xy}(0,0)=-1\) but \(f_{yx}(0,0)=+1\). The theorem does not apply because the mixed partials are not continuous at the origin. You will not be asked to compute this; it is here only to show why the continuity condition is stated.</p>
+<details><summary>Show the calculation: why \(f_{xy}(0,0)=-1\) but \(f_{yx}(0,0)=+1\)</summary><div>
+<p>The formula breaks down at the origin, so use the limit definitions of §2 directly.</p>
+<ol class="steps">
+<li><b>\(f_x\) along the \(y\)-axis.</b> \(f(0,y)=0\) for every \(y\) (the factor \(x\) is 0). So
+\[\begin{aligned}f_x(0,y)&=\lim_{h\to0}\frac{f(h,y)-f(0,y)}{h}\\&=\lim_{h\to0}\frac{hy(h^2-y^2)}{h(h^2+y^2)}\\&=\lim_{h\to0}\frac{y(h^2-y^2)}{h^2+y^2}\\&=\frac{y(-y^2)}{y^2}=-y\end{aligned}\]
+(the \(h\) cancels before the limit; for \(y=0\) the same limit gives 0, which is also \(-y\)).</li>
+<li><b>\(f_y\) along the \(x\)-axis.</b> \(f(x,0)=0\), so
+\[\begin{aligned}f_y(x,0)&=\lim_{k\to0}\frac{xk(x^2-k^2)}{k(x^2+k^2)}\\&=\frac{x\cdot x^2}{x^2}=x.\end{aligned}\]</li>
+<li><b>Mixed derivatives at the origin.</b> \(f_{xy}\) means "first \(x\), then \(y\)": differentiate \(f_x(0,y)=-y\) with respect to \(y\), giving \(-1\). \(f_{yx}\) means "first \(y\), then \(x\)": differentiate \(f_y(x,0)=x\) with respect to \(x\), giving \(+1\).</li>
+</ol>
+</div></details>
+</div>
+</section>
+
+<section id="s3">
+<h2><span class="n">3</span>The chain rule <span class="muted small">(handout §1.3, pp. 8–10)</span></h2>
+<p>For one variable: if \(y=f(x)\) and \(x=x(t)\), then \(y=f(x(t))\) and</p>
+\[\frac{dy}{dt}=\frac{df}{dx}\,\frac{dx}{dt}.\]
+<p class="word"><b>In words:</b> rate of \(y\) per unit \(t\) = (rate of \(y\) per unit \(x\)) × (rate of \(x\) per unit \(t\)).</p>
+<p>Now suppose \(z\) depends on two variables \(x\) and \(y\), and both of them change with time \(t\) (think of a hiker at position \((x(t),y(t))\) on a hill of height \(f(x,y)\)). How fast does the hiker's height change?</p>
+<div class="box thm"><span class="tag">Theorem 1.3.1 (The Chain Rule)</span>
+<p>If \(z=f(x,y)\) and \(x=x(t),\ y=y(t)\), then</p>
+\[\frac{dz}{dt}=\pd fx\frac{dx}{dt}+\pd fy\frac{dy}{dt}.\]
+<p class="word"><b>In words:</b> total rate of change of \(z\) = (effect of \(x\) moving) + (effect of \(y\) moving), where each effect = sensitivity of \(f\) to that variable × how fast that variable moves.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Tree diagram: one branch per route from \(z\) down to \(t\)</p>
+  <svg viewBox="0 0 360 170" style="width:100%;max-width:420px;display:block;margin:auto" role="img" aria-label="Tree: z branches to x and y, each branches to t">
+    <g style="stroke:var(--axis);stroke-width:1.5"><line x1="180" y1="30" x2="90" y2="85"/><line x1="180" y1="30" x2="270" y2="85"/><line x1="90" y1="100" x2="90" y2="140"/><line x1="270" y1="100" x2="270" y2="140"/></g>
+    <g style="fill:var(--ink);font:600 17px Inter,sans-serif" text-anchor="middle"><text x="180" y="24">z</text><text x="90" y="98">x</text><text x="270" y="98">y</text><text x="90" y="160">t</text><text x="270" y="160">t</text></g>
+    <g style="fill:var(--accent);font:13px Inter,sans-serif" text-anchor="middle"><text x="110" y="55">∂f/∂x</text><text x="250" y="55">∂f/∂y</text><text x="122" y="125">dx/dt</text><text x="302" y="125">dy/dt</text></g>
+  </svg>
+  <p class="cap">Multiply along each path from \(z\) to \(t\), then add the paths. Straight \(d\) is used where the variable depends on one thing only (\(x\) depends only on \(t\)); curly \(\partial\) where it depends on several (\(f\) depends on \(x\) and \(y\)).</p>
+</div>
+<details><summary>Proof of Theorem 1.3.1, explained line by line</summary><div>
+<p>By the definition of the derivative,</p>
+\[\begin{aligned}\frac{dz}{dt}&=\lim_{\delta t\to0}\frac{z(t+\delta t)-z(t)}{\delta t}\\&=\lim_{\delta t\to0}\frac{1}{\delta t}\Big[f\big(x(t+\delta t),y(t+\delta t)\big)\\&\qquad\qquad-f\big(x(t),y(t)\big)\Big].\end{aligned}\]
+<p>As \(t\) changes to \(t+\delta t\), \(x\) and \(y\) change by \(\delta x=x(t+\delta t)-x(t)\) and \(\delta y=y(t+\delta t)-y(t)\). The trick is to make the change in \(f\) happen in two steps: first move \(x\) only, then move \(y\) only. Adding and subtracting \(f(x+\delta x,y)\):</p>
+\[\begin{aligned}&f(x+\delta x,y+\delta y)-f(x,y)\\&=\big[f(x+\delta x,y)-f(x,y)\big]\\&\quad+\big[f(x+\delta x,y+\delta y)-f(x+\delta x,y)\big].\end{aligned}\]
+<p>Divide by \(\delta t\) and multiply-and-divide each bracket by \(\delta x\) and \(\delta y\) respectively:</p>
+\[\begin{aligned}\frac{dz}{dt}&=\lim_{\delta x\to0}\left[\frac{f(x+\delta x,y)-f(x,y)}{\delta x}\right]\\&\qquad\times\lim_{\delta t\to0}\left[\frac{\delta x}{\delta t}\right]\\&\quad+\lim_{\substack{\delta y\to0\\\delta x\to0}}\left[\frac{f(x+\delta x,y+\delta y)-f(x+\delta x,y)}{\delta y}\right]\\&\qquad\times\lim_{\delta t\to0}\left[\frac{\delta y}{\delta t}\right]\\&=\pd fx\frac{dx}{dt}+\pd fy\frac{dy}{dt}.\end{aligned}\]
+<p>The first bracket is exactly the definition of \(f_x\); the second becomes \(f_y\) evaluated at \((x,y)\) because \(\delta x\to0\) too (this step quietly uses continuity of \(f_y\)). As \(\delta t\to0\), \(\delta x\to0\) and \(\delta y\to0\).</p>
+</div></details>
+<div class="box eg"><span class="tag">Example 1.3.1</span>
+<p>If \(z=f(x,y)\) where \(f(x,y)=x^2+2xy\) and \(x=\sin t,\ y=\cos t\), find \(dz/dt\).</p>
+\[\begin{aligned}\frac{dz}{dt}&=\pd fx\frac{dx}{dt}+\pd fy\frac{dy}{dt}\\&=(2x+2y)\cos t+2x(-\sin t)\\&=2(\sin t+\cos t)\cos t-2\sin^2 t\\&=2\sin t\cos t+2(\cos^2t-\sin^2t)\\&=\sin2t+2\cos2t.\end{aligned}\]
+<p>Check by direct substitution: \(z=\sin^2t+2\sin t\cos t=\sin^2t+\sin2t\), so \(\dfrac{dz}{dt}\) \(=2\sin t\cos t+2\cos2t\) \(=\sin2t+2\cos2t.\) ✓</p>
+</div>
+<h3>Special case: \(y\) is a function of \(x\)</h3>
+<p>Suppose \(z=f(x,y)\) and \(y=y(x)\). Then \(z\) is really a function of \(x\) only. Put \(x=t\) in Theorem 1.3.1 (so \(dx/dt=1\)):</p>
+\[\frac{dz}{dx}=\pd fx+\pd fy\frac{dy}{dx}.\]
+<p class="word"><b>In words:</b> the <b>total derivative</b> \(dz/dx\) counts both the direct effect of \(x\) (\(\partial f/\partial x\), with \(y\) frozen) and the indirect effect through \(y\) (\(\partial f/\partial y\times dy/dx\)).</p>
+<div class="box warn"><span class="tag">Watch out</span><p>\(\dfrac{dz}{dx}\) and \(\dfrac{\partial f}{\partial x}\) are different here. The partial derivative pretends \(y\) stays still; the total derivative lets \(y\) follow its rule \(y(x)\).</p></div>
+<div class="box eg"><span class="tag">Example 1.3.2</span>
+<p>\(z=f(x,y)=\tan^{-1}\!\left(\dfrac xy\right)\), \(y=\sin x\). Using \(\frac{d}{du}\tan^{-1}u=\frac1{1+u^2}\):</p>
+\[\begin{aligned}\pd fx&=\frac{1}{1+x^2/y^2}\cdot\frac1y=\frac{y}{x^2+y^2},\\ \pd fy&=\frac{1}{1+x^2/y^2}\cdot\left(-\frac{x}{y^2}\right)=-\frac{x}{x^2+y^2}.\end{aligned}\]
+\[\begin{aligned}\frac{dz}{dx}&=\frac{y}{x^2+y^2}-\frac{x}{x^2+y^2}\cos x\\&=\frac{\sin x-x\cos x}{x^2+\sin^2x}.\end{aligned}\]
+<details><summary>Show the calculation: the simplifications</summary><div>
+<ol class="steps">
+<li>Let \(w=x/y\). Then \(\pd wx=\dfrac1y\) (\(y\) constant) and \(\pd wy=-\dfrac{x}{y^2}\) (\(x\) constant, derivative of \(y^{-1}\) is \(-y^{-2}\)).</li>
+<li>\(\pd fx=\dfrac{1}{1+w^2}\cdot\dfrac1y=\dfrac{1}{1+x^2/y^2}\cdot\dfrac1y\). Multiply top and bottom of the first fraction by \(y^2\) to clear the small fraction: \(\dfrac{y^2}{y^2+x^2}\cdot\dfrac1y=\dfrac{y}{x^2+y^2}\).</li>
+<li>\(\pd fy=\dfrac{y^2}{x^2+y^2}\cdot\left(-\dfrac{x}{y^2}\right)=-\dfrac{x}{x^2+y^2}\) (the \(y^2\) cancels).</li>
+<li>Total derivative: \(\dfrac{dz}{dx}=\pd fx+\pd fy\dfrac{dy}{dx}\) with \(\dfrac{dy}{dx}=\cos x\), giving \(\dfrac{y-x\cos x}{x^2+y^2}\) over a common denominator.</li>
+<li>Finally replace \(y\) by \(\sin x\) everywhere, so the answer is in terms of \(x\) only.</li>
+</ol>
+</div></details>
+</div>
+<h3>Implicit differentiation, again</h3>
+<p>If \(y\) is defined as an <b>implicit function</b> of \(x\) by the equation \(z=f(x,y)=0\), then \(z\) is constantly zero along the curve, so \(dz/dx\equiv0\). The special case above gives \(0=f_x+f_y\,\dfrac{dy}{dx}\), so</p>
+\[\frac{dy}{dx}=-\frac{\partial f/\partial x}{\partial f/\partial y}\qquad\text{whenever }\pd fy\ne0.\]
+<p class="word"><b>In words:</b> slope of the curve \(f(x,y)=0\) = −(partial in \(x\)) ÷ (partial in \(y\)). Note the minus sign: it is not a cancellation of fractions.</p>
+<div class="box eg"><span class="tag">Example 1.3.3</span>
+<p>The slope of the tangent at a point \((x,y)\) of the conic \(f(x,y)\) \(=ax^2+2hxy+by^2+2px+2qy+c\) \(=0\) is</p>
+\[\begin{aligned}\frac{dy}{dx}&=-\frac{\partial f/\partial x}{\partial f/\partial y}=-\frac{2ax+2hy+2p}{2hx+2by+2q}\\&=-\frac{ax+hy+p}{hx+by+q}.\end{aligned}\]
+<p>(A <b>conic</b> is any curve given by a second-degree equation in \(x\) and \(y\): circle, ellipse, parabola or hyperbola.)</p>
+</div>
+<h3>Change of variables</h3>
+<div class="box thm"><span class="tag">Theorem 1.3.2 (Change of variables)</span>
+<p>If \(z=f(x,y)\) and \(x=x(u,v),\ y=y(u,v)\), then</p>
+\[\begin{aligned}\pd zu&=\pd fx\pd xu+\pd fy\pd yu,\\ \pd zv&=\pd fx\pd xv+\pd fy\pd yv.\end{aligned}\]
+<p class="word"><b>In words:</b> same tree as before, but now \(x\) and \(y\) each depend on two variables \(u,v\). To differentiate with respect to \(u\), hold \(v\) fixed and follow every path from \(z\) to \(u\).</p>
+</div>
+<p><b>Proof.</b> Holding \(v\) fixed, \(x\) and \(y\) are functions of the single variable \(u\), so Theorem 1.3.1 applies with \(u\) in place of \(t\) (and \(d\) becoming \(\partial\) because \(v\) is held fixed). Likewise for \(v\).</p>
+<div class="box eg"><span class="tag">Example 1.3.4</span>
+<p>\(z=f(x,y)=e^{2xy}\) with the change of variables to polar coordinates \(x=r\cos\theta,\ y=r\sin\theta\). Here \(f_x=2ye^{2xy}\), \(f_y=2xe^{2xy}\), \(\partial x/\partial r=\cos\theta\), \(\partial y/\partial r=\sin\theta\). Also \(2xy=2r^2\cos\theta\sin\theta=r^2\sin2\theta\). So</p>
+\[\begin{aligned}\pd zr&=2ye^{2xy}\cos\theta+2xe^{2xy}\sin\theta\\&=2r\,e^{r^2\sin2\theta}\sin2\theta,\end{aligned}\]
+<p>(since \(2y\cos\theta+2x\sin\theta\) \(=4r\sin\theta\cos\theta\) \(=2r\sin2\theta\)), and with \(\partial x/\partial\theta=-r\sin\theta\), \(\partial y/\partial\theta=r\cos\theta\):</p>
+\[\begin{aligned}\pd z\theta&=2ye^{2xy}(-r\sin\theta)+2xe^{2xy}\,r\cos\theta\\&=2r^2e^{r^2\sin2\theta}\cos2\theta.\end{aligned}\]
+<p>Check: substitute first, \(z=e^{r^2\sin2\theta}\), and differentiate directly; both answers agree. ✓</p>
+<details><summary>Show the calculation: simplifying both derivatives, and the check</summary><div>
+<ol class="steps">
+<li><b>The exponent.</b> \(2xy\) \(=2(r\cos\theta)(r\sin\theta)\) \(=r^2(2\sin\theta\cos\theta)\) \(=r^2\sin2\theta\), using the double-angle formula \(\sin2\theta=2\sin\theta\cos\theta\).</li>
+<li><b>\(\partial z/\partial r\).</b> Factor out \(e^{2xy}\): \(e^{2xy}\,(2y\cos\theta+2x\sin\theta)\). Substitute \(x=r\cos\theta,\ y=r\sin\theta\) in the bracket: \(2r\sin\theta\cos\theta+2r\cos\theta\sin\theta\) \(=4r\sin\theta\cos\theta\) \(=2r\sin2\theta\).</li>
+<li><b>\(\partial z/\partial\theta\).</b> Factor out \(e^{2xy}\): \(e^{2xy}\,(-2yr\sin\theta+2xr\cos\theta)\). Substitute: \(-2r^2\sin^2\theta+2r^2\cos^2\theta\) \(=2r^2(\cos^2\theta-\sin^2\theta)\) \(=2r^2\cos2\theta\), using \(\cos2\theta=\cos^2\theta-\sin^2\theta\).</li>
+<li><b>Check.</b> With \(z=e^{r^2\sin2\theta}\): differentiating the exponent with respect to \(r\) (\(\theta\) fixed) gives \(2r\sin2\theta\); with respect to \(\theta\) (\(r\) fixed) gives \(r^2\cdot2\cos2\theta\). Multiplying each by \(e^{r^2\sin2\theta}\) (chain rule for \(e^{(\ )}\)) reproduces both answers.</li>
+</ol>
+</div></details>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · second derivatives after a change of variables (exam type C1.1)</span>
+<p>The handout stops at first derivatives, but December Q1(a) almost always asks for <b>second</b> derivatives in new coordinates (e.g. "show that \(f_{xx}+f_{yy}=g_{rr}+\frac1rg_r+\frac1{r^2}g_{\theta\theta}\)"). Two facts make this work.</p>
+<p><b>Fact 1. The chain rule is an operator.</b> Theorem 1.3.2 run backwards (from \(f(x,y)=g(u,v)\) to \(x\)-derivatives) says, for <i>any</i> function \(\Box\):</p>
+\[\pd{\Box}{x}=\pd{\Box}{u}\pd ux+\pd{\Box}{v}\pd vx.\]
+<p>To get \(f_{xx}\), apply this to \(\Box=f_x\), which you have already written in terms of \(g_u,g_v\) and \(u,v\). Remember that \(g_u\) and \(g_v\) are themselves functions of \(u\) and \(v\), so they need the operator too, and the coefficients (like \(\cos\theta\)) need the product rule.</p>
+<p><b>Fact 2. Partial derivatives do not flip.</b> \(\pd rx\ne1\Big/\pd xr\) in general, because different variables are held fixed (\(y\) on the left, \(\theta\) on the right). For polar coordinates, from \(r=\sqrt{x^2+y^2}\), \(\theta=\tan^{-1}(y/x)\):</p>
+\[\begin{aligned}\pd rx&=\frac xr=\cos\theta, & \pd ry&=\sin\theta,\\ \pd\theta x&=-\frac{\sin\theta}{r}, & \pd\theta y&=\frac{\cos\theta}{r},\end{aligned}\]
+<p>whereas \(\pd xr=\cos\theta\) but \(\pd x\theta=-r\sin\theta\), and \(1/(\partial x/\partial\theta)\ne\partial\theta/\partial x\).</p>
+<p><b>Worked example: Laplacian in polar coordinates.</b> Let \(g(r,\theta)=f(r\cos\theta,r\sin\theta)\).</p>
+<ol class="steps">
+<li>First derivatives: \(f_x=\cos\theta\,g_r-\dfrac{\sin\theta}{r}\,g_\theta\) and \(f_y=\sin\theta\,g_r+\dfrac{\cos\theta}{r}\,g_\theta\).</li>
+<li>Apply the operator \(\pd{}{x}=\cos\theta\pd{}{r}-\dfrac{\sin\theta}{r}\pd{}{\theta}\) to \(f_x\):
+\[\begin{aligned}f_{xx}&=\cos\theta\Big(\cos\theta\,g_{rr}+\frac{\sin\theta}{r^2}g_\theta\\&\qquad\quad-\frac{\sin\theta}{r}g_{r\theta}\Big)\\&\quad-\frac{\sin\theta}{r}\Big(-\sin\theta\,g_r+\cos\theta\,g_{r\theta}\\&\qquad\quad-\frac{\cos\theta}{r}g_\theta-\frac{\sin\theta}{r}g_{\theta\theta}\Big).\end{aligned}\]</li>
+<li>Do the same for \(f_{yy}\) with \(\pd{}{y}=\sin\theta\pd{}{r}+\dfrac{\cos\theta}{r}\pd{}{\theta}\), then add. Every \(g_{r\theta}\) and \(g_\theta\) term cancels and \(\cos^2\theta+\sin^2\theta=1\) leaves
+\[\boxed{\begin{aligned}&\pd{^2f}{x^2}+\pd{^2f}{y^2}\\&=\pd{^2g}{r^2}+\frac1r\pd gr+\frac1{r^2}\pd{^2g}{\theta^2}\end{aligned}}\]</li>
+</ol>
+<details><summary>Show the calculation: the full derivation, every term</summary><div>
+<p><b>Step A: derivatives of \(r\) and \(\theta\) with respect to \(x\) and \(y\).</b> From \(r=\sqrt{x^2+y^2}\): \(r_x=\dfrac{2x}{2\sqrt{x^2+y^2}}=\dfrac xr=\cos\theta\) and likewise \(r_y=\dfrac yr=\sin\theta\). From \(\theta=\tan^{-1}(y/x)\), using \(\frac{d}{dw}\tan^{-1}w=\frac1{1+w^2}\):</p>
+\[\begin{aligned}\theta_x&=\frac{1}{1+y^2/x^2}\cdot\left(-\frac{y}{x^2}\right)\\&=-\frac{y}{x^2+y^2}=-\frac{\sin\theta}{r},\\ \theta_y&=\frac{1}{1+y^2/x^2}\cdot\frac1x\\&=\frac{x}{x^2+y^2}=\frac{\cos\theta}{r}.\end{aligned}\]
+<p>(Multiply top and bottom by \(x^2\), then use \(y=r\sin\theta\), \(x=r\cos\theta\), \(x^2+y^2=r^2\).)</p>
+<p><b>Step B: first derivatives.</b> The chain rule (Theorem 1.3.2 with the roles of the variables swapped) gives</p>
+\[\begin{aligned}f_x&=g_r\,r_x+g_\theta\,\theta_x=\cos\theta\,g_r-\frac{\sin\theta}{r}g_\theta,\\ f_y&=g_r\,r_y+g_\theta\,\theta_y=\sin\theta\,g_r+\frac{\cos\theta}{r}g_\theta.\end{aligned}\]
+<p>So, as operators, \(\pd{}{x}=\cos\theta\pd{}{r}-\dfrac{\sin\theta}{r}\pd{}{\theta}\) and \(\pd{}{y}=\sin\theta\pd{}{r}+\dfrac{\cos\theta}{r}\pd{}{\theta}\).</p>
+<p><b>Step C: \(f_{xx}\).</b> Apply \(\partial/\partial x\) to \(f_x\). Two pieces are needed.</p>
+<ul class="list">
+<li>\(\pd{}{r}(f_x)\) \(=\cos\theta\,g_{rr}-\sin\theta\,\pd{}{r}\!\left(\dfrac{g_\theta}{r}\right)\) \(=\cos\theta\,g_{rr}-\dfrac{\sin\theta}{r}g_{r\theta}+\dfrac{\sin\theta}{r^2}g_\theta\). (\(\cos\theta\) and \(\sin\theta\) are constants when \(\theta\) is held fixed; \(g_\theta/r\) needs the product rule, and \((1/r)'=-1/r^2\).)</li>
+<li>\(\pd{}{\theta}(f_x)\) \(=-\sin\theta\,g_r\) \(+\:\cos\theta\,g_{r\theta}\) \(-\:\dfrac1r\big(\cos\theta\,g_\theta+\sin\theta\,g_{\theta\theta}\big)\). (Now \(r\) is constant; each product \(\cos\theta\,g_r\) and \(\sin\theta\,g_\theta\) needs the product rule in \(\theta\); \(g_{r\theta}=g_{\theta r}\) by the mixed-partials theorem.)</li>
+</ul>
+<p>Then \(f_{xx}=\cos\theta\cdot\pd{}{r}(f_x)-\dfrac{\sin\theta}{r}\cdot\pd{}{\theta}(f_x)\). Multiplying out and collecting like terms:</p>
+\[\begin{aligned}f_{xx}&=\cos^2\theta\,g_{rr}-\frac{2\sin\theta\cos\theta}{r}g_{r\theta}\\&\quad+\frac{2\sin\theta\cos\theta}{r^2}g_\theta+\frac{\sin^2\theta}{r}g_r\\&\quad+\frac{\sin^2\theta}{r^2}g_{\theta\theta}.\end{aligned}\]
+<p>(The \(g_{r\theta}\) terms: \(\cos\theta\cdot(-\frac{\sin\theta}{r})\) plus \((-\frac{\sin\theta}{r})\cdot\cos\theta\). The \(g_\theta\) terms: \(\cos\theta\cdot\frac{\sin\theta}{r^2}\) plus \((-\frac{\sin\theta}{r})(-\frac{\cos\theta}{r})\).)</p>
+<p><b>Step D: \(f_{yy}\).</b> The same two pieces for \(f_y\):</p>
+<ul class="list">
+<li>\(\pd{}{r}(f_y)\) \(=\sin\theta\,g_{rr}+\dfrac{\cos\theta}{r}g_{r\theta}-\dfrac{\cos\theta}{r^2}g_\theta\),</li>
+<li>\(\pd{}{\theta}(f_y)\) \(=\cos\theta\,g_r\) \(+\:\sin\theta\,g_{r\theta}\) \(+\:\dfrac1r\big(-\sin\theta\,g_\theta+\cos\theta\,g_{\theta\theta}\big)\).</li>
+</ul>
+<p>Then \(f_{yy}=\sin\theta\cdot\pd{}{r}(f_y)+\dfrac{\cos\theta}{r}\cdot\pd{}{\theta}(f_y)\), which collects to</p>
+\[\begin{aligned}f_{yy}&=\sin^2\theta\,g_{rr}+\frac{2\sin\theta\cos\theta}{r}g_{r\theta}\\&\quad-\frac{2\sin\theta\cos\theta}{r^2}g_\theta+\frac{\cos^2\theta}{r}g_r\\&\quad+\frac{\cos^2\theta}{r^2}g_{\theta\theta}.\end{aligned}\]
+<p><b>Step E: add.</b> Term by term: \(g_{rr}\) has \(\cos^2\theta+\sin^2\theta=1\); the \(g_{r\theta}\) and \(g_\theta\) terms have equal and opposite coefficients and cancel; \(g_r\) has \(\frac{\sin^2\theta+\cos^2\theta}{r}=\frac1r\); \(g_{\theta\theta}\) has \(\frac1{r^2}\). This is the boxed result. (Both intermediate formulas were checked in sympy.)</p>
+</div></details>
+<p class="word"><b>In words:</b> the Laplacian (sum of the two unmixed second derivatives) in polar coordinates = second \(r\)-derivative + (1/r)× first \(r\)-derivative + (1/r²)× second \(\theta\)-derivative.</p>
+<p class="muted small">Checked in sympy on a test function. The full exam versions of this, with marker notes, are in <a class="guide" href="guide-C1.html#C1-1">Guide C1.1</a>.</p>
+</div>
+</section>
+
+<section id="s4">
+<h2><span class="n">4</span>Taylor's theorem in two variables <span class="muted small">(handout §1.4, pp. 10–13)</span></h2>
+<p>Taylor's theorem replaces a complicated function near a point by a polynomial that matches its value and its derivatives there. You met the one-variable version in first year; here it is restated, then extended to two variables.</p>
+<div class="box thm"><span class="tag">Taylor's theorem, one variable</span>
+<p>If \(f(x)\) has continuous derivatives \(f'(x),f''(x),\dots,f^{(N-1)}(x)\) in \([a,b]\) and \(f^{(N)}(x)\) exists in \((a,b)\), then</p>
+\[\begin{aligned}f(a+h)&=f(a)+\frac{h}{1!}f'(a)+\frac{h^2}{2!}f''(a)+\cdots\\&\quad+\frac{h^{N-1}}{(N-1)!}f^{(N-1)}(a)+R_N(h),\end{aligned}\]
+<p>where \(R_N(h)\) is the <b>error term</b> (also called the remainder): the difference between the true value and the polynomial.</p>
+<p class="word"><b>In words:</b> value a small step \(h\) away = value here + step × slope + (step²/2!) × curvature + … + error.</p>
+</div>
+<p>Writing \(h=x-a\) gives the equivalent form</p>
+\[\begin{aligned}f(x)&=f(a)+(x-a)f'(a)\\&\quad+\frac{(x-a)^2}{2!}f''(a)+\cdots+R'_N(x).\end{aligned}\]
+<p>When \(a=0\) it is called <b>Maclaurin's theorem</b>.</p>
+<div class="figure">
+  <p class="ttl">Example 1.4.1: approximating \(y=e^x\) near \(x=0\)</p>
+  <canvas class="plot" id="f-taylor1" style="aspect-ratio:16/10" aria-label="e to the x and its Taylor polynomials"></canvas>
+  <div class="ctrl"><label>Number of terms <input type="range" id="t1-n" min="1" max="6" step="1" value="2"></label></div>
+  <div class="readout" id="t1-out"></div>
+  <p class="cap">Orange: \(e^x\). Teal: the Taylor polynomial. The first four are \(y=1\), \(y=1+x\), \(y=1+x+x^2/2\), \(y=1+x+x^2/2+x^3/6\). Each extra term hugs the curve over a wider range.</p>
+</div>
+<h3>Two variables</h3>
+<div class="box thm"><span class="tag">Taylor's theorem, two variables</span>
+<p>Suppose \(f(x,y)\) has continuous partial derivatives of all orders up to and including \(N-1\) inside and on the boundary of the rectangle with vertices \((a,b),(a+c,b),(a,b+d),(a+c,b+d)\), and all \(N\)-th order partial derivatives exist within this rectangle. Then</p>
+\[\begin{aligned}&f(a+h,b+k)\\&=f(a,b)+\big[hf_x(a,b)+kf_y(a,b)\big]\\&\quad+\frac1{2!}\big[h^2f_{xx}(a,b)+2hkf_{xy}(a,b)\\&\qquad\quad+k^2f_{yy}(a,b)\big]+\cdots+R_N(h,k)\\&=\sum_{r=0}^{N-1}\frac1{r!}\left(h\pd{}{x}+k\pd{}{y}\right)^{\!r}f(a,b)\\&\quad+R_N(h,k),\end{aligned}\]
+<p>where \(R_N(h,k)\) is the error term.</p>
+<p class="word"><b>In words:</b> value at a nearby point = value here + (first-order change: step in \(x\) × slope in \(x\) + step in \(y\) × slope in \(y\)) + ½ × (second-order change) + … + error.</p>
+</div>
+<p><b>Reading the compact form.</b> \(\left(h\pd{}{x}+k\pd{}{y}\right)^r\) is expanded like a binomial \((A+B)^r\), with \(\partial/\partial x\) and \(\partial/\partial y\) acting on \(f\). For \(r=2\): \(h^2f_{xx}+2hkf_{xy}+k^2f_{yy}\) (using \(f_{xy}=f_{yx}\)), which is why the middle coefficient is 2. For \(r=3\) the coefficients would be \(1,3,3,1\). The generalisation to more than two variables works the same way.</p>
+<p>Writing \(h=x-a,\ k=y-b\) gives the equivalent form</p>
+\[\begin{aligned}f(x,y)&=f(a,b)+\big[(x-a)f_x(a,b)\\&\qquad+(y-b)f_y(a,b)\big]\\&\quad+\frac1{2!}\big[(x-a)^2f_{xx}(a,b)\\&\qquad+2(x-a)(y-b)f_{xy}(a,b)\\&\qquad+(y-b)^2f_{yy}(a,b)\big]+\cdots+R'_N(x,y).\end{aligned}\]
+<p>If \(R'_N(x,y)\to0\) as \(N\to\infty\), the infinite sum is the <b>Taylor series</b> representation of \(f(x,y)\).</p>
+<h3>Three useful truncations</h3>
+<p>Stopping after different numbers of terms gives successive approximations, all meeting \(z=f(x,y)\) at the point \((a,b)\):</p>
+<div class="cases">
+<div><b>Constant approximation</b>\(z=f(a,b)\)<br><span class="muted small">a horizontal plane at the right height</span></div>
+<div><b>Tangent plane approximation</b>\(z\) \(=f(a,b)\) \(+\:(x-a)f_x(a,b)\) \(+\:(y-b)f_y(a,b)\)<br><span class="muted small">a tilted plane with the right slopes (also called the <b>linear approximation</b>)</span></div>
+<div><b>Quadratic surface approximation</b>tangent plane \(+\dfrac1{2!}\big[(x-a)^2f_{xx}\) \(+\:2(x-a)(y-b)f_{xy}\) \(+\:(y-b)^2f_{yy}\big]\)<br><span class="muted small">a curved surface with the right curvatures</span></div>
+</div>
+<div class="box eg"><span class="tag">Example 1.4.2</span>
+<p><b>Find the tangent plane and quadratic surface approximations given by Taylor's theorem at the point \((1,0)\) for the cone \(f(x,y)=\sqrt{x^2+y^2}\). Hence estimate \(f(0.9,0.1)\).</b></p>
+<p>The derivatives are</p>
+\[\begin{aligned}f_x&=\frac{x}{\sqrt{x^2+y^2}}, & f_y&=\frac{y}{\sqrt{x^2+y^2}},\\ f_{xx}&=\frac{y^2}{\sqrt{(x^2+y^2)^3}}, & f_{xy}&=\frac{-xy}{\sqrt{(x^2+y^2)^3}},\\ f_{yy}&=\frac{x^2}{\sqrt{(x^2+y^2)^3}},\end{aligned}\]
+<p>which exist everywhere except at the origin \((0,0)\) (the tip of the cone). At \((1,0)\): \(f\) \(=1,\ f_x\) \(=1,\ f_y\) \(=0,\ f_{xx}\) \(=0,\ f_{xy}\) \(=0,\ f_{yy}\) \(=1\).</p>
+<details><summary>Show the calculation: the five derivatives of \(\sqrt{x^2+y^2}\)</summary><div>
+<p>Write \(f=(x^2+y^2)^{1/2}\) and let \(s=x^2+y^2\) for short.</p>
+<ol class="steps">
+<li>\(f_x=\tfrac12s^{-1/2}\cdot2x=x\,s^{-1/2}\): chain rule (power rule on the outside, \(\partial s/\partial x=2x\) inside). By the same steps, \(f_y=y\,s^{-1/2}\).</li>
+<li>\(f_{xx}=\pd{}{x}\big(x\,s^{-1/2}\big)\): product rule, because both \(x\) and \(s^{-1/2}\) contain \(x\):
+\[\begin{aligned}f_{xx}&=1\cdot s^{-1/2}+x\cdot\left(-\tfrac12\right)s^{-3/2}\cdot2x\\&=\frac{s-x^2}{s^{3/2}}=\frac{y^2}{(x^2+y^2)^{3/2}}.\end{aligned}\]
+(Put both terms over the common denominator \(s^{3/2}\); then \(s-x^2=y^2\).)</li>
+<li>\(f_{xy}=\pd{}{y}\big(x\,s^{-1/2}\big)\): now \(x\) is a constant, so only \(s^{-1/2}\) is differentiated: \(x\cdot(-\tfrac12)s^{-3/2}\cdot2y=-\dfrac{xy}{s^{3/2}}\).</li>
+<li>\(f_{yy}\): the same as step 2 with \(x\) and \(y\) swapped, so \(\dfrac{x^2}{s^{3/2}}\).</li>
+<li>At \((1,0)\): \(s=1\), so \(f=1\), \(f_x=1\), \(f_y=0\), \(f_{xx}=0^2/1=0\), \(f_{xy}=0\), \(f_{yy}=1^2/1=1\).</li>
+</ol>
+</div></details>
+<p>Tangent plane:</p>
+\[\begin{aligned}z&=f(1,0)+(x-1)f_x(1,0)+(y-0)f_y(1,0)\\&=1+(x-1)+y\times0=x.\end{aligned}\]
+<p>Quadratic surface:</p>
+\[\begin{aligned}z&=1+(x-1)+y\times0\\&\quad+\frac1{2!}\Big[(x-1)^2\times0+2(x-1)y\times0\\&\qquad\quad+y^2\times1\Big]\\&=x+\tfrac12y^2.\end{aligned}\]
+<p>Hence, using the tangent plane, \(f(0.9,0.1)\approx0.9\); using the quadratic surface, \(f(0.9,0.1)\approx0.9+0.1^2/2=0.905\). The correct value is \(f(0.9,0.1)=\sqrt{0.82}=0.9055\) (to 4 significant figures). A bound for the error in approximating a function near a point \((a,b)\) can be obtained by summing over-estimates of the sizes (moduli) of the terms in \(R_N(x,y)\).</p>
+</div>
+<div class="figure">
+  <p class="ttl">The cone and its approximations at \((1,0)\)</p>
+  <canvas class="plot" id="f-cone" style="aspect-ratio:16/11" aria-label="Cone with tangent plane or quadratic surface"></canvas>
+  <div class="ctrl"><label>Show
+    <select id="cone-sel"><option value="0">constant approximation z = 1</option><option value="1" selected>tangent plane z = x</option><option value="2">quadratic surface z = x + y²/2</option></select></label></div>
+  <p class="cap">Colour-shaded surface: the cone \(z=\sqrt{x^2+y^2}\). Orange: the chosen approximation. All touch at the dot \((1,0,1)\); switch between the three. The horizontal plane only matches the height; the tangent plane \(z=x\) also matches the slopes, so it lies along the cone in the \(x\)-direction; the quadratic surface \(z=x+y^2/2\) also bends upward in the \(y\)-direction, following the cone's sideways curvature, which no plane can do.</p>
+</div>
+</section>
+
+<section id="s5">
+<h2><span class="n">5</span>Maxima, minima and saddle points <span class="muted small">(handout §1.5, pp. 13–18)</span></h2>
+<div class="box def"><span class="tag">Definitions (local extrema)</span>
+<p>A function \(f(x,y)\) has a <b>local (relative) maximum</b> at a point \((a,b)\) if, for all points \((x,y)\) close to \((a,b)\),</p>
+\[f(x,y)\le f(a,b).\]
+<p>It has a <b>local (relative) minimum</b> at \((a,b)\) if, for all points \((x,y)\) close to \((a,b)\),</p>
+\[f(x,y)\ge f(a,b).\]
+<p class="word"><b>In words:</b> a local maximum is a hilltop: no nearby point is higher (though a different hill far away may be). A local minimum is the bottom of a dip: no nearby point is lower.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Local maxima and a local minimum on one surface</p>
+  <canvas class="plot" id="f-extrema" style="aspect-ratio:16/11" aria-label="Surface with two peaks and a dip"></canvas>
+  <p class="cap">Two hilltops (red): each is a local maximum, since no point near it is higher, even though one peak is lower than the other. One dip (orange): a local minimum, since no point near it is lower. The small rings around each point are the level curves just below a peak or just above the dip.</p>
+</div>
+<h3>Where to look: stationary points</h3>
+<p>At a local maximum or minimum at \((a,b)\), the curves lying in the two vertical planes \(x=a\) and \(y=b\) must also have a maximum or minimum there (a hilltop is the top of every path across it). From single-variable calculus, their slopes are zero:</p>
+\[\pd fx(a,b)=\pd fy(a,b)=0.\]
+<div class="figure">
+  <p class="ttl">At a hilltop, both slices are flat</p>
+  <canvas class="plot" id="f-stat" style="aspect-ratio:16/11" aria-label="Hilltop with the slice curves g(x)=f(x,b) and h(y)=f(a,y)"></canvas>
+  <p class="cap">At the top \((a,b)\): the teal curve \(g(x)=f(x,b)\) lies in the plane \(y=b\) and the purple curve \(h(y)=f(a,y)\) lies in the plane \(x=a\). Both have their highest point at the top, so both have a horizontal tangent (orange and red lines): \(\partial f/\partial x=0\) and \(\partial f/\partial y=0\). The dashed line drops to \((a,b,0)\) on the floor.</p>
+</div>
+<div class="box def"><span class="tag">Definition (stationary point)</span>
+<p>If \(f_x(a,b)=f_y(a,b)=0\), the point \((a,b)\) is a <b>stationary point</b> of \(f\).</p>
+<p class="word"><b>In words:</b> a stationary point is where the surface is flat in both the \(x\)- and \(y\)-directions, so its tangent plane is horizontal.</p>
+</div>
+<div class="box def"><span class="tag">Definition (saddle point)</span>
+<p>A stationary point can be neither a local maximum nor a local minimum. If along one path through \((a,b)\) the point is a local minimum, while along a different path it is a local maximum, \((a,b)\) is a <b>saddle point</b>. There is no equivalent for functions of one variable. (The nearest one-variable cousin, a stationary point of inflection like \(x^3\) at 0, is different: there the function rises on one side and falls on the other along the same line.)</p>
+</div>
+<div class="box analogy"><span class="tag">Analogy</span><p>A mountain pass. Walking along the ridge from one peak to the other, the pass is your lowest point. Walking across the ridge from one valley to the other, the pass is your highest point. The ground is flat at the pass, yet it is neither a top nor a bottom.</p></div>
+<p><b>Global extrema on a domain.</b> To find the largest (smallest) value of \(f(x,y)\) within a domain (these largest and smallest values are called <b>extrema</b>), we must consider all of:</p>
+<ul class="list">
+<li>the stationary points,</li>
+<li>the points where \(f_x\) or \(f_y\) fails to exist (for example the tip of a cone),</li>
+<li>the boundary points of the domain.</li>
+</ul>
+<p>The first two sets together are collectively called <b>critical points</b>. (This definition is not universal: some books use "critical point" to mean the same as "stationary point". Recent May papers say "critical points" and mean the points where \(f_x=f_y=0\).)</p>
+<div class="box eg"><span class="tag">Example 1.5.1</span>
+<p><b>1.</b> \(f(x,y)=x^2+2y^2\): \(f_x=2x,\ f_y=4y\). Setting both to zero gives \((x,y)=(0,0)\), the only stationary point. Since \(f(0,0)=0\) and clearly \(f(x,y)\ge0\) everywhere, this is a local minimum (also global).</p>
+<p><b>2.</b> \(f(x,y)=2x-x^2-2y^2\): \(f_x=2-2x,\ f_y=-4y\). Setting both to zero gives \((1,0)\), the only stationary point. Since</p>
+\[\begin{aligned}f(x,y)-f(1,0)&=2x-x^2-2y^2-1\\&=-(x-1)^2-2y^2\\&\lt0\quad\text{for all }(x,y)\ne(1,0),\end{aligned}\]
+<p>we have \(f(x,y)\le f(1,0)\), and \((1,0)\) is a local maximum (also global).</p>
+<p><b>3.</b> \(f(x,y)=x^2-2y^2\): \(f_x=2x,\ f_y=-4y\), so \((0,0)\) is the only stationary point. However, \(f\) may be positive or negative near it depending on the relative sizes of \(|x|\) and \(|y|\). Along \(y=0\), \(f(x,0)=x^2\ge0\) (minimum along this path). Along \(x=0\), \(f(0,y)=-2y^2\le0\) (maximum along this path). Thus \((0,0)\) is a saddle point.</p>
+</div>
+<div class="figure">
+  <p class="ttl">The three surfaces of Example 1.5.1</p>
+  <canvas class="plot" id="f-ex151" style="aspect-ratio:16/11" aria-label="Surface for example 1.5.1"></canvas>
+  <div class="ctrl"><label>Function <select id="ex151-sel"><option value="0">1. x² + 2y² (minimum)</option><option value="1">2. 2x − x² − 2y² (maximum)</option><option value="2">3. x² − 2y² (saddle)</option></select></label></div>
+  <p class="cap">The red dot is the stationary point. For the saddle, the teal curve (along \(y=0\)) bends up and the purple curve (along \(x=0\)) bends down.</p>
+</div>
+<h3>The second-derivative test (derived from Taylor's theorem)</h3>
+<p>Inspecting the sign of \(f(a+h,b+k)-f(a,b)\) for small \(h,k\) is not always easy. Instead we use Taylor's theorem to derive a test similar to the second-derivative test for one variable. At a stationary point \((a,b)\), Taylor's theorem gives</p>
+\[\begin{aligned}f(a+h,b+k)&=f(a,b)+h\underbrace{\pd fx(a,b)}_{0}+k\underbrace{\pd fy(a,b)}_{0}\\&\quad+\frac12\Big[h^2f_{xx}+2hkf_{xy}+k^2f_{yy}\Big]\\&\quad+R_3(h,k).\end{aligned}\]
+<p>For \(h\) and \(k\) sufficiently small we may assume \(R_3(h,k)\) is negligible compared with the other terms, so</p>
+\[\begin{aligned}&f(a+h,b+k)-f(a,b)\\&\approx\frac12\Big[h^2f_{xx}(a,b)+2hkf_{xy}(a,b)+k^2f_{yy}(a,b)\Big].\end{aligned}\]
+<p>Let \(q=h^2f_{xx}+2hkf_{xy}+k^2f_{yy}\). Completing the square in \(h\) (assuming \(f_{xx}\ne0\)):</p>
+\[\begin{aligned}q&=f_{xx}\left[h^2+2\frac{kf_{xy}}{f_{xx}}h+\left(\frac{kf_{xy}}{f_{xx}}\right)^2\right]\\&\quad+k^2f_{yy}-f_{xx}\left(\frac{kf_{xy}}{f_{xx}}\right)^2\\&=f_{xx}\left(h+\frac{kf_{xy}}{f_{xx}}\right)^2\\&\quad+\frac{k^2}{f_{xx}}\left(f_{xx}f_{yy}-f_{xy}^2\right).\end{aligned}\]
+<p>Reading off signs (a square is never negative):</p>
+<div class="scroll"><table>
+<tr><th>Sign of \(q\) for all small \((h,k)\ne(0,0)\)</th><th>happens exactly when</th><th>so \((a,b)\) is</th></tr>
+<tr><td>\(q\gt0\) always</td><td>\(f_{xx}\gt0\) and \(f_{xx}f_{yy}-f_{xy}^2\gt0\)</td><td>local minimum</td></tr>
+<tr><td>\(q\lt0\) always</td><td>\(f_{xx}\lt0\) and \(f_{xx}f_{yy}-f_{xy}^2\gt0\)</td><td>local maximum</td></tr>
+<tr><td>\(q\) takes both signs ("sign indefinite")</td><td>\(f_{xx}f_{yy}-f_{xy}^2\lt0\)</td><td>saddle point</td></tr>
+</table></div>
+<details><summary>Show the calculation: completing the square, and why the signs come out this way</summary><div>
+<p><b>Completing the square</b> (the same trick as \(x^2+2bx=(x+b)^2-b^2\)):</p>
+<ol class="steps">
+<li>Take \(f_{xx}\) out of the two terms containing \(h\): \(q=f_{xx}\Big[h^2+2\dfrac{kf_{xy}}{f_{xx}}h\Big]+k^2f_{yy}\). (Multiplying back gives \(h^2f_{xx}+2hkf_{xy}\), as before.)</li>
+<li>Inside the bracket, \(b=\dfrac{kf_{xy}}{f_{xx}}\). Add \(b^2\) inside the bracket to make a perfect square, and subtract \(f_{xx}b^2\) outside so nothing has changed: \(q=f_{xx}(h+b)^2+k^2f_{yy}-f_{xx}b^2\).</li>
+<li>Simplify the leftover: \(f_{xx}b^2=f_{xx}\dfrac{k^2f_{xy}^2}{f_{xx}^2}=\dfrac{k^2f_{xy}^2}{f_{xx}}\). So \(k^2f_{yy}-\dfrac{k^2f_{xy}^2}{f_{xx}}=\dfrac{k^2}{f_{xx}}\big(f_{xx}f_{yy}-f_{xy}^2\big)\) (common denominator \(f_{xx}\)).</li>
+</ol>
+<p>So \(q=f_{xx}\,(h+b)^2+\dfrac{k^2}{f_{xx}}\,D\) with \(D=f_{xx}f_{yy}-f_{xy}^2\).</p>
+<p><b>Reading off the signs.</b> \((h+b)^2\ge0\) and \(k^2\ge0\).</p>
+<ul class="list">
+<li><b>\(D\gt0\).</b> The first term has the sign of \(f_{xx}\) (or is 0); the second also has the sign of \(f_{xx}\) (since \(D\gt0\) and \(k^2\ge0\)), or is 0. Both are 0 only if \(k=0\) and then \(h=0\). So for every small step \((h,k)\ne(0,0)\), \(q\) has the sign of \(f_{xx}\): always positive (minimum) if \(f_{xx}\gt0\), always negative (maximum) if \(f_{xx}\lt0\).</li>
+<li><b>\(D\lt0\).</b> Step along \(k=0\), \(h\ne0\): \(q=f_{xx}h^2\), which has the sign of \(f_{xx}\). Now choose \(k\ne0\) and \(h=-b\) so the square is 0: \(q=\frac{k^2}{f_{xx}}D\), which has the <i>opposite</i> sign (since \(D\lt0\)). So \(q\) takes both signs near \((a,b)\): a saddle. (If \(f_{xx}=0\), then \(D=-f_{xy}^2\), and \(D\lt0\) means \(f_{xy}\ne0\); then \(q=k(2hf_{xy}+kf_{yy})\) changes sign when \(h\) changes sign with \(k\) small and fixed, again a saddle.)</li>
+<li><b>\(D=0\).</b> \(q=f_{xx}(h+b)^2\), which is 0 along the whole line \(h=-b\). Along that line the second-order terms tell you nothing and the neglected \(R_3\) decides, hence "no information".</li>
+</ul>
+</div></details>
+<p>If \(f_{xx}f_{yy}-f_{xy}^2=0\), higher-order terms in Taylor's theorem would need to be considered. The quantity \(f_{xx}f_{yy}-f_{xy}^2\) is called the <b>discriminant function</b> of \(f\) (many books write \(D\) or \(\Delta\); it is the determinant of the matrix of second derivatives).</p>
+<div class="box thm"><span class="tag">Summary: the second-derivative test</span>
+<p>All partial derivatives are evaluated at \((a,b)\). First, \((a,b)\) is a stationary point of \(f(x,y)\iff f_x=0\) and \(f_y=0\). Then, with \(D=f_{xx}f_{yy}-f_{xy}^2\):</p>
+<ol class="steps">
+<li>If \(D\gt0\): \((a,b)\) is a <b>local maximum</b> if \(f_{xx}\lt0\), a <b>local minimum</b> if \(f_{xx}\gt0\).</li>
+<li>If \(D\lt0\): \((a,b)\) is a <b>saddle point</b>.</li>
+<li>If \(D=0\): the test gives <b>no information</b>.</li>
+</ol>
+<p class="word"><b>In words:</b> positive discriminant means the surface curves the same way in every direction (a bowl or a dome), and \(f_{xx}\) tells you which; negative discriminant means it curves up in some directions and down in others (a saddle).</p>
+</div>
+<div class="box eg"><span class="tag">Example 1.5.2</span>
+<p><b>Determine the nature of the stationary points of \(f(x,y)=x^3+y^3-3(x+y)\).</b></p>
+<p>\(f_x=3x^2-3=0\Rightarrow x=\pm1\), and \(f_y=3y^2-3=0\Rightarrow y=\pm1\). Every combination works, so there are 4 stationary points: \((1,1),(-1,-1),(1,-1),(-1,1)\). Second derivatives: \(f_{xx}=6x,\ f_{yy}=6y,\ f_{xy}=0\).</p>
+<div class="scroll"><table>
+<tr><th>Point</th><th>\(f_{xx}\)</th><th>\(f_{xy}\)</th><th>\(f_{yy}\)</th><th>\(f_{xx}f_{yy}-f_{xy}^2\)</th><th>Conclusion</th></tr>
+<tr><td>\((1,1)\)</td><td>\(6\ (\gt0)\)</td><td>0</td><td>6</td><td>\(36\ (\gt0)\)</td><td>minimum</td></tr>
+<tr><td>\((-1,-1)\)</td><td>\(-6\ (\lt0)\)</td><td>0</td><td>\(-6\)</td><td>\(36\ (\gt0)\)</td><td>maximum</td></tr>
+<tr><td>\((1,-1)\)</td><td>\(6\ (\gt0)\)</td><td>0</td><td>\(-6\)</td><td>\(-36\ (\lt0)\)</td><td>saddle point</td></tr>
+<tr><td>\((-1,1)\)</td><td>\(-6\ (\lt0)\)</td><td>0</td><td>6</td><td>\(-36\ (\lt0)\)</td><td>saddle point</td></tr>
+</table></div>
+</div>
+<div class="figure">
+  <p class="ttl">Example 1.5.2 on a contour map</p>
+  <canvas class="plot" id="f-ex152" style="aspect-ratio:1/0.85" aria-label="Contour map of x cubed plus y cubed minus 3(x+y) with four stationary points"></canvas>
+  <p class="cap">Minimum at \((1,1)\): small closed loops (a dip). Maximum at \((-1,-1)\): small closed loops (a hilltop). Saddles at \((1,-1)\) and \((-1,1)\): level curves cross in an X. Learning to spot these patterns lets you sanity-check an answer.</p>
+</div>
+<div class="box eg"><span class="tag">Example 1.5.3 (when the test fails)</span>
+<p>Consider \(f(x,y)=x^4+y^4\), which has \(f_x=4x^3,\ f_y=4y^3\), so \((0,0)\) is the only stationary point. The discriminant at \((0,0)\) is</p>
+\[\pd{^2f}{x^2}\pd{^2f}{y^2}-\left(\frac{\partial^2f}{\partial x\,\partial y}\right)^2=0\cdot0-0^2=0,\]
+<p>so the second-derivative test is inconclusive. However, it is obvious that \((0,0)\) is a local minimum, because \(f(0,0)=0\) and \(f\ge0\) everywhere.</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · what to do when \(D=0\)</span>
+<p>The handout only says "higher-order terms need to be considered". In the past papers with \(D=0\) (Dec 2016 Q1(b)(ii), where a whole line of stationary points appears, and Dec 2023 Q2(a)) the reliable method is to <b>look at \(f(a+h,b+k)-f(a,b)\) directly</b>:</p>
+<ol class="steps">
+<li>If it is \(\ge0\) for all nearby points (like \(x^4+y^4\)), the point is a minimum; if \(\le0\), a maximum.</li>
+<li>To prove a saddle, find <b>two paths</b> through the point with opposite behaviour. Try the axes \(x=0\), \(y=0\) first, then lines \(y=mx\) or curves like \(x=y^2\). Example: \(f=x^4-y^4\) has \(D=0\) at the origin, but \(f(x,0)=x^4\gt0\) and \(f(0,y)=-y^4\lt0\), so it is a saddle.</li>
+</ol>
+<p>Dec 2023 Q2(a) gives the hint "consider \(f\) along \(y=mx\)": along a line the function becomes a one-variable function of \(x\), which you can analyse with first-year methods.</p>
+</div>
+</section>
+
+<section id="s6">
+<h2><span class="n">6</span>Directional derivative and gradient <span class="muted small">(handout §1.6, pp. 18–23)</span></h2>
+<p>For \(z=f(x,y)\), the partial derivatives \(f_x\) and \(f_y\) measure the rate of change of \(f\) in the \(x\)- and \(y\)-directions only. A hiker can walk in any direction, so we would like the rate of change in <b>any</b> direction.</p>
+<p>Start at \(P_0(x_0,y_0)\) and walk a distance \(s\) along a straight line \(l\) to the point \(P(x,y)\). The average rate of change along \(l\) is</p>
+\[\frac{f(x,y)-f(x_0,y_0)}{s},\]
+<p>and the rate of change at \((x_0,y_0)\) along the direction from \(P_0\) to \(P\) is its limit:</p>
+<div class="box def"><span class="tag">Definition (directional derivative)</span>
+\[\frac{df}{ds}(x_0,y_0)=\lim_{s\to0}\frac{f(x,y)-f(x_0,y_0)}{s},\]
+<p>provided the limit exists. This is the <b>directional derivative</b> of \(f(x,y)\) in the direction \(P_0P\).</p>
+<p class="word"><b>In words:</b> the directional derivative = the slope of the surface you feel underfoot when you walk from \(P_0\) in the chosen direction (rise per unit distance walked).</p>
+</div>
+<div class="figure">
+  <p class="ttl">The directional derivative is the slope of a vertical slice</p>
+  <canvas class="plot" id="f-dir3" style="aspect-ratio:16/11" aria-label="Surface sliced along a chosen direction"></canvas>
+  <div class="ctrl"><label>Direction angle <input type="range" id="d3-a" min="0" max="360" step="1" value="30"></label></div>
+  <div class="readout" id="d3-out"></div>
+  <p class="cap">On the floor: the point \(P_0\) (red) and the line \(l\) through it in the chosen direction \(\vb u\) (dark arrow). Above it: the curve where the vertical plane through \(l\) cuts the surface (teal). The orange line is its tangent at the point above \(P_0\); its slope is \(df/ds\), the directional derivative. Surface \(f=1.2+0.6x-0.3y^2+0.2xy\) (an example), \(P_0=(0.4,0.5)\).</p>
+</div>
+<p>Let \(\vb u=u_1\ii+u_2\jj\) be the <b>unit vector</b> (a vector of length 1) specifying the direction. Walking a distance \(s\) along it takes you to</p>
+\[x=x_0+su_1,\qquad y=y_0+su_2.\]
+<p>Using Taylor's theorem (the tangent-plane part, since \(s\) is small):</p>
+\[\begin{aligned}&\frac{df}{ds}(x_0,y_0)\\&=\lim_{s\to0}\frac{f(x_0+su_1,y_0+su_2)-f(x_0,y_0)}{s}\\&=\lim_{s\to0}\frac{su_1f_x(x_0,y_0)+su_2f_y(x_0,y_0)}{s}\\&=u_1f_x(x_0,y_0)+u_2f_y(x_0,y_0).\end{aligned}\]
+<p>This is a dot product of \(\vb u\) with the vector \((f_x,f_y)\). To keep a vector description, we give that vector a name.</p>
+<div class="box def"><span class="tag">Definition (gradient)</span>
+\[\operatorname{grad}f=f_x\,\ii+f_y\,\jj\]
+<p>(also written \(\nabla f\), read "del f" or "nabla f")</p>
+<p>is the <b>gradient</b> of \(f\). For a function of three variables \(f(x,y,z)\):</p>
+\[\operatorname{grad}f=\pd fx\ii+\pd fy\jj+\pd fz\kk.\]
+<p class="word"><b>In words:</b> the gradient is the vector whose components are the partial derivatives. It lives in the floor (the \(xy\)-plane), not on the surface.</p>
+</div>
+<div class="box thm"><span class="tag">Directional derivative formula</span>
+\[\begin{aligned}D_{\vb u}f(x_0,y_0)&=\frac{df}{ds}(x_0,y_0)\\&=\operatorname{grad}f(x_0,y_0)\cdot\vb u\qquad(|\vb u|=1)\end{aligned}\]
+<p class="word"><b>In words:</b> rate of change in direction \(\vb u\) = gradient dot (unit vector in that direction). \(D_{\vb u}f\) is the more common notation.</p>
+</div>
+<div class="box warn"><span class="tag">Watch out</span><p>\(\vb u\) must be a <b>unit</b> vector. An exam saying "in the direction of \(\ii+\jj\)" means \(\vb u=\frac{1}{\sqrt2}(\ii+\jj)\). Forgetting to divide by the length is the most common lost mark in this topic.</p></div>
+<p>Writing the dot product with the angle \(\alpha\) between \(\operatorname{grad}f(x_0,y_0)\) and \(\vb u\):</p>
+\[\begin{aligned}D_{\vb u}f(x_0,y_0)&=\operatorname{grad}f(x_0,y_0)\cdot\vb u\\&=|\operatorname{grad}f(x_0,y_0)|\,|\vb u|\cos\alpha\\&=|\operatorname{grad}f(x_0,y_0)|\cos\alpha\end{aligned}\]
+<p>(the last step since \(|\vb u|=1\)).</p>
+<p>Two questions now answer themselves:</p>
+<ol class="steps">
+<li><b>Along which direction is the rate of change largest?</b> \(\cos\alpha\) is largest (=1) when \(\alpha=0\), so \(\vb u\) must point along \(\operatorname{grad}f(x_0,y_0)\).</li>
+<li><b>What is the maximum rate of change?</b> At \(\alpha=0\) it is
+\[|\operatorname{grad}f(x_0,y_0)|=\sqrt{f_x^2(x_0,y_0)+f_y^2(x_0,y_0)}.\]</li>
+</ol>
+<p>In other words, \(\operatorname{grad}f\) gives both the <b>magnitude and direction of the greatest rate of change</b> of \(f\). The directional derivative is simply the projection of \(\operatorname{grad}f\) onto \(\vb u\). Following the same formula further: the fastest <i>decrease</i> is in the direction \(-\operatorname{grad}f\) (\(\alpha=\pi\)), at rate \(-|\operatorname{grad}f|\); and the rate is zero when \(\vb u\perp\operatorname{grad}f\) (\(\alpha=\pi/2\)).</p>
+<div class="figure">
+  <p class="ttl">Turn the direction \(\vb u\) and watch \(D_{\vb u}f\)</p>
+  <canvas class="plot" id="f-dir" style="aspect-ratio:1/0.85" aria-label="Contour map with gradient and a rotatable unit vector"></canvas>
+  <div class="ctrl"><label>Angle of \(\vb u\) <input type="range" id="dir-a" min="0" max="360" step="1" value="45"></label></div>
+  <div class="readout" id="dir-out"></div>
+  <p class="cap">Contours of \(\varphi=\ln\sqrt{x^2+y^2}\) (Example 1.6.1). Orange: \(\operatorname{grad}\varphi\) at \((1,2)\). Teal: the unit vector \(\vb u\). The readout shows \(D_{\vb u}\varphi=|\operatorname{grad}\varphi|\cos\alpha\); it peaks when \(\vb u\) lines up with the gradient.</p>
+</div>
+<h3>The gradient is normal to level curves</h3>
+<p>The gradient has another important geometric property. Consider a particle moving along the level curve \(f(x,y)=c\), at position \((x(t),y(t))\) at time \(t\). Since \(f\) stays equal to \(c\), the chain rule gives</p>
+\[\begin{gathered}\frac{df}{dt}=0=f_x\frac{dx}{dt}+f_y\frac{dy}{dt}\\ \Longrightarrow\quad0=\operatorname{grad}f(x,y)\cdot\left(\frac{dx}{dt}\ii+\frac{dy}{dt}\jj\right).\end{gathered}\]
+<p>The vector \(\frac{dx}{dt}\ii+\frac{dy}{dt}\jj\) is the particle's velocity, which always points along (tangent to) the curve. A zero dot product means perpendicular, so</p>
+<div class="box thm"><span class="tag">Result</span>
+<p>\(\operatorname{grad}f(x,y)\) at a point on the curve \(f(x,y)=c\) is always <b>normal</b> (perpendicular) to the curve.</p>
+<p class="word"><b>In words:</b> the steepest way up a hill crosses the contour lines at right angles.</p>
+</div>
+<p>Consequences for the tangent line. The 2D gradient vector \((f_x,f_y)\) has slope \(\dfrac{f_y}{f_x}\), so the tangent line (perpendicular to it) has slope \(-\dfrac{f_x}{f_y}\) (since \(-\dfrac{f_x}{f_y}\cdot\dfrac{f_y}{f_x}=-1\), the condition for perpendicular lines). This agrees with the implicit-differentiation formula of §3. Hence the equation of the tangent line at \((x_0,y_0)\) is</p>
+\[\begin{gathered}\frac{y-y_0}{x-x_0}=-\frac{f_x}{f_y}\\ \Longrightarrow\quad(x-x_0)f_x+(y-y_0)f_y=0,\end{gathered}\]
+<p>with \(f_x,f_y\) evaluated at \((x_0,y_0)\).</p>
+<p class="word"><b>In words:</b> the tangent line is the set of points whose displacement from \((x_0,y_0)\) has zero dot product with the gradient.</p>
+<p><b>Three variables.</b> For \(f(x,y,z)\), the gradient vector at \((x_0,y_0,z_0)\) is normal to the level surface \(f(x,y,z)=c\) and to its tangent plane at that point. The velocity of any particle moving on the surface \(f(x,y,z)=c\) is tangential to the surface. Picture a point \(P_0\) on the level surface with its tangent plane resting on it: any two curves drawn on the surface through \(P_0\) have velocities \(\vb v_1,\vb v_2\) lying in the tangent plane, and \(\nabla f\) sticks straight out of the plane, perpendicular to both. The figure in <a href="#s7">§7</a> shows a tangent plane with its normal; the tangent plane equation follows there.</p>
+<div class="box eg"><span class="tag">Example 1.6.1</span>
+<p><b>An electrostatic potential field is given by \(\varphi=\log(x^2+y^2)^{1/2}\). Find the directional derivative of this field at the point \((1,2)\) in the direction \(\ii+\jj\).</b> (Here \(\log\) means the natural log, \(\ln\).)</p>
+\[\begin{aligned}\vb u&=\frac1{\sqrt2}(\ii+\jj),\\ \operatorname{grad}\varphi&=\pd\varphi x\ii+\pd\varphi y\jj\\&=\frac{x}{x^2+y^2}\ii+\frac{y}{x^2+y^2}\jj.\end{aligned}\]
+<p>The directional derivative, evaluated at \((1,2)\), is</p>
+\[\begin{aligned}\frac{d\varphi}{ds}&=\operatorname{grad}\varphi\cdot\vb u\\&=\left(\tfrac15\ii+\tfrac25\jj\right)\cdot\frac1{\sqrt2}(\ii+\jj)\\&=\frac{3}{5\sqrt2}\approx0.424.\end{aligned}\]
+<p>The maximum rate of change at \((1,2)\) is determined by \(\operatorname{grad}\varphi=\frac15\ii+\frac25\jj\). Its magnitude is \(\frac1{\sqrt5}\approx0.447\) and its direction is \(\ii+2\jj\): directly away from the origin (as expected, since \(\varphi\) depends only on distance from the origin), and normal to the level curve through \((1,2)\), which is a circle centred at \((0,0)\).</p>
+</div>
+<div class="box eg"><span class="tag">Example 1.6.2</span>
+<p><b>The temperature in a room is \(T(x,y,z)=T_0(x^2-y^2+xyz)+273\), \(T_0\gt0\). Find the maximum rate of change of temperature at \((1,1,1)\) and the direction in which it occurs.</b></p>
+\[\begin{aligned}\operatorname{grad}T=T_0\big[&(2x+yz)\ii+(xz-2y)\jj\\&+xy\,\kk\big].\end{aligned}\]
+<p>At \((1,1,1)\): \(\operatorname{grad}T=T_0(3\ii-\jj+\kk)\), with magnitude \(T_0\sqrt{9+1+1}=T_0\sqrt{11}\).</p>
+<p>Thus the maximum rate of change of \(T\) at \((1,1,1)\) is \(T_0\sqrt{11}\), in the direction \(\vb n=\frac1{\sqrt{11}}(3\ii-\jj+\kk)\). \(T\) increases at this rate in the direction \(\vb n\), and decreases at this rate in the direction \(-\vb n\).</p>
+</div>
+</section>
+
+<section id="s7">
+<h2><span class="n">7</span><span>Beyond the handouts: tangent planes and normal lines <span class="pill">Beyond</span></span></h2>
+<div class="box beyond"><span class="tag">Beyond the handouts · why this section is here</span>
+<p>The handout states that the gradient is normal to a level surface and to its tangent plane, but never writes the tangent plane's equation. Every December paper from 2014 to 2025 asks for one (type C1.3). Everything below follows directly from §4 and §6.</p>
+</div>
+<h3>Form 1: surface given as a level surface \(F(x,y,z)=c\)</h3>
+<p>A plane through the point \(P_0(x_0,y_0,z_0)\) with normal vector \(\vb n=(n_1,n_2,n_3)\) consists of the points whose displacement from \(P_0\) is perpendicular to \(\vb n\): \(\vb n\cdot(x-x_0,\,y-y_0,\,z-z_0)=0\). Taking \(\vb n=\nabla F(P_0)\):</p>
+<div class="box thm"><span class="tag">Tangent plane to \(F(x,y,z)=c\) at \(P_0\)</span>
+\[\begin{aligned}&F_x(P_0)(x-x_0)+F_y(P_0)(y-y_0)\\&\quad+F_z(P_0)(z-z_0)=0\end{aligned}\]
+<p class="word"><b>In words:</b> (gradient at the point) · (position − point) = 0. It is the 3D version of the tangent line \((x-x_0)f_x+(y-y_0)f_y=0\) from §6.</p>
+</div>
+<p>The <b>normal line</b> (the straight line through \(P_0\) perpendicular to the surface) is \(\vb r(t)=(x_0,y_0,z_0)+t\,\nabla F(P_0)\).</p>
+<h3>Form 2: surface given as a graph \(z=f(x,y)\)</h3>
+<p>This is exactly the tangent plane approximation of §4:</p>
+\[\begin{aligned}z-z_0&=f_x(x_0,y_0)(x-x_0)\\&\quad+f_y(x_0,y_0)(y-y_0),\end{aligned}\]
+<p>where \(z_0=f(x_0,y_0)\).</p>
+<p>It is also Form 1 applied to \(F(x,y,z)=f(x,y)-z=0\), whose gradient is \((f_x,f_y,-1)\). So a normal vector to a graph is \(f_x\ii+f_y\jj-\kk\) (or its negative, the "upward" normal \(-f_x\ii-f_y\jj+\kk\), which you will meet again for flux integrals in Chapter 3c).</p>
+<div class="box eg"><span class="tag">Worked example (written for these notes)</span>
+<p><b>Find the tangent plane and normal line to the sphere \(x^2+y^2+z^2=9\) at \((1,2,2)\).</b></p>
+<ol class="steps">
+<li>\(F=x^2+y^2+z^2\), \(\nabla F=(2x,2y,2z)\). Check the point is on the surface: \(1+4+4=9\) ✓.</li>
+<li>\(\nabla F(1,2,2)=(2,4,4)\).</li>
+<li>Tangent plane: \(2(x-1)+4(y-2)+4(z-2)=0\), i.e. \(\boxed{x+2y+2z=9}\).</li>
+<li>Normal line: \((x,y,z)=(1,2,2)+t(2,4,4)\), which passes through the centre \((0,0,0)\) at \(t=-\tfrac12\), as it should for a sphere.</li>
+</ol>
+</div>
+<div class="figure">
+  <p class="ttl">A tangent plane resting on a surface</p>
+  <canvas class="plot" id="f-tplane" style="aspect-ratio:16/11" aria-label="Surface with tangent plane and normal vector"></canvas>
+  <div class="ctrl"><label>\(x_0\) <input type="range" id="tp-x" min="-1.2" max="1.2" step="0.05" value="0.5"></label><label>\(y_0\) <input type="range" id="tp-y" min="-1.2" max="1.2" step="0.05" value="0.3"></label></div>
+  <div class="readout" id="tp-out"></div>
+  <p class="cap">Surface \(z=2-x^2-\tfrac12y^2\) over a disc. Orange: the tangent plane at the red point. Arrow: the upward normal \(-f_x\ii-f_y\jj+\kk\).</p>
+</div>
+</section>
+
+<section id="s8">
+<h2><span class="n">8</span><span>Previous content (out of 2026 syllabus): Lagrange multipliers <span class="pill prev">Out of 2026 syllabus</span></span></h2>
+<div class="box prev"><span class="tag">Previous content · out of 2026 syllabus</span>
+<p>Lagrange multipliers are not in the 2026 course materials, but past papers asked them: May 2022 Q1(c) (a gift box inside a chocolate egg) and May 2026 Q2 (a cylinder inside a snow globe), both word problems of type C1.5. This section teaches everything those questions need, so you can work through them; all of them are collected with full solutions on the <a href="guide-prev.html#C1-5">out-of-syllabus questions page</a> of the exam guide.</p>
+</div>
+<p><b>The problem.</b> Find the largest or smallest value of \(f(x,y)\) (or \(f(x,y,z)\)) when the variables are not free but must satisfy a <b>constraint</b> \(g=c\). Example: the largest box (volume \(f=8xyz\)) whose corners touch an ellipsoid (\(g=4x^2+4y^2+z^2=4\)).</p>
+<p><b>The idea.</b> Walk along the constraint curve \(g=c\) on a contour map of \(f\). While you cross contours of \(f\), the value of \(f\) is still changing, so you are not at the best point. At the best point the constraint curve just <b>touches</b> a contour of \(f\) without crossing it. Touching curves share a tangent line, so their normals are parallel. By §6, the normals are \(\nabla f\) and \(\nabla g\):</p>
+<div class="box thm"><span class="tag">Method of Lagrange multipliers</span>
+<p>At a constrained maximum or minimum of \(f\) subject to \(g=c\) (with \(\nabla g\ne\vb 0\)),</p>
+\[\nabla f=\lambda\,\nabla g,\qquad g=c,\]
+<p>for some number \(\lambda\), called the <b>Lagrange multiplier</b>. In two variables that is three equations \(f_x=\lambda g_x,\ f_y=\lambda g_y,\ g=c\) for the three unknowns \(x,y,\lambda\); in three variables, four equations for \(x,y,z,\lambda\).</p>
+<p class="word"><b>In words:</b> at the best point, the direction of steepest increase of \(f\) is straight across the constraint, so moving along the constraint cannot improve \(f\).</p>
+</div>
+<ol class="steps">
+<li>Write \(f\) (what to optimise) and \(g=c\) (the constraint). In word problems, use symmetry to choose variables (for a box centred at the origin with a corner at \((x,y,z)\), the sides are \(2x,2y,2z\)).</li>
+<li>Solve \(\nabla f=\lambda\nabla g\), \(g=c\). A good trick: divide equations to eliminate \(\lambda\), or multiply each equation by its variable and compare.</li>
+<li>Evaluate \(f\) at every solution; the largest is the maximum, the smallest the minimum (on a closed bounded constraint such as an ellipse or ellipsoid both exist).</li>
+</ol>
+<div class="box eg"><span class="tag">Worked example (written for these notes)</span>
+<p><b>Find the maximum and minimum of \(f(x,y)=xy\) on the ellipse \(x^2+4y^2=8\).</b></p>
+<ol class="steps">
+<li>\(g=x^2+4y^2\), \(\nabla f=(y,x)\), \(\nabla g=(2x,8y)\).</li>
+<li>\(y=2\lambda x,\quad x=8\lambda y,\quad x^2+4y^2=8\).</li>
+<li>Multiply the first by \(x\) and the second by \(y\): \(xy=2\lambda x^2=8\lambda y^2\). If \(\lambda=0\) then \(x=y=0\), not on the ellipse. So \(x^2=4y^2\), and the constraint gives \(8y^2=8\): \(y=\pm1,\ x=\pm2\).</li>
+<li>\(f=xy=2\) at \((2,1),(-2,-1)\) and \(f=-2\) at \((2,-1),(-2,1)\).</li>
+</ol>
+<p class="boxed">Maximum \(2\) at \((\pm2,\pm1)\) (same signs); minimum \(-2\) at \((\pm2,\mp1)\) (opposite signs).</p>
+</div>
+<div class="figure">
+  <p class="ttl">The constraint touches a contour at the optimum</p>
+  <canvas class="plot" id="f-lag" style="aspect-ratio:1/0.8" aria-label="Contours of xy and the ellipse x squared plus 4 y squared equals 8"></canvas>
+  <div class="ctrl"><label>Point on the ellipse <input type="range" id="lag-t" min="0" max="360" step="1" value="115"></label></div>
+  <div class="readout" id="lag-out"></div>
+  <p class="cap">Coloured curves: contours \(xy=c\). Dark curve: the constraint \(x^2+4y^2=8\). Orange: \(\nabla f\); teal: \(\nabla g\) at the moving point. They line up (parallel) exactly at the four optimal points.</p>
+</div>
+</section>
+
+<section id="summary">
+<h2><span class="n">◆</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Formula</th><th>In words</th></tr>
+<tr><td>Level curve / surface</td><td>\(f(x,y)=c\), \(f(x,y,z)=c\)</td><td>all points where \(f\) has the same value</td></tr>
+<tr><td>Partial derivative</td><td>\(f_x=\lim\limits_{h\to0}\frac{f(x+h,y)-f(x,y)}{h}\)</td><td>rate of change with the other variables frozen</td></tr>
+<tr><td>Mixed partials</td><td>\(f_{xy}=f_{yx}\) if continuous</td><td>order does not matter for smooth \(f\)</td></tr>
+<tr><td>Chain rule</td><td>\(\frac{dz}{dt}=f_x\frac{dx}{dt}+f_y\frac{dy}{dt}\)</td><td>add the effect of each moving input</td></tr>
+<tr><td>Change of variables</td><td>\(z_u=f_xx_u+f_yy_u\)</td><td>follow every path in the tree</td></tr>
+<tr><td>Implicit slope</td><td>\(\frac{dy}{dx}=-\frac{f_x}{f_y}\)</td><td>minus the ratio of partials</td></tr>
+<tr><td>Tangent plane approx.</td><td>\(z\approx f+(x-a)f_x+(y-b)f_y\)</td><td>first-order Taylor</td></tr>
+<tr><td>Stationary point</td><td>\(f_x=f_y=0\)</td><td>horizontal tangent plane</td></tr>
+<tr><td>Second-derivative test</td><td>\(D=f_{xx}f_{yy}-f_{xy}^2\)</td><td>\(D\gt0\): max (\(f_{xx}\lt0\)) or min (\(f_{xx}\gt0\)); \(D\lt0\): saddle; \(D=0\): no information</td></tr>
+<tr><td>Gradient</td><td>\(\nabla f=f_x\ii+f_y\jj+f_z\kk\)</td><td>points uphill fastest; normal to level sets</td></tr>
+<tr><td>Directional derivative</td><td>\(D_{\vb u}f=\nabla f\cdot\vb u,\ |\vb u|=1\)</td><td>slope in direction \(\vb u\); max \(|\nabla f|\)</td></tr>
+<tr><td>Tangent plane (Beyond)</td><td>\(\nabla F(P_0)\cdot(\vb r-\vb r_0)=0\)</td><td>normal = gradient</td></tr>
+<tr><td>Lagrange (out of 2026 syllabus)</td><td>\(\nabla f=\lambda\nabla g,\ g=c\)</td><td>best point: gradients parallel</td></tr>
+</table></div>
+</section>
+
+<section id="mistakes">
+<h2><span class="n">◆</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Using \(\ii+2\jj-\kk\) itself in \(\nabla f\cdot\vb u\). <b>Fix:</b> divide by its length \(\sqrt6\) first.</span>
+<span class="x">✗</span><span>Classifying with \(f_{xx}\) alone. <b>Fix:</b> compute \(D\) first; \(f_{xx}\) only decides max vs min when \(D\gt0\).</span>
+<span class="x">✗</span><span>Calling a point with \(D=0\) a saddle (or a minimum) without proof. <b>Fix:</b> say "test inconclusive", then examine \(f\) along paths.</span>
+<span class="x">✗</span><span>Missing stationary points when solving \(f_x=f_y=0\), e.g. dividing by \(x\) in \(2xy=2x\). <b>Fix:</b> factorise: \(2x(y-1)=0\Rightarrow x=0\) <i>or</i> \(y=1\); follow both cases.</span>
+<span class="x">✗</span><span>\(\pd rx=1/\pd xr\). <b>Fix:</b> different variables are held fixed; compute \(\partial r/\partial x\) from \(r=\sqrt{x^2+y^2}\).</span>
+<span class="x">✗</span><span>In second-order chain-rule work, treating \(g_r\) as a constant. <b>Fix:</b> \(g_r\) is a function of \(r,\theta\); apply the chain-rule operator to it and the product rule to its coefficient.</span>
+<span class="x">✗</span><span>Giving the tangent plane with the gradient at a general point. <b>Fix:</b> evaluate \(\nabla F\) at \(P_0\) first; check \(P_0\) lies on the surface.</span>
+<span class="ok">✓</span><span>Always state the conclusion in words ("\((1,1)\) is a local minimum since \(D=36\gt0\) and \(f_{xx}=6\gt0\)"); markers look for the reason.</span>
+</div>
+</section>
+
+<section id="find-mistake">
+<h2><span class="n">◆</span>Find the mistake</h2>
+<p class="muted small">Written for these notes. Each "solution" has one error. Find it before opening the answer.</p>
+<div class="q"><p class="qh">1. Directional derivative</p>
+<p>"\(f=x^2y\). The directional derivative at \((1,3)\) in the direction \(3\ii+4\jj\) is \(\nabla f\cdot(3\ii+4\jj)=(6,1)\cdot(3,4)=22\)."</p>
+<details><summary>Answer</summary><div><p>\(3\ii+4\jj\) is not a unit vector (length 5). Correct: \(\vb u=\frac15(3,4)\), so \(D_{\vb u}f=\frac{18+4}{5}=4.4\).</p></div></details></div>
+<div class="q"><p class="qh">2. Classification</p>
+<p>"\(f=x^2+4xy+y^2\). Stationary point \((0,0)\); \(f_{xx}=2\gt0\), so \((0,0)\) is a local minimum."</p>
+<details><summary>Answer</summary><div><p>\(D\) \(=f_{xx}f_{yy}-f_{xy}^2\) \(=2\cdot2-4^2\) \(=-12\) \(\lt0\), so \((0,0)\) is a <b>saddle</b>. Indeed \(f(t,-t)=-2t^2\lt0\) while \(f(t,0)=t^2\gt0\).</p></div></details></div>
+<div class="q"><p class="qh">3. Polar chain rule</p>
+<p>"With \(x=r\cos\theta\), \(\pd xr=\cos\theta\), so \(\pd rx=\dfrac1{\cos\theta}\)."</p>
+<details><summary>Answer</summary><div><p>Partial derivatives cannot be flipped like this. From \(r=\sqrt{x^2+y^2}\), \(\pd rx=\dfrac xr=\cos\theta\) (with \(y\) held fixed), not \(1/\cos\theta\) (which would hold \(\theta\) fixed).</p></div></details></div>
+</section>
+
+<section id="group-work">
+<h2><span class="n">◆</span>Practice problems</h2>
+<p class="muted small">The Chapter 1 handout has no group-work questions, so these are written for these notes, one per section. Answers checked in sympy.</p>
+<div class="q"><p class="qh">1. (§2) For \(f=xe^{xy}\), find \(f_x,\ f_y\), and check that \(f_{xy}=f_{yx}\).</p>
+<details><summary>Hint</summary><div><p>\(f_x\) needs the product rule; \(f_y\) treats the leading \(x\) as a constant.</p></div></details>
+<details><summary>Answer</summary><div><p>\(f_x=(1+xy)e^{xy}\), \(f_y=x^2e^{xy}\), \(f_{xy}=f_{yx}=x(2+xy)e^{xy}\).</p></div></details></div>
+<div class="q"><p class="qh">2. (§3) \(z=x^2y\) with \(x=t^2,\ y=e^t\). Find \(dz/dt\) by the chain rule.</p>
+<details><summary>Hint</summary><div><p>\(\frac{dz}{dt}=2xy\cdot2t+x^2\cdot e^t\); substitute at the end.</p></div></details>
+<details><summary>Answer</summary><div><p>\(\dfrac{dz}{dt}=4t^3e^t+t^4e^t=t^3(t+4)e^t\).</p></div></details></div>
+<div class="q"><p class="qh">3. (§4) Use the tangent plane approximation of \(f=x^3y^2\) at \((1,1)\) to estimate \(1.02^3\times0.97^2\).</p>
+<details><summary>Hint</summary><div><p>\(f_x=3,\ f_y=2\) at \((1,1)\); \(h=0.02,\ k=-0.03\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(1+3(0.02)+2(-0.03)=1.00\). True value \(0.99849\).</p></div></details></div>
+<div class="q"><p class="qh">4. (§5) Find and classify the stationary points of \(f=x^3-12x+y^2-2y\).</p>
+<details><summary>Hint</summary><div><p>\(f_x=3x^2-12\), \(f_y=2y-2\); then \(D=6x\cdot2-0\).</p></div></details>
+<details><summary>Answer</summary><div><p>\((2,1)\): \(D=24\gt0,\ f_{xx}=12\gt0\), local minimum (\(f=-17\)). \((-2,1)\): \(D=-24\lt0\), saddle point.</p></div></details></div>
+<div class="q"><p class="qh">5. (§6) For \(f=x^2y+yz\), find the directional derivative at \((1,2,-1)\) in the direction \(2\ii-\jj+2\kk\), and the maximum rate of change there.</p>
+<details><summary>Hint</summary><div><p>\(\nabla f=(2xy,\ x^2+z,\ y)\); the direction has length 3.</p></div></details>
+<details><summary>Answer</summary><div><p>\(\nabla f(1,2,-1)=(4,0,2)\); \(D_{\vb u}f=\frac{8+0+4}{3}=4\); maximum rate \(|\nabla f|=2\sqrt5\).</p></div></details></div>
+<div class="q"><p class="qh">6. (§7) Find the tangent plane to \(z=x^2+y^2\) at \((1,2,5)\).</p>
+<details><summary>Hint</summary><div><p>Form 2: \(z-z_0=f_x(x-x_0)+f_y(y-y_0)\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(z-5=2(x-1)+4(y-2)\), i.e. \(z=2x+4y-5\).</p></div></details></div>
+</section>
+
+<section id="checks">
+<h2><span class="n">◆</span>Concept checks</h2>
+<p class="muted small">Written for these notes.</p>
+<div class="q"><p class="qh">1. On a contour map, contours are tightly packed near \(A\) and widely spaced near \(B\). Where is \(|\nabla f|\) larger?</p>
+<details><summary>Answer</summary><div><p>At \(A\): \(f\) changes a lot over a short distance, so the maximum rate of change \(|\nabla f|\) is large.</p></div></details></div>
+<div class="q"><p class="qh">2. If \(\nabla f(P)=\vb 0\), what is \(D_{\vb u}f(P)\) for any \(\vb u\)? What kind of point is \(P\)?</p>
+<details><summary>Answer</summary><div><p>Zero in every direction; \(P\) is a stationary point (max, min, saddle or undetermined).</p></div></details></div>
+<div class="q"><p class="qh">3. Can a directional derivative be larger than \(|\nabla f|\)?</p>
+<details><summary>Answer</summary><div><p>No: \(D_{\vb u}f=|\nabla f|\cos\alpha\le|\nabla f|\).</p></div></details></div>
+<div class="q"><p class="qh">4. At a stationary point, can \(D\gt0\) while \(f_{xx}=0\)?</p>
+<details><summary>Answer</summary><div><p>No: \(D=f_{xx}f_{yy}-f_{xy}^2\gt0\) needs \(f_{xx}f_{yy}\gt f_{xy}^2\ge0\), so \(f_{xx}\ne0\).</p></div></details></div>
+<div class="q"><p class="qh">5. For \(z=f(x,y)\) with \(y=y(x)\), when is \(\dfrac{dz}{dx}=\pd fx\)?</p>
+<details><summary>Answer</summary><div><p>When \(f_y\,\dfrac{dy}{dx}=0\): \(f\) does not depend on \(y\) there, or \(y\) is not changing.</p></div></details></div>
+<div class="q"><p class="qh">6. Why is \(\nabla F\) at a point of \(F(x,y,z)=c\) a normal to the tangent plane, not a vector in it?</p>
+<details><summary>Answer</summary><div><p>Every curve on the surface keeps \(F=c\), so \(\nabla F\cdot\vb v=0\) for every tangent velocity \(\vb v\): \(\nabla F\) is perpendicular to all tangent directions.</p></div></details></div>
+</section>
+
+<section id="taster">
+<h2><span class="n">◆</span>Exam taster</h2>
+<p>Real past-paper questions, one per main question type of this chapter, newest first. Each has a hint and the final answer; the full worked solution with marker notes is in the exam guide (follow the tag). December papers: answer 4 of 5 questions, 25 marks each, 3 hours; a formula sheet is given but it contains <b>nothing from this chapter</b> (no chain rule, no second-derivative test).</p>
+
+<div class="q"><div class="src"><b>Dec 2025 Q1(a)</b><span>4 + 6 marks</span><a class="guide" href="guide-C1.html#C1-1">Guide C1.1 · chain rule</a></div>
+<p>Suppose \(f(x,y)\) is transformed to \(g(u,v)\) where \(u=x^2-y\) and \(v=x+y^2\).</p>
+<p>(i) Use the Chain Rule to express \(\pd fx,\ \pd fy\) in terms of \(x,\ y,\ \pd gu,\ \pd gv\). (Do NOT attempt to express \(x\) and \(y\) in terms of \(u\) and \(v\).)</p>
+<p>(ii) Use the results in (i) to express the PDE \(\;(1-2y)\pd fx+(1+2x)\pd fy=0\;\) in terms of the partial derivatives of \(g(u,v)\).</p>
+<details><summary>Hint</summary><div><p>\(\pd fx=\pd gu\pd ux+\pd gv\pd vx\) with \(u_x=2x,\ v_x=1,\ u_y=-1,\ v_y=2y\). In (ii) substitute and collect the \(g_u\) and \(g_v\) terms.</p></div></details>
+<details><summary>Answer</summary><div><p>(i) \(f_x=2x\,g_u+g_v,\qquad f_y=-g_u+2y\,g_v.\)</p><p>(ii) The left side becomes \((1+4xy)(g_v-g_u)\), so (where \(1+4xy\ne0\)) the PDE is \(\boxed{\pd gu=\pd gv}\), i.e. \(\pd gu-\pd gv=0\).</p></div></details>
+<details><summary>Show the calculation (outline)</summary><div>
+<ol class="steps">
+<li>Partial derivatives of the new variables: \(u_x=2x,\ u_y=-1,\ v_x=1,\ v_y=2y\).</li>
+<li>Chain rule: \(f_x=g_uu_x+g_vv_x=2xg_u+g_v\); \(f_y=g_uu_y+g_vv_y=-g_u+2yg_v\).</li>
+<li>Substitute into the left side and expand: \((1-2y)(2xg_u+g_v)\) \(+\:(1+2x)(-g_u+2yg_v)\).</li>
+<li>Collect \(g_u\): \(2x(1-2y)-(1+2x)\) \(=2x-4xy-1-2x\) \(=-(1+4xy)\). Collect \(g_v\): \((1-2y)+2y(1+2x)\) \(=1-2y+2y+4xy\) \(=1+4xy\).</li>
+<li>So the left side is \((1+4xy)(g_v-g_u)\); dividing by \(1+4xy\) (where it is not zero) gives \(g_u=g_v\).</li>
+</ol>
+</div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2025 Q3(a)</b><span>3 + 9 marks</span><a class="guide" href="guide-C1.html#C1-2">Guide C1.2 · stationary points</a></div>
+<p>Given \(f(x,y)=x^4+y^4-4xy\).</p>
+<p>(i) Find the gradient of \(f(x,y)\). &nbsp;(ii) Find the stationary points of \(f(x,y)\) and determine their nature.</p>
+<details><summary>Hint</summary><div><p>\(\nabla f=\vb 0\) gives \(y=x^3\) and \(x=y^3\), so \(x=x^9\): \(x(x^8-1)=0\). Then \(D=144x^2y^2-16\).</p></div></details>
+<details><summary>Answer</summary><div><p>(i) \(\nabla f=(4x^3-4y)\ii+(4y^3-4x)\jj\).</p><p>(ii) \((0,0)\): \(D=-16\lt0\), saddle point. \((1,1)\) and \((-1,-1)\): \(D=128\gt0,\ f_{xx}=12\gt0\), local minima with \(f=-2\).</p></div></details>
+<details><summary>Show the calculation (outline)</summary><div>
+<ol class="steps">
+<li>\(f_x=4x^3-4y=0\Rightarrow y=x^3\); \(f_y=4y^3-4x=0\Rightarrow x=y^3\).</li>
+<li>Substitute the first into the second: \(x=(x^3)^3=x^9\), so \(x(x^8-1)=0\). Real solutions: \(x=0\) or \(x^8=1\Rightarrow x=\pm1\). Then \(y=x^3\) gives \((0,0),(1,1),(-1,-1)\).</li>
+<li>Second derivatives: \(f_{xx}=12x^2,\ f_{yy}=12y^2,\ f_{xy}=-4\), so \(D=144x^2y^2-16\).</li>
+<li>\((0,0)\): \(D=-16\lt0\Rightarrow\) saddle. \((\pm1,\pm1)\): \(D=144-16=128\gt0\), \(f_{xx}=12\gt0\Rightarrow\) minima; \(f=1+1-4=-2\).</li>
+</ol>
+</div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2024 Q2(a)</b><span>4 + 4 + 4 marks</span><a class="guide" href="guide-C1.html#C1-3">Guide C1.3 · gradient &amp; tangent plane</a></div>
+<p>Consider \(f(x,y,z)=xy^2+yz^2+zx^2\).</p>
+<p>(i) Find the gradient of \(f\) at \((1,0,-1)\). (ii) Find the directional derivative of \(f\) at \((1,0,-1)\) along the direction \(\ii+2\jj+2\kk\). (iii) Find the tangent plane to the surface \(xy^2+yz^2+zx^2=-1\) at \((1,0,-1)\).</p>
+<details><summary>Hint</summary><div><p>\(\nabla f=(y^2+2zx,\ 2xy+z^2,\ 2yz+x^2)\). The direction has length 3. For (iii) use \(\nabla f(P_0)\cdot(\vb r-\vb r_0)=0\).</p></div></details>
+<details><summary>Answer</summary><div><p>(i) \(\nabla f(1,0,-1)=-2\ii+\jj+\kk\). (ii) \(D_{\vb u}f=\frac{-2+2+2}{3}=\frac23\). (iii) \(-2(x-1)+y+(z+1)=0\), i.e. \(2x-y-z=3\).</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2023 Q1(a)</b><span>10 marks</span><span class="older">May format</span><a class="guide" href="guide-C1.html#C1-4">Guide C1.4 · linear approximation</a></div>
+<p>Find the linear approximation of \(f(x,y)=e^{5-2x+3y}\) at \(P_0=(4,1)\). Hence, use this approximation to compute an approximated value for \(f(4.1,0.9)\).</p>
+<details><summary>Hint</summary><div><p>\(f(4,1)=e^0=1\), \(f_x=-2f\), \(f_y=3f\). Use the tangent plane approximation of §4.</p></div></details>
+<details><summary>Answer</summary><div><p>\(L(x,y)\) \(=1-2(x-4)+3(y-1)\) \(=6-2x+3y\); \(f(4.1,0.9)\approx0.5\) (true value \(e^{-0.5}\approx0.607\)).</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2022 Q1(c)</b><span>10 marks</span><span class="older">May format</span><span class="pill prev">Out of 2026 syllabus</span><a class="guide" href="guide-prev.html#C1-5">Guide C1.5 · Lagrange</a></div>
+<p>ABC Wonder egg, a competitor of Kinder Surprise egg, is planning to put a rectangular gift box inside a chocolate shelled ellipsoid. Your help is needed to maximize this box. For your information, the 3D ellipsoid is modelled by \(4x^2+4y^2+z^2=4\), with the thickness of chocolate shell coating negligible. Identify the dimension and volume of the required box.</p>
+<details><summary>Hint</summary><div><p>A box centred at the origin with corner \((x,y,z)\) on the ellipsoid has volume \(V=8xyz\). Solve \(\nabla V=\lambda\nabla g\) with \(g=4x^2+4y^2+z^2\).</p></div></details>
+<details><summary>Answer</summary><div><p>Corner at \(\left(\frac1{\sqrt3},\frac1{\sqrt3},\frac2{\sqrt3}\right)\): box \(\frac2{\sqrt3}\times\frac2{\sqrt3}\times\frac4{\sqrt3}\), volume \(\frac{16}{3\sqrt3}=\frac{16\sqrt3}{9}\approx3.08\).</p></div></details>
+<details><summary>Show the calculation (outline)</summary><div>
+<ol class="steps">
+<li>Maximise \(V=8xyz\) (sides \(2x,2y,2z\)) subject to \(g=4x^2+4y^2+z^2=4\), with \(x,y,z\gt0\).</li>
+<li>\(\nabla V=\lambda\nabla g\): \(8yz=8\lambda x,\quad8xz=8\lambda y,\quad8xy=2\lambda z\).</li>
+<li>Multiply the three equations by \(x\), \(y\), \(z\) respectively: each left side becomes \(8xyz\), so \(8\lambda x^2=8\lambda y^2=2\lambda z^2\). (\(\lambda\ne0\), otherwise \(V=0\).) Hence \(y^2=x^2\) and \(z^2=4x^2\).</li>
+<li>Constraint: \(4x^2+4x^2+4x^2=4\Rightarrow x^2=\frac13\). So \(x=y=\frac1{\sqrt3}\), \(z=\frac2{\sqrt3}\).</li>
+<li>\(V=8\cdot\frac1{\sqrt3}\cdot\frac1{\sqrt3}\cdot\frac2{\sqrt3}=\frac{16}{3\sqrt3}\).</li>
+</ol>
+</div></details></div>
+</section>
+
+<footer class="foot">MECH2407 Revision Bundle · written for students revising on their own. Material in orange "Beyond the handouts" boxes is not in the course handouts. <a href="index.html">Start Here</a></footer>
+</main>
+</div>
+
+<script>
+/* ===== MV: shared plotting helpers (2D plot, 3D surface, contour map, vector field) ===== */
+window.MV=(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+function hex(c){c=c.replace('#','');if(c.length===3)c=c.split('').map(x=>x+x).join('');return [0,2,4].map(i=>parseInt(c.substr(i,2),16));}
+function mix(a,b,t){const A=hex(a),B=hex(b);return 'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')+')';}
+function ramp(t){t=Math.max(0,Math.min(1,t));return t<.5?mix(css('--accent'),css('--c3'),t*2):mix(css('--c3'),css('--warm'),(t-.5)*2);}
+function setup(cv){const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return null;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card');g.fillRect(0,0,W,H);g.font='11px Inter, system-ui, sans-serif';return {g,W,H};}
+function arrow(g,x1,y1,x2,y2,col,w,head){g.strokeStyle=col;g.fillStyle=col;g.lineWidth=w||2;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  const a=Math.atan2(y2-y1,x2-x1),L=head||8;g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-L*Math.cos(a-.4),y2-L*Math.sin(a-.4));g.lineTo(x2-L*Math.cos(a+.4),y2-L*Math.sin(a+.4));g.closePath();g.fill();}
+function label(g,t,x,y,col,align,bold){g.font=(bold?'600 ':'')+'12px Inter, system-ui, sans-serif';g.fillStyle=col;g.textAlign=align||'left';g.textBaseline='middle';g.save();g.strokeStyle=css('--card');g.lineWidth=3.5;g.lineJoin='round';g.strokeText(t,x,y);g.restore();g.fillText(t,x,y);g.font='11px Inter, system-ui, sans-serif';}
+
+/* ---- 2D axes. o: xmin,xmax,ymin,ymax,xstep,ystep,equal, curves[{f,color,dash,width,from,to}], param[{x(t),y(t),t0,t1,color}],
+   segs[{x1,y1,x2,y2,color,dash}], arrows[{x1,y1,x2,y2,color,label}], pts[{x,y,color,label,open}], extra(g,X,Y) ---- */
+function axes2d(cv,o){
+  const s=setup(cv);if(!s)return;const {g,W,H}=s;
+  const pl=34,pr=12,pt=12,pb=26;
+  if(o.equal){const sx=(W-pl-pr)/(o.xmax-o.xmin),sy=(H-pt-pb)/(o.ymax-o.ymin);if(sx>sy){const c=(o.xmin+o.xmax)/2,h=(W-pl-pr)/sy/2;o=Object.assign({},o,{xmin:c-h,xmax:c+h});}else{const c=(o.ymin+o.ymax)/2,h=(H-pt-pb)/sx/2;o=Object.assign({},o,{ymin:c-h,ymax:c+h});}}
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr), Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const xs=o.xstep||1,ys=o.ystep||1;
+  const xt=range(Math.ceil(o.xmin/xs)*xs,o.xmax,xs),yt=range(Math.ceil(o.ymin/ys)*ys,o.ymax,ys);
+  g.strokeStyle=css('--grid');g.lineWidth=1;
+  xt.forEach(v=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(v=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis');g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted');g.textAlign='center';g.textBaseline='top';
+  xt.forEach(v=>{if(v!==0)g.fillText(fmt(v,2),X(v),H-pb+6);});
+  g.textAlign='right';g.textBaseline='middle';yt.forEach(v=>{if(v!==0)g.fillText(fmt(v,2),pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr-2,Y(Math.max(o.ymin,Math.min(0,o.ymax)))-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,X(Math.max(o.xmin,Math.min(0,o.xmax)))+5,pt+2);}
+  g.save();g.beginPath();g.rect(pl,pt,W-pl-pr,H-pt-pb);g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{const a=c.from!==undefined?c.from:o.xmin,b=c.to!==undefined?c.to:o.xmax,N=c.n||600;
+    g.strokeStyle=c.color;g.lineWidth=c.width||2.4;g.setLineDash(c.dash||[]);g.beginPath();let pen=false,py=null;
+    for(let i=0;i<=N;i++){const x=a+(b-a)*i/N,y=c.f(x);if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*.5)pen=false;if(!pen){g.moveTo(X(x),Y(y));pen=true;}else g.lineTo(X(x),Y(y));py=y;}
+    g.stroke();g.setLineDash([]);});
+  (o.param||[]).forEach(c=>{const N=c.n||400;g.strokeStyle=c.color;g.lineWidth=c.width||2.4;g.setLineDash(c.dash||[]);g.beginPath();
+    for(let i=0;i<=N;i++){const t=c.t0+(c.t1-c.t0)*i/N;const x=c.x(t),y=c.y(t);i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y));}g.stroke();g.setLineDash([]);});
+  (o.segs||[]).forEach(q=>{g.strokeStyle=q.color;g.lineWidth=q.width||2;g.setLineDash(q.dash||[]);g.beginPath();g.moveTo(X(q.x1),Y(q.y1));g.lineTo(X(q.x2),Y(q.y2));g.stroke();g.setLineDash([]);});
+  if(o.extra)o.extra(g,X,Y);
+  g.restore();
+  (o.arrows||[]).forEach(a=>{arrow(g,X(a.x1),Y(a.y1),X(a.x2),Y(a.y2),a.color,a.width||2.2);if(a.label)label(g,a.label,X(a.x2)+6,Y(a.y2)-8,a.color,'left',true);});
+  (o.pts||[]).forEach(p=>{g.beginPath();g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label)label(g,p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-10,p.color,p.align||'left',true);});
+  return {X,Y,g};
+}
+
+/* ---- 3D surface z=f(x,y) (or parametric o.P), drag to rotate. o: f, x:[a,b], y:[c,d] (box), z:[lo,hi] (clip), n (grid), view {yaw,elev}, psurfs[{P,s,t,color,alpha}],
+   f2 (second surface, e.g. tangent plane), curves3d[{pts:[[x,y,z]...],color,width}], pts3d[{p:[x,y,z],color,label}],
+   arrows3d[{from,to,color,label}], labels {x,y,z}, alpha, mask(x,y)->bool ---- */
+function surface(cv,o){
+  if(!cv._view){cv._view=Object.assign({yaw:-0.65,elev:0.45},o.view||{});attachDrag(cv);}
+  cv._o=o;const s=setup(cv);if(!s)return;const {g,W,H}=s;const v=cv._view;
+  const [xa,xb]=o.x,[ya,yb]=o.y;let [za,zb]=o.z;
+  const nx=x=>2*(x-xa)/(xb-xa)-1, ny=y=>2*(y-ya)/(yb-ya)-1, zs=o.zscale||0.8, nz=z=>zs*(2*(z-za)/(zb-za)-1);
+  const cy=Math.cos(v.yaw),sy=Math.sin(v.yaw),ce=Math.cos(v.elev),se=Math.sin(v.elev);
+  const sc=Math.min(W,H)*0.33, ox=W/2, oy=H/2+H*0.03;
+  function P(x,y,z){const X=nx(x),Y=ny(y),Z=nz(z);const u=X*cy-Y*sy,d=X*sy+Y*cy;return [ox+sc*u, oy-sc*(Z*ce+d*se), d*ce-Z*se];}
+  // axes box floor + axes
+  g.lineWidth=1;g.strokeStyle=css('--grid');
+  const fl=[[xa,ya],[xb,ya],[xb,yb],[xa,yb],[xa,ya]].map(q=>P(q[0],q[1],za));
+  g.beginPath();fl.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();
+  const ax=[[P(xa,ya,za),P(xb,ya,za),o.labels?o.labels.x:'x'],[P(xa,ya,za),P(xa,yb,za),o.labels?o.labels.y:'y'],[P(xa,ya,za),P(xa,ya,zb),o.labels?o.labels.z:'z']];
+  ax.forEach(a=>{arrow(g,a[0][0],a[0][1],a[1][0],a[1][1],css('--axis'),1.3,6);label(g,a[2],a[1][0]+(a[1][0]>a[0][0]?6:-6),a[1][1]-6,css('--muted'),a[1][0]>a[0][0]?'left':'right');});
+  const quads=[];
+  function addGrid(pt,N,M,col,alpha,isMain){const G=[];
+    for(let i=0;i<=N;i++){G[i]=[];for(let j=0;j<=M;j++){const q=pt(i/N,j/M);const ok=q&&q.every(isFinite)&&q[2]>=za-1e-9&&q[2]<=zb+1e-9&&(!o.mask||o.mask(q[0],q[1]));G[i][j]={q,ok};}}
+    for(let i=0;i<N;i++)for(let j=0;j<M;j++){const c=[G[i][j],G[i+1][j],G[i+1][j+1],G[i][j+1]];if(c.some(q=>!q.ok))continue;
+      const pp=c.map(q=>P(q.q[0],q.q[1],q.q[2]));const zm=(c[0].q[2]+c[1].q[2]+c[2].q[2]+c[3].q[2])/4;
+      quads.push({pp,depth:(pp[0][2]+pp[1][2]+pp[2][2]+pp[3][2])/4,fill:col?col:ramp((zm-za)/(zb-za)),alpha,isMain});}}
+  function addSurf(f,col,alpha,isMain){const N=o.n||28;addGrid((u,w)=>{const x=xa+(xb-xa)*u,y=ya+(yb-ya)*w;return [x,y,f(x,y)];},N,N,col,alpha,isMain);}
+  // parametric piece: {P:(s,t)=>[x,y,z], s:[a,b], t:[c,d], n, m, color (css var; omit for height colours), alpha}
+  function addParam(q,isMain){const [sa,sb]=q.s,[ta,tb]=q.t;addGrid((u,w)=>q.P(sa+(sb-sa)*u,ta+(tb-ta)*w),q.n||24,q.m||48,q.color?css(q.color):null,q.alpha||(isMain?0.92:0.5),isMain);}
+  if(o.f)addSurf(o.f,null,o.alpha||0.92,true);
+  if(o.P)addParam(Object.assign({alpha:o.alpha||0.92},o.P),true);
+  if(o.f2)addSurf(o.f2,css(o.f2color||'--warm'),o.f2alpha||0.55,false);
+  (o.surfs||[]).forEach(q=>addSurf(q.f,css(q.color),q.alpha||0.5,false));
+  (o.psurfs||[]).forEach(q=>addParam(q,false));
+  quads.sort((a,b)=>b.depth-a.depth);
+  const line=css('--card');
+  quads.forEach(q=>{g.globalAlpha=q.alpha;g.fillStyle=q.fill;g.beginPath();q.pp.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();g.fill();
+    g.globalAlpha=q.isMain?0.35:0.2;g.strokeStyle=line;g.lineWidth=0.6;g.stroke();});
+  g.globalAlpha=1;
+  (o.curves3d||[]).forEach(c=>{g.strokeStyle=c.color;g.lineWidth=c.width||2.6;g.setLineDash(c.dash||[]);g.beginPath();c.pts.forEach((q,i)=>{const p=P(q[0],q[1],q[2]);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.stroke();g.setLineDash([]);});
+  (o.arrows3d||[]).forEach(a=>{const p=P(...a.from),q=P(...a.to);arrow(g,p[0],p[1],q[0],q[1],a.color,2.4);if(a.label)label(g,a.label,q[0]+6,q[1]-8,a.color,'left',true);});
+  (o.pts3d||[]).forEach(t=>{const p=P(...t.p);g.beginPath();g.arc(p[0],p[1],t.r||5,0,7);g.fillStyle=t.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();if(t.label)label(g,t.label,p[0]+8,p[1]-10,t.color,'left',true);});
+  g.fillStyle=css('--muted');g.font='11px Inter, system-ui, sans-serif';g.textAlign='right';g.textBaseline='bottom';g.fillText('drag to rotate',W-8,H-6);
+}
+function attachDrag(cv){cv.classList.add('drag');let d=null;
+  cv.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY,yaw:cv._view.yaw,elev:cv._view.elev};cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!d)return;cv._view.yaw=d.yaw-(e.clientX-d.x)*0.01;cv._view.elev=Math.max(-0.2,Math.min(1.45,d.elev+(e.clientY-d.y)*0.01));surface(cv,cv._o);});
+  ['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>{d=null;}));}
+
+/* ---- contour map of f(x,y). o: f, x,y ranges, levels [..], labels (bool), equal, plus any axes2d options (pts, arrows, curves, param) ---- */
+function contour(cv,o){
+  const base=Object.assign({xmin:o.x[0],xmax:o.x[1],ymin:o.y[0],ymax:o.y[1]},o);
+  base.extra=function(g,X,Y){
+    const N=o.n||120,[xa,xb]=[base.xmin,base.xmax],[ya,yb]=[base.ymin,base.ymax];const F=[];
+    for(let i=0;i<=N;i++){F[i]=[];for(let j=0;j<=N;j++)F[i][j]=o.f(xa+(xb-xa)*i/N,ya+(yb-ya)*j/N);}
+    const L=o.levels,lo=Math.min(...L),hi=Math.max(...L);
+    L.forEach(c=>{g.strokeStyle=o.color?css(o.color):ramp(hi>lo?(c-lo)/(hi-lo):0.5);g.lineWidth=1.8;g.beginPath();
+      for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+        const x0=xa+(xb-xa)*i/N,x1=xa+(xb-xa)*(i+1)/N,y0=ya+(yb-ya)*j/N,y1=ya+(yb-ya)*(j+1)/N;
+        const v=[F[i][j],F[i+1][j],F[i+1][j+1],F[i][j+1]],P=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]],e=[];
+        if(v.some(q=>!isFinite(q)))continue;
+        for(let k=0;k<4;k++){const a=v[k]-c,b=v[(k+1)%4]-c;if((a<0)!==(b<0)){const t=a/(a-b),A=P[k],B=P[(k+1)%4];e.push([A[0]+t*(B[0]-A[0]),A[1]+t*(B[1]-A[1])]);}}
+        for(let k=0;k+1<e.length;k+=2){g.moveTo(X(e[k][0]),Y(e[k][1]));g.lineTo(X(e[k+1][0]),Y(e[k+1][1]));}}
+      g.stroke();});
+    if(o.extra2)o.extra2(g,X,Y);
+  };
+  return axes2d(cv,base);
+}
+
+/* ---- vector field F(x,y) -> [u,v]. o: F, x,y ranges, n (arrows per side), plus axes2d options ---- */
+function field(cv,o){
+  const base=Object.assign({xmin:o.x[0],xmax:o.x[1],ymin:o.y[0],ymax:o.y[1],equal:true},o);
+  base.extra=function(g,X,Y){const n=o.n||13,[xa,xb]=o.x,[ya,yb]=o.y,h=Math.min((xb-xa),(yb-ya))/n;let mx=0;const A=[];
+    for(let i=0;i<=n;i++)for(let j=0;j<=n;j++){const x=xa+(xb-xa)*i/n,y=ya+(yb-ya)*j/n,F=o.F(x,y);const m=Math.hypot(F[0],F[1]);if(isFinite(m)){A.push([x,y,F,m]);mx=Math.max(mx,m);}}
+    A.forEach(([x,y,F,m])=>{if(m<1e-12)return;const L=0.42*h*(o.uniform?1:Math.sqrt(m/mx))/m;
+      arrow(g,X(x-F[0]*L),Y(y-F[1]*L),X(x+F[0]*L),Y(y+F[1]*L),ramp(m/mx),1.6,5);});
+    if(o.extra2)o.extra2(g,X,Y);};
+  return axes2d(cv,base);
+}
+
+function mount(id,draw){const el=document.getElementById(id);if(!el)return;const f=()=>draw(el);redraws.push(f);f();return f;}
+function slider(id,cb){const el=document.getElementById(id);if(el)el.addEventListener('input',cb);return el;}
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>redraws.forEach(f=>f()),120);});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>redraws.forEach(f=>f()));
+document.addEventListener('DOMContentLoaded',()=>{ // highlight current section in rail
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];if(!('IntersectionObserver' in window)||!links.length)return;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));}}),{rootMargin:'-20% 0px -70% 0px'});
+  links.forEach(a=>{const s=document.getElementById(a.getAttribute('href').slice(1));if(s)io.observe(s);});});
+return {css,fmt,range,mix,ramp,arrow,label,axes2d,surface,contour,field,mount,slider,redraw:()=>redraws.forEach(f=>f())};
+})();
+</script>
+<script>
+(function(){
+const {css,fmt,mount,slider,surface,contour,axes2d,field,ramp}=MV;
+const $=id=>document.getElementById(id);
+const lin=(a,b,n)=>Array.from({length:n+1},(_,i)=>a+(b-a)*i/n);
+
+/* ---- §1 surface + contour ---- */
+const FUN={
+  hill:{f:(x,y)=>1080*Math.exp(-((x-0.2)**2/1.2+(y+0.1)**2/0.6+0.25*(x-0.2)*(y+0.1))),x:[-2.5,2.5],y:[-2,2],z:[0,1100],levels:[25,500,1000],name:'height (m); contours 0 m (base), 500 m, 1000 m'},
+  bowl:{f:(x,y)=>x*x+y*y,x:[-3,3],y:[-3,3],z:[0,18],levels:[1,4,9,16],name:'x²+y²'},
+  saddle:{f:(x,y)=>x*x-y*y,x:[-3,3],y:[-3,3],z:[-9,9],levels:[-8,-4,-1,0,1,4,8],name:'x²−y²'},
+  cosxy:{f:(x,y)=>Math.cos(x*y),x:[-3,3],y:[-3,3],z:[-1,1],levels:[-0.75,-0.25,0.25,0.75],name:'cos xy'}};
+function levelSet(F,c){ // polyline points of f=c via marching squares on grid, returned as segments [[x,y,x,y]]
+  const N=90,[xa,xb]=F.x,[ya,yb]=F.y,S=[];
+  for(let i=0;i<N;i++)for(let j=0;j<N;j++){const x0=xa+(xb-xa)*i/N,x1=xa+(xb-xa)*(i+1)/N,y0=ya+(yb-ya)*j/N,y1=ya+(yb-ya)*(j+1)/N;
+    const P=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]],v=P.map(p=>F.f(p[0],p[1])-c),e=[];
+    for(let k=0;k<4;k++){const a=v[k],b=v[(k+1)%4];if((a<0)!==(b<0)){const t=a/(a-b),A=P[k],B=P[(k+1)%4];e.push([A[0]+t*(B[0]-A[0]),A[1]+t*(B[1]-A[1])]);}}
+    for(let k=0;k+1<e.length;k+=2)S.push([e[k],e[k+1]]);}
+  return S;}
+function drawSC(){const F=FUN[$('f-sel').value],tt=+$('f-c').value,lo=Math.min(...F.levels),hi=Math.max(...F.levels),c=lo+(hi-lo)*tt;
+  const segs=levelSet(F,c);
+  surface($('f-surf'),{f:F.f,x:F.x,y:F.y,z:F.z,n:30,curves3d:segs.map(s=>({pts:[[s[0][0],s[0][1],c],[s[1][0],s[1][1],c]],color:css('--c2'),width:3}))});
+  contour($('f-cont'),{f:F.f,x:F.x,y:F.y,levels:F.levels,equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra2:(g,X,Y)=>{g.strokeStyle=css('--c2');g.lineWidth=3.2;g.beginPath();segs.forEach(s=>{g.moveTo(X(s[0][0]),Y(s[0][1]));g.lineTo(X(s[1][0]),Y(s[1][1]));});g.stroke();}});
+  $('f-out').innerHTML='f = '+F.name+' · highlighted level c = <b>'+fmt(c,2)+'</b>';}
+if($('f-surf')){['f-sel','f-c'].forEach(id=>$(id).addEventListener('input',drawSC));mount('f-surf',drawSC);}
+
+/* ---- §1 nested spheres (upper halves, cut-away quarter removed) ---- */
+mount('f-spheres',cv=>{const sph=(R,col,al)=>({P:(ph,th)=>[R*Math.sin(ph)*Math.cos(th),R*Math.sin(ph)*Math.sin(th),R*Math.cos(ph)],s:[0,Math.PI/2],t:[Math.PI/2,2*Math.PI],n:14,m:36,color:col,alpha:al});
+  surface(cv,{x:[-3,3],y:[-3,3],z:[0,3],zscale:0.5,view:{yaw:-0.75,elev:0.45},
+    psurfs:[sph(3,'--warm',0.28),sph(2,'--c3',0.45),sph(1,'--accent',0.85)],
+    pts3d:[{p:[0,0,1],color:css('--accent'),label:'f = 1',r:3},{p:[0,0,2],color:css('--c3'),label:'f = 2',r:3},{p:[0,0,3],color:css('--warm'),label:'f = 3',r:3}]});});
+
+/* ---- §2 slices ---- */
+const fs=(x,y)=>1+0.5*x*x-0.4*y*y+0.3*x*y, fsx=(x,y)=>x+0.3*y, fsy=(x,y)=>-0.8*y+0.3*x;
+function drawSlice(cv){const x0=+$('sl-x').value,y0=+$('sl-y').value,z0=fs(x0,y0),a=fsx(x0,y0),b=fsy(x0,y0);
+  surface(cv,{f:fs,x:[-2,2],y:[-2,2],z:[-1,3.4],n:26,alpha:0.75,
+    curves3d:[{pts:lin(-2,2,60).map(x=>[x,y0,fs(x,y0)]),color:css('--accent'),width:3},{pts:lin(-2,2,60).map(y=>[x0,y,fs(x0,y)]),color:css('--c4'),width:3},
+      {pts:[[x0-0.9,y0,z0-0.9*a],[x0+0.9,y0,z0+0.9*a]],color:css('--warm'),width:3},{pts:[[x0,y0-0.9,z0-0.9*b],[x0,y0+0.9,z0+0.9*b]],color:css('--c2'),width:3},
+      {pts:[[x0,y0,-1],[x0,y0,z0]],color:css('--axis'),width:1.2,dash:[4,4]}],
+    pts3d:[{p:[x0,y0,z0],color:css('--c2'),label:'P'}]});
+  $('sl-out').innerHTML='P = ('+fmt(x0,2)+', '+fmt(y0,2)+', '+fmt(z0,3)+') · f<sub>x</sub> = <b>'+fmt(a,3)+'</b> · f<sub>y</sub> = <b>'+fmt(b,3)+'</b>';}
+if($('f-slice')){['sl-x','sl-y'].forEach(id=>$(id).addEventListener('input',()=>drawSlice($('f-slice'))));mount('f-slice',drawSlice);}
+
+/* ---- §4 Taylor 1D ---- */
+const fact=n=>n<2?1:n*fact(n-1);
+function drawT1(cv){const N=+$('t1-n').value,p=x=>{let s=0;for(let k=0;k<N;k++)s+=x**k/fact(k);return s;};
+  axes2d(cv,{xmin:-3,xmax:3,ymin:-4,ymax:6,xstep:1,ystep:1,curves:[{f:Math.exp,color:css('--warm')},{f:p,color:css('--accent')}],pts:[{x:0,y:1,color:css('--c2')}]});
+  const terms=['1','x','x²/2','x³/6','x⁴/24','x⁵/120'].slice(0,N).join(' + ');
+  $('t1-out').innerHTML='y = '+terms+' · at x = 1: <b>'+fmt(p(1),4)+'</b> vs e = 2.7183';}
+if($('f-taylor1')){$('t1-n').addEventListener('input',()=>drawT1($('f-taylor1')));mount('f-taylor1',drawT1);}
+
+/* ---- §4 cone ---- */
+const approx=[()=>1,(x,y)=>x,(x,y)=>x+y*y/2];
+function drawCone(cv){const k=+$('cone-sel').value;
+  surface(cv,{f:(x,y)=>Math.hypot(x,y),x:[0,2],y:[-1,1],z:[0,2.3],n:26,alpha:0.85,f2:approx[k],f2alpha:0.55,view:{yaw:-1.0,elev:0.35},
+    pts3d:[{p:[1,0,1],color:css('--c2'),label:'(1,0,1)'}]});}
+if($('f-cone')){$('cone-sel').addEventListener('input',()=>drawCone($('f-cone')));mount('f-cone',drawCone);}
+
+/* ---- §5 Example 1.5.1 (drawn over a disc of radius 1.6) ---- */
+const E151=[{f:(x,y)=>x*x+2*y*y,p:[0,0],z:[0,5.2]},{f:(x,y)=>2*x-x*x-2*y*y,p:[1,0],z:[-4.2,1.1]},{f:(x,y)=>x*x-2*y*y,p:[0,0],z:[-5.2,2.6]}];
+function draw151(cv){const k=+$('ex151-sel').value,E=E151[k],[a,b]=E.p,R=1.6;
+  surface(cv,{x:[a-R,a+R],y:[b-R,b+R],z:E.z,alpha:0.8,P:{P:(r,t)=>{const x=a+r*Math.cos(t),y=b+r*Math.sin(t);return [x,y,E.f(x,y)];},s:[0,R],t:[0,2*Math.PI],n:14,m:48},
+    curves3d:[{pts:lin(a-R,a+R,50).map(x=>[x,b,E.f(x,b)]),color:css('--accent'),width:3},{pts:lin(b-R,b+R,50).map(y=>[a,y,E.f(a,y)]),color:css('--c4'),width:3}],
+    pts3d:[{p:[a,b,E.f(a,b)],color:css('--c2')}]});}
+if($('f-ex151')){$('ex151-sel').addEventListener('input',()=>draw151($('f-ex151')));mount('f-ex151',draw151);}
+
+/* ---- §5 extrema surface ---- */
+const fe=(x,y)=>1.6*Math.exp(-((x+0.9)**2+(y+0.6)**2)/0.35)+1.1*Math.exp(-((x-0.8)**2+(y+0.9)**2)/0.3)-0.9*Math.exp(-((x-0.3)**2+(y-1)**2)/0.3)+0.2*x;
+function ring(x0,y0,z0,r){return lin(0,2*Math.PI,40).map(t=>[x0+r*Math.cos(t),y0+r*Math.sin(t),z0]);}
+mount('f-extrema',cv=>{const pk=[[-0.9,-0.6],[0.8,-0.9]],dp=[0.3,1];
+  const top=pk.map(p=>{let best=p;for(let dx=-0.2;dx<=0.2;dx+=0.01)for(let dy=-0.2;dy<=0.2;dy+=0.01){if(fe(p[0]+dx,p[1]+dy)>fe(best[0],best[1]))best=[p[0]+dx,p[1]+dy];}return best;});
+  let bot=dp;for(let dx=-0.2;dx<=0.2;dx+=0.01)for(let dy=-0.2;dy<=0.2;dy+=0.01){if(fe(dp[0]+dx,dp[1]+dy)<fe(bot[0],bot[1]))bot=[dp[0]+dx,dp[1]+dy];}
+  surface(cv,{f:fe,x:[-2,2],y:[-2,2],z:[-1.2,1.8],n:34,alpha:0.8,view:{yaw:-0.5,elev:0.5},
+    curves3d:top.map(p=>({pts:ring(p[0],p[1],fe(p[0],p[1])-0.12,0.22),color:css('--accent'),width:2})).concat([{pts:ring(bot[0],bot[1],fe(bot[0],bot[1])+0.12,0.22),color:css('--accent'),width:2}]),
+    pts3d:top.map((p,i)=>({p:[p[0],p[1],fe(p[0],p[1])],color:css('--c2'),label:'local max'})).concat([{p:[bot[0],bot[1],fe(bot[0],bot[1])],color:css('--warm'),label:'local min'}])});});
+
+/* ---- §5 stationary point slices ---- */
+mount('f-stat',cv=>{const g=(x,y)=>2.2-0.6*x*x-0.9*y*y+0.15*x*y,a=0,b=0,z0=g(a,b);
+  surface(cv,{x:[-1.8,1.8],y:[-1.8,1.8],z:[0,2.6],alpha:0.6,view:{yaw:-0.6,elev:0.4},P:{P:(r,t)=>{const x=1.4*r*Math.cos(t),y=1.4*r*Math.sin(t);return [x,y,g(x,y)];},s:[0,1],t:[0,2*Math.PI],n:12,m:48},
+    curves3d:[{pts:lin(-1.4,1.4,50).map(x=>[x,b,g(x,b)]),color:css('--accent'),width:3},{pts:lin(-1.4,1.4,50).map(y=>[a,y,g(a,y)]),color:css('--c4'),width:3},
+      {pts:[[a-0.9,b,z0],[a+0.9,b,z0]],color:css('--warm'),width:3},{pts:[[a,b-0.9,z0],[a,b+0.9,z0]],color:css('--c2'),width:3},
+      {pts:[[a,b,0],[a,b,z0]],color:css('--axis'),width:1.2,dash:[4,4]}],
+    pts3d:[{p:[a,b,z0],color:css('--c2'),label:'top'},{p:[a,b,0],color:css('--c2'),label:'(a, b, 0)',r:3}]});});
+
+/* ---- §5 Example 1.5.2 contour ---- */
+mount('f-ex152',cv=>{const f=(x,y)=>x**3+y**3-3*(x+y);
+  contour(cv,{f,x:[-2.3,2.3],y:[-2.3,2.3],levels:[-6,-4,-3,-2,-1,0,1,2,3,4,6].concat([-3.6,3.6]),equal:true,n:140,xlabel:'x',ylabel:'y',
+    pts:[{x:1,y:1,color:css('--c3'),label:'min'},{x:-1,y:-1,color:css('--c2'),label:'max'},{x:1,y:-1,color:css('--c4'),label:'saddle'},{x:-1,y:1,color:css('--c4'),label:'saddle'}]});});
+
+/* ---- §6 directional derivative ---- */
+function drawDir(cv){const ang=+$('dir-a').value*Math.PI/180,u=[Math.cos(ang),Math.sin(ang)],G=[0.2,0.4],sc=3.2;
+  const D=G[0]*u[0]+G[1]*u[1],al=Math.acos(D/Math.hypot(...G));
+  contour(cv,{f:(x,y)=>0.5*Math.log(x*x+y*y),x:[-3.2,3.2],y:[-0.6,3.6],levels:[-0.5,0,0.4,0.8,1.0,1.2],equal:true,color:'--axis',xlabel:'x',ylabel:'y',
+    arrows:[{x1:1,y1:2,x2:1+G[0]*sc,y2:2+G[1]*sc,color:css('--warm'),label:'∇φ'},{x1:1,y1:2,x2:1+u[0],y2:2+u[1],color:css('--accent'),label:'u'}],
+    pts:[{x:1,y:2,color:css('--c2')}]});
+  $('dir-out').innerHTML='u = ('+fmt(u[0],3)+', '+fmt(u[1],3)+') · angle to ∇φ: α = '+fmt(al*180/Math.PI,1)+'° · D<sub>u</sub>φ = 0.447 × cos α = <b>'+fmt(D,4)+'</b>'+(Math.abs(ang-Math.PI/4)<0.01?' (= 3/(5√2), the answer of Example 1.6.1)':'');}
+if($('f-dir')){$('dir-a').addEventListener('input',()=>drawDir($('f-dir')));mount('f-dir',drawDir);}
+
+/* ---- §6 directional slice in 3D ---- */
+const fd=(x,y)=>1.2+0.6*x-0.3*y*y+0.2*x*y;
+function drawD3(cv){const ang=+$('d3-a').value*Math.PI/180,u=[Math.cos(ang),Math.sin(ang)],x0=0.4,y0=0.5,z0=fd(x0,y0);
+  const gx=0.6+0.2*y0,gy=-0.6*y0+0.2*x0,D=gx*u[0]+gy*u[1],S=lin(-1.4,1.4,40);
+  surface(cv,{f:fd,x:[-1.5,1.5],y:[-1.5,1.5],z:[0,2.6],n:24,alpha:0.55,view:{yaw:-0.55,elev:0.42},
+    curves3d:[{pts:S.map(s=>[x0+s*u[0],y0+s*u[1],0]),color:css('--axis'),width:1.6},
+      {pts:S.map(s=>[x0+s*u[0],y0+s*u[1],fd(x0+s*u[0],y0+s*u[1])]),color:css('--accent'),width:3},
+      {pts:[-0.8,0.8].map(s=>[x0+s*u[0],y0+s*u[1],z0+s*D]),color:css('--warm'),width:3},
+      {pts:[[x0,y0,0],[x0,y0,z0]],color:css('--axis'),width:1.2,dash:[4,4]}],
+    arrows3d:[{from:[x0,y0,0],to:[x0+0.7*u[0],y0+0.7*u[1],0],color:css('--ink'),label:'u'}],
+    pts3d:[{p:[x0,y0,0],color:css('--c2'),label:'P₀'},{p:[x0,y0,z0],color:css('--c2')}]});
+  $('d3-out').innerHTML='u = ('+fmt(u[0],3)+', '+fmt(u[1],3)+') · grad f(P₀) = ('+fmt(gx,2)+', '+fmt(gy,2)+') · D<sub>u</sub>f = <b>'+fmt(D,3)+'</b> (slope of the orange line)';}
+if($('f-dir3')){$('d3-a').addEventListener('input',()=>drawD3($('f-dir3')));mount('f-dir3',drawD3);}
+
+/* ---- §7 tangent plane ---- */
+const fp=(x,y)=>2-x*x-0.5*y*y;
+function drawTP(cv){const x0=+$('tp-x').value,y0=+$('tp-y').value,z0=fp(x0,y0),a=-2*x0,b=-y0;
+  const L=0.7/Math.hypot(a,b,1),n=[-a*L,-b*L,L],tp=(x,y)=>z0+a*(x-x0)+b*(y-y0);
+  surface(cv,{x:[-1.6,1.6],y:[-1.6,1.6],z:[-1,3.2],alpha:0.85,P:{P:(r,t)=>{const x=1.5*r*Math.cos(t),y=1.5*r*Math.sin(t);return [x,y,fp(x,y)];},s:[0,1],t:[0,2*Math.PI],n:14,m:48},
+    psurfs:[{P:(r,t)=>{const x=x0+r*Math.cos(t),y=y0+r*Math.sin(t);return [x,y,tp(x,y)];},s:[0,0.75],t:[0,2*Math.PI],n:6,m:36,color:'--warm',alpha:0.55}],
+    arrows3d:[{from:[x0,y0,z0],to:[x0+n[0],y0+n[1],z0+n[2]],color:css('--c2'),label:'n'}],pts3d:[{p:[x0,y0,z0],color:css('--c2')}]});
+  const sg=(c,v,p)=>(c<0?' − ':' + ')+fmt(Math.abs(c),2)+'('+v+(p<0?' + '+fmt(-p,2):' − '+fmt(p,2))+')';
+  $('tp-out').innerHTML='tangent plane: z − '+fmt(z0,3)+' ='+sg(a,'x',x0)+sg(b,'y',y0);}
+if($('f-tplane')){['tp-x','tp-y'].forEach(id=>$(id).addEventListener('input',()=>drawTP($('f-tplane'))));mount('f-tplane',drawTP);}
+
+/* ---- §8 Lagrange ---- */
+function drawLag(cv){const t=+$('lag-t').value*Math.PI/180,x=Math.sqrt(8)*Math.cos(t),y=Math.sqrt(2)*Math.sin(t);
+  const gf=[y,x],gg=[2*x,8*y],s1=0.6/Math.max(1,Math.hypot(...gf)),s2=1.2/Math.hypot(...gg);
+  const cross=gf[0]*gg[1]-gf[1]*gg[0],par=Math.abs(cross)/(Math.hypot(...gf)*Math.hypot(...gg)+1e-9)<0.02;
+  contour(cv,{f:(x,y)=>x*y,x:[-3.6,3.6],y:[-2.4,2.4],levels:[-4,-3,-2,-1,1,2,3,4],equal:true,xlabel:'x',ylabel:'y',
+    param:[{x:s=>Math.sqrt(8)*Math.cos(s),y:s=>Math.sqrt(2)*Math.sin(s),t0:0,t1:2*Math.PI,color:css('--ink'),width:2.4}],
+    arrows:[{x1:x,y1:y,x2:x+gf[0]*s1*2,y2:y+gf[1]*s1*2,color:css('--warm'),label:'∇f'},{x1:x,y1:y,x2:x+gg[0]*s2,y2:y+gg[1]*s2,color:css('--accent'),label:'∇g'}],
+    pts:[{x,y,color:css('--c2')}]});
+  $('lag-out').innerHTML='(x, y) = ('+fmt(x,3)+', '+fmt(y,3)+') · f = xy = <b>'+fmt(x*y,3)+'</b>'+(par?' · gradients parallel: optimum':'');}
+if($('f-lag')){$('lag-t').addEventListener('input',()=>drawLag($('f-lag')));mount('f-lag',drawLag);}
+})();
+
+</script>
+</body>
+</html>

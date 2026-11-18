@@ -1,0 +1,905 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH1851 L4 · Continuity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (46rem) with a sticky contents rail on wide screens; graphs inline beside the maths they explain; practice and past papers at the end. Palette and type match the MECH2407 notes. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Lecture 4</p>
+  <ol>
+    <li><a href="#s0">0 · Where we are</a></li>
+    <li><a href="#s1">1 · Continuity at a point</a></li>
+    <li><a href="#s2">2 · Continuity on an interval</a></li>
+    <li><a href="#s3">3 · Types of discontinuity</a></li>
+    <li><a href="#s4">4 · Continuous extension</a></li>
+    <li><a href="#s5">5 · Properties of continuous functions</a></li>
+    <li><a href="#s6">6 · Composites</a></li>
+    <li><a href="#s7">7 · Limits of continuous functions</a></li>
+    <li><a href="#s8">8 · Intermediate Value Theorem</a></li>
+    <li><a href="#s9">9 · Summary</a></li>
+    <li><a href="#s10">10 · Common mistakes</a></li>
+    <li><a href="#s11">11 · Find the mistake</a></li>
+    <li><a href="#s12">12 · Group work</a></li>
+    <li><a href="#s13">13 · Concept checks</a></li>
+    <li><a href="#pastpaper">14 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MATH1851 · Calculus · Lecture 4</span>
+  <h1>Continuity</h1>
+  <p class="lede">Every slide of Lecture 4 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this lecture.</p>
+</header>
+
+<!-- ================= 0 ================= -->
+<section id="s0"><h2><span class="n">0</span>Where this lecture sits</h2>
+<p>Lectures 1 to 3 were all about <b>limits</b>: what value \(f(x)\) heads towards as \(x\) heads towards some number. Lecture 1 defined limits and one-sided limits, Lecture 2 gave the Sandwich Theorem and the key limit \(\lim_{x\to0}\frac{\sin x}{x}=1\), and Lecture 3 handled limits involving infinity (vertical and horizontal asymptotes). This lecture uses limits to make precise an idea you already know from drawing graphs: a graph with <b>no breaks, holes or jumps</b>. That idea is called <b>continuity</b>.</p>
+
+<div class="box def"><span class="tag">Recall from Lecture 1 (slide 2) · Limit, intuitive definition</span>
+<p>Suppose \(f(x)\) is defined on an open interval about \(x_0\) (an interval \((p,q)\) with \(x_0\) strictly inside it; \(f\) may or may not be defined at \(x_0\) itself). We write</p>
+\[\lim_{x\to x_0}f(x)=L\]
+<p>and say "the limit of \(f(x)\) as \(x\) approaches \(x_0\) is \(L\)" if we can make the values of \(f(x)\) arbitrarily close to \(L\) for all \(x\) sufficiently close to \(x_0\) but <b>not equal</b> to \(x_0\).</p>
+<p class="word"><b>In words:</b> the limit is the height the graph is heading to as you slide towards \(x_0\); what happens exactly at \(x_0\) does not matter.</p>
+<p>The definition can be modified for <b>one-sided limits</b> (\(x\to x_0^-\): approach from the left, using only \(x\lt x_0\); \(x\to x_0^+\): approach from the right, using only \(x\gt x_0\)) and for <b>limits at infinity</b> (\(x\to\pm\infty\), Lecture 3). The two-sided limit exists exactly when both one-sided limits exist and are equal.</p>
+</div>
+
+<p>The lecture's admin slides, in brief:</p>
+<ul class="list">
+<li><b>Review questions (slide 3):</b> an in-class poll run on the Ed discussion platform (reached via HKU Moodle). The slide shows only the QR code and logos; the poll questions are not on the handout.</li>
+<li><b>Learning objectives (slide 4):</b> define <i>continuous</i>, the <i>types of discontinuity</i> and <i>continuous extension</i>; determine the points and/or intervals where a function is continuous or discontinuous; apply theorems involving continuity: the composite of continuous functions, limits of continuous functions, and the Intermediate Value Theorem.</li>
+<li><b>Textbook reference (slide 5):</b> Continuity is § 1.5 of the Custom textbook and § 2.6 of MyLab.</li>
+<li><b>Lecture timeline (slide 6):</b> continuity (15 minutes), theorems involving continuity (15 minutes), group work/discussion (20 minutes).</li>
+</ul>
+</section>
+
+<!-- ================= 1 ================= -->
+<section id="s1"><h2><span class="n">1</span>Continuity at a point</h2>
+<h3>Continuous curves (slide 7)</h3>
+<p>Slide 7 shows three smooth curves \(f\), \(g\), \(h\) drawn on the same axes: \(f\) wiggles up and down, \(g\) is a single hump, and \(h\) is an S-shaped curve that rises and levels off. What they share: each one can be drawn <b>without lifting the pen off the paper</b>. That is the picture to keep in mind for "continuous". The slide's picture is redrawn below (the exact formulas are not given on the slide; the ones used here only reproduce the shapes).</p>
+<div class="figure"><p class="ttl">Three continuous curves (slide 7 redrawn)</p>
+<canvas class="plot" id="cc" style="aspect-ratio:16/9" aria-label="Three unbroken curves: an oscillating curve f, a hump g and an S-shaped curve h"></canvas>
+<div class="legend"><span style="--k:var(--accent)">f (wiggly)</span><span style="--k:var(--c3)">g (hump)</span><span style="--k:var(--c4)">h (S-shape)</span></div>
+<p class="cap">No breaks, no holes, no jumps, no vertical asymptotes: each curve is one unbroken stroke.</p></div>
+
+<p>"Without lifting the pen" is a good picture but not a definition you can calculate with. The definition uses limits.</p>
+
+<div class="box def"><span class="tag">Definition · Continuity at a point (slide 8)</span>
+<p>A function \(f(x)\) is <b>continuous at an interior point</b> \(c\) if</p>
+\[\lim_{x\to c}f(x)=f(c).\]
+<p class="word"><b>In words:</b> the height the graph is heading to near \(c\) = the height the graph actually has at \(c\).</p>
+<p>If \(f(x)\) does not satisfy this condition at \(c\), then \(f\) is <b>discontinuous at \(x=c\)</b>, and \(c\) is called a <b>point of discontinuity</b>.</p>
+<p>An <b>interior point</b> of the domain is a point \(c\) with some room on both sides: \(f\) is defined on a whole open interval around \(c\) (except possibly at \(c\)). Points at the edge of the domain (endpoints) are handled with one-sided limits in Section 2.</p>
+</div>
+
+<div class="box thm"><span class="tag">Theorem · Continuity Test (slide 8)</span>
+<p>A function \(f(x)\) is continuous at \(x=c\) <b>if and only if</b> (meaning: exactly when; each side guarantees the other) it meets all three conditions:</p>
+<ol class="steps">
+<li>\(f(c)\) is defined;</li>
+<li>\(\lim_{x\to c}f(x)\) exists;</li>
+<li>\(\lim_{x\to c}f(x)=f(c)\).</li>
+</ol>
+<p class="word"><b>In words:</b> (i) there is a dot on the graph at \(x=c\); (ii) the graph heads to one single height from both sides; (iii) the dot sits exactly at that height.</p>
+</div>
+<p>The test is how you <b>prove</b> continuity or discontinuity at a point: check the three conditions in order and stop at the first one that fails. Each kind of failure gives a different picture, which is what the "types of discontinuity" in Section 3 describe.</p>
+<div class="box eg"><span class="tag">Quick illustration</span>
+<p>Let \(f(x)=\dfrac{x^2-1}{x-1}\). At \(c=1\): \(f(1)=\frac00\) is not defined, so condition (i) fails and \(f\) is discontinuous at \(1\), even though \(\lim_{x\to1}f(x)=\lim_{x\to1}(x+1)=2\) exists. At \(c=3\): \(f(3)=4\), \(\lim_{x\to3}f(x)=4\), equal, so \(f\) is continuous at \(3\).</p>
+</div>
+</section>
+
+<!-- ================= 2 ================= -->
+<section id="s2"><h2><span class="n">2</span>Continuity on an interval</h2>
+<p>At an endpoint of an interval you can only approach from one side, so the definition uses one-sided limits there.</p>
+<div class="box def"><span class="tag">Definition · Continuity on a closed interval (slide 9)</span>
+<p>A function \(f(x)\) is <b>continuous on the interval \([a,b]\)</b> if it meets the following three conditions.</p>
+<ol class="steps">
+<li>Continuity at every \(c\in(a,b)\) (every point strictly between \(a\) and \(b\)):
+\[\lim_{x\to c}f(x)=f(c)\]</li>
+<li>Continuity at the left endpoint \(a\) (approach from the right only):
+\[\lim_{x\to a^+}f(x)=f(a)\]</li>
+<li>Continuity at the right endpoint \(b\) (approach from the left only):
+\[\lim_{x\to b^-}f(x)=f(b)\]</li>
+</ol>
+<p class="word"><b>In words:</b> no breaks inside the interval, and at each end the graph runs right up to the dot that is there, coming from inside the interval.</p>
+</div>
+<p>The symbol \(\in\) means "is an element of" (belongs to). A point where only one of the one-sided conditions holds is called <b>right-continuous</b> (\(\lim_{x\to c^+}f(x)=f(c)\)) or <b>left-continuous</b> (\(\lim_{x\to c^-}f(x)=f(c)\)). The same idea applies to half-open intervals such as \([a,b)\): check the interior points and the included endpoint only.</p>
+
+<div class="box thm"><span class="tag">Convention (slide 9)</span>
+<p><b>A continuous function is continuous on its domain.</b> That is, when we simply call \(f\) "a continuous function", we mean it is continuous at every point where it is defined (using one-sided limits at any endpoints of the domain). The <b>domain</b> is the set of all \(x\) for which \(f(x)\) is defined.</p>
+<p class="word"><b>In words:</b> "continuous function" is judged only where the function exists. For example, \(1/x\) is a continuous function (it has no break anywhere on its domain), even though it is discontinuous at \(x=0\), where it is not defined.</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 1 (slide 10) · Reading continuity off a graph</span>
+<p>The graph of \(f(x)\) is shown below (the slide's picture redrawn). (a) Find the domain of \(f\). (b) Find the intervals on which \(f\) is continuous. (c) Find the points where \(f\) is discontinuous.</p>
+<p><b>What the graph shows</b>, from left to right:</p>
+<ul class="list">
+<li>A filled dot at about \((-2,-0.5)\); the curve runs right to an <b>open circle</b> (hollow dot: the point is <i>not</i> on the graph) at about \((-1,-0.8)\), then carries on from the other side of the hole.</li>
+<li>Between \(x=-1\) and \(x=0\) the curve dips to about \(-1\), comes back up to \(1\), then wiggles between \(-1\) and \(1\) faster and faster as \(x\to0^-\) (a solid-looking band just left of the \(y\)-axis). Its shape matches \(\sin(1/x)\), which is what the redraw uses.</li>
+<li>Just right of \(x=0\) the curve comes down from very high up (it shoots up to \(+\infty\) as \(x\to0^+\)) and falls to an open circle at \((1,1)\).</li>
+<li>A filled dot at \((1,2)\) starts a horizontal segment at height 2 which ends at an open circle at \((2,2)\).</li>
+</ul>
+</div>
+<div class="figure"><p class="ttl">Example 1: the graph of f (slide 10 redrawn)</p>
+<canvas class="plot" id="ex1" style="aspect-ratio:16/11" aria-label="Graph of f for Example 1 with holes at x=-1 and x=1, oscillation left of 0 and a vertical asymptote right of 0"></canvas>
+<div class="ctrl"><label for="ex1-s">Inspect the point <select id="ex1-s"><option value="m2">x = −2</option><option value="m1">x = −1</option><option value="z">x = 0</option><option value="p1">x = 1</option><option value="p2">x = 2</option><option value="h">x = 0.5 (a typical point)</option></select></label></div>
+<div class="readout" id="ex1-out"></div>
+<p class="cap">Open circles are holes (not part of the graph); filled dots are points on the graph. Pick a point to run the Continuity Test on it.</p></div>
+<div class="box eg"><span class="tag">Example 1 · Solution</span>
+<p><b>(a) Domain.</b> \(f\) is defined from \(x=-2\) (filled dot, included) up to but not including \(x=2\) (open circle), except at \(x=-1\) (open circle with no filled dot above or below it) and \(x=0\) (no point at all). At \(x=1\) there is a filled dot at height 2, so \(f(1)=2\) is defined.</p>
+\[\text{Domain}=[-2,-1)\cup(-1,0)\cup(0,2)\]
+<p class="word"><b>In words:</b> every \(x\) from \(-2\) up to \(2\), including \(-2\), excluding \(-1\), \(0\) and \(2\). (\(\cup\) means "union": put the pieces together.)</p>
+<p><b>(b) Intervals of continuity.</b> The graph is unbroken on each of these pieces:</p>
+\[[-2,-1),\quad(-1,0),\quad(0,1),\quad[1,2)\]
+<p>At \(x=-2\) the curve runs into the filled dot from the right, so \(\lim_{x\to-2^+}f(x)=f(-2)\) (right-continuous); that is why \(-2\) is included. At \(x=1\), \(\lim_{x\to1^+}f(x)=2=f(1)\), so \(f\) is right-continuous at \(1\) and \([1,2)\) includes \(1\); but \(\lim_{x\to1^-}f(x)=1\ne f(1)\), so the piece to the left stops at \((0,1)\), open at \(1\).</p>
+<p><b>(c) Points of discontinuity:</b> \(x=-1\), \(x=0\), \(x=1\).</p>
+<ul class="list">
+<li>\(x=-1\): \(f(-1)\) is not defined (test condition (i) fails), although the limit exists (both sides head to the hole at about \(-0.8\)). A <b>removable</b> discontinuity (Section 3).</li>
+<li>\(x=0\): \(f(0)\) is not defined; from the left the graph oscillates (no limit), from the right \(f(x)\to+\infty\). Oscillating on the left, infinite on the right.</li>
+<li>\(x=1\): \(f(1)=2\) is defined, but \(\lim_{x\to1^-}f(x)=1\) and \(\lim_{x\to1^+}f(x)=2\) differ, so \(\lim_{x\to1}f(x)\) does not exist (condition (ii) fails). A <b>jump</b> discontinuity.</li>
+</ul>
+<p style="font-size:.9rem;color:var(--muted)">About \(x=2\): the graph simply ends there (there is nothing to the right of \(x=2\)), so \(x=2\) is an end of the picture rather than a break inside it, and the usual answer does not list it. Since \(f(2)\) is undefined, some readers would also call \(f\) discontinuous at \(x=2\); if you include it, say why. The slide gives no printed answer, so this is the reading used here.</p>
+</div>
+</section>
+
+<!-- ================= 3 ================= -->
+<section id="s3"><h2><span class="n">3</span>Types of discontinuity (slide 11)</h2>
+<p>Slide 11 shows four kinds of discontinuity, all at \(x=0\). Each matches a different failure in the Continuity Test. Use the selector to step through them; the readout runs the test.</p>
+<div class="figure"><p class="ttl">The four types of discontinuity at x = 0 (slide 11 redrawn)</p>
+<canvas class="plot" id="dt" style="aspect-ratio:16/10" aria-label="Graph illustrating the selected type of discontinuity at x = 0"></canvas>
+<div class="ctrl"><label for="dt-s">Type <select id="dt-s">
+<option value="r1">Removable (hole)</option>
+<option value="r2">Removable (moved point)</option>
+<option value="j">Jump</option>
+<option value="i">Infinite</option>
+<option value="o">Oscillating</option>
+</select></label></div>
+<div class="readout" id="dt-out"></div>
+<p class="cap">Open circle = hole (not on the graph). Filled dot = the actual value f(0).</p></div>
+
+<div class="cases">
+<div><b>Removable</b>\(\lim_{x\to0}f(x)\) exists, but either \(f(0)\) is undefined (slide's left picture: the line \(y=x+1\) with a hole at \((0,1)\)) or \(f(0)\) is defined with the wrong value (slide's second picture: the hole at \((0,1)\) and a stray dot at \((0,2)\)). It is "removable" because redefining the single value \(f(0)\) as the limit (here \(1\)) repairs it.</div>
+<div><b>Jump</b>Both one-sided limits exist but are different, so the graph jumps. Slide's picture: \(f(x)=0\) for \(x\lt0\) and \(f(x)=1\) for \(x\ge0\): \(\lim_{x\to0^-}f(x)=0\), \(\lim_{x\to0^+}f(x)=1=f(0)\). No single value of \(f(0)\) can fix it.</div>
+<div><b>Infinite</b>The function blows up to \(\pm\infty\) at the point (a vertical asymptote, Lecture 3). Slide's picture: \(f(x)=\dfrac{1}{x^2}\), with \(\lim_{x\to0}f(x)=+\infty\).</div>
+<div><b>Oscillating</b>The function wiggles between values infinitely often near the point and never settles, so no limit exists. Slide's picture: \(y=\sin\dfrac1x\), which swings between \(-1\) and \(1\) faster and faster as \(x\to0\).</div>
+</div>
+<div class="box warn"><span class="tag">Trap</span>
+<p>"Removable" does not mean the function is continuous. It is still discontinuous at that point; it just <i>could be made</i> continuous by changing or adding one value. Only removable discontinuities can be fixed this way; jump, infinite and oscillating ones cannot.</p></div>
+<div class="box beyond"><span class="tag">Beyond the handouts</span>
+<p>Jump, infinite and oscillating discontinuities are sometimes grouped together as <b>non-removable</b> (or "essential" in some books). Also, a function can mix types at one point, as in Example 1 at \(x=0\) (oscillating from the left, infinite from the right). Exams ask you to name the type, so describe each side if they differ.</p></div>
+</section>
+
+<!-- ================= 4 ================= -->
+<section id="s4"><h2><span class="n">4</span>Continuous extension (slide 12)</h2>
+<div class="box def"><span class="tag">Definition · Continuous extension (slide 12)</span>
+<p>Suppose \(\lim_{x\to c}f(x)=L\) exists, but \(f(c)\) is not defined. The <b>continuous extension</b> of \(f\) to \(x=c\) is the function</p>
+\[F(x)=\begin{cases}f(x), & \text{if } x \text{ is in the domain of } f\\ L, & \text{if } x=c\end{cases}\]
+<p class="word"><b>In words:</b> keep \(f\) exactly as it is everywhere it already exists, and plug the hole at \(c\) with the limit value \(L\).</p>
+<p>\(F\) is then continuous at \(c\) because \(\lim_{x\to c}F(x)=\lim_{x\to c}f(x)=L=F(c)\). "Extension" means the domain is extended (made bigger) by one point.</p>
+</div>
+<div class="box eg"><span class="tag">Example 2 (slide 12)</span>
+<p>Find the continuous extension of \(f(x)=\dfrac{\sin x}{x}\).</p>
+<p><b>Solution.</b> \(f\) is defined for every \(x\ne0\); at \(x=0\) it gives \(\frac00\), undefined. From Lecture 2 (the Sandwich Theorem result),</p>
+\[\lim_{x\to0}\frac{\sin x}{x}=1.\]
+<p>So the limit exists and \(f\) has a removable discontinuity at \(0\). The continuous extension is</p>
+\[F(x)=\begin{cases}\dfrac{\sin x}{x}, & x\ne0\\[4pt] 1, & x=0\end{cases}\]
+<p class="word"><b>In words:</b> \(F\) = \(\frac{\sin x}{x}\) wherever that makes sense, and \(1\) at \(x=0\).</p>
+</div>
+<div class="figure"><p class="ttl">Plugging the hole in sin x / x</p>
+<canvas class="plot" id="ce" style="aspect-ratio:16/9" aria-label="Graph of sin x over x with a hole at (0,1), filled in for the extension F"></canvas>
+<div class="ctrl"><label for="ce-s">Show <select id="ce-s"><option value="f">f(x) = sin x / x (hole at 0)</option><option value="F">F(x), the continuous extension</option></select></label></div>
+<div class="readout" id="ce-out"></div>
+<p class="cap">The two graphs are identical except at the single point x = 0.</p></div>
+<p>Not every hole can be plugged: if the limit at \(c\) does not exist (jump, infinite, oscillating), there is no continuous extension to \(c\). Group Work 1 (Section 12) asks about this.</p>
+</section>
+
+<!-- ================= 5 ================= -->
+<section id="s5"><h2><span class="n">5</span>Properties of continuous functions</h2>
+<div class="box thm"><span class="tag">Theorem · Combinations (slide 13)</span>
+<p>If functions \(f\) and \(g\) are continuous at \(x=c\), then the following combinations are continuous at \(x=c\).</p>
+<div class="scroll"><table>
+<tr><th>#</th><th>Combination</th><th>Formula</th><th>Condition</th></tr>
+<tr><td>1</td><td>Sums</td><td>\(f+g\)</td><td></td></tr>
+<tr><td>2</td><td>Differences</td><td>\(f-g\)</td><td></td></tr>
+<tr><td>3</td><td>Constant multiples</td><td>\(kf\)</td><td>\(k\in\mathbb R\) (any real constant)</td></tr>
+<tr><td>4</td><td>Products</td><td>\(fg\)</td><td></td></tr>
+<tr><td>5</td><td>Quotients</td><td>\(\dfrac fg\)</td><td>\(g(c)\ne0\)</td></tr>
+<tr><td>6</td><td>Powers</td><td>\(f^n\)</td><td>\(n\in\mathbb Z^+\) (positive integer)</td></tr>
+<tr><td>7</td><td>Roots</td><td>\(\sqrt[n]{f}\)</td><td>\(n\in\mathbb Z^+\)</td></tr>
+</table></div>
+<p class="word"><b>In words:</b> add, subtract, scale, multiply, divide (by something non-zero at \(c\)), raise to a power or take a root of continuous functions, and you get a continuous function.</p>
+</div>
+<p>Why they hold: each one follows from the matching limit law of Lecture 1. For example, for sums, \(\lim_{x\to c}(f+g)=\lim_{x\to c}f+\lim_{x\to c}g=f(c)+g(c)=(f+g)(c)\). The condition \(g(c)\ne0\) for quotients is needed because \(\frac{f(c)}{0}\) is not defined.</p>
+<div class="box warn"><span class="tag">Trap · roots</span>
+<p>For an <b>even</b> root (\(n=2,4,\dots\)) the root must be defined near \(c\), so you need \(f(c)\gt0\) (if \(f(c)=0\) you only get one-sided continuity, on the side where \(f\ge0\)). For example \(\sqrt{x}\) is continuous on \([0,\infty)\), right-continuous at \(0\). Odd roots such as \(\sqrt[3]{x}\) work for negative values too.</p></div>
+
+<div class="box thm"><span class="tag">Theorem · Standard continuous functions (slide 14)</span>
+<p>The following types of functions are continuous on their domains.</p>
+<ol class="steps">
+<li><b>Polynomial functions</b>, e.g. \(3x^4-2x+7\): domain all real numbers, so continuous everywhere.</li>
+<li><b>Rational functions</b> (one polynomial divided by another), e.g. \(\dfrac{x+1}{x^2-4}\): continuous wherever the denominator is not zero.</li>
+<li><b>Root functions</b>, e.g. \(\sqrt{x}\), \(\sqrt[3]{x}\): continuous where defined.</li>
+<li><b>Trigonometric functions</b>: \(\sin x\) and \(\cos x\) everywhere; \(\tan x\) and \(\sec x\) except at odd multiples of \(\frac\pi2\); \(\cot x\) and \(\csc x\) except at multiples of \(\pi\).</li>
+</ol>
+<p class="word"><b>In words:</b> the familiar functions have no breaks anywhere they are defined; their only discontinuities are where they are undefined.</p>
+<p style="font-size:.9rem;color:var(--muted)">The slide notes that more function types (exponential, logarithmic and inverse trigonometric functions) are added to this list in a later lecture (Lecture 7).</p>
+</div>
+<p>Together, the two theorems let you see continuity at a glance: build the function out of standard pieces, and the only places to check are where a denominator is zero, a root is of a negative number, or (for piecewise functions) where the formula changes.</p>
+
+<div class="box eg"><span class="tag">Example 3 (slide 15)</span>
+<p>For what value of \(b\) is</p>
+\[f(x)=\begin{cases}x, & \text{if } x\lt -2\\ bx^2, & \text{if } x\ge -2\end{cases}\]
+<p>continuous for every \(x\)?</p>
+<p><b>Solution.</b> A <b>piecewise function</b> uses different formulas on different parts of the number line. For \(x\lt-2\), \(f(x)=x\) is a polynomial, so continuous. For \(x\gt-2\), \(f(x)=bx^2\) is a polynomial, so continuous. The only point to check is the join \(x=-2\).</p>
+<ul class="list">
+<li>\(f(-2)=b(-2)^2=4b\) (the second formula applies since \(-2\ge-2\)).</li>
+<li>Left limit: \(\displaystyle\lim_{x\to-2^-}f(x)=\lim_{x\to-2^-}x=-2\).</li>
+<li>Right limit: \(\displaystyle\lim_{x\to-2^+}f(x)=\lim_{x\to-2^+}bx^2=4b\).</li>
+</ul>
+<p>For the limit to exist and equal \(f(-2)\) we need</p>
+\[4b=-2\quad\Longrightarrow\quad b=-\frac12.\]
+<p class="word"><b>In words:</b> the height where the left piece ends = the height where the right piece starts.</p>
+</div>
+<div class="figure"><p class="ttl">Example 3: slide b until the pieces join</p>
+<canvas class="plot" id="e3" style="aspect-ratio:16/10" aria-label="Piecewise function: line y=x for x less than -2, parabola b x squared for x at least -2"></canvas>
+<div class="ctrl"><label for="e3-b">b = <input type="range" id="e3-b" min="-1.5" max="1" step="0.05" value="0.5"><span id="e3-bv"></span></label></div>
+<div class="legend"><span style="--k:var(--accent)">y = x (x &lt; −2)</span><span style="--k:var(--c2)">y = bx² (x ≥ −2)</span></div>
+<div class="readout" id="e3-out"></div>
+<p class="cap">The open circle is where the left piece ends; the filled dot is f(−2) = 4b. They meet only at b = −1/2.</p></div>
+</section>
+
+<!-- ================= 6 ================= -->
+<section id="s6"><h2><span class="n">6</span>Composites (slide 16)</h2>
+<p>A <b>composite</b> function applies one function and then another. \(g\circ f\) (read "\(g\) of \(f\)" or "\(g\) composed with \(f\)") means \((g\circ f)(x)=g(f(x))\): first apply \(f\), then feed the result into \(g\). For example if \(f(x)=x^2+1\) and \(g(u)=\sqrt u\), then \(g(f(x))=\sqrt{x^2+1}\).</p>
+<div class="box thm"><span class="tag">Theorem · Composite of continuous functions (slide 16)</span>
+<p>If \(f\) is continuous at \(c\) and \(g\) is continuous at \(f(c)\), then the composite \(g\circ f\) is continuous at \(c\).</p>
+<p class="word"><b>In words:</b> a continuous function of a continuous function is a continuous function. Note \(g\) must be continuous at the <i>output</i> \(f(c)\), not at \(c\).</p>
+</div>
+<p>Analogy: \(f\) is a dimmer dial that turns smoothly, and \(g\) converts the dial reading to brightness smoothly. Small turns of the knob give small changes of reading, which give small changes of brightness, so the whole chain is smooth.</p>
+
+<div class="box eg"><span class="tag">Example 4 (slide 16)</span>
+<p>Find the interval for which \(y=\sqrt{\dfrac{x-1}{x+2}}\) is continuous.</p>
+<p><b>Solution.</b> This is a composite: inside \(f(x)=\dfrac{x-1}{x+2}\) (rational, continuous for \(x\ne-2\)), outside \(g(u)=\sqrt u\) (continuous for \(u\ge0\), one-sided at \(u=0\)). So \(y\) is continuous wherever it is defined, which is where</p>
+\[\frac{x-1}{x+2}\ge0\quad\text{and}\quad x\ne-2.\]
+<p>Sign table: the numerator is zero at \(x=1\), the denominator at \(x=-2\).</p>
+<div class="scroll"><table>
+<tr><th>\(x\)</th><th>\(x\lt-2\)</th><th>\(x=-2\)</th><th>\(-2\lt x\lt1\)</th><th>\(x=1\)</th><th>\(x\gt1\)</th></tr>
+<tr><td>\(x-1\)</td><td>−</td><td>−</td><td>−</td><td>0</td><td>+</td></tr>
+<tr><td>\(x+2\)</td><td>−</td><td>0</td><td>+</td><td>+</td><td>+</td></tr>
+<tr><td>quotient</td><td>+</td><td>undefined</td><td>−</td><td>0</td><td>+</td></tr>
+</table></div>
+<p>So \(y\) is continuous on</p>
+\[(-\infty,-2)\cup[1,\infty).\]
+<p class="word"><b>In words:</b> every \(x\) less than \(-2\), together with every \(x\) from \(1\) upwards. At \(x=1\) the function is only right-continuous (it is not defined just to the left of \(1\)), which is exactly continuity at a left endpoint.</p>
+</div>
+<div class="figure"><p class="ttl">Example 4: y = √((x − 1)/(x + 2))</p>
+<canvas class="plot" id="e4" style="aspect-ratio:16/9" aria-label="Graph of the square root of (x-1)/(x+2), existing for x less than -2 and x at least 1"></canvas>
+<div class="legend"><span style="--k:var(--accent)">y</span><span style="--k:var(--axis)">asymptotes x = −2, y = 1 (dashed)</span></div>
+<p class="cap">Two separate pieces. Left piece: rises to +∞ as x → −2⁻ (Lecture 3). Right piece: starts at the filled dot (1, 0) and levels off towards 1. Nothing exists for −2 ≤ x &lt; 1.</p></div>
+</section>
+
+<!-- ================= 7 ================= -->
+<section id="s7"><h2><span class="n">7</span>Limits of continuous functions (slide 17)</h2>
+<div class="box thm"><span class="tag">Theorem · Limits of continuous functions (slide 17)</span>
+<p>If \(g\) is continuous at \(b\) and \(\displaystyle\lim_{x\to c}f(x)=b\), then</p>
+\[\lim_{x\to c}g(f(x))=g\Big(\lim_{x\to c}f(x)\Big)=g(b).\]
+<p class="word"><b>In words:</b> limit of (continuous function of something) = continuous function of (limit of that something). You may move the limit inside a continuous outer function.</p>
+</div>
+<p>This is stronger than Section 6: \(f\) itself need not be continuous at \(c\) (it need not even be defined there); only its limit \(b\) matters, and \(g\) must be continuous at \(b\). Together with Section 5 it justifies the slogan "limits of continuous functions can be evaluated by <b>direct substitution</b>": if \(h\) is continuous at \(c\), then \(\lim_{x\to c}h(x)=h(c)\), so just plug in.</p>
+<div class="box eg"><span class="tag">Example 5 (slide 17)</span>
+<p>Evaluate \(\displaystyle\lim_{x\to0}\cos\Big(\frac{\sin x}{x}\Big)\).</p>
+<p><b>Solution.</b> Inside: \(f(x)=\dfrac{\sin x}{x}\) is not defined at \(0\), but \(\lim_{x\to0}\dfrac{\sin x}{x}=1\) (Lecture 2). Outside: \(g(u)=\cos u\) is continuous everywhere, in particular at \(b=1\). By the theorem,</p>
+\[\begin{aligned}\lim_{x\to0}\cos\Big(\frac{\sin x}{x}\Big)&=\cos\Big(\lim_{x\to0}\frac{\sin x}{x}\Big)\\&=\cos 1\approx0.5403.\end{aligned}\]
+<p class="word"><b>In words:</b> the inside heads to 1, and cosine is smooth at 1, so the whole thing heads to cos 1 (1 radian, not 1 degree).</p>
+</div>
+</section>
+
+<!-- ================= 8 ================= -->
+<section id="s8"><h2><span class="n">8</span>The Intermediate Value Theorem (slides 18–19)</h2>
+<div class="box thm"><span class="tag">Theorem · Intermediate Value Theorem, IVT (slide 18)</span>
+<p>A function \(y=f(x)\) that is continuous on a closed interval \([a,b]\) takes on every value between \(f(a)\) and \(f(b)\). In other words, if \(y_0\) is any value between \(f(a)\) and \(f(b)\), then there exists \(c\in[a,b]\) such that</p>
+\[f(c)=y_0.\]
+<p class="word"><b>In words:</b> if an unbroken graph starts at height \(f(a)\) and ends at height \(f(b)\), it must pass through every height in between at least once.</p>
+</div>
+<p>Analogy: you hike from a village at 200 m altitude to a peak at 800 m. However winding the path, at some moment you were at exactly 500 m, because you cannot teleport. The IVT says the same for graphs, and continuity is the "no teleporting" condition. Three things to notice:</p>
+<ul class="list">
+<li>Both conditions matter: <b>continuous</b> and on a <b>closed</b> interval \([a,b]\). Drop continuity and the graph can jump over \(y_0\) (try the jump case in the figure).</li>
+<li>The IVT says a \(c\) <b>exists</b>; it does not say where, and there may be several.</li>
+<li>It says nothing about values outside the range from \(f(a)\) to \(f(b)\): the graph may or may not reach those.</li>
+</ul>
+<div class="figure"><p class="ttl">IVT: pick a target height N</p>
+<canvas class="plot" id="ivt" style="aspect-ratio:16/10" aria-label="A function on [0,4] with a horizontal target line y=N and the points c where f(c)=N marked"></canvas>
+<div class="ctrl"><label for="ivt-s">Function <select id="ivt-s"><option value="c">continuous on [0, 4]</option><option value="j">with a jump at x = 2</option></select></label>
+<label for="ivt-n">N = <input type="range" id="ivt-n" min="-0.5" max="5.5" step="0.05" value="2.5"><span id="ivt-nv"></span></label></div>
+<div class="legend"><span style="--k:var(--accent)">y = f(x)</span><span style="--k:var(--c2)">y = N</span><span style="--k:var(--c3)">points with f(c) = N</span></div>
+<div class="readout" id="ivt-out"></div>
+<p class="cap">For the continuous function, every N between f(0) and f(4) is hit at least once (sometimes three times). Heights above f(4) may still be hit, but the IVT does not promise it. For the function with a jump, heights inside the gap are skipped.</p></div>
+
+<p>The most common use is finding <b>roots</b>. A <b>root</b> (or zero) of \(f\) is a value \(c\) with \(f(c)=0\), i.e. where the graph meets the \(x\)-axis. If \(f\) is continuous on \([a,b]\) and \(f(a)\), \(f(b)\) have <b>opposite signs</b>, then \(0\) lies between them, so the IVT gives a root \(c\) in \([a,b]\) (in fact in \((a,b)\), since \(f(a)\) and \(f(b)\) are not zero).</p>
+
+<div class="box eg"><span class="tag">Example 6 (slide 19)</span>
+<p>Show that \(f(x)=\sqrt[3]{x}+x-1\) has a root in \([0,1]\).</p>
+<p><b>Solution.</b></p>
+<ol class="steps">
+<li><b>Continuity.</b> \(\sqrt[3]{x}\) is a root function and \(x-1\) is a polynomial; both are continuous for all real \(x\), so their sum \(f\) is continuous on \([0,1]\) (slides 13–14).</li>
+<li><b>End values.</b> \(f(0)=0+0-1=-1\lt0\) and \(f(1)=1+1-1=1\gt0\).</li>
+<li><b>Conclude.</b> \(0\) lies between \(f(0)=-1\) and \(f(1)=1\). By the Intermediate Value Theorem there exists \(c\in[0,1]\) with \(f(c)=0\), i.e. \(f\) has a root in \([0,1]\).</li>
+</ol>
+<p class="word"><b>In words:</b> continuous, negative at one end, positive at the other, so it crosses zero in between.</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · Bisection: actually finding the root</span>
+<p>The IVT only proves a root exists. Repeating it pins the root down: check the sign at the midpoint, keep the half where the sign still changes, and repeat. Each step halves the interval. For Example 6 this homes in on \(c\approx0.3177\) (checked numerically). Drag the slider to watch.</p>
+<div class="figure"><p class="ttl">Bisection on f(x) = ∛x + x − 1</p>
+<canvas class="plot" id="bis" style="aspect-ratio:16/9" aria-label="Graph of cube root x plus x minus 1 on [0,1] with the current bisection interval highlighted on the x-axis"></canvas>
+<div class="ctrl"><label for="bis-n">Steps = <input type="range" id="bis-n" min="0" max="10" step="1" value="0"><span id="bis-nv"></span></label></div>
+<div class="legend"><span style="--k:var(--accent)">y = f(x)</span><span style="--k:var(--c4)">interval still known to contain the root</span></div>
+<div class="readout" id="bis-out"></div></div>
+</div>
+</section>
+
+<!-- ================= 9 ================= -->
+<section id="s9"><h2><span class="n">9</span>Summary (slide 20)</h2>
+<ul class="list">
+<li>"The graph of a continuous function can be drawn without removing a pen from the paper." Precisely: \(\lim_{x\to c}f(x)=f(c)\) at every point (one-sided at endpoints).</li>
+<li>Types of discontinuity include <b>removable</b>, <b>jump</b>, <b>infinite</b> and <b>oscillating</b>.</li>
+<li>"A continuous function of a continuous function is a continuous function" (composites).</li>
+<li>Limits of continuous functions can be evaluated by <b>direct substitution</b>.</li>
+<li>The IVT asserts that a closed interval on which a continuous function <b>changes sign</b> contains a root.</li>
+</ul>
+</section>
+
+<!-- ================= 10 ================= -->
+<section id="s10"><h2><span class="n">10</span>Common mistakes (slide 22)</h2>
+<h3>1. Assuming that if \(f\) is discontinuous at \(x=c\), then \(\lim_{x\to c}f(x)\) does not exist</h3>
+<p>Slide's example: suppose</p>
+\[f(x)=\begin{cases}1 & \text{if } x\ne0\\ 0 & \text{if } x=0.\end{cases}\]
+<div class="box"><div class="mistake"><span class="x">✗</span><span>"Since \(f(x)\) is discontinuous at \(x=0\), \(\lim_{x\to0}f(x)\) does not exist."</span>
+<span class="ok">✓</span><span>Near \(0\) (but not at \(0\)) every value is \(1\), so \(\lim_{x\to0}f(x)=1\) <b>exists</b>. The discontinuity comes from condition (iii) of the Continuity Test: the limit \(1\ne f(0)=0\). This is a removable discontinuity. Discontinuity means at least one of the three conditions fails; it need not be the limit one.</span></div></div>
+
+<h3>2. Assuming algebraic operations preserve discontinuities</h3>
+<div class="box"><div class="mistake"><span class="x">✗</span><span>"Since \(f(x)=\frac1x\) and \(g(x)=-\frac1x\) are discontinuous at \(x=0\), \(f+g\) is also discontinuous at \(x=0\)" (meaning: it inherits their infinite discontinuity).</span>
+<span class="ok">✓</span><span>For every \(x\ne0\), \(f(x)+g(x)=\frac1x-\frac1x=0\). The two blow-ups cancel, so \(\lim_{x\to0}(f+g)(x)=0\) exists and \(f+g\) extends continuously to the zero function. The theorem in Section 5 only goes one way: continuous + continuous = continuous. It says nothing about discontinuous + discontinuous, which can be continuous (or have a removable discontinuity only).</span></div></div>
+<p style="font-size:.9rem;color:var(--muted)">Being strict: \(f+g\) is still undefined at \(0\) (because \(f\) and \(g\) are), so by the Continuity Test it is technically not continuous there; but its discontinuity is now only removable, not infinite. A cleaner example with no such fine print is given next.</p>
+<div class="box eg"><span class="tag">Example <span class="pill">Written for these notes</span></span>
+<p>Let \(H(x)=0\) for \(x\lt0\) and \(H(x)=1\) for \(x\ge0\) (the jump from slide 11), and \(K(x)=1-H(x)\). Both have a jump discontinuity at \(0\), but \(H(x)+K(x)=1\) for <b>every</b> \(x\), which is continuous everywhere.</p></div>
+
+<h3>3. Applying the IVT when its conditions are not satisfied</h3>
+<div class="box"><div class="mistake"><span class="x">✗</span><span>"\(f(x)=\dfrac{|x|}{x}\) has a root in \([-1,1]\)" (because \(f(-1)=-1\lt0\) and \(f(1)=1\gt0\)).</span>
+<span class="ok">✓</span><span>\(\dfrac{|x|}{x}=-1\) for \(x\lt0\) and \(1\) for \(x\gt0\), and it is undefined at \(0\). It is <b>not continuous on \([-1,1]\)</b>, so the IVT does not apply. In fact it never equals \(0\): no root at all. Always check continuity on the whole closed interval first.</span></div></div>
+<div class="figure"><p class="ttl">|x|/x changes sign without a root</p>
+<canvas class="plot" id="absx" style="aspect-ratio:16/8" aria-label="Graph of |x|/x: -1 for negative x, 1 for positive x, with open circles at x = 0"></canvas>
+<p class="cap">The graph jumps from −1 to 1 at x = 0 without ever touching the x-axis.</p></div>
+
+<h3>Two more <span class="pill">Written for these notes</span></h3>
+<div class="box"><div class="mistake"><span class="x">✗</span><span>Checking a piecewise function only by plugging the join point into both formulas, without asking which formula defines \(f\) at that point.</span>
+<span class="ok">✓</span><span>You need left limit = right limit = \(f(c)\), where \(f(c)\) comes from the piece whose condition includes \(c\) (the one with \(\le\) or \(\ge\)).</span>
+<span class="x">✗</span><span>Concluding "no root" when \(f(a)\) and \(f(b)\) have the same sign.</span>
+<span class="ok">✓</span><span>The IVT gives no information then; there may still be roots (see Group Work 4).</span></div></div>
+</section>
+
+<!-- ================= 11 ================= -->
+<section id="s11"><h2><span class="n">11</span>Find the mistake (slide 21)</h2>
+<p>The slide shows a question and a student's handwritten answer. Find what is wrong or missing.</p>
+<div class="q"><p class="qh">Question 6. Apply the Intermediate Value Theorem to show that</p>
+\[f(x)=xe^x-x^2-1\]
+<p>has a root in the interval \([0,2]\).</p>
+<p><b>Student's work</b> (transcribed from the handwriting):</p>
+<div class="handwork">
+<p>Let \(f(x)=xe^x-x^2-1\)</p>
+<p>\(f(0)=-1\lt0\)</p>
+<p>\(f(2)=2e^2-4-1=2e^2-5\gt0\)</p>
+<p>By Intermediate Value Theorem \(f(c)=0\) for some \(0\le c\le2\)</p>
+</div>
+<p style="font-size:.9rem;color:var(--muted)">The function uses \(e^x\), the exponential function (graph known from HKDSE Core). Its continuity is formally listed in Lecture 7; you can take it as continuous everywhere here.</p>
+<details><summary>Hint</summary><div><p>The IVT has two conditions (Section 8). The student checked one of them. Which one is missing?</p></div></details>
+<details><summary>Answer</summary><div>
+<p>The arithmetic is correct (\(2e^2-5\approx9.78\gt0\)), but the student <b>never states that \(f\) is continuous on \([0,2]\)</b>, which is a required condition of the IVT (Common Mistake 3 shows what goes wrong without it). A complete answer adds a line such as:</p>
+<p>"\(x\), \(e^x\) and \(x^2\) are continuous everywhere, so \(f(x)=xe^x-x^2-1\) is continuous on \([0,2]\) (products and differences of continuous functions)."</p>
+<p>Then: \(f(0)=-1\lt0\lt2e^2-5=f(2)\), so by the IVT there exists \(c\in[0,2]\) with \(f(c)=0\). Small improvement: since \(f(0)\ne0\) and \(f(2)\ne0\), the root is in fact in \((0,2)\). (The root is \(c\approx0.738\), checked numerically.)</p>
+</div></details></div>
+</section>
+
+<!-- ================= 12 ================= -->
+<section id="s12"><h2><span class="n">12</span>Group work (slide 23)</h2>
+
+<div class="q"><p class="qh">1. Find the continuous extension of \(f(x)=\dfrac{x^3+2x^2-1}{5-3x}\).</p>
+<details><summary>Hint</summary><div><p>Where is \(f\) undefined? Does the limit exist there? (Plug that point into the numerator.)</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(f\) is a rational function, continuous everywhere except where \(5-3x=0\), i.e. \(x=\frac53\). At that point the numerator is</p>
+\[\Big(\tfrac53\Big)^3+2\Big(\tfrac53\Big)^2-1=\frac{248}{27}\ne0,\]
+<p>so near \(x=\frac53\) the function behaves like (non-zero)/(tiny): \(\lim_{x\to5/3^-}f(x)=+\infty\) and \(\lim_{x\to5/3^+}f(x)=-\infty\). This is an <b>infinite discontinuity</b>; the limit does not exist, so <b>no continuous extension to \(x=\frac53\) exists</b>. \(f\) is already continuous on its whole domain, so as printed, there is nothing to extend: the "extension" is \(f\) itself.</p>
+<p style="font-size:.9rem;color:var(--muted)">Possible typo on the slide: the numerator factorises as \((x+1)(x^2+x-1)\), which suggests the intended denominator may have contained a factor \(x+1\). For example, if the function were \(\frac{x^3+2x^2-1}{x+1}\), its continuous extension would be \(F(x)=x^2+x-1\) for all \(x\) (so \(F(-1)=-1\)). The answer above is for the question as printed.</p>
+</div></details></div>
+
+<div class="q"><p class="qh">2. For what values of \(a\) and \(b\) is</p>
+\[f(x)=\begin{cases}ax+2b, & \text{if } x\le0\\ x^2+3a-b, & \text{if } 0\lt x\le2\\ 3x-5, & \text{if } x\gt2\end{cases}\]
+<p class="qh">continuous for every \(x\)?</p>
+<details><summary>Hint</summary><div><p>Each piece is a polynomial, so only the joins \(x=0\) and \(x=2\) need checking. At each join set left limit = right limit = value. You get two equations in \(a\) and \(b\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p><b>At \(x=0\):</b> \(f(0)=2b\), left limit \(2b\), right limit \(0+3a-b=3a-b\). Need \(2b=3a-b\), i.e. \(a=b\).</p>
+<p><b>At \(x=2\):</b> \(f(2)=4+3a-b\), left limit \(4+3a-b\), right limit \(3(2)-5=1\). Need \(4+3a-b=1\), i.e. \(3a-b=-3\).</p>
+<p>Substituting \(a=b\): \(2a=-3\), so</p>
+\[a=b=-\frac32.\]
+</div></details></div>
+
+<div class="q"><p class="qh">3. Find the interval for which \(y=\sqrt[3]{\sin(x^{20}+5)}\) is continuous.</p>
+<details><summary>Hint</summary><div><p>Build it from the inside out: polynomial, then sine, then cube root. Where is each one continuous? Is a cube root of a negative number a problem?</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(x^{20}+5\) is a polynomial (continuous everywhere); \(\sin u\) is continuous everywhere; \(\sqrt[3]{v}\) is an odd root, defined and continuous for every real \(v\), including negatives. By the composite theorem (twice), \(y\) is continuous on</p>
+\[(-\infty,\infty),\]
+<p>i.e. for all real \(x\).</p>
+</div></details></div>
+
+<div class="q"><p class="qh">4. Does \(f(x)=x^{100}-9x^2+1\) have a root in \([0,2]\)?</p>
+<details><summary>Hint</summary><div><p>\(f(0)\) and \(f(2)\) are both positive, so the IVT on \([0,2]\) directly gives nothing. Try a point in between, such as \(x=1\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p><b>Yes.</b> \(f\) is a polynomial, so continuous everywhere. \(f(0)=1\gt0\), \(f(1)=1-9+1=-7\lt0\), \(f(2)=2^{100}-36+1\gt0\).</p>
+<p>By the IVT on \([0,1]\) there is a root in \((0,1)\), and on \([1,2]\) another root in \((1,2)\). So \(f\) has at least two roots in \([0,2]\). (Numerically they are \(x\approx0.3333\) and \(x\approx1.0215\).)</p>
+<p>Lesson: the same sign at both ends does not mean "no root"; split the interval.</p>
+</div></details></div>
+
+<div class="q"><p class="qh">5. Evaluate \(\displaystyle\lim_{x\to\pi/4}\tan\Big(\frac{\cos x-\sin x}{\cos 2x}\Big)\).</p>
+<details><summary>Hint</summary><div><p>At \(x=\frac\pi4\) the inside is \(\frac00\). Use \(\cos2x=\cos^2x-\sin^2x=(\cos x-\sin x)(\cos x+\sin x)\) to cancel, then move the limit inside \(\tan\) (Section 7).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>For \(x\) near \(\frac\pi4\) with \(\cos x\ne\sin x\),</p>
+\[\cos2x=(\cos x-\sin x)(\cos x+\sin x),\]
+\[\text{so}\quad\frac{\cos x-\sin x}{\cos2x}=\frac{1}{\cos x+\sin x}.\]
+<p>So the inside tends to \(\dfrac{1}{\frac{\sqrt2}{2}+\frac{\sqrt2}{2}}=\dfrac1{\sqrt2}=\dfrac{\sqrt2}{2}\). Since \(\tan\) is continuous at \(\frac{\sqrt2}{2}\) (which is not an odd multiple of \(\frac\pi2\)),</p>
+\[\begin{aligned}&\lim_{x\to\pi/4}\tan\Big(\frac{\cos x-\sin x}{\cos 2x}\Big)\\&\quad=\tan\frac{\sqrt2}{2}\approx0.8545.\end{aligned}\]
+<p class="word"><b>In words:</b> simplify the inside, find its limit, then apply tan to that limit (in radians).</p>
+</div></details></div>
+</section>
+
+<!-- ================= 13 ================= -->
+<section id="s13"><h2><span class="n">13</span>Concept checks <span class="pill">Written for these notes</span></h2>
+
+<div class="q"><p class="qh">1. Can \(f\) be continuous at \(c\) if \(f(c)\) is not defined?</p>
+<details><summary>Answer</summary><div><p>No. Condition (i) of the Continuity Test requires \(f(c)\) to be defined. If the limit exists, you can build the continuous extension, but that is a new function \(F\).</p></div></details></div>
+
+<div class="q"><p class="qh">2. True or false: if \(\lim_{x\to c}f(x)\) exists, then \(f\) is continuous at \(c\).</p>
+<details><summary>Answer</summary><div><p>False. The limit must also equal \(f(c)\). Common Mistake 1 is a counterexample: the limit at \(0\) is \(1\) but \(f(0)=0\).</p></div></details></div>
+
+<div class="q"><p class="qh">3. \(f\) is continuous on \([0,1]\) with \(f(0)=2\) and \(f(1)=5\). Must \(f\) take the value 3? The value 6?</p>
+<details><summary>Answer</summary><div><p>Value 3: yes, by the IVT, since \(3\) is between \(2\) and \(5\). Value 6: not necessarily. The IVT says nothing about values outside \([2,5]\); for example \(f(x)=3x+2\) never reaches 6 on \([0,1]\), while another function could rise above 6 and come back down to 5.</p></div></details></div>
+
+<div class="q"><p class="qh">4. Is \(f(x)=\dfrac1x\) a continuous function?</p>
+<details><summary>Answer</summary><div><p>Yes, as a "continuous function" in the sense of slide 9: it is a rational function, continuous at every point of its domain (all \(x\ne0\)). It is discontinuous at \(x=0\) (an infinite discontinuity), but \(0\) is not in its domain. On the interval \([-1,1]\), however, it is not continuous.</p></div></details></div>
+
+<div class="q"><p class="qh">5. Can the product of two functions that are both discontinuous at \(0\) be continuous at \(0\)?</p>
+<details><summary>Answer</summary><div><p>Yes. Take \(s(x)=1\) for \(x\ge0\) and \(s(x)=-1\) for \(x\lt0\) (jump at \(0\)). Then \(s(x)\cdot s(x)=1\) for every \(x\), which is continuous. The product rule for continuity only works in the direction "continuous \(\times\) continuous \(\Rightarrow\) continuous".</p></div></details></div>
+
+<div class="q"><p class="qh">6. \(f\) is continuous on \([-1,1]\) with \(f(-1)=f(1)=3\). Does the IVT tell you that \(f\) has no root in \([-1,1]\)?</p>
+<details><summary>Answer</summary><div><p>No. The IVT only ever promises that values are reached; it never rules a value out. For example \(f(x)=4x^2-1\) has \(f(\pm1)=3\) but roots at \(x=\pm\frac12\).</p></div></details></div>
+</section>
+
+<!-- ================= Exam taster ================= -->
+<section id="pastpaper"><h2><span class="n">14</span>Exam taster</h2>
+<p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
+<p style="font-size:.92rem;color:var(--muted)">Lecture 4's question types appear 22 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide. Lecture 4 types also appear inside later notes: Dec 2021 Q2(b), May 2017 Q1(c), Dec 2020 Q1(b), Dec 2019 Q1(a) and May 2018 Q2 (Lecture 7); May 2016 Q1(b) (Lecture 6); May 2019 Q5(b) (Lecture 8); May 2024 Q3(c) (Lecture 12).</p>
+
+<div class="q"><p class="src"><b>Dec 2025 MC1</b><span>2 pts</span><a class="guide" data-guide="L4.3">Guide · L4.3 Classify a discontinuity, extend continuously, or construct an example</a></p>
+<p class="qh">Consider the function</p>
+\[g(x)=\frac{x^2-4}{\sin(\pi x)}.\]
+<p class="qh">Which of the following is true about the continuity of \(g\) at \(x=2\)?</p>
+<p>(A) Jump discontinuity at \(x=2\)<br>(B) Infinite discontinuity at \(x=2\)<br>(C) \(g\) is continuous at \(x=2\)<br>(D) Removable discontinuity at \(x=2\)<br>(E) Oscillatory discontinuity at \(x=2\)</p>
+<details><summary>Hint</summary><div><p>Classify a discontinuity: first, is \(g(2)\) defined? Then find \(\lim_{x\to2}g(x)\): factor \(x^2-4=(x-2)(x+2)\) and write \(\sin(\pi x)=\sin(\pi(x-2))\) (period \(2\)), so a \(\frac{\sin\theta}{\theta}\) limit from Lecture 2 appears.</p></div></details>
+<details><summary>Answer</summary><div>
+<p><b>(D)</b> Removable discontinuity: \(g(2)\) is undefined (\(\frac00\)), but \(\displaystyle\lim_{x\to2}g(x)=\frac4\pi\) exists.</p>
+<p style="font-size:.9rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2019 Q1(a)</b><span>Q1 total 10%</span><a class="guide" data-guide="L4.2">Guide · L4.2 Limits and continuity read off a graph (including composites like u(u(x)))</a></p>
+<p class="qh">Let \(u\) be a function whose graph is (partially) shown below.</p>
+<div class="figure"><p class="ttl">Graph of u (redrawn from the paper)</p>
+<canvas class="plot" id="u19" style="aspect-ratio:16/10" aria-label="Graph of u with open circles at (-2,2), (-2,4), (2,3), (2,-1), (6,4) and a filled dot at (2,1)"></canvas>
+<p class="cap">Open circles: (−2, 2), (−2, 4), (2, 3), (2, −1), (6, 4). Filled dot: (2, 1), so u(2) = 1. The middle piece has a smooth maximum at (0, 5); the right piece passes through (3, 0), has a corner at about (4, 1.5), passes about (5, 2.2) and steepens up to (6, 4). The left piece continues off the left edge.</p></div>
+<p class="qh">(a) Evaluate</p>
+\[\text{(i) }\lim_{x\to2^-}\big(u(x)+u(-x)\big)\]
+\[\text{(ii) }\lim_{x\to6^-}u\Big(\sqrt{u(x)}\Big)\]
+<p style="font-size:.9rem;color:var(--muted)">The graph is recreated from a description of the paper's figure; the readings that matter (heights of the open circles at x = −2, 2 and 6, and that u rises towards (6, 4) from below) are clear, while exact shapes between them are approximate and do not affect the answers.</p>
+<details><summary>Hint</summary><div><p>Limits read off a graph. (i) Split into two limits. As \(x\to2^-\), \(-x\to-2^+\): read \(u\) just to the <b>right</b> of \(-2\). (ii) Work inside out: as \(x\to6^-\), does \(u(x)\) approach 4 from below or above? Then \(\sqrt{u(x)}\) approaches 2 from which side? Then read \(u\) on that side of 2.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(i) \(3+4=7\) &nbsp;&nbsp; (ii) \(3\)</p>
+<p style="font-size:.9rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2019 Q1(d)</b><span>Q1 total 10%</span><a class="guide" data-guide="L4.4">Guide · L4.4 Show a solution exists (Intermediate Value Theorem)</a></p>
+<p class="qh">Let \(u\) be a function continuous everywhere except at integers. Moreover, for any integer \(a\),</p>
+\[\lim_{x\to a^-}u(x)=2-3a,\]
+\[\lim_{x\to a^+}u(x)=a^2-2,\]
+\[u(a)=a.\]
+<p class="qh">(d) Show that the equation \(u(x)=x-1\) has at least two solutions of \(x\) in the interval \([0,4]\).</p>
+<p style="font-size:.9rem;color:var(--muted)">As printed on the paper, the one-sided limits are written with \(x\) in place of \(a\) (e.g. "\(2-3x\)"); they are read here as \(2-3a\) and \(a^2-2\), which is the only reading that makes sense for a limit as \(x\to a\).</p>
+<details><summary>Hint</summary><div><p>Show a solution exists with the IVT: let \(h(x)=u(x)-(x-1)\) and look for sign changes. \(u\) is only continuous between integers, so work on each piece \((k,k+1)\) separately, using the one-sided limits at its ends (e.g. \(\lim_{x\to2^+}h(x)\) and \(\lim_{x\to3^-}h(x)\)) in place of end values, and check the integers themselves too.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>One solution in \((2,3)\) and another in \((3,4)\): there \(h=u-(x-1)\) goes from \(\lim_{x\to2^+}h=1\gt0\) to \(\lim_{x\to3^-}h=-9\lt0\), and from \(\lim_{x\to3^+}h=5\gt0\) to \(\lim_{x\to4^-}h=-13\lt0\). (No integer is a solution, since \(h(a)=1\).)</p>
+<p style="font-size:.9rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2015 Q1(b)</b><span>Q1 total 10%</span><span class="older">older format</span><a class="guide" data-guide="L4.1">Guide · L4.1 Choose constants so a piecewise function is continuous</a></p>
+<p class="qh">Evaluate the value(s) of \(A\) if</p>
+\[g(x)=\begin{cases}\dfrac{\sin(2x)-\sin(Ax)}{x+x^3}, & x\ne0\\[6pt] A^2, & x=0\end{cases}\]
+<p class="qh">is a continuous function.</p>
+<details><summary>Hint</summary><div><p>Choose constants for continuity: \(g\) is continuous away from \(0\), so require \(\lim_{x\to0}g(x)=g(0)=A^2\). For the limit, divide top and bottom by \(x\) and use \(\lim_{x\to0}\frac{\sin(kx)}{kx}=1\) (Lecture 2).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(\lim_{x\to0}g(x)=2-A\), so \(2-A=A^2\), giving \(A=1\) or \(A=-2\).</p>
+<p style="font-size:.9rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+</section>
+</main>
+</div>
+<script>
+(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const PI=Math.PI;
+const $=id=>document.getElementById(id);
+
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+const piTicks=(lo,hi)=>{const out=[];const L={'-4':'−2π','-3':'−3π/2','-2':'−π','-1':'−π/2','0':'0','1':'π/2','2':'π','3':'3π/2','4':'2π','5':'5π/2'};for(let k=Math.ceil(lo/(PI/2));k<=Math.floor(hi/(PI/2));k++)out.push([k*PI/2,L[k]||'']);return out;};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+
+/* ---- slide 7: continuous curves ---- */
+function drawCC(){
+  plot($('cc'),{xmin:-5,xmax:5,ymin:-1.6,ymax:2,xstep:1,ystep:1,
+    curves:[
+      {f:x=>1.5*Math.cos(2.4*x)*Math.exp(-x*x/10),color:css('--accent')},
+      {f:x=>1.8/(1+x*x),color:css('--c3')},
+      {f:x=>1/(1+Math.exp(-2*(x-0.8))),color:css('--c4')}
+    ]});
+}
+redraws.push(drawCC);
+
+/* ---- Example 1 (slide 10) ---- */
+function drawEx1(){
+  const v=$('ex1-s').value;
+  const A=css('--accent'), R=css('--c2');
+  const xs={m2:-2,m1:-1,z:0,p1:1,p2:2,h:0.5}[v];
+  const segs=[{x1:1,y1:2,x2:2,y2:2,color:A,width:2.4},{x1:xs,y1:-1.5,x2:xs,y2:4.5,color:R,width:1.2,dash:[5,4]}];
+  plot($('ex1'),{xmin:-2.3,xmax:2.3,ymin:-1.5,ymax:4.5,xstep:1,ystep:1,
+    curves:[
+      {f:x=>Math.sin(1/x),from:-2,to:-0.004,n:9000,color:A,width:1.8},
+      {f:x=>1/x,from:0.01,to:1,color:A}
+    ],
+    segs,
+    pts:[{x:-2,y:Math.sin(-0.5),color:A},{x:-1,y:Math.sin(-1),color:A,open:true},
+         {x:1,y:1,color:A,open:true},{x:1,y:2,color:A},{x:2,y:2,color:A,open:true}]});
+  const T={
+    m2:'x = −2 (left end of the domain). f(−2) ≈ −0.48 is defined (filled dot). Only a right-hand limit makes sense: lim x→−2⁺ f(x) = f(−2). <b>Right-continuous</b>, so −2 is included in [−2, −1).',
+    m1:'x = −1. (i) f(−1) is NOT defined (open circle, no filled dot) → test fails. The limit exists (both sides → about −0.84). <b>Removable discontinuity.</b>',
+    z:'x = 0. (i) f(0) is NOT defined. From the left f oscillates between −1 and 1 (no limit); from the right f(x) → +∞. <b>Discontinuous</b> (oscillating on the left, infinite on the right).',
+    p1:'x = 1. (i) f(1) = 2 is defined. (ii) lim x→1⁻ f(x) = 1, lim x→1⁺ f(x) = 2: different, so the limit does not exist → test fails. <b>Jump discontinuity.</b> Right-continuous, since lim x→1⁺ f(x) = 2 = f(1).',
+    p2:'x = 2. f(2) is not defined and nothing is drawn for x ≥ 2: this is the end of the graph, not a break inside it. Usually not listed as a discontinuity (see the note under the solution).',
+    h:'x = 0.5. f(0.5) = 2 (on the 1/x-shaped piece), lim x→0.5 f(x) = 2 = f(0.5). All three conditions hold: <b>continuous</b>.'};
+  $('ex1-out').innerHTML=T[v];
+}
+$('ex1-s').addEventListener('input',drawEx1); redraws.push(drawEx1);
+
+/* ---- Types of discontinuity (slide 11) ---- */
+function drawDT(){
+  const v=$('dt-s').value, A=css('--accent');
+  let o={xmin:-3,xmax:3,ymin:-1.5,ymax:3,xstep:1,ystep:1,curves:[],pts:[],segs:[]};
+  let txt='';
+  if(v==='r1'){o.curves=[{f:x=>x+1,color:A}];o.pts=[{x:0,y:1,color:A,open:true}];
+    txt='f(x) = x + 1 for x ≠ 0, f(0) undefined.<br>(i) f(0) defined? <b>No</b>. lim x→0 f(x) = 1 exists.<br>Removable: define f(0) = 1 to repair it.';}
+  if(v==='r2'){o.curves=[{f:x=>x+1,color:A}];o.pts=[{x:0,y:1,color:A,open:true},{x:0,y:2,color:A}];
+    txt='f(x) = x + 1 for x ≠ 0, f(0) = 2.<br>(i) f(0) = 2 defined. (ii) lim x→0 f(x) = 1 exists. (iii) 1 ≠ 2 → <b>fails</b>.<br>Removable: redefine f(0) = 1.';}
+  if(v==='j'){o.ymin=-1;o.ymax=2;o.ystep=1;o.segs=[{x1:-3,y1:0,x2:0,y2:0,color:A,width:2.6},{x1:0,y1:1,x2:3,y2:1,color:A,width:2.6}];
+    o.pts=[{x:0,y:0,color:A,open:true},{x:0,y:1,color:A}];
+    txt='f(x) = 0 for x &lt; 0, f(x) = 1 for x ≥ 0.<br>(i) f(0) = 1 defined. (ii) left limit 0, right limit 1: different → limit does <b>not</b> exist.<br>Jump: cannot be repaired by changing one value.';}
+  if(v==='i'){o.ymin=-0.5;o.ymax=6;o.curves=[{f:x=>1/(x*x),from:-3,to:-0.02,color:A},{f:x=>1/(x*x),from:0.02,to:3,color:A}];
+    txt='f(x) = 1/x².<br>(i) f(0) undefined. lim x→0 f(x) = +∞: no finite limit (vertical asymptote x = 0).<br>Infinite discontinuity: cannot be repaired.';}
+  if(v==='o'){o.xmin=-1.2;o.xmax=1.2;o.xstep=0.5;o.ymin=-1.5;o.ymax=1.5;o.ystep=0.5;
+    o.curves=[{f:x=>Math.sin(1/x),from:-1.2,to:-0.003,n:9000,color:A,width:1.6},{f:x=>Math.sin(1/x),from:0.003,to:1.2,n:9000,color:A,width:1.6}];
+    txt='f(x) = sin(1/x).<br>(i) f(0) undefined. As x → 0 the values swing between −1 and 1 infinitely often: no limit, not even one-sided.<br>Oscillating discontinuity: cannot be repaired.';}
+  plot($('dt'),o); $('dt-out').innerHTML=txt;
+}
+$('dt-s').addEventListener('input',drawDT); redraws.push(drawDT);
+
+/* ---- continuous extension of sin x / x ---- */
+function drawCE(){
+  const v=$('ce-s').value, A=css('--accent');
+  plot($('ce'),{xmin:-12,xmax:12,ymin:-0.5,ymax:1.3,xstep:3,ystep:0.5,
+    curves:[{f:x=>Math.sin(x)/x,color:A}],
+    pts:[v==='f'?{x:0,y:1,color:A,open:true,label:'hole at (0, 1)'}:{x:0,y:1,color:css('--c3'),label:'F(0) = 1'}]});
+  $('ce-out').innerHTML=v==='f'?'f(0) = 0/0 is undefined, but lim x→0 sin x / x = 1 (Lecture 2). Removable discontinuity.':'F(0) = 1 = lim x→0 F(x): <b>continuous at 0</b>; elsewhere F = f.';
+}
+$('ce-s').addEventListener('input',drawCE); redraws.push(drawCE);
+
+/* ---- Example 3 slider ---- */
+function drawE3(){
+  const b=+$('e3-b').value, A=css('--accent'), R=css('--c2');
+  $('e3-bv').textContent=fmt(b,2);
+  plot($('e3'),{xmin:-5,xmax:2,ymin:-6,ymax:6,xstep:1,ystep:2,
+    curves:[{f:x=>x,from:-5,to:-2,color:A},{f:x=>b*x*x,from:-2,to:2,color:R}],
+    pts:[{x:-2,y:-2,color:A,open:true},{x:-2,y:4*b,color:R}]});
+  const gap=4*b+2;
+  $('e3-out').innerHTML='left limit = −2 &nbsp;·&nbsp; f(−2) = 4b = '+fmt(4*b,2)+' &nbsp;·&nbsp; gap = '+fmt(gap,2)+
+    (Math.abs(gap)<1e-9?' → <b>continuous at x = −2</b> (b = −1/2)':' → jump at x = −2');
+}
+$('e3-b').addEventListener('input',drawE3); redraws.push(drawE3);
+
+/* ---- Example 4 ---- */
+function drawE4(){
+  const A=css('--accent'), M=css('--axis');
+  const y=x=>{const q=(x-1)/(x+2);return q>=0?Math.sqrt(q):NaN;};
+  plot($('e4'),{xmin:-10,xmax:8,ymin:-0.5,ymax:3.5,xstep:2,ystep:1,
+    curves:[{f:y,from:-10,to:-2.01,n:1500,color:A},{f:y,from:1,to:8,color:A}],
+    segs:[{x1:-2,y1:-0.5,x2:-2,y2:3.5,color:M,width:1.2,dash:[5,4]},{x1:-10,y1:1,x2:8,y2:1,color:M,width:1.2,dash:[5,4]}],
+    pts:[{x:1,y:0,color:A,label:'(1, 0)'}]});
+}
+redraws.push(drawE4);
+
+/* ---- IVT with slider N ---- */
+function drawIVT(){
+  const kind=$('ivt-s').value, N=+$('ivt-n').value, A=css('--accent'), R=css('--c2'), G=css('--c3');
+  $('ivt-nv').textContent=fmt(N,2);
+  const fc=x=>1+0.6*x+1.2*Math.sin(1.8*x);
+  const fj=x=>x<2?0.5+0.5*x:2+0.5*x;
+  const f=kind==='c'?fc:fj;
+  const fa=f(0), fb=f(4);
+  // find c with f(c)=N
+  const cs=[]; const M=4000;
+  let px=0, pv=f(0)-N; if(Math.abs(pv)<1e-12)cs.push(0);
+  for(let i=1;i<=M;i++){const x=4*i/M, v=f(x)-N;
+    if(kind==='j'&&px<2&&x>=2){px=x;pv=v;if(Math.abs(v)<1e-12)cs.push(x);continue;}
+    if(pv*v<0){let lo=px,hi=x;for(let k=0;k<50;k++){const m=(lo+hi)/2;((f(lo)-N)*(f(m)-N)<=0)?hi=m:lo=m;}cs.push((lo+hi)/2);}
+    else if(v===0)cs.push(x);
+    px=x;pv=v;}
+  const curves=kind==='c'?[{f,from:0,to:4,color:A}]:[{f,from:0,to:1.9999,color:A},{f,from:2,to:4,color:A}];
+  const pts=[{x:0,y:fa,color:A,label:'f(a)'},{x:4,y:fb,color:A,label:'f(b)',align:'right'}];
+  if(kind==='j'){pts.push({x:2,y:1.5,color:A,open:true});pts.push({x:2,y:3,color:A});}
+  cs.forEach(c=>pts.push({x:c,y:N,color:G,r:5}));
+  plot($('ivt'),{xmin:-0.3,xmax:4.3,ymin:-0.8,ymax:5.8,xstep:1,ystep:1,curves,
+    segs:[{x1:-0.3,y1:N,x2:4.3,y2:N,color:R,width:1.6,dash:[6,4]}].concat(cs.map(c=>({x1:c,y1:N,x2:c,y2:-0.8,color:G,width:1,dash:[3,3]}))),pts});
+  const lo=Math.min(fa,fb), hi=Math.max(fa,fb), between=N>=lo&&N<=hi;
+  let msg='a = 0, b = 4, f(a) = '+fmt(fa,2)+', f(b) = '+fmt(fb,2)+'. N = '+fmt(N,2)+' is '+(between?'<b>between</b> f(a) and f(b)':'<b>not between</b> f(a) and f(b)')+'.<br>';
+  msg+=cs.length?('f(c) = N at c ≈ '+cs.map(c=>fmt(c,2)).join(', ')+' ('+cs.length+' point'+(cs.length>1?'s':'')+').'):'No c in [0, 4] with f(c) = N.';
+  if(kind==='c')msg+=between?' Guaranteed by the IVT.':' The IVT makes no promise here.';
+  else msg+=between&&!cs.length?' The IVT fails: f is not continuous on [0, 4] (jump at 2).':(between?' Hit, but not guaranteed: f is not continuous on [0, 4].':' The IVT makes no promise here.');
+  $('ivt-out').innerHTML=msg;
+}
+$('ivt-s').addEventListener('input',drawIVT); $('ivt-n').addEventListener('input',drawIVT); redraws.push(drawIVT);
+
+/* ---- bisection ---- */
+function drawBis(){
+  const n=+$('bis-n').value, A=css('--accent'), O=css('--c4');
+  $('bis-nv').textContent=n;
+  const f=x=>Math.cbrt(x)+x-1;
+  let lo=0,hi=1;
+  for(let k=0;k<n;k++){const m=(lo+hi)/2; if(f(lo)*f(m)<=0)hi=m; else lo=m;}
+  plot($('bis'),{xmin:-0.05,xmax:1.05,ymin:-1.2,ymax:1.2,xstep:0.25,ystep:0.5,
+    curves:[{f,from:0,to:1,color:A}],
+    segs:[{x1:lo,y1:0,x2:hi,y2:0,color:O,width:7}],
+    pts:[{x:lo,y:f(lo),color:O,r:4},{x:hi,y:f(hi),color:O,r:4}]});
+  $('bis-out').innerHTML='Root lies in ['+fmt(lo,4)+', '+fmt(hi,4)+'] &nbsp;·&nbsp; width '+fmt(hi-lo,4)+' &nbsp;·&nbsp; f(left) = '+fmt(f(lo),3)+', f(right) = '+fmt(f(hi),3);
+}
+$('bis-n').addEventListener('input',drawBis); redraws.push(drawBis);
+
+/* ---- |x|/x ---- */
+function drawAbs(){
+  const A=css('--accent');
+  plot($('absx'),{xmin:-1.3,xmax:1.3,ymin:-1.6,ymax:1.6,xstep:0.5,ystep:1,
+    segs:[{x1:-1,y1:-1,x2:0,y2:-1,color:A,width:2.6},{x1:0,y1:1,x2:1,y2:1,color:A,width:2.6}],
+    pts:[{x:-1,y:-1,color:A,label:'f(−1) = −1'},{x:0,y:-1,color:A,open:true},{x:0,y:1,color:A,open:true},{x:1,y:1,color:A,label:'f(1) = 1',align:'right'}]});
+}
+redraws.push(drawAbs);
+
+/* ---- May 2019 Q1 graph of u ---- */
+function drawU(){
+  const A=css('--accent');
+  const mid=x=>x<=0?5-x*x/4:5-x*x/2;
+  const right=x=>x<=4?-1+0.75*(x-2)+0.25*(x-2)*(x-2):1.5+0.15*(x-4)+0.55*(x-4)*(x-4);
+  plot($('u19'),{xmin:-3.5,xmax:7,ymin:-2,ymax:6,xstep:1,ystep:1,
+    curves:[{f:x=>x+4,from:-3.5,to:-2,color:A},{f:mid,from:-2,to:2,color:A},{f:right,from:2,to:6,color:A}],
+    pts:[{x:-2,y:2,color:A,open:true},{x:-2,y:4,color:A,open:true},{x:2,y:3,color:A,open:true},
+         {x:2,y:1,color:A},{x:2,y:-1,color:A,open:true},{x:6,y:4,color:A,open:true}]});
+}
+redraws.push(drawU);
+
+
+const all=()=>redraws.forEach(f=>{try{f();}catch(e){}});
+all();
+let t; window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(all,120);});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);}catch(e){}
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+<script>
+/* MATH1851 bundle links: fills hrefs for a.note[data-note] and a.guide[data-guide], links "Lx guide" mentions, adds an index link on guide pages. */
+(function(){
+var B="",N={"L1": "note-L1.html", "L2": "note-L2.html", "L3": "note-L3.html", "L4": "note-L4.html", "L5": "note-L5.html", "L6": "note-L6.html", "L7": "note-L7.html", "L8": "note-L8.html", "L9": "note-L9.html", "L10": "note-L10.html", "L11": "note-L11.html", "L12": "note-L12.html", "L13": "note-L13.html", "L14": "note-L14.html", "L15": "note-L15.html", "L16": "note-L16.html", "L17": "note-L17.html", "O1": "note-O1.html", "O2": "note-O2.html", "O3": "note-O3.html", "O4": "note-O4.html", "LT": "note-LT.html"},G={"L1": "guide-L1.html", "L2": "guide-L2.html", "L3": "guide-L3.html", "L4": "guide-L4.html", "L5": "guide-L5.html", "L6": "guide-L6.html", "L7": "guide-L7.html", "L8": "guide-L8.html", "L9": "guide-L9.html", "L10": "guide-L10.html", "L12": "guide-L12.html", "L13": "guide-L13.html", "L14": "guide-L14.html", "L15": "guide-L15.html", "L16": "guide-L16.html", "L17": "guide-L17.html", "O1": "guide-O1.html", "O2": "guide-O2.html", "O3": "guide-O3.html", "O4": "guide-O4.html", "LT": "guide-LT.html"},M={"LT#forward|forward transforms and shifts": "LT#s4", "LT#partial-fractions|partial fractions": "LT#s10", "LT#second-shift|second shift and the step function": "LT#s5", "LT#repeated-factors|repeated factors and the first shift": "LT#s10", "LT#convolution|convolution": "LT#s6", "LT#s5|solving ODEs by Laplace": "LT#s12", "LT#s6|convolution and integral equations": "LT#s11", "L1#s4|limit laws": "L1#s5", "L1#s5|direct substitution": "L1#s6", "L1#s6|removing the 0/0 by algebra": "L1#s7", "L1#s7|one-sided limits": "L1#s3", "L1#s8|absolute values and piecewise functions": "L1#s3", "L2#s2|the Sandwich Theorem": "L2#s1", "L2#s3|x sin(1/x) and other examples": "L2#s2", "L2#s4|the limit sin x / x": "L2#s3", "L1#s5|one-sided limits": "L1#s3", "L3#s2|infinite limits": "L3#s1", "L3#s3|limits at infinity": "L3#s2", "L1#s6|conjugates": "L1#s7", "L3#s4|asymptotes": "L3#s5", "L9#s3|asymptotes in curve sketching": "L9#s8", "L4#s2|continuity at a point": "L4#s1", "L4#s4|continuity of combinations": "L4#s5", "L4#s3|one-sided limits and continuity": "L4#s1", "L4#s5|limits of composite functions": "L4#s7", "L4#s6|types of discontinuity": "L4#s3", "L4#s7|the Intermediate Value Theorem": "L4#s8", "L5#s2|definition of the derivative": "L5#s3", "L5#s3|one-sided derivatives": "L5#s5", "L5#s4|differentiable implies continuous": "L5#s6", "L6#s2|product and quotient rules": "L6#s2", "L6#s4|chain rule": "L6#s5", "L6#s5|implicit differentiation": "L6#s6", "L6#s6|tangent lines": "L5#s2", "L7#s5|logarithmic differentiation": "L7#s4", "L7#s4|derivatives of ln and exp": "L7#s3", "L7#s4|derivatives of exp, ln and aˣ": "L7#s3", "L7#s6|derivatives of inverse trig functions": "L7#s6", "L7#s2|derivative of an inverse function": "L7#s2", "L7#s1|one-to-one functions and inverses": "L7#s1", "L7#s5|graphs and limits of eˣ and ln x": "L7#s3", "L4#s2|continuity of composite functions": "L4#s6", "L8#s2|absolute extrema and the Extreme Value Theorem": "L8#s3", "L8#s3|critical points": "L8#s4", "L8#s4|Rolle's Theorem": "L8#s6", "L8#s5|the Mean Value Theorem": "L8#s7", "L8#s6|counting roots with Rolle's Theorem": "L8#s9", "L4#s5|the Intermediate Value Theorem": "L4#s8", "L8#s7|consequences of the MVT": "L8#s8", "L9#s2|increasing, decreasing and the first derivative test": "L9#s2", "L9#s3|concavity and inflection points": "L9#s7", "L9#s5|curve sketching checklist": "L9#s8", "L9#s2|sign of f′ and monotonicity": "L9#s1", "L9#s3|concavity from f′": "L9#s4", "L12#s4|area functions": "L12#s7", "L9#s5|curve sketching from f′ and f″": "L9#s9", "L9#s6|applied optimisation": "L9#s3", "L8#s2|absolute extrema on an interval": "L8#s5", "L9#s3|what f′ and f″ say about a graph": "L9#s4", "L10#s3|L'Hôpital's Rule": "L10#s3", "L10#s2|classifying forms": "L10#s2", "L10#s4|∞ − ∞ forms": "L10#s5", "L10#s5|0 · ∞ forms": "L10#s5", "L10#s6|indeterminate powers": "L10#s6", "L10#s7|L'Hôpital with an unknown function": "L10#s3", "L10#s8|L'Hôpital at a join": "L10#s3", "L4#s2|continuity": "L4#s1", "L5#s2|derivative by definition": "L5#s3", "L12#s4|FTC Part I": "L12#s7", "L6#s5|chain rule": "L6#s5", "L12#s2|Riemann sums and the definite integral": "L12#s1", "L11#s5|sigma notation and area": "L11#s6", "L12#s5|the area function": "L12#s7", "L12#s4|the Fundamental Theorem of Calculus": "L12#s7", "L12#s6|average value": "L12#s6", "L13#s2|substitution": "L13#s2", "L13#s3|substitution in definite integrals": "L13#s5", "L13#s4|integration by parts": "L13#s7", "L13#s5|repeated parts, ln and inverse trig": "L13#s8", "L13#s6|by parts with an unknown function": "L13#s7", "L13#s7|reduction formulas": "L13#s8", "L13#s8|the x → a − x substitution": "L13#s5", "L14#s2|partial fractions": "L14#s5", "L14#s3|repeated and quadratic factors": "L14#s5", "L14#s4|trig integrals": "L14#s3", "L14#s5|trig substitution": "L14#s4", "L15#s2|parametric curves": "L15#s1", "L15#s3|slope of a parametric curve": "L15#s3", "L15#s4|polar coordinates": "L15#s5", "L15#s5|sketching polar curves and symmetry": "L15#s7", "L15#s6|slope of a polar curve": "L15#s8", "L16#s1|area between curves": "L16#s1", "L16#s2|discs and washers": "L16#s4", "L16#s3|cylindrical shells": "L16#s5", "L16#s4|choosing discs or shells": "L16#s6", "L16#s5|volume by slicing": "L16#s3", "L17#s2|arc length": "L17#s2", "L17#s3|parametric and polar length": "L17#s3", "L14#s4|trig substitution": "L14#s4", "L17#s4|surface area": "L17#s6", "L16#s3|solids of revolution": "L16#s4", "O1#separable|separable equations": "O1#s6", "O1#linear|linear equations and the integrating factor": "O1#s5", "O1#exact|exact equations": "O1#s8", "O2#homogeneous|homogeneous equations": "O2#s5", "O2#bernoulli|Bernoulli equations": "O2#s1", "O2#riccati|Riccati equations": "O2#s2", "O2#shift|shift substitution": "O2#s6", "O2#reduction|reduction of order": "O2#s7", "O3#roots|root cases": "O3#s4", "O3#constant|constant coefficients": "O3#s3", "O3#higher|higher-order equations": "O3#s7", "O3#euler|Cauchy–Euler": "O3#s10", "O4#s2|undetermined coefficients": "O4#s2", "O4#s3|when the trial clashes": "O4#s3", "O4#s4|initial value problems": "O4#s4", "O4#variation-of-parameters|variation of parameters": "O4#s6", "O4#vop-cauchy-euler|VoP for Cauchy–Euler": "O4#s7", "O3#cauchy-euler|Cauchy–Euler homogeneous": "O3#s10", "O4#d-operator|D-operator method": "O4#s5"},IDX="index.html#part2";
+function ext(a,u){a.href=u;}
+function go(){
+  var h=document.querySelector("nav.toc .h"),m0=h&&/Exam guide\s*·\s*([A-Z0-9]+)/i.exec(h.textContent),self=m0?m0[1].toUpperCase():null,isGuide=!!(h&&/Exam guide/i.test(h.textContent));
+  document.querySelectorAll("a.note[data-note]").forEach(function(a){
+    var k=a.getAttribute("data-note"),t=a.textContent.replace(/\s+/g," ").replace(/^\s*Chapter note\s*·?\s*/,"").trim();
+    var v=M[k+"|"+t]||k,p=v.split("#"),c=p[0];
+    if(!N[c])return;
+    ext(a,B+N[c]+(p[1]&&p[1]!=="top"?"#"+p[1]:""));
+  });
+  document.querySelectorAll("a.guide[data-guide]").forEach(function(a){
+    var g=a.getAttribute("data-guide"),h=g.indexOf("#")>=0,c=h?g.split("#")[0]:g.split(".")[0],f=h?g.split("#")[1]:g.replace(".","");
+    if(!G[c])return;
+    ext(a,B+G[c]+"#"+f);
+  });
+  if(!isGuide)return;
+  var main=document.querySelector("main");
+  if(!main)return;
+  var top=main.querySelector("header.top");
+  if(top&&IDX&&self!=="INDEX"){var p=document.createElement("p");p.className="muted";var a=document.createElement("a");ext(a,B+IDX);a.textContent="← All exam-guide pages and the exam format";p.appendChild(a);top.appendChild(p);}
+  var re=/\b(L1[0-7]|L[1-9]|O[1-4]|LT) guide\b/g,skip={A:1,SCRIPT:1,STYLE:1,H1:1,H2:1,CODE:1,"MJX-CONTAINER":1,SUMMARY:1};
+  var w=document.createTreeWalker(main,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    for(var e=n.parentNode;e&&e!==main;e=e.parentNode){if(skip[e.nodeName])return NodeFilter.FILTER_REJECT;}
+    re.lastIndex=0;return re.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP;}});
+  var list=[],n;while((n=w.nextNode()))list.push(n);
+  list.forEach(function(n){
+    var s=n.nodeValue,f=document.createDocumentFragment(),last=0,m;re.lastIndex=0;
+    while((m=re.exec(s))){
+      var c=m[1];if(c===self||!G[c])continue;
+      f.appendChild(document.createTextNode(s.slice(last,m.index)));
+      var a=document.createElement("a");ext(a,B+G[c]);a.textContent=m[0];f.appendChild(a);last=m.index+m[0].length;
+    }
+    if(last===0)return;
+    f.appendChild(document.createTextNode(s.slice(last)));n.parentNode.replaceChild(f,n);
+  });
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
+})();
+</script>
+</html>

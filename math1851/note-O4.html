@@ -1,0 +1,777 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH1851 O4 · Non-Homogeneous Linear ODEs</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (46rem) with a sticky contents rail on wide screens; graphs inline beside the maths they explain; practice and past papers at the end. Palette and type match the MECH2407 notes. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">ODE · Part O4</p>
+  <ol>
+    <li><a href="#s0">0 · Where we are</a></li>
+    <li><a href="#s1">1 · CF + particular solution</a></li>
+    <li><a href="#s2">2 · Undetermined coefficients</a></li>
+    <li><a href="#s3">3 · Resonance and clashes</a></li>
+    <li><a href="#s4">4 · Initial conditions</a></li>
+    <li><a href="#s5">5 · The D-operator method</a></li>
+    <li><a href="#s6">6 · Variation of parameters</a></li>
+    <li><a href="#s7">7 · VoP for Cauchy–Euler</a></li>
+    <li><a href="#s8">8 · Which method?</a></li>
+    <li><a href="#s9">9 · Summary</a></li>
+    <li><a href="#s10">10 · Common mistakes</a></li>
+    <li><a href="#s11">11 · Find the mistake</a></li>
+    <li><a href="#s12">12 · Group work</a></li>
+    <li><a href="#s13">13 · Concept checks</a></li>
+    <li><a href="#pastpaper">14 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MATH1851 · ODE · Part O4</span>
+  <h1>Non-Homogeneous Linear ODEs</h1>
+  <p class="lede">Every slide of ODE Part O4 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The closing section turns the slides' "insights on solving ODEs" into a "which method?" guide for the whole ODE part. The exam taster at the end shows how the exam asks about this part.</p>
+</header>
+
+<section id="s0"><h2><span class="n">0</span>Where this part sits</h2>
+<p>This is the last part of the ODE (ordinary differential equation) half of the course. A quick reminder of what came before:</p>
+<ul class="list">
+<li><b>Part O1</b>: first-order equations solved directly: separable equations, linear equations with an integrating factor, exact equations. Also the ideas of <b>order</b> (the highest derivative that appears) and <b>linear</b> (no \(y^2\), \(\sin y\), \(e^{y}\), \(y\,y'\) and so on: \(y\) and its derivatives appear only to the first power, multiplied by functions of \(x\)).</li>
+<li><b>Part O2</b>: first-order equations solved by a substitution (homogeneous \(y=vx\), Bernoulli, Riccati), and reduction of order.</li>
+<li><b>Part O3</b>: linear equations whose right-hand side is <b>zero</b>. With constant coefficients we try \(y=e^{mx}\) and solve the <b>characteristic equation</b> (distinct real roots, repeated roots, complex roots \(a\pm bi\) giving \(e^{ax}\cos bx,\ e^{ax}\sin bx\)). For <b>Cauchy–Euler</b> equations \(x^2y''+bxy'+cy=0\) we try \(y=x^m\). Also linear independence and the <b>Wronskian</b> \(W=y_1y_2'-y_2y_1'\), and the mass–spring oscillator.</li>
+</ul>
+<p><b>What this part adds:</b> linear equations whose right-hand side is <b>not</b> zero, such as \(y''+y=\cos x\). These model a system being pushed by an outside force (a spring shaken by a motor, a circuit driven by a power supply). You will learn:</p>
+<ol class="steps">
+<li>why every solution is "the Part O3 answer + one extra solution" (section 1);</li>
+<li>three ways to find that one extra solution: <b>undetermined coefficients</b> (guess its shape, sections 2–3), the <b>D-operator method</b> (a systematic way to make the guess, section 5), and <b>variation of parameters</b> (a formula that always works, sections 6–7);</li>
+<li>what <b>resonance</b> is and why it forces you to change your guess (section 3);</li>
+<li>how to fit initial conditions (section 4);</li>
+<li>how to choose a method for any ODE in the course (section 8).</li>
+</ol>
+<p style="font-size:.92rem;color:var(--muted)">Slide numbers below refer to the 20 slides of this part. This part has no admin, summary, common-mistakes, find-the-mistake or group-work slides; those sections at the end were written for these notes.</p>
+</section>
+
+<section id="s1"><h2><span class="n">1</span>Non-homogeneous equations: complementary function + particular solution</h2>
+<div class="box def"><span class="tag">Definition (slide 1)</span>
+<p>An <b>inhomogeneous</b> (also called <b>non-homogeneous</b>) second-order linear equation with constant coefficients is</p>
+\[ y''+a_1y'+a_2y=f(x),\qquad f(x)\ne0. \]
+<p class="word"><b>In words:</b> second derivative + (constant) × first derivative + (constant) × function = a given function of \(x\) that is not zero.</p>
+<p>Here \(a_1,a_2\) are constants, and \(f(x)\) is called the <b>forcing term</b> or <b>inhomogeneous term</b>: it is the part of the equation that does not contain \(y\). "Homogeneous" in Parts O3–O4 simply means \(f(x)=0\).</p></div>
+
+<div class="box warn"><span class="tag">Two meanings of "homogeneous"</span><p>In Part O2, a "homogeneous equation" was a first-order equation \(y'=g(x,y)\) where \(g\) depends only on \(y/x\) (solved with \(y=vx\)). Here "homogeneous" means "right-hand side zero". The words are the same; the ideas are unrelated. The Part O2 slides themselves warned about this.</p></div>
+
+<div class="box def"><span class="tag">Definitions (slide 1)</span>
+<ul class="list">
+<li>The <b>complementary function</b> (CF), written \(y_c\), is the general solution of the equation with \(f(x)\) replaced by 0, i.e. of \(y''+a_1y'+a_2y=0\). You already know how to find it (Part O3). It contains the arbitrary constants \(C_1,C_2\).</li>
+<li>A <b>particular solution</b> or <b>particular integral</b> (PI), written \(y_p\), is any <em>one</em> function that satisfies the full equation with \(f(x)\). It contains no arbitrary constants.</li>
+<li>The particular solution can be found by <b>undetermined coefficients</b> (section 2) or <b>variation of parameters</b> (section 6).</li>
+</ul></div>
+
+<h3>Why the general solution is CF + PI (slides 2–4)</h3>
+<p>The slides prove this for \(y''+k^2y=f(x)\) (\(k\) a constant). Suppose \(y_1\) and \(y_2\) are <em>any</em> two solutions:</p>
+\[ y_1''+k^2y_1=f(x),\qquad y_2''+k^2y_2=f(x). \]
+<p>Subtract the first from the second. Since \((y_2-y_1)''=y_2''-y_1''\), we get, with \(Y=y_2-y_1\),</p>
+\[ Y''+k^2Y=0. \]
+<p class="word"><b>In words:</b> the difference of two solutions of the forced equation solves the unforced equation, because the two copies of \(f(x)\) cancel.</p>
+<p>So \(Y\) is a solution of the homogeneous equation, and any solution can be written \(y_2=y_1+Y\). Read this as: pick one fixed solution \(y_1\) (the particular solution); every other solution is that one plus something from the complementary function. Exactly the same subtraction works for \(y''+a_1y'+a_2y=f(x)\), and for any linear equation, even with variable coefficients.</p>
+<div class="box thm"><span class="tag">Key result (slide 4)</span>
+\[ y=y_c+y_p \]
+<p class="word"><b>In words:</b> general solution = complementary function (general solution of the homogeneous equation, with the arbitrary constants) + particular solution (any one solution of the full equation).</p></div>
+<p><b>Analogy.</b> Think of all solutions as all the points on a straight line in the plane. To describe the line you need one point on it (the particular solution) plus "all multiples of the direction" (the complementary function). Which point you pick does not matter: a different particular solution just moves the starting point along the same line. That is why two correct methods can give particular solutions that look different but differ only by CF terms (see sections 4 and 6).</p>
+
+<div class="box eg"><span class="tag">Example 1 <span class="pill">Written for these notes</span></span>
+<p>Find the general solution of \(y''+3y'+2y=10\cos x\).</p>
+<p><b>CF.</b> Characteristic equation \(m^2+3m+2=(m+1)(m+2)=0\), so \(m=-1,-2\) and</p>
+\[ y_c=C_1e^{-x}+C_2e^{-2x}. \]
+<p><b>PI.</b> (The method is explained in section 2.) Try \(y_p=A\cos x+B\sin x\). Then \(y_p'=-A\sin x+B\cos x\), \(y_p''=-A\cos x-B\sin x\), and</p>
+\[ \begin{aligned} &y_p''+3y_p'+2y_p\\ &=(A+3B)\cos x+(B-3A)\sin x. \end{aligned} \]
+<p>Matching with \(10\cos x+0\sin x\): \(A+3B=10\) and \(B-3A=0\). So \(B=3A\), \(10A=10\), \(A=1\), \(B=3\).</p>
+\[ y=C_1e^{-x}+C_2e^{-2x}+\cos x+3\sin x. \]
+<p>Play with \(C_1,C_2\) in the first graph below: whatever you choose, the solution settles onto the particular solution, because the CF terms die away.</p></div>
+
+<div class="figure"><p class="ttl">Complementary function + particular solution = general solution</p>
+<canvas class="plot" id="cf" style="aspect-ratio:16/10" aria-label="Graph of the complementary function, the particular solution cos x + 3 sin x and their sum for y''+3y'+2y=10cos x"></canvas>
+<div class="ctrl"><label for="cf-c1">\(C_1\) = <span id="cf-c1v">−4</span> <input type="range" id="cf-c1" min="-6" max="6" step="0.5" value="-4"></label>
+<label for="cf-c2">\(C_2\) = <span id="cf-c2v">5</span> <input type="range" id="cf-c2" min="-6" max="6" step="0.5" value="5"></label></div>
+<div class="legend"><span style="--k:var(--c4)">CF \(C_1e^{-x}+C_2e^{-2x}\) (dashed)</span><span style="--k:var(--c3)">PI \(\cos x+3\sin x\)</span><span style="--k:var(--accent)">general solution = CF + PI</span></div>
+<div class="readout" id="cf-out"></div>
+<p class="cap">Equation \(y''+3y'+2y=10\cos x\). The sliders change only the complementary function. Every choice gives a genuine solution (a different starting value \(y(0)\) and slope \(y'(0)\)); after about \(x=4\) they all sit on the particular solution. In engineering language the CF is the <b>transient</b> and the PI is the <b>steady state</b> <span class="pill">Beyond the slides</span>.</p></div>
+
+<div class="box thm"><span class="tag">Splitting the forcing term <span class="pill">Beyond the slides, used in slide 6</span></span>
+<p>If \(y_{p1}\) solves the equation with right-hand side \(f_1\), and \(y_{p2}\) solves it with \(f_2\), then \(y_{p1}+y_{p2}\) solves it with \(f_1+f_2\).</p>
+<p class="word"><b>In words:</b> for a linear equation, the response to a sum of forces is the sum of the responses. You may find a particular solution for each piece of \(f(x)\) separately and add them.</p>
+<p>Reason: the left-hand side of a linear equation is a sum of derivatives times constants, and the derivative of a sum is the sum of the derivatives (Lecture 6). This is the superposition principle of Part O1 applied to the forcing.</p></div>
+</section>
+
+<section id="s2"><h2><span class="n">2</span>Undetermined coefficients</h2>
+<p><b>Idea (slide 5).</b> For some simple, standard right-hand sides, the particular solution has the same <em>shape</em> as \(f(x)\). You write down that shape with unknown constants (the "undetermined coefficients"), substitute it into the equation, and choose the constants so that both sides match. This works because differentiating an exponential, a sine/cosine or a polynomial gives back a function of the same family.</p>
+<div class="box thm"><span class="tag">Working rules (slide 5)</span>
+<ul class="list">
+<li>\(f(x)=\) constant: try \(y_p=A\) (a constant).</li>
+<li>\(f(x)=e^{ax}\): try \(y_p=Ce^{ax}\).</li>
+<li>\(f(x)=\cos x\) or \(\sin x\): try \(y_p=C\cos x+D\sin x\) (both, even if \(f\) has only one of them). Likewise \(\cos bx\) or \(\sin bx\): try \(C\cos bx+D\sin bx\).</li>
+<li>\(f(x)=x^n\): try a polynomial of degree \(n\).</li>
+</ul>
+<p class="word"><b>In words:</b> guess a function of the same type as the right-hand side, with unknown numbers in front, then find the numbers.</p></div>
+<p style="font-size:.92rem;color:var(--muted)">Note on slide 5: it writes "\(f(x)=x^n\), try \(y_p=x^N\)". Read this as "a polynomial of degree \(n\) with all its lower powers": \(y_p=A_nx^n+A_{n-1}x^{n-1}+\dots+A_1x+A_0\). Trying only a single power usually fails (Example 2(d) below shows why).</p>
+
+<p>The complete table of trial functions used in this course:</p>
+<div class="scroll"><table>
+<tr><th>Right-hand side \(f(x)\)</th><th>Trial \(y_p\)</th><th>Number \(r\) to test against the characteristic roots</th></tr>
+<tr><td>constant \(k\)</td><td>\(A\)</td><td>\(0\)</td></tr>
+<tr><td>polynomial of degree \(n\)</td><td>\(A_nx^n+\dots+A_1x+A_0\)</td><td>\(0\)</td></tr>
+<tr><td>\(ke^{ax}\)</td><td>\(Ae^{ax}\)</td><td>\(a\)</td></tr>
+<tr><td>\(k\cos bx\), \(k\sin bx\), or both</td><td>\(A\cos bx+B\sin bx\)</td><td>\(\pm bi\)</td></tr>
+<tr><td>\(x^ne^{ax}\) <span class="pill">Beyond the slides</span></td><td>\((A_nx^n+\dots+A_0)e^{ax}\)</td><td>\(a\)</td></tr>
+<tr><td>\(e^{ax}\cos bx\), \(e^{ax}\sin bx\) <span class="pill">Beyond the slides</span></td><td>\(e^{ax}(A\cos bx+B\sin bx)\)</td><td>\(a\pm bi\)</td></tr>
+<tr><td>sum \(f_1+f_2\)</td><td>sum of the two trials (one group per term)</td><td>test each group separately</td></tr>
+</table></div>
+
+<div class="box thm"><span class="tag">The clash rule (multiply by \(x\) or \(x^2\))</span>
+<p>Before substituting, compare each trial group with the complementary function. If the number \(r\) in the last column is a root of the characteristic equation, the trial "clashes" with the CF: it would make the left-hand side zero, so it can never produce \(f(x)\). Then multiply <b>that group</b> by \(x^s\), where \(s\) is how many times \(r\) is a root:</p>
+<ul class="list">
+<li>\(r\) is not a root: \(s=0\), use the table trial as it is;</li>
+<li>\(r\) is a simple (single) root: multiply by \(x\);</li>
+<li>\(r\) is a double root: multiply by \(x^2\).</li>
+</ul>
+<p class="word"><b>In words:</b> if your guess is already a solution of the unforced equation, it is useless; multiply it by \(x\), and again by \(x\) if it is still useless.</p>
+<p>Only the clashing group is multiplied. For \(f=12(e^{2x}-x)\) with roots \(2,-1\), the trial is \(Axe^{2x}+Bx+C\), not \(x(Ae^{2x}+Bx+C)\). Section 3 explains the physical meaning (resonance) and section 5 explains why multiplying by \(x\) is exactly right.</p></div>
+
+<div class="box eg"><span class="tag">Example 2: one equation, four right-hand sides <span class="pill">Written for these notes</span></span>
+<p>Equation: \(y''-y'-2y=f(x)\). Characteristic equation \(m^2-m-2=(m-2)(m+1)=0\), roots \(2,-1\), so \(y_c=C_1e^{2x}+C_2e^{-x}\). None of the trials below clashes.</p>
+<p><b>(a) \(f=4\).</b> Try \(y_p=A\): \(y_p'=y_p''=0\), so \(-2A=4\), \(A=-2\). \(\;y_p=-2\).</p>
+<p><b>(b) \(f=5e^{3x}\).</b> Try \(y_p=Ae^{3x}\): \(y_p'=3Ae^{3x}\), \(y_p''=9Ae^{3x}\), so \((9-3-2)Ae^{3x}=5e^{3x}\), \(4A=5\). \(\;y_p=\tfrac54e^{3x}\).</p>
+<p><b>(c) \(f=10\sin x\).</b> Try \(y_p=A\cos x+B\sin x\). Then</p>
+\[ \begin{aligned} y_p''-y_p'-2y_p&=(-3A-B)\cos x\\ &\quad+(A-3B)\sin x. \end{aligned} \]
+<p>Match: \(-3A-B=0\) (no cosine on the right) and \(A-3B=10\). So \(B=-3A\), \(10A=10\): \(A=1\), \(B=-3\). \(\;y_p=\cos x-3\sin x\). Note the cosine is needed even though \(f\) has only a sine.</p>
+<p><b>(d) \(f=4x^2\).</b> Try \(y_p=Ax^2+Bx+C\): \(y_p'=2Ax+B\), \(y_p''=2A\).</p>
+\[ \begin{aligned} &y_p''-y_p'-2y_p\\ &=-2Ax^2+(-2A-2B)x+(2A-B-2C). \end{aligned} \]
+<p>Match with \(4x^2+0x+0\): \(A=-2\); \(-2A-2B=0\Rightarrow B=2\); \(2A-B-2C=0\Rightarrow C=-3\). \(\;y_p=-2x^2+2x-3\). If you had tried only \(Ax^2\), the \(x\) and constant terms could not be matched.</p>
+<p>In each case the general solution is \(y=C_1e^{2x}+C_2e^{-x}+y_p\).</p></div>
+
+<div class="box eg"><span class="tag">Class example (slide 6)</span>
+<p>Solve \(y''''-y''=3x^2-\sin 2x\). (\(y''''\) is the fourth derivative.)</p>
+<p><b>CF.</b> Try \(e^{mx}\): \(m^4-m^2=m^2(m-1)(m+1)=0\), roots \(0,0,1,-1\). A double root \(0\) gives \(e^{0x}=1\) and \(x\cdot1=x\) (Part O3), so</p>
+\[ y_c=C_1+C_2x+C_3e^{x}+C_4e^{-x}. \]
+<p><b>Trial for \(3x^2\).</b> The table says \(Ax^2+Bx+C\), with \(r=0\). But \(0\) is a <b>double</b> root, and indeed the constant and \(x\) terms are already in the CF. Why the naive trial fails: for any \(Ax^2+Bx+C\), \(y''''-y''=-2A\), a constant, which can never equal \(3x^2\). So multiply by \(x^2\):</p>
+\[ x^2(Ax^2+Bx+C)=Ax^4+Bx^3+Cx^2. \]
+<p><b>Trial for \(-\sin2x\).</b> \(D\cos2x+E\sin2x\), with \(r=\pm2i\), not roots: no change.</p>
+<p><b>Substitute.</b> With \(y_p=Ax^4+Bx^3+Cx^2+D\cos2x+E\sin2x\):</p>
+\[ \begin{aligned} y_p''&=12Ax^2+6Bx+2C\\ &\quad-4(D\cos2x+E\sin2x),\\ y_p''''&=24A+16(D\cos2x+E\sin2x). \end{aligned} \]
+\[ \begin{aligned} y_p''''-y_p''&=-12Ax^2-6Bx+(24A-2C)\\ &\quad+20(D\cos2x+E\sin2x). \end{aligned} \]
+<p>Match with \(3x^2-\sin2x\): \(x^2\): \(-12A=3\), \(A=-\tfrac14\). \(x\): \(B=0\). Constant: \(24A-2C=0\), \(C=12A=-3\). \(\cos2x\): \(D=0\). \(\sin2x\): \(20E=-1\), \(E=-\tfrac1{20}\).</p>
+\[ \begin{aligned} y&=C_1+C_2x+C_3e^{x}+C_4e^{-x}\\ &\quad-\frac{x^4}{4}-3x^2-\frac{1}{20}\sin2x. \end{aligned} \]
+<p class="word"><b>In words:</b> general solution = four-constant CF + polynomial response to \(3x^2\) (raised by \(x^2\) because of the double root 0) + sine response to \(-\sin2x\).</p></div>
+</section>
+
+<section id="s3"><h2><span class="n">3</span>Resonance and clashes</h2>
+<div class="box def"><span class="tag">Resonance (slide 7)</span>
+<p>When a system is forced at one of its <b>natural frequencies</b>, a large amplitude results from the synchronised ("in-phase") energy input to the oscillator.</p>
+<p>Mathematically: when the inhomogeneous term satisfies the homogeneous equation, the trial function must be chosen carefully.</p></div>
+<p><b>Terms.</b> An <b>oscillator</b> is anything that swings back and forth (a mass on a spring, a pendulum, a circuit). Its <b>natural frequency</b> is how fast it oscillates when left alone: for \(y''+\omega_0^2y=0\) the CF is \(\cos\omega_0t,\ \sin\omega_0t\), so the natural (angular) frequency is \(\omega_0\). The <b>amplitude</b> is the size of the swing. <b>In phase</b> means each push arrives at the moment it adds to the motion.</p>
+<p><b>Analogy.</b> Pushing a child on a swing: if you push once per swing, at the right moment, every push adds energy and the swing goes higher and higher. If you push at a random rhythm, some pushes help and some fight the motion, and the swing never gets big.</p>
+
+<div class="box eg"><span class="tag">Simple example of resonance (slides 8–9)</span>
+<p>Solve \(y''+y=\cos x\).</p>
+<p><b>CF (slide 8).</b> \(Y''+Y=0\) has \(m^2+1=0\), \(m=\pm i\), so \(Y=\cos x,\ \sin x\): the natural frequency is 1. One of them, \(\cos x\), is exactly the forcing. Hence this is a problem of resonance (slide 9).</p>
+<p><b>Why the table trial fails.</b> \(A\cos x+B\sin x\) gives \(y_p''+y_p=0\), never \(\cos x\).</p>
+<p><b>Trial.</b> The slide tries "(constant) \(\times\,x\sin x\)". The safe trial (clash rule, \(r=\pm i\) simple roots) is</p>
+\[ y_p=x(A\cos x+B\sin x). \]
+<p>Differentiate (product rule, Lecture 6):</p>
+\[ \begin{aligned} y_p'&=A\cos x+B\sin x\\ &\quad+x(-A\sin x+B\cos x),\\ y_p''&=2(-A\sin x+B\cos x)\\ &\quad-x(A\cos x+B\sin x). \end{aligned} \]
+<p>The \(x(\dots)\) terms cancel when we add \(y_p\):</p>
+\[ y_p''+y_p=-2A\sin x+2B\cos x=\cos x. \]
+<p>So \(A=0\), \(B=\tfrac12\) (the slide's guess without \(\cos\) was lucky to be enough):</p>
+\[ y_p=\frac{x\sin x}{2}, \]
+\[ y=C_1\cos x+C_2\sin x+\frac{x\sin x}{2}. \]
+<p class="word"><b>In words:</b> the response to forcing at the natural frequency is a sine wave whose amplitude grows in proportion to \(x\) (time).</p></div>
+
+<div class="figure"><p class="ttl">Particular solution in the case of resonance (slide 10, redrawn)</p>
+<canvas class="plot" id="r10" style="aspect-ratio:16/9" aria-label="Graph of y_p = t sin t / 2 between the dashed lines y = t/2 and y = -t/2"></canvas>
+<div class="legend"><span style="--k:var(--accent)">\(y_p=\tfrac12t\sin t\)</span><span style="--k:var(--muted)">envelope \(\pm\tfrac12t\) (dashed)</span></div>
+<p class="cap">The slide's picture, with time \(t\) in place of \(x\). The oscillation touches the dashed lines \(y=\pm\frac t2\), which grow without limit: in a real machine, something breaks.</p></div>
+
+<p>The next graph shows the whole story. A spring with natural frequency \(\omega_0=2\) starts at rest and is shaken by the force \(\cos\omega t\): \(y''+4y=\cos\omega t\), \(y(0)=0\), \(y'(0)=0\). Move the forcing frequency \(\omega\) towards 2.</p>
+<div class="figure"><p class="ttl">Forced oscillator: \(y''+\omega_0^2y=\cos\omega t\) with \(\omega_0=2\)</p>
+<canvas class="plot" id="osc" style="aspect-ratio:16/10" aria-label="Response of a forced oscillator for a chosen forcing frequency, with the resonance envelope dashed"></canvas>
+<div class="ctrl"><label for="osc-w">forcing frequency \(\omega\) = <span id="osc-wv">1.85</span> <input type="range" id="osc-w" min="0.5" max="4" step="0.05" value="1.85"></label></div>
+<div class="legend"><span style="--k:var(--accent)">response \(y(t)\)</span><span style="--k:var(--c2)">resonance envelope \(\pm t/4\) (dashed)</span></div>
+<div class="readout" id="osc-out"></div>
+<p class="cap">Far from \(\omega_0=2\) the response stays small. Close to 2 the swings grow, then shrink again (the pushes drift in and out of phase: "beats"). At exactly \(\omega=2\) the response is \(\frac{t\sin2t}{4}\) and keeps growing along the dashed lines.</p></div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts</span>
+<p>For \(\omega\ne\omega_0\), the trial \(A\cos\omega t+B\sin\omega t\) gives \(y_p=\dfrac{\cos\omega t}{\omega_0^2-\omega^2}\) (check: \(y_p''=-\omega^2y_p\)). Fitting \(y(0)=y'(0)=0\):</p>
+\[ y=\frac{\cos\omega t-\cos\omega_0t}{\omega_0^2-\omega^2}. \]
+<p>As \(\omega\to\omega_0\) the denominator goes to 0, which is why the amplitude blows up near resonance. Treating \(\omega\) as the variable and using L'Hôpital's Rule (Lecture 10) on this \(\frac00\) form gives the limit \(\dfrac{t\sin\omega_0t}{2\omega_0}\): the resonant solution with the extra factor \(t\).</p></div>
+</section>
+
+<section id="s4"><h2><span class="n">4</span>Initial conditions <span class="pill">Written for these notes</span></h2>
+<p>The slides do not have a separate initial-condition slide, but exams often ask for it. <b>Initial conditions</b> are given values such as \(y(0)\) and \(y'(0)\) that pick out one solution from the general solution. A second-order equation needs two of them (one per arbitrary constant).</p>
+<div class="box thm"><span class="tag">Order of work</span>
+<ol class="steps">
+<li>Find the CF \(y_c\) (with \(C_1,C_2\)).</li>
+<li>Find a particular solution \(y_p\).</li>
+<li>Write \(y=y_c+y_p\) and differentiate it.</li>
+<li><b>Only now</b> substitute the initial conditions and solve for \(C_1,C_2\).</li>
+</ol>
+<p class="word"><b>In words:</b> constants last. The initial conditions belong to the whole solution, not to the CF.</p></div>
+
+<div class="box eg"><span class="tag">Example 3</span>
+<p>Solve \(y''+3y'+2y=10\cos x\) with \(y(0)=0\), \(y'(0)=0\).</p>
+<p>From Example 1, \(y=C_1e^{-x}+C_2e^{-2x}+\cos x+3\sin x\), so</p>
+\[ y'=-C_1e^{-x}-2C_2e^{-2x}-\sin x+3\cos x. \]
+<p>\(y(0)=C_1+C_2+1=0\) and \(y'(0)=-C_1-2C_2+3=0\). So \(C_1+C_2=-1\), \(C_1+2C_2=3\), giving \(C_2=4\), \(C_1=-5\):</p>
+\[ y=-5e^{-x}+4e^{-2x}+\cos x+3\sin x. \]
+<p>Set the sliders in the first graph to \(C_1=-5\), \(C_2=4\): the readout shows \(y(0)=0\), \(y'(0)=0\).</p></div>
+
+<div class="box eg"><span class="tag">Example 4: the slide 10 graph is an initial value problem</span>
+<p>Solve \(y''+y=\cos x\), \(y(0)=0\), \(y'(0)=0\). From section 3, \(y=C_1\cos x+C_2\sin x+\tfrac12x\sin x\). Then \(y(0)=C_1=0\). Also</p>
+\[ \begin{aligned} y'&=-C_1\sin x+C_2\cos x\\ &\quad+\tfrac12(\sin x+x\cos x), \end{aligned} \]
+<p>so \(y'(0)=C_2=0\). The answer is \(y=\tfrac12x\sin x\): the system starts at rest, and the resonant forcing alone builds up the growing swing of slide 10.</p></div>
+
+<div class="box"><span class="tag">Two methods, one answer</span>
+<p>Different methods can give particular solutions that differ by CF terms (for example \(\frac x2e^{x}\) and \(\frac x2e^{x}-\frac14e^{x}\) both solve \(y''-y=e^{x}\); see Group work 3). After you fit the initial conditions, the constants adjust and the final answers are identical. If an exam asks you to "solve two ways and compare", this is the comparison to make.</p></div>
+</section>
+
+<section id="s5"><h2><span class="n">5</span>The D-operator method</h2>
+<div class="box def"><span class="tag">Definition (slide 11)</span>
+<p>Write \(D=\dfrac{d}{dx}\), so \(Dy=y'\), \(D^2y=D(Dy)=y''\), and so on. An <b>operator</b> is a rule that takes a function and gives back a function, the way a function takes a number and gives a number. Polynomials in \(D\) act term by term, e.g. \((D^2+1)y=y''+y\). So</p>
+\[ \begin{aligned} &y''+y=\cos x\quad\text{becomes}\\ &(D^2+1)y=\cos x. \end{aligned} \]
+<p class="word"><b>In words:</b> "apply (differentiate twice, then add the original) to \(y\), and you get \(\cos x\)".</p></div>
+<p>With constant coefficients, operators can be multiplied and factorised exactly like ordinary polynomials, and the order does not matter: \((D-2)(D+2)y=(D^2-4)y=y''-4y\).</p>
+
+<p><b>The question (slide 11).</b> What operator will "destroy" \(\cos x\), i.e. turn it into zero? Such an operator is called an <b>annihilator</b> of \(\cos x\).</p>
+<div class="box eg"><span class="tag">The D-operator method on \(y''+y=\cos x\) (slides 12–13)</span>
+<p><b>Annihilate (slide 12).</b> \((\cos x)''+\cos x=-\cos x+\cos x=0\), i.e. \((D^2+1)\cos x=0\). Apply \((D^2+1)\) to both sides of \((D^2+1)y=\cos x\):</p>
+\[ (D^2+1)^2y=(D^2+1)\cos x=0. \]
+<p>This is now a <b>homogeneous</b> fourth-order equation, which we can solve with Part O3.</p>
+<p><b>Characteristic equation (slide 13).</b> With \(y=e^{mx}\): \((m^2+1)^2=0\), so \(m=i,i,-i,-i\) (the slide writes "I"; it means \(i=\sqrt{-1}\)). Repeated complex roots (Part O3) give</p>
+\[ \cos x,\quad\sin x,\quad x\cos x,\quad x\sin x. \]
+<p><b>Pick the new ones.</b> \(\cos x,\ \sin x\) are already the CF of the original equation. The NEW solutions \(x\cos x,\ x\sin x\) are the correct choice for the particular solution: try \(y_p=x(A\cos x+B\sin x)\). Substituting (as in section 3) gives \(A=0\), \(B=\tfrac12\), \(y_p=\tfrac12x\sin x\).</p>
+<p class="word"><b>In words:</b> kill the right-hand side with an extra operator, solve the bigger homogeneous equation, and the solutions that are not already in the CF are the shape of the particular solution.</p></div>
+<p>This is why the clash rule works: the annihilator adds roots \(r\). If \(r\) is new, the trial is the ordinary table trial; if \(r\) was already a root, it becomes a repeated root, and repeated roots bring an extra factor \(x\).</p>
+
+<div class="box eg"><span class="tag">Example 5 <span class="pill">Written for these notes</span></span>
+<p>Solve \(y''-4y=8e^{2x}\) by the D-operator method.</p>
+<p>\((D-2)(D+2)y=8e^{2x}\). Since \((D-2)e^{2x}=2e^{2x}-2e^{2x}=0\), the annihilator is \(D-2\). Apply it:</p>
+\[ (D-2)^2(D+2)y=0,\qquad m=2,2,-2. \]
+<p>Solutions: \(e^{2x},\ xe^{2x},\ e^{-2x}\). The CF is \(C_1e^{2x}+C_2e^{-2x}\), so the new one is \(xe^{2x}\): try \(y_p=Axe^{2x}\).</p>
+\[ \begin{aligned} y_p'&=A(1+2x)e^{2x},\\ y_p''&=A(4+4x)e^{2x}. \end{aligned} \]
+<p>\(y_p''-4y_p=4Ae^{2x}=8e^{2x}\), so \(A=2\) and</p>
+\[ y=C_1e^{2x}+C_2e^{-2x}+2xe^{2x}. \]</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts: annihilators</span>
+<div class="scroll"><table>
+<tr><th>Function</th><th>Annihilator</th></tr>
+<tr><td>constant</td><td>\(D\)</td></tr>
+<tr><td>polynomial of degree \(n\)</td><td>\(D^{n+1}\)</td></tr>
+<tr><td>\(e^{ax}\)</td><td>\(D-a\)</td></tr>
+<tr><td>\(\cos bx\), \(\sin bx\)</td><td>\(D^2+b^2\)</td></tr>
+<tr><td>\(x^ne^{ax}\)</td><td>\((D-a)^{n+1}\)</td></tr>
+<tr><td>\(e^{ax}\cos bx\), \(e^{ax}\sin bx\)</td><td>\((D-a)^2+b^2\)</td></tr>
+</table></div>
+<p>For a sum, multiply the annihilators of the pieces, e.g. \(5-xe^{3x}\) is annihilated by \(D(D-3)^2\).</p></div>
+</section>
+
+<section id="s6"><h2><span class="n">6</span>Variation of parameters</h2>
+<p><b>When (slide 14).</b> For more complicated inhomogeneous terms (e.g. \(\sec x\), \(\ln x\), \(\frac1x\), which are not in the trial table), or when you simply cannot see the right form of the particular solution, use <b>variation of parameters</b> (VoP). It also works when the coefficients are functions of \(x\):</p>
+\[ y''+p(x)y'+q(x)y=f(x). \]
+<p><b>Setup (slide 14).</b> Suppose the homogeneous equation has two independent solutions \(y_1(x)\), \(y_2(x)\), so its general solution is \(C_1y_1+C_2y_2\). "Vary the parameters": replace the constants by unknown functions,</p>
+\[ y_p(x)=u_1(x)y_1(x)+u_2(x)y_2(x). \]
+<p class="word"><b>In words:</b> particular solution = (unknown function) × first CF solution + (unknown function) × second CF solution.</p>
+
+<p><b>One free choice (slide 15).</b> We are using two unknown functions \(u_1,u_2\) to describe one unknown function \(y_p\): two degrees of freedom for a one-degree-of-freedom problem. A <b>degree of freedom</b> is a quantity you are free to choose. Analogy: if all you need is \(a+b=10\), you may also demand anything reasonable you like (say \(a=3\)) and still succeed. So we may impose one extra condition of our choosing, picked to make the algebra easy.</p>
+
+<h3>Derivation (slides 16–17)</h3>
+<p>Differentiate \(y_p\) with the product rule:</p>
+\[ \begin{aligned} y_p'&=u_1y_1'+u_2y_2'\\ &\quad+\big(u_1'y_1+u_2'y_2\big). \end{aligned} \]
+<p>To stop second derivatives of \(u\) from appearing later, choose the extra condition</p>
+\[ u_1'y_1+u_2'y_2=0. \tag{1} \]
+<p>Then \(y_p'=u_1y_1'+u_2y_2'\), and differentiating again,</p>
+\[ y_p''=u_1y_1''+u_2y_2''+u_1'y_1'+u_2'y_2'. \]
+<p>("Further algebra", written out:) substitute into \(y''+py'+qy=f\) and group by \(u_1\) and \(u_2\):</p>
+\[ \begin{aligned} &u_1\big(y_1''+py_1'+qy_1\big)\\ &+u_2\big(y_2''+py_2'+qy_2\big)\\ &+u_1'y_1'+u_2'y_2'=f. \end{aligned} \]
+<p>Both brackets are 0, because \(y_1,y_2\) solve the homogeneous equation. What is left:</p>
+\[ u_1'y_1'+u_2'y_2'=f(x). \tag{2} \]
+
+<div class="box thm"><span class="tag">The VoP system (slides 17–18)</span>
+\[ \begin{aligned} u_1'y_1+u_2'y_2&=0\\ u_1'y_1'+u_2'y_2'&=f(x) \end{aligned} \]
+<p class="word"><b>In words:</b> (unknown slope 1)×(solution 1) + (unknown slope 2)×(solution 2) = 0, and the same with the solutions differentiated = right-hand side.</p>
+<p>Solve for \(u_1',u_2'\) algebraically (two simultaneous linear equations), then integrate to find \(u_1,u_2\) (slide 17). Eliminating gives</p>
+\[ u_1'=-\frac{y_2f}{W},\qquad u_2'=\frac{y_1f}{W}, \]
+\[ W=y_1y_2'-y_2y_1'. \]
+<p class="word"><b>In words:</b> \(W\) is the Wronskian of the two CF solutions (Part O3); it is never zero because they are independent. \(u_1'\) = minus (other solution × right side) ÷ \(W\); \(u_2'\) = (first solution × right side) ÷ \(W\).</p>
+<p>(To get \(u_1'\): multiply (1) by \(y_2'\) and (2) by \(y_2\), subtract: \(u_1'(y_1y_2'-y_2y_1')=-y_2f\). Similarly for \(u_2'\).)</p></div>
+
+<div class="box warn"><span class="tag">Be careful (slide 18)</span>
+<p>The coefficient of \(y''\) must be ONE (unity). The derivation substituted into \(y''+py'+qy=f\). If the equation is \(a(x)y''+\dots=g(x)\), first divide everything by \(a(x)\); the \(f\) in the formulas is \(g(x)/a(x)\). Forgetting this is the most common VoP error, especially for Cauchy–Euler equations (section 7).</p></div>
+<p>Constants of integration in \(u_1,u_2\) may be dropped: adding a constant to \(u_1\) just adds a multiple of \(y_1\) (a CF term) to \(y_p\).</p>
+
+<div class="box eg"><span class="tag">Example 6: a right-hand side the table cannot handle <span class="pill">Written for these notes</span></span>
+<p>Find the general solution of \(y''+y=\sec x\) on \(-\frac\pi2\lt x\lt\frac\pi2\).</p>
+<p>Undetermined coefficients fails: the derivatives of \(\sec x\) (\(\sec x\tan x\), \(\sec x\tan^2x+\sec^3x\), …) keep producing new kinds of terms, so no finite trial works.</p>
+<p>CF: \(y_1=\cos x\), \(y_2=\sin x\). Coefficient of \(y''\) is 1, so \(f=\sec x\). \(W=\cos x\cdot\cos x-\sin x\cdot(-\sin x)=1\).</p>
+\[ u_1'=-\sin x\sec x=-\tan x, \]
+\[ u_2'=\cos x\sec x=1. \]
+<p>Integrate (Lecture 13): \(u_1=\ln(\cos x)\) (as \(\cos x\gt0\) here), \(u_2=x\). So</p>
+\[ y_p=\cos x\,\ln(\cos x)+x\sin x, \]
+\[ \begin{aligned} y&=C_1\cos x+C_2\sin x\\ &\quad+\cos x\ln(\cos x)+x\sin x. \end{aligned} \]</div>
+
+<div class="box eg"><span class="tag">Example 7: VoP on a clash <span class="pill">Written for these notes</span></span>
+<p>Redo Example 5, \(y''-4y=8e^{2x}\), by VoP. \(y_1=e^{2x}\), \(y_2=e^{-2x}\), \(f=8e^{2x}\).</p>
+\[ W=e^{2x}(-2e^{-2x})-e^{-2x}(2e^{2x})=-4. \]
+\[ u_1'=-\frac{e^{-2x}\cdot8e^{2x}}{-4}=2, \]
+\[ u_2'=\frac{e^{2x}\cdot8e^{2x}}{-4}=-2e^{4x}. \]
+<p>So \(u_1=2x\), \(u_2=-\tfrac12e^{4x}\), and</p>
+\[ y_p=2xe^{2x}-\tfrac12e^{2x}. \]
+<p>The term \(-\frac12e^{2x}\) is a CF term, so it can be absorbed into \(C_1e^{2x}\): the general solution is the same as in Example 5. VoP needs no clash rule: it finds the factor \(x\) by itself.</p></div>
+</section>
+
+<section id="s7"><h2><span class="n">7</span>Variation of parameters for Cauchy–Euler equations <span class="pill">Written for these notes</span></h2>
+<p>This combines Part O3 (Cauchy–Euler CF) with slide 18's warning. Exams set it often, and usually remind you that "the coefficient of the second derivative term is not unity".</p>
+<p><b>Recap (Part O3).</b> A second-order <b>Cauchy–Euler</b> equation has the form \(x^2y''+bxy'+cy=g(x)\) (\(b,c\) constants; the power of \(x\) matches the order of the derivative). For the CF, try \(y=x^m\): \(m(m-1)+bm+c=0\). Distinct real roots give \(x^{m_1},x^{m_2}\); a double root \(m\) gives \(x^m,\ x^m\ln x\); complex roots \(a\pm bi\) give \(x^a\cos(b\ln x),\ x^a\sin(b\ln x)\). Take \(x\gt0\).</p>
+<div class="box thm"><span class="tag">Method</span>
+<ol class="steps">
+<li>Find \(y_1,y_2\) from \(m(m-1)+bm+c=0\).</li>
+<li><b>Divide the whole equation by \(x^2\)</b>, so that the coefficient of \(y''\) is 1. Then \(f(x)=\dfrac{g(x)}{x^2}\).</li>
+<li>\(W=y_1y_2'-y_2y_1'\); \(u_1'=-\dfrac{y_2f}{W}\), \(u_2'=\dfrac{y_1f}{W}\); integrate.</li>
+<li>\(y=C_1y_1+C_2y_2+u_1y_1+u_2y_2\).</li>
+</ol>
+<p class="word"><b>In words:</b> the right-hand side used in VoP is the original right-hand side divided by \(x^2\).</p></div>
+
+<div class="box eg"><span class="tag">Example 8</span>
+<p>Solve \(x^2y''-2xy'+2y=x^3e^{x}\), \(x\gt0\).</p>
+<p><b>CF.</b> \(m(m-1)-2m+2=m^2-3m+2=(m-1)(m-2)=0\): \(y_1=x\), \(y_2=x^2\).</p>
+<p><b>Divide by \(x^2\).</b> \(y''-\frac2xy'+\frac2{x^2}y=xe^{x}\), so \(f=xe^{x}\) (not \(x^3e^x\)).</p>
+<p>\(W=x\cdot2x-x^2\cdot1=x^2\).</p>
+\[ u_1'=-\frac{x^2\cdot xe^{x}}{x^2}=-xe^{x}, \]
+\[ u_2'=\frac{x\cdot xe^{x}}{x^2}=e^{x}. \]
+<p>By parts (Lecture 13), \(u_1=-(x-1)e^{x}=(1-x)e^{x}\); and \(u_2=e^{x}\). So</p>
+\[ y_p=x(1-x)e^{x}+x^2e^{x}=xe^{x}, \]
+\[ y=C_1x+C_2x^2+xe^{x}. \]
+<p>Check: \(y_p'=(1+x)e^x\), \(y_p''=(2+x)e^x\); \(x^2(2+x)e^x-2x(1+x)e^x+2xe^x=x^3e^x\). ✓</p></div>
+
+<div class="box"><span class="tag">Shortcut when \(g(x)=kx^n\)</span>
+<p>For a pure power on the right, you may also try \(y_p=Ax^n\): then \(x^2y_p''+bxy_p'+cy_p=A\big[n(n-1)+bn+c\big]x^n\), so \(A=\dfrac{k}{n(n-1)+bn+c}\), provided \(n\) is not a root of the characteristic equation. If the question says "use variation of parameters", you must use VoP, but this is a quick check of your answer.</p></div>
+</section>
+
+<section id="s8"><h2><span class="n">8</span>Which method? Insights on solving ODEs (slides 19–20)</h2>
+<p>The last two slides summarise the whole ODE part as five situations. Here they are, with the method for each and where it was taught.</p>
+<div class="cases">
+<div><b>(1) First order, linear</b>\(y'+p(x)y=q(x)\). Can <em>always</em> be solved exactly by an integrating factor \(e^{\int p\,dx}\) (Part O1). Make the coefficient of \(y'\) equal to 1 first.</div>
+<div><b>(2) First order, nonlinear</b>Can "usually" make progress: separable (Part O1), exact (Part O1), homogeneous in \(y/x\) (Part O2), Bernoulli (Part O2); also Riccati with a given solution (Part O2).</div>
+<div><b>(3) Second or higher order, linear, constant coefficients</b>Can <em>always</em> be solved exactly: characteristic equation for the CF (Part O3), then undetermined coefficients, D-operator or variation of parameters for the PI (this part).</div>
+<div><b>(4) Second or higher order, linear, variable coefficients</b>(a) Special case: Cauchy–Euler, try \(x^m\) (Part O3), PI by VoP after dividing by \(x^2\) (section 7). (b) Generally: solutions as an infinite series ("Frobenius series"). Also: reduction of order if one solution is known (Part O2).</div>
+<div><b>(5) Second or higher order, nonlinear</b>Usually hopeless. You are really lucky if you can solve the ODE exactly.</div>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts: Frobenius series</span><p>A <b>Frobenius series</b> writes the solution as an infinite sum \(y=x^r(a_0+a_1x+a_2x^2+\dots)\) and finds the numbers \(a_0,a_1,\dots\) one after another by substituting into the equation. It is how equations like Bessel's equation are solved in later courses. It is named on slide 20 only to say that it exists; it is not examined in this course. Similarly, "hopeless" in (5) means no general method exists: such equations are usually solved numerically by computer.</p></div>
+
+<h3>A decision path for exam questions</h3>
+<ol class="steps">
+<li><b>Order?</b> First order: go to step 2. Second or higher: go to step 3.</li>
+<li><b>First order.</b> Can you put all \(y\) on one side and all \(x\) on the other? Separable (O1.1). Is it \(y'+p(x)y=q(x)\)? Integrating factor (O1.2). Is it \(M\,dx+N\,dy=0\) with \(\partial M/\partial y=\partial N/\partial x\)? Exact (O1.3). Does it depend only on \(y/x\)? \(y=vx\) (O2.1). Is there a \(y^n\) term on the right of a linear equation? Bernoulli, \(u=y^{1-n}\) (O2.2). A \(y^2\) term and a given solution? Riccati (O2.3).</li>
+<li><b>Linear, second or higher order.</b> Constant coefficients? Characteristic equation (O3.1–O3.2). Coefficients \(x^2,\ x,\ 1\) in front of \(y'',y',y\)? Cauchy–Euler (O3.3). One solution given? Reduction of order (O2.5).</li>
+<li><b>Right-hand side not zero.</b> Find the CF first. Then:
+<ul class="list"><li>constant coefficients and \(f\) in the trial table: undetermined coefficients; check for a clash (O4.1, O4.2);</li>
+<li>the question says "D operator": annihilate, solve, take the new solutions (O4.6);</li>
+<li>\(f\) not in the table (\(\sec x\), \(\ln x\), \(1/x\), …), variable coefficients, or the question says "variation of parameters": divide by the \(y''\) coefficient, then VoP (O4.4, O4.5).</li></ul></li>
+<li><b>Initial conditions?</b> Fit them last, to the full \(y_c+y_p\) (O4.3).</li>
+</ol>
+<div class="scroll"><table>
+<tr><th>Method</th><th>Works for</th><th>Strength</th><th>Weakness</th></tr>
+<tr><td>Undetermined coefficients</td><td>constant coefficients, \(f\) in the table</td><td>fast, little integration</td><td>needs the right guess; clash check</td></tr>
+<tr><td>D-operator</td><td>same as above</td><td>produces the right guess, clashes automatic</td><td>still needs the substitution step</td></tr>
+<tr><td>Variation of parameters</td><td>any linear 2nd-order equation with known \(y_1,y_2\)</td><td>always works, no guessing</td><td>integrals can be hard; must divide by the \(y''\) coefficient</td></tr>
+</table></div>
+</section>
+
+<section id="s9"><h2><span class="n">9</span>Summary <span class="pill">Written for these notes</span></h2>
+<ul class="list">
+<li>Non-homogeneous linear equation: \(y''+a_1y'+a_2y=f(x)\) with \(f\ne0\). General solution = complementary function (solution with \(f=0\), contains the constants) + particular solution (any one solution).</li>
+<li>Undetermined coefficients: trial of the same shape as \(f\): constant → constant; polynomial → full polynomial of the same degree; \(e^{ax}\) → \(Ae^{ax}\); \(\cos bx\) or \(\sin bx\) → \(A\cos bx+B\sin bx\); sums → sums.</li>
+<li>Clash: if a trial group solves the homogeneous equation, multiply that group by \(x\) (simple root) or \(x^2\) (double root).</li>
+<li>Resonance: forcing at a natural frequency; the response grows like \(x\sin x\); e.g. \(y''+y=\cos x\) has \(y_p=\tfrac12x\sin x\).</li>
+<li>Initial conditions: fit to \(y_c+y_p\), never to \(y_c\) alone.</li>
+<li>D-operator: write \(L(D)y=f\), apply the annihilator of \(f\), solve the homogeneous equation; the new solutions give the trial.</li>
+<li>Variation of parameters: \(y_p=u_1y_1+u_2y_2\) with \(u_1'y_1+u_2'y_2=0\), \(u_1'y_1'+u_2'y_2'=f\); \(u_1'=-y_2f/W\), \(u_2'=y_1f/W\). Coefficient of \(y''\) must be 1: divide Cauchy–Euler equations by \(x^2\).</li>
+<li>Linear equations are always solvable when the coefficients are constant (or Cauchy–Euler); nonlinear higher-order equations usually are not.</li>
+</ul>
+</section>
+
+<section id="s10"><h2><span class="n">10</span>Common mistakes <span class="pill">Written for these notes</span></h2>
+<div class="box"><div class="mistake">
+<span class="x">✗</span><span>Fitting the initial conditions to the CF and then adding \(y_p\). <span class="ok">✓</span> Form \(y=y_c+y_p\) first; the particular solution changes \(y(0)\) and \(y'(0)\) too.</span>
+<span class="x">✗</span><span>Skipping the clash check: trying \(Ae^{2x}\) when 2 is a characteristic root leads to "\(0=12\)". <span class="ok">✓</span> List the CF first; compare every trial group with it.</span>
+<span class="x">✗</span><span>Multiplying the whole trial by \(x\) when only one group clashes, e.g. \(x(Ae^{2x}+Bx+C)\). <span class="ok">✓</span> \(Axe^{2x}+Bx+C\): only the clashing group is raised.</span>
+<span class="x">✗</span><span>Multiplying by \(x\) when the root is double. <span class="ok">✓</span> Double root → \(x^2\) (e.g. \(y''-4y'+4y=e^{2x}\) needs \(Ax^2e^{2x}\)).</span>
+<span class="x">✗</span><span>Polynomial trial with only the top power, e.g. \(Ax^2\) for \(4x^2\). <span class="ok">✓</span> \(Ax^2+Bx+C\).</span>
+<span class="x">✗</span><span>Trig trial with only cosine (or only sine). <span class="ok">✓</span> \(A\cos bx+B\sin bx\) always.</span>
+<span class="x">✗</span><span>Using variation of parameters on \(x^2y''+\dots=g\) with \(f=g\). <span class="ok">✓</span> Divide by \(x^2\) first: \(f=g/x^2\).</span>
+<span class="x">✗</span><span>Sign or order slips: \(u_1'=+y_2f/W\), or \(W=y_2y_1'-y_1y_2'\). <span class="ok">✓</span> \(W=y_1y_2'-y_2y_1'\), \(u_1'=-y_2f/W\), \(u_2'=+y_1f/W\). Check by substituting \(y_p\) back.</span>
+<span class="x">✗</span><span>Undetermined coefficients on variable-coefficient equations, or on \(f=\sec x,\ \ln x,\ 1/x\). <span class="ok">✓</span> Use variation of parameters.</span>
+<span class="x">✗</span><span>Answering a "general solution" question with \(y_p\) only (or a "particular solution" question with arbitrary constants left in). <span class="ok">✓</span> Read which one is asked.</span>
+</div></div>
+</section>
+
+<section id="s11"><h2><span class="n">11</span>Find the mistake <span class="pill">Written for these notes</span></h2>
+<div class="q"><p class="qh">1. A student solves \(x^2y''-2xy'+2y=x^3e^{x}\) (\(x\gt0\)) by variation of parameters:</p>
+<div class="handwork">
+<p>\(y_1=x,\ y_2=x^2,\ W=x^2,\ f=x^3e^x\)</p>
+<p>\(u_1'=-\dfrac{x^2\cdot x^3e^x}{x^2}=-x^3e^x,\quad u_2'=\dfrac{x\cdot x^3e^x}{x^2}=x^2e^x\)</p>
+<p>\(u_1=(-x^3+3x^2-6x+6)e^x,\quad u_2=(x^2-2x+2)e^x\)</p>
+<p>\(y_p=xu_1+x^2u_2=(x^3-4x^2+6x)e^x\)</p>
+</div>
+<details><summary>Hint</summary><div><p>The integrations are correct. Look at the very first line, and at what slide 18 says about the equation the VoP formulas come from.</p></div></details>
+<details><summary>Answer</summary><div><p>The student used \(f=x^3e^x\), but the formulas need the coefficient of \(y''\) to be 1. Dividing by \(x^2\) gives \(f=xe^x\). Then \(u_1'=-xe^x\), \(u_2'=e^x\), and \(y_p=xe^x\) (Example 8). Substituting the student's answer back leaves an error of \(x^3(x^2-1)e^x\), not 0.</p></div></details></div>
+
+<div class="q"><p class="qh">2. A student solves \(y''+3y'+2y=10\cos x\), \(y(0)=0\), \(y'(0)=0\):</p>
+<div class="handwork">
+<p>\(y_c=C_1e^{-x}+C_2e^{-2x}\). \(y_c(0)=0\): \(C_1+C_2=0\). \(y_c'(0)=0\): \(-C_1-2C_2=0\). So \(C_1=C_2=0\).</p>
+<p>\(y_p=\cos x+3\sin x\), so \(y=\cos x+3\sin x\).</p>
+</div>
+<details><summary>Hint</summary><div><p>Check the final answer: what is \(y(0)\)?</p></div></details>
+<details><summary>Answer</summary><div><p>\(y(0)=1\ne0\) and \(y'(0)=3\ne0\). The initial conditions were applied to the CF alone. Apply them to \(y=C_1e^{-x}+C_2e^{-2x}+\cos x+3\sin x\): \(C_1+C_2+1=0\), \(-C_1-2C_2+3=0\), so \(C_1=-5\), \(C_2=4\), and \(y=-5e^{-x}+4e^{-2x}+\cos x+3\sin x\).</p></div></details></div>
+</section>
+
+<section id="s12"><h2><span class="n">12</span>Group work <span class="pill">Written for these notes</span></h2>
+<div class="q"><p class="qh">1. Solve \(y''+4y=8\sin2x\), \(y(0)=0\), \(y'(0)=0\). Describe the motion for large \(x\).</p>
+<details><summary>Hint 1</summary><div><p>CF: \(m=\pm2i\), so \(\cos2x,\ \sin2x\). The forcing \(\sin2x\) is in the CF: resonance.</p></div></details>
+<details><summary>Hint 2</summary><div><p>Try \(y_p=x(A\cos2x+B\sin2x)\). A useful fact: for this trial, \(y_p''+4y_p=4(-A\sin2x+B\cos2x)\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(-4A=8\), \(B=0\), so \(y_p=-2x\cos2x\). With \(y=C_1\cos2x+C_2\sin2x-2x\cos2x\): \(y(0)=C_1=0\); \(y'(0)=2C_2-2=0\), \(C_2=1\).</p>
+\[ y=\sin2x-2x\cos2x. \]
+<p>For large \(x\) the term \(-2x\cos2x\) dominates: oscillations whose amplitude grows like \(2x\) (resonance).</p></div></details></div>
+
+<div class="q"><p class="qh">2. Find the general solution of \(y''-2y'+y=\dfrac{e^{x}}{x}\), \(x\gt0\).</p>
+<details><summary>Hint 1</summary><div><p>\(\frac{e^x}{x}\) is not in the trial table: use variation of parameters. CF: \(m=1\) (double), \(y_1=e^x\), \(y_2=xe^x\).</p></div></details>
+<details><summary>Hint 2</summary><div><p>\(W=e^x(e^x+xe^x)-xe^x\cdot e^x=e^{2x}\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(u_1'=-\dfrac{xe^x\cdot e^x/x}{e^{2x}}=-1\), \(u_2'=\dfrac{e^x\cdot e^x/x}{e^{2x}}=\dfrac1x\); \(u_1=-x\), \(u_2=\ln x\). \(y_p=-xe^x+xe^x\ln x\); the \(-xe^x\) is a CF term.</p>
+\[ y=(C_1+C_2x)e^{x}+xe^{x}\ln x. \]</div></details></div>
+
+<div class="q"><p class="qh">3. Solve \(y''-y=e^{x}\) with \(y(0)=0\), \(y'(0)=0\) twice: (a) by undetermined coefficients, (b) by variation of parameters. Compare.</p>
+<details><summary>Hint</summary><div><p>(a) Roots \(\pm1\): \(e^x\) clashes once, so try \(Axe^x\). (b) \(y_1=e^x\), \(y_2=e^{-x}\), \(W=-2\).</p></div></details>
+<details><summary>Answer</summary><div><p>(a) \(y_p=\frac12xe^x\). \(y=C_1e^x+C_2e^{-x}+\frac12xe^x\); conditions give \(C_1=-\frac14\), \(C_2=\frac14\).</p>
+<p>(b) \(u_1'=\frac12\), \(u_2'=-\frac12e^{2x}\); \(u_1=\frac x2\), \(u_2=-\frac14e^{2x}\); \(y_p=\frac12xe^x-\frac14e^x\). Conditions give \(C_1=0\), \(C_2=\frac14\).</p>
+<p>The particular solutions differ by \(-\frac14e^x\), a CF term, and the constants absorb it. Both give</p>
+\[ y=\tfrac12xe^{x}-\tfrac14e^{x}+\tfrac14e^{-x}. \]</div></details></div>
+</section>
+
+<section id="s13"><h2><span class="n">13</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<div class="q"><p class="qh">1. What trial would you use for \(y''-4y'+4y=e^{2x}\)? Find \(y_p\).</p>
+<details><summary>Answer</summary><div><p>\((m-2)^2=0\): 2 is a double root, so \(Ax^2e^{2x}\). Substituting gives \(2A=1\): \(y_p=\frac12x^2e^{2x}\).</p></div></details></div>
+<div class="q"><p class="qh">2. \(y_a\) and \(y_b\) both solve \(y''+y=x\). Which equations do \(y_a-y_b\), \(y_a+y_b\) and \(2y_a-y_b\) solve?</p>
+<details><summary>Answer</summary><div><p>\(y_a-y_b\): \(y''+y=0\) (the CF equation, slides 2–3). \(y_a+y_b\): \(y''+y=2x\). \(2y_a-y_b\): \(y''+y=2x-x=x\), the original equation.</p></div></details></div>
+<div class="q"><p class="qh">3. For \(y''+9y=\cos\omega x\) (\(\omega\gt0\)), for which \(\omega\) does the trial need an extra factor \(x\)? What happens physically?</p>
+<details><summary>Answer</summary><div><p>\(\omega=3\), the natural frequency (roots \(\pm3i\)). The forcing is in phase with the natural motion: resonance, amplitude grows like \(x\).</p></div></details></div>
+<div class="q"><p class="qh">4. Why must the coefficient of \(y''\) be 1 before using \(u_1'y_1+u_2'y_2=0,\ u_1'y_1'+u_2'y_2'=f\)?</p>
+<details><summary>Answer</summary><div><p>The second equation comes from substituting into \(y''+py'+qy=f\). For \(a(x)y''+\dots=g\), the same steps give \(a(x)(u_1'y_1'+u_2'y_2')=g\), i.e. the right side is \(g/a\), not \(g\).</p></div></details></div>
+<div class="q"><p class="qh">5. How many arbitrary constants does the general solution of a third-order linear non-homogeneous ODE have, and which part contains them?</p>
+<details><summary>Answer</summary><div><p>Three, all in the complementary function. The particular solution contains none.</p></div></details></div>
+<div class="q"><p class="qh">6. Which method would you use for (a) \(y''+y=\tan x\); (b) \(y''+y=x^2+e^{-x}\); (c) \(x^2y''+xy'-y=\ln x\)?</p>
+<details><summary>Answer</summary><div><p>(a) Variation of parameters (\(\tan x\) is not in the table). (b) Undetermined coefficients: \(Ax^2+Bx+C+Ee^{-x}\), no clash (roots \(\pm i\)). (c) Cauchy–Euler CF (\(x,\ x^{-1}\)), then variation of parameters after dividing by \(x^2\).</p></div></details></div>
+</section>
+
+<section id="pastpaper"><h2><span class="n">14</span>Exam taster</h2>
+<p>A few real past-paper questions, about one for each main question type in this part, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
+<p style="font-size:.92rem;color:var(--muted)">Part O4's question types appear 75 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide.</p>
+
+<div class="q"><p class="src"><b>May 2026 Q7(b)</b><span>Q7 total 10 pts</span><a class="guide" data-guide="O4.1">Guide · O4.1 Undetermined coefficients, no clash</a></p>
+<p class="qh">Find the general solution to the following differential equation:</p>
+\[ \frac{d^2y}{dx^2}+4\frac{dy}{dx}+5y=\cos3x \]
+<details><summary>Hint</summary><div><p>Undetermined coefficients. CF: \(m^2+4m+5=0\), \(m=-2\pm i\). The forcing has \(r=\pm3i\), not a root, so try \(y_p=A\cos3x+B\sin3x\) and match the \(\cos3x\) and \(\sin3x\) coefficients.</p></div></details>
+<details><summary>Answer</summary><div>
+\[ \begin{aligned} y&=e^{-2x}(C_1\cos x+C_2\sin x)\\ &\quad+\frac{3\sin3x-\cos3x}{40} \end{aligned} \]
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2026 Q8(a)</b><span>Q8 total 10 pts</span><a class="guide" data-guide="O4.2">Guide · O4.2 Undetermined coefficients with a clash</a></p>
+<p class="qh">Find the general solution to the following differential equation:</p>
+\[ \frac{d^2y}{dx^2}-\frac{dy}{dx}-2y=12\left(e^{2x}-x\right) \]
+<details><summary>Hint</summary><div><p>Roots \(2,-1\). The \(e^{2x}\) group clashes (simple root 2), the polynomial group does not: try \(y_p=Axe^{2x}+Bx+C\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=C_1e^{2x}+C_2e^{-x}+4xe^{2x}+6x-3 \]
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2026 Q8(b)</b><span>Q8 total 10 pts</span><a class="guide" data-guide="O4.5">Guide · O4.5 Variation of parameters, Cauchy–Euler</a></p>
+<p class="qh">Solve the following differential equation using the method of variation of parameters:</p>
+\[ x^2\frac{d^2y}{dx^2}-9x\frac{dy}{dx}+9y=x^{15} \]
+<p class="qh">(Note: The coefficient of the second derivative term is not unity.)</p>
+<details><summary>Hint</summary><div><p>Cauchy–Euler CF: \(m(m-1)-9m+9=(m-1)(m-9)=0\), so \(y_1=x\), \(y_2=x^9\). Divide by \(x^2\) first: \(f=x^{13}\). Then \(W=y_1y_2'-y_2y_1'\) and \(u_1'=-y_2f/W\), \(u_2'=y_1f/W\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=C_1x+C_2x^9+\frac{x^{15}}{84} \]
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2024 Q8(b)</b><span>Q8 total 10%</span><a class="guide" data-guide="O4.4">Guide · O4.4 Variation of parameters</a></p>
+<p class="qh">Find a particular solution of the differential equation by variation of parameters:</p>
+\[ \frac{d^2y}{dx^2}-11\frac{dy}{dx}+18y=\exp(9x). \]
+<details><summary>Hint</summary><div><p>Roots \(2,9\): \(y_1=e^{2x}\), \(y_2=e^{9x}\), \(f=e^{9x}\) (coefficient of \(y''\) is already 1). Compute \(W=y_1y_2'-y_2y_1'\), then \(u_1'=-y_2f/W\), \(u_2'=y_1f/W\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y_p=\frac{x}{7}e^{9x}-\frac{1}{49}e^{9x} \]
+<p>Equivalently \(y_p=\frac x7e^{9x}\), since \(-\frac1{49}e^{9x}\) is a CF term.</p>
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2014 Q10(a)</b><span>Q10 total 10%</span><span class="older">older format</span><a class="guide" data-guide="O4.3">Guide · O4.3 Initial conditions / two methods</a></p>
+<p class="qh">The differential equation</p>
+\[ \frac{d^2y}{dt^2}-3\frac{dy}{dt}+2y=6e^{3t} \]
+<p class="qh">is to be solved with the initial conditions \(y(0)=6\), \(y'(0)=14\).</p>
+<p class="qh">(a) Find the solution by undetermined coefficients. (Note: Apply the initial condition AFTER you have determined both the complementary functions and the particular solution.)</p>
+<details><summary>Hint</summary><div><p>CF from \(m^2-3m+2=0\) (\(m=1,2\)); \(3\) is not a root, so try \(y_p=Ae^{3t}\). Then write \(y=C_1e^{t}+C_2e^{2t}+y_p\) and use both conditions.</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=e^{t}+2e^{2t}+3e^{3t} \]
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2018 Q8(a)</b><span>Q8 total 10%</span><span class="older">older format</span><a class="guide" data-guide="O4.6">Guide · O4.6 D-operator method</a></p>
+<p class="qh">Use the 'D operator' method to solve the equation:</p>
+\[ y''+2y'=3e^{-2x}. \]
+<details><summary>Hint</summary><div><p>\(D(D+2)y=3e^{-2x}\). The annihilator of \(e^{-2x}\) is \(D+2\), giving \(D(D+2)^2y=0\) with roots \(0,-2,-2\). The new solution is \(xe^{-2x}\): try \(y_p=Axe^{-2x}\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=C_1+C_2e^{-2x}-\frac32xe^{-2x} \]
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+</section>
+</main>
+</div>
+<script>
+(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const PI=Math.PI;
+const $=id=>document.getElementById(id);
+
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+const piTicks=(lo,hi)=>{const out=[];const L={'-4':'−2π','-3':'−3π/2','-2':'−π','-1':'−π/2','0':'0','1':'π/2','2':'π','3':'3π/2','4':'2π','5':'5π/2'};for(let k=Math.ceil(lo/(PI/2));k<=Math.floor(hi/(PI/2));k++)out.push([k*PI/2,L[k]||'']);return out;};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+function drawCF(){
+  const c1=+$('cf-c1').value, c2=+$('cf-c2').value;
+  $('cf-c1v').textContent=fmt(c1,1); $('cf-c2v').textContent=fmt(c2,1);
+  const cf=x=>c1*Math.exp(-x)+c2*Math.exp(-2*x), yp=x=>Math.cos(x)+3*Math.sin(x);
+  plot($('cf'),{xmin:0,xmax:10,ymin:-8,ymax:8,xstep:2,ystep:2,
+    curves:[{f:cf,color:css('--c4'),dash:[6,4],width:2},{f:yp,color:css('--c3'),width:2},{f:x=>cf(x)+yp(x),color:css('--accent'),width:2.6}],
+    pts:[{x:0,y:c1+c2+1,color:css('--accent')}]});
+  const y0=c1+c2+1, d0=-c1-2*c2+3;
+  $('cf-out').innerHTML='y(0) = C₁+C₂+1 = <b>'+fmt(y0,2)+'</b> · y′(0) = −C₁−2C₂+3 = <b>'+fmt(d0,2)+'</b><br>at x = 6: CF = <b>'+fmt(cf(6),3)+'</b>, so y ≈ PI = '+fmt(yp(6),3);
+}
+['cf-c1','cf-c2'].forEach(id=>$(id).addEventListener('input',drawCF)); redraws.push(drawCF);
+
+function drawR10(){
+  plot($('r10'),{xmin:0,xmax:20,ymin:-10,ymax:10,xstep:5,ystep:5,
+    curves:[{f:t=>t/2,color:css('--muted'),dash:[6,4],width:1.5},{f:t=>-t/2,color:css('--muted'),dash:[6,4],width:1.5},{f:t=>t*Math.sin(t)/2,color:css('--accent')}]});
+}
+redraws.push(drawR10);
+
+function drawOsc(){
+  const w=+$('osc-w').value, w0=2; $('osc-wv').textContent=w.toFixed(2);
+  const res=Math.abs(w-w0)<1e-6;
+  const f=res?(t=>t*Math.sin(w0*t)/(2*w0)):(t=>(Math.cos(w*t)-Math.cos(w0*t))/(w0*w0-w*w));
+  let m=0; for(let i=0;i<=4000;i++){const t=40*i/4000; m=Math.max(m,Math.abs(f(t)));}
+  plot($('osc'),{xmin:0,xmax:40,ymin:-10,ymax:10,xstep:10,ystep:5,
+    curves:[{f:t=>t/(2*w0),color:css('--c2'),dash:[6,4],width:1.5,alpha:.7},{f:t=>-t/(2*w0),color:css('--c2'),dash:[6,4],width:1.5,alpha:.7},{f:f,color:css('--accent'),width:2,n:2400}]});
+  $('osc-out').innerHTML='ω = <b>'+w.toFixed(2)+'</b>, ω₀ = 2, ω/ω₀ = '+fmt(w/w0,3)+'<br>largest |y| for 0 ≤ t ≤ 40: <b>'+fmt(m,2)+'</b>'+(res?' (resonance: keeps growing like t/4)':' (bounded by 2/|ω₀²−ω²| = '+fmt(2/Math.abs(w0*w0-w*w),2)+')');
+}
+$('osc-w').addEventListener('input',drawOsc); redraws.push(drawOsc);
+
+const all=()=>redraws.forEach(f=>{try{f();}catch(e){}});
+all();
+let t; window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(all,120);});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);}catch(e){}
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+<script>
+/* MATH1851 bundle links: fills hrefs for a.note[data-note] and a.guide[data-guide], links "Lx guide" mentions, adds an index link on guide pages. */
+(function(){
+var B="",N={"L1": "note-L1.html", "L2": "note-L2.html", "L3": "note-L3.html", "L4": "note-L4.html", "L5": "note-L5.html", "L6": "note-L6.html", "L7": "note-L7.html", "L8": "note-L8.html", "L9": "note-L9.html", "L10": "note-L10.html", "L11": "note-L11.html", "L12": "note-L12.html", "L13": "note-L13.html", "L14": "note-L14.html", "L15": "note-L15.html", "L16": "note-L16.html", "L17": "note-L17.html", "O1": "note-O1.html", "O2": "note-O2.html", "O3": "note-O3.html", "O4": "note-O4.html", "LT": "note-LT.html"},G={"L1": "guide-L1.html", "L2": "guide-L2.html", "L3": "guide-L3.html", "L4": "guide-L4.html", "L5": "guide-L5.html", "L6": "guide-L6.html", "L7": "guide-L7.html", "L8": "guide-L8.html", "L9": "guide-L9.html", "L10": "guide-L10.html", "L12": "guide-L12.html", "L13": "guide-L13.html", "L14": "guide-L14.html", "L15": "guide-L15.html", "L16": "guide-L16.html", "L17": "guide-L17.html", "O1": "guide-O1.html", "O2": "guide-O2.html", "O3": "guide-O3.html", "O4": "guide-O4.html", "LT": "guide-LT.html"},M={"LT#forward|forward transforms and shifts": "LT#s4", "LT#partial-fractions|partial fractions": "LT#s10", "LT#second-shift|second shift and the step function": "LT#s5", "LT#repeated-factors|repeated factors and the first shift": "LT#s10", "LT#convolution|convolution": "LT#s6", "LT#s5|solving ODEs by Laplace": "LT#s12", "LT#s6|convolution and integral equations": "LT#s11", "L1#s4|limit laws": "L1#s5", "L1#s5|direct substitution": "L1#s6", "L1#s6|removing the 0/0 by algebra": "L1#s7", "L1#s7|one-sided limits": "L1#s3", "L1#s8|absolute values and piecewise functions": "L1#s3", "L2#s2|the Sandwich Theorem": "L2#s1", "L2#s3|x sin(1/x) and other examples": "L2#s2", "L2#s4|the limit sin x / x": "L2#s3", "L1#s5|one-sided limits": "L1#s3", "L3#s2|infinite limits": "L3#s1", "L3#s3|limits at infinity": "L3#s2", "L1#s6|conjugates": "L1#s7", "L3#s4|asymptotes": "L3#s5", "L9#s3|asymptotes in curve sketching": "L9#s8", "L4#s2|continuity at a point": "L4#s1", "L4#s4|continuity of combinations": "L4#s5", "L4#s3|one-sided limits and continuity": "L4#s1", "L4#s5|limits of composite functions": "L4#s7", "L4#s6|types of discontinuity": "L4#s3", "L4#s7|the Intermediate Value Theorem": "L4#s8", "L5#s2|definition of the derivative": "L5#s3", "L5#s3|one-sided derivatives": "L5#s5", "L5#s4|differentiable implies continuous": "L5#s6", "L6#s2|product and quotient rules": "L6#s2", "L6#s4|chain rule": "L6#s5", "L6#s5|implicit differentiation": "L6#s6", "L6#s6|tangent lines": "L5#s2", "L7#s5|logarithmic differentiation": "L7#s4", "L7#s4|derivatives of ln and exp": "L7#s3", "L7#s4|derivatives of exp, ln and aˣ": "L7#s3", "L7#s6|derivatives of inverse trig functions": "L7#s6", "L7#s2|derivative of an inverse function": "L7#s2", "L7#s1|one-to-one functions and inverses": "L7#s1", "L7#s5|graphs and limits of eˣ and ln x": "L7#s3", "L4#s2|continuity of composite functions": "L4#s6", "L8#s2|absolute extrema and the Extreme Value Theorem": "L8#s3", "L8#s3|critical points": "L8#s4", "L8#s4|Rolle's Theorem": "L8#s6", "L8#s5|the Mean Value Theorem": "L8#s7", "L8#s6|counting roots with Rolle's Theorem": "L8#s9", "L4#s5|the Intermediate Value Theorem": "L4#s8", "L8#s7|consequences of the MVT": "L8#s8", "L9#s2|increasing, decreasing and the first derivative test": "L9#s2", "L9#s3|concavity and inflection points": "L9#s7", "L9#s5|curve sketching checklist": "L9#s8", "L9#s2|sign of f′ and monotonicity": "L9#s1", "L9#s3|concavity from f′": "L9#s4", "L12#s4|area functions": "L12#s7", "L9#s5|curve sketching from f′ and f″": "L9#s9", "L9#s6|applied optimisation": "L9#s3", "L8#s2|absolute extrema on an interval": "L8#s5", "L9#s3|what f′ and f″ say about a graph": "L9#s4", "L10#s3|L'Hôpital's Rule": "L10#s3", "L10#s2|classifying forms": "L10#s2", "L10#s4|∞ − ∞ forms": "L10#s5", "L10#s5|0 · ∞ forms": "L10#s5", "L10#s6|indeterminate powers": "L10#s6", "L10#s7|L'Hôpital with an unknown function": "L10#s3", "L10#s8|L'Hôpital at a join": "L10#s3", "L4#s2|continuity": "L4#s1", "L5#s2|derivative by definition": "L5#s3", "L12#s4|FTC Part I": "L12#s7", "L6#s5|chain rule": "L6#s5", "L12#s2|Riemann sums and the definite integral": "L12#s1", "L11#s5|sigma notation and area": "L11#s6", "L12#s5|the area function": "L12#s7", "L12#s4|the Fundamental Theorem of Calculus": "L12#s7", "L12#s6|average value": "L12#s6", "L13#s2|substitution": "L13#s2", "L13#s3|substitution in definite integrals": "L13#s5", "L13#s4|integration by parts": "L13#s7", "L13#s5|repeated parts, ln and inverse trig": "L13#s8", "L13#s6|by parts with an unknown function": "L13#s7", "L13#s7|reduction formulas": "L13#s8", "L13#s8|the x → a − x substitution": "L13#s5", "L14#s2|partial fractions": "L14#s5", "L14#s3|repeated and quadratic factors": "L14#s5", "L14#s4|trig integrals": "L14#s3", "L14#s5|trig substitution": "L14#s4", "L15#s2|parametric curves": "L15#s1", "L15#s3|slope of a parametric curve": "L15#s3", "L15#s4|polar coordinates": "L15#s5", "L15#s5|sketching polar curves and symmetry": "L15#s7", "L15#s6|slope of a polar curve": "L15#s8", "L16#s1|area between curves": "L16#s1", "L16#s2|discs and washers": "L16#s4", "L16#s3|cylindrical shells": "L16#s5", "L16#s4|choosing discs or shells": "L16#s6", "L16#s5|volume by slicing": "L16#s3", "L17#s2|arc length": "L17#s2", "L17#s3|parametric and polar length": "L17#s3", "L14#s4|trig substitution": "L14#s4", "L17#s4|surface area": "L17#s6", "L16#s3|solids of revolution": "L16#s4", "O1#separable|separable equations": "O1#s6", "O1#linear|linear equations and the integrating factor": "O1#s5", "O1#exact|exact equations": "O1#s8", "O2#homogeneous|homogeneous equations": "O2#s5", "O2#bernoulli|Bernoulli equations": "O2#s1", "O2#riccati|Riccati equations": "O2#s2", "O2#shift|shift substitution": "O2#s6", "O2#reduction|reduction of order": "O2#s7", "O3#roots|root cases": "O3#s4", "O3#constant|constant coefficients": "O3#s3", "O3#higher|higher-order equations": "O3#s7", "O3#euler|Cauchy–Euler": "O3#s10", "O4#s2|undetermined coefficients": "O4#s2", "O4#s3|when the trial clashes": "O4#s3", "O4#s4|initial value problems": "O4#s4", "O4#variation-of-parameters|variation of parameters": "O4#s6", "O4#vop-cauchy-euler|VoP for Cauchy–Euler": "O4#s7", "O3#cauchy-euler|Cauchy–Euler homogeneous": "O3#s10", "O4#d-operator|D-operator method": "O4#s5"},IDX="index.html#part2";
+function ext(a,u){a.href=u;}
+function go(){
+  var h=document.querySelector("nav.toc .h"),m0=h&&/Exam guide\s*·\s*([A-Z0-9]+)/i.exec(h.textContent),self=m0?m0[1].toUpperCase():null,isGuide=!!(h&&/Exam guide/i.test(h.textContent));
+  document.querySelectorAll("a.note[data-note]").forEach(function(a){
+    var k=a.getAttribute("data-note"),t=a.textContent.replace(/\s+/g," ").replace(/^\s*Chapter note\s*·?\s*/,"").trim();
+    var v=M[k+"|"+t]||k,p=v.split("#"),c=p[0];
+    if(!N[c])return;
+    ext(a,B+N[c]+(p[1]&&p[1]!=="top"?"#"+p[1]:""));
+  });
+  document.querySelectorAll("a.guide[data-guide]").forEach(function(a){
+    var g=a.getAttribute("data-guide"),h=g.indexOf("#")>=0,c=h?g.split("#")[0]:g.split(".")[0],f=h?g.split("#")[1]:g.replace(".","");
+    if(!G[c])return;
+    ext(a,B+G[c]+"#"+f);
+  });
+  if(!isGuide)return;
+  var main=document.querySelector("main");
+  if(!main)return;
+  var top=main.querySelector("header.top");
+  if(top&&IDX&&self!=="INDEX"){var p=document.createElement("p");p.className="muted";var a=document.createElement("a");ext(a,B+IDX);a.textContent="← All exam-guide pages and the exam format";p.appendChild(a);top.appendChild(p);}
+  var re=/\b(L1[0-7]|L[1-9]|O[1-4]|LT) guide\b/g,skip={A:1,SCRIPT:1,STYLE:1,H1:1,H2:1,CODE:1,"MJX-CONTAINER":1,SUMMARY:1};
+  var w=document.createTreeWalker(main,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    for(var e=n.parentNode;e&&e!==main;e=e.parentNode){if(skip[e.nodeName])return NodeFilter.FILTER_REJECT;}
+    re.lastIndex=0;return re.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP;}});
+  var list=[],n;while((n=w.nextNode()))list.push(n);
+  list.forEach(function(n){
+    var s=n.nodeValue,f=document.createDocumentFragment(),last=0,m;re.lastIndex=0;
+    while((m=re.exec(s))){
+      var c=m[1];if(c===self||!G[c])continue;
+      f.appendChild(document.createTextNode(s.slice(last,m.index)));
+      var a=document.createElement("a");ext(a,B+G[c]);a.textContent=m[0];f.appendChild(a);last=m.index+m[0].length;
+    }
+    if(last===0)return;
+    f.appendChild(document.createTextNode(s.slice(last)));n.parentNode.replaceChild(f,n);
+  });
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
+})();
+</script>
+</html>

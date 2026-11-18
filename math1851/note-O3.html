@@ -1,0 +1,1074 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH1851 O3 · Homogeneous Linear ODEs</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (46rem) with a sticky contents rail on wide screens; graphs inline beside the maths they explain; practice and past papers at the end. Palette and type match the MECH2407 notes. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">ODE · Part O3</p>
+  <ol>
+    <li><a href="#s0">0 · Where we are</a></li>
+    <li><a href="#s1">1 · Hyperbolic functions</a></li>
+    <li><a href="#s2">2 · Linear independence</a></li>
+    <li><a href="#s3">3 · The characteristic equation</a></li>
+    <li><a href="#s4">4 · Real roots</a></li>
+    <li><a href="#s5">5 · Complex numbers</a></li>
+    <li><a href="#s6">6 · Complex roots</a></li>
+    <li><a href="#s7">7 · Higher order</a></li>
+    <li><a href="#s8">8 · Where ODEs appear</a></li>
+    <li><a href="#s9">9 · Oscillators</a></li>
+    <li><a href="#s10">10 · Cauchy–Euler</a></li>
+    <li><a href="#s11">11 · Summary</a></li>
+    <li><a href="#s12">12 · Common mistakes</a></li>
+    <li><a href="#s13">13 · Find the mistake</a></li>
+    <li><a href="#s14">14 · Group work</a></li>
+    <li><a href="#s15">15 · Concept checks</a></li>
+    <li><a href="#pastpaper">16 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MATH1851 · ODE · Part O3</span>
+  <h1>Homogeneous Linear ODEs</h1>
+  <p class="lede">Every slide of ODE Part O3 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this part.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this part sits</h2>
+<p>An <b>ordinary differential equation</b> (ODE) is an equation linking an unknown function \(y(x)\) with its derivatives \(y'\), \(y''\), …; <b>solving</b> it means finding every function \(y(x)\) that makes the equation true. Part O1 set up the basic language (order, linear, homogeneous, general solution, initial conditions) and solved first-order equations; Part O2 added substitutions and the method of <b>reduction of order</b> (finding a second solution of the form \(y=u(x)\,y_1(x)\) from a known solution \(y_1\)).</p>
+<p>This part solves a big, very useful family of <b>second- and higher-order</b> equations exactly:</p>
+<ul class="list">
+  <li><b>linear, homogeneous equations with constant coefficients</b>, such as \(y''-y'-6y=0\), by turning the ODE into an ordinary polynomial equation (the <b>characteristic equation</b>); the roots may be real and different, repeated, or complex;</li>
+  <li>their main application, the <b>mass–spring oscillator</b> (over-, critically and under-damped motion), plus a gallery of other places ODEs appear;</li>
+  <li><b>Cauchy–Euler equations</b>, such as \(x^2y''-2y=0\), where the coefficients are powers of \(x\) and the trial solution is \(y=x^m\).</li>
+</ul>
+<p>Two tools are needed first: <b>hyperbolic functions</b> (handy names for combinations of \(e^x\) and \(e^{-x}\)) and <b>linear independence</b> (how to tell when two solutions are "genuinely different"). Complex numbers, which HKDSE Core does not cover, are explained from scratch in section 5.</p>
+<p style="font-size:.92rem;color:var(--muted)">Slide numbers in this note, e.g. "(slide 9)", count the pages of this part's handout (38 slides). The handout is the middle portion of the course's ODE deck and has no title, admin, summary or group-work slides; the Summary, Common mistakes, Find the mistake and Group work sections below were written for these notes.</p>
+<p>Reminders used throughout: \(\dfrac{d}{dx}e^{kx}=ke^{kx}\) and \(\dfrac{d}{dx}\ln x=\dfrac1x\) (Lecture 7); the product and quotient rules (Lecture 6). In this part "\(\log x\)" always means the natural logarithm \(\ln x\).</p>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Hyperbolic functions (slides 1–2)</h2>
+<p>The deck opens by introducing six functions built from \(e^x\) and \(e^{-x}\). They turn up naturally in this part: section 4 shows that \(\cosh x\) and \(\sinh x\) are exactly the solutions of \(y''-y=0\). They are called <b>hyperbolic</b> because the point \((\cosh t,\sinh t)\) moves along the hyperbola \(X^2-Y^2=1\), in the same way that \((\cos t,\sin t)\) moves along the circle \(X^2+Y^2=1\). Names are usually read "cosh", "shine" or "sinch", "tanh" ("than"), "sech", "cosech" (also written csch) and "coth".</p>
+<div class="box def"><span class="tag">Definition (slide 1)</span>
+\[ \cosh x=\frac{e^{x}+e^{-x}}{2},\qquad \sinh x=\frac{e^{x}-e^{-x}}{2} \]
+<p class="word"><b>In words:</b> hyperbolic cosine = average of \(e^x\) and \(e^{-x}\); hyperbolic sine = half the difference \(e^x\) minus \(e^{-x}\).</p>
+\[ \tanh x=\frac{\sinh x}{\cosh x},\qquad \operatorname{sech}x=\frac{1}{\cosh x} \]
+\[ \operatorname{cosech}x=\frac{1}{\sinh x},\qquad \coth x=\frac{1}{\tanh x} \]
+<p class="word"><b>In words:</b> exactly the same pattern as trigonometry: tanh = sinh ÷ cosh, and sech, cosech, coth are the reciprocals of cosh, sinh, tanh.</p>
+</div>
+<p>Some facts you can read off the definitions (and the graph below): \(\cosh 0=1\), \(\sinh 0=0\); \(\cosh x\ge1\) for every \(x\) and \(\cosh\) is even (\(\cosh(-x)=\cosh x\)), like \(\cos\); \(\sinh\) is odd (\(\sinh(-x)=-\sinh x\)), like \(\sin\); \(\tanh x\) lies strictly between \(-1\) and \(1\). Unlike \(\cos\) and \(\sin\), they are <b>not periodic</b>: cosh and sinh grow like \(\tfrac12e^{|x|}\). \(\operatorname{cosech}x\) and \(\coth x\) are undefined at \(x=0\) because \(\sinh 0=0\).</p>
+
+<div class="figure"><p class="ttl">The hyperbolic functions</p><canvas class="plot" id="fhyp" style="aspect-ratio:16/10" aria-label="Graphs of hyperbolic functions"></canvas>
+  <div class="ctrl"><label for="fhyp-s">Show <select id="fhyp-s"><option value="cs">cosh and sinh</option><option value="tc">tanh and coth</option><option value="sc">sech and cosech</option></select></label></div>
+  <div class="legend" id="fhyp-leg"></div>
+  <div class="readout" id="fhyp-out"></div>
+  <p class="cap">"cosh and sinh": the dashed curves are \(\tfrac12e^{x}\) and \(\tfrac12e^{-x}\). cosh is their sum (a hanging-chain shape, the <i>catenary</i>), sinh their difference. For large \(x\) all three almost coincide because \(\tfrac12e^{-x}\to0\).</p></div>
+
+<div class="box thm"><span class="tag">Identity and derivatives (slide 2)</span>
+\[ \cosh^2x-\sinh^2x=1\quad\text{for all }x \]
+<p class="word"><b>In words:</b> (hyperbolic cosine)² − (hyperbolic sine)² = 1 always; compare \(\cos^2x+\sin^2x=1\), with a minus sign instead of a plus.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>Derivative</th><th>Function</th><th>Derivative</th></tr>
+<tr><td>\(\cosh x\)</td><td>\(\sinh x\)</td><td>\(\operatorname{sech}x\)</td><td>\(-\operatorname{sech}x\tanh x\)</td></tr>
+<tr><td>\(\sinh x\)</td><td>\(\cosh x\)</td><td>\(\operatorname{cosech}x\)</td><td>\(-\operatorname{cosech}x\coth x\)</td></tr>
+<tr><td>\(\tanh x\)</td><td>\(\operatorname{sech}^2x\)</td><td>\(\coth x\)</td><td>\(-\operatorname{cosech}^2x\)</td></tr>
+</table></div>
+<p class="word"><b>In words:</b> the same table as for trig functions, except that cosh differentiates to <i>plus</i> sinh (no minus sign, unlike \(\cos\to-\sin\)).</p>
+</div>
+<div class="box eg"><span class="tag">Why these are true</span>
+<p><b>Identity.</b> Square and subtract:</p>
+\[ \cosh^2x=\frac{e^{2x}+2+e^{-2x}}{4} \]
+\[ \sinh^2x=\frac{e^{2x}-2+e^{-2x}}{4} \]
+\[ \cosh^2x-\sinh^2x=\frac{2-(-2)}{4}=1. \]
+<p><b>cosh and sinh.</b> Using \(\frac{d}{dx}e^{-x}=-e^{-x}\):</p>
+\[ \frac{d}{dx}\cosh x=\frac{e^{x}-e^{-x}}{2}=\sinh x \]
+\[ \frac{d}{dx}\sinh x=\frac{e^{x}+e^{-x}}{2}=\cosh x \]
+<p><b>tanh</b> by the quotient rule (Lecture 6), then the identity:</p>
+\[ \begin{aligned}\frac{d}{dx}\tanh x&=\frac{\cosh x\cosh x-\sinh x\sinh x}{\cosh^2x}\\&=\frac{1}{\cosh^2x}=\operatorname{sech}^2x.\end{aligned} \]
+<p><b>sech</b> by the chain rule on \((\cosh x)^{-1}\):</p>
+\[ \begin{aligned}\frac{d}{dx}\operatorname{sech}x&=-\frac{\sinh x}{\cosh^2x}=-\frac1{\cosh x}\cdot\frac{\sinh x}{\cosh x}\\&=-\operatorname{sech}x\tanh x.\end{aligned} \]
+<p><b>cosech</b> the same way: \(\frac{d}{dx}(\sinh x)^{-1}=-\frac{\cosh x}{\sinh^2x}=-\operatorname{cosech}x\coth x\).</p>
+<p><b>coth</b> by the quotient rule:</p>
+\[ \begin{aligned}\frac{d}{dx}\frac{\cosh x}{\sinh x}&=\frac{\sinh^2x-\cosh^2x}{\sinh^2x}\\&=\frac{-1}{\sinh^2x}=-\operatorname{cosech}^2x.\end{aligned} \]
+</div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Linear independence and the Wronskian (slides 3–7)</h2>
+<p>A second-order equation such as \(y''-y=0\) has infinitely many solutions: \(e^x\), \(2e^x\), \(-7e^x\), \(e^{-x}\), \(3e^x-e^{-x}\), … To write down <i>all</i> of them we need a small set of "building blocks" that are genuinely different from each other. "Genuinely different" is made precise by linear independence.</p>
+<div class="box def"><span class="tag">Definition (slide 3)</span>
+<p>A finite set of functions \(\{u_1,\dots,u_n\}\) is <b>linearly dependent</b> on an interval \(I\) if and only if there exist constants \(\alpha_1,\dots,\alpha_n\) (numbers, called <b>scalars</b>), <b>not all zero</b>, such that</p>
+\[ \alpha_1u_1(x)+\alpha_2u_2(x)+\dots+\alpha_nu_n(x)=0 \]
+<p>is satisfied <b>identically</b> on \(I\), i.e. for <i>every</i> \(x\) in \(I\), not just for some \(x\). If this can only happen when all the \(\alpha\)'s are zero, the set is <b>linearly independent</b> on \(I\).</p>
+<p class="word"><b>In words:</b> dependent = some mixture of the functions (with at least one non-zero weight) cancels to zero everywhere, so at least one function is a combination of the others and adds nothing new; independent = the only way to mix them into the zero function is to use zero of each.</p>
+</div>
+<p>A <b>linear combination</b> of \(u_1,\dots,u_n\) means an expression \(\alpha_1u_1+\dots+\alpha_nu_n\) with constant weights. For just <b>two</b> functions the definition says something very simple: \(u\) and \(v\) are dependent exactly when one is a constant multiple of the other (if \(\alpha u+\beta v=0\) with \(\beta\ne0\), then \(v=-\tfrac{\alpha}{\beta}u\)).</p>
+
+<div class="box eg"><span class="tag">Example (slides 4–5)</span>
+<p>We do not want to count \(y=e^x\) and \(y=2e^x\) as two different solutions of \(y''-y=0\): the second is just twice the first. The "truly distinct" (linearly independent) solutions are \(e^x\) and \(e^{-x}\).</p>
+<p><b>\(e^x\) and \(2e^x\) are linearly DEPENDENT:</b> take \(\alpha=2\), \(\beta=-1\); then \(2\cdot e^x+(-1)\cdot2e^x=0\) for all \(x\), and the weights are not both zero.</p>
+<p><b>\(e^x\) and \(e^{-x}\) are linearly INDEPENDENT:</b> we cannot find constants \(\alpha,\beta\), not both zero, with</p>
+\[ \alpha e^{x}+\beta e^{-x}=0\quad\text{for ALL }x. \]
+<p>Proof: put \(x=0\): \(\alpha+\beta=0\). Differentiate the identity (allowed, since it holds for all \(x\)) and put \(x=0\): \(\alpha-\beta=0\). Together \(\alpha=\beta=0\). So the only possibility for the equation to hold for all \(x\) is \(\alpha=\beta=0\).</p>
+<p>Both are solutions of \(y''-y=0\): \((e^x)''=e^x\) and \((e^{-x})''=e^{-x}\), so \(y''-y=0\) in each case.</p>
+</div>
+
+<div class="box def"><span class="tag">The Wronskian (slides 6–7)</span>
+<p>For two functions \(u(x)\), \(v(x)\), the <b>Wronskian</b> is</p>
+\[ W(u,v)(x)=u(x)\,v'(x)-v(x)\,u'(x). \]
+<p class="word"><b>In words:</b> Wronskian = first function × derivative of the second − second function × derivative of the first.</p>
+<ul class="list">
+<li>If \(W\) is <b>identically zero</b> (zero for ALL \(x\)), the two functions are linearly <b>dependent</b>.</li>
+<li>If \(W\) is "generally nonzero" (not zero everywhere), the two functions are linearly <b>independent</b>.</li>
+</ul>
+</div>
+<p>Why it works, informally: if \(v=ku\) then \(uv'-vu'=u(ku')-(ku)u'=0\). Conversely, where \(u\ne0\), the quotient rule gives \(\left(\dfrac vu\right)'=\dfrac{uv'-vu'}{u^2}=\dfrac{W}{u^2}\); so \(W=0\) everywhere means \(v/u\) has zero derivative, i.e. \(v/u\) is a constant (Lecture 8, consequence of the MVT).</p>
+<div class="box eg"><span class="tag">Example: Wronskians of the slide's pairs</span>
+\[ W(e^x,2e^x)=e^x\cdot2e^x-2e^x\cdot e^x=0 \]
+<p>so \(e^x,2e^x\) are dependent;</p>
+\[ W(e^x,e^{-x})=e^x(-e^{-x})-e^{-x}e^{x}=-2\ne0 \]
+<p>so \(e^x,e^{-x}\) are independent.</p>
+</div>
+<div class="figure"><p class="ttl">Two functions and their Wronskian</p><canvas class="plot" id="fwr" style="aspect-ratio:16/10" aria-label="Two functions and their Wronskian"></canvas>
+  <div class="ctrl"><label for="fwr-s">Pair <select id="fwr-s"><option value="a">e^x and 2e^x</option><option value="b">e^x and e^(−x)</option><option value="c">cos x and sin x</option><option value="d">e^x and x e^x</option></select></label></div>
+  <div class="legend"><span style="--k:var(--accent)">u(x)</span><span style="--k:var(--c2)">v(x)</span><span style="--k:var(--c3)">Wronskian W(x)</span></div>
+  <div class="readout" id="fwr-out"></div>
+  <p class="cap">Only the first pair has \(W\equiv0\) (the green line lies on the \(x\)-axis): \(2e^x\) is just a stretched copy of \(e^x\). The other pairs are independent.</p></div>
+
+<p><b>Three or more functions (slide 7).</b> For \(n\) functions the Wronskian is a "determinant" of order \(n\), built from the functions and their first \(n-1\) derivatives. The rule is the same: identically zero means dependent (for solutions of the same linear ODE), not identically zero means independent.</p>
+<div class="box beyond"><span class="tag">Beyond the handouts</span>
+<p><b>Determinants.</b> A determinant is a number calculated from a square table (matrix) of entries. For a 2 × 2 table, \(\begin{vmatrix}a&amp;b\\c&amp;d\end{vmatrix}=ad-bc\), so the two-function Wronskian is \(\begin{vmatrix}u&amp;v\\u'&amp;v'\end{vmatrix}=uv'-vu'\). For three functions,</p>
+\[ W(u,v,w)=\begin{vmatrix}u&amp;v&amp;w\\u'&amp;v'&amp;w'\\u''&amp;v''&amp;w''\end{vmatrix}, \]
+<p>where a 3 × 3 determinant is expanded along the top row:</p>
+\[ \begin{aligned}\begin{vmatrix}a&amp;b&amp;c\\d&amp;e&amp;f\\g&amp;h&amp;i\end{vmatrix}&amp;=a(ei-fh)-b(di-fg)\\&amp;\quad+c(dh-eg).\end{aligned} \]
+<p>Example: \(W(1,e^x,e^{-x})=1\cdot(e^x e^{-x}-(-e^{-x})e^x)-0+0=2\ne0\), so \(1,e^x,e^{-x}\) are independent.</p>
+<p><b>A caution about the "identically zero ⇒ dependent" direction.</b> For arbitrary functions it can fail: \(u=x^2\) and \(v=x|x|\) have \(W=0\) for every \(x\), yet on \(-1\lt x\lt 1\) neither is a constant multiple of the other. The rule is completely safe when \(u,v\) are both <b>solutions of the same linear second-order ODE</b> (with continuous coefficients, leading coefficient 1): then \(W\) is either zero at every point or zero at no point (Abel's theorem), and \(W\equiv0\) exactly when they are dependent. That is the only situation this course uses it in.</p>
+</div>
+<div class="box thm"><span class="tag">Why we care: the general solution</span>
+<p>For a linear homogeneous ODE of order \(n\), if \(y_1,\dots,y_n\) are \(n\) linearly independent solutions, the <b>general solution</b> (the formula containing every solution) is</p>
+\[ y=C_1y_1+C_2y_2+\dots+C_ny_n . \]
+<p class="word"><b>In words:</b> every solution = a mixture of \(n\) genuinely different building-block solutions, one arbitrary constant per block; the order of the equation tells you how many blocks you need.</p>
+<p style="font-size:.92rem;color:var(--muted)">The slides use this fact throughout without stating it as a theorem; its proof is <span class="pill">Beyond the handouts</span>. The easy half, that a mixture of solutions is again a solution (the <b>principle of superposition</b>), is shown in section 3.</p>
+</div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Constant coefficients: the characteristic equation (slides 8–9)</h2>
+<div class="box def"><span class="tag">The equation (slide 8)</span>
+<p>A <b>homogeneous second-order linear equation with constant coefficients</b> has the form</p>
+\[ y''+a_1y'+a_2y=0,\qquad a_1,a_2\ \text{constants}. \]
+<p class="word"><b>In words:</b> (second derivative) + (constant) × (first derivative) + (constant) × (the function) = 0.</p>
+</div>
+<ul class="list">
+<li><b>Second order:</b> the highest derivative is \(y''\).</li>
+<li><b>Linear:</b> \(y\), \(y'\), \(y''\) appear only to the first power, are never multiplied together, and are not inside other functions (no \(y^2\), \(yy'\), \(\sin y\), …). "Hence the equation must be of such forms" (slide 8): a linear second-order equation can always be written as \(y''+p(x)y'+q(x)y=r(x)\); here \(p,q\) are constants.</li>
+<li><b>Homogeneous:</b> the right-hand side, i.e. every term other than those containing \(y''\), \(y'\), \(y\), must be zero. (An equation like \(y''+y=\cos x\) is <i>non-homogeneous</i>; that is Part O4.)</li>
+<li><b>Constant coefficients:</b> the numbers multiplying \(y'\) and \(y\) do not depend on \(x\). (If the given equation is \(ay''+by'+cy=0\) with \(a\ne0\), divide by \(a\) first, or simply use \(a\lambda^2+b\lambda+c=0\) below: the roots are the same.)</li>
+</ul>
+<p><b>Superposition.</b> If \(y_1\) and \(y_2\) are solutions, so is \(y=C_1y_1+C_2y_2\), because derivatives respect sums and constant multiples:</p>
+\[ \begin{aligned} y''+a_1y'+a_2y&amp;=C_1(y_1''+a_1y_1'+a_2y_1)\\&amp;\quad+C_2(y_2''+a_1y_2'+a_2y_2)\\&amp;=C_1\cdot0+C_2\cdot0=0. \end{aligned} \]
+<p class="word"><b>In words:</b> mixing solutions of a linear homogeneous equation gives another solution. This only works because the equation is linear and the right side is 0.</p>
+
+<p><b>The idea (slide 8):</b> differentiating \(e^{x}\) gives \(e^{x}\) back, and differentiating \(e^{\lambda x}\) gives the same function times the number \(\lambda\). So if we try an exponential, every term of the equation becomes "a number × the same exponential", and the exponential can be cancelled.</p>
+<div class="box thm"><span class="tag">Characteristic equation (slide 9)</span>
+<p>Try \(y=e^{\lambda x}\) (\(\lambda\) is the Greek letter lambda, a constant to be found). Then \(y'=\lambda e^{\lambda x}\) and \(y''=\lambda^2e^{\lambda x}\), so</p>
+\[ y''+a_1y'+a_2y=e^{\lambda x}\left(\lambda^2+a_1\lambda+a_2\right)=0. \]
+<p>Since \(e^{\lambda x}\) is never zero, this holds exactly when</p>
+\[ \lambda^2+a_1\lambda+a_2=0. \]
+<p class="word"><b>In words:</b> replace \(y''\) by \(\lambda^2\), \(y'\) by \(\lambda\), \(y\) by 1; the ODE turns into an <b>algebraic</b> equation (an ordinary quadratic) for \(\lambda\). Each root \(\lambda\) gives a solution \(e^{\lambda x}\).</p>
+</div>
+<p>"As the equation is linear, no need to have a constant in front of exp" (slide 9): trying \(y=Ce^{\lambda x}\) gives \(Ce^{\lambda x}(\lambda^2+a_1\lambda+a_2)=0\) and the \(C\) cancels too; constants are put back at the end by superposition. The slide's exclamation, "ODE is turned into an algebraic equation!!", is the whole point: a calculus problem becomes a quadratic you solved in HKDSE.</p>
+<p>A quadratic \(\lambda^2+a_1\lambda+a_2=0\) has discriminant \(\Delta=a_1^2-4a_2\), giving <b>three possibilities</b> (slide 10): \(\Delta\gt0\) two distinct real roots; \(\Delta=0\) a repeated real root; \(\Delta\lt0\) two complex roots (section 6).</p>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Distinct and repeated real roots (slides 10–11)</h2>
+<div class="box thm"><span class="tag">Case (1): distinct real roots \(m\ne n\) (slide 10)</span>
+\[ y=C_1e^{mx}+C_2e^{nx} \]
+<p class="word"><b>In words:</b> two different roots give two different exponentials; the general solution is any mixture of them.</p>
+<p>They are independent: \(W(e^{mx},e^{nx})=e^{mx}\,ne^{nx}-e^{nx}\,me^{mx}=(n-m)e^{(m+n)x}\ne0\) because \(m\ne n\).</p>
+</div>
+<div class="box eg"><span class="tag">Example (slide 10)</span>
+<p>Solve \(y''-y'-6y=0\).</p>
+<p>Characteristic equation: \(\lambda^2-\lambda-6=0\), i.e. \((\lambda+2)(\lambda-3)=0\), roots \(\lambda=-2,\,3\). General solution</p>
+\[ y(x)=C_1e^{-2x}+C_2e^{3x}. \]
+<p>Check one piece: \(y=e^{3x}\) gives \(9e^{3x}-3e^{3x}-6e^{3x}=0\). ✓</p>
+</div>
+<div class="box eg"><span class="tag">Example (from section 2): \(y''-y=0\) and hyperbolic functions</span>
+<p>\(\lambda^2-1=0\), \(\lambda=\pm1\), so \(y=C_1e^{x}+C_2e^{-x}\). Since \(\cosh x\) and \(\sinh x\) are mixtures of \(e^x,e^{-x}\) (and \(W(\cosh,\sinh)=\cosh^2x-\sinh^2x=1\ne0\)), the same general solution can be written</p>
+\[ y=A\cosh x+B\sinh x, \]
+\[ C_1=\tfrac{A+B}{2},\quad C_2=\tfrac{A-B}{2}. \]
+<p>This form is convenient with conditions at \(x=0\), because \(\cosh0=1\), \(\sinh0=0\). For example \(y''-4y=0\), \(y(0)=3\), \(y'(0)=4\): \(y=A\cosh2x+B\sinh2x\), \(y(0)=A=3\), \(y'(0)=2B=4\Rightarrow B=2\), so</p>
+\[ y=3\cosh2x+2\sinh2x=\tfrac52e^{2x}+\tfrac12e^{-2x}. \]
+</div>
+
+<div class="box thm"><span class="tag">Case (2): repeated root \(m,m\) (slide 11)</span>
+\[ y=C_1e^{mx}+C_2\,x\,e^{mx}=(C_1+C_2x)e^{mx} \]
+<p class="word"><b>In words:</b> a double root gives only one exponential, so the second building block is the same exponential multiplied by \(x\).</p>
+</div>
+<p><b>Why the extra \(x\)? Proof by reduction of order (Part O2), as the slide says: put \(y=u\,e^{mx}\).</b> By the product rule</p>
+\[ y'=(u'+mu)e^{mx}, \]
+\[ y''=(u''+2mu'+m^2u)e^{mx}. \]
+<p>Substituting into \(y''+a_1y'+a_2y=0\) and dividing by \(e^{mx}\):</p>
+\[ u''+(2m+a_1)u'+(m^2+a_1m+a_2)u=0. \]
+<p>Because \(m\) is a root, \(m^2+a_1m+a_2=0\). Because it is a <i>double</i> root, the sum of the two roots, \(m+m\), equals \(-a_1\) (sum of roots of \(\lambda^2+a_1\lambda+a_2\) is \(-a_1\), HKDSE Core), so \(2m+a_1=0\). What is left is \(u''=0\), so \(u=C_1+C_2x\) and \(y=(C_1+C_2x)e^{mx}\).</p>
+<div class="box eg"><span class="tag">Example (slide 11)</span>
+<p>Solve \(y''-2y'+y=0\).</p>
+<p>\(\lambda^2-2\lambda+1=(\lambda-1)^2=0\), roots \(\lambda=1,1\). General solution</p>
+\[ y(x)=C_1e^{x}+C_2\,x\,e^{x}. \]
+<p>Check \(y=xe^x\): \(y'=(1+x)e^x\), \(y''=(2+x)e^x\); \((2+x)-2(1+x)+x=0\). ✓</p>
+</div>
+<div class="box warn"><span class="tag">Trap</span>
+<p>Writing \(y=C_1e^{x}+C_2e^{x}\) for a repeated root is wrong: that is just \((C_1+C_2)e^x\), really one constant, so it cannot match two initial conditions. You need the factor \(x\).</p>
+</div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Complex numbers and Euler's formula (background for slides 12–15)</h2>
+<p>When the discriminant is negative, as in \(\lambda^2-4\lambda+5=0\) (\(\Delta=16-20=-4\)), HKDSE Core says "no real roots". To keep going we need <b>complex numbers</b>. This background is not in HKDSE Core, so here it is from scratch.</p>
+<div class="box def"><span class="tag">Definition: complex numbers</span>
+<p>Introduce a new number \(i\) with \(i^2=-1\) (the <b>imaginary unit</b>). A <b>complex number</b> is \(z=a+bi\) with \(a,b\) real; \(a\) is its <b>real part</b> and \(b\) its <b>imaginary part</b>. Complex numbers are added and multiplied like ordinary algebra, replacing \(i^2\) by \(-1\) whenever it appears:</p>
+\[ (a+bi)(c+di)=(ac-bd)+(ad+bc)i. \]
+<p>The <b>complex conjugate</b> of \(a+bi\) is \(a-bi\) (flip the sign of the imaginary part). A complex number can be drawn as the point \((a,b)\) in a plane, the <b>complex plane</b>: horizontal axis = real part, vertical axis = imaginary part.</p>
+<p class="word"><b>In words:</b> a complex number is a pair (real part, imaginary part); \(i\) is a number whose square is \(-1\).</p>
+</div>
+<div class="box eg"><span class="tag">Example: a quadratic with negative discriminant</span>
+<p>Since \(\sqrt{-4}=\sqrt{4}\sqrt{-1}=2i\), the quadratic formula still works:</p>
+\[ \lambda=\frac{4\pm\sqrt{-4}}{2}=\frac{4\pm2i}{2}=2\pm i. \]
+<p>Check \(\lambda=2+i\): \((2+i)^2=4+4i+i^2=3+4i\), and \(3+4i-4(2+i)+5=0\). ✓</p>
+<p>In general, if \(\Delta=a_1^2-4a_2\lt0\) the roots are \(a\pm bi\) with \(a=-\dfrac{a_1}{2}\) and \(b=\dfrac{\sqrt{4a_2-a_1^2}}{2}\).</p>
+</div>
+<p>Notice the two roots are <b>conjugates</b> of each other. That always happens when the quadratic has real coefficients (slide 12): the \(\pm\) in front of \(\sqrt{\Delta}=\sqrt{|\Delta|}\,i\) produces \(a+bi\) and \(a-bi\).</p>
+
+<div class="box thm"><span class="tag">Euler's formula (slide 13)</span>
+\[ e^{i\theta}=\cos\theta+i\sin\theta \qquad(\theta\ \text{in radians}) \]
+<p class="word"><b>In words:</b> the exponential of "\(i\) times an angle" is the point on the unit circle at that angle: its real part is the cosine and its imaginary part is the sine.</p>
+</div>
+<p>What does \(e\) to an imaginary power even mean? We <i>define</i> it so that the usual rules keep working: \(e^{u+v}=e^ue^v\), and \(\frac{d}{d\theta}e^{k\theta}=ke^{k\theta}\) also for \(k=i\). Here is a short reason why the definition must be \(\cos\theta+i\sin\theta\):</p>
+<div class="box beyond"><span class="tag">Beyond the handouts: why Euler's formula holds</span>
+<p>Let \(f(\theta)=\cos\theta+i\sin\theta\). Then \(f'(\theta)=-\sin\theta+i\cos\theta=i(\cos\theta+i\sin\theta)=i\,f(\theta)\) (use \(i\cdot i=-1\)), and \(f(0)=1\). The function \(e^{i\theta}\) satisfies exactly the same two facts: derivative = \(i\) × itself, value 1 at 0. A first-order ODE with an initial condition has only one solution, so \(e^{i\theta}=\cos\theta+i\sin\theta\).</p>
+<p>(Another route uses the power series \(e^z=1+z+\frac{z^2}{2!}+\dots\): putting \(z=i\theta\) and grouping real and imaginary terms gives the series for \(\cos\theta\) and \(\sin\theta\).) A famous special case: \(\theta=\pi\) gives \(e^{i\pi}=-1\).</p>
+</div>
+<div class="figure"><p class="ttl">Euler's formula on the unit circle</p><canvas class="plot" id="feul" style="aspect-ratio:16/10" aria-label="Unit circle showing e to the i theta"></canvas>
+  <div class="ctrl"><label for="feul-t">Angle θ <input type="range" id="feul-t" min="0" max="6.28" step="0.02" value="0.9"></label></div>
+  <div class="legend"><span style="--k:var(--accent)">e^(iθ)</span><span style="--k:var(--c3)">real part cos θ</span><span style="--k:var(--c2)">imaginary part sin θ</span></div>
+  <div class="readout" id="feul-out"></div>
+  <p class="cap">As θ increases, \(e^{i\theta}\) runs round the circle of radius 1. That is why complex exponentials produce <i>oscillations</i> (cos and sin) in the solutions below.</p></div>
+<p>Combining with the ordinary rule \(e^{u+v}=e^ue^v\):</p>
+\[ e^{(a+bi)x}=e^{ax}e^{ibx}=e^{ax}\big(\cos bx+i\sin bx\big). \]
+<p class="word"><b>In words:</b> the real part \(a\) of the exponent controls growth or decay (\(e^{ax}\)); the imaginary part \(b\) controls how fast it oscillates (\(\cos bx\), \(\sin bx\)).</p>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Case (3): complex roots (slides 12–15)</h2>
+<p>"99.99% or more of the time" (slide 12) the characteristic equation has <b>real coefficients</b> (\(a_1,a_2\) are real numbers), so complex roots come in a conjugate pair \(a+bi\) and \(a-bi\) (\(b\ne0\)).</p>
+<div class="box thm"><span class="tag">Case (3): complex roots \(a\pm bi\) (slide 12)</span>
+\[ y=C_1e^{(a+bi)x}+C_2e^{(a-bi)x} \]
+<p>or, equivalently and much more usefully,</p>
+\[ y=e^{ax}\big[A\cos(bx)+B\sin(bx)\big]. \]
+<p class="word"><b>In words:</b> real part \(a\) of the roots → the factor \(e^{ax}\) (growth or decay); imaginary part \(b\) → the angular frequency of the \(\cos\) and \(\sin\). Use \(b\), not \(\pm b\): both signs are already covered.</p>
+</div>
+<p><b>From one form to the other (slides 13–14).</b> "To simplify algebra" we use Euler's formula on each term, with \(\cos(-bx)=\cos bx\) and \(\sin(-bx)=-\sin bx\):</p>
+\[ \begin{aligned} y&amp;=C_1e^{(a+bi)x}+C_2e^{(a-bi)x}\\ &amp;=e^{ax}\big[C_1(\cos bx+i\sin bx)\\&amp;\qquad+C_2(\cos bx-i\sin bx)\big]\\ &amp;=e^{ax}\big[(C_1+C_2)\cos bx\\&amp;\qquad+i(C_1-C_2)\sin bx\big]. \end{aligned} \]
+<p>"Relate \(A\), \(B\) in terms of COMPLEX \(C_1\), \(C_2\)": setting</p>
+\[ A=C_1+C_2,\qquad B=i(C_1-C_2) \]
+<p>gives \(y=e^{ax}[A\cos bx+B\sin bx]\).</p>
+<p class="word"><b>In words:</b> the two forms are the same family of functions, just with the constants renamed.</p>
+<p>The constants \(C_1,C_2\) are allowed to be complex (slide 14). For a <b>real</b> solution (the only kind that describes a real spring or circuit) we choose \(C_2\) to be the conjugate of \(C_1\); then \(A\) and \(B\) come out as real numbers. In practice you skip \(C_1,C_2\) altogether and write the real form directly, with \(A,B\) real.</p>
+
+<div class="box eg"><span class="tag">Example (slide 15)</span>
+<p>Solve \(y''-4y'+5y=0\).</p>
+<p>Characteristic equation \(\lambda^2-4\lambda+5=0\), roots \(\lambda=2\pm i\) (section 5), so \(a=2\), \(b=1\). The general solution is</p>
+\[ y=C_1e^{(2+i)x}+C_2e^{(2-i)x} \]
+<p>or</p>
+\[ y=e^{2x}\big[A\cos x+B\sin x\big]. \]
+</div>
+<div class="figure"><p class="ttl">The building block \(e^{ax}\cos(bx)\)</p><canvas class="plot" id="fcx" style="aspect-ratio:16/10" aria-label="Exponentially growing or decaying cosine"></canvas>
+  <div class="ctrl"><label for="fcx-a">a (real part) <input type="range" id="fcx-a" min="-1" max="1" step="0.05" value="-0.3"></label><label for="fcx-b">b (imaginary part) <input type="range" id="fcx-b" min="0.5" max="6" step="0.1" value="2"></label></div>
+  <div class="legend"><span style="--k:var(--accent)">e^(ax) cos(bx)</span><span style="--k:var(--muted)">envelope ±e^(ax)</span></div>
+  <div class="readout" id="fcx-out"></div>
+  <p class="cap">\(a\lt0\): oscillations die away; \(a=0\): steady oscillation; \(a\gt0\): oscillations grow. \(b\) sets how many wiggles fit in a given length (period \(2\pi/b\)).</p></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Higher-order equations (slides 16–18)</h2>
+<p>"Extension to higher order equations is conceptually straightforward" (slide 16). For</p>
+\[ y^{(n)}+a_1y^{(n-1)}+\dots+a_{n-1}y'+a_ny=0 \]
+<p>(\(y^{(n)}\) means the \(n\)-th derivative), trying \(y=e^{\lambda x}\) gives the characteristic equation</p>
+\[ \lambda^n+a_1\lambda^{n-1}+\dots+a_{n-1}\lambda+a_n=0. \]
+<p class="word"><b>In words:</b> each \(k\)-th derivative becomes \(\lambda^k\); an \(n\)-th order ODE gives a degree-\(n\) polynomial, whose \(n\) roots (counted with repeats, complex allowed) give the \(n\) building blocks.</p>
+<p>Factorise the polynomial using HKDSE tools (taking out common factors, the factor theorem: if \(p(r)=0\) then \(\lambda-r\) is a factor, then long division) and translate each root:</p>
+<div class="scroll"><table>
+<tr><th>Root(s) of the characteristic polynomial</th><th>Building blocks in \(y\)</th></tr>
+<tr><td>a single real root \(m\)</td><td>\(e^{mx}\)</td></tr>
+<tr><td>a real root \(m\) repeated twice</td><td>\(e^{mx},\ xe^{mx}\)</td></tr>
+<tr><td>a complex pair \(a\pm bi\)</td><td>\(e^{ax}\cos bx,\ e^{ax}\sin bx\)</td></tr>
+<tr><td>a complex pair \(a\pm bi\), each repeated twice</td><td>\(e^{ax}\cos bx,\ e^{ax}\sin bx,\ xe^{ax}\cos bx,\ xe^{ax}\sin bx\)</td></tr>
+</table></div>
+<div class="box beyond"><span class="tag">Beyond the handouts: general multiplicity</span>
+<p>If a root (real or a complex pair) is repeated \(k\) times, multiply its building blocks by \(1,x,x^2,\dots,x^{k-1}\). E.g. roots \(3,3,3\) give \((C_1+C_2x+C_3x^2)e^{3x}\); a root \(0\) repeated twice gives \(e^{0x}=1\) and \(x\), i.e. \(C_1+C_2x\). Also beyond: every degree-\(n\) polynomial has exactly \(n\) complex roots counted with repetition (the Fundamental Theorem of Algebra), which is why an \(n\)-th order equation always has \(n\) building blocks.</p>
+</div>
+<div class="box eg"><span class="tag">Example (slide 16)</span>
+<p>Solve \(y^{(5)}-7y^{(3)}+12y'=0\).</p>
+<p>Characteristic equation \(\lambda^5-7\lambda^3+12\lambda=0\). Factorise:</p>
+\[ \begin{aligned}\lambda^5-7\lambda^3+12\lambda&amp;=\lambda(\lambda^4-7\lambda^2+12)\\&amp;=\lambda(\lambda^2-3)(\lambda^2-4),\end{aligned} \]
+<p>(treat \(\lambda^4-7\lambda^2+12\) as a quadratic in \(\lambda^2\)), with roots \(\lambda=0,\ 2,\ -2,\ \sqrt3,\ -\sqrt3\). All five are real and different, so</p>
+\[ \begin{aligned}y(x)=C_1&amp;+C_2e^{2x}+C_3e^{-2x}\\&amp;+C_4e^{\sqrt3x}+C_5e^{-\sqrt3x}.\end{aligned} \]
+<p>The root \(\lambda=0\) gives \(e^{0x}=1\), i.e. the constant \(C_1\). Five constants for a fifth-order equation.</p>
+<p style="font-size:.92rem;color:var(--muted)">This slide's text is an embedded picture in the handout; it is transcribed here in full.</p>
+</div>
+<div class="box eg"><span class="tag">Example: repeated complex roots (slides 17–18)</span>
+<p>"Special case for higher order equations": solve</p>
+\[ y''''-8y'''+26y''-40y'+25y=0. \]
+<p>The characteristic equation is</p>
+\[ \lambda^4-8\lambda^3+26\lambda^2-40\lambda+25=0. \]
+<p>This is a perfect square: \((\lambda^2-4\lambda+5)^2=\lambda^4-8\lambda^3+26\lambda^2-40\lambda+25\) (expand to check: \(\lambda^2\) coefficient \(16+5+5=26\)). The quadratic \(\lambda^2-4\lambda+5\) has roots \(2\pm i\) (section 5), so the quartic has roots \(2+i,\,2+i,\,2-i,\,2-i\). The pair \(2\pm i\) is repeated, so (slide 18)</p>
+\[ \begin{aligned}y=e^{2x}\big\{&amp;A\cos x+B\sin x\\&amp;+Cx\cos x+Dx\sin x\big\}.\end{aligned} \]
+<p class="word"><b>In words:</b> exactly like a repeated real root: the second copy of the pair gets an extra factor \(x\).</p>
+<p style="font-size:.92rem;color:var(--muted)">Slide 18 prints the roots as "2+I, 2+I, 2-I, 2-I"; the capital I is the imaginary unit \(i\).</p>
+</div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Where ODEs appear (slides 19–22)</h2>
+<p>Slide 19: ordinary differential equations describe the "motion and vibration of particles, loading of beams, electrical circuits and even mathematical biology". Slides 20–22 are a picture gallery of nine models (each labelled with a textbook section number such as "Sec. 2.8"). The pictures are described below with their equations. A <b>model</b> here means an equation that describes how a real quantity changes.</p>
+<div class="scroll"><table>
+<tr><th>Picture</th><th>What is shown</th><th>Equation</th><th>Type</th></tr>
+<tr><td>Falling stone</td><td>a stone dropped from a tower; \(y\) = distance fallen (downwards)</td><td>\(y''=g=\text{const.}\)</td><td>2nd order; integrate twice (Lecture 11)</td></tr>
+<tr><td>Parachutist</td><td>parachutist falling with velocity \(v\); air resistance \(bv^2\) opposes gravity \(mg\)</td><td>\(mv'=mg-bv^2\)</td><td>1st order, nonlinear, separable (Part O1)</td></tr>
+<tr><td>Outflowing water</td><td>tank emptying through a pipe at the bottom; \(h\) = water level</td><td>\(h'=-k\sqrt h\)</td><td>1st order, separable (Part O1)</td></tr>
+<tr><td>Vibrating mass on a spring</td><td>mass \(m\) hanging on a spring of stiffness \(k\); \(y\) = displacement</td><td>\(my''+ky=0\)</td><td>2nd order, constant coefficients (this part)</td></tr>
+<tr><td>Beats of a vibrating system</td><td>graph of \(y\) against \(t\): fast oscillations whose size swells and shrinks inside a slow dashed "envelope"</td><td>\(y''+\omega_0^2y=\cos\omega t,\ \omega_0\approx\omega\)</td><td>2nd order, non-homogeneous (Part O4)</td></tr>
+<tr><td>Current \(I\) in an RLC circuit</td><td>loop with resistor \(R\), capacitor \(C\), inductor \(L\) and voltage source \(E\)</td><td>\(LI''+RI'+\dfrac1C I=E'\)</td><td>2nd order, constant coefficients</td></tr>
+<tr><td>Deformation of a beam</td><td>a beam bending under a distributed downward load (arrows of varying length); \(y\) = deflection</td><td>\(EIy^{iv}=f(x)\)</td><td>4th order (\(y^{iv}=y''''\))</td></tr>
+<tr><td>Pendulum</td><td>mass on a rod of length \(L\), angle \(\theta\) from the vertical, swinging left–right</td><td>\(L\theta''+g\sin\theta=0\)</td><td>2nd order, nonlinear (because of \(\sin\theta\))</td></tr>
+<tr><td>Lotka–Volterra predator–prey model</td><td>foxes chasing rabbits; \(y_1\) = prey population, \(y_2\) = predator population</td><td>\(y_1'=ay_1-by_1y_2\)<br>\(y_2'=ky_1y_2-ly_2\)</td><td>a system of two 1st-order nonlinear ODEs</td></tr>
+</table></div>
+<p style="font-size:.92rem;color:var(--muted)">In the beam equation \(E\) is the stiffness of the material and \(I\) a number describing the shape of the beam's cross-section; \(f(x)\) is the load. In the Lotka–Volterra model \(a,b,k,l\) are positive constants: rabbits grow at rate \(a\) and are eaten at a rate proportional to encounters \(y_1y_2\); foxes grow from encounters and die at rate \(l\).</p>
+<p>The rest of the deck concentrates on the spring (and its electrical twin, the RLC circuit), because its equation is exactly of the constant-coefficient type solved above.</p>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>The mass–spring oscillator (slides 23–32)</h2>
+<h3>The set-up (slides 23–24)</h3>
+<p>Slide 23: a particle attached to a spring is "stretched beyond the equilibrium position, and released". Slide 24's picture (redrawn below) shows three stages.</p>
+<div class="figure"><p class="ttl">Mechanical mass–spring system (slide 24, redrawn)</p><canvas class="plot" id="fspring" style="aspect-ratio:16/10" aria-label="Unstretched spring, spring at static equilibrium with mass, and spring in motion"></canvas>
+  <p class="cap">(a) The spring alone, at its natural length. (b) A mass is hung on it; the spring stretches by \(s_0\) and the system rests at the <b>static equilibrium</b> position, labelled \(y=0\). (c) The system in motion: \(y\) is the displacement of the mass from equilibrium (positive downwards).</p></div>
+<p>Physics needed (HKDSE Physics, not Maths, so here in brief): <b>Hooke's law</b> says a spring stretched by a distance \(s\) pulls back with force \(ks\), where \(k\) (the <b>spring constant</b>, stiffness) is a positive constant. <b>Newton's second law</b> says mass × acceleration = total force, and acceleration is the second derivative of position, \(y''\).</p>
+<ul class="list">
+<li>In (b) the mass is at rest, so the spring's upward pull balances gravity: \(ks_0=mg\).</li>
+<li>In (c) the spring is stretched by \(s_0+y\), so the total downward force is \(mg-k(s_0+y)=-ky\) (the \(mg\) and \(ks_0\) cancel). Newton's law gives \(my''=-ky\), i.e. \(my''+ky=0\), the "vibrating mass" equation of the gallery. Measuring from equilibrium makes gravity disappear from the equation.</li>
+</ul>
+
+<h3>Free oscillation with damping (slides 25–27)</h3>
+<p>Slide 25: a particle of mass \(m\) is attached to a spring with constant \(k\). <b>Damping</b> (a force that resists motion, e.g. friction or air or oil resistance) is proportional to the speed, and there is no external <b>forcing</b> (no outside push), so the oscillation is called <b>free</b>. Writing the displacement as \(x(t)\), Newton's law of motion becomes</p>
+<div class="box thm"><span class="tag">Damped free oscillator (slide 25)</span>
+\[ mx''+cx'+kx=0 \]
+<p class="word"><b>In words:</b> mass × acceleration + damping constant × velocity + spring constant × displacement = 0, i.e. the spring force \(-kx\) and the damping force \(-cx'\) together produce the acceleration.</p>
+<p>Here \(m\gt0\), \(k\gt0\), and the <b>damping constant</b> \(c\ge0\).</p>
+</div>
+<p>This is a constant-coefficient equation in the variable \(t\). Characteristic equation \(m\lambda^2+c\lambda+k=0\), with roots (slide 26)</p>
+\[ \lambda=\frac{-c\pm\sqrt{c^2-4mk}}{2m}, \]
+<p>"and the character of the motion depends on the nature of the roots". Slide 27 rewrites this with the <b>critical damping</b> constant \(c_{cr}\):</p>
+<div class="box thm"><span class="tag">Three kinds of damping (slide 27)</span>
+\[ \lambda=\frac{-c\pm\sqrt{c^2-c_{cr}^2}}{2m},\qquad c_{cr}^2=4mk \]
+<p class="word"><b>In words:</b> critical damping \(c_{cr}=2\sqrt{mk}\) is the amount of damping that makes the discriminant exactly zero.</p>
+<ol class="steps">
+<li><b>Underdamped</b> vibration: \(c\lt c_{cr}\). Negative discriminant: complex roots \(-\dfrac{c}{2m}\pm i\,\dfrac{\sqrt{c_{cr}^2-c^2}}{2m}\).</li>
+<li><b>Critically damped</b> vibration: \(c=c_{cr}\). Repeated real root \(\lambda=-\dfrac{c}{2m}\).</li>
+<li><b>Overdamped</b> vibration: \(c\gt c_{cr}\). Two distinct real roots, both negative (since \(\sqrt{c^2-c_{cr}^2}\lt c\)).</li>
+</ol>
+</div>
+<p><b>What each looks like (slides 28–29).</b> Slide 28 (physically): overdamped and critically damped oscillators give exponentially decaying solutions, the "motion died down" without swinging back and forth; the underdamped oscillator gives a product of exponential and trigonometric functions, slowly decaying oscillations. Slide 29 (mathematically): overdamped = two distinct real roots, dying exponentials; critically damped = two equal real roots, \(e^{-\gamma t}\) and \(te^{-\gamma t}\) behaviours; underdamped = complex conjugate roots, \(e^{-\gamma t}\cos\omega_d t\) and \(e^{-\gamma t}\sin\omega_d t\).</p>
+<p style="font-size:.92rem;color:var(--muted)">On slide 29 the Greek letters were lost: it prints "exp(–t) and t exp(–t)" and "exp(–t)cos/sin t". The reading used here: \(\gamma=\dfrac{c}{2m}\) is the decay rate and \(\omega_d=\dfrac{\sqrt{c_{cr}^2-c^2}}{2m}\) the frequency of the damped oscillation.</p>
+<div class="scroll"><table>
+<tr><th>Case</th><th>Roots</th><th>Solution \(x(t)\)</th><th>Motion</th></tr>
+<tr><td>Overdamped \(c\gt c_{cr}\)</td><td>\(r_1\ne r_2\), both negative</td><td>\(C_1e^{r_1t}+C_2e^{r_2t}\)</td><td>slow creep back to 0, no swinging</td></tr>
+<tr><td>Critical \(c=c_{cr}\)</td><td>\(-\gamma,-\gamma\)</td><td>\((C_1+C_2t)e^{-\gamma t}\)</td><td>fastest return to 0 without swinging</td></tr>
+<tr><td>Underdamped \(c\lt c_{cr}\)</td><td>\(-\gamma\pm i\omega_d\)</td><td>\(e^{-\gamma t}(A\cos\omega_dt+B\sin\omega_dt)\)</td><td>swings, with shrinking amplitude</td></tr>
+<tr><td>Undamped \(c=0\)</td><td>\(\pm i\sqrt{k/m}\)</td><td>\(A\cos\omega t+B\sin\omega t\)</td><td>swings forever (simple harmonic motion)</td></tr>
+</table></div>
+
+<h3>The explorer</h3>
+<p>Dividing \(mx''+cx'+kx=0\) by \(m\) and writing \(\omega=\sqrt{k/m}\) (the <b>natural frequency</b>: how fast it swings with no damping) and \(\zeta=c/c_{cr}\) (the <b>damping ratio</b>, Greek "zeta") gives the standard form used in engineering <span class="pill">Beyond the handouts</span>:</p>
+\[ y''+2\zeta\omega\,y'+\omega^2y=0, \]
+\[ \lambda=-\zeta\omega\pm\omega\sqrt{\zeta^2-1}. \]
+<p class="word"><b>In words:</b> damping ratio below 1 → complex roots (underdamped); exactly 1 → repeated root (critical); above 1 → distinct real roots (overdamped).</p>
+<p>(Check: \(2\zeta\omega=\dfrac{c}{2\sqrt{mk}}\cdot2\sqrt{\dfrac km}=\dfrac cm\) and \(\omega^2=\dfrac km\), as required.) The explorer releases the mass from \(y(0)=1\) at rest, \(y'(0)=0\). The solutions plotted are, with \(\omega_d=\omega\sqrt{1-\zeta^2}\) and \(r_{1,2}=-\zeta\omega\pm\omega\sqrt{\zeta^2-1}\):</p>
+\[ \zeta\lt1:\ y=e^{-\zeta\omega t}\Big(\cos\omega_dt+\tfrac{\zeta\omega}{\omega_d}\sin\omega_dt\Big) \]
+\[ \zeta=1:\ y=(1+\omega t)e^{-\omega t} \]
+\[ \zeta\gt1:\ y=\frac{r_2e^{r_1t}-r_1e^{r_2t}}{r_2-r_1} \]
+<div class="figure"><p class="ttl">Oscillator explorer: \(y''+2\zeta\omega y'+\omega^2y=0\), \(y(0)=1\), \(y'(0)=0\)</p><canvas class="plot" id="fosc" style="aspect-ratio:16/9" aria-label="Displacement against time for a damped oscillator"></canvas>
+  <div class="ctrl"><label for="fosc-z">Damping ratio ζ <input type="range" id="fosc-z" min="0" max="2.5" step="0.05" value="0.2"></label><label for="fosc-w">Natural frequency ω <input type="range" id="fosc-w" min="0.5" max="3" step="0.1" value="2"></label></div>
+  <div class="legend"><span style="--k:var(--accent)">y(t)</span><span style="--k:var(--muted)">decay envelope (underdamped)</span><span style="--k:var(--c4)">critically damped, same ω (for comparison)</span></div>
+  <canvas class="plot" id="froot" style="aspect-ratio:16/7;margin-top:10px" aria-label="The two characteristic roots in the complex plane"></canvas>
+  <div class="legend"><span style="--k:var(--c2)">the two roots λ, plotted as λ/ω in the complex plane (horizontal: real part, vertical: imaginary part)</span></div>
+  <div class="readout" id="fosc-out"></div>
+  <p class="cap">Slide ζ from 0 to 2.5. While ζ is below 1 the two roots sit on the dashed curve \(|\lambda|=\omega\) (a circle of radius 1 in units of ω, drawn squashed because the two axes use different scales) as a conjugate pair; at ζ = 1 they meet at \(-\omega\); above 1 they split along the real axis, one towards 0 (slow decay) and one far to the left. That is why heavy overdamping returns <i>more slowly</i> than critical damping.</p></div>
+
+<h3>Dashpots and RLC circuits (slides 30–31)</h3>
+<p>Slide 30 lists other examples. In mechanical engineering, damping is provided by a <b>dashpot</b>: a piston moving in a cylinder of oil, which resists with a force proportional to speed (the \(cx'\) term). In electrical engineering, <b>RLC circuits</b> contain an \(R\) = resistor, \(L\) = inductor (a coil) and \(C\) = capacitor. Slide 31's picture is redrawn here.</p>
+<div class="figure"><p class="ttl">Mass–spring–dashpot system and RLC circuit (slide 31, redrawn)</p><canvas class="plot" id="fdash" style="aspect-ratio:16/9" aria-label="Spring, mass and dashpot; and an RLC circuit"></canvas>
+  <p class="cap">Left: spring (constant \(k\)) holding a mass \(m\), with a dashpot (damping constant \(c\)) underneath. Right: a loop containing a capacitor \(C\), resistor \(R\), inductor \(L\) and a voltage source \(E(t)\).</p></div>
+<p>The circuit equation from the gallery, \(LI''+RI'+\frac1CI=E'(t)\), has exactly the same shape as the spring. With a constant (or zero) voltage, \(E'=0\) and it is homogeneous:</p>
+\[ LI''+RI'+\tfrac1C I=0 \]
+<p>matches</p>
+\[ mx''+cx'+kx=0. \]
+<p class="word"><b>In words:</b> inductance plays the role of mass, resistance the role of damping, and 1/capacitance the role of spring stiffness; current behaves like displacement. So the same three cases (over-, critically, under-damped) occur, with critical resistance \(R^2=4L/C\).</p>
+
+<h3>The pendulum (slide 32)</h3>
+<p>Slide 32 points to an online lecture: a pendulum video from Udacity (<a href="http://www.youtube.com/watch?v=PkRJ7ASgEvY">youtube.com/watch?v=PkRJ7ASgEvY</a>). The pendulum equation from the gallery, \(L\theta''+g\sin\theta=0\), is <b>not</b> linear because of \(\sin\theta\).</p>
+<div class="box beyond"><span class="tag">Beyond the handouts: small swings</span>
+<p>For small angles (in radians) \(\sin\theta\approx\theta\) (Lecture 2: \(\frac{\sin\theta}{\theta}\to1\)), giving the linear equation \(\theta''+\frac gL\theta=0\). Its roots are \(\pm i\sqrt{g/L}\), so \(\theta=A\cos\big(\sqrt{g/L}\,t\big)+B\sin\big(\sqrt{g/L}\,t\big)\): simple harmonic motion with period \(2\pi\sqrt{L/g}\), independent of the size of the swing.</p>
+</div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Cauchy–Euler equations (slides 33–38)</h2>
+<p>So far the coefficients were constants. With <b>variable coefficients</b> (coefficients that depend on \(x\)) there is usually no exact formula, but one special class can be solved exactly (slide 33).</p>
+<div class="box def"><span class="tag">Definition (slide 33)</span>
+\[ \begin{aligned}x^ny^{(n)}&amp;+c_1x^{n-1}y^{(n-1)}+\dots\\&amp;+c_{n-1}xy'+c_ny=0\end{aligned} \]
+<p>with constants \(c_1,\dots,c_n\) is a <b>Cauchy–Euler equation</b> (also called an Euler or equidimensional equation).</p>
+<p class="word"><b>In words:</b> each derivative \(y^{(k)}\) is multiplied by a constant times \(x^k\), the power of \(x\) matching the order of the derivative.</p>
+<p>The second-order case, used in the exam, is</p>
+\[ x^2y''+c_1xy'+c_2y=0. \]
+</div>
+<p><b>Reasoning (slide 34):</b> similar to the constant coefficient case, but we try</p>
+\[ y=x^{\lambda}. \]
+<p>Each differentiation lowers the power by one (\((x^\lambda)'=\lambda x^{\lambda-1}\)), and the coefficient \(x^r\) in front of \(y^{(r)}\) "compensates for the loss (reduction) of the exponent" by raising it back by \(r\). So every term becomes a number times the same \(x^\lambda\), just as every term became a number times \(e^{\lambda x}\) before.</p>
+<div class="box thm"><span class="tag">Characteristic equation for second order (slide 35)</span>
+<p>With \(y=x^m\): \(y'=mx^{m-1}\), \(y''=m(m-1)x^{m-2}\), so</p>
+\[ \begin{aligned}&amp;x^2y''+c_1xy'+c_2y\\&amp;=x^m\big[m(m-1)+c_1m+c_2\big]=0.\end{aligned} \]
+<p>For \(x\gt0\), \(x^m\ne0\), so</p>
+\[ m(m-1)+c_1m+c_2=0, \]
+<p>i.e.</p>
+\[ m^2+(c_1-1)m+c_2=0. \]
+<p class="word"><b>In words:</b> replace \(x^2y''\) by \(m(m-1)\), \(xy'\) by \(m\), \(y\) by 1. It is a quadratic again ("Characteristic equation – Quadratic", slide 35), often called the <i>indicial equation</i>.</p>
+</div>
+<div class="box warn"><span class="tag">Trap</span>
+<p>\(x^2y''\) becomes \(m(m-1)\), <b>not</b> \(m^2\). Using \(m^2+c_1m+c_2=0\) (the constant-coefficient habit) gives wrong roots.</p>
+</div>
+<p>As before there are three cases (slides 35–37):</p>
+<div class="box thm"><span class="tag">Solutions of \(x^2y''+c_1xy'+c_2y=0\), \(x\gt0\)</span>
+<ol class="steps">
+<li><b>Two distinct real roots \(m,n\)</b> (slide 35): \(x^m\) and \(x^n\) are two linearly independent solutions, so \(y=C_1x^m+C_2x^n\).</li>
+<li><b>Two coincident (equal) roots \(m,m\)</b> (slide 36): the solutions are \(x^m\) and \(x^m\ln x\), so \(y=(C_1+C_2\ln x)x^m\). The second solution, involving \(\ln x\), is found by reduction of order (Part O2).</li>
+<li><b>Two complex roots \(a\pm ib\)</b> (slide 37): the solutions are \(x^a\cos(b\ln x)\) and \(x^a\sin(b\ln x)\), so \(y=x^a\big[A\cos(b\ln x)+B\sin(b\ln x)\big]\).</li>
+</ol>
+<p class="word"><b>In words:</b> same pattern as constant coefficients with \(e^{x}\) replaced by \(x\): an extra factor \(x\) became an extra factor \(\ln x\), and \(\cos bx\) became \(\cos(b\ln x)\).</p>
+</div>
+<p><b>Reasoning for the complex case (slide 38).</b> Use \(x=e^{\ln x}\) (Lecture 7) and Euler's formula:</p>
+\[ \begin{aligned} x^{ib}&amp;=\exp\big[\ln\big(x^{ib}\big)\big]=\exp(ib\ln x)\\&amp;=\cos(b\ln x)+i\sin(b\ln x). \end{aligned} \]
+<p>So \(x^{a+ib}=x^a\,x^{ib}=x^a[\cos(b\ln x)+i\sin(b\ln x)]\), and, exactly as in section 6, suitable combinations of the two complex solutions give the real solutions \(x^a\cos(b\ln x)\) and \(x^a\sin(b\ln x)\).</p>
+<p style="font-size:.92rem;color:var(--muted)">Slide 38 writes "I sin(b log x)"; the capital I is \(i\), and "log" is the natural log.</p>
+<div class="box eg"><span class="tag">Reduction of order for the repeated case (sketch)</span>
+<p>For a repeated root \(m\), the sum of the two roots of \(m^2+(c_1-1)m+c_2=0\) is \(m+m=-(c_1-1)\), so \(2m+c_1=1\). Put \(y=u\,x^m\) into the equation and simplify:</p>
+\[ \begin{aligned}&amp;x^{m+2}u''+(2m+c_1)x^{m+1}u'\\&amp;\quad+\big[m(m-1)+c_1m+c_2\big]x^mu=0.\end{aligned} \]
+<p>The bracket is 0 because \(m\) is a root, and \(2m+c_1=1\); dividing by \(x^{m+1}\) leaves \(xu''+u'=0\). Then \((xu')'=0\), so \(xu'=C_2\), \(u=C_2\ln x+C_1\), and \(y=(C_1+C_2\ln x)x^m\).</p>
+</div>
+<div class="box eg"><span class="tag">Example: one of each case</span>
+<p><b>(1)</b> \(x^2y''-2y=0\): \(m(m-1)-2=m^2-m-2=(m-2)(m+1)=0\), \(m=2,-1\):</p>
+\[ y=C_1x^2+\frac{C_2}{x}. \]
+<p><b>(2)</b> \(x^2y''-xy'+y=0\): \(m(m-1)-m+1=(m-1)^2=0\), \(m=1,1\):</p>
+\[ y=C_1x+C_2x\ln x. \]
+<p><b>(3)</b> \(x^2y''+xy'+y=0\): \(m(m-1)+m+1=m^2+1=0\), \(m=\pm i\) (\(a=0\), \(b=1\)):</p>
+\[ y=A\cos(\ln x)+B\sin(\ln x). \]
+</div>
+<div class="figure"><p class="ttl">Cauchy–Euler solutions (\(x\gt0\))</p><canvas class="plot" id="fce" style="aspect-ratio:16/10" aria-label="Solutions of three Cauchy-Euler equations"></canvas>
+  <div class="ctrl"><label for="fce-s">Equation <select id="fce-s"><option value="d">x²y'' − 2y = 0 (distinct roots)</option><option value="r">x²y'' − xy' + y = 0 (repeated root)</option><option value="c">x²y'' + xy' + y = 0 (complex roots)</option></select></label></div>
+  <div class="legend" id="fce-leg"></div>
+  <div class="readout" id="fce-out"></div>
+  <p class="cap">Cauchy–Euler solutions behave like powers of \(x\), not exponentials. In the complex case \(\cos(\ln x)\) oscillates infinitely often as \(x\to0^+\) (where \(\ln x\to-\infty\)) but ever more slowly as \(x\) grows: it repeats each time \(x\) is multiplied by \(e^{2\pi}\approx535\).</p></div>
+<div class="box beyond"><span class="tag">Beyond the handouts</span>
+<p><b>Why \(x\gt0\)?</b> \(\ln x\) and powers like \(x^{\sqrt2}\) are only defined for \(x\gt0\); also the equation's leading coefficient \(x^2\) is zero at \(x=0\), where solutions can blow up (e.g. \(1/x\)). For \(x\lt0\), replace \(x\) by \(|x|\) in the formulas.</p>
+<p><b>Link to constant coefficients.</b> The substitution \(x=e^t\) turns \(x^2y''+c_1xy'+c_2y=0\) into the constant-coefficient equation \(\ddot y+(c_1-1)\dot y+c_2y=0\) in \(t\) (dots = \(d/dt\)), with the same characteristic equation. Since \(t=\ln x\), \(e^{mt}=x^m\), \(te^{mt}=x^m\ln x\) and \(\cos bt=\cos(b\ln x)\): this explains every formula above.</p>
+</div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Summary <span class="pill">Written for these notes</span></h2>
+<div class="scroll"><table>
+<tr><th>Equation</th><th>Try</th><th>Characteristic equation</th></tr>
+<tr><td>\(y''+a_1y'+a_2y=0\)</td><td>\(y=e^{\lambda x}\)</td><td>\(\lambda^2+a_1\lambda+a_2=0\)</td></tr>
+<tr><td>\(y^{(n)}+\dots+a_ny=0\)</td><td>\(y=e^{\lambda x}\)</td><td>\(\lambda^n+\dots+a_n=0\)</td></tr>
+<tr><td>\(x^2y''+c_1xy'+c_2y=0\)</td><td>\(y=x^{m}\)</td><td>\(m(m-1)+c_1m+c_2=0\)</td></tr>
+</table></div>
+<div class="scroll"><table>
+<tr><th>Roots</th><th>Constant coefficients</th><th>Cauchy–Euler (\(x\gt0\))</th></tr>
+<tr><td>distinct real \(m,n\)</td><td>\(C_1e^{mx}+C_2e^{nx}\)</td><td>\(C_1x^m+C_2x^n\)</td></tr>
+<tr><td>repeated \(m,m\)</td><td>\((C_1+C_2x)e^{mx}\)</td><td>\((C_1+C_2\ln x)x^m\)</td></tr>
+<tr><td>complex \(a\pm bi\)</td><td>\(e^{ax}(A\cos bx+B\sin bx)\)</td><td>\(x^a[A\cos(b\ln x)+B\sin(b\ln x)]\)</td></tr>
+<tr><td>repeated pair \(a\pm bi\) (twice)</td><td>\(e^{ax}[(A+Cx)\cos bx+(B+Dx)\sin bx]\)</td><td>(not needed)</td></tr>
+</table></div>
+<ul class="list">
+<li><b>Hyperbolic functions:</b> \(\cosh x=\frac{e^x+e^{-x}}2\), \(\sinh x=\frac{e^x-e^{-x}}2\); \(\cosh^2x-\sinh^2x=1\); \((\cosh x)'=\sinh x\), \((\sinh x)'=\cosh x\). \(A\cosh kx+B\sinh kx\) is the general solution of \(y''-k^2y=0\).</li>
+<li><b>Linear independence:</b> no non-trivial combination is identically zero. Two functions: Wronskian \(W=uv'-vu'\); \(W\equiv0\) means dependent, \(W\not\equiv0\) independent. An \(n\)-th order linear homogeneous ODE needs \(n\) independent solutions; general solution = their combination with \(n\) constants.</li>
+<li><b>Complex numbers:</b> \(i^2=-1\); real-coefficient quadratics have conjugate roots \(a\pm bi\). Euler: \(e^{i\theta}=\cos\theta+i\sin\theta\), so \(e^{(a+bi)x}=e^{ax}(\cos bx+i\sin bx)\).</li>
+<li><b>Oscillator</b> \(mx''+cx'+kx=0\): \(c_{cr}=2\sqrt{mk}\). \(c\lt c_{cr}\) underdamped (complex roots, decaying oscillation); \(c=c_{cr}\) critical (repeated root); \(c\gt c_{cr}\) overdamped (two negative real roots). RLC circuits obey the same equation (\(L\leftrightarrow m\), \(R\leftrightarrow c\), \(1/C\leftrightarrow k\)).</li>
+</ul>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Common mistakes <span class="pill">Written for these notes</span></h2>
+<div class="box"><div class="mistake">
+<span class="x">✗</span><span>Repeated root \(\lambda=3,3\) written as \(C_1e^{3x}+C_2e^{3x}\). <span class="ok">✓</span> \((C_1+C_2x)e^{3x}\). The first is really only one constant.</span>
+<span class="x">✗</span><span>Roots \(-1\pm2i\) written as \(e^{2x}(A\cos x+B\sin x)\) (real and imaginary parts swapped). <span class="ok">✓</span> \(e^{-x}(A\cos2x+B\sin2x)\): the <i>real</i> part goes in the exponential, the <i>imaginary</i> part inside cos and sin.</span>
+<span class="x">✗</span><span>Leaving the answer as \(C_1e^{(-1+2i)x}+C_2e^{(-1-2i)x}\) when a real solution is wanted. <span class="ok">✓</span> Correct but unhelpful; convert with Euler's formula.</span>
+<span class="x">✗</span><span>Forgetting the root \(\lambda=0\), or treating a double root 0 as single: \(y''''-y''=0\) answered as \(C_1+C_3e^x+C_4e^{-x}\). <span class="ok">✓</span> \(\lambda^2(\lambda^2-1)\): 0 is a double root, so \(C_1+C_2x\) plus \(C_3e^x+C_4e^{-x}\). Count: four constants for a fourth-order equation.</span>
+<span class="x">✗</span><span>Cauchy–Euler: replacing \(x^2y''\) by \(m^2\). <span class="ok">✓</span> \(x^2y''\to m(m-1)\), \(xy'\to m\), \(y\to1\).</span>
+<span class="x">✗</span><span>Cauchy–Euler repeated root written as \((C_1+C_2x)x^m\). <span class="ok">✓</span> \((C_1+C_2\ln x)x^m\); the "extra \(x\)" of the constant-coefficient case becomes "extra \(\ln x\)".</span>
+<span class="x">✗</span><span>Cauchy–Euler complex roots \(a\pm ib\) written with \(\cos bx\). <span class="ok">✓</span> \(\cos(b\ln x)\) and \(\sin(b\ln x)\), times \(x^a\).</span>
+<span class="x">✗</span><span>"\(W(0)=0\), so the functions are dependent." <span class="ok">✓</span> Dependence needs \(W=0\) for <i>all</i> \(x\) in the interval; one zero proves nothing (e.g. \(W(x,x^2)=x^2\) is zero only at 0, and \(x,x^2\) are independent).</span>
+<span class="x">✗</span><span>Mixing up the damping names: "\(c\lt c_{cr}\) is overdamped". <span class="ok">✓</span> Small damping (\(c\lt c_{cr}\)) = <b>under</b>damped = it still oscillates.</span>
+<span class="x">✗</span><span>Initial-value problems: forgetting the product rule when differentiating \(e^{ax}(A\cos bx+B\sin bx)\) before using \(y'(0)\). <span class="ok">✓</span> \(y'(0)=aA+bB\).</span>
+</div></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Find the mistake <span class="pill">Written for these notes</span></h2>
+<p>Each attempt below contains one error. Find it before opening the answer.</p>
+<div class="q"><p class="qh">A. Solve \(y''+4y=0\).</p>
+<div class="handwork">
+\[ \lambda^2+4=0\ \Rightarrow\ \lambda=\pm2 \]
+\[ y=C_1e^{2x}+C_2e^{-2x} \]
+</div>
+<details><summary>Hint</summary><div><p>Solve \(\lambda^2=-4\) carefully. What is \(\sqrt{-4}\)?</p></div></details>
+<details><summary>Answer</summary><div><p>\(\lambda^2=-4\) gives \(\lambda=\pm2i\), not \(\pm2\) (that would be \(\lambda^2=4\)). Complex roots with \(a=0\), \(b=2\):</p>
+\[ y=A\cos2x+B\sin2x. \]
+<p>Check: \(y=\cos2x\) gives \(-4\cos2x+4\cos2x=0\). ✓</p></div></details></div>
+
+<div class="q"><p class="qh">B. Solve \(y''-6y'+9y=0\), \(y(0)=1\), \(y'(0)=0\).</p>
+<div class="handwork">
+\[ \lambda^2-6\lambda+9=(\lambda-3)^2=0,\ \lambda=3,3 \]
+\[ y=C_1e^{3x}+C_2e^{3x} \]
+\[ y(0)=C_1+C_2=1 \]
+\[ y'(0)=3C_1+3C_2=0 \]
+\[ \text{No solution!} \]
+</div>
+<details><summary>Hint</summary><div><p>The two equations contradict each other because the general solution has really only one constant. What is the second building block for a repeated root?</p></div></details>
+<details><summary>Answer</summary><div><p>The general solution for a repeated root is \(y=(C_1+C_2x)e^{3x}\). Then \(y(0)=C_1=1\) and \(y'=(C_2+3C_1+3C_2x)e^{3x}\), \(y'(0)=C_2+3C_1=0\Rightarrow C_2=-3\):</p>
+\[ y=(1-3x)e^{3x}. \]</div></details></div>
+
+<div class="q"><p class="qh">C. Solve \(x^2y''+xy'-4y=0\) for \(x\gt0\).</p>
+<div class="handwork">
+\[ \text{Try } y=x^m:\ m^2+m-4=0 \]
+\[ m=\frac{-1\pm\sqrt{17}}{2} \]
+\[ y=C_1x^{(-1+\sqrt{17})/2}+C_2x^{(-1-\sqrt{17})/2} \]
+</div>
+<details><summary>Hint</summary><div><p>What does \(x^2y''\) become when \(y=x^m\)?</p></div></details>
+<details><summary>Answer</summary><div><p>\(x^2y''=m(m-1)x^m\), so the characteristic equation is \(m(m-1)+m-4=m^2-4=0\), \(m=\pm2\):</p>
+\[ y=C_1x^2+\frac{C_2}{x^2}. \]</div></details></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Group work <span class="pill">Written for these notes</span></h2>
+<div class="q"><p class="qh">1. Solve the initial-value problem \(y''+2y'+10y=0\), \(y(0)=1\), \(y'(0)=2\).</p>
+<details><summary>Hint 1</summary><div><p>The characteristic equation \(\lambda^2+2\lambda+10=0\) has discriminant \(4-40=-36\).</p></div></details>
+<details><summary>Hint 2</summary><div><p>Roots \(-1\pm3i\), so \(y=e^{-x}(A\cos3x+B\sin3x)\). Then \(y(0)=A\) and \(y'(0)=-A+3B\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(A=1\), \(-1+3B=2\Rightarrow B=1\):</p>
+\[ y=e^{-x}(\cos3x+\sin3x). \]</div></details></div>
+
+<div class="q"><p class="qh">2. Find a homogeneous linear ODE with constant coefficients whose general solution is \(y=C_1+C_2e^{x}+C_3xe^{x}\).</p>
+<details><summary>Hint</summary><div><p>Work backwards: which roots produce \(1\), \(e^x\) and \(xe^x\)? Multiply out the corresponding factors.</p></div></details>
+<details><summary>Answer</summary><div><p>Roots \(0,1,1\): characteristic polynomial \(\lambda(\lambda-1)^2=\lambda^3-2\lambda^2+\lambda\). So</p>
+\[ y'''-2y''+y'=0. \]</div></details></div>
+
+<div class="q"><p class="qh">3. A mass \(m=1\) hangs on a spring with \(k=4\), with damping constant \(c\): \(x''+cx'+4x=0\).<br>(a) Find \(c_{cr}\) and classify the motion for \(c=2\), \(c=4\), \(c=5\).<br>(b) For \(c=5\), find \(x(t)\) if \(x(0)=1\), \(x'(0)=0\).</p>
+<details><summary>Hint</summary><div><p>\(c_{cr}=2\sqrt{mk}\). For (b) the roots of \(\lambda^2+5\lambda+4=0\) factorise nicely.</p></div></details>
+<details><summary>Answer</summary><div><p>(a) \(c_{cr}=2\sqrt{4}=4\). \(c=2\): underdamped (roots \(-1\pm\sqrt3\,i\)); \(c=4\): critically damped (root \(-2\) twice); \(c=5\): overdamped.</p>
+<p>(b) \((\lambda+1)(\lambda+4)=0\), \(x=C_1e^{-t}+C_2e^{-4t}\); \(C_1+C_2=1\), \(-C_1-4C_2=0\) give \(C_1=\frac43\), \(C_2=-\frac13\):</p>
+\[ x(t)=\frac{4e^{-t}-e^{-4t}}{3}. \]</div></details></div>
+
+<div class="q"><p class="qh">4. Solve \(x^2y''-3xy'+13y=0\), \(x\gt0\).</p>
+<details><summary>Hint</summary><div><p>Cauchy–Euler: \(m(m-1)-3m+13=0\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(m^2-4m+13=0\), \(m=2\pm3i\):</p>
+\[ y=x^2\big[A\cos(3\ln x)+B\sin(3\ln x)\big]. \]</div></details></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<div class="q"><p class="qh">1. Are \(\sin x\) and \(\cos x\) linearly independent? Use the Wronskian.</p>
+<details><summary>Answer</summary><div><p>\(W(\sin x,\cos x)=\sin x(-\sin x)-\cos x\cos x=-1\ne0\). Independent (they are the two building blocks for \(y''+y=0\)).</p></div></details></div>
+<div class="q"><p class="qh">2. If one root of a characteristic equation with real coefficients is \(1+2i\), what must another root be? What two solutions do they give?</p>
+<details><summary>Answer</summary><div><p>Its conjugate \(1-2i\). Together: \(e^{x}\cos2x\) and \(e^{x}\sin2x\).</p></div></details></div>
+<div class="q"><p class="qh">3. A characteristic equation has roots \(3,3,3\). What is the order of the ODE and its general solution?</p>
+<details><summary>Answer</summary><div><p>Third order (three roots). \(y=(C_1+C_2x+C_3x^2)e^{3x}\) (multiplicity three: multiply by \(1,x,x^2\)).</p></div></details></div>
+<div class="q"><p class="qh">4. A spring with no damping (\(c=0\)) is released. Does it ever stop? Which case of the characteristic equation is this?</p>
+<details><summary>Answer</summary><div><p>Roots \(\pm i\sqrt{k/m}\): complex with real part 0, so \(x=A\cos\omega t+B\sin\omega t\) with \(\omega=\sqrt{k/m}\). The factor \(e^{0t}=1\) does not decay: it oscillates forever (simple harmonic motion).</p></div></details></div>
+<div class="q"><p class="qh">5. A car's suspension should settle quickly after a bump without bouncing. Should it be under-, critically or overdamped? Why not very heavily overdamped?</p>
+<details><summary>Answer</summary><div><p>Critically damped (or just under). Heavy overdamping makes one root \(-\zeta\omega+\omega\sqrt{\zeta^2-1}\) very close to 0, so the term \(e^{r_1t}\) decays very slowly: the car creeps back to level. See the explorer in section 9.</p></div></details></div>
+<div class="q"><p class="qh">6. Which constant-coefficient ODE has general solution \(y=A\cosh2x+B\sinh2x\)?</p>
+<details><summary>Answer</summary><div><p>Equivalent to \(C_1e^{2x}+C_2e^{-2x}\): roots \(\pm2\), \(\lambda^2-4=0\), so \(y''-4y=0\).</p></div></details></div>
+<div class="q"><p class="qh">7. Why does the Cauchy–Euler method use \(y=x^m\) rather than \(y=e^{\lambda x}\)?</p>
+<details><summary>Answer</summary><div><p>With \(y=e^{\lambda x}\), \(x^2y''=\lambda^2x^2e^{\lambda x}\) and \(y\) would carry different powers of \(x\) in front of \(e^{\lambda x}\), so \(e^{\lambda x}\) could not be cancelled to leave a number. With \(y=x^m\), each derivative loses one power of \(x\) and the coefficient \(x^k\) gives it back, so every term is a constant times \(x^m\).</p></div></details></div>
+</section>
+
+<!-- ============ exam ============ -->
+<section id="pastpaper"><h2><span class="n">16</span>Exam taster</h2>
+<p>A few real past-paper questions, about one for each main question type in this part, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
+<p style="font-size:.92rem;color:var(--muted)">Part O3's question types appear 12 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide.</p>
+
+<div class="q"><p class="src"><b>Dec 2023 Q7(b)</b><span>5%</span><a class="guide" data-guide="O3.3">Guide · O3.3 Cauchy–Euler: try x^m</a></p>
+<p class="qh">Find the general solution to the differential equation:</p>
+\[ x^2\frac{d^2y}{dx^2}-7x\frac{dy}{dx}+16y=0\qquad(x\gt0). \]
+<details><summary>Hint</summary><div><p>Cauchy–Euler equation (powers of \(x\) match the order of each derivative). Try \(y=x^m\): the characteristic equation is \(m(m-1)-7m+16=0\). Look at the type of roots.</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=x^4\left(C_1+C_2\ln x\right) \]
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2021 Q8(a)</b><span>Q8 total 10%</span><a class="guide" data-guide="O3.2">Guide · O3.2 Constant coefficients, higher order</a></p>
+<p class="qh">Find the general solution to the differential equation:</p>
+\[ \frac{d^4y}{dx^4}-\frac{d^2y}{dx^2}=0. \]
+<details><summary>Hint</summary><div><p>Characteristic equation \(\lambda^4-\lambda^2=\lambda^2(\lambda^2-1)=0\). Note that \(\lambda=0\) is a <i>double</i> root; you need four constants.</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=C_1+C_2x+C_3e^{x}+C_4e^{-x} \]
+<p>(equivalently \(C_1+C_2x+A\cosh x+B\sinh x\)).</p>
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2020 Q7(a)</b><span>Q7 total 10%</span><a class="guide" data-guide="O3.1">Guide · O3.1 Constant coefficients, second order</a></p>
+<p class="qh">Find the general solution to the following differential equation:</p>
+\[ \frac{d^2y}{dx^2}+2\frac{dy}{dx}+5y=0. \]
+<details><summary>Hint</summary><div><p>Characteristic equation \(\lambda^2+2\lambda+5=0\); its discriminant is negative, so the roots are a complex pair \(a\pm bi\). Use \(e^{ax}(A\cos bx+B\sin bx)\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=e^{-x}\left(A\cos2x+B\sin2x\right) \]
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2017 Q7(a)</b><span>Q7 total 10%</span><span class="older">older format</span><a class="guide" data-guide="O3.2">Guide · O3.2 Constant coefficients, higher order</a></p>
+<p class="qh">Find the solution of the following differential equation, which satisfies the given initial conditions \(y(0)=1\), \(y'(0)=0\), \(y''(0)=0\):</p>
+\[ y'''-4y''+7y'-6y=0. \]
+<details><summary>Hint</summary><div><p>Characteristic equation \(\lambda^3-4\lambda^2+7\lambda-6=0\). By the factor theorem, test small integers: \(\lambda=2\) works, so divide by \(\lambda-2\) to get a quadratic (with complex roots). Write the general solution with three constants, then use the three initial conditions.</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=e^{2x}-\sqrt2\,e^{x}\sin\!\big(\sqrt2\,x\big) \]
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+</section>
+</main>
+</div>
+<script>
+(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const PI=Math.PI;
+const $=id=>document.getElementById(id);
+
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+const piTicks=(lo,hi)=>{const out=[];const L={'-4':'−2π','-3':'−3π/2','-2':'−π','-1':'−π/2','0':'0','1':'π/2','2':'π','3':'3π/2','4':'2π','5':'5π/2'};for(let k=Math.ceil(lo/(PI/2));k<=Math.floor(hi/(PI/2));k++)out.push([k*PI/2,L[k]||'']);return out;};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+
+const sinh=Math.sinh, cosh=Math.cosh, exp=Math.exp;
+function leg(id,items){$(id).innerHTML=items.map(([k,t])=>'<span style="--k:var('+k+')">'+t+'</span>').join('');}
+
+/* --- hyperbolic functions --- */
+function drawHyp(){
+  const s=$('fhyp-s').value, A=css('--accent'), R=css('--c2'), G=css('--c3'), O=css('--c4'), M=css('--muted');
+  if(s==='cs'){
+    plot($('fhyp'),{xmin:-3,xmax:3,ymin:-5,ymax:5,xstep:1,ystep:1,curves:[
+      {f:x=>exp(x)/2,color:G,dash:[5,4],width:1.6},{f:x=>exp(-x)/2,color:O,dash:[5,4],width:1.6},
+      {f:cosh,color:A},{f:sinh,color:R}],pts:[{x:0,y:1,color:A,label:'(0, 1)'},{x:0,y:0,color:R}]});
+    leg('fhyp-leg',[['--accent','cosh x'],['--c2','sinh x'],['--c3','½eˣ (dashed)'],['--c4','½e⁻ˣ (dashed)']]);
+    $('fhyp-out').innerHTML='cosh 0 = <b>1</b> (minimum), sinh 0 = <b>0</b>; at x = 2: cosh = <b>'+fmt(cosh(2))+'</b>, sinh = <b>'+fmt(sinh(2))+'</b>, cosh² − sinh² = <b>'+fmt(cosh(2)**2-sinh(2)**2)+'</b>';
+  } else if(s==='tc'){
+    plot($('fhyp'),{xmin:-3,xmax:3,ymin:-4,ymax:4,xstep:1,ystep:1,curves:[
+      {f:x=>1,color:M,dash:[4,4],width:1.2},{f:x=>-1,color:M,dash:[4,4],width:1.2},
+      {f:Math.tanh,color:A},{f:x=>1/Math.tanh(x),color:R,from:0.02,to:3},{f:x=>1/Math.tanh(x),color:R,from:-3,to:-0.02}]});
+    leg('fhyp-leg',[['--accent','tanh x'],['--c2','coth x'],['--muted','y = ±1']]);
+    $('fhyp-out').innerHTML='tanh x lies strictly between <b>−1</b> and <b>1</b>; coth x = 1/tanh x is undefined at <b>x = 0</b> and lies outside [−1, 1]';
+  } else {
+    plot($('fhyp'),{xmin:-3,xmax:3,ymin:-4,ymax:4,xstep:1,ystep:1,curves:[
+      {f:x=>1/cosh(x),color:A},{f:x=>1/sinh(x),color:R,from:0.02,to:3},{f:x=>1/sinh(x),color:R,from:-3,to:-0.02}],pts:[{x:0,y:1,color:A,label:'(0, 1)'}]});
+    leg('fhyp-leg',[['--accent','sech x'],['--c2','cosech x']]);
+    $('fhyp-out').innerHTML='sech x = 1/cosh x has maximum <b>1</b> at x = 0; cosech x = 1/sinh x is undefined at <b>x = 0</b>';
+  }
+}
+$('fhyp-s').addEventListener('input',drawHyp); redraws.push(drawHyp);
+
+/* --- Wronskian --- */
+const WR={a:{u:exp,v:x=>2*exp(x),W:x=>0,t:'W = eˣ·2eˣ − 2eˣ·eˣ = <b>0</b> for all x ⇒ <b>dependent</b>'},
+  b:{u:exp,v:x=>exp(-x),W:x=>-2,t:'W = eˣ(−e⁻ˣ) − e⁻ˣ·eˣ = <b>−2</b> ≠ 0 ⇒ <b>independent</b>'},
+  c:{u:Math.cos,v:Math.sin,W:x=>1,t:'W = cos x·cos x − sin x·(−sin x) = <b>1</b> ≠ 0 ⇒ <b>independent</b>'},
+  d:{u:exp,v:x=>x*exp(x),W:x=>exp(2*x),t:'W = eˣ(1+x)eˣ − xeˣ·eˣ = <b>e²ˣ</b> ≠ 0 ⇒ <b>independent</b>'}};
+function drawWr(){
+  const p=WR[$('fwr-s').value];
+  plot($('fwr'),{xmin:-2,xmax:2,ymin:-4,ymax:6,xstep:1,ystep:2,curves:[{f:p.u,color:css('--accent')},{f:p.v,color:css('--c2')},{f:p.W,color:css('--c3'),dash:[6,4]}]});
+  $('fwr-out').innerHTML=p.t;
+}
+$('fwr-s').addEventListener('input',drawWr); redraws.push(drawWr);
+
+/* --- Euler unit circle --- */
+function drawEul(){
+  const cv=$('feul'), dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight; if(!W||!H)return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const th=+$('feul-t').value, s=Math.min(W,H)*0.38, cx=W/2, cy=H/2;
+  const X=x=>cx+x*s, Y=y=>cy-y*s;
+  g.font='11px Inter, system-ui, sans-serif';
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  g.beginPath(); g.moveTo(X(-1.35),cy); g.lineTo(X(1.35),cy); g.moveTo(cx,Y(1.25)); g.lineTo(cx,Y(-1.25)); g.stroke();
+  g.fillStyle=css('--muted'); g.textAlign='left'; g.textBaseline='bottom';
+  g.fillText('real',X(1.2),cy-3); g.fillText('imaginary',cx+5,Y(1.18));
+  g.textAlign='center'; g.textBaseline='top'; g.fillText('1',X(1),cy+4); g.fillText('−1',X(-1),cy+4);
+  g.textAlign='right'; g.textBaseline='middle'; g.fillText('i',cx-5,Y(1)); g.fillText('−i',cx-5,Y(-1));
+  g.strokeStyle=css('--grid'); g.lineWidth=1.5; g.beginPath(); g.arc(cx,cy,s,0,7); g.stroke();
+  const c=Math.cos(th), sn=Math.sin(th);
+  g.strokeStyle=css('--c3'); g.lineWidth=3; g.beginPath(); g.moveTo(cx,cy); g.lineTo(X(c),cy); g.stroke();
+  g.strokeStyle=css('--c2'); g.setLineDash([5,4]); g.lineWidth=2.4; g.beginPath(); g.moveTo(X(c),cy); g.lineTo(X(c),Y(sn)); g.stroke(); g.setLineDash([]);
+  g.strokeStyle=css('--accent'); g.lineWidth=2.4; g.beginPath(); g.moveTo(cx,cy); g.lineTo(X(c),Y(sn)); g.stroke();
+  g.strokeStyle=css('--muted'); g.lineWidth=1.2; g.beginPath(); g.arc(cx,cy,s*0.2,0,-th,true); g.stroke();
+  g.fillStyle=css('--muted'); g.textAlign='left'; g.textBaseline='middle';
+  g.fillText('θ',X(0.24*Math.cos(th/2)),Y(0.24*Math.sin(th/2)));
+  g.beginPath(); g.arc(X(c),Y(sn),5,0,7); g.fillStyle=css('--accent'); g.fill();
+  g.font='600 12px Inter, system-ui, sans-serif'; g.textAlign=c>=0?'left':'right'; g.textBaseline=sn>=0?'bottom':'top';
+  g.fillText('e^(iθ)',X(c)+(c>=0?8:-8),Y(sn)+(sn>=0?-4:4));
+  $('feul-out').innerHTML='θ = <b>'+fmt(th,2)+'</b> rad: e^(iθ) = cos θ + i sin θ = <b>'+fmt(c)+'</b> + <b>'+fmt(sn)+'</b> i; distance from 0 = <b>1</b>';
+}
+$('feul-t').addEventListener('input',drawEul); redraws.push(drawEul);
+
+/* --- e^{ax}cos bx --- */
+function drawCx(){
+  const a=+$('fcx-a').value, b=+$('fcx-b').value, M=css('--muted');
+  plot($('fcx'),{xmin:0,xmax:8,ymin:-3,ymax:3,xstep:1,ystep:1,curves:[
+    {f:x=>exp(a*x),color:M,dash:[5,4],width:1.4},{f:x=>-exp(a*x),color:M,dash:[5,4],width:1.4},
+    {f:x=>exp(a*x)*Math.cos(b*x),color:css('--accent'),n:1500}]});
+  $('fcx-out').innerHTML='roots a ± bi = <b>'+fmt(a,2)+' ± '+fmt(b,2)+'i</b>; period 2π/b = <b>'+fmt(2*PI/b)+'</b>; '+(a<0?'<b>decaying</b> oscillation':a>0?'<b>growing</b> oscillation':'<b>steady</b> oscillation (a = 0)');
+}
+['fcx-a','fcx-b'].forEach(i=>$(i).addEventListener('input',drawCx)); redraws.push(drawCx);
+
+/* --- oscillator explorer --- */
+function oscY(z,w){
+  if(Math.abs(z-1)<1e-9) return t=>(1+w*t)*exp(-w*t);
+  if(z<1){const wd=w*Math.sqrt(1-z*z); return t=>exp(-z*w*t)*(Math.cos(wd*t)+z*w/wd*Math.sin(wd*t));}
+  const q=w*Math.sqrt(z*z-1), r1=-z*w+q, r2=-z*w-q; return t=>(r2*exp(r1*t)-r1*exp(r2*t))/(r2-r1);
+}
+function drawOsc(){
+  const z=+$('fosc-z').value, w=+$('fosc-w').value, A=css('--accent'), R=css('--c2'), M=css('--muted');
+  const curves=[{f:t=>(1+w*t)*exp(-w*t),color:css('--c4'),dash:[6,4],width:1.6}];
+  if(z<1-1e-9){const Rr=1/Math.sqrt(1-z*z); curves.push({f:t=>Rr*exp(-z*w*t),color:M,dash:[3,4],width:1.3},{f:t=>-Rr*exp(-z*w*t),color:M,dash:[3,4],width:1.3});}
+  curves.push({f:oscY(z,w),color:A,n:1500});
+  plot($('fosc'),{xmin:0,xmax:10,ymin:-1.2,ymax:1.2,xstep:1,ystep:0.5,curves});
+  let pts, txt, kind;
+  if(Math.abs(z-1)<1e-9){pts=[{x:-1,y:0,color:R,r:7}];kind='<b>critically damped</b>: repeated real root';txt='λ = '+fmt(-w)+' (twice)';}
+  else if(z<1){const q=Math.sqrt(1-z*z);pts=[{x:-z,y:q,color:R},{x:-z,y:-q,color:R}];kind=z===0?'<b>undamped</b>: purely imaginary roots, oscillates forever':'<b>underdamped</b>: complex conjugate roots';txt='λ = '+fmt(-z*w)+' ± '+fmt(w*q)+'i';}
+  else{const q=Math.sqrt(z*z-1);pts=[{x:-z+q,y:0,color:R},{x:-z-q,y:0,color:R}];kind='<b>overdamped</b>: two distinct negative real roots';txt='λ = '+fmt(-z*w+w*q)+' and '+fmt(-z*w-w*q);}
+  plot($('froot'),{xmin:-5,xmax:0.8,ymin:-1.4,ymax:1.4,xstep:1,ystep:1,curves:[
+    {f:x=>Math.sqrt(Math.max(0,1-x*x)),color:M,dash:[4,4],width:1.2,from:-1,to:1},{f:x=>-Math.sqrt(Math.max(0,1-x*x)),color:M,dash:[4,4],width:1.2,from:-1,to:1}],pts});
+  $('fosc-out').innerHTML='ζ = c/c<sub>cr</sub> = <b>'+fmt(z,2)+'</b>, ω = <b>'+fmt(w,2)+'</b>: equation y″ + '+fmt(2*z*w)+'y′ + '+fmt(w*w)+'y = 0<br>'+txt+' &nbsp;→ '+kind;
+}
+['fosc-z','fosc-w'].forEach(i=>$(i).addEventListener('input',drawOsc)); redraws.push(drawOsc);
+
+/* --- springs --- */
+function spring(g,x,y1,y2,w){
+  const n=8, seg=(y2-y1)/(2*n+2);
+  g.beginPath(); g.moveTo(x,y1); g.lineTo(x,y1+seg);
+  for(let i=0;i<2*n;i++) g.lineTo(x+(i%2?-w:w), y1+seg*(i+1.5));
+  g.lineTo(x,y2-seg); g.lineTo(x,y2); g.stroke();
+}
+function ceiling(g,x,y,w){
+  g.fillStyle=css('--axis'); g.fillRect(x-w/2,y-5,w,5);
+  g.strokeStyle=css('--axis'); g.lineWidth=1;
+  for(let i=0;i<6;i++){g.beginPath();g.moveTo(x-w/2+i*w/5,y-5);g.lineTo(x-w/2+i*w/5+5,y-11);g.stroke();}
+}
+function canvasSetup(cv){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight; if(!W||!H)return null;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  g.font='11px Inter, system-ui, sans-serif'; return {g,W,H};
+}
+function drawSpring(){
+  const o=canvasSetup($('fspring')); if(!o)return; const {g,W,H}=o;
+  const A=css('--accent'), I=css('--ink'), M=css('--muted'), R=css('--c2');
+  const xs=[W/6,W/2,5*W/6], top=H*0.1, sw=Math.min(12,W*0.025), L0=H*0.34, s0=H*0.12, yd=H*0.12, mh=H*0.1, mw=Math.min(44,W*0.1);
+  const e0=top+L0, eq=e0+s0;
+  xs.forEach(x=>ceiling(g,x,top,mw+16));
+  g.strokeStyle=I; g.lineWidth=1.6;
+  spring(g,xs[0],top,e0,sw); spring(g,xs[1],top,eq,sw); spring(g,xs[2],top,eq+yd,sw);
+  g.fillStyle=A; g.fillRect(xs[1]-mw/2,eq,mw,mh); g.fillRect(xs[2]-mw/2,eq+yd,mw,mh);
+  g.fillStyle=css('--card'); g.font='600 12px Inter, system-ui, sans-serif'; g.textAlign='center'; g.textBaseline='middle';
+  g.fillText('m',xs[1],eq+mh/2); g.fillText('m',xs[2],eq+yd+mh/2); g.font='11px Inter, system-ui, sans-serif';
+  g.strokeStyle=M; g.lineWidth=1; g.setLineDash([4,4]);
+  g.beginPath(); g.moveTo(xs[0]-mw/2,e0); g.lineTo(xs[1]-mw/2-14,e0); g.stroke();
+  g.beginPath(); g.moveTo(xs[1]+mw/2,eq); g.lineTo(xs[2]-mw/2-4,eq); g.stroke(); g.setLineDash([]);
+  /* s0 bracket */
+  const bx=xs[1]-mw/2-10; g.strokeStyle=R; g.lineWidth=1.5;
+  g.beginPath(); g.moveTo(bx,e0); g.lineTo(bx,eq); g.moveTo(bx-4,e0); g.lineTo(bx+4,e0); g.moveTo(bx-4,eq); g.lineTo(bx+4,eq); g.stroke();
+  g.fillStyle=R; g.textAlign='right'; g.textBaseline='middle'; g.fillText('s₀',bx-5,(e0+eq)/2);
+  /* y = 0 label and y arrow */
+  g.fillStyle=M; g.textAlign='center'; g.textBaseline='bottom'; g.fillText('y = 0',(xs[1]+xs[2])/2,eq-3);
+  const ax=xs[2]-mw/2-10; g.strokeStyle=R; g.beginPath(); g.moveTo(ax,eq); g.lineTo(ax,eq+yd); g.lineTo(ax-4,eq+yd-6); g.moveTo(ax,eq+yd); g.lineTo(ax+4,eq+yd-6); g.stroke();
+  g.fillStyle=R; g.textAlign='right'; g.textBaseline='middle'; g.fillText('y',ax-5,eq+yd/2);
+  g.fillStyle=I; g.textAlign='center'; g.textBaseline='top';
+  const lab=[['(a) Unstretched','spring'],['(b) Static','equilibrium'],['(c) System','in motion']];
+  xs.forEach((x,i)=>{g.fillText(lab[i][0],x,H*0.84);g.fillText(lab[i][1],x,H*0.84+14);});
+  g.fillStyle=M; g.textAlign='left'; g.textBaseline='middle'; g.fillText('k',xs[0]+sw+5,top+L0/2);
+}
+redraws.push(drawSpring);
+
+function drawDash(){
+  const o=canvasSetup($('fdash')); if(!o)return; const {g,W,H}=o;
+  const A=css('--accent'), I=css('--ink'), M=css('--muted');
+  /* left: spring-mass-dashpot */
+  const x=W*0.25, top=H*0.1, sw=Math.min(12,W*0.025), mw=Math.min(50,W*0.11), my=H*0.42, mh=H*0.12;
+  ceiling(g,x,top,mw+16); g.strokeStyle=I; g.lineWidth=1.6; spring(g,x,top,my,sw);
+  g.fillStyle=A; g.fillRect(x-mw/2,my,mw,mh);
+  g.fillStyle=css('--card'); g.font='600 12px Inter, system-ui, sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText('m',x,my+mh/2); g.font='11px Inter, system-ui, sans-serif';
+  const cy1=H*0.66, cy2=H*0.84, cw=mw*0.8, py=H*0.7;
+  g.strokeStyle=I; g.lineWidth=1.6;
+  g.beginPath(); g.moveTo(x,my+mh); g.lineTo(x,py); g.moveTo(x-cw/2+4,py); g.lineTo(x+cw/2-4,py); g.stroke();
+  g.beginPath(); g.moveTo(x-cw/2,cy1); g.lineTo(x-cw/2,cy2); g.lineTo(x+cw/2,cy2); g.lineTo(x+cw/2,cy1); g.stroke();
+  g.fillStyle=css('--axis'); g.fillRect(x-cw/2-10,cy2,cw+20,4);
+  g.fillStyle=M; g.textAlign='left'; g.textBaseline='middle';
+  g.fillText('k  spring',x+sw+6,(top+my)/2); g.fillText('c  dashpot',x+cw/2+6,(cy1+cy2)/2);
+  g.textAlign='center'; g.textBaseline='top'; g.fillStyle=I; g.fillText('Mass–spring system',x,H*0.9);
+  /* right: RLC loop */
+  const l=W*0.58, r=W*0.92, t=H*0.16, b=H*0.78, mx=(l+r)/2, my2=(t+b)/2;
+  g.strokeStyle=I; g.lineWidth=1.6;
+  /* top: capacitor */
+  g.beginPath(); g.moveTo(l,t); g.lineTo(mx-4,t); g.moveTo(mx+4,t); g.lineTo(r,t); g.stroke();
+  g.beginPath(); g.moveTo(mx-4,t-10); g.lineTo(mx-4,t+10); g.moveTo(mx+4,t-10); g.lineTo(mx+4,t+10); g.stroke();
+  /* left: resistor */
+  const rz=(b-t)*0.18; g.beginPath(); g.moveTo(l,t); g.lineTo(l,my2-rz);
+  for(let i=0;i<6;i++) g.lineTo(l+(i%2?-6:6), my2-rz+(i+0.5)*(2*rz/6)); g.lineTo(l,my2+rz); g.lineTo(l,b); g.stroke();
+  /* right: inductor */
+  g.beginPath(); g.moveTo(r,t); g.lineTo(r,my2-rz); g.stroke();
+  for(let i=0;i<4;i++){g.beginPath(); g.arc(r,my2-rz+(i+0.5)*(rz/2),rz/4,-PI/2,PI/2); g.stroke();}
+  g.beginPath(); g.moveTo(r,my2+rz); g.lineTo(r,b); g.stroke();
+  /* bottom: source */
+  const sr=9; g.beginPath(); g.moveTo(l,b); g.lineTo(mx-sr,b); g.moveTo(mx+sr,b); g.lineTo(r,b); g.stroke();
+  g.beginPath(); g.arc(mx,b,sr,0,7); g.stroke();
+  g.beginPath(); g.moveTo(mx-5,b); g.quadraticCurveTo(mx-2.5,b-5,mx,b); g.quadraticCurveTo(mx+2.5,b+5,mx+5,b); g.stroke();
+  g.fillStyle=M; g.textAlign='center'; g.textBaseline='bottom'; g.fillText('C',mx,t-12);
+  g.textAlign='right'; g.textBaseline='middle'; g.fillText('R',l-10,my2);
+  g.textAlign='left'; g.fillText('L',r+rz/4+6,my2);
+  g.textAlign='center'; g.textBaseline='top'; g.fillText('E(t)',mx,b+12);
+  g.fillStyle=I; g.fillText('RLC circuit',mx,H*0.9);
+}
+redraws.push(drawDash);
+
+/* --- Cauchy–Euler --- */
+function drawCE(){
+  const s=$('fce-s').value, A=css('--accent'), R=css('--c2');
+  if(s==='d'){
+    plot($('fce'),{xmin:0,xmax:4,ymin:-1,ymax:6,xstep:1,ystep:1,curves:[{f:x=>x*x,color:A},{f:x=>1/x,color:R,from:0.05}]});
+    leg('fce-leg',[['--accent','y₁ = x²'],['--c2','y₂ = 1/x']]);
+    $('fce-out').innerHTML='m(m−1) − 2 = 0 ⇒ m = <b>2, −1</b>: y = C₁x² + C₂/x';
+  } else if(s==='r'){
+    plot($('fce'),{xmin:0,xmax:4,ymin:-1,ymax:6,xstep:1,ystep:1,curves:[{f:x=>x,color:A},{f:x=>x*Math.log(x),color:R,from:0.001}],pts:[{x:1,y:0,color:R,label:'x ln x = 0 at x = 1'}]});
+    leg('fce-leg',[['--accent','y₁ = x'],['--c2','y₂ = x ln x']]);
+    $('fce-out').innerHTML='m(m−1) − m + 1 = (m−1)² = 0 ⇒ m = <b>1, 1</b>: y = (C₁ + C₂ ln x)x';
+  } else {
+    plot($('fce'),{xmin:0,xmax:10,ymin:-1.5,ymax:1.5,xstep:1,ystep:0.5,curves:[{f:x=>Math.cos(Math.log(x)),color:A,from:1e-4,n:6000},{f:x=>Math.sin(Math.log(x)),color:R,from:1e-4,n:6000}]});
+    leg('fce-leg',[['--accent','y₁ = cos(ln x)'],['--c2','y₂ = sin(ln x)']]);
+    $('fce-out').innerHTML='m(m−1) + m + 1 = m² + 1 = 0 ⇒ m = <b>±i</b> (a = 0, b = 1): y = A cos(ln x) + B sin(ln x)';
+  }
+}
+$('fce-s').addEventListener('input',drawCE); redraws.push(drawCE);
+
+const all=()=>redraws.forEach(f=>{try{f();}catch(e){}});
+all();
+let t; window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(all,120);});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);}catch(e){}
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+<script>
+/* MATH1851 bundle links: fills hrefs for a.note[data-note] and a.guide[data-guide], links "Lx guide" mentions, adds an index link on guide pages. */
+(function(){
+var B="",N={"L1": "note-L1.html", "L2": "note-L2.html", "L3": "note-L3.html", "L4": "note-L4.html", "L5": "note-L5.html", "L6": "note-L6.html", "L7": "note-L7.html", "L8": "note-L8.html", "L9": "note-L9.html", "L10": "note-L10.html", "L11": "note-L11.html", "L12": "note-L12.html", "L13": "note-L13.html", "L14": "note-L14.html", "L15": "note-L15.html", "L16": "note-L16.html", "L17": "note-L17.html", "O1": "note-O1.html", "O2": "note-O2.html", "O3": "note-O3.html", "O4": "note-O4.html", "LT": "note-LT.html"},G={"L1": "guide-L1.html", "L2": "guide-L2.html", "L3": "guide-L3.html", "L4": "guide-L4.html", "L5": "guide-L5.html", "L6": "guide-L6.html", "L7": "guide-L7.html", "L8": "guide-L8.html", "L9": "guide-L9.html", "L10": "guide-L10.html", "L12": "guide-L12.html", "L13": "guide-L13.html", "L14": "guide-L14.html", "L15": "guide-L15.html", "L16": "guide-L16.html", "L17": "guide-L17.html", "O1": "guide-O1.html", "O2": "guide-O2.html", "O3": "guide-O3.html", "O4": "guide-O4.html", "LT": "guide-LT.html"},M={"LT#forward|forward transforms and shifts": "LT#s4", "LT#partial-fractions|partial fractions": "LT#s10", "LT#second-shift|second shift and the step function": "LT#s5", "LT#repeated-factors|repeated factors and the first shift": "LT#s10", "LT#convolution|convolution": "LT#s6", "LT#s5|solving ODEs by Laplace": "LT#s12", "LT#s6|convolution and integral equations": "LT#s11", "L1#s4|limit laws": "L1#s5", "L1#s5|direct substitution": "L1#s6", "L1#s6|removing the 0/0 by algebra": "L1#s7", "L1#s7|one-sided limits": "L1#s3", "L1#s8|absolute values and piecewise functions": "L1#s3", "L2#s2|the Sandwich Theorem": "L2#s1", "L2#s3|x sin(1/x) and other examples": "L2#s2", "L2#s4|the limit sin x / x": "L2#s3", "L1#s5|one-sided limits": "L1#s3", "L3#s2|infinite limits": "L3#s1", "L3#s3|limits at infinity": "L3#s2", "L1#s6|conjugates": "L1#s7", "L3#s4|asymptotes": "L3#s5", "L9#s3|asymptotes in curve sketching": "L9#s8", "L4#s2|continuity at a point": "L4#s1", "L4#s4|continuity of combinations": "L4#s5", "L4#s3|one-sided limits and continuity": "L4#s1", "L4#s5|limits of composite functions": "L4#s7", "L4#s6|types of discontinuity": "L4#s3", "L4#s7|the Intermediate Value Theorem": "L4#s8", "L5#s2|definition of the derivative": "L5#s3", "L5#s3|one-sided derivatives": "L5#s5", "L5#s4|differentiable implies continuous": "L5#s6", "L6#s2|product and quotient rules": "L6#s2", "L6#s4|chain rule": "L6#s5", "L6#s5|implicit differentiation": "L6#s6", "L6#s6|tangent lines": "L5#s2", "L7#s5|logarithmic differentiation": "L7#s4", "L7#s4|derivatives of ln and exp": "L7#s3", "L7#s4|derivatives of exp, ln and aˣ": "L7#s3", "L7#s6|derivatives of inverse trig functions": "L7#s6", "L7#s2|derivative of an inverse function": "L7#s2", "L7#s1|one-to-one functions and inverses": "L7#s1", "L7#s5|graphs and limits of eˣ and ln x": "L7#s3", "L4#s2|continuity of composite functions": "L4#s6", "L8#s2|absolute extrema and the Extreme Value Theorem": "L8#s3", "L8#s3|critical points": "L8#s4", "L8#s4|Rolle's Theorem": "L8#s6", "L8#s5|the Mean Value Theorem": "L8#s7", "L8#s6|counting roots with Rolle's Theorem": "L8#s9", "L4#s5|the Intermediate Value Theorem": "L4#s8", "L8#s7|consequences of the MVT": "L8#s8", "L9#s2|increasing, decreasing and the first derivative test": "L9#s2", "L9#s3|concavity and inflection points": "L9#s7", "L9#s5|curve sketching checklist": "L9#s8", "L9#s2|sign of f′ and monotonicity": "L9#s1", "L9#s3|concavity from f′": "L9#s4", "L12#s4|area functions": "L12#s7", "L9#s5|curve sketching from f′ and f″": "L9#s9", "L9#s6|applied optimisation": "L9#s3", "L8#s2|absolute extrema on an interval": "L8#s5", "L9#s3|what f′ and f″ say about a graph": "L9#s4", "L10#s3|L'Hôpital's Rule": "L10#s3", "L10#s2|classifying forms": "L10#s2", "L10#s4|∞ − ∞ forms": "L10#s5", "L10#s5|0 · ∞ forms": "L10#s5", "L10#s6|indeterminate powers": "L10#s6", "L10#s7|L'Hôpital with an unknown function": "L10#s3", "L10#s8|L'Hôpital at a join": "L10#s3", "L4#s2|continuity": "L4#s1", "L5#s2|derivative by definition": "L5#s3", "L12#s4|FTC Part I": "L12#s7", "L6#s5|chain rule": "L6#s5", "L12#s2|Riemann sums and the definite integral": "L12#s1", "L11#s5|sigma notation and area": "L11#s6", "L12#s5|the area function": "L12#s7", "L12#s4|the Fundamental Theorem of Calculus": "L12#s7", "L12#s6|average value": "L12#s6", "L13#s2|substitution": "L13#s2", "L13#s3|substitution in definite integrals": "L13#s5", "L13#s4|integration by parts": "L13#s7", "L13#s5|repeated parts, ln and inverse trig": "L13#s8", "L13#s6|by parts with an unknown function": "L13#s7", "L13#s7|reduction formulas": "L13#s8", "L13#s8|the x → a − x substitution": "L13#s5", "L14#s2|partial fractions": "L14#s5", "L14#s3|repeated and quadratic factors": "L14#s5", "L14#s4|trig integrals": "L14#s3", "L14#s5|trig substitution": "L14#s4", "L15#s2|parametric curves": "L15#s1", "L15#s3|slope of a parametric curve": "L15#s3", "L15#s4|polar coordinates": "L15#s5", "L15#s5|sketching polar curves and symmetry": "L15#s7", "L15#s6|slope of a polar curve": "L15#s8", "L16#s1|area between curves": "L16#s1", "L16#s2|discs and washers": "L16#s4", "L16#s3|cylindrical shells": "L16#s5", "L16#s4|choosing discs or shells": "L16#s6", "L16#s5|volume by slicing": "L16#s3", "L17#s2|arc length": "L17#s2", "L17#s3|parametric and polar length": "L17#s3", "L14#s4|trig substitution": "L14#s4", "L17#s4|surface area": "L17#s6", "L16#s3|solids of revolution": "L16#s4", "O1#separable|separable equations": "O1#s6", "O1#linear|linear equations and the integrating factor": "O1#s5", "O1#exact|exact equations": "O1#s8", "O2#homogeneous|homogeneous equations": "O2#s5", "O2#bernoulli|Bernoulli equations": "O2#s1", "O2#riccati|Riccati equations": "O2#s2", "O2#shift|shift substitution": "O2#s6", "O2#reduction|reduction of order": "O2#s7", "O3#roots|root cases": "O3#s4", "O3#constant|constant coefficients": "O3#s3", "O3#higher|higher-order equations": "O3#s7", "O3#euler|Cauchy–Euler": "O3#s10", "O4#s2|undetermined coefficients": "O4#s2", "O4#s3|when the trial clashes": "O4#s3", "O4#s4|initial value problems": "O4#s4", "O4#variation-of-parameters|variation of parameters": "O4#s6", "O4#vop-cauchy-euler|VoP for Cauchy–Euler": "O4#s7", "O3#cauchy-euler|Cauchy–Euler homogeneous": "O3#s10", "O4#d-operator|D-operator method": "O4#s5"},IDX="index.html#part2";
+function ext(a,u){a.href=u;}
+function go(){
+  var h=document.querySelector("nav.toc .h"),m0=h&&/Exam guide\s*·\s*([A-Z0-9]+)/i.exec(h.textContent),self=m0?m0[1].toUpperCase():null,isGuide=!!(h&&/Exam guide/i.test(h.textContent));
+  document.querySelectorAll("a.note[data-note]").forEach(function(a){
+    var k=a.getAttribute("data-note"),t=a.textContent.replace(/\s+/g," ").replace(/^\s*Chapter note\s*·?\s*/,"").trim();
+    var v=M[k+"|"+t]||k,p=v.split("#"),c=p[0];
+    if(!N[c])return;
+    ext(a,B+N[c]+(p[1]&&p[1]!=="top"?"#"+p[1]:""));
+  });
+  document.querySelectorAll("a.guide[data-guide]").forEach(function(a){
+    var g=a.getAttribute("data-guide"),h=g.indexOf("#")>=0,c=h?g.split("#")[0]:g.split(".")[0],f=h?g.split("#")[1]:g.replace(".","");
+    if(!G[c])return;
+    ext(a,B+G[c]+"#"+f);
+  });
+  if(!isGuide)return;
+  var main=document.querySelector("main");
+  if(!main)return;
+  var top=main.querySelector("header.top");
+  if(top&&IDX&&self!=="INDEX"){var p=document.createElement("p");p.className="muted";var a=document.createElement("a");ext(a,B+IDX);a.textContent="← All exam-guide pages and the exam format";p.appendChild(a);top.appendChild(p);}
+  var re=/\b(L1[0-7]|L[1-9]|O[1-4]|LT) guide\b/g,skip={A:1,SCRIPT:1,STYLE:1,H1:1,H2:1,CODE:1,"MJX-CONTAINER":1,SUMMARY:1};
+  var w=document.createTreeWalker(main,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    for(var e=n.parentNode;e&&e!==main;e=e.parentNode){if(skip[e.nodeName])return NodeFilter.FILTER_REJECT;}
+    re.lastIndex=0;return re.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP;}});
+  var list=[],n;while((n=w.nextNode()))list.push(n);
+  list.forEach(function(n){
+    var s=n.nodeValue,f=document.createDocumentFragment(),last=0,m;re.lastIndex=0;
+    while((m=re.exec(s))){
+      var c=m[1];if(c===self||!G[c])continue;
+      f.appendChild(document.createTextNode(s.slice(last,m.index)));
+      var a=document.createElement("a");ext(a,B+G[c]);a.textContent=m[0];f.appendChild(a);last=m.index+m[0].length;
+    }
+    if(last===0)return;
+    f.appendChild(document.createTextNode(s.slice(last)));n.parentNode.replaceChild(f,n);
+  });
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
+})();
+</script>
+</html>

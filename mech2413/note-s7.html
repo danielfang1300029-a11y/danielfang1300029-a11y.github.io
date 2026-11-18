@@ -1,0 +1,1029 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH2413 S7 · Thin-Walled Pressure Vessels</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH2413 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Statics · S7</p>
+  <ol>
+    <li><a href="#s0">0 · Where this sits</a></li>
+    <li><a href="#s1">1 · What a thin-walled vessel is</a></li>
+    <li><a href="#s2">2 · Cylinder: hoop and longitudinal stress</a></li>
+    <li><a href="#s3">3 · Which radius? How does it burst?</a></li>
+    <li><a href="#s4">4 · Spheres and end caps</a></li>
+    <li><a href="#s5">5 · Maximum shear stress</a></li>
+    <li><a href="#s6">6 · Strains and change in size</a></li>
+    <li><a href="#s7">7 · Stress on a weld</a></li>
+    <li><a href="#s8">8 · Where the cap meets the cylinder</a></li>
+    <li><a href="#s9">9 · Bolts, rivets and joints</a></li>
+    <li><a href="#s10">10 · Composite and shrink-fit cylinders</a></li>
+    <li><a href="#s11">11 · Summary</a></li>
+    <li><a href="#s12">12 · Common mistakes</a></li>
+    <li><a href="#s13">13 · Find the mistake</a></li>
+    <li><a href="#s14">14 · Concept checks</a></li>
+    <li><a href="#s15">15 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-S7.html">Exam guide · S7</a><a href="note-S6.html">← S6</a><a href="note-D1.html">Next: D1 →</a></nav>
+  <span class="course">MECH2413 · Engineering Mechanics · Statics chapter 7</span>
+  <h1>Thin-Walled Pressure Vessels</h1>
+  <p class="lede">Tanks, pipes, boilers and gas bottles: how internal pressure stretches their walls. This chapter derives the hoop, longitudinal and sphere stresses from free-body diagrams, finds the maximum shear stress, the change in diameter and volume, the stresses on a helical weld, the forces on bolts and rivets that hold the ends on, and the stresses in a two-layer (composite) tube. There is <b>no handout</b> for this topic, so the whole note is built from the past papers and standard textbooks. It is one of the most heavily examined chapters in Section A (24 question parts since 2013), and the questions are very predictable.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<div class="beyond box"><span class="tag">Beyond the handouts · whole chapter</span>
+<p>The statics contents list (S1 handout, slide 6) names topic 7, <i>thin-walled pressure vessels</i>, but no slides were issued for it. Everything on this page is written from the standard textbooks: Beer, Johnston &amp; DeWolf, <i>Mechanics of Materials</i> (ch. 7, "Stresses in thin-walled pressure vessels"); Hibbeler, <i>Mechanics of Materials</i> (ch. 8, "Combined loadings: thin-walled pressure vessels"); Gere &amp; Goodno, <i>Mechanics of Materials</i> (ch. 8, "Applications of plane stress"); plus Pytel &amp; Singer, <i>Strength of Materials</i>, for bolted and riveted joints. The past papers set every question in the style of these books, so this is exactly what you need.</p></div>
+<p>This chapter is where the earlier statics tools come together:</p>
+<ul class="list">
+<li><b>Free-body diagrams and equilibrium</b> (<a href="note-S1.html">S1</a>): every vessel formula comes from cutting the vessel in half and balancing forces.</li>
+<li><b>Stress, Hooke's law and Mohr's circle</b> (<a href="note-S3.html">S3</a>): the wall is in a two-dimensional stress state, so S3's 2D Hooke's law gives the strains and Mohr's circle gives the stresses on a weld or the maximum shear.</li>
+</ul>
+<div class="box conv"><span class="tag">Sign convention for this chapter</span>
+<ul class="list">
+<li><b>Tension is positive</b>, compression negative (as in S3). Internal pressure makes every wall stress in this chapter a tension.</li>
+<li>Directions in the wall: <b>hoop</b> (also called circumferential, \(\theta\)) goes round the vessel; <b>longitudinal</b> (also called axial, \(x\)) runs along the vessel's axis; <b>radial</b> (\(r\)) points through the wall thickness.</li>
+<li>\(p\) is the <b>gauge pressure</b>: inside pressure minus outside (atmospheric) pressure.</li>
+<li>Angles of an inclined plane (a weld) are measured from the <b>transverse plane</b> (a plane cutting straight across the vessel), as the past papers do. On Mohr's circle a rotation of \(\beta\) on the element is \(2\beta\) on the circle, in the same sense.</li>
+</ul></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>What a thin-walled pressure vessel is</h2>
+<div class="box def"><span class="tag">Definition · pressure vessel</span>
+<p>A <b>pressure vessel</b> is a closed container that holds a gas or liquid at a pressure different from the pressure outside: a compressed-air tank, a boiler, a gas cylinder, a water main, a submarine hull (pressure outside), an aerosol can, a balloon.</p></div>
+<div class="box def"><span class="tag">Definition · thin-walled</span>
+<p>A vessel is <b>thin-walled</b> when its wall thickness \(t\) is small compared with its radius \(r\). The usual rule (Hibbeler, Gere) is</p>
+\[\frac rt\ge10\qquad\left(\text{equivalently } t\le\tfrac{r}{10}\right).\]
+<p class="word"><b>In words:</b> the radius is at least ten times the wall thickness. Then the stress hardly changes across the thickness (it stays within about 5% of its average value), so we may treat it as <b>uniform</b> through the wall.</p></div>
+<p>Example: a gas cylinder of inner diameter 300 mm with a 6 mm wall has \(r/t=150/6=25\ge10\): thin-walled. A hydraulic cylinder of bore 50 mm with a 10 mm wall has \(r/t=2.5\): thick-walled (needs Lamé's equations, not in this course).</p>
+<div id="fig-s1"></div>
+<div class="box def"><span class="tag">Definition · membrane stresses</span>
+<p>Because the wall is thin it cannot resist bending well; like a balloon skin or a soap film, it carries the pressure by <b>stretching</b> in its own plane. The resulting in-plane stresses are called <b>membrane stresses</b>. In a cylinder there are two: the <b>hoop stress</b> \(\sigma_h\) (also written \(\sigma_1\), \(\sigma_\theta\), \(\sigma_\varphi\)) and the <b>longitudinal stress</b> \(\sigma_l\) (also \(\sigma_2\), \(\sigma_x\), \(\sigma_a\)). Because of the symmetry, there is <b>no shear stress</b> on planes along and across the vessel, so these two are <b>principal stresses</b> (S3).</p></div>
+<p class="word"><b>Analogy:</b> blow up a long sausage-shaped balloon. It always splits <b>along</b> its length, never round its middle: the stress round the balloon (hoop) is twice the stress along it. Section 2 shows why.</p>
+<div class="box def"><span class="tag">Definition · radial stress</span>
+<p>The third normal stress, through the wall, is the <b>radial stress</b> \(\sigma_r\). It equals \(-p\) on the inside face (the gas pushes on it) and 0 on the outside face. Since \(p\) is small compared with \(\sigma_h=pr/t\) (it is \(t/r\) times smaller, under 10%), thin-wall theory sets \(\sigma_r\approx0\): the wall is in <b>plane stress</b>.</p></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Cylinder: hoop and longitudinal stress</h2>
+<p>Take a closed cylinder of inner radius \(r\), wall thickness \(t\) and length \(L\), with internal gauge pressure \(p\). Both formulas come from <b>cutting the vessel and balancing forces</b> on one piece (method of sections, S1 Section 2). This derivation is asked directly (May 2019 A2(b), Dec 2015 A3(a), 5 marks each).</p>
+
+<h3>Hoop stress: cut along the length</h3>
+<p>Cut the cylinder by a plane through its axis and keep the top half, together with the gas inside it, over a length \(L\) (away from the ends).</p>
+<div class="pair">
+<div><div id="fig-s2-hoop"></div><p class="sub">Cross-section of the top half: pressure pushes outward on the inner surface; the cut walls pull down with \(\sigma_h\).</p></div>
+<div><div id="fig-s2-hoop2"></div><p class="sub">Easier free body: half-cylinder <b>plus the gas</b> in it. The gas on the cut plane pushes up on area \(2r\times L\).</p></div>
+</div>
+<ol class="steps">
+<li><b>Forces up.</b> The pressure acts on every bit of the curved inner surface, normal to it. Easiest: include the gas in the free body. Then the only pressure force is on the flat cut through the gas, a rectangle \(2r\) wide and \(L\) long:
+\[F_p=p\,(2rL).\]</li>
+<li><b>Forces down.</b> The wall is cut in two places (left and right), each a strip of area \(tL\), each pulled by the hoop stress:
+\[F_w=2\,\sigma_h\,(tL).\]</li>
+<li><b>Equilibrium</b> \(\sum F_y=0\): \(2\sigma_htL=2prL\), so</li>
+</ol>
+<div class="box thm"><span class="tag">Result · hoop (circumferential) stress</span>
+\[\sigma_h=\frac{pr}{t}\]
+<p class="word"><b>In words:</b> hoop stress = pressure × radius ÷ wall thickness. Bigger vessel or higher pressure → more stress; thicker wall → less.</p></div>
+<div class="box eg"><span class="tag">Same result by integration · for the derivation question</span>
+<p>Without the gas trick: a small strip of the inner surface at angle \(\theta\) (measured from the horizontal) has area \(r\,\mathrm d\theta\,L\) and carries force \(p\,r\,\mathrm d\theta\,L\) normal to the wall. Its vertical part is \(p\,rL\sin\theta\,\mathrm d\theta\). Adding over the half circle:</p>
+\[\begin{aligned}F_p&=\int_0^{\pi}p\,rL\sin\theta\,\mathrm d\theta\\ &=prL\big[-\cos\theta\big]_0^{\pi}=2prL.\end{aligned}\]
+<p>The horizontal parts cancel in pairs (left and right). Same \(F_p\), same \(\sigma_h\). <b>General rule:</b> the net force of a pressure on a curved surface, in any direction, equals the pressure times the surface's <b>projected area</b> on a plane perpendicular to that direction.</p></div>
+
+<h3>Longitudinal stress: cut across</h3>
+<p>Now cut the cylinder by a transverse plane (straight across) and keep the left end, with its cap and the gas.</p>
+<div id="fig-s2-long"></div>
+<ol class="steps">
+<li><b>Pressure force</b> on the gas cross-section (a circle of radius \(r\)), pushing the cap to the left:
+\[F_p=p\,(\pi r^2).\]</li>
+<li><b>Wall force</b>: the cut wall is a thin ring of circumference \(2\pi r\) and thickness \(t\), area \(\approx2\pi rt\), pulled to the right by \(\sigma_l\):
+\[F_w=\sigma_l\,(2\pi rt).\]</li>
+<li><b>Equilibrium</b> \(\sum F_x=0\): \(\sigma_l\,2\pi rt=p\,\pi r^2\), so</li>
+</ol>
+<div class="box thm"><span class="tag">Result · longitudinal (axial) stress</span>
+\[\sigma_l=\frac{pr}{2t}=\tfrac12\sigma_h\]
+<p class="word"><b>In words:</b> the stress along a closed cylinder is half the stress round it. The pressure has a circle (\(\pi r^2\)) to push on along the axis, but a whole diametral rectangle (\(2rL\)) to push on sideways, while the wall area resisting is \(2\pi rt\) one way and only \(2tL\) the other.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · where the approximation comes in</span>
+<p>The ring's exact area is \(\pi[(r+t)^2-r^2]=2\pi rt+\pi t^2\). Using it gives \(\sigma_l=\dfrac{pr^2}{(r+t)^2-r^2}\), which tends to \(pr/2t\) as \(t/r\to0\). For \(r/t=10\) the difference is under 5%.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>\(\sigma_l=pr/2t\) needs the ends to be <b>closed</b> and the pressure on the end caps to be carried by the cylinder wall. If the ends are free to slide on seals (Dec 2017 A3(b), a pipe with O-ring end plates, or a long pipeline anchored externally), the wall carries no end thrust and \(\sigma_l=0\). Read the question.</p></div>
+
+<div class="box eg"><span class="tag">Worked example · written for these notes · gas cylinder</span>
+<p>A gas cylinder has inner diameter 300 mm, wall 6 mm, and gauge pressure 2 MPa. Find the wall stresses.</p>
+<ol class="steps">
+<li><b>Thin?</b> \(r/t=150/6=25\ge10\) ✓.</li>
+<li>\(\sigma_h=\dfrac{pr}{t}=\dfrac{2\u{MPa}\times150\u{mm}}{6\u{mm}}=50\u{MPa}\).</li>
+<li>\(\sigma_l=\dfrac{pr}{2t}=25\u{MPa}\).</li>
+<li><b>Units:</b> MPa × mm ÷ mm = MPa ✓. (1 MPa = 1 N/mm², a convenient unit when lengths are in mm.)</li>
+</ol>
+<p>\(\boxed{\sigma_h=50\u{MPa},\quad\sigma_l=25\u{MPa}\ \ (\text{both tension})}\)</p></div>
+<div class="box ready"><span class="tag">Ready answer · design for thickness</span>
+<p>Given an allowable stress \(\sigma_{\rm allow}\), the hoop stress governs (it is the larger), so \(t\ge\dfrac{pr}{\sigma_{\rm allow}}\). Example: \(p=1.5\u{MPa}\), \(r=1000\u{mm}\), \(\sigma_{\rm allow}=120\u{MPa}\) gives \(t\ge12.5\u{mm}\).</p></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Which radius? How does it burst?</h2>
+<h3>Inner, mean or outer radius?</h3>
+<p>The derivation used the <b>inner</b> radius for the pressure area, and treated the wall area as \(2\pi rt\). For a thin wall the difference between radii is small, and papers say which to use: "mean radius 400 mm" (May 2014), "average diameter 400 mm" (Dec 2017), "outside diameter 500 mm, wall 10 mm" (Dec 2014: inner radius \(=250-10=240\u{mm}\), mean 245 mm). Rules:</p>
+<ul class="list">
+<li>If the paper gives one radius and says "thin wall", use it as given.</li>
+<li>If it gives an outside diameter \(D_o\), the inner radius is \(r_i=D_o/2-t\) and the mean radius \(r_m=D_o/2-t/2\). Gere uses \(r_i\) (conservative for stress, slightly larger); Beer and Hibbeler use \(r_i\) in the formula derivation. State which you use.</li>
+<li>Example: with inner \(r=150\u{mm}\) the gas cylinder above had \(\sigma_h=50\u{MPa}\); with mean \(r=153\u{mm}\) it is 51 MPa, only 2% more.</li>
+</ul>
+
+<h3>How a cylinder bursts</h3>
+<p>Since \(\sigma_h=2\sigma_l\), a cylinder overloaded by internal pressure fails first in the hoop direction. The crack opens <b>perpendicular to the hoop stress</b>, so it runs <b>along the length</b> (a longitudinal split), often with a "fish-mouth" opening. This is asked in Dec 2014 A2(c).</p>
+<div id="fig-s3-burst"></div>
+<div class="box ready"><span class="tag">Ready answer · "sketch the fracture" (Dec 2014 A2(c))</span>
+<p>Draw a cylinder with a crack running <b>parallel to the axis</b>. Reason: the hoop stress \(pr/t\) is twice the longitudinal stress, so it reaches the material's strength first, and a crack opens at right angles to the largest tensile stress. (Same reason a sausage splits lengthwise in the pan.)</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Spheres and end caps</h2>
+<p>For a sphere of inner radius \(r\) and wall \(t\), <b>every</b> plane through the centre cuts it the same way. Cut it in half and keep one hemisphere with its gas (asked as a derivation in Dec 2021 A3(a)).</p>
+<div id="fig-s4"></div>
+<ol class="steps">
+<li>Pressure force on the flat gas face: \(F_p=p\,\pi r^2\).</li>
+<li>Wall force on the cut ring: \(F_w=\sigma\,2\pi rt\).</li>
+<li>Equilibrium: \(\sigma\,2\pi rt=p\pi r^2\).</li>
+</ol>
+<div class="box thm"><span class="tag">Result · sphere</span>
+\[\sigma_1=\sigma_2=\frac{pr}{2t}\]
+<p class="word"><b>In words:</b> a sphere carries pressure equally in every direction in its wall, at half the hoop stress of a cylinder of the same radius and thickness. (The figure in Dec 2021 calls these \(\sigma_\varphi\) and \(\sigma_t\); they are equal.)</p></div>
+<div class="box eg"><span class="tag">Worked example · written for these notes · sphere versus cylinder</span>
+<p>A tank of radius 5 m must hold 0.5 MPa with allowable stress 100 MPa. Compare the wall needed for a sphere and a cylinder.</p>
+\[\begin{aligned}\text{sphere: } t&=\frac{pr}{2\sigma_{\rm allow}}=\frac{0.5(5000)}{2(100)}\\ &=12.5\u{mm},\\ \text{cylinder: } t&=\frac{pr}{\sigma_{\rm allow}}=25\u{mm}.\end{aligned}\]
+<p>\(\boxed{\text{the sphere needs half the thickness}}\). That is why large gas-storage tanks are spheres, and why cylinders get rounded (hemispherical or dished) ends. Spheres are harder to make, need more floor space per volume, and are awkward to transport, so cylinders are still more common.</p></div>
+<div class="box def"><span class="tag">Definition · end caps</span>
+<p>A cylinder's ends are closed by <b>end caps</b> (heads): flat plates (which must be thick, because a flat plate carries pressure by bending, not stretching), dished heads, or <b>hemispherical caps</b>. A hemispherical cap is half a sphere, so its membrane stress is \(pr/(2t_{\rm cap})\) in every direction.</p></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Maximum shear stress: in-plane and absolute</h2>
+<p>Ductile metals yield in shear (Tresca criterion, Beer ch. 7), so exams ask for \(\tau_{\max}\) (Dec 2015, Dec 2021, May 2019, Dec 2022). The wall element has three principal stresses: \(\sigma_h\), \(\sigma_l\), and \(\sigma_r\approx0\). Recall from <a href="note-S3.html">S3</a>: on Mohr's circle, the maximum shear between two principal stresses \(\sigma_a\), \(\sigma_b\) is the circle's radius \(\tfrac12|\sigma_a-\sigma_b|\), on planes at \(45^\circ\) to both.</p>
+<div class="box def"><span class="tag">Definitions · in-plane and out-of-plane shear</span>
+<ul class="list">
+<li><b>In-plane maximum shear</b>: the largest shear on planes you get by rotating the element <b>within the wall surface</b> (about the radial axis). Uses only \(\sigma_h\) and \(\sigma_l\).</li>
+<li><b>Out-of-plane</b> (absolute) <b>maximum shear</b>: the largest shear on <b>any</b> plane, including planes tilted through the thickness (rotating about the hoop or longitudinal axis). Uses the largest and smallest of all three principal stresses.</li>
+</ul></div>
+<div class="figure"><p class="ttl">The three Mohr's circles for a cylinder wall (\(\sigma_r=0\)), in units of \(pr/t\)</p>
+<canvas class="plot" id="cv-s5" style="height:240px"></canvas>
+<div class="ctrl"><label>vessel <select id="s5sel"><option value="c">cylinder</option><option value="s">sphere</option></select></label></div>
+<div class="readout" id="s5-out"></div>
+<p class="cap">Each pair of principal stresses gives a circle. The biggest circle (from 0 to \(\sigma_h\)) gives the absolute maximum shear; the small one between \(\sigma_l\) and \(\sigma_h\) gives the in-plane maximum. For a sphere the in-plane circle shrinks to a point.</p></div>
+<div class="box thm"><span class="tag">Results · maximum shear (thin wall, \(\sigma_r=0\))</span>
+<div class="scroll"><table>
+<tr><th></th><th>in-plane \(\tau_{\max}\)</th><th>absolute \(\tau_{\max}\)</th></tr>
+<tr><td>cylinder</td><td>\(\dfrac{\sigma_h-\sigma_l}{2}=\dfrac{pr}{4t}\)</td><td>\(\dfrac{\sigma_h-0}{2}=\dfrac{pr}{2t}\)</td></tr>
+<tr><td>sphere</td><td>\(0\)</td><td>\(\dfrac{\sigma-0}{2}=\dfrac{pr}{4t}\)</td></tr>
+</table></div>
+<p class="word"><b>In words:</b> in a cylinder, the biggest shear within the wall is a quarter of \(pr/t\), on planes at \(45^\circ\) between the hoop and longitudinal directions; but the biggest shear of all is half of \(pr/t\), on planes at \(45^\circ\) through the thickness. In a sphere every in-plane direction is the same, so there is no in-plane shear at all.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>When a question says just "maximum shear stress", give <b>both</b> and say which is which (marks are often split this way, e.g. Dec 2021 A3(a)(ii)–(iii)). If it says "neglecting the radial stress", use \(\sigma_r=0\).</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · including the radial stress</span>
+<p>At the <b>inner</b> surface \(\sigma_r=-p\). Then the absolute maximum shear in a cylinder is \(\tfrac12(\sigma_h+p)=\tfrac p2\left(\tfrac rt+1\right)\), slightly larger (Gere §8.3). Only use this if asked.</p></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Strains and the change in size</h2>
+<p>The most common exam question (Dec 2023, Dec 2022, Dec 2018, Dec 2014, May 2014): find the stresses, then the strains, then how much the diameter grows. The wall is in plane stress with principal stresses \(\sigma_h\) and \(\sigma_l\), so the <b>2D Hooke's law</b> of <a href="note-S3.html">S3</a> applies.</p>
+<div class="box def"><span class="tag">Reminder · Young's modulus and Poisson's ratio</span>
+<p><b>Young's modulus</b> \(E\) is the stiffness of the material: stress divided by strain in a simple pull. <b>Poisson's ratio</b> \(\nu\) says how much a material gets thinner sideways when stretched: lateral strain \(=-\nu\times\) axial strain. Steel: \(E\approx200\u{GPa}\), \(\nu\approx0.3\) (papers often use 0.25).</p></div>
+<div class="box thm"><span class="tag">Result · hoop and longitudinal strain</span>
+\[\begin{aligned}\varepsilon_h&=\frac{1}{E}\left(\sigma_h-\nu\sigma_l\right)=\frac{pr}{2tE}(2-\nu),\\ \varepsilon_l&=\frac{1}{E}\left(\sigma_l-\nu\sigma_h\right)=\frac{pr}{2tE}(1-2\nu).\end{aligned}\]
+<p class="word"><b>In words:</b> each strain is "its own stress over \(E\)", minus Poisson's ratio times "the other stress over \(E\)" (stretching one way makes the material shrink the other way). (\(\sigma_r\approx0\) contributes nothing.)</p></div>
+<h3>From strain to change in size</h3>
+<p>The hoop strain is the stretch of the circumference: \(\varepsilon_h=\dfrac{2\pi(r+\Delta r)-2\pi r}{2\pi r}=\dfrac{\Delta r}{r}\). So the hoop strain is also the strain of the radius and diameter.</p>
+<div class="box thm"><span class="tag">Result · change in diameter, length and volume (cylinder)</span>
+\[\begin{aligned}\Delta d&=\varepsilon_h\,d,\qquad\Delta r=\varepsilon_h\,r,\\ \Delta L&=\varepsilon_l\,L,\\ \frac{\Delta V}{V}&=2\varepsilon_h+\varepsilon_l=\frac{pr}{2tE}(5-4\nu).\end{aligned}\]
+<p class="word"><b>In words:</b> diameter change = hoop strain × diameter; length change = longitudinal strain × length; volume strain = twice the hoop strain plus the longitudinal strain (since \(V=\pi r^2L\), and small changes add: \(\Delta V/V=2\Delta r/r+\Delta L/L\)).</p></div>
+<div class="box thm"><span class="tag">Result · sphere</span>
+\[\begin{aligned}\varepsilon&=\frac{\sigma}{E}(1-\nu)=\frac{pr}{2tE}(1-\nu),\\ \Delta r&=\varepsilon r,\qquad\frac{\Delta V}{V}=3\varepsilon.\end{aligned}\]
+<p class="word"><b>In words:</b> both in-plane stresses are equal, so the Poisson shrinkage from one cancels part of the stretch from the other.</p></div>
+<div class="box eg"><span class="tag">Worked example · written for these notes · steel tank</span>
+<p>A closed steel cylinder: inner radius 1.2 m, wall 12 mm, length 6 m, gauge pressure 1.0 MPa, \(E=200\u{GPa}\), \(\nu=0.3\). Find the stresses, strains, and the changes in diameter, length and volume (ignore the ends' volume change).</p>
+<div id="fig-s6"></div>
+<ol class="steps">
+<li><b>Thin?</b> \(r/t=1200/12=100\) ✓.</li>
+<li>\(\sigma_h=\dfrac{1.0(1200)}{12}=100\u{MPa}\); \(\sigma_l=50\u{MPa}\).</li>
+<li>\(E=200\u{GPa}=200\,000\u{MPa}\) (keep everything in MPa and mm).
+\[\begin{aligned}\varepsilon_h&=\frac{100-0.3(50)}{200\,000}=4.25\times10^{-4},\\ \varepsilon_l&=\frac{50-0.3(100)}{200\,000}=1.0\times10^{-4}.\end{aligned}\]</li>
+<li>\(\Delta d=\varepsilon_hd=4.25\times10^{-4}\times2400\u{mm}=1.02\u{mm}\); \(\Delta L=1.0\times10^{-4}\times6000\u{mm}=0.60\u{mm}\).</li>
+<li>\(V=\pi(1.2)^2(6)=27.14\u{m^3}\); \(\Delta V/V=2(4.25)+1.0=9.5\times10^{-4}\); \(\Delta V=0.0258\u{m^3}\approx25.8\) litres.</li>
+<li><b>Dimension check:</b> \(\Delta d=\dfrac{\text{MPa}}{\text{MPa}}\times\text{mm}\) = mm ✓. <b>Sense check:</b> \(\varepsilon_l\) is small and positive because \(\nu=0.3\lt0.5\): the Poisson shrinkage from the big hoop stress almost cancels the longitudinal stretch.</li>
+</ol>
+<p>\(\boxed{\sigma_h=100,\ \sigma_l=50\u{MPa};\ \Delta d=1.02\u{mm},\ \Delta L=0.60\u{mm},\ \Delta V=0.0258\u{m^3}}\)</p></div>
+<div class="figure"><p class="ttl">Try it · thin-cylinder calculator (closed ends, steel \(E=200\u{GPa}\))</p>
+<div class="ctrl"><label>\(p\) (MPa) <input type="range" id="cp" min="0.2" max="5" step="0.1" value="1"></label>
+<label>\(r\) (mm) <input type="range" id="cr" min="100" max="3000" step="50" value="1200"></label>
+<label>\(t\) (mm) <input type="range" id="ct" min="2" max="40" step="1" value="12"></label>
+<label>\(\nu\) <select id="cnu"><option>0.25</option><option selected>0.3</option></select></label></div>
+<canvas class="plot" id="cv-s6" style="height:200px"></canvas>
+<div class="readout" id="s6-out"></div>
+<p class="cap">Bars: hoop stress, longitudinal stress, in-plane and absolute maximum shear (MPa). Start values are the worked example. Try halving \(t\): every stress doubles.</p></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Stress on a weld or any inclined plane</h2>
+<p>Many vessels are made by rolling a steel strip into a <b>helix</b> (spiral) and welding the seam (Dec 2016 A3(b), May 2014 A3(c)–(d)). The weld is weaker than the plate, so we need the normal stress <b>across</b> the weld and the shear stress <b>along</b> it. This is plane-stress transformation from <a href="note-S3.html">S3</a>, made easy because \(\sigma_h\) and \(\sigma_l\) are already principal (no shear on them).</p>
+<div id="fig-s7"></div>
+<p>Let the weld make angle \(\beta\) with a <b>transverse plane</b> (a plane cutting straight across). Then the <b>normal</b> to the weld makes angle \(\beta\) with the vessel axis. With \(x\) along the axis (\(\sigma_x=\sigma_l\)), \(y\) round the hoop (\(\sigma_y=\sigma_h\)), \(\tau_{xy}=0\), the transformation equations of S3 give:</p>
+<div class="box thm"><span class="tag">Result · stresses on a helical weld</span>
+\[\begin{aligned}\sigma_w&=\sigma_l\cos^2\beta+\sigma_h\sin^2\beta\\ &=\tfrac{\sigma_h+\sigma_l}{2}-\tfrac{\sigma_h-\sigma_l}{2}\cos2\beta,\\ \tau_w&=\tfrac{\sigma_h-\sigma_l}{2}\sin2\beta,\\ \sigma_{\parallel}&=\sigma_h+\sigma_l-\sigma_w.\end{aligned}\]
+<p class="word"><b>In words:</b> the normal stress on the weld blends the axial and hoop stresses (all axial when \(\beta=0\), a circumferential weld; all hoop when \(\beta=90^\circ\), a longitudinal weld). The shear along the weld is the in-plane Mohr radius times \(\sin2\beta\). \(\sigma_\parallel\) is the normal stress <b>along</b> the weld direction (the sum of normal stresses on perpendicular planes is constant).</p></div>
+<h3>With Mohr's circle (what the papers ask you to sketch)</h3>
+<ol class="steps">
+<li>Plot \(L=(\sigma_l,0)\) and \(H=(\sigma_h,0)\) on the \(\sigma\)-axis. The circle has centre \(C=\tfrac12(\sigma_h+\sigma_l)\) and radius \(R=\tfrac12(\sigma_h-\sigma_l)\).</li>
+<li>The axial face (normal along the axis) is point \(L\). The weld face's normal is turned \(\beta\) from the axis, so rotate <b>\(2\beta\)</b> round the circle from \(L\), in the same sense.</li>
+<li>Read off \(\sigma_w=C-R\cos2\beta\) and \(|\tau_w|=R\sin2\beta\). The diametrically opposite point gives the face along the weld: \(\sigma_\parallel=C+R\cos2\beta\).</li>
+</ol>
+<div class="figure"><p class="ttl">Try it · weld angle on Mohr's circle (\(\sigma_h=100\), \(\sigma_l=50\u{MPa}\))</p>
+<div class="ctrl"><label>weld angle \(\beta\) from transverse plane <input type="range" id="wb" min="0" max="90" step="1" value="35"></label></div>
+<div class="pair"><div><canvas class="plot" id="cv-s7" style="height:250px"></canvas></div><div><div id="fig-s7-el"></div></div></div>
+<div class="readout" id="s7-out"></div>
+<p class="cap">Left: Mohr's circle with the axial point \(L\), the hoop point \(H\), and the weld point \(W\) at \(2\beta\) from \(L\). Right: the element aligned with the weld, showing \(\sigma_w\) across it and \(\tau_w\) along it. The shear on the weld is largest at \(\beta=45^\circ\).</p></div>
+<div class="box eg"><span class="tag">Worked example · written for these notes · 35° weld</span>
+<p>The tank of Section 6 (\(\sigma_h=100\), \(\sigma_l=50\u{MPa}\)) is welded along a helix at \(35^\circ\) to a transverse plane. Find the stresses on the weld.</p>
+<ol class="steps">
+<li>\(C=75\u{MPa}\), \(R=25\u{MPa}\), \(2\beta=70^\circ\).</li>
+<li>\(\sigma_w=75-25\cos70^\circ=66.4\u{MPa}\) (check: \(50\cos^235^\circ+100\sin^235^\circ=33.55+32.90=66.45\) ✓).</li>
+<li>\(\tau_w=25\sin70^\circ=23.5\u{MPa}\).</li>
+<li>Along the weld: \(\sigma_\parallel=150-66.4=83.6\u{MPa}\).</li>
+</ol>
+<p>\(\boxed{\sigma_w=66.4\u{MPa}\ \text{(tension across)},\ \ \tau_w=23.5\u{MPa}\ \text{(along the weld)}}\)</p>
+<p class="muted">Direction of \(\tau_w\): on the weld face whose outward normal points (partly) along the \(+\)axis, \(\tau_w\) acts along the weld in the sense that has a component in the \(+\)hoop direction, i.e. towards the larger stress (from the traction \((\sigma_l\cos\beta,\ \sigma_h\sin\beta)\) resolved along the weld). The element in the figure above is drawn this way.</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Where the cap meets the cylinder</h2>
+<p>May 2014 A3(b) asks you to compare the radius increase of hemispherical end caps with that of the cylinder they are welded to. From Section 6:</p>
+\[\begin{aligned}\Delta r_{\rm cyl}&=\frac{pr^2}{2tE}(2-\nu),\\ \Delta r_{\rm cap}&=\frac{pr^2}{2t_{\rm cap}E}(1-\nu).\end{aligned}\]
+<p class="word"><b>In words:</b> with the same thickness, the cylinder grows more than twice as much as the cap. At the joint they must have the same radius, so the joint is forced to bend: local <b>discontinuity stresses</b> (bending stresses) appear near the weld.</p>
+<div id="fig-s8"></div>
+<div class="box thm"><span class="tag">Result · matching expansion</span>
+<p>Setting \(\Delta r_{\rm cap}=\Delta r_{\rm cyl}\) gives the cap thickness that removes the mismatch:</p>
+\[t_{\rm cap}=t\,\frac{1-\nu}{2-\nu}\quad(=0.41\,t\ \text{for}\ \nu=0.3).\]
+<p class="word"><b>In words:</b> a thinner cap stretches more, so making the hemispherical cap about 40% of the cylinder's thickness lets both grow by the same amount. (The price: the thin cap's membrane stress \(\tfrac{pr}{2t_{\rm cap}}=\tfrac{2-\nu}{2(1-\nu)}\,\tfrac{pr}{t}\) is then about \(1.2\,\sigma_h\) for \(\nu=0.3\), higher than anywhere in the cylinder; designers balance the two.)</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · numbers from May 2014</span>
+<p>Mean radius 400 mm, cylinder 10 mm, caps 8 mm, \(p=1.2\u{MPa}\), \(E=200\u{GPa}\), \(\nu=0.3\): cap stress \(30\u{MPa}\), \(\Delta r_{\rm cap}=0.042\u{mm}\); cylinder \(\sigma_h=48\), \(\sigma_l=24\u{MPa}\), \(\Delta r_{\rm cyl}=0.0816\u{mm}\). The cylinder grows almost twice as much; the caps would need about \(0.41\times10=4.1\u{mm}\) to match. Full solution in the exam taster.</p></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Bolts, rivets and joints</h2>
+<p>The ends of a vessel must be held on, and plates must be joined. Four past-paper parts (May 2013, Dec 2014, May 2019) ask how many bolts or rivets are needed, or what pressure a joint can take. All use one idea: <b>the force the pressure puts on a part = pressure × the projected area it acts on</b> (Section 2), and that force must be carried by the fasteners.</p>
+<h3>Bolted end caps</h3>
+<div id="fig-s9-bolt"></div>
+<ol class="steps">
+<li><b>Force on the cap:</b> \(F=p\times\dfrac{\pi}{4}D^2\), with \(D\) the diameter inside the seal (gasket or vessel bore).</li>
+<li><b>Capacity of one bolt:</b> \(F_b=\sigma_{\rm allow}A_b\), with \(A_b\) the bolt's (net) tensile area.</li>
+<li><b>Number of bolts:</b> \(n\ge F/F_b\), <b>rounded up</b> to a whole number (often to a multiple suiting the pattern).</li>
+</ol>
+<div class="box thm"><span class="tag">Result · number of bolts</span>
+\[n\ \ge\ \frac{p\,\tfrac{\pi}{4}D^2}{\sigma_{\rm allow}\,A_b}\]
+<p class="word"><b>In words:</b> total pressure force on the cap ÷ what one bolt can safely carry, rounded up.</p></div>
+<div class="box def"><span class="tag">Definition · bolt pretension (initial tightening)</span>
+<p>Bolts are tightened before the vessel is pressurised, so they already carry an <b>initial stress</b>, and they squeeze the <b>gasket</b> (a soft sealing ring) between the flanges. Why (Dec 2014 A2(c)):</p>
+<ul class="list"><li>to keep the gasket compressed, so the joint stays <b>tight and does not leak</b> when the pressure tries to push the cap off;</li>
+<li>to stop the flanges separating, which would let the full pressure load cycle on and off in the bolts (fatigue) and let the cap knock;</li>
+<li>the pressure then mostly <b>reduces the gasket compression</b> instead of adding all of its load to the bolts.</li></ul>
+<p>In the textbook simplification used in the papers, only the part of the allowable stress <b>not already used</b> by the pretension is available for the pressure load: \(\sigma_{\rm available}=\sigma_{\rm allow}-\sigma_{\rm initial}\).</p></div>
+<div class="box eg"><span class="tag">Worked example · Dec 2014 A2(a) · 5 marks</span>
+<p>Compressed-air tank, gauge pressure 3 MPa, outside diameter 500 mm, wall 10 mm, flat end caps bolted on with a gasket. How many Ø40 mm bolts are needed if the allowable bolt stress is 100 MPa, of which 60 MPa is the initial stress?</p>
+<ol class="steps">
+<li>Inner diameter \(D=500-2(10)=480\u{mm}\). Force on a cap: \(F=3\times\tfrac\pi4(480)^2=542.9\times10^3\u{N}=542.9\u{kN}\).</li>
+<li>Stress available for the pressure: \(100-60=40\u{MPa}\). Bolt area \(\tfrac\pi4(40)^2=1257\u{mm^2}\); one bolt carries \(40\times1257=50.27\u{kN}\).</li>
+<li>\(n\ge542.9/50.27=10.8\).</li>
+</ol>
+<p>\(\boxed{n=11\ \text{bolts}}\) (12 if an even pattern is wanted).</p>
+<p class="flag">"of which 60 MPa is the initial stress" is read in the Pytel–Singer way: the pretension uses 60 MPa, leaving 40 MPa for the pressure. If the full 100 MPa were available, \(n=4.32\to5\).</p></div>
+<h3>Riveted seams</h3>
+<div class="box def"><span class="tag">Definitions · lap joint, pitch, single shear</span>
+<p>In a <b>single-lap joint</b> two plates overlap and are joined by one row of rivets. The <b>pitch</b> \(s\) is the spacing between rivet centres along the seam. Each rivet is cut by one plane between the plates (<b>single shear</b>), so it can carry \(\tau_{\rm allow}\times\tfrac\pi4d^2\).</p></div>
+<div id="fig-s9-rivet"></div>
+<ul class="list">
+<li><b>Longitudinal seam</b> (along the cylinder): it carries the <b>hoop</b> force. One pitch length \(s\) of seam carries \(\sigma_h t s=p\,r\,s\).</li>
+<li><b>Circumferential seam</b> (round the cylinder, e.g. where the end is attached): it carries the <b>longitudinal</b> force, \(\sigma_l t s=\tfrac12p\,r\,s\) per pitch.</li>
+</ul>
+<div class="box thm"><span class="tag">Result · pressure a riveted seam can hold</span>
+\[\begin{aligned}\text{longitudinal seam: }&p\,r\,s=\tau_{\rm allow}\tfrac\pi4d^2,\\ \text{circumferential seam: }&\tfrac12p\,r\,s=\tau_{\rm allow}\tfrac\pi4d^2.\end{aligned}\]
+<p class="word"><b>In words:</b> the wall force arriving in one pitch of seam must be carried by the one rivet in that pitch. Check both seams; the smaller pressure governs.</p></div>
+<div class="box eg"><span class="tag">Worked example · May 2013 A1(b) · 9 marks · older format</span>
+<p>A closed cylindrical steel vessel of 1.8 m diameter, 10 mm sheet, made of two semi-cylinders joined by longitudinal single-lap seams with 12 mm rivets at 36 mm pitch; dished ends attached by circumferential single-lap seams with 8 mm rivets at 30 mm pitch. Rivet shear stress must not exceed 60 MPa. Find the maximum pressure and the resulting wall stresses.</p>
+<ol class="steps">
+<li>\(r=900\u{mm}\) (diameter taken as the thin-wall diameter).</li>
+<li>Longitudinal seam: one rivet \(60\times\tfrac\pi4(12)^2=6786\u{N}\). So \(p(900)(36)=6786\Rightarrow p=0.209\u{MPa}\).</li>
+<li>Circumferential seam: one rivet \(60\times\tfrac\pi4(8)^2=3016\u{N}\). So \(\tfrac12p(900)(30)=3016\Rightarrow p=0.223\u{MPa}\).</li>
+<li>The smaller governs: \(p_{\max}=0.209\u{MPa}\). Then \(\sigma_h=0.209(900)/10=18.8\u{MPa}\), \(\sigma_l=9.42\u{MPa}\).</li>
+</ol>
+<p>\(\boxed{p_{\max}=0.209\u{MPa};\ \ \sigma_h=18.8\u{MPa},\ \ \sigma_l=9.42\u{MPa}}\)</p>
+<p class="muted">The low wall stresses show that the rivets, not the plate, are the weak link: a reason modern vessels are welded.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · joint efficiency</span>
+<p>Codes allow for a weaker seam with a <b>joint efficiency</b> \(\eta\) (0 to 1): \(\sigma_h=\dfrac{pr}{\eta t}\). Example: \(p=1\u{MPa}\), \(r=1000\u{mm}\), \(t=10\u{mm}\), \(\eta=0.8\) gives \(125\u{MPa}\) instead of 100.</p></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Composite and shrink-fit cylinders</h2>
+<p>Dec 2017 A3(b): an aluminium tube is <b>shrunk onto</b> a steel tube (heated so it expands, slid on, then cooled so it grips), and the pair is pressurised. How is the pressure shared?</p>
+<div class="box def"><span class="tag">Definitions · composite cylinder, interface pressure</span>
+<p>A <b>composite cylinder</b> is two (or more) tubes, one tightly inside the other, acting together. The pressure between them is the <b>interface pressure</b> \(\bar p\). It pushes the outer tube outward (hoop tension) and the inner tube inward (it reduces the inner tube's tension).</p></div>
+<div id="fig-s10"></div>
+<p>For two thin tubes of nearly the same radius \(r\), inner tube (material 1, thickness \(t_1\)) and outer tube (material 2, \(t_2\)), internal pressure \(p\), ends free (\(\sigma_l=0\)):</p>
+<ol class="steps">
+<li><b>Equilibrium</b> (cut both tubes along a diameter, as in Section 2): the total hoop force carries the whole pressure,
+\[\sigma_1t_1+\sigma_2t_2=pr.\]</li>
+<li><b>Compatibility</b> (the tubes stay in contact, so their radii grow by the same amount): equal hoop strains. With \(\sigma_l=0\), \(\varepsilon_h=\sigma/E\), so
+\[\frac{\sigma_1}{E_1}=\frac{\sigma_2}{E_2}.\]</li>
+<li>Solve the two equations. Interface pressure from the outer tube alone: \(\sigma_2=\bar p\,r/t_2\).</li>
+</ol>
+<div class="box thm"><span class="tag">Result · sharing the pressure</span>
+\[\begin{aligned}\sigma_1&=\frac{E_1\,pr}{E_1t_1+E_2t_2},\\ \sigma_2&=\frac{E_2\,pr}{E_1t_1+E_2t_2}.\end{aligned}\]
+<p class="word"><b>In words:</b> the tubes share the hoop load in proportion to "stiffness × thickness". The stiffer tube takes more stress, because both must stretch the same amount. This is the same reasoning as a statically indeterminate bar (S1 Section 11): equilibrium alone is not enough, so a deformation condition is added.</p></div>
+<div class="box eg"><span class="tag">Worked example · written for these notes · steel liner in a brass tube</span>
+<p>A steel tube (\(t_1=5\u{mm}\), \(E_1=200\u{GPa}\)) fits tightly inside a brass tube (\(t_2=3\u{mm}\), \(E_2=100\u{GPa}\)); mean radius 250 mm; internal pressure 3 MPa; ends free. Find the hoop stresses and the interface pressure.</p>
+<ol class="steps">
+<li>Equilibrium: \(5\sigma_s+3\sigma_b=3(250)=750\u{N/mm}\).</li>
+<li>Compatibility: \(\sigma_s/200=\sigma_b/100\Rightarrow\sigma_s=2\sigma_b\).</li>
+<li>\(10\sigma_b+3\sigma_b=750\Rightarrow\sigma_b=57.7\u{MPa}\), \(\sigma_s=115.4\u{MPa}\).</li>
+<li>\(\bar p=\sigma_bt_2/r=57.7(3)/250=0.692\u{MPa}\). Check the inner tube: net pressure \(3-0.692\), \(\sigma_s=(2.308)(250)/5=115.4\u{MPa}\) ✓.</li>
+</ol>
+<p>\(\boxed{\sigma_{\rm steel}=115.4\u{MPa},\ \sigma_{\rm brass}=57.7\u{MPa},\ \bar p=0.692\u{MPa}}\)</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · stresses from the shrink fit itself</span>
+<p>If the outer tube's inner radius is made smaller than the inner tube's outer radius by a <b>radial interference</b> \(\delta\), assembling them creates an interface pressure even with no internal pressure. The outer tube grows by \(\bar pr^2/(E_2t_2)\) and the inner shrinks by \(\bar pr^2/(E_1t_1)\); together they make up \(\delta\):</p>
+\[\delta=\bar p\,r^2\left(\frac{1}{E_1t_1}+\frac{1}{E_2t_2}\right).\]
+<p class="word"><b>In words:</b> the misfit is shared between stretching the outer tube and squashing the inner. Example: two steel tubes, \(r=100\u{mm}\), \(t=5\u{mm}\) each, \(\delta=0.05\u{mm}\) give \(\bar p=2.5\u{MPa}\) and hoop stresses \(\pm50\u{MPa}\) (outer tension, inner compression). Dec 2017 asks only for the <b>additional</b> stress due to pressure, which the method above gives; the fit stresses simply add on.</p></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>Thin wall</td><td>\(r/t\ge10\); \(\sigma_r\approx0\)</td><td>stress uniform through the wall; plane stress</td></tr>
+<tr><td>Cylinder</td><td>\(\sigma_h=\dfrac{pr}{t}\), \(\sigma_l=\dfrac{pr}{2t}\)</td><td>cut along: pressure on \(2rL\); cut across: pressure on \(\pi r^2\)</td></tr>
+<tr><td>Sphere</td><td>\(\sigma=\dfrac{pr}{2t}\) every direction</td><td>half the cylinder's hoop stress</td></tr>
+<tr><td>Max shear, cylinder</td><td>in-plane \(\dfrac{pr}{4t}\); absolute \(\dfrac{pr}{2t}\)</td><td>Mohr radius between the right pair of principal stresses</td></tr>
+<tr><td>Max shear, sphere</td><td>in-plane 0; absolute \(\dfrac{pr}{4t}\)</td><td>uses \(\sigma_r=0\)</td></tr>
+<tr><td>Strains</td><td>\(\varepsilon_h=\dfrac{\sigma_h-\nu\sigma_l}{E}\), \(\varepsilon_l=\dfrac{\sigma_l-\nu\sigma_h}{E}\)</td><td>2D Hooke's law (S3)</td></tr>
+<tr><td>Size change</td><td>\(\Delta d=\varepsilon_hd\), \(\Delta L=\varepsilon_lL\), \(\Delta V/V=2\varepsilon_h+\varepsilon_l\)</td><td>hoop strain is the diameter strain</td></tr>
+<tr><td>Weld at \(\beta\) to transverse</td><td>\(\sigma_w=\sigma_l\cos^2\beta+\sigma_h\sin^2\beta\), \(\tau_w=\tfrac{\sigma_h-\sigma_l}2\sin2\beta\)</td><td>rotate \(2\beta\) from the axial point on Mohr's circle</td></tr>
+<tr><td>Cap–cylinder</td><td>\(t_{\rm cap}=t\frac{1-\nu}{2-\nu}\) for equal \(\Delta r\)</td><td>otherwise bending at the joint</td></tr>
+<tr><td>Bolts</td><td>\(n\ge\dfrac{p\frac\pi4D^2}{\sigma_{\rm avail}A_b}\)</td><td>round up; \(\sigma_{\rm avail}=\sigma_{\rm allow}-\sigma_{\rm initial}\)</td></tr>
+<tr><td>Rivets</td><td>long. seam \(prs\), circ. seam \(\tfrac12prs\) per rivet</td><td>smaller pressure governs</td></tr>
+<tr><td>Composite tube</td><td>\(\sigma_1t_1+\sigma_2t_2=pr\), \(\sigma_1/E_1=\sigma_2/E_2\)</td><td>equilibrium + equal strain</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Using the diameter in \(pr/t\).</span>
+<span class="ok">✓</span><span>\(r\) is the <b>radius</b>. A "1.5 m diameter" vessel has \(r=750\u{mm}\).</span>
+<span class="x">✗</span><span>Mixing GPa and MPa in the strain (getting strains of 0.5 instead of \(5\times10^{-4}\)).</span>
+<span class="ok">✓</span><span>Write \(E=200\u{GPa}=200\,000\u{MPa}\); keep stresses in MPa and lengths in mm.</span>
+<span class="x">✗</span><span>\(\varepsilon_h=\sigma_h/E\), forgetting the Poisson term.</span>
+<span class="ok">✓</span><span>\(\varepsilon_h=(\sigma_h-\nu\sigma_l)/E\): the wall is stressed both ways.</span>
+<span class="x">✗</span><span>Giving only the in-plane maximum shear \(pr/4t\).</span>
+<span class="ok">✓</span><span>The absolute maximum is \(pr/2t\) (with \(\sigma_r=0\)); give both and label them.</span>
+<span class="x">✗</span><span>Measuring the weld angle from the axis when the paper measures it from the transverse plane.</span>
+<span class="ok">✓</span><span>Angle from the transverse plane = angle of the weld's <b>normal</b> from the axis: \(\sigma_w=\sigma_l\cos^2\beta+\sigma_h\sin^2\beta\).</span>
+<span class="x">✗</span><span>Rotating \(\beta\) (not \(2\beta\)) on Mohr's circle.</span>
+<span class="ok">✓</span><span>Angles double on the circle.</span>
+<span class="x">✗</span><span>Rounding the number of bolts down (10.8 → 10).</span>
+<span class="ok">✓</span><span>Always round <b>up</b>: 10 bolts would be over-stressed.</span>
+<span class="x">✗</span><span>Using \(\sigma_l=pr/2t\) when the ends are free to slide.</span>
+<span class="ok">✓</span><span>No end thrust on the wall ⇒ \(\sigma_l=0\) (Dec 2017).</span>
+</div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Find the mistake</h2>
+<div class="q"><p class="qh">1 · Change in diameter</p>
+<p>"Dec 2018 numbers: \(r=1000\u{mm}\), \(t=10\u{mm}\), \(p=0.8\u{MPa}\), \(E=200\u{GPa}\), \(\nu=0.25\). \(\sigma_h=80\u{MPa}\), so \(\varepsilon_h=80/200\,000=4\times10^{-4}\) and \(\Delta d=4\times10^{-4}\times2000=0.80\u{mm}\)."</p>
+<details><summary>Hint</summary><div><p>What does the longitudinal stress do to the hoop strain?</p></div></details>
+<details><summary>Answer</summary><div><p>The Poisson effect of \(\sigma_l=40\u{MPa}\) is missing: \(\varepsilon_h=(80-0.25\times40)/200\,000=3.5\times10^{-4}\), so \(\Delta d=0.70\u{mm}\).</p></div></details></div>
+<div class="q"><p class="qh">2 · Sphere shear</p>
+<p>"In a sphere \(\sigma_1=\sigma_2=pr/2t\), so the maximum shear stress is \((\sigma_1-\sigma_2)/2=0\). Spheres have no shear anywhere."</p>
+<details><summary>Hint</summary><div><p>Is that the only pair of principal stresses?</p></div></details>
+<details><summary>Answer</summary><div><p>That is only the <b>in-plane</b> maximum. With \(\sigma_r=0\) as the third principal stress, the absolute maximum is \((pr/2t-0)/2=pr/4t\), on planes at \(45^\circ\) through the thickness.</p></div></details></div>
+<div class="q"><p class="qh">3 · The weld</p>
+<p>"Dec 2016: \(\sigma_h=75\), \(\sigma_a=37.5\u{MPa}\), weld at \(30^\circ\) to a transverse plane. \(\sigma_w=\sigma_a\sin^230^\circ+\sigma_h\cos^230^\circ=9.4+56.3=65.6\u{MPa}\)."</p>
+<details><summary>Hint</summary><div><p>When \(\beta=0\) (a circumferential weld), which stress should act across the weld?</p></div></details>
+<details><summary>Answer</summary><div><p>Sine and cosine are swapped. A circumferential weld (\(\beta=0\)) is pulled across by the <b>axial</b> stress, so \(\sigma_w=\sigma_a\cos^2\beta+\sigma_h\sin^2\beta=28.1+18.75=46.9\u{MPa}\).</p></div></details></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Doubling</p><p>A cylinder's radius is doubled with the same wall and pressure. What happens to \(\sigma_h\) and to \(\Delta d\)?</p>
+<details><summary>Answer</summary><div><p>\(\sigma_h=pr/t\) doubles; the strain doubles too, and \(\Delta d=\varepsilon_hd\) has \(d\) doubled as well, so \(\Delta d\) becomes <b>four</b> times larger.</p></div></details></div>
+<div class="q"><p class="qh">2 · Which seam?</p><p>A cylinder is made with one longitudinal weld and two circumferential welds of equal strength. Which is more likely to fail, and why?</p>
+<details><summary>Answer</summary><div><p>The longitudinal weld: it is pulled apart by the hoop stress, which is twice the longitudinal stress acting across the circumferential welds.</p></div></details></div>
+<div class="q"><p class="qh">3 · Longitudinal strain sign</p><p>For what Poisson's ratio would a closed cylinder not change length under pressure?</p>
+<details><summary>Answer</summary><div><p>\(\varepsilon_l=\tfrac{pr}{2tE}(1-2\nu)=0\) when \(\nu=0.5\) (an incompressible material, like rubber). For metals (\(\nu\approx0.3\)) it gets slightly longer.</p></div></details></div>
+<div class="q"><p class="qh">4 · Best weld angle</p><p>At what helix angle \(\beta\) is the shear along a spiral weld largest, and how big is it?</p>
+<details><summary>Answer</summary><div><p>At \(\beta=45^\circ\) (\(\sin2\beta=1\)): \(\tau_w=\tfrac12(\sigma_h-\sigma_l)=pr/4t\), the in-plane maximum.</p></div></details></div>
+<div class="q"><p class="qh">5 · Projected area</p><p>A hemispherical cap of radius \(r\) is bolted to a cylinder. What total force do the bolts carry from a gauge pressure \(p\)?</p>
+<details><summary>Answer</summary><div><p>\(p\pi r^2\): the pressure's net force equals \(p\) times the projected area, whatever the cap's shape (flat, dished or hemispherical).</p></div></details></div>
+<div class="q"><p class="qh">6 · Vacuum</p><p>A thin cylinder has a vacuum inside (\(p=-0.1\u{MPa}\) gauge). What changes?</p>
+<details><summary>Answer</summary><div><p>The formulas still hold with \(p\) negative: the wall is in <b>compression</b>, \(\sigma_h=-0.1r/t\). But a thin wall in compression can <b>buckle</b> (crumple) long before it yields, which thin-wall stress theory does not cover.</p></div></details></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Exam taster</h2>
+<p>Real past-paper parts, one per question type. Pressure vessels appear in Section A of almost every paper, often as a whole 20-mark question; no formula sheet is given in Section A, so the formulas must be known. Full method and more questions: <a href="guide-S7.html">Exam guide · S7</a>.</p>
+
+<div class="q"><div class="src"><b>Dec 2023 A1(c)</b><span>9 marks</span><span>also Dec 2022 A3(a)–(b), Dec 2018 A3(b)</span><a class="guide" href="guide-S7.html#S7-1">S7.1 thin cylinder, Δd</a></div>
+<p>Consider a closed cylindrical steel pressure vessel. The radius of the cylinder is 3 m and its wall thickness is 10 mm. Young's modulus of steel is 200 GPa and Poisson's ratio is 0.25. Assume that it is a thin wall vessel. (i) Determine the hoop and longitudinal stresses in the cylindrical wall caused by an internal pressure 0.9 MPa. [3] (ii) Calculate the change in diameter of the cylinder caused by pressurization. [6]</p>
+<details><summary>Hint</summary><div><p>Radius 3000 mm. Strain needs both stresses and \(\nu\); then \(\Delta d=\varepsilon_hd\) with \(d=6000\u{mm}\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(i) \(\sigma_h=0.9(3000)/10=270\u{MPa}\), \(\sigma_l=135\u{MPa}\).</p>
+<p>(ii) \(\varepsilon_h=(270-0.25\times135)/200\,000=1.181\times10^{-3}\);</p>
+<p>\(\boxed{\sigma_h=270\u{MPa},\ \sigma_l=135\u{MPa},\ \Delta d=1.181\times10^{-3}\times6000=7.09\u{mm}}\)</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2021 A3(a)</b><span>10 marks</span><span>also Dec 2015 A3(a), May 2019 A2(b)</span><a class="guide" href="guide-S7.html#S7-2">S7.2 derive formulas, max shear</a></div>
+<p>Consider a thin-walled spherical pressure vessel with inner radius \(r\) and wall thickness \(t\). It is subjected to an internal gage pressure \(p\). (i) Derive vessel formulas for membrane stresses \(\sigma_\varphi\) and \(\sigma_t\). [4] (ii) Determine the maximum shear stresses \(\tau_{\max}\) for in-plane rotation of the stress element. [2] (iii) Neglecting stress in radial direction, determine the maximum shear stresses \(\tau_{\max}\) for out-of-plane rotation of the stress element. [4]</p>
+<div id="fig-t2"></div>
+<details><summary>Hint</summary><div><p>Hemisphere + gas as the free body (Section 4). Then Mohr's circles with \(\sigma_r=0\) (Section 5).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(i) Cut through the centre; FBD of a hemisphere and its gas: \(\sigma(2\pi rt)=p(\pi r^2)\Rightarrow\sigma_\varphi=\sigma_t=\dfrac{pr}{2t}\) (same for any cutting plane by symmetry).</p>
+<p>(ii) \(\tau_{\max}=\dfrac{\sigma_\varphi-\sigma_t}{2}=0\): Mohr's circle for in-plane rotation is a point.</p>
+<p>(iii) With \(\sigma_r=0\): \(\boxed{\tau_{\max}=\dfrac{pr/2t-0}{2}=\dfrac{pr}{4t}}\), on planes at \(45^\circ\) to the surface.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2016 A3(b)</b><span>10 marks</span><span>also May 2014 A3(c)–(d), Dec 2022 A3(c), Dec 2014 A2(d)</span><a class="guide" href="guide-S7.html#S7-3">S7.3 vessel + Mohr, weld</a></div>
+<p>A cylindrical pressure vessel 1.50 m in diameter is constructed by wrapping a 15 mm thick steel plate into a spiral and butt-welding the mating edges of the plate as shown in the figure below. The butt-welded seams form an angle of 30° with a transverse plane through the cylinder. Determine the normal stress \(\sigma\) perpendicular to the weld and the shearing stress \(\tau\) parallel to the weld when the internal pressure in the vessel is 1500 kPa.</p>
+<div id="fig-t3"></div>
+<details><summary>Hint</summary><div><p>\(r=750\u{mm}\), \(p=1.5\u{MPa}\). On Mohr's circle start at the axial point and turn \(2\beta=60^\circ\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(\sigma_h=1.5(750)/15=75\u{MPa}\), \(\sigma_a=37.5\u{MPa}\). Centre 56.25, radius 18.75 MPa.</p>
+<p>\(\sigma=56.25-18.75\cos60^\circ=46.9\u{MPa}\); \(\tau=18.75\sin60^\circ=16.24\u{MPa}\).</p>
+<p>\(\boxed{\sigma=46.9\u{MPa}\ (\text{tension}),\quad\tau=16.2\u{MPa}}\)</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2019 A2(c)</b><span>5 marks</span><span>also Dec 2014 A2(a), May 2013 A1(b)</span><a class="guide" href="guide-S7.html#S7-4">S7.4 bolts and rivets</a></div>
+<p>An air chamber for a pump, the sectional side view of which is shown in mm in Figure below, consists of two pieces. Calculate the number of 19 mm bolts, each of net area 195 mm², required to attach the chamber to the cylinder at plane A-A. The allowable tensile stress in the bolts is 40 MPa, and the water and air pressure is 1.5 MPa.</p>
+<div id="fig-t4"></div>
+<p class="flag">the 300 mm dimension is read as the inside diameter of the chamber's opening at plane A-A, so the bolts there carry the pressure on a 300 mm circle; the 450 mm diameter belongs to the upper joint.</p>
+<details><summary>Hint</summary><div><p>Free body: both chamber pieces plus the fluid in them, cut at A-A. Net pressure force = \(p\) × area of the opening at A-A.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(F=1.5\times\tfrac\pi4(300)^2=106.0\u{kN}\). One bolt: \(40\times195=7.80\u{kN}\). \(n\ge106.0/7.80=13.6\).</p>
+<p>\(\boxed{n=14\ \text{bolts}}\)</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2014 A3(a)–(b)</b><span>12 marks</span><span>parts (c)–(d), the weld, are in the guide</span><a class="guide" href="guide-S7.html#S7-5">S7.5 spheres and end caps</a></div>
+<p>A compressed-air tank of mean radius 400 mm is supported by two cradles, one of which is designed so that it does not exert any longitudinal force on the tank, as shown in Figure A3. The cylindrical body of the tank is fabricated from a 10 mm thick steel plate by butt welding along a helix which forms an angle of 25° with a transverse plane. The end caps are spherical and have a uniform wall thickness of 8 mm. Assume that the internal gage pressure is 1.2 MPa, and the inner and outer radii are approximately equal to the mean radius. Assume that the elastic modulus and Poisson's ratio of the material of the tank are 200 GPa and 0.3, respectively. (a) Determine the normal stress and the maximum shearing stress in the spherical end caps. Calculate the increase in radius of the caps. [4] (b) Determine the hoop and longitudinal stresses, \(\sigma_1\) and \(\sigma_2\), respectively, and the principal strains, \(\varepsilon_1\) and \(\varepsilon_2\), in the cylindrical body of the tank. Calculate the increase in radius of the cylindrical body. Compare the result in (a) and (b) and give comments. Use diagram to illustrate your answer. [8]</p>
+<div id="fig-t5"></div>
+<details><summary>Hint</summary><div><p>Caps: sphere formula with \(t=8\). The cradle that exerts no longitudinal force means the wall carries the full end thrust, so \(\sigma_2=pr/2t\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) \(\sigma=1.2(400)/(2\times8)=30\u{MPa}\); \(\tau_{\max}=15\u{MPa}\) (absolute, with \(\sigma_r=0\); in-plane 0). \(\Delta r=400\times\tfrac{30(1-0.3)}{200\,000}=0.042\u{mm}\).</p>
+<p>(b) \(\sigma_1=48\u{MPa}\), \(\sigma_2=24\u{MPa}\); \(\varepsilon_1=(48-7.2)/200\,000=2.04\times10^{-4}\), \(\varepsilon_2=(24-14.4)/200\,000=4.8\times10^{-5}\); \(\Delta r=0.0816\u{mm}\).</p>
+<p>\(\boxed{\Delta r_{\rm cap}=0.042\u{mm},\ \ \Delta r_{\rm cyl}=0.082\u{mm}}\)</p>
+<p><b>Comment:</b> the cylinder tries to grow about twice as much as the caps; at the weld they must match, so the junction bends and local (discontinuity) stresses arise (sketch as in Section 8). Thinner caps, \(t_{\rm cap}\approx0.41\times10=4.1\u{mm}\), would match the growth.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2017 A3(b)</b><span>10 marks</span><a class="guide" href="guide-S7.html#S7-6">S7.6 composite (shrink-fit) cylinder</a></div>
+<p>An aluminum-alloy tube is shrunk onto a steel tube to form the pressure vessel as shown in the following figure. The wall thickness of each tube is 4 mm. The average diameter of the assembly to be used in calculations is 400 mm. If the composite tube is pressurized at 2 MPa, what additional hoop stress develops in the aluminum tube? Assume that the ends of the tube can freely expand, preventing the development of longitudinal stresses, i.e., \(\sigma_z=0\). Let \(E_{al}=70\times10^3\u{MPa}\) and \(E_{st}=200\times10^3\u{MPa}\). Hint: the interface pressure, say \(\bar p\), between the two materials acts to cause hoop tension in the outer tube and hoop compression in the inner tube.</p>
+<div id="fig-t6"></div>
+<details><summary>Hint</summary><div><p>Two equations: total hoop force \(=pr\); equal hoop strains \(\sigma_{al}/E_{al}=\sigma_{st}/E_{st}\) (no longitudinal stress, so no Poisson term).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(r=200\u{mm}\). Equilibrium: \(4\sigma_{al}+4\sigma_{st}=2(200)=400\u{N/mm}\). Compatibility: \(\sigma_{st}=\tfrac{200}{70}\sigma_{al}\).</p>
+<p>\(\sigma_{al}\left(1+\tfrac{20}{7}\right)=100\Rightarrow\boxed{\sigma_{al}=25.9\u{MPa}}\) (steel: 74.1 MPa; interface pressure \(\bar p=25.9\times4/200=0.519\u{MPa}\)).</p></div></details></div>
+</section>
+</main>
+</div>
+
+<script>
+/* MECH2413 shared helpers (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-S7 figures (page-level helpers only; lib.js is frozen) */
+const P=FBD.panels, D=FBD.draw;
+const T=(x,y,s,cls,dx,dy,anchor)=>({t:'text',x,y,s,cls:cls||'it',dx,dy,anchor});
+const rad=d=>d*Math.PI/180;
+function arc(cx,cy,r,a0,a1,n=40){const p=[];for(let i=0;i<=n;i++){const a=rad(a0+(a1-a0)*i/n);p.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}return p;}
+function annulus(cx,cy,ri,ro,a0,a1,cls){return {t:'poly',pts:[...arc(cx,cy,ro,a0,a1),...arc(cx,cy,ri,a1,a0)],cls:cls||'member'};}
+function ell(cx,cy,rx,ry,a0=0,a1=360){const p=[];for(let i=0;i<=48;i++){const a=rad(a0+(a1-a0)*i/48);p.push([cx+rx*Math.cos(a),cy+ry*Math.sin(a)]);}return p;}
+/* side view of a cylinder from x0 to x1, radius r: outline + end ellipses */
+function cyl(x0,x1,r,e){e=e||0.3*r;return [{t:'poly',pts:[[x0,r],[x1,r],...ell(x1,0,e,r,90,-90).slice(1,-1),[x1,-r],[x0,-r],...ell(x0,0,e,r,-90,-270).slice(1,-1)],cls:'member2'},{t:'line',p:ell(x1,0,e,r,90,270),cls:'faint'}];}
+/* Mohr-circle plot with roughly equal axis scales */
+function mohr(cv,circles,pts,segs,o){
+  const c=$(cv);if(!c)return;const W=c.clientWidth||400,H=c.clientHeight||240,pl=o.pl||40,pw=W-pl-12,ph=H-38;
+  const Rm=Math.max(...circles.map(k=>k[1]))*1.2,xc=(o.xmin+o.xmax)/2,k=Math.max((o.xmax-o.xmin)/pw,2*Rm/ph);
+  const xmin=xc-k*pw/2,xmax=xc+k*pw/2,span=k*ph;
+  const curves=[];circles.forEach(([C,R,col,w])=>{curves.push({f:x=>{const v=R*R-(x-C)**2;return v>=0?Math.sqrt(v):NaN;},from:C-R,to:C+R,color:col,width:w||2,n:400},{f:x=>{const v=R*R-(x-C)**2;return v>=0?-Math.sqrt(v):NaN;},from:C-R,to:C+R,color:col,width:w||2,n:400});});
+  const xs=o.xstep*Math.max(1,Math.round((xmax-xmin)/o.xstep/8));
+  plot(c,{xmin,xmax,ymin:-span/2,ymax:span/2,xstep:xs,ystep:o.ystep||xs,pl,xlabel:'σ',ylabel:o.ylabel||'τ',curves,pts,segs});
+}
+
+/* ---------- Section 1 ---------- */
+(function(){
+  const el=[...cyl(0,6,1.3),{t:'rect',x:2.6,y:-0.35,w:0.7,h:0.7,cls:'sup'},
+    {t:'force',x:2.95,y:0.35,ang:90,len:26,k:'good',at:'tail',lbl:'σ_h',dx:12},{t:'force',x:2.95,y:-0.35,ang:-90,len:26,k:'good',at:'tail'},
+    {t:'force',x:3.3,y:0,ang:0,len:26,k:'good',at:'tail',lbl:'σ_l',dy:-11},{t:'force',x:2.6,y:0,ang:180,len:26,k:'good',at:'tail'},
+    {t:'line',p:[[-0.6,0],[-0.1,0]],cls:'faint'},T(-0.35,-0.3,'axis','lbl-dim')];
+  P('fig-s1',[
+   {o:{x0:-0.8,x1:6.8,y0:-1.8,y1:1.8,px:34,pad:10},cap:'A wall element: hoop stress \\(\\sigma_h\\) round the vessel, longitudinal stress \\(\\sigma_l\\) along it',items:el},
+   {o:{x0:-2.2,x1:2.2,y0:-2.2,y1:2.2,px:34,pad:10},cap:'thin: \\(r/t=25\\)',items:[{t:'circle',x:0,y:0,r:1.75,cls:'member2'},{t:'circle',x:0,y:0,r:1.68,cls:'sup'},T(0,0,'r/t = 25','lbl-dim')]},
+   {o:{x0:-2.2,x1:2.2,y0:-2.2,y1:2.2,px:34,pad:10},cap:'thick: \\(r/t=2.5\\) (not this chapter)',items:[{t:'circle',x:0,y:0,r:1.75,cls:'member2'},{t:'circle',x:0,y:0,r:1.0,cls:'sup'},T(0,0,'r/t = 2.5','lbl-dim')]}
+  ]);
+})();
+
+/* ---------- Section 2 ---------- */
+(function(){
+  const ri=2,ro=2.25,o={x0:-2.9,x1:2.9,y0:-1.7,y1:2.9,px:40,pad:10,maxw:300};
+  const pr=[];for(let a=20;a<=160;a+=20)pr.push({t:'force',x:ri*Math.cos(rad(a)),y:ri*Math.sin(rad(a)),ang:a,len:22,k:'load',w:1.6});
+  const walls=[{t:'force',x:-2.125,y:0,ang:-90,len:34,k:'good',at:'tail',lbl:'σ_h tL',dx:-6},{t:'force',x:2.125,y:0,ang:-90,len:34,k:'good',at:'tail',lbl:'σ_h tL',dx:6}];
+  D('fig-s2-hoop',o,[annulus(0,0,ri,ro,0,180),...pr,...walls,T(0,0.9,'p','lbl-load'),{t:'dim',x1:-2,x2:2,y:-1.3,lbl:'2r',below:true}]);
+  const up=[-1.5,-0.75,0,0.75,1.5].map(x=>({t:'force',x,y:0,ang:90,len:26,k:'load',w:1.6}));
+  D('fig-s2-hoop2',o,[{t:'poly',pts:arc(0,0,ri,0,180),cls:'loadfill'},annulus(0,0,ri,ro,0,180),...up,...walls,T(0,1.0,'gas','lbl-dim'),T(0,-0.95,'p(2rL) pushes up','lbl-load'),{t:'dim',x1:-2,x2:2,y:-1.3,lbl:'2r',below:true}]);
+  const r=1,tw=0.14;
+  D('fig-s2-long',{x0:-1.6,x1:5.4,y0:-1.8,y1:1.7,px:44,pad:10,maxw:420},[{t:'rect',x:0,y:-r,w:4,h:2*r,cls:'loadfill'},
+    {t:'rect',x:0,y:r,w:4,h:tw,cls:'member'},{t:'rect',x:0,y:-r-tw,w:4,h:tw,cls:'member'},{t:'rect',x:-0.18,y:-r-tw,w:0.18,h:2*(r+tw),cls:'member'},
+    ...[-0.6,-0.2,0.2,0.6].map(y=>({t:'force',x:0,y,ang:180,len:22,k:'load',at:'tail',w:1.6})),T(-1.1,0,'p πr²','lbl-load'),
+    {t:'force',x:4,y:r+tw/2,ang:0,len:34,k:'good',at:'tail',lbl:'σ_l',dy:-12},{t:'force',x:4,y:-r-tw/2,ang:0,len:34,k:'good',at:'tail',lbl:'σ_l',dy:12},
+    {t:'cut',p:[[4,1.6],[4,-1.6]]},T(2,0,'gas, pressure p','lbl-dim'),{t:'vdim',y1:-r,y2:r,x:4.5,lbl:'2r'},T(2,-1.55,'wall ring area 2πrt','lbl-dim')]);
+})();
+
+/* ---------- Section 3: burst ---------- */
+(function(){
+  const crack={t:'poly',pts:[[1.2,0.15],[2.2,0.28],[3,0.45],[3.8,0.28],[4.8,0.15],[3.8,0.05],[3,-0.05],[2.2,0.05]],cls:'force'};
+  D('fig-s3-burst',{x0:-0.6,x1:6.6,y0:-1.7,y1:1.9,px:44,pad:10,maxw:440},[...cyl(0,6,1.1),crack,
+    {t:'force',x:3,y:0.45,ang:90,len:30,k:'good',at:'tail',lbl:'σ_h',dx:12},{t:'force',x:3,y:-0.05,ang:-90,len:30,k:'good',at:'tail',lbl:'σ_h',dx:12},
+    T(3,-1.5,'crack runs along the length, opened by the hoop stress','lbl-dim')]);
+})();
+
+/* ---------- Section 4: sphere ---------- */
+(function(){
+  const ri=2,ro=2.25;
+  D('fig-s4',{x0:-2.9,x1:2.6,y0:-2.8,y1:2.8,px:38,pad:10,maxw:280},[{t:'poly',pts:arc(0,0,ri,90,270),cls:'loadfill'},annulus(0,0,ri,ro,90,270),
+    ...[-1.4,-0.7,0,0.7,1.4].map(y=>({t:'force',x:0,y,ang:180,len:24,k:'load',w:1.6})),T(0.75,0.35,'p πr²','lbl-load','',0,'start'),
+    {t:'force',x:0,y:2.125,ang:0,len:32,k:'good',at:'tail',lbl:'σ',dy:-11},{t:'force',x:0,y:-2.125,ang:0,len:32,k:'good',at:'tail',lbl:'σ',dy:11},
+    T(-1,0,'gas','lbl-dim'),T(-1.3,-2.6,'ring area 2πrt','lbl-dim')]);
+})();
+
+/* ---------- Section 5: three Mohr circles ---------- */
+(function(){
+  function d(){const sph=$('s5sel').value==='s',h=sph?0.5:1,l=0.5;
+    const A=css('--accent'),W=css('--c4'),R2=css('--c2');
+    const circ=[[h/2,h/2,A,2.4],[l/2,l/2,W,1.6]];if(!sph)circ.push([(h+l)/2,(h-l)/2,R2,2]);
+    mohr('cv-s5',circ,[{x:0,y:0,color:css('--ink'),label:'σr = 0',r:4,align:'left'},{x:l,y:0,color:W,label:sph?'σ1 = σ2':'σl',r:4},...(sph?[]:[{x:h,y:0,color:A,label:'σh',r:4}]),
+      {x:h/2,y:h/2,color:A,label:'τ abs = '+fmt(h/2,3),r:4}],[],{xmin:-0.15,xmax:1.15,xstep:0.25,ylabel:'τ  (× pr/t)'});
+    $('s5-out').innerHTML=sph?'sphere: σ₁ = σ₂ = <b>0.5 pr/t</b> · in-plane τmax = <b>0</b> · absolute τmax = <b>0.25 pr/t</b>'
+      :'cylinder: σ_h = <b>pr/t</b>, σ_l = <b>0.5 pr/t</b> · in-plane τmax = <b>0.25 pr/t</b> (red circle) · absolute τmax = <b>0.5 pr/t</b> (big circle)';}
+  $('s5sel').addEventListener('input',d);redraws.push(d);d();
+})();
+
+/* ---------- Section 6 ---------- */
+(function(){
+  D('fig-s6',{x0:-0.8,x1:7.2,y0:-2.0,y1:1.9,px:40,pad:10,maxw:420},[...cyl(0,6,1.2),T(3,0,'p = 1.0 MPa','lbl-load'),
+    {t:'dim',x1:0,x2:6,y:-1.65,lbl:'L = 6 m'},{t:'vdim',y1:-1.2,y2:1.2,x:6.8,lbl:'d = 2.4 m'},T(3,1.55,'t = 12 mm, E = 200 GPa, ν = 0.3','lbl-dim')]);
+  function d(){const p=+$('cp').value,r=+$('cr').value,t=+$('ct').value,nu=+$('cnu').value,E=200000;
+    const sh=p*r/t,sl=sh/2,ti=(sh-sl)/2,ta=sh/2,eh=(sh-nu*sl)/E,el=(sl-nu*sh)/E;
+    const cols=[css('--accent'),css('--c4'),css('--c3'),css('--c2')],v=[sh,sl,ti,ta],lab=['σh','σl','τ in-plane','τ abs'];
+    const ym=Math.max(10,sh*1.25);
+    plot($('cv-s6'),{xmin:0,xmax:4,ymin:0,ymax:ym,xticks:[],ystep:nstep(ym),pl:44,ylabel:'MPa',
+      segs:v.map((y,i)=>({x1:i+0.5,y1:0,x2:i+0.5,y2:y,color:cols[i],width:26})),pts:v.map((y,i)=>({x:i+0.5,y,color:cols[i],r:0.1,label:lab[i]+' '+fmt(y,1),align:'left'}))});
+    $('s6-out').innerHTML=`r/t = <b>${fmt(r/t,1)}</b>${r/t<10?' (not thin!)':''} · σ_h = <b>${fmt(sh,1)}</b>, σ_l = <b>${fmt(sl,1)} MPa</b> · ε_h = <b>${fmt(eh*1e4,3)}×10⁻⁴</b>, ε_l = <b>${fmt(el*1e4,3)}×10⁻⁴</b> · Δd = <b>${fmt(eh*2*r,3)} mm</b>`;}
+  function nstep(s){const r=s/4,p=Math.pow(10,Math.floor(Math.log10(r))),m=r/p;return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p;}
+  ['cp','cr','ct','cnu'].forEach(i=>$(i).addEventListener('input',d));redraws.push(d);d();
+})();
+
+/* ---------- Section 7: weld ---------- */
+function helix(x0,x1,r,beta,gap){const L=[],dx=2*r*Math.tan(rad(beta));for(let x=x0;x+dx<=x1+1e-9;x+=gap)L.push({t:'line',p:[[x,-r],[x+dx,r]],cls:'ink'});return L;}
+(function(){
+  const b=35;
+  D('fig-s7',{x0:-0.6,x1:7.0,y0:-1.9,y1:1.9,px:42,pad:10,maxw:440},[...cyl(0,6.2,1.2),...helix(0.3,6.0,1.2,b,1.3),
+    {t:'line',p:[[1.6,-1.2],[1.6,1.2]],cls:'faint'},T(1.95,-0.9,'β','lbl-dim'),T(3.1,-1.6,'weld at β to a transverse plane (dashed)','lbl-dim'),
+    {t:'line',p:[[-0.5,0],[6.9,0]],cls:'faint'},T(6.7,0.25,'axis','lbl-dim')]);
+  function el(beta){const c=Math.cos(rad(beta)),s=Math.sin(rad(beta)),h=0.75,n=[c,s],tt=[-s,c];
+    const sl=50,sh=100,sw=sl*c*c+sh*s*s,tw=(sh-sl)/2*Math.sin(rad(2*beta)),sp=sh+sl-sw;
+    const corner=(a,b2)=>[a*h*n[0]+b2*h*tt[0],a*h*n[1]+b2*h*tt[1]];
+    const it=[{t:'poly',pts:[corner(1,1),corner(1,-1),corner(-1,-1),corner(-1,1)],cls:'member2'},{t:'line',p:[corner(1,-1.6),corner(1,1.6)],cls:'force'},T(corner(1,1.75)[0],corner(1,1.75)[1],'weld','lbl-force')];
+    const A=beta*1, L=(v,m)=>Math.max(10,Math.min(40,m*v/2.5));
+    [[1,n,A,sw,'σ_w'],[-1,n,A+180,sw,''],[1,tt,A+90,sp,'σ∥'],[-1,tt,A+270,sp,'']].forEach(([sg,v,ang,val,lb])=>it.push({t:'force',x:sg*h*v[0]*1.02,y:sg*h*v[1]*1.02,ang,len:L(val,1),k:'good',at:'tail',lbl:lb}));
+    if(tw>0.5){[[1,n,A+90],[-1,n,A-90],[1,tt,A],[-1,tt,A+180]].forEach(([sg,v,ang],i)=>{const off=0.12;it.push({t:'force',x:sg*(h+off)*v[0]-Math.cos(rad(ang))*0.35,y:sg*(h+off)*v[1]-Math.sin(rad(ang))*0.35,ang,len:24,k:'force',at:'tail',lbl:i===0?'τ_w':'',w:1.8});});}
+    it.push({t:'axes',x:-1.9,y:-1.9,len:24,lx:'axis',ly:'hoop'});
+    D('fig-s7-el',{x0:-2.2,x1:2.2,y0:-2.2,y1:2.2,px:46,pad:6,maxw:240},it);return [sw,tw,sp];}
+  function d(){const beta=+$('wb').value,C=75,R=25,[sw,tw,sp]=el(beta),a=rad(2*beta);
+    const A=css('--accent'),G=css('--c3'),Rd=css('--c2');
+    mohr('cv-s7',[[C,R,A,2]],[{x:50,y:0,color:css('--ink'),label:'L',r:4,align:'right'},{x:100,y:0,color:css('--ink'),label:'H',r:4},
+      {x:C-R*Math.cos(a),y:R*Math.sin(a),color:Rd,label:'W',r:5},{x:C+R*Math.cos(a),y:-R*Math.sin(a),color:G,label:'',r:4}],
+      [{x1:C,y1:0,x2:C-R*Math.cos(a),y2:R*Math.sin(a),color:Rd,width:1.5},{x1:C,y1:0,x2:C+R*Math.cos(a),y2:-R*Math.sin(a),color:G,width:1.2,dash:[4,4]}],{xmin:40,xmax:110,xstep:10,ylabel:'τ (MPa)'});
+    $('s7-out').innerHTML=`β = <b>${beta}°</b>, 2β = ${2*beta}° · σ_w = <b>${fmt(sw,1)} MPa</b> across the weld · τ_w = <b>${fmt(tw,1)} MPa</b> along it · σ∥ = ${fmt(sp,1)} MPa`;}
+  $('wb').addEventListener('input',d);redraws.push(d);d();
+})();
+
+/* ---------- Section 8 ---------- */
+(function(){
+  D('fig-s8',{x0:-1.9,x1:4.6,y0:-0.3,y1:2.1,px:70,pad:10,maxw:460},[
+    {t:'line',p:[...arc(0,0,1,180,90),[4,1]],cls:'ink'},{t:'line',p:arc(0,0,1.12,180,90),cls:'faint'},{t:'line',p:[[0,1.3],[4,1.3]],cls:'faint'},
+    {t:'line',p:[[-1.5,0],[4.4,0]],cls:'faint'},{t:'vdim',y1:1,y2:1.3,x:2.6,lbl:'Δr_cyl'},{t:'vdim',y1:1,y2:1.12,x:-1.25,lbl:'Δr_cap',left:true},
+    T(-0.55,0.3,'cap','lbl-dim'),T(2,0.6,'cylinder','lbl-dim'),T(1.6,1.85,'mismatch at the weld → bending','lbl-force'),{t:'dot',x:0,y:1,k:'force'},T(3.6,0.15,'axis','lbl-dim')]);
+})();
+
+/* ---------- Section 9 ---------- */
+(function(){
+  const it=[{t:'rect',x:0,y:1.2,w:4,h:0.15},{t:'rect',x:0,y:-1.35,w:4,h:0.15},{t:'rect',x:3.75,y:1.35,w:0.25,h:0.45},{t:'rect',x:3.75,y:-1.8,w:0.25,h:0.45},
+    {t:'rect',x:4.05,y:-1.8,w:0.3,h:3.6,cls:'member2'},{t:'rect',x:4.0,y:-1.2,w:0.05,h:2.4,cls:'sup'},
+    {t:'rect',x:3.55,y:1.48,w:1.0,h:0.12,cls:'sup'},{t:'rect',x:3.55,y:-1.6,w:1.0,h:0.12,cls:'sup'},{t:'rect',x:0,y:-1.2,w:4,h:2.4,cls:'loadfill'},
+    ...[-0.8,-0.4,0,0.4,0.8].map(y=>({t:'force',x:4,y,ang:0,len:28,k:'load',at:'tip',w:1.6})),
+    {t:'force',x:4.6,y:1.54,ang:180,len:30,k:'react',at:'tail',lbl:'F_b',dy:-16,dx:-4},{t:'force',x:4.6,y:-1.54,ang:180,len:30,k:'react',at:'tail',lbl:'F_b',dy:16,dx:-4},
+    T(2,0,'p','lbl-load'),T(4.2,2.45,'cap','lbl-dim'),T(3.0,2.0,'bolt','lbl-dim'),T(4.02,-2.15,'gasket (thin strip)','lbl-dim'),{t:'vdim',y1:-1.2,y2:1.2,x:0.5,lbl:'D'}];
+  D('fig-s9-bolt',{x0:-0.3,x1:5.6,y0:-2.5,y1:2.7,px:46,pad:8,maxw:380},it);
+  D('fig-s9-rivet',{x0:-0.4,x1:6.4,y0:-1.4,y1:1.6,px:46,pad:8,maxw:420},[{t:'rect',x:0,y:0,w:3.6,h:0.3},{t:'rect',x:2.4,y:-0.3,w:3.6,h:0.3,cls:'member2'},
+    {t:'rect',x:2.85,y:-0.45,w:0.3,h:0.9,cls:'sup'},{t:'line',p:[[2.5,0],[3.5,0]],cls:'cut'},T(3.0,0.85,'rivet, d','lbl-dim'),T(3.95,0.3,'shear plane','lbl-good','',0,'start'),
+    {t:'force',x:0,y:0.15,ang:180,len:36,k:'force',at:'tail',lbl:'σ t s',dy:-12},{t:'force',x:6,y:-0.15,ang:0,len:36,k:'force',at:'tail',lbl:'σ t s',dy:12},
+    T(1.2,-0.7,'plate 1','lbl-dim'),T(4.8,0.6,'plate 2','lbl-dim')]);
+})();
+
+/* ---------- Section 10 ---------- */
+(function(){
+  const it=[{t:'circle',x:0,y:0,r:2.3,cls:'member2'},{t:'circle',x:0,y:0,r:2.0,cls:'member'},{t:'circle',x:0,y:0,r:1.7,cls:'loadfill'},T(0,0,'p','lbl-load')];
+  [30,150,270].forEach(a=>{it.push({t:'force',x:2.0*Math.cos(rad(a)),y:2.0*Math.sin(rad(a)),ang:a,len:22,k:'good',at:'tail'});it.push({t:'force',x:2.0*Math.cos(rad(a+30)),y:2.0*Math.sin(rad(a+30)),ang:a+30+180,len:22,k:'good',at:'tail'});});
+  [90,210,330].forEach(a=>it.push({t:'force',x:1.7*Math.cos(rad(a)),y:1.7*Math.sin(rad(a)),ang:a,len:20,k:'load',w:1.5}));
+  it.push(T(0,3.0,'outer tube (2): p̄ outward','lbl-dim'),T(0,-2.95,'inner tube (1): p − p̄ net','lbl-dim'),T(1.0,1.0,'p̄','lbl-good'));
+  D('fig-s10',{x0:-2.9,x1:2.9,y0:-3.3,y1:3.3,px:40,pad:8,maxw:300},it);
+})();
+
+/* ---------- Exam taster ---------- */
+(function(){
+  // t2 sphere with element
+  D('fig-t2',{x0:-2.6,x1:2.6,y0:-2.6,y1:2.6,px:40,pad:8,maxw:280},[{t:'circle',x:0,y:0,r:2.1,cls:'member2'},{t:'line',p:ell(0,0,2.1,0.6,180,360),cls:'faint'},
+    {t:'rect',x:0.5,y:0.6,w:0.6,h:0.6,cls:'sup'},{t:'force',x:1.1,y:0.9,ang:0,len:24,k:'good',at:'tail',lbl:'σ_t',dy:-11},{t:'force',x:0.8,y:1.2,ang:90,len:24,k:'good',at:'tail',lbl:'σφ',dx:12},
+    {t:'force',x:0.5,y:0.9,ang:180,len:24,k:'good',at:'tail'},{t:'force',x:0.8,y:0.6,ang:-90,len:24,k:'good',at:'tail'},T(-0.8,-0.5,'p','lbl-load'),T(-1.0,1.4,'r, t','lbl-dim')]);
+  // t3 spiral-welded cylinder
+  D('fig-t3',{x0:-0.6,x1:7.2,y0:-1.9,y1:1.9,px:42,pad:8,maxw:440},[...cyl(0,6.4,1.2),...helix(0.2,6.2,1.2,30,1.25),{t:'line',p:[[1.45,-1.2],[1.45,1.2]],cls:'faint'},T(1.85,-0.95,'30°','lbl-dim'),
+    {t:'vdim',y1:-1.2,y2:1.2,x:6.95,lbl:'1.50 m'},T(3.2,-1.65,'t = 15 mm, p = 1500 kPa','lbl-dim')]);
+  // t4 air chamber (May 2019 A2c), mm, redrawn schematic
+  const wl=[[-150,0],[-150,60],[-225,330],[-225,360]],wr=wl.map(([x,y])=>[-x,y]);
+  const s=0.01,S=p=>p.map(([x,y])=>[x*s,y*s]);
+  D('fig-t4',{x0:-3.4,x1:3.4,y0:-0.9,y1:6.8,px:46,pad:8,maxw:320},[{t:'rect',x:-3.2,y:-0.3,w:1.7,h:0.3},{t:'rect',x:1.5,y:-0.3,w:1.7,h:0.3},
+    {t:'line',p:S(wl),cls:'ink'},{t:'line',p:S(wr),cls:'ink'},{t:'rect',x:-2.6,y:3.6,w:0.35,h:2.4,cls:'member'},{t:'rect',x:2.25,y:3.6,w:0.35,h:2.4,cls:'member'},{t:'rect',x:-2.6,y:6.0,w:5.2,h:0.35,cls:'member'},
+    {t:'rect',x:-2.6,y:3.45,w:5.2,h:0.15,cls:'sup'},{t:'rect',x:-1.85,y:0,w:0.35,h:0.15,cls:'sup'},{t:'rect',x:1.5,y:0,w:0.35,h:0.15,cls:'sup'},
+    ...[-1.68,1.68].map(x=>({t:'rect',x:x-0.06,y:-0.55,w:0.12,h:0.9,cls:'sup'})),...[-2.45,2.45].map(x=>({t:'rect',x:x-0.06,y:3.05,w:0.12,h:0.9,cls:'sup'})),
+    {t:'line',p:[[-3.3,0],[3.3,0]],cls:'cut'},T(-3.2,0.35,'A','it'),T(3.2,0.35,'A','it'),{t:'dim',x1:-1.5,x2:1.5,y:0.9,lbl:'300'},{t:'dim',x1:-2.25,x2:2.25,y:4.6,lbl:'450'},
+    T(0,2.2,'p = 1.5 MPa','lbl-load')]);
+  // t5 tank on cradles (May 2014 A3)
+  D('fig-t5',{x0:-1.6,x1:7.2,y0:-2.2,y1:2.0,px:40,pad:8,maxw:460},[{t:'poly',pts:[...arc(0,0,1,90,270),[0,-1],[0,1]],cls:'member2'},{t:'poly',pts:[...arc(5.6,0,1,-90,90)],cls:'member2'},
+    ...cyl(0,5.6,1,0.25),...helix(0.15,5.4,1,25,1.1),{t:'rect',x:0.8,y:-1.8,w:0.3,h:0.9,cls:'member'},{t:'rect',x:4.5,y:-1.8,w:0.3,h:0.9,cls:'member'},{t:'line',p:[[-1.2,-1.8],[7,-1.8]],cls:'ground'},
+    {t:'dim',x1:0,x2:5.6,y:1.6,lbl:'3.2 m'},{t:'vdim',y1:-1,y2:1,x:6.9,lbl:'800 mm'},T(1.75,-1.4,'25°','lbl-dim'),T(-0.6,0,'cap','lbl-dim')]);
+  // t6 composite tube
+  D('fig-t6',{x0:-2.8,x1:2.8,y0:-2.8,y1:2.8,px:40,pad:8,maxw:280},[{t:'circle',x:0,y:0,r:2.25,cls:'member2'},{t:'circle',x:0,y:0,r:2.0,cls:'member'},{t:'circle',x:0,y:0,r:1.75,cls:'loadfill'},
+    T(0,0.3,'p = 2 MPa','lbl-load'),T(0,-0.35,'mean d = 400 mm','lbl-dim'),T(1.75,2.5,'aluminium, 4 mm','lbl-dim'),T(-1.25,-2.55,'steel, 4 mm','lbl-dim')]);
+})();
+
+</script>
+</body></html>

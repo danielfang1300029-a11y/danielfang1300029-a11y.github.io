@@ -1,0 +1,1428 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH1350 H2 · Pressure and manometry</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH1350 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --purple:#6d3fb2; --purple-soft:#efe8fa; --green:#1f7a4d; --green-soft:#e3f4ea;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+/* ---- MECH1350 additions ---- */
+.box.prev,.prev.box{background:var(--purple-soft);border-color:transparent;border-left:4px solid var(--purple)} .prev>.tag{color:var(--purple)}
+section.prev-sec{border-top:3px solid var(--purple)} section.prev-sec>h2 .n{color:var(--purple)}
+section.prev-sec>.prevbar{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin:-8px 0 8px}
+.beyond{border-left:4px solid var(--warm)}
+.banner{background:var(--warm-soft);border:1px solid var(--warm);border-radius:8px;padding:10px 14px;font-size:.95rem}
+.banner b{color:var(--warm)}
+.conv{background:var(--green-soft);border-color:transparent;border-left:4px solid var(--green)} .conv>.tag{color:var(--green)}
+details.calc{border-left:3px solid var(--accent)}
+details.calc>summary{color:var(--accent);font-weight:500}
+details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.calc .why{color:var(--muted);font-size:.9rem}
+table.tbl td,table.tbl th{padding:6px 8px}
+.circuit{width:100%;height:auto;display:block}
+.circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
+.circuit .r{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+.circuit .node{fill:var(--ink)}
+.circuit text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.circuit .q{stroke:var(--c2);fill:var(--c2)}
+
+/* ---- exam-guide classes (promoted from guide-T3 pilot, Gate D 2026-11-17) ---- */
+.mem{border:2px solid var(--c3);background:var(--card)} .mem>.tag{color:var(--c3)}
+.mem table td{padding:5px 8px;font-size:.92rem}
+.proc{border-left:4px solid var(--accent)} .proc>.tag{color:var(--accent)}
+.skel{border-left:4px solid var(--purple)} .skel>.tag{color:var(--purple)}
+.recap{font-size:.95rem;background:var(--accent-soft);border-radius:6px;padding:8px 12px;margin:8px 0 14px}
+.recap a{font-family:var(--mono);font-size:12px;white-space:nowrap}
+details.hint>summary{color:var(--muted)}
+details.hint>summary::before{content:"Hint · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.sol{border-left:3px solid var(--accent)}
+details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.mnote{font-size:.9rem;border-left:3px solid var(--warm);padding-left:10px;color:var(--muted)}
+.mnote b{color:var(--warm);font-weight:600}
+.q .part{font-weight:600;margin-top:14px}
+.q .opts{list-style:none;padding-left:.4rem;margin:6px 0}
+.q .opts li{margin:3px 0}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
+.stats span{font-size:.88rem;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted)}
+.stats b{color:var(--ink);font-family:var(--display)}
+.small{font-size:.88rem}
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/es5/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents"><p class="h">Hydrostatics · H2</p><ol>
+  <li><a href="#s0">0 · Where this sits</a></li>
+  <li><a href="#s1">1 · A fluid at rest</a></li>
+  <li><a href="#s2">2 · Pressure as a stress</a></li>
+  <li><a href="#s3">3 · Pascal's law</a></li>
+  <li><a href="#s4">4 · Hydraulic lift</a></li>
+  <li><a href="#s5">5 · Hydrostatic law</a></li>
+  <li><a href="#s6">6 · Absolute &amp; gauge</a></li>
+  <li><a href="#s7">7 · Same level, same fluid</a></li>
+  <li><a href="#s8">8 · Pressure in a gas</a></li>
+  <li><a href="#s9">9 · Pressure diagrams</a></li>
+  <li><a href="#s10">10 · Layered liquids</a></li>
+  <li><a href="#s11">11 · Barometer</a></li>
+  <li><a href="#s12">12 · Weather &amp; storm surge</a></li>
+  <li><a href="#s13">13 · Piezometer &amp; U-tube</a></li>
+  <li><a href="#s14">14 · Differential manometer</a></li>
+  <li><a href="#s15">15 · Manometer chains</a></li>
+  <li><a href="#s16">16 · Summary</a></li>
+  <li><a href="#s17">17 · Common mistakes</a></li>
+  <li><a href="#s18">18 · Find the mistake</a></li>
+  <li><a href="#s19">19 · Concept checks</a></li>
+  <li><a href="#s20">20 · Exam taster</a></li>
+</ol></nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-H2.html">Exam guide · H2</a><a href="note-H1.html">← H1</a><a href="note-H3.html">Next: H3 →</a></nav>
+  <span class="course">MECH1350 · Hydrostatics · chapter 2</span>
+  <h1>Pressure and manometry</h1>
+  <p class="lede">What pressure is, why it grows with depth, and how piezometers and manometers turn liquid-column heights into pressures. Every slide of the first part of Fluid Statics and its supplements, explained from scratch.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>H1 described the properties of a fluid. This chapter starts <b>fluid statics</b>: the pressure inside a still fluid and how to measure it. H3 then uses this pressure to find the forces on gates and curved walls, and H4 the buoyant force.</p>
+<p><b>In the exam:</b> short concept questions on pressure and manometers (1–6 marks) and a manometer walk (5–13 marks), often part (a) of a Section B gate question. See the <a href="guide-H2.html">H2 exam guide</a>.</p>
+<p class="muted small">Source: Fluid Statics handout (Prof C.O. Ng), slides 1–22 of 51, with the supplements Pascal's Law, Atmospheric Pressure and Some Concept Questions pp. 1–8; slide n = PDF page n (no printed numbers).</p>
+
+<div class="box conv"><span class="tag">Sign convention for this chapter</span>
+<ul class="list">
+<li><b>"Pressure" means gauge pressure</b> (measured above the local atmospheric pressure) unless the question says "absolute". This is stated on the Dec 2026 review sheet and on most papers. Open surfaces in contact with the air are at \(p=0\) gauge.</li>
+<li>\(z\) is the <b>elevation</b>, measured <b>upwards</b>; \(h\) is the <b>depth</b> below a free surface, measured <b>downwards</b> (\(h=-z\) when \(z=0\) at the surface).</li>
+<li>Pressure is <b>positive when it compresses</b> (pushes on a surface). A <b>negative gauge pressure</b> means "below atmospheric" (a partial vacuum, or suction).</li>
+<li>Walking through a still fluid: going <b>down</b> by \(\Delta z\) <b>adds</b> \(\rho g\,\Delta z\); going <b>up</b> <b>subtracts</b> it. Moving <b>sideways</b> within the same continuous fluid changes nothing.</li>
+<li>Unless a question gives other values: \(g=9.81\u{m/s^2}\), \(\rho_\text{water}=1000\u{kg/m^3}\) (review sheet). Mercury: relative density 13.6, so \(\rho_\text{Hg}=13\,600\u{kg/m^3}\).</li>
+</ul></div>
+
+<h3>Symbols used throughout</h3>
+<div class="scroll"><table class="tbl">
+<tr><th>Symbol</th><th>Meaning</th><th>Unit</th></tr>
+<tr><td>\(p\)</td><td>pressure (gauge unless stated)</td><td>Pa = N/m²</td></tr>
+<tr><td>\(p_0\), \(p_\text{atm}\)</td><td>pressure at a free surface; atmospheric pressure</td><td>Pa</td></tr>
+<tr><td>\(F_n\)</td><td>normal (perpendicular) force on a surface</td><td>N</td></tr>
+<tr><td>\(A\)</td><td>area</td><td>m²</td></tr>
+<tr><td>\(\rho\)</td><td>density (mass per volume)</td><td>kg/m³</td></tr>
+<tr><td>\(\gamma=\rho g\)</td><td>specific weight (weight per volume)</td><td>N/m³</td></tr>
+<tr><td>SG, RD</td><td>specific gravity = relative density = \(\rho/\rho_\text{water}\)</td><td>none</td></tr>
+<tr><td>\(z\)</td><td>elevation (upwards)</td><td>m</td></tr>
+<tr><td>\(h\)</td><td>depth below a free surface, or a column height</td><td>m</td></tr>
+<tr><td>\(\rho_m\), \(\gamma_m\)</td><td>density / specific weight of the manometer (gauge) fluid</td><td>kg/m³, N/m³</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>A fluid at rest (slide 2)</h2>
+<div class="box def"><span class="tag">Definition · fluid statics</span>
+<p><b>Fluid statics</b> (or <b>hydrostatics</b> for water) is the study of fluids that are <b>at rest</b>: no part of the fluid moves relative to any other part. A lake on a calm day, the water in a closed tank and the air in a sealed room are all static.</p></div>
+<p>Slide 2 lists what makes a fluid at rest so much simpler than a moving fluid:</p>
+<ul class="list">
+<li><b>Velocity is zero.</b> Nothing moves.</li>
+<li><b>Shear stress is zero</b> (for a Newtonian fluid). H1 showed that a fluid deforms continuously under any shear stress (a sideways, "sliding" force per area). A fluid that is not deforming must therefore carry no shear stress at all. The only stress left is the push straight onto surfaces: pressure.</li>
+<li><b>Viscosity has no effect.</b> Viscosity relates shear stress to the rate of deformation; with no deformation it plays no part.</li>
+<li><b>Only one important property: density</b> \(\rho\). (Surface tension matters only in bubbles, droplets and thin capillary tubes, as in H1.)</li>
+<li><b>Only one "dynamics" variable: pressure</b> \(p\), the quantity we solve for.</li>
+<li><b>Only one independent variable: the vertical coordinate</b> (elevation \(z\), or depth \(h\) below the free surface). Pressure changes only as you go up or down, never sideways.</li>
+<li><b>Only one forcing: gravity</b> (the body force, i.e. the weight of the fluid).</li>
+</ul>
+<p class="word"><b>In short:</b> in a still fluid, pressure depends only on depth and density, and it is produced only by the weight of fluid above. The rest of this chapter turns that sentence into formulas.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Pressure is a normal compressive stress (slide 3)</h2>
+<div class="box def"><span class="tag">Definition · pressure</span>
+<p><b>Pressure</b> is the <b>normal compressive force per unit area</b>: the force with which a fluid pushes <b>straight onto</b> (perpendicular to) a surface, divided by the area it pushes on. Formally,</p>
+\[p=\lim_{\Delta A\to0}\frac{\Delta F_n}{\Delta A}\]
+<p>where \(\Delta F_n\) is the normal compressive force on a tiny area \(\Delta A\). Taking the limit \(\Delta A\to0\) makes \(p\) the pressure <b>at a point</b>.</p>
+<p class="word"><b>In words:</b> pressure = push (perpendicular to the surface) ÷ area, measured on a very small patch.</p></div>
+<p>The words in the slide title each mean something:</p>
+<ul class="list">
+<li><b>Stress</b>: a force per area (like the stress in a stretched rod in mechanics).</li>
+<li><b>Normal</b>: perpendicular to the surface. The other kind of stress, <b>shear</b>, acts along the surface; a fluid at rest has none (Section 1).</li>
+<li><b>Compressive</b>: it pushes, it never pulls. Pressure always acts <b>inward</b> on any surface, whatever its orientation: down on the top of a submerged box, up on its bottom, sideways on its walls.</li>
+</ul>
+<div id="fig-normal"></div>
+<p class="muted">Drawn for these notes: a block held in still water. The pressure forces on every face point into the face and are perpendicular to it. They grow with depth (Section 5), so the push up on the bottom is larger than the push down on the top.</p>
+<h3>Units and dimensions</h3>
+<p>Pressure has the dimension of force per area, \([\mathrm{ML^{-1}T^{-2}}]\) (mass × length⁻¹ × time⁻²), since a newton is \(\mathrm{kg\,m/s^2}\) and dividing by \(\mathrm{m^2}\) gives \(\mathrm{kg/(m\,s^2)}\). The SI unit is the <b>pascal</b>: \(1\u{Pa}=1\u{N/m^2}\). A pascal is tiny (a sheet of paper lying flat presses on a table with about 1 Pa), so engineers use kPa and MPa.</p>
+<div class="scroll"><table class="tbl">
+<tr><th>Unit</th><th>Value in Pa</th><th>Where you meet it</th></tr>
+<tr><td>kPa, MPa</td><td>\(10^3\), \(10^6\)</td><td>exam answers, tyre and pipe pressures</td></tr>
+<tr><td>bar</td><td>\(10^5\) (= 100 kPa)</td><td>weather, scuba tanks</td></tr>
+<tr><td>hPa = millibar (mb)</td><td>100</td><td>weather charts (Section 12)</td></tr>
+<tr><td>mmHg</td><td>≈ 133.4</td><td>barometers, blood pressure (Section 11)</td></tr>
+</table></div>
+<div class="box eg"><span class="tag">Example · written for these notes · force from pressure</span>
+<p>(a) A 600 N person balances on the heels of one shoe, contact area \(0.002\u{m^2}\) (20 cm²). Average pressure on the floor: \(p=F/A=600/0.002=300\u{kPa}\). (b) Standing on two flat shoes, total area \(0.04\u{m^2}\): \(p=600/0.04=15\u{kPa}\). Same force, 20 times the area, 1/20 of the pressure. (c) Atmospheric pressure (101.3 kPa) on 1 cm² (\(10^{-4}\u{m^2}\)) gives a force of \(101.3\times10^3\times10^{-4}=10.13\u{N}\): the weight of about 1 kg on every square centimetre of your body. You do not feel it because the fluids inside your body push back with the same pressure.</p></div>
+<p>The last bullet of slide 3, "pressure at a point has the same value in all directions", is the subject of the next section.</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Pascal's law: pressure is a scalar (slide 4; Pascal's Law supplement pp. 1–2)</h2>
+<p>Pressure is defined as a force divided by an area. Force has a direction, so you might expect pressure to have one too: perhaps water pushes harder downward than sideways? Slide 4 shows that it does not. A small piece of fluid is cut out as a <b>wedge</b> (a triangular prism); because it is at rest, the forces on it must balance; letting the wedge shrink to a point shows the pressures on all its faces are equal, whatever the angle of the slanted face.</p>
+<div id="fig-wedge"></div>
+<p class="muted">Free-body diagram of the wedge (redrawn from supplement Figure 2.1 and slide 4 Fig. 2.1). It has sides \(\delta y\) (horizontal), \(\delta z\) (vertical) and slanted face \(\delta s\) at angle \(\theta\), and length \(\delta x\) into the page. Forces: \(p_y\) on the vertical face, \(p_z\) on the bottom face, \(p_s\) on the slanted face (each = pressure × area, inward and perpendicular), and the weight \(\gamma\,\delta x\,\delta y\,\delta z/2\). There are no shear forces because the fluid is still.</p>
+<div class="box thm"><span class="tag">Law · Pascal's law (pressure at a point)</span>
+\[p_y=p_z=p_s=p\quad\text{for any angle }\theta\]
+<p class="word"><b>In words:</b> the pressure at a point in a fluid at rest is the same in every direction. Pressure is a <b>point property</b> (it has one value at each point), it is <b>independent of orientation</b>, and so it is a <b>scalar</b> (a number with no direction), also called an <b>isotropic</b> stress ("isotropic" = the same in all directions).</p></div>
+<details class="calc"><summary>the wedge proof, step by step</summary><div>
+<p>1. Forces on each face = pressure × area of that face. Vertical face: area \(\delta x\,\delta z\). Bottom face: \(\delta x\,\delta y\). Slanted face: \(\delta x\,\delta s\). <span class="why">The element is so small that the pressure on each face can be taken as constant over it.</span></p>
+<p>2. Weight of the wedge = specific weight × volume. The volume is the triangle area \(\tfrac12\delta y\,\delta z\) times the length \(\delta x\): \(W=\gamma\,\delta x\,\delta y\,\delta z/2\), acting down.</p>
+<p>3. The slanted face pushes inward, perpendicular to itself. Its horizontal part is \(p_s\,\delta x\,\delta s\,\sin\theta\) (pointing towards \(-y\)) and its vertical part \(p_s\,\delta x\,\delta s\,\cos\theta\) (pointing down). <span class="why">\(\theta\) is the angle of the slanted face's normal from the vertical, as in the figure.</span></p>
+<p>4. Equilibrium in \(y\) (horizontal):</p>
+\[\sum F_y=p_y\,\delta x\,\delta z-p_s\,\delta x\,\delta s\sin\theta=0\]
+<p>5. Equilibrium in \(z\) (vertical):</p>
+\[\begin{aligned}\sum F_z&=p_z\,\delta x\,\delta y-p_s\,\delta x\,\delta s\cos\theta\\&\quad-\gamma\,\frac{\delta x\,\delta y\,\delta z}{2}=0\end{aligned}\]
+<p>6. Geometry of the triangle: \(\delta s\sin\theta=\delta z\) and \(\delta s\cos\theta=\delta y\). Substitute and divide step 4 by \(\delta x\,\delta z\), step 5 by \(\delta x\,\delta y\):</p>
+\[p_y-p_s=0,\qquad p_z-p_s-\gamma\,\frac{\delta z}{2}=0\]
+<p>7. Shrink the wedge to a point: \(\delta x,\delta y,\delta z\to0\). The weight term \(\gamma\,\delta z/2\to0\) <span class="why">(weight scales with volume, size³; surface forces with area, size², so weight becomes negligible for a tiny element)</span>, leaving \(p_y=p_s=p_z\).</p>
+<p>8. \(\theta\) was arbitrary, so the pressure is the same on a surface facing <b>any</b> direction. ∎</p>
+</div></details>
+<p>The result holds "as long as there are no shearing forces", which is true in any fluid at rest. The supplement adds that pressure is a scalar, isotropic, normal and compressive stress <b>in general</b>, whether the fluid is at rest or in motion (in a moving fluid, the "pressure" is defined as the isotropic part of the normal stress, slide 4).</p>
+<div id="fig-allways"></div>
+<p class="muted">Supplement p. 2: at depth \(h\) below a free surface (\(p=0\) gauge at the surface, \(z=-h\) at the point), the pressure \(p\) pushes equally in all directions, like the arrows of a star.</p>
+<div class="box warn"><span class="tag">Watch · pressure vs pressure force</span>
+<p><b>Pressure</b> is a scalar: no direction. The <b>pressure force</b> on a surface, \(p\,\mathrm dA\), is a vector: its direction is set by the surface (perpendicular to it, pointing in). "Pressure acts downward" is wrong; "the pressure force on the top face acts downward" is right. Slide 12 repeats this, and Dec 2024 Q1(m) asked "Pressure is an isotropic quantity" (true).</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Transmission of pressure: the hydraulic lift (Pascal's Law supplement p. 3)</h2>
+<p>The supplement gives a second statement, also called Pascal's law (or Pascal's principle, or the principle of transmission of fluid pressure). It follows from the first.</p>
+<div class="box thm"><span class="tag">Law · Pascal's principle (transmission of pressure)</span>
+<p>Any change in pressure at any point in a confined incompressible fluid is transmitted throughout the fluid <b>equally and undiminished</b> to all points, in all directions.</p>
+<p class="word"><b>In words:</b> squeeze a sealed liquid somewhere, and every point in it feels the same extra pressure.</p></div>
+<p><b>Why it is true.</b> Section 5 shows the pressure difference between two points in a still liquid is fixed by their height difference alone: \(p_\text{below}-p_\text{above}=\rho g\,\Delta z\). If the pressure at one point rises by \(\Delta p\), the differences cannot change (the heights and density have not changed: the liquid is incompressible), so every pressure must rise by the same \(\Delta p\).</p>
+<p>This is how a <b>hydraulic jack</b> or <b>hydraulic lift</b> works. Two cylinders are joined by a pipe, all filled with oil. A small piston (area \(A_1\)) is pushed down with force \(F_1\); a large piston (area \(A_2\)) carries the load \(F_2\), e.g. a car.</p>
+<div id="fig-lift"></div>
+<div class="box thm"><span class="tag">Result · hydraulic lift (pistons at the same level)</span>
+\[p_1=p_2\ \Rightarrow\ \frac{F_1}{A_1}=\frac{F_2}{A_2}\]\[\frac{F_1}{F_2}=\frac{A_1}{A_2}\ll1\]
+<p class="word"><b>In words:</b> the same pressure under both pistons, so the force on each is in proportion to its area. A small force on a small piston holds up a large force on a large piston.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A garage lift has a small piston of diameter 2 cm and a large piston of diameter 20 cm, at the same level. What force on the small piston holds a 1500 kg car? (Ignore the piston weights.)</p>
+<p>Load: \(F_2=mg=1500(9.81)=14\,715\u{N}\). Area ratio \(A_1/A_2=(d_1/d_2)^2=(2/20)^2=0.01\). So</p>
+\[F_1=F_2\,\frac{A_1}{A_2}=14\,715(0.01)=\boxed{147\u{N}}\]
+<p>The oil pressure under both pistons is</p>\[\frac{F_2}{A_2}=\frac{14\,715}{\pi(0.2)^2/4}\approx468\u{kPa}\]</div>
+<div class="beyond box"><span class="tag">Beyond the handouts · no free lunch</span>
+<p>The lift multiplies force, not energy. The oil is incompressible, so the volume pushed out of the small cylinder, \(A_1d_1\), equals the volume entering the large one, \(A_2d_2\). To raise the car \(d_2=5\u{cm}\), the small piston must travel \(d_1=d_2A_2/A_1=5\u{m}\) (in many short pumping strokes). Work in \(=F_1d_1=147\times5\) = work out \(=F_2d_2=14\,715\times0.05\), both about 736 J. If the pistons are at different levels, add \(\rho g\,\Delta z\) between them (Section 5).</p></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>The hydrostatic law: pressure variation with depth (slide 5)</h2>
+<p>Why is the pressure higher at the bottom of a swimming pool? Because the water there carries the weight of all the water above it. Slide 5 makes this precise with a free-body diagram of a small vertical cylinder of fluid.</p>
+<p><b>Set-up.</b> Take \(z\) pointing <b>vertically upward</b>, with \(z=0\) at the free surface. Cut out a small vertical cylinder of fluid of cross-section area \(A\) and height \(\Delta z\), at depth \(h\). The pressure on its bottom face is \(p\); on its top face (higher up by \(\Delta z\)) it is \(p+\Delta p\). Its weight is \(W=\rho g A\,\Delta z\).</p>
+<div id="fig-cyl"></div>
+<p class="muted">Free-body diagram of the fluid cylinder (slide 5). The pressure forces on the curved side are horizontal and cancel in pairs, so only the vertical forces matter.</p>
+<div class="box thm"><span class="tag">Law · hydrostatic equation</span>
+\[\frac{\mathrm dp}{\mathrm dz}=-\rho g=-\gamma\]
+<p class="word"><b>In words:</b> going up, pressure falls at a rate equal to the specific weight of the fluid; going down, it rises at that rate. Every metre deeper in water adds \(9.81\u{kPa}\).</p></div>
+<details class="calc"><summary>the force balance on the cylinder</summary><div>
+<p>1. Forces up: pressure on the bottom face pushes up, \(pA\). <span class="why">Pressure pushes into the face; the bottom face is pushed upward.</span></p>
+<p>2. Forces down: pressure on the top face, \((p+\Delta p)A\), and the weight \(W=\rho gA\,\Delta z\).</p>
+<p>3. At rest, up = down:</p>
+\[(p+\Delta p)A+W=pA\]
+<p>4. Cancel \(pA\) and put in \(W\): \(\Delta p\,A+\rho gA\,\Delta z=0\), so \(\Delta p=-\rho g\,\Delta z\).</p>
+<p>5. Divide by \(\Delta z\) and let \(\Delta z\to0\): \(\mathrm dp/\mathrm dz=-\rho g\). <span class="why">The minus sign: higher up (\(\Delta z\gt0\)) means lower pressure (\(\Delta p\lt0\)).</span></p>
+</div></details>
+<p>Slide 5's conclusion: the hydrostatic pressure <b>increases with depth</b>, at a rate equal to the specific weight \(\gamma\equiv\rho g\) of the fluid. The handout writes \(\gamma\) and \(\rho g\) interchangeably; several exam papers give \(\gamma\) directly (e.g. "specific weight of mercury 133.7 kN/m³").</p>
+<div class="box def"><span class="tag">Definition · specific weight (from H1)</span>
+<p>The <b>specific weight</b> \(\gamma=\rho g\) is the weight of one cubic metre of the fluid, in N/m³. Water: \(1000\times9.81=9810\u{N/m^3}=9.81\u{kN/m^3}\). Mercury: \(13.6\times9.81=133.4\u{kN/m^3}\).</p></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Constant specific weight: absolute and gauge pressure (slides 6–7)</h2>
+<p>For a liquid, \(\rho\) (and so \(\gamma\)) hardly changes with depth: liquids are nearly incompressible. Then the hydrostatic equation can be integrated in one line (slide 6).</p>
+<details class="calc"><summary>integrating \(\mathrm dp=-\rho g\,\mathrm dz\)</summary><div>
+<p>1. Separate: \(\int\mathrm dp=-\int\rho g\,\mathrm dz\). <span class="why">\(\rho g\) is constant, so it comes out of the integral.</span></p>
+<p>2. Integrate: \(p=-\rho gz+C\), where \(C\) is an integration constant.</p>
+<p>3. Fix \(C\) at the free surface: there \(z=0\) and the pressure is the atmospheric pressure \(p_0\). So \(p_0=C\).</p>
+<p>4. Result: \(p=-\rho gz+p_0\). Below the surface \(z\) is negative; writing the depth \(h=-z\) gives \(p=\rho gh+p_0\).</p>
+</div></details>
+<div class="box thm"><span class="tag">Result · pressure in a liquid of constant density</span>
+\[p=-\rho gz+p_0=\rho gh+p_0\quad\text{(absolute)}\]
+\[p=-\rho gz=\rho gh\quad\text{(gauge, }p_0=0\text{)}\]
+<p class="word"><b>In words:</b> pressure = pressure at the surface + (density × g × depth). Pressure grows <b>linearly</b> with depth.</p></div>
+<div class="box def"><span class="tag">Definitions · absolute and gauge pressure (slides 6–7)</span>
+<ul class="list">
+<li><b>Absolute pressure</b>: measured above a perfect <b>vacuum</b> (zero absolute pressure, no molecules at all). It can never be negative.</li>
+<li><b>Gauge pressure</b> (also spelled "gage"): measured above the <b>local atmospheric pressure</b>. Setting \(p_0=0\) gives gauge pressure. Most pressure gauges (tyre gauges, the dial gauges on tanks) read gauge pressure, because the atmosphere pushes on their outside too.</li>
+</ul>
+\[p_\text{abs}=p_\text{gauge}+p_\text{atm}\]
+<p class="word"><b>In words:</b> absolute = gauge + atmospheric.</p></div>
+<div id="fig-absgauge"></div>
+<p class="muted">Slide 7, redrawn. Point A is above the local atmosphere: positive gauge pressure. Point B is below it: negative gauge pressure, also called a <b>vacuum</b> or "positive vacuum" reading (a vacuum gauge reads how far below atmospheric). The standard atmosphere, 101.3 kPa = 14.7 psi = 30.0 in Hg = 760 mm Hg = 34 ft H₂O = 1.013 bar, sits above zero absolute; the <b>local</b> atmosphere varies with weather and altitude.</p>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>(a) A diver is 10 m below the surface of fresh water. Gauge pressure: \(p=\rho gh=1000(9.81)(10)=98.1\u{kPa}\). Absolute pressure: \(98.1+101.3=199.4\u{kPa}\): about twice atmospheric. (b) A tank of air has a gauge pressure of \(-16\u{kPa}\). Its absolute pressure is \(101.3-16=85.3\u{kPa}\): a partial vacuum. (c) The pressure on the floor of a 2.5 m deep pool is \(9.81\times2.5=24.5\u{kPa}\) gauge, whatever the size of the pool.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Section B papers state "pressure means gauge pressure". Only add 101.3 kPa if the question asks for absolute pressure. Negative gauge answers are normal (e.g. air in a tank under suction, May 2024 Q1(a)); do not "fix" the sign.</p></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Pressure in a liquid: "same level, same fluid" (slide 8; Concept Questions pp. 1–8)</h2>
+<p>Slide 8 turns the hydrostatic law into the two rules used in every manometer problem.</p>
+<div class="box thm"><span class="tag">Rule 1 · below vs above</span>
+\[p_\text{below}=p_\text{above}+\rho g\,|\Delta z|\]
+<p class="word"><b>In words:</b> the pressure at a lower point is higher than at a higher point by (specific weight) × (difference in depth). It does not matter where the two points are sideways, as long as one continuous fluid joins them.</p></div>
+<div class="box thm"><span class="tag">Rule 2 · same level, same fluid</span>
+<p>Pressures at two points are <b>equal</b> when the two points are at the <b>same elevation</b> (on the same horizontal level) <b>and</b> can be joined by a line drawn <b>through the same fluid</b>.</p></div>
+<p>The third bullet of slide 8: <b>the shape of the container does not matter</b> in hydrostatics. Slide 8's figure (Fig. 2.4) shows a container of water with odd-shaped compartments that all open into one body of water above them, and a narrow compartment on the right, walled off from the others, holding mercury at its base.</p>
+<div id="fig-fig24"></div>
+<p class="muted">Slide 8 Fig. 2.4, redrawn. Points a, b, c, d are at equal depth (depth 1) in water: same pressure, whatever shape of compartment they are in. Points A, B, C are at the same deeper level (depth 2) in water and have equal pressures, higher than at a–d. Point D is at the same level but in the <b>mercury</b>: a water path from A, B or C cannot reach it, so \(p_D\ne p_A\) (here \(p_D\) is larger: the column above D includes heavy mercury).</p>
+<div class="box eg"><span class="tag">Older-course question · ENGG1205 2012–13 Q1(h) · 1 mark</span>
+<p>"Is it always true that the hydrostatic pressure at one point is the same as that at another point if the two points are at the same level?"</p>
+<details><summary>Answer</summary><div><p><b>No.</b> The two points must also be connected by the same continuous fluid. Point D in Fig. 2.4 is at the same level as A but under mercury, so its pressure is different. (Two separate tanks with different free-surface heights are another example.)</p></div></details></div>
+
+<h3>Concept question: two containers (Some Concept Questions, pp. 1–8)</h3>
+<p>The supplement asks a short sequence of questions about two containers with the <b>same bottom area</b> and the <b>same water depth</b>: a wide jar, and a "T-shaped" container (a thin flat box at the bottom, with a narrow tube rising from its centre to the same height).</p>
+<div id="fig-cont"></div>
+<ol class="steps">
+<li>"What is the force acting on the bottom of the (wide) container?" Answer given: <b>the weight of fluid in the container</b>. True for straight vertical walls: the water column above the bottom is all the water.</li>
+<li>"What is the force acting on the bottom of the T-shaped container?" The slide prints "Answer: Weight of fluid in the container<b>?</b>", with a question mark: this time it is <b>not</b> the weight.</li>
+<li>"If the bottom area is the same, which container has the larger force on the bottom?" Answer: <b>the force is the same</b>.</li>
+<li>"Why the same force on the bottom, despite the different volumes of fluid?"</li>
+</ol>
+<details class="calc"><summary>why the bottom forces are equal (with numbers)</summary><div>
+<p>1. Bottom force = pressure at the bottom × bottom area: \(F=\rho gH\,A_b\). <span class="why">The bottom is horizontal, so the pressure is the same all over it.</span></p>
+<p>2. The pressure depends only on the depth \(H\) (Section 6), not on the shape, so both containers have the same bottom pressure and the same \(F\). With \(A_b=0.01\u{m^2}\) and \(H=0.30\u{m}\): \(F=9810(0.30)(0.01)=29.4\u{N}\) for both.</p>
+<p>3. Wide jar: water volume \(A_bH=0.003\u{m^3}\), weight 29.4 N = bottom force. ✓</p>
+<p>4. T-shape: say the flat part is 1 cm tall and the tube has area 1 cm² (\(10^{-4}\u{m^2}\)) for the remaining 29 cm. Volume:</p>\[\begin{aligned}V&=0.01(0.01)+10^{-4}(0.29)\\&=1.29\times10^{-4}\u{m^3}\end{aligned}\]<p>so the weight is only 1.27 N.</p>
+<p>5. Where does the other 28.2 N come from? Look at the water in the T-shape as a free body (figure, right). The <b>ceiling</b> of the flat part is at depth 0.29 m, where the pressure is \(9810(0.29)=2845\u{Pa}\). The water pushes up on that ceiling, so the ceiling pushes <b>down</b> on the water with \(2845\times(0.01-0.0001)=28.2\u{N}\). <span class="why">Pressure force on a surface is perpendicular to it and inward into the fluid.</span></p>
+<p>6. Vertical balance of the water: bottom push up = weight + ceiling push down \(=1.27+28.2=29.4\u{N}\). ✓ The container's ceiling, not the water's weight, supplies most of the force on the bottom.</p>
+</div></details>
+<p class="word"><b>In words:</b> pressure depends on depth, not on how much fluid there is. The bottom force equals the weight of the fluid only when the walls are vertical. This "hydrostatic paradox" is why the review sheet lets you write \(p=\rho gh\) for any container shape.</p>
+<div class="box warn"><span class="tag">Watch</span>
+<p>The container itself still weighs what it weighs: on a scale, the T-shape container with its water reads the true total weight (container + 1.27 N of water). The extra 28.2 N on the bottom is cancelled by the 28.2 N upward push on the ceiling, which is part of the same container.</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Pressure in a static gas (slide 9)</h2>
+<p>The hydrostatic equation \(\mathrm dp/\mathrm dz=-\rho g\) applies to gases too, but a gas is very light: air at room conditions has \(\rho\approx1.2\u{kg/m^3}\), about \(1/830\) of water.</p>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>Across 10 m of height, air changes pressure by \(\rho g\,\Delta z=1.2(9.81)(10)\approx118\u{Pa}\), while 10 m of water changes it by 98 100 Pa. Even over 100 m of air the change is only about 1.2 kPa, around 1% of atmospheric pressure.</p></div>
+<div class="box thm"><span class="tag">Rule · pressure in a gas (slide 9)</span>
+<p>Unless a huge elevation difference is involved, the pressure in a static gas may be taken as <b>constant</b> everywhere in the system, regardless of height.</p>
+<p class="word"><b>In words:</b> in a manometer or tank problem, gas columns add nothing. The air at the top of a tank has the same pressure as the air in the pipe leading to the manometer, even if the pipe goes up or down.</p></div>
+<p>This is why exam questions say "the air pressure in this vessel can be assumed to be the same everywhere" (May 2023) and why, in a U-tube manometer measuring a gas, the gas term is dropped (Section 13). "Huge" means kilometres: across the whole atmosphere, the pressure falls from 101 kPa at sea level to about half at 5.5 km, and there the density change also matters (air is compressible).</p>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Pressure distributions and pressure force (slides 10–14)</h2>
+<p>Slides 10–14 lead from pressure at a point to the force on a whole surface, which is the subject of H3. They are summarised here because they rest on the ideas above.</p>
+<p><b>Slide 10, recall:</b></p>
+<ul class="list">
+<li>Pressure increases <b>linearly</b> with vertical depth.</li>
+<li>In unit depth (1 m), pressure increases by an amount equal to the specific weight of the fluid.</li>
+<li>Pressure is a scalar, independent of direction.</li>
+<li>The force due to pressure acting on a submerged surface (the <b>pressure force</b>) is a <b>distributed load</b>: it is spread over the surface, like snow on a roof, rather than acting at one point.</li>
+<li>The pressure force is always directed <b>inward</b> and <b>perpendicular</b> to the surface on which it acts.</li>
+</ul>
+<div class="box def"><span class="tag">Definition · pressure distribution diagram (slide 11)</span>
+<p>A <b>pressure distribution diagram</b> shows the distributed load on a submerged surface (plane or curved, fully or partly submerged) by a row of arrows:</p>
+<ul class="list">
+<li>each arrow is the local pressure force, drawn <b>inward and perpendicular</b> to the surface;</li>
+<li>its <b>length is proportional to the local pressure</b>, so it grows linearly with <b>vertical</b> depth: zero at the free surface, largest at the bottom;</li>
+<li>the line joining the arrow tails (the far ends) is the <b>pressure envelope</b>.</li>
+</ul></div>
+<p><b>Slide 12, reminder:</b> pressure is a scalar, not associated with any direction, and increases linearly with vertical depth. The <b>pressure force</b> is a local force on an infinitesimal part of a surface, therefore a <b>vector</b>; its direction is set by the direction of the surface.</p>
+<h3>Shapes of pressure diagrams (slides 13–14)</h3>
+<div id="fig-dist"></div>
+<p class="muted">Slide 13, redrawn. Left: a vertical wall that pierces the free surface carries a <b>triangular</b> distribution (zero at the surface, \(\rho gh\) at the bottom). Middle: a vertical plate whose top is at depth \(h_1\) and bottom at \(h_2\) carries a <b>trapezoidal</b> distribution, from \(\gamma h_1\) to \(\gamma h_2\). Right: the same plate inclined: the arrows tilt to stay perpendicular to the plate, but their lengths still go from \(\gamma h_1\) to \(\gamma h_2\). The inclination changes only the <b>direction</b> of the pressure force, not the pressure: pressure depends only on vertical depth.</p>
+<div id="fig-curve"></div>
+<p class="muted">Slide 14, redrawn. Left: on a <b>circular</b> surface, every pressure arrow is perpendicular to the circle, so its line of action passes through the centre \(O\); therefore the resultant force \(F_R\) also passes through \(O\) (used in H3). Right: a spherical buoy held under seawater by a cable. The pressure envelope around it is larger on the lower half (deeper) than on the upper half, so the pressure forces add up to a net <b>upward</b> force: the <b>buoyant force</b> \(F_B\), which the slide's free-body sketch balances by the cable tension \(T\) pulling down (with the buoy's own weight, if not negligible; H4).</p>
+<p>H3 shows how to replace a distributed pressure load by a single resultant force (magnitude and point of action). Here the main point is how to draw the diagrams: <b>perpendicular, inward, length ∝ vertical depth</b>.</p>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Layered liquids (slides 15–17)</h2>
+<p>Liquids that do not mix (oil and water, water and mercury) settle in <b>layers</b>, lightest on top. Inside each layer the hydrostatic law holds with that layer's own density.</p>
+<h3>A bilinear pressure diagram (slide 15)</h3>
+<p>Slide 15 shows a vertical wall holding back a layer of oil (thickness \(b_1\)) floating on water (thickness \(b_2\)). The pressure diagram is <b>bilinear</b>: two straight pieces with a kink at the oil–water interface. The slide marks the two resultant forces \(F_{R_1}\) (oil part, triangle) and \(F_{R_2}\) (water part, trapezoid), which H3 computes.</p>
+<div id="fig-bilin"></div>
+<p class="muted">Slide 15, redrawn: oil over water against a vertical wall. With pressure drawn horizontally and depth vertically, the envelope's slope (depth per unit of pressure) is \(1/\gamma\): the heavier water layer has the smaller slope, so its envelope leans outward faster.</p>
+<p class="word"><b>Slide 15 in words:</b> the slope of the pressure envelope is scaled by the inverse of the specific weight of the fluid. The greater the specific weight, the smaller the slope (and the faster the pressure grows with depth).</p>
+<h3>The interface carries the pressure across (slide 16)</h3>
+<p>Slide 16 takes a column of water (height \(\Delta z_1\)) on top of mercury (height \(\Delta z_2\)), open to the air (\(p_0=0\)). Call 1 the water–mercury interface and 2 the bottom.</p>
+<div id="fig-wh"></div>
+<div class="box thm"><span class="tag">Result · two layers (slide 16)</span>
+\[p_1=\rho_\text{water}g\,\Delta z_1\]
+\[p_2=p_1+\rho_\text{mercury}g\,\Delta z_2\]
+<p class="word"><b>In words:</b> the pressure is <b>continuous</b> at an interface. The pressure at the bottom of the water, \(p_1\), is the starting pressure at the top of the mercury. It acts on the mercury like a <b>surcharge</b>: a uniform extra pressure transmitted to, and felt at, every depth of the mercury below.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>0.5 m of water on 0.1 m of mercury, open top. Interface: \(p_1=9810(0.5)=4905\u{Pa}\). Bottom:</p>\[\begin{aligned}p_2&=4905+13\,600(9.81)(0.1)\\&=4905+13\,342\\&=18\,247\u{Pa}\approx18.2\u{kPa}\end{aligned}\]<p> The 10 cm of mercury adds almost three times as much as the 50 cm of water.</p></div>
+<h3>A column of many liquids (slide 17)</h3>
+<p>Slide 17 (Fig. 2.8) stacks oil (\(\rho_o\)), water (\(\rho_w\)), glycerin (\(\rho_G\)) and mercury (\(\rho_M\)) with a known pressure \(p_1\) at the top (\(z=z_1\)) and interfaces at \(z_2,z_3,z_4\), bottom at \(z_5\). Across each layer, \(p_{i+1}-p_i=-\rho_i g(z_{i+1}-z_i)\); summing all four:</p>
+\[\begin{aligned}p_5&=p_1+\gamma_o|\Delta z_{12}|+\gamma_w|\Delta z_{23}|\\&\quad+\gamma_G|\Delta z_{34}|+\gamma_M|\Delta z_{45}|\end{aligned}\]
+<p class="word"><b>In words:</b> start from the known pressure and add (specific weight × thickness) for every layer you go down through. This "add as you go down" walk is exactly the manometer method of Sections 13–15.</p>
+<div id="fig-col"></div>
+<div class="box eg"><span class="tag">Example · written for these notes · slide 17 with numbers</span>
+<p>Open tank (\(p_1=0\)): oil 1.0 m (\(\rho=850\)), water 1.5 m, glycerin 0.5 m (\(\rho=1260\)), mercury 0.2 m. Find the pressure at the bottom.</p>
+<details class="calc"><summary>layer by layer</summary><div>
+<p>1. Oil: \(p_2=0+850(9.81)(1.0)=8339\u{Pa}\).</p>
+<p>2. Water:</p>\[\begin{aligned}p_3&=8339+1000(9.81)(1.5)\\&=23\,054\u{Pa}\end{aligned}\]
+<p>3. Glycerin:</p>\[\begin{aligned}p_4&=23\,054+1260(9.81)(0.5)\\&=29\,234\u{Pa}\end{aligned}\]
+<p>4. Mercury:</p>\[\begin{aligned}p_5&=29\,234+13\,600(9.81)(0.2)\\&=55\,917\u{Pa}\end{aligned}\]
+</div></details>
+\[\boxed{p_5\approx55.9\u{kPa}\ \text{(gauge)}}\]</div>
+<div class="figure" id="fig-colsim"><p class="ttl">Try it · pressure down a layered column</p>
+<canvas class="plot" id="cv-col" style="height:280px"></canvas>
+<div class="ctrl">
+<label>oil, m <input type="range" id="c-o" min="0" max="2" step="0.1" value="1"></label>
+<label>water, m <input type="range" id="c-w" min="0" max="2" step="0.1" value="1.5"></label>
+<label>mercury, m <input type="range" id="c-m" min="0" max="0.5" step="0.05" value="0.2"></label>
+<label>\(p\) at top, kPa <input type="range" id="c-p" min="-20" max="40" step="1" value="0"></label>
+</div>
+<div class="readout" id="out-col"></div>
+<p class="cap">Oil (SG 0.85) on water on mercury (SG 13.6). Depth is drawn downward and pressure (gauge, kPa) across. Each layer is a straight line; the heavier the liquid, the flatter the line (more kPa per metre). Raising the top pressure shifts the whole line sideways: Pascal's principle (Section 4) in a picture.</p></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Measuring pressure; the mercury barometer (slides 18–19)</h2>
+<p>Slide 18: the principle of hydrostatics is widely applied to the <b>measurement of pressure</b> or of a <b>pressure difference</b>. Every instrument in Sections 11–15 uses only the two rules of Section 7:</p>
+<ol class="steps">
+<li>Pressure "below" is higher than pressure "above" by (specific weight of the fluid) × (difference in depth).</li>
+<li>Two points on the same horizontal level have the same pressure as long as they are connected by the same fluid.</li>
+</ol>
+<h3>The mercury barometer (slide 19)</h3>
+<div class="box def"><span class="tag">Definition · barometer</span>
+<p>A <b>barometer</b> measures the <b>atmospheric</b> pressure. The mercury barometer is a glass tube, closed at the top, filled with mercury and turned upside down into a dish of mercury. The mercury falls until its column is about 760 mm high, leaving an almost perfect <b>vacuum</b> at the top of the tube.</p></div>
+<div class="pair">
+<div><div id="fig-baro"></div><p class="sub">Slide 19, redrawn: the atmosphere pushes on the open mercury surface in the dish; the column is held up by that push.</p></div>
+<div><div id="fig-barofbd"></div><p class="sub">Free-body diagram of the mercury column (area \(A\)): vacuum above (no push), weight \(\rho_\text{Hg}gAh\) down, \(p_\text{atm}A\) up at the dish level.</p></div>
+</div>
+<div class="box thm"><span class="tag">Result · barometer</span>
+\[p_\text{atm}=\rho_\text{Hg}\,g\,h\]
+<p class="word"><b>In words:</b> atmospheric pressure = specific weight of mercury × height of the mercury column. A point inside the tube at the level of the dish surface is joined to the dish surface through mercury, so it is at \(p_\text{atm}\); going up \(h\) to the vacuum (\(p\approx0\) absolute) subtracts \(\rho_\text{Hg}gh\).</p></div>
+<details class="calc"><summary>the numbers on slide 19</summary><div>
+<p>1. Atmospheric pressure about 101 kPa (standard: 101.325 kPa). Mercury: \(\rho=13\,600\u{kg/m^3}\), "13.6 times heavier than water".</p>
+<p>2. Column height:</p>\[\begin{aligned}h&=\frac{101\,325}{13\,600\times9.81}\\&=0.7595\u{m}\approx760\u{mm}\end{aligned}\]<p><span class="why">This is why standard atmosphere = 760 mm Hg.</span></p>
+<p>3. With water instead: \(h=101\,325/9810=10.33\u{m}\), "more than 10 m high", 13.6 times taller. The slide's sketch shows a person dwarfed by a 10 m water barometer beside a small mercury one.</p>
+</div></details>
+<p>It is conventional to give atmospheric pressure as the <b>barometric height in mm of mercury</b> (mmHg); 1 mmHg \(=13\,600\times9.81\times0.001\approx133.4\u{Pa}\). Blood pressure is also measured in mmHg: a reading of "120 over 80" means a gauge pressure of 120 mmHg (16.0 kPa) when the heart beats and 80 mmHg (10.7 kPa) between beats.</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · why mercury, and why not a perfect vacuum</span>
+<p>Mercury is used because it is so dense (a short tube suffices) and it evaporates very little. The space at the top is not quite empty: it holds mercury vapour at its <b>vapour pressure</b> (H1), about 0.16 Pa at 20 °C, which is negligible. A water barometer would have water vapour at about 2.3 kPa at the top, a 2% error.</p></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Atmospheric pressure, weather and storm surge (Atmospheric Pressure supplement)</h2>
+<h3>The weather chart (p. 1)</h3>
+<p>The supplement shows a Hong Kong Observatory surface weather chart (5 Oct 2026, 14:00 HK time) of East Asia and the western Pacific. The curved lines are <b>isobars</b>: lines joining places with the same air pressure, labelled in hPa (millibar). \(1000\u{hPa}=100\u{kPa}=1\u{bar}\). Centres marked H (high) and L (low) are local pressure maxima and minima; a tropical cyclone appears as a tight set of closed isobars around a low.</p>
+<ul class="list">
+<li>The pressures on the chart are <b>mean sea level pressures</b> (MSLP): each station's measured pressure is adjusted for the station's altitude to what it would be at sea level, so that stations at different heights can be compared. (Section 8: across large heights, air pressure does change.)</li>
+<li>The <b>standard atmospheric pressure</b>, 1013.25 mb (101.325 kPa), is measured at standard mean sea level.</li>
+<li>Typically the local air pressure deviates by only about <b>±1%</b> (about ±10 hPa) from the standard value.</li>
+<li><b>Weather is good at a local maximum</b> of pressure (a high: sinking, drying air) and <b>bad at a local minimum</b> (a low: rising air forms clouds and rain). Inclement (rainy, unsettled) weather occurs in a <b>trough</b>, an elongated region of low pressure.</li>
+<li>A <b>tropical cyclone</b> (typhoon) is a region of low pressure; the pressure is lowest in the <b>eye</b>, its centre.</li>
+</ul>
+<h3>Storm surge (p. 2)</h3>
+<p>Near the centre of super typhoon Choi-Wan the atmospheric pressure was 990 mb, against the standard 1013 mb. The pressure drop is \(\Delta P=1013-990=23\u{mb}=2300\u{Pa}\). The sea under the low pressure is pushed up less, so it <b>rises</b>.</p>
+<div id="fig-surge"></div>
+<p class="muted">Supplement p. 2, redrawn: under good weather (1013 mb) the sea is at its normal level; under the centre of the typhoon (990 mb) it stands higher by \(\Delta h\). At a fixed level deep below, the pressure is the same in both places.</p>
+<div class="box thm"><span class="tag">Result · sea-level rise from a pressure drop</span>
+\[\Delta h=\frac{\Delta p}{\rho g}\]
+<p class="word"><b>In words:</b> the extra water depth must make up exactly for the missing air pressure, so that the total pressure at some level below the surface stays the same.</p></div>
+<details class="calc"><summary>why \(\Delta h=\Delta p/(\rho g)\), and Choi-Wan's numbers</summary><div>
+<p>1. Pick a level a depth \(h\) below the normal sea surface, far below. In still water, the pressure on a horizontal level in the same fluid is the same everywhere (Rule 2), so it must be the same under the good weather and under the typhoon. <span class="why">If it differed, water would flow sideways until it was equal.</span></p>
+<p>2. Good weather: \(p=p_\text{std}+\rho gh\). Under the typhoon: \(p=(p_\text{std}-\Delta p)+\rho g(h+\Delta h)\).</p>
+<p>3. Set equal: \(\rho g\,\Delta h=\Delta p\), so \(\Delta h=\Delta p/(\rho g)\).</p>
+<p>4. Choi-Wan (supplement, with \(\rho=1000\)): \(\Delta h=2300/(1000\times9.81)=0.23\u{m}\). With seawater (\(\rho\approx1025\)) it is 0.229 m: the same to two figures.</p>
+</div></details>
+<p>This is the pressure effect on the sea level in the <b>open ocean</b>; a useful rule: each 1 hPa of pressure drop raises the sea about 1 cm. Wind (pushing water towards the shore) and tides can add much more. As the storm moves, so does its low-pressure region, and it carries a mound of water with it, travelling in the sea as a wave. When the cyclone nears a coast, this water has gained considerable momentum and can surge up a shore slope as a large wave: the <b>storm surge</b>, similar to a tsunami in that a massive amount of water suddenly floods a coastal region.</p>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A very strong typhoon has a central pressure of 920 hPa. Open-ocean rise from pressure alone (seawater):</p>\[\Delta h=\frac{(1013-920)\times100}{1025\times9.81}=0.92\u{m}\]<p> Wind set-up near a shallow coast can add several metres more.</p></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Piezometer and simple U-tube manometer (slides 20–21)</h2>
+<div class="box def"><span class="tag">Definition · manometer</span>
+<p>A <b>manometer</b> is a tube holding one or more liquids whose <b>column heights</b> show a pressure or a pressure difference. You read lengths with a ruler and convert them to pressure with \(\rho gh\). No springs, no electronics: just hydrostatics.</p></div>
+<h3>Piezometer (slide 20)</h3>
+<p>A <b>piezometer</b> is a vertical tube, open at the top, connected to a point A of a pipe or tank. The liquid in the system rises up the tube until its weight balances the pressure at A. It works whether the fluid in the system is static or flowing (the tube itself holds still liquid).</p>
+<div class="pair">
+<div><div id="fig-piezo"></div><p class="sub">Slide 20: liquid (specific weight \(\gamma_1\)) rises a height \(h_1\) above A in the open tube.</p></div>
+<div><div id="fig-utube"></div><p class="sub">Slide 21: simple U-tube. Points (1) at A's level, (2) at the gauge-fluid interface, (3) at the same level in the open limb.</p></div>
+</div>
+<div class="box thm"><span class="tag">Result · piezometer</span>
+\[p_A=\gamma_1h_1\]
+<p class="word"><b>In words:</b> pressure at A = specific weight of the system liquid × the height it rises above A. (Start at the open top, \(p=0\), go down \(h_1\) through the same liquid to A's level.)</p></div>
+<p>It works only when (slide 20):</p>
+<ul class="list">
+<li><b>the fluid is a liquid</b>: a gas would simply escape out of the open tube, with no column to read;</li>
+<li><b>the pressure is not too large</b>: 38 kPa of water pressure needs a tube \(38\,060/9810=3.88\u{m}\) tall.</li>
+</ul>
+<p>It also cannot measure a <b>negative</b> gauge pressure: air would be sucked in through the open top. A U-tube with a heavy gauge fluid fixes all three problems.</p>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>Water rises 0.6 m above the centre of a pipe in a piezometer. \(p_A=9810(0.6)=5886\u{Pa}=5.89\u{kPa}\).</p></div>
+<h3>Simple U-tube manometer (slide 21)</h3>
+<p>A U-shaped tube holds a <b>gauge fluid</b> (specific weight \(\gamma_2\), usually mercury) that does not mix with the system fluid (\(\gamma_1\)). The left limb connects to A; the right limb is open. The system fluid fills the tube from A down to the gauge fluid's surface in the left limb, a depth \(h_1\) below A; in the open limb, the gauge fluid stands \(h_2\) above that interface level.</p>
+<div class="box thm"><span class="tag">Result · simple U-tube manometer</span>
+\[p_A=\gamma_2h_2-\gamma_1h_1\]
+<p class="word"><b>In words:</b> pressure at A = (gauge fluid's specific weight × its height difference) − (system fluid's specific weight × the depth of the interface below A). If the system fluid is a <b>gas</b>, \(\gamma_1h_1\) is negligible and \(p_A=\gamma_2h_2\).</p></div>
+<details class="calc"><summary>slide 21's four steps</summary><div>
+<p>1. \(p_2=p_3\). <span class="why">Same horizontal level, connected by the same fluid (the gauge fluid, through the bend).</span></p>
+<p>2. \(p_2=p_1+\gamma_1h_1\). <span class="why">(2) is \(h_1\) below (1), through the system fluid.</span></p>
+<p>3. \(p_3=\gamma_2h_2\). <span class="why">(3) is \(h_2\) below the open surface, where \(p_\text{atm}=0\) gauge, through the gauge fluid.</span></p>
+<p>4. \(p_A=p_1\). <span class="why">Same horizontal level, connected by the same fluid (the system fluid).</span></p>
+<p>Hence \(p_1+\gamma_1h_1=\gamma_2h_2\), i.e. \(p_A=\gamma_2h_2-\gamma_1h_1\).</p>
+</div></details>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>(a) Water flows in a pipe; a mercury U-tube is connected at A. The mercury interface in the left limb is 0.2 m below A, and the mercury in the open limb stands 0.3 m higher than that interface. </p>\[\begin{aligned}p_A&=13.6(9810)(0.3)-9810(0.2)\\&=40\,025-1962=\boxed{38.06\u{kPa}}\end{aligned}\]<p>The piezometer above would need a 3.9 m tube for this pressure.</p>
+<p>(b) The same U-tube on a tank of <b>air</b> reads \(h_2=5\u{cm}\) of mercury: \(p_A=13.6(9810)(0.05)=6.67\u{kPa}\); the air column is ignored (Section 8).</p></div>
+<div class="figure" id="fig-manosim"><p class="ttl">Try it · a simple U-tube manometer</p>
+<div id="fig-mano"></div>
+<div class="ctrl">
+<label>\(p_A\), kPa <input type="range" id="m-p" min="-12" max="40" step="0.5" value="10"></label>
+<label>gauge fluid SG <input type="range" id="m-sg" min="1.5" max="13.6" step="0.1" value="13.6"></label>
+<label><input type="checkbox" id="m-gas"> system fluid is a gas</label>
+</div>
+<div class="readout" id="out-mano"></div>
+<p class="cap">Equal tube areas: whatever leaves one limb enters the other. Raise \(p_A\) and the gauge fluid is pushed down on the A side and up on the open side. Make \(p_A\) negative and the open-side level falls below the A side (the pattern of May 2024 Q1 and ENGG1205 2017–18 Q1). A lighter gauge fluid gives bigger, easier-to-read heights for the same pressure.</p></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Differential U-tube manometer (slide 22)</h2>
+<p>A <b>differential manometer</b> measures the <b>difference</b> in pressure between two points A and B (for example, either side of a valve or of a narrowing in a pipe, F3). Both limbs are connected: the left to A (fluid \(\gamma_1\)), the right to B (fluid \(\gamma_3\)), with a gauge fluid \(\gamma_2\) in the bend.</p>
+<div id="fig-diff"></div>
+<p class="muted">Slide 22, redrawn. (1) at A's level; the interface (2) is \(h_1\) below it; (3) is level with (2) in the right limb; the right-hand interface (4) is \(h_2\) above (3); (5), at B's level, is \(h_3\) above (4).</p>
+<div class="box thm"><span class="tag">Result · differential U-tube manometer</span>
+\[p_A-p_B=\gamma_2h_2+\gamma_3h_3-\gamma_1h_1\]
+<p class="word"><b>In words:</b> walk from A down to the left interface (+), across the bend at the same level, up the gauge fluid (−) and up the fluid of B (−) to reach B; the sum of the changes is \(p_B-p_A\).</p></div>
+<details class="calc"><summary>slide 22's steps</summary><div>
+<p>1. \(p_2=p_3\). <span class="why">Same horizontal level, connected by the same fluid (the gauge fluid).</span></p>
+<p>2. \(p_2=p_1+\gamma_1h_1=p_A+\gamma_1h_1\). <span class="why">(2) is \(h_1\) below (1); (1) and A are on one level in fluid 1.</span></p>
+<p>3. Going down from B:</p>\[\begin{aligned}p_3&=p_4+\gamma_2h_2\\&=p_5+\gamma_3h_3+\gamma_2h_2\\&=p_B+\gamma_3h_3+\gamma_2h_2\end{aligned}\]<p><span class="why">(3) is \(h_2\) below (4) through the gauge fluid; (4) is \(h_3\) below (5) through fluid 3; (5) and B are level in fluid 3.</span></p>
+<p>4. Equate steps 2 and 3: \(p_A+\gamma_1h_1=p_B+\gamma_3h_3+\gamma_2h_2\), which rearranges to the boxed result.</p>
+</div></details>
+<h3>The common special case</h3>
+<p>If A and B are at the <b>same elevation</b> (\(h_1=h_2+h_3\)) and the two containers hold the <b>same fluid</b> (\(\gamma_1=\gamma_3\)), then, with \(h=h_2\) the <b>manometer differential reading</b> (the height difference between the two gauge-fluid surfaces):</p>
+<div class="box thm"><span class="tag">Result · same elevation, same fluid</span>
+\[\Delta p=p_A-p_B=\Big(\frac{\rho_m}{\rho}-1\Big)\rho gh\]
+<p class="word"><b>In words:</b> pressure difference = (manometer fluid density ÷ pipe fluid density − 1) × \(\rho gh\). The "−1" is there because the pipe fluid fills the rest of the limb on the low side and partly balances the gauge fluid.</p></div>
+<details class="calc"><summary>from the general result to the special case</summary><div>
+<p>1. Put \(\gamma_3=\gamma_1\) and \(h_1=h_2+h_3\): \(p_A-p_B=\gamma_2h_2+\gamma_1h_3-\gamma_1(h_2+h_3)\).</p>
+<p>2. The \(\gamma_1h_3\) terms cancel: \(p_A-p_B=(\gamma_2-\gamma_1)h_2\).</p>
+<p>3. Write \(\gamma_2=\rho_mg\), \(\gamma_1=\rho g\), \(h_2=h\): \((\rho_m-\rho)gh=(\rho_m/\rho-1)\rho gh\).</p>
+</div></details>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>(a) Water at A and B (same level), mercury gauge, reading \(h=0.15\u{m}\):</p>\[\Delta p=(13.6-1)(9810)(0.15)=18.5\u{kPa}\]<p>higher at A (the side where mercury is pushed down). (b) The same reading with <b>air</b> at A and B: \(\Delta p\approx13.6(9810)(0.15)=20.0\u{kPa}\) (the "−1" becomes −0.0012, negligible).</p>
+<p>(c) Unequal levels, water at both ends, mercury gauge: \(h_1=0.6\u{m}\), \(h_2=0.2\u{m}\), \(h_3=0.9\u{m}\) (so B is 0.5 m above A). Use the general result:</p>
+\[\begin{aligned}p_A-p_B&=133\,416(0.2)+9810(0.9)\\&\quad-9810(0.6)=29.6\u{kPa}\end{aligned}\]
+<p>The special-case formula would give 24.7 kPa here: wrong, because A and B are not level.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>The formula \((\rho_m/\rho-1)\rho gh\) is a result for a <b>specific</b> set-up. The review sheet says "there is no need to remember equations deduced for specific applications": in the exam, walk through the fluids point by point instead (Section 15). Then you never use it in the wrong situation.</p></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Manometer chains: the exam method</h2>
+<p>Every manometer question, however strange the picture, is solved by the same walk. This is exam type <a href="guide-H2.html#H2-2">H2.2</a>.</p>
+<div class="box ready"><span class="tag">Ready answer · walking through a manometer (exam type H2.2)</span>
+<ol class="steps">
+<li><b>Sketch and label</b> every fluid surface and interface with a number; mark known pressures (open to air: 0 gauge).</li>
+<li><b>Start</b> at a point of known pressure (or at the unknown, as a symbol).</li>
+<li><b>Walk</b> through the tubes: going <b>down</b> \(\Delta z\) through a fluid, <b>add</b> \(\gamma\,\Delta z\); going <b>up</b>, <b>subtract</b> it. Crossing sideways at one level in one continuous fluid: no change. Gas columns: no change.</li>
+<li><b>Jump</b> across a U-bend only at a level where the <b>same fluid</b> is on both sides (usually the lower gauge-fluid surface).</li>
+<li><b>End</b> at the other known point and set the sum equal to its pressure; solve. Keep symbols to the last line (review sheet advice), then substitute.</li>
+<li><b>Check the sign</b>: the side where the gauge fluid is pushed <b>down</b> has the higher pressure.</li>
+</ol></div>
+<h3>Worked example · ENGG1205 2017–18 Q1(a) (older course, 10 marks)</h3>
+<div class="box eg"><span class="tag">Past paper · older course ENGG1205 · same lecturer</span>
+<p>"For the tank shown in Figure C1(a), find the pressure of air inside the tank and the pressure gauge reading if the mercury manometer reading \(H=0.12\u{m}\). Relative density of mercury = 13.6." (Take \(\rho_w=1000\u{kg/m^3}\), \(g=9.81\u{m/s^2}\).)</p>
+<div id="fig-e1718"></div>
+<details class="calc"><summary>the walk, step by step</summary><div>
+<p>1. Start at the open mercury surface (right limb): \(p=0\). <span class="why">Open to the atmosphere.</span></p>
+<p>2. Go across the bend to the level of that surface in the left limb: still mercury, same level, so still 0.</p>
+<p>3. Go <b>up</b> \(H=0.12\u{m}\) through mercury to the mercury surface in the left limb:</p>\[\begin{aligned}p&=0-\rho_\text{Hg}gH\\&=-13.6(9810)(0.12)=-16.0\u{kPa}\end{aligned}\]<p><span class="why">Up means subtract.</span></p>
+<p>4. Through the air in the pipe up into the tank: no change (gas). So \(p_\text{air}=-16.0\u{kPa}\) (gauge): a partial vacuum, which is why the mercury is sucked up on the tank side.</p>
+<p>5. Down 4 m through the water to the gauge:</p>\[\begin{aligned}p_\text{gauge}&=-16.01+9.81(4)\\&=-16.01+39.24=23.23\u{kPa}\end{aligned}\]
+</div></details>
+<p></p>\[\boxed{p_\text{air}=-16.0\u{kPa}}\qquad\boxed{p_\text{gauge}=23.2\u{kPa}}\]<p>These match the given solution.</p></div>
+<h3>Worked example · ENGG1205 2015–16 Q2(a): inverted U-tube (6 marks)</h3>
+<div class="box eg"><span class="tag">Past paper · older course ENGG1205 · same lecturer</span>
+<p>"Determine the elevation difference, \(\Delta h\), between the water levels in the open tanks shown in Figure C2(a). The fluid in the inverted manometer has a relative density of 0.9."</p>
+<div id="fig-e1516"></div>
+<p class="muted">Two open tanks; the left water level is 1 m above the floor and higher than the right by \(\Delta h\). An inverted U-tube joins them: water rises in both legs, and a lighter liquid (SG 0.90) fills the top of the bend and the top 0.4 m of the right leg. A is the top of the water in the left leg, B the same level in the right leg; C is in the left leg at the left free-surface level; \(x\) is the distance from the bottom of the SG 0.9 column down to that level; D is at the right free-surface level.</p>
+<details class="calc"><summary>the walk, step by step</summary><div>
+<p>1. \(p_A=p_B\). <span class="why">Same level, joined through the SG 0.9 liquid across the top of the bend.</span></p>
+<p>2. Left leg, from A down \(0.4+x\) through water to C, which is level with the left free surface and joined to it through water: \(p_A+\rho_wg(0.4+x)=p_C=0\).</p>
+<p>3. Right leg, from B down 0.4 m of SG 0.9 liquid, then \(x+\Delta h\) of water to D at the right free surface: \(p_B+0.9\rho_wg(0.4)+\rho_wg(x+\Delta h)=0\).</p>
+<p>4. Subtract step 2 from step 3 (\(p_A=p_B\), and the \(x\) terms cancel): \(0.36+\Delta h-0.4=0\).</p>
+</div></details>
+<p>\(\boxed{\Delta h=0.4(1-0.9)=0.04\u{m}}\). An inverted U-tube with a gauge liquid <b>lighter</b> than water magnifies small differences: here 0.4 m of reading for 4 cm of level difference.</p></div>
+<h3>When the reading changes: the "2x" rule</h3>
+<p>Some questions give the reading for one state and ask for it in another (May 2022). If the pressure on one side rises, the gauge fluid in that limb drops by \(x\) and, with equal tube areas, rises by \(x\) in the other limb. The reading (the difference between the two gauge-fluid levels) grows by \(2x\), and the column of system fluid above the dropped interface gets longer by \(x\).</p>
+<div id="fig-change"></div>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A water-filled tube runs from point C down into a mercury U-tube whose other limb is open. With the water surface exactly at C (so \(p_C=0\)), the mercury in the open limb stands \(\Delta h=0.10\u{m}\) higher. Water is then added until it stands 1.0 m above C. Find the new reading.</p>
+<details class="calc"><summary>before and after</summary><div>
+<p>1. Before: let \(y\) = the water column from C down to the mercury on the connected side. Balancing at that mercury level: \(\gamma_wy=\gamma_\text{Hg}(0.10)\), so \(y=13.6(0.10)=1.36\u{m}\). <span class="why">The heights not given in the question come out of the first state.</span></p>
+<p>2. After: the mercury drops \(x\) on the connected side, rises \(x\) in the open limb. Water column above the new interface: \(1.0+1.36+x\). New reading \(0.10+2x\).</p>
+<p>3. Balance at the new interface level: \(\gamma_w(1.0+1.36+x)=\gamma_\text{Hg}(0.10+2x)\), i.e. \(2.36+x=1.36+27.2x\).</p>
+<p>4. \(x=1.0/26.2=0.0382\u{m}\); new reading \(0.10+2(0.0382)=\boxed{0.176\u{m}}\).</p>
+</div></details>
+<p>A common wrong answer adds the full 1 m of water as \(\gamma_w(1.0)=\gamma_\text{Hg}\Delta(\Delta h)\), giving \(1/13.6=0.074\) extra and forgetting the \(2x\) and the \(+x\) of water.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · the well-type inclined manometer (exam type H2.1, May 2025 Q1)</span>
+<p>The handouts cover the piezometer and the simple and differential U-tubes only, but May 2025 asked about the <b>well-tube inclined manometer</b>. It replaces one limb of the U-tube by a large reservoir (the <b>well</b>, area \(A\)) and the other by a narrow tube (area \(a\)) <b>sloping</b> at a small angle \(\theta\) to the horizontal. The reading \(L\) is taken <b>along</b> the sloping tube.</p>
+<div id="fig-incl"></div>
+\[\Delta p=\rho_mgL\Big(\sin\theta+\frac{a}{A}\Big)\approx\rho_mgL\sin\theta\]
+<p class="word"><b>In words:</b> the vertical rise is only \(L\sin\theta\), so a small pressure gives a long, easy-to-read length; the well is so wide that its level hardly falls (the \(a/A\) term is a small correction).</p>
+<p><b>Advantages over a standard U-tube</b> (what the question wanted, in marker-point form):</p>
+<ol class="steps">
+<li><b>Higher sensitivity / precision</b>: the reading is magnified by \(1/\sin\theta\) (3.9 times at 15°, 5.8 times at 10°), so small pressures (a few hundred Pa, e.g. air ducts, low-speed wind tunnels) can be read accurately.</li>
+<li><b>Only one reading</b>: the well level barely moves, so you read one scale instead of two levels and subtracting; less reading error, quicker.</li>
+<li>The scale can be <b>calibrated directly in pressure units</b> (Pa or mm water) once \(\theta\), \(\rho_m\) and \(a/A\) are fixed.</li>
+<li>Compact, and a light gauge oil can be used for extra sensitivity.</li>
+</ol>
+<p>Example: 100 Pa with a gauge oil of SG 0.8 at \(\theta=15^\circ\): vertical rise \(100/(800\times9.81)=12.7\u{mm}\), but the reading along the tube is \(12.7/\sin15^\circ=49\u{mm}\). With a well 100 times the tube area, ignoring \(a/A\) causes an error of about \(0.01/\sin15^\circ\approx4\%\).</p></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>Fluid at rest</td><td>no shear, no velocity</td><td>only pressure, density, depth and gravity matter</td></tr>
+<tr><td>Pressure</td><td>\(p=\lim\Delta F_n/\Delta A\)</td><td>normal compressive stress; Pa = N/m²</td></tr>
+<tr><td>Pascal's law</td><td>\(p_y=p_z=p_s\)</td><td>same in all directions: scalar, isotropic, point property</td></tr>
+<tr><td>Hydraulic lift</td><td>\(F_1/A_1=F_2/A_2\)</td><td>pressure change transmitted undiminished</td></tr>
+<tr><td>Hydrostatic law</td><td>\(\mathrm dp/\mathrm dz=-\rho g\)</td><td>pressure grows with depth at rate \(\gamma\)</td></tr>
+<tr><td>Constant density</td><td>\(p=\rho gh+p_0\)</td><td>linear in depth</td></tr>
+<tr><td>Gauge vs absolute</td><td>\(p_\text{abs}=p_\text{gauge}+p_\text{atm}\)</td><td>gauge is relative to the atmosphere; may be negative</td></tr>
+<tr><td>Two rules</td><td>\(p_\text{below}=p_\text{above}+\rho g|\Delta z|\)</td><td>equal pressure at one level in one continuous fluid</td></tr>
+<tr><td>Container shape</td><td>\(F_\text{bottom}=\rho ghA\)</td><td>depends on depth, not on the amount of fluid</td></tr>
+<tr><td>Gas</td><td>\(p\approx\) constant</td><td>gas columns add nothing</td></tr>
+<tr><td>Pressure diagram</td><td>arrows ⊥ surface, length ∝ depth</td><td>triangular, trapezoidal, bilinear, curved</td></tr>
+<tr><td>Layers</td><td>\(p_\text{bottom}=p_\text{top}+\sum\gamma_i\Delta z_i\)</td><td>pressure continuous at each interface</td></tr>
+<tr><td>Barometer</td><td>\(p_\text{atm}=\rho_\text{Hg}gh\)</td><td>760 mm Hg = 101.3 kPa = 10.3 m water</td></tr>
+<tr><td>Storm surge</td><td>\(\Delta h=\Delta p/(\rho g)\)</td><td>1 hPa drop ≈ 1 cm rise</td></tr>
+<tr><td>Piezometer</td><td>\(p_A=\gamma_1h_1\)</td><td>liquids, modest positive pressures only</td></tr>
+<tr><td>U-tube</td><td>\(p_A=\gamma_2h_2-\gamma_1h_1\)</td><td>drop \(\gamma_1h_1\) for a gas</td></tr>
+<tr><td>Differential</td><td>\(p_A-p_B=\gamma_2h_2+\gamma_3h_3-\gamma_1h_1\)</td><td>same level, same fluid: \((\rho_m/\rho-1)\rho gh\)</td></tr>
+<tr><td>Reading change</td><td>reading changes by \(2x\)</td><td>one limb drops \(x\), the other rises \(x\)</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17"><h2><span class="n">17</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>"Pressure acts downward" / "pressure is a vector".</span>
+<span class="ok">✓</span><span>Pressure is a scalar; the pressure <b>force</b> on a surface is a vector, perpendicular and inward.</span>
+<span class="x">✗</span><span>Equating pressures at the same level in different fluids (or across a bend at the wrong level).</span>
+<span class="ok">✓</span><span>Same level <b>and</b> same continuous fluid; jump across a U-bend at the lower gauge-fluid surface.</span>
+<span class="x">✗</span><span>Adding \(\rho gh\) when going up a column.</span>
+<span class="ok">✓</span><span>Down adds, up subtracts. Check: the side where the gauge fluid is pushed down has the higher pressure.</span>
+<span class="x">✗</span><span>Using the water density for the mercury column (or forgetting SG × 1000).</span>
+<span class="ok">✓</span><span>Each column uses its own \(\gamma\): mercury \(13.6\times9810=133.4\u{kN/m^3}\) (or the \(\gamma\) printed in the paper).</span>
+<span class="x">✗</span><span>Adding a \(\rho_\text{air}gh\) term for the air in a tank or pipe.</span>
+<span class="ok">✓</span><span>Gas pressure is the same throughout; gas columns add nothing.</span>
+<span class="x">✗</span><span>Turning a negative gauge answer positive, or adding 101.3 kPa unasked.</span>
+<span class="ok">✓</span><span>"Pressure" means gauge; negative gauge = below atmospheric. Absolute only if asked.</span>
+<span class="x">✗</span><span>Reading change: adding the extra head as \(\gamma_\text{Hg}\times\) (change in reading) with no \(x\).</span>
+<span class="ok">✓</span><span>Interface drops \(x\), reading grows \(2x\), system-fluid column grows \(x\).</span>
+<span class="x">✗</span><span>Using \((\rho_m/\rho-1)\rho gh\) when A and B are at different levels or hold different fluids.</span>
+<span class="ok">✓</span><span>Walk through the fluids point by point instead.</span>
+<span class="x">✗</span><span>cm left in \(\rho gh\).</span>
+<span class="ok">✓</span><span>3 cm = 0.03 m; answers in Pa, then kPa.</span>
+</div>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="s18"><h2><span class="n">18</span>Find the mistake</h2>
+<div class="q"><p class="qh">1 · A student's barometer</p>
+<p>"A mercury barometer reads 750 mm. So \(p_\text{atm}=\rho gh=1000(9.81)(0.750)\) \(=7.36\u{kPa}\)."</p>
+<details><summary>Hint</summary><div><p>Which liquid is in the column?</p></div></details>
+<details><summary>Answer</summary><div><p>The column is <b>mercury</b>: \(p_\text{atm}=13\,600(9.81)(0.750)\) \(=100.1\u{kPa}\). 7.36 kPa is far below any real atmospheric pressure, a sign something is wrong.</p></div></details></div>
+<div class="q"><p class="qh">2 · A student's U-tube on a water pipe</p>
+<p>"The mercury interface is 0.2 m below A; the open-side mercury is 0.3 m higher. Going from A down 0.2 m of water and then up 0.3 m of mercury to the open end: \(p_A+9810(0.2)+133\,416(0.3)=0\), so \(p_A=-42.0\u{kPa}\)."</p>
+<details><summary>Hint</summary><div><p>Which way does each step go, and what sign should it carry?</p></div></details>
+<details><summary>Answer</summary><div><p>Going <b>up</b> 0.3 m of mercury <b>subtracts</b>: \(p_A+9810(0.2)-133\,416(0.3)=0\), so \(p_A=+38.06\u{kPa}\). Sign check: mercury is pushed down on the A side, so A is above atmospheric.</p></div></details></div>
+<div class="q"><p class="qh">3 · A student's two layers</p>
+<p>"A tank holds 2 m of oil (SG 0.8) on 1 m of water. Pressure at the bottom: \(9810(0.8)(3)=23.5\u{kPa}\)."</p>
+<details><summary>Hint</summary><div><p>Is the whole 3 m oil?</p></div></details>
+<details><summary>Answer</summary><div><p>Each layer uses its own specific weight:</p>\[\begin{aligned}p&=0.8(9810)(2)+9810(1)\\&=15.70+9.81=25.5\u{kPa}\end{aligned}\]</div></details></div>
+</section>
+
+<!-- ============ 19 ============ -->
+<section id="s19"><h2><span class="n">19</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Direction</p><p>A small cube is held 2 m deep in water. Compare the pressure on its top face, its bottom face and a side face. Compare the directions of the pressure forces on them.</p>
+<details><summary>Answer</summary><div><p>At (almost) the same point the pressure is the same in all directions (Pascal), about 19.6 kPa; the bottom is a little deeper, so slightly higher. The <b>forces</b> point into each face: down on the top, up on the bottom, sideways on the sides. The small excess up on the bottom is the buoyant force (H4).</p></div></details></div>
+<div class="q"><p class="qh">2 · Same level?</p><p>Two open tanks, one of water and one of oil, stand side by side, both filled to 1 m. Is the pressure the same at the bottoms? What if they are joined by a pipe at the bottom?</p>
+<details><summary>Answer</summary><div><p>No: water gives 9.81 kPa, oil (SG 0.8) 7.85 kPa: same level, but different fluids. If joined, the water flows towards the oil side until the pressures at the junction level match; the oil ends up standing higher than the water (1/0.8 = 1.25 times the column height above the junction).</p></div></details></div>
+<div class="q"><p class="qh">3 · Gas or liquid?</p><p>Why can the air column in a manometer's connecting pipe be ignored, but not a water column?</p>
+<details><summary>Answer</summary><div><p>\(\Delta p=\rho g\Delta z\): air is about 830 times lighter than water, so a 0.5 m air column changes the pressure by about 6 Pa, against 4905 Pa for water: negligible next to the mercury reading.</p></div></details></div>
+<div class="q"><p class="qh">4 · Lighter gauge fluid</p><p>For the same pressure, does a manometer with gauge oil (SG 0.8) or mercury (SG 13.6) give the larger reading? Which would you use for a pressure of 50 Pa, and which for 50 kPa?</p>
+<details><summary>Answer</summary><div><p>Reading \(h=\Delta p/(\rho_mg)\): oil gives 17 times the reading. 50 Pa: oil (6.4 mm, mercury would give 0.37 mm, unreadable). 50 kPa: mercury (0.37 m; oil would need 6.4 m of tube).</p></div></details></div>
+<div class="q"><p class="qh">5 · Storm surge</p><p>A typhoon's eye has a pressure 40 hPa below standard. Estimate the open-ocean sea-level rise from pressure alone.</p>
+<details><summary>Answer</summary><div><p>\(\Delta h=4000/(1000\times9.81)\approx0.41\u{m}\) (about 1 cm per hPa).</p></div></details></div>
+<div class="q"><p class="qh">6 · Hydraulic lift</p><p>The small piston of a lift is pushed with 200 N; the large piston has 50 times its area. What load can it support? If the small piston moves 0.5 m, how far does the load rise?</p>
+<details><summary>Answer</summary><div><p>\(F_2=200\times50=10\u{kN}\). Volume is conserved: the load rises \(0.5/50=1\u{cm}\).</p></div></details></div>
+</section>
+
+<!-- ============ 20 ============ -->
+<section id="s20"><h2><span class="n">20</span>Exam taster</h2>
+<p>Real past-paper parts (ENGG1350, the predecessor of MECH1350; same Section B structure), covering both question types of this chapter. Full methods, every other sitting, and more practice: <a href="guide-H2.html">Exam guide · H2</a>.</p>
+
+<div class="q"><div class="src"><b>Dec 2024 Q1(m)</b><span>1 mark</span><span>also: ENGG1205 2015–16 Q1(e)</span><a class="guide" href="guide-H2.html#H2-1">H2.1 pressure &amp; manometer concepts</a></div>
+<p>State true (T) or false (F) for each of the following statements. … (m) Pressure is an isotropic quantity.</p>
+<details><summary>Hint</summary><div><p>What does "isotropic" mean, and what did the wedge show?</p></div></details>
+<details><summary>Answer</summary><div><p><b>True.</b> By Pascal's law the pressure at a point is the same in all directions: pressure is an isotropic (direction-independent) scalar.</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2025 Q1</b><span>6 marks</span><span class="pill">Beyond</span><a class="guide" href="guide-H2.html#H2-1">H2.1 pressure &amp; manometer concepts</a></div>
+<p>What fluid properties does the U-tube manometer measure? A variation of the U-tube manometer is the well-tube inclined manometer. Describe at least two advantages of it over the standard U-tube manometer.</p>
+<details><summary>Hint</summary><div><p>A manometer turns a column height into what? For the inclined version, think about how long the reading is for a given vertical rise, and how many levels you must read.</p></div></details>
+<details><summary>Answer</summary><div>
+<p><b>Measures:</b> the (gauge) <b>pressure</b> of a fluid at a point, relative to the atmosphere (one limb open), or the <b>pressure difference</b> between two points (differential manometer), from the height difference of a liquid column of known density: \(\Delta p=\rho_mgh\) (minus the system-fluid column).</p>
+<p><b>Advantages of the well-type inclined manometer:</b> (1) greater <b>sensitivity</b>: the reading along the sloping tube is \(L=h/\sin\theta\), magnified by \(1/\sin\theta\), so small pressures are read accurately; (2) only <b>one level</b> to read, because the wide well's level hardly moves (less reading error, scale can be marked directly in pressure units); (3) compact; suits low pressures such as air ducts.</p>
+<p class="flag">the well-type inclined manometer is not in the 2026 handouts (Beyond; see Section 15).</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2024 Q1(a)</b><span>5 marks</span><a class="guide" href="guide-H2.html#H2-2">H2.2 manometer chain</a></div>
+<p>A closed oil tank and an open water tank are separated by a rectangular flat gate \(AB\), which rotates around hinge \(A\), as shown in the figure below. The closed tank is equipped with a mercury manometer to measure the air pressure inside it. The reading of the mercury manometer is: \(h_1=5\u{cm}\). The height of the oil in the closed tank is \(h_2=3\u{m}\). The height of the gate \(AB\) is the same as the height of the water, which is \(h_3=0.8\u{m}\). The width of the gate \(b=1\u{m}\). The specific weights of mercury, water, and the oil are 133.7 kN/m³, 9.81 kN/m³, and 7.8 kN/m³, respectively.</p>
+<div id="fig-t2405"></div>
+<p>(a) What is the air pressure (gage) inside the oil tank? <span class="muted">(Parts (b) and (c), on the force on the gate, belong to chapter H3.)</span></p>
+<details><summary>Hint</summary><div><p>Which limb has the higher mercury? Start at the open limb (0) and walk to the air; the air pipe adds nothing.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>Mercury stands \(h_1\) <b>higher</b> on the tank side, so the air is <b>below</b> atmospheric. From the open mercury surface (0), across the bend at that level, then <b>up</b> \(h_1\) of mercury to the tank-side surface; then air:</p>
+\[p_\text{air}=0-\gamma_\text{Hg}h_1=-133.7(0.05)\]
+\[\boxed{p_\text{air}=-6.69\u{kPa}\ \text{(gauge)}}\]</div></details></div>
+
+<div class="q"><div class="src"><b>May 2023 Q1(a)(b)</b><span>5 + 8 marks</span><a class="guide" href="guide-H2.html#H2-2">H2.2 manometer chain</a></div>
+<p>A pressure vessel is an enclosed container designed to store liquids and gases at specified pressures. The pressure vessel shown in the figure below is designed to store water and air. The vessel is equipped with two mercury manometers to measure the air pressure inside the vessel and the water level. The readings of the mercury manometers are given: \(h_1=3\u{cm}\), \(h_2=30\u{cm}\), and \(h_3=31\u{cm}\). The specific weight of water is 9.81 kN/m³, and the specific gravity of mercury is 13.6. The air pressure in this vessel can be assumed to be the same everywhere.</p>
+<div id="fig-t2305"></div>
+<p>(a) What is the air pressure (gage) \(p_0\) inside the vessel? (b) What is the water level \(H\) inside the vessel?</p>
+<details><summary>Hint</summary><div><p>(a) Right manometer only: the air is joined to it by air. (b) Left manometer: walk from the open mercury down to the connected-limb mercury level, then up through water \(h_2\) and \(H\) to the surface, where the pressure is \(p_0\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) Open-limb mercury is \(h_1\) higher, so the air is above atmospheric:</p>
+\[p_0=\gamma_\text{Hg}h_1=13.6(9.81)(0.03)\]
+\[\boxed{p_0=4.00\u{kPa}}\]
+<p>(b) Pressure at the connected-limb mercury surface, from the open limb: \(\gamma_\text{Hg}h_3=13.6(9.81)(0.31)\) \(=41.36\u{kPa}\). From the water surface down: \(p_0+\gamma_w(H+h_2)\). Equate:</p>
+\[\begin{aligned}H&=\frac{\gamma_\text{Hg}(h_3-h_1)}{\gamma_w}-h_2\\&=13.6(0.28)-0.30\end{aligned}\]
+\[\boxed{H\approx3.51\u{m}}\]</div></details></div>
+
+<div class="q"><div class="src"><b>May 2022 Q1</b><span>13 marks</span><a class="guide" href="guide-H2.html#H2-2">H2.2 manometer chain</a></div>
+<p>A conical container is connected to a U-shaped mercury differential pressure gauge at point \(C\). Injecting water below and up to point \(C\) while keeping the conical container empty, the differential pressure gauge reading is \(\Delta h=0.2\u{m}\). When the conical container is also full of water, what is the reading of the differential pressure gauge? Draw the setup when the conical container is full and clearly indicate how the liquid levels change. The specific gravity of mercury is 13.6.</p>
+<div id="fig-t2205"></div>
+<details><summary>Hint</summary><div><p>The water column \(y\) from C down to the mercury is not given: find it from the first state. Then use the "2x" rule (Section 15).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>1. Empty cone: \(p_C=0\). Balance at the right-limb mercury level: \(\gamma_wy=\gamma_\text{Hg}(0.2)\), so \(y=13.6(0.2)=2.72\u{m}\).</p>
+<p>2. Full cone: \(p_C=\gamma_w(3)=29.4\u{kPa}\). The right mercury surface drops \(x\), the left rises \(x\); new reading \(0.2+2x\).</p>
+<p>3. Balance at the new right-limb mercury level:</p>
+\[\gamma_w(3+2.72+x)=\gamma_\text{Hg}(0.2+2x)\]
+<p>so \(5.72+x=2.72+27.2x\), giving \(x=3/26.2=0.1145\u{m}\).</p>
+\[\boxed{\Delta h_\text{new}=0.2+2(0.1145)\approx0.429\u{m}}\]
+<div id="fig-t2205a"></div>
+<p>Sketch: the right (water-side) mercury level falls 0.1145 m and the left (open) level rises 0.1145 m; the water column below C lengthens by the same 0.1145 m.</p></div></details></div>
+</section>
+</main></div>
+
+<script>
+/* MECH1350 shared helpers (from MECH2413) (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-H2 figures: pressure, hydrostatic law, manometers.
+   Helpers copied from the pilot (note-T3.js): E, tw, T, arrowHead, arrow, svgIn, reg, details-toggle redraw hook.
+   New page-local helpers: tube(g,pts,w) draws a hollow tube along a polyline (open ends); fl(g,pts,col,w) fills part of that tube
+   with a liquid; surf(g,x,y) free-surface mark; vd/hd dimension lines; dash(); dot(); twoUp(id,[f1,f2],[cap1,cap2]) side-by-side panels. */
+const NS='http://www.w3.org/2000/svg';
+function E(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)if(a[k]!==undefined)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function tw(s,fs=13){const c=s.replace(/_\{([^}]*)\}/g,(m,a)=>'\u0001'.repeat(a.length)).replace(/_([A-Za-z0-9,∞]+)/g,(m,a)=>'\u0001'.repeat(a.length));
+  let w=0;for(const ch of c)w+=(ch==='\u0001'?0.72:1)*(/[ .,:·()′]/.test(ch)?0.33:0.6);return w*fs;}
+function T(p,x,y,s,o={}){
+  const t=E('text',{x,y,'text-anchor':o.a||'middle','dominant-baseline':'middle',style:`font-size:${o.fs||13}px;fill:${o.col||'var(--ink)'};${o.bold?'font-weight:600;':''}`},p);
+  const re=/([^_]*?)(?:_(\{[^}]*\}|[A-Za-z0-9,∞]+))/y; let i=0, m, lastSub=false;
+  const add=(str,sub,ital)=>{if(!str)return;const sp=E('tspan',{},t);sp.textContent=str;
+    if(sub){sp.setAttribute('dy',4);sp.setAttribute('font-size',(o.fs||13)*0.74);lastSub=true;} else if(lastSub){sp.setAttribute('dy',-4);lastSub=false;}
+    if(ital)sp.setAttribute('font-style','italic');};
+  while((m=re.exec(s))){ let pre=m[1]; const mm=/^(.*?)([A-Za-zαλεσΔγρ])$/.exec(pre);
+    if(mm&&(mm[1]===''||/[\s(=+−\-\/]$/.test(mm[1]))){add(mm[1]);add(mm[2],false,true);} else add(pre);
+    add(m[2].replace(/[{}]/g,''),true); i=re.lastIndex; }
+  add(s.slice(i)); if(o.it&&!s.includes('_'))t.setAttribute('font-style','italic'); return t;}
+function arrowHead(p,x,y,ux,uy,col,L=9,W=7){const bx=x-ux*L,by=y-uy*L,nx=-uy,ny=ux;E('polygon',{points:`${x},${y} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,style:`fill:${col};stroke:none`},p);}
+function arrow(p,x1,y1,x2,y2,col='var(--c2)',w=2.2,L=9,W=7){const D=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/D,uy=(y2-y1)/D;
+  E('line',{x1,y1,x2:x2-ux*(L-2),y2:y2-uy*(L-2),style:`stroke:${col};stroke-width:${w}`},p);arrowHead(p,x2,y2,ux,uy,col,L,W);}
+function svgIn(el,W,H,alt){if(typeof el==='string')el=document.getElementById(el);el.innerHTML='';
+  const s=E('svg',{viewBox:`0 0 ${W} ${H}`,class:'circuit',role:'img','aria-label':alt||'diagram'});s.style.maxWidth=W+'px';s.style.margin='0 auto';el.appendChild(s);return s;}
+const figs=[]; const reg=f=>{figs.push(f);redraws.push(f);f();};
+let togT=null;document.addEventListener('toggle',()=>{clearTimeout(togT);togT=setTimeout(()=>figs.forEach(f=>{try{f();}catch(e){console.error(e);}}),60);},true);
+
+/* ---------- liquids, tubes, dimensions ---------- */
+const WATER='color-mix(in srgb,var(--accent) 30%,var(--card))', HG='var(--axis)', OIL='color-mix(in srgb,var(--warm) 32%,var(--card))',
+      LIGHT='color-mix(in srgb,var(--green) 34%,var(--card))', GLY='color-mix(in srgb,var(--purple) 30%,var(--card))', SOLID='var(--grid)';
+const P=pts=>pts.map(p=>p[0]+','+p[1]).join(' ');
+function tube(g,pts,w=10){E('polyline',{points:P(pts),style:`stroke:var(--ink);stroke-width:${w+3};fill:none;stroke-linejoin:miter;stroke-linecap:butt`},g);
+  E('polyline',{points:P(pts),style:`stroke:var(--card);stroke-width:${w};fill:none;stroke-linejoin:miter;stroke-linecap:butt`},g);}
+function fl(g,pts,col,w=10){E('polyline',{points:P(pts),style:`stroke:${col};stroke-width:${w};fill:none;stroke-linejoin:miter;stroke-linecap:butt`},g);}
+function rect(g,x,y,w,h,fill,stroke){return E('rect',{x,y,width:w,height:h,style:`fill:${fill||'none'};stroke:${stroke||'none'};stroke-width:1.5`},g);}
+function ln(g,x1,y1,x2,y2,st='stroke:var(--ink);stroke-width:1.6'){return E('line',{x1,y1,x2,y2,style:st},g);}
+function dash(g,x1,y1,x2,y2,col='var(--muted)'){return ln(g,x1,y1,x2,y2,`stroke:${col};stroke-width:1;stroke-dasharray:4 3`);}
+function surf(g,x,y){E('polygon',{points:`${x-6},${y-12} ${x+6},${y-12} ${x},${y-3}`,style:'fill:none;stroke:var(--accent);stroke-width:1.4'},g);
+  ln(g,x-5,y+4,x+5,y+4,'stroke:var(--accent);stroke-width:1.2');ln(g,x-2.5,y+8,x+2.5,y+8,'stroke:var(--accent);stroke-width:1.2');}
+function vd(g,x,y1,y2,lbl,o={}){const c='var(--muted)';ln(g,x,y1+1,x,y2-1,`stroke:${c};stroke-width:1`);ln(g,x-4,y1,x+4,y1,`stroke:${c};stroke-width:1`);ln(g,x-4,y2,x+4,y2,`stroke:${c};stroke-width:1`);
+  if(Math.abs(y2-y1)>14){arrowHead(g,x,y1,0,-1,c,6,5);arrowHead(g,x,y2,0,1,c,6,5);}
+  if(lbl)T(g,x+(o.left?-6:6),(y1+y2)/2+(o.dy||0),lbl,{a:o.left?'end':'start',fs:o.fs||12,col:o.col||'var(--ink)'});}
+function hd(g,y,x1,x2,lbl,o={}){const c='var(--muted)';ln(g,x1+1,y,x2-1,y,`stroke:${c};stroke-width:1`);ln(g,x1,y-4,x1,y+4,`stroke:${c};stroke-width:1`);ln(g,x2,y-4,x2,y+4,`stroke:${c};stroke-width:1`);
+  arrowHead(g,x1,y,-1,0,c,6,5);arrowHead(g,x2,y,1,0,c,6,5);if(lbl)T(g,(x1+x2)/2,y+(o.below?11:-9),lbl,{fs:o.fs||12});}
+function dot(g,x,y,lbl,dx=8,dy=0,a){E('circle',{cx:x,cy:y,r:3.2,style:'fill:var(--ink)'},g);if(lbl)T(g,x+dx,y+dy,lbl,{a:a||(dx<0?'end':dx>0?'start':'middle'),fs:12});}
+function twoUp(id,fns,caps){const host=document.getElementById(id);if(!host)return;host.innerHTML='';const w=document.createElement('div');w.className='pair';host.appendChild(w);
+  fns.forEach((f,i)=>{const d=document.createElement('div');w.appendChild(d);const s=document.createElement('div');s.id=id+'-p'+i;d.appendChild(s);
+    if(caps&&caps[i]){const p=document.createElement('p');p.className='sub';p.innerHTML=caps[i];d.appendChild(p);}reg(()=>f(s.id));});}
+const RED='var(--c2)';
+
+/* ================= Section 2 ================= */
+reg(()=>{const g=E('g',{},svgIn('fig-normal',360,215,'pressure forces on a block held in still water'));
+  rect(g,10,30,340,178,WATER);ln(g,10,30,350,30,'stroke:var(--accent);stroke-width:1.5');surf(g,40,30);T(g,60,120,'water',{fs:12,col:'var(--muted)'});
+  rect(g,140,80,80,60,SOLID,'var(--ink)');T(g,180,110,'block',{fs:12});
+  const L=y=>12+0.22*(y-30);
+  [155,180,205].forEach(x=>{arrow(g,x,80-L(80),x,80,RED,1.8);arrow(g,x,140+L(140),x,140,RED,1.8);});
+  [92,110,128].forEach(y=>{arrow(g,140-L(y),y,140,y,RED,1.8);arrow(g,220+L(y),y,220,y,RED,1.8);});
+  T(g,268,62,'push down on top',{fs:12,col:RED});T(g,285,185,'bigger push up',{fs:12,col:RED});T(g,285,200,'on the bottom',{fs:12,col:RED});
+});
+
+/* ================= Section 3 ================= */
+reg(()=>{const g=E('g',{},svgIn('fig-wedge',400,275,'free-body diagram of a fluid wedge'));
+  const O=[110,200],Bx=310,Ty=90;
+  E('polygon',{points:`${O[0]},${O[1]} ${Bx},${O[1]} ${O[0]},${Ty}`,style:`fill:${WATER};stroke:var(--ink);stroke-width:1.6`},g);
+  const hx=Bx-O[0],hy=O[1]-Ty,Ls=Math.hypot(hx,hy),nx=hy/Ls,ny=-hx/Ls,mx=(O[0]+Bx)/2,my=(O[1]+Ty)/2;
+  arrow(g,mx+nx*62,my+ny*62,mx,my,RED);T(g,mx+nx*62+8,my+ny*62-8,'p_s δx δs',{a:'start',fs:12,col:RED});
+  dash(g,mx,my,mx,my-60);E('path',{d:`M${mx},${my-24} A24,24 0 0 1 ${mx+nx*24},${my+ny*24}`,style:'fill:none;stroke:var(--ink);stroke-width:1.2'},g);
+  T(g,mx+9,my-34,'θ',{fs:13,it:true});
+  arrow(g,40,145,O[0],145,RED);T(g,64,130,'p_y δx δz',{fs:12,col:RED});
+  arrow(g,210,262,210,O[1],RED);T(g,220,250,'p_z δx δy',{a:'start',fs:12,col:RED});
+  const cx=O[0]+hx/3,cy=O[1]-hy/3;arrow(g,cx,cy-14,cx,cy+22,'var(--warm)',2);T(g,cx-8,cy-8,'W',{a:'end',fs:13,it:true,col:'var(--warm)'});
+  T(g,102,104,'δz',{a:'end',fs:12});T(g,160,214,'δy',{fs:12});T(g,150,100,'δs',{fs:12});
+  const ax=338,ay=255;arrow(g,ax,ay,ax+34,ay,'var(--muted)',1.2,7,5);arrow(g,ax,ay,ax,ay-34,'var(--muted)',1.2,7,5);T(g,ax+42,ay,'y',{it:true,fs:12});T(g,ax,ay-44,'z',{it:true,fs:12});
+  T(g,300,24,'length δx into the page',{fs:11,col:'var(--muted)'});T(g,300,40,'no shear: fluid at rest',{fs:11,col:'var(--muted)'});
+});
+reg(()=>{const g=E('g',{},svgIn('fig-allways',260,180,'pressure at a point acts equally in all directions'));
+  rect(g,10,30,240,145,WATER);ln(g,10,30,250,30,'stroke:var(--accent);stroke-width:1.5');surf(g,40,30);T(g,92,18,'p = 0 (gauge)',{fs:12});
+  const px=130,py=110;for(let k=0;k<8;k++){const a=k*Math.PI/4,c=Math.cos(a),s=Math.sin(a);arrow(g,px+c*42,py+s*42,px+c*8,py+s*8,RED,1.8,8,6);}
+  E('circle',{cx:px,cy:py,r:3,style:'fill:var(--ink)'},g);T(g,px+14,py+56,'p at z = −h',{fs:12});
+  vd(g,222,30,110,'h');dash(g,140,110,226,110);
+});
+
+/* ================= Section 4 ================= */
+reg(()=>{const g=E('g',{},svgIn('fig-lift',400,222,'hydraulic lift'));
+  E('polygon',{points:'40,110 80,110 80,170 240,170 240,110 340,110 340,198 40,198',style:`fill:${OIL};stroke:none`},g);
+  E('path',{d:'M40,40 L40,198 L340,198 L340,40 M80,40 L80,170 L240,170 L240,40',style:'fill:none;stroke:var(--ink);stroke-width:2'},g);
+  rect(g,41,100,38,10,SOLID,'var(--ink)');ln(g,60,100,60,62,'stroke:var(--ink);stroke-width:4');
+  rect(g,241,100,98,10,SOLID,'var(--ink)');ln(g,290,100,290,80,'stroke:var(--ink);stroke-width:6');rect(g,250,74,80,6,SOLID,'var(--ink)');
+  E('path',{d:'M258,74 L258,56 L272,56 L282,42 L312,42 L322,56 L326,56 L326,74 Z',style:'fill:var(--purple-soft);stroke:var(--ink);stroke-width:1.3'},g);
+  arrow(g,60,18,60,60,RED);T(g,68,22,'F_1',{a:'start',fs:13,col:RED});
+  arrow(g,358,108,358,40,'var(--accent)');T(g,366,72,'F_2',{a:'start',fs:13,col:'var(--accent)'});T(g,290,28,'load (car)',{fs:12});
+  T(g,60,130,'A_1, p_1',{fs:12});T(g,290,135,'A_2, p_2',{fs:12});T(g,160,186,'oil (confined, incompressible)',{fs:11.5});
+  dash(g,20,110,380,110);T(g,160,100,'same level: p_1 = p_2',{fs:11.5,col:'var(--muted)'});
+});
+
+/* ================= Section 5 ================= */
+reg(()=>{const g=E('g',{},svgIn('fig-cyl',380,230,'free-body diagram of a vertical fluid cylinder'));
+  rect(g,20,40,290,185,WATER);ln(g,20,40,310,40,'stroke:var(--accent);stroke-width:1.5');surf(g,40,40);
+  arrow(g,345,215,345,18,'var(--muted)',1.3,7,5);T(g,355,20,'z',{it:true,a:'start'});T(g,352,40,'z = 0',{a:'start',fs:11});dash(g,310,40,345,40);
+  rect(g,150,110,50,60,'var(--card)','var(--ink)');
+  [160,175,190].forEach(x=>{arrow(g,x,86,x,110,RED,1.8,8,6);arrow(g,x,196,x,170,RED,1.8,8,6);});
+  T(g,175,74,'(p + Δp)A',{fs:12,col:RED});T(g,175,210,'pA',{fs:12,col:RED});
+  arrow(g,175,126,175,158,'var(--warm)',2,8,6);T(g,183,134,'W',{a:'start',it:true,col:'var(--warm)'});
+  [125,155].forEach(y=>{arrow(g,128,y,149,y,'var(--muted)',1.2,6,5);arrow(g,222,y,201,y,'var(--muted)',1.2,6,5);});
+  vd(g,112,110,170,'Δz',{left:true});vd(g,262,40,140,'h');dash(g,200,140,266,140);T(g,236,182,'area A',{a:'start',fs:12});
+});
+
+/* ================= Section 6 ================= */
+reg(()=>{const g=E('g',{},svgIn('fig-absgauge',440,242,'absolute and gauge pressure'));
+  ln(g,20,215,430,215,'stroke:var(--ink);stroke-width:1.8');T(g,300,230,'zero absolute pressure (perfect vacuum)',{fs:11.5});
+  dash(g,20,100,120,100);T(g,70,90,'standard atmosphere',{fs:11.5});arrow(g,32,215,32,101,'var(--muted)',1.4,7,5);
+  ['101.3 kPa','14.7 psi','30.0 in Hg','760 mm Hg','34 ft H₂O','1.013 bar'].forEach((s,i)=>T(g,42,124+i*15,s,{a:'start',fs:11}));
+  dash(g,150,120,430,120);T(g,300,133,'local atmosphere: p = 0 gauge',{fs:11.5});
+  dash(g,160,35,260,35);dot(g,225,35,'A',8,0);
+  arrow(g,185,215,185,37,'var(--accent)',1.8,8,6);T(g,180,170,'p_A absolute',{a:'end',fs:11.5,col:'var(--accent)'});
+  arrow(g,225,120,225,37,RED,1.8,8,6);T(g,231,78,'p_A gauge (positive)',{a:'start',fs:11.5,col:RED});
+  dash(g,340,175,420,175);dot(g,395,175,'B',8,0);
+  arrow(g,395,121,395,173,RED,1.8,8,6);T(g,388,152,'p_B gauge (negative)',{a:'end',fs:11.5,col:RED});
+  arrow(g,395,215,395,177,'var(--accent)',1.8,8,6);T(g,388,198,'p_B absolute',{a:'end',fs:11.5,col:'var(--accent)'});
+});
+
+/* ================= Section 7 ================= */
+reg(()=>{const g=E('g',{transform:'translate(40,0)'},svgIn('fig-fig24',460,240,'containers of odd shape: pressure depends on depth only'));
+  rect(g,20,40,380,172,WATER);rect(g,345,150,55,62,HG);
+  [['75,212 110,72 150,212'],['175,72 235,72 215,212 195,212'],['255,212 290,72 325,212']].forEach(p=>E('polygon',{points:p[0],style:`fill:${SOLID};stroke:var(--ink);stroke-width:1.4`},g));
+  ln(g,345,72,345,212,'stroke:var(--ink);stroke-width:3');
+  E('path',{d:'M20,30 L20,212 L400,212 L400,30',style:'fill:none;stroke:var(--ink);stroke-width:2'},g);ln(g,20,40,400,40,'stroke:var(--accent);stroke-width:1.5');surf(g,60,40);
+  dash(g,20,112,400,112,'var(--ink)');dash(g,20,196,400,196,'var(--ink)');T(g,16,112,'depth 1',{a:'end',fs:11});T(g,16,196,'depth 2',{a:'end',fs:11});
+  [[50,112,'a'],[163,112,'b'],[255,112,'c'],[372,112,'d'],[48,196,'A'],[172,196,'B'],[238,196,'C'],[372,196,'D']].forEach(([x,y,s])=>dot(g,x,y,s,0,-11));
+  T(g,190,56,'water',{fs:12});T(g,372,165,'mercury',{fs:11});T(g,210,24,'free surface, atmospheric pressure',{fs:11.5,col:'var(--muted)'});
+});
+function contPanel(id,kind){const fb=kind==='forces',g=E('g',{},svgIn(id,215,fb?240:215,kind));
+  const H0=40,B=180;
+  if(kind==='wide jar'){rect(g,45,H0,110,B-H0,WATER);E('path',{d:`M45,28 L45,${B} L155,${B} L155,28`,style:'fill:none;stroke:var(--ink);stroke-width:2'},g);
+    ln(g,45,H0,155,H0,'stroke:var(--accent);stroke-width:1.4');T(g,100,205,'wide jar',{fs:12,bold:true});
+    arrow(g,66,110,66,150,'var(--warm)',2,8,6);T(g,74,116,'weight of',{a:'start',fs:11});T(g,74,130,'all the water',{a:'start',fs:11});}
+  else{rect(g,25,B-14,150,14,WATER);rect(g,94,H0,12,B-14-H0,WATER);
+    E('path',{d:`M94,28 L94,${B-14} L25,${B-14} L25,${B} L175,${B} L175,${B-14} L106,${B-14} L106,28`,style:'fill:none;stroke:var(--ink);stroke-width:2'},g);
+    ln(g,94,H0,106,H0,'stroke:var(--accent);stroke-width:1.4');
+    if(!fb)T(g,100,205,'T-shape, same bottom area',{fs:12,bold:true});
+    else{[38,62,138,162].forEach(x=>arrow(g,x,B-40,x,B-15,'var(--accent)',1.6,7,5));T(g,50,B-74,'ceiling',{fs:11,col:'var(--accent)'});T(g,50,B-61,'pushes',{fs:11,col:'var(--accent)'});T(g,50,B-48,'down',{fs:11,col:'var(--accent)'});
+      [40,75,125,160].forEach(x=>arrow(g,x,B+24,x,B+1,RED,1.6,7,5));T(g,100,B+38,'bottom pushes up: ρgH × A_b',{fs:11,col:RED});
+      arrow(g,128,70,128,100,'var(--warm)',1.8,7,5);T(g,134,78,'small',{a:'start',fs:11,col:'var(--warm)'});T(g,134,91,'weight',{a:'start',fs:11,col:'var(--warm)'});}}
+  vd(g,195,H0,B,'H',{left:true});
+}
+twoUp('fig-cont',[id=>contPanel(id,'wide jar'),id=>contPanel(id,'T-shape'),id=>contPanel(id,'forces')],
+  ['Same depth <i>H</i>, same bottom area <i>A</i><sub>b</sub>.','Much less water, same bottom force.','Free body: the water in the T-shape.']);
+
+/* ================= Section 9 ================= */
+function distPanel(id,kind){
+  if(kind==='tri'){const g=E('g',{},svgIn(id,220,200,'triangular pressure distribution on a vertical wall'));
+    rect(g,40,30,175,158,WATER);rect(g,22,18,18,172,SOLID,'var(--ink)');ln(g,40,30,215,30,'stroke:var(--accent);stroke-width:1.4');surf(g,190,30);
+    const L=y=>0.7*(y-30);for(let y=45;y<=183;y+=15)arrow(g,40+L(y),y,41,y,RED,1.5,7,5);
+    ln(g,40,30,40+L(183),183,`stroke:${RED};stroke-width:1.4`);T(g,160,170,'ρgh',{a:'start',fs:12,col:RED});
+    T(g,150,80,'water',{fs:11.5,col:'var(--muted)'});return;}
+  if(kind==='trap'){const g=E('g',{},svgIn(id,220,205,'trapezoidal pressure distribution on a submerged vertical plate'));
+    rect(g,10,30,205,168,WATER);ln(g,10,30,215,30,'stroke:var(--accent);stroke-width:1.4');surf(g,30,30);
+    rect(g,150,70,7,100,SOLID,'var(--ink)');const L=y=>0.6*(y-30);
+    for(let y=72;y<=168;y+=12)arrow(g,150-L(y),y,149,y,RED,1.5,7,5);ln(g,150-L(70),70,150-L(170),170,`stroke:${RED};stroke-width:1.4`);
+    T(g,118,60,'γh_1',{fs:12,col:RED});T(g,60,184,'γh_2',{fs:12,col:RED});vd(g,178,30,70,'h_1');vd(g,200,30,170,'h_2');return;}
+  const g=E('g',{},svgIn(id,250,210,'trapezoidal pressure distribution on an inclined plate'));
+  rect(g,10,30,235,175,WATER);ln(g,10,30,245,30,'stroke:var(--accent);stroke-width:1.4');surf(g,140,30);
+  const p1=[70,70],p2=[190,160],nx=0.6,ny=-0.8;ln(g,p1[0],p1[1],p2[0],p2[1],'stroke:var(--ink);stroke-width:7');ln(g,p1[0],p1[1],p2[0],p2[1],'stroke:var(--grid);stroke-width:4');
+  const tails=[];for(let i=0;i<=6;i++){const t=i/6,x=p1[0]+120*t,y=p1[1]+90*t,L=0.6*(y-30);tails.push([x+nx*L,y+ny*L]);arrow(g,x+nx*L,y+ny*L,x+nx*2,y+ny*2,RED,1.5,7,5);}
+  ln(g,tails[0][0],tails[0][1],tails[6][0],tails[6][1],`stroke:${RED};stroke-width:1.4`);
+  T(g,84,42,'γh_1',{fs:12,col:RED});T(g,244,82,'γh_2',{a:'end',fs:12,col:RED});
+  vd(g,52,30,70,'h_1',{left:true});vd(g,28,30,160,'h_2');dash(g,28,160,190,160);
+}
+twoUp('fig-dist',[id=>distPanel(id,'tri'),id=>distPanel(id,'trap'),id=>distPanel(id,'incl')],['Wall through the free surface: triangle.','Submerged vertical plate: trapezoid.','Inclined plate: arrows tilt, lengths the same.']);
+
+function curvePanel(id){const g=E('g',{},svgIn(id,240,220,'pressure forces on a circular surface pass through its centre'));
+  const O=[175,115],R=55;rect(g,10,30,165,180,WATER);
+  E('path',{d:`M${O[0]},${O[1]-R} A${R},${R} 0 0 0 ${O[0]},${O[1]+R} Z`,style:'fill:var(--card);stroke:none'},g);
+  E('path',{d:`M${O[0]},20 L${O[0]},${O[1]-R} A${R},${R} 0 0 0 ${O[0]},${O[1]+R} L${O[0]},210`,style:'fill:none;stroke:var(--ink);stroke-width:2.4'},g);
+  ln(g,10,30,175,30,'stroke:var(--accent);stroke-width:1.4');surf(g,30,30);
+  for(let a=105;a<=255;a+=18){const r=a*Math.PI/180,c=Math.cos(r),s=-Math.sin(r),px=O[0]+R*c,py=O[1]+R*s,L=10+0.22*(py-30);
+    dash(g,px,py,O[0],O[1],'var(--axis)');arrow(g,O[0]+(R+L)*c,O[1]+(R+L)*s,px-c*1,py-s*1,RED,1.4,6,5);}
+  dot(g,O[0],O[1],'O',8,0);const ux=100/107.7,uy=-40/107.7;arrow(g,O[0]-R*ux-58*ux,O[1]-R*uy-58*uy,O[0]-R*ux,O[1]-R*uy,'var(--c3)',3);
+  T(g,O[0]-R*ux-58*ux-4,O[1]-R*uy-58*uy+12,'F_R',{a:'end',fs:13,col:'var(--c3)'});}
+function buoyPanel(id){const g=E('g',{},svgIn(id,240,220,'pressure envelope around a submerged buoy'));
+  rect(g,10,30,150,175,WATER);ln(g,10,30,160,30,'stroke:var(--accent);stroke-width:1.4');surf(g,30,30);ln(g,10,205,160,205,'stroke:var(--ink);stroke-width:2');
+  const C=[85,105],r=28;E('circle',{cx:C[0],cy:C[1],r,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.5'},g);ln(g,C[0],C[1]+r,C[0],205);T(g,85,105,'buoy',{fs:11});T(g,100,180,'cable',{a:'start',fs:11});
+  for(let k=0;k<16;k++){const a=k*Math.PI/8,c=Math.cos(a),s=Math.sin(a),py=C[1]+r*s,L=6+0.18*(py-30);arrow(g,C[0]+(r+L)*c,C[1]+(r+L)*s,C[0]+(r+1)*c,C[1]+(r+1)*s,RED,1.2,5,4);}
+  T(g,85,44,'seawater',{fs:11,col:'var(--muted)'});
+  const X=205;E('circle',{cx:X,cy:115,r:15,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.4'},g);arrow(g,X,100,X,45,'var(--accent)');arrow(g,X,130,X,185,RED);
+  T(g,X+8,58,'F_B',{a:'start',col:'var(--accent)'});T(g,X+8,178,'T',{a:'start',it:true,col:RED});T(g,X,205,'free body',{fs:11});}
+twoUp('fig-curve',[curvePanel,buoyPanel],['Circular surface: every arrow points at <i>O</i>.','Buoy: bigger pushes underneath give <i>F</i><sub>B</sub>.']);
+
+/* ================= Section 10 ================= */
+reg(()=>{const g=E('g',{},svgIn('fig-bilin',340,215,'bilinear pressure distribution: oil over water'));
+  rect(g,60,30,275,70,OIL);rect(g,60,100,275,98,WATER);rect(g,44,20,16,180,SOLID,'var(--ink)');ln(g,60,30,335,30,'stroke:var(--accent);stroke-width:1.4');surf(g,300,30);
+  dash(g,60,100,335,100,'var(--ink)');const k=0.75,L=y=>y<=100?0.8*k*(y-30):0.8*k*70+k*(y-100);
+  for(let y=40;y<=192;y+=12)arrow(g,60+L(y),y,61,y,RED,1.4,6,5);E('polyline',{points:P([[60,30],[60+L(100),100],[60+L(195),195]]),style:`fill:none;stroke:${RED};stroke-width:1.5`},g);
+  arrow(g,150,77,62,77,'var(--c3)',3);T(g,156,77,'F_{R1}',{a:'start',col:'var(--c3)'});arrow(g,195,152,62,152,'var(--c3)',3);T(g,201,152,'F_{R2}',{a:'start',col:'var(--c3)'});
+  T(g,270,62,'oil, γ_o',{fs:12});T(g,270,175,'water, γ_w',{fs:12});vd(g,32,30,100,'b_1',{left:true});vd(g,32,100,195,'b_2',{left:true});
+});
+reg(()=>{const g=E('g',{},svgIn('fig-wh',400,225,'water over mercury and its pressure diagram'));
+  rect(g,40,40,50,80,WATER);rect(g,40,120,50,70,HG);E('path',{d:'M40,28 L40,190 L90,190 L90,28',style:'fill:none;stroke:var(--ink);stroke-width:2'},g);surf(g,65,40);T(g,65,16,'p_0 = 0',{fs:12});
+  T(g,65,80,'H₂O',{fs:12});T(g,65,155,'Hg',{fs:12});dot(g,65,120,'1',0,-9);dot(g,65,186,'2',0,-9);
+  vd(g,108,40,120,'Δz_1');vd(g,108,120,190,'Δz_2');
+  const x0=175;arrow(g,x0,40,390,40,'var(--muted)',1.2,7,5);T(g,390,28,'p',{a:'end',it:true});ln(g,x0,40,x0,205,'stroke:var(--muted);stroke-width:1.2');T(g,x0-4,212,'depth',{a:'end',fs:11});
+  dash(g,90,120,x0+50,120);dash(g,90,190,x0+205,190);
+  E('polyline',{points:P([[x0,40],[x0+50,120],[x0+205,190]]),style:`fill:none;stroke:${RED};stroke-width:2.2`},g);
+  dash(g,x0+50,120,x0+50,190,RED);dot(g,x0+50,120,'p_1 = ρ_{water} g Δz_1',8,-6);T(g,x0+56,182,'surcharge p_1',{a:'start',fs:11,col:RED});
+  dot(g,x0+205,190);T(g,395,207,'p_2 = p_1 + ρ_{Hg} g Δz_2',{a:'end',fs:12});
+});
+reg(()=>{const g=E('g',{},svgIn('fig-col',420,240,'a column of four liquids'));
+  const ys=[32,75,125,160,205],cols=[OIL,WATER,GLY,HG],nm=['oil, ρ_o','water, ρ_w','glycerin, ρ_G','mercury, ρ_M'];
+  cols.forEach((c,i)=>rect(g,70,ys[i],110,ys[i+1]-ys[i],c));E('path',{d:'M70,22 L70,205 L180,205 L180,22',style:'fill:none;stroke:var(--ink);stroke-width:2'},g);
+  ys.forEach((y,i)=>{if(i<4&&i>0)dash(g,70,y,180,y,'var(--ink)');T(g,64,y,'z_'+(i+1),{a:'end',fs:12});});
+  nm.forEach((s,i)=>T(g,125,(ys[i]+ys[i+1])/2,s,{fs:12}));T(g,125,14,'known pressure p_1',{fs:12});
+  ['p_2 − p_1 = −ρ_o g(z_2 − z_1)','p_3 − p_2 = −ρ_w g(z_3 − z_2)','p_4 − p_3 = −ρ_G g(z_4 − z_3)','p_5 − p_4 = −ρ_M g(z_5 − z_4)'].forEach((s,i)=>T(g,192,(ys[i]+ys[i+1])/2,s,{a:'start',fs:11.5}));
+  ln(g,192,212,410,212,'stroke:var(--muted);stroke-width:1');T(g,192,226,'sum: p_5 − p_1 (add them all)',{a:'start',fs:11.5});
+  arrow(g,26,200,26,130,'var(--muted)',1.3,7,5);T(g,26,118,'z',{it:true});
+});
+reg(function(){const cv=document.getElementById('cv-col');if(!cv)return;
+  const th=[+$('c-o').value,+$('c-w').value,+$('c-m').value],p0=+$('c-p').value,rho=[850,1000,13600],g9=9.81,cols=[css('--warm'),css('--accent'),css('--axis')];
+  const z=[0],p=[p0];th.forEach((t,i)=>{z.push(z[i]+t);p.push(p[i]+rho[i]*g9*t/1000);});
+  const D=Math.max(z[3],0.5),pmin=Math.min(0,p0,...p),pmax=Math.max(10,...p);const xs=pmax-pmin>80?20:10;
+  const yt=range(0,Math.ceil(D*2)/2,0.5).map(v=>[-v,fmt(v,1)]);
+  plot(cv,{xmin:Math.floor(pmin/xs)*xs,xmax:Math.ceil(pmax*1.05/xs)*xs,ymin:-Math.ceil(D*2)/2,ymax:0,xstep:xs,yticks:yt,pl:36,xlabel:'p (kPa, gauge)',ylabel:'depth (m)',
+    segs:[0,1,2].filter(i=>th[i]>0).map(i=>({x1:p[i],y1:-z[i],x2:p[i+1],y2:-z[i+1],color:cols[i],width:3.2})),
+    pts:[1,2,3].filter(i=>th[i-1]>0).map(i=>({x:p[i],y:-z[i],color:css('--c2'),label:fmt(p[i],1)}))});
+  $('out-col').innerHTML=`top ${fmt(p0,1)} kPa → oil/water <b>${fmt(p[1],2)}</b> → water/mercury <b>${fmt(p[2],2)}</b> → bottom <b>${fmt(p[3],2)} kPa</b><br>rates: oil ${fmt(rho[0]*g9/1000,2)}, water ${fmt(9.81,2)}, mercury ${fmt(rho[2]*g9/1000,1)} kPa per metre`;
+});
+['c-o','c-w','c-m','c-p'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Section 11 ================= */
+reg(()=>{const g=E('g',{},svgIn('fig-baro',260,250,'mercury barometer'));
+  E('path',{d:'M40,180 L40,232 L220,232 L220,180',style:'fill:none;stroke:var(--ink);stroke-width:2'},g);rect(g,41,200,178,31,HG);
+  rect(g,121,60,18,158,HG);E('path',{d:'M120,218 L120,40 Q120,30 130,30 Q140,30 140,40 L140,218',style:'fill:none;stroke:var(--ink);stroke-width:2'},g);
+  T(g,148,40,'vacuum (p ≈ 0)',{a:'start',fs:12});T(g,148,120,'glass tube',{a:'start',fs:11.5,col:'var(--muted)'});T(g,190,244,'mercury',{fs:11.5});
+  vd(g,100,60,200,'h ≈ 760 mm',{left:true});dash(g,100,60,121,60);
+  [55,200].forEach(x=>{arrow(g,x,166,x,198,'var(--accent)');T(g,x,155,'p_atm',{fs:12,col:'var(--accent)'});});
+});
+reg(()=>{const g=E('g',{},svgIn('fig-barofbd',250,250,'free-body diagram of the mercury column'));
+  rect(g,90,50,50,140,HG,'var(--ink)');T(g,115,32,'p = 0 above: no push',{fs:12});
+  arrow(g,115,95,115,150,'var(--warm)');T(g,148,122,'W = ρ_{Hg} g A h',{a:'start',fs:12,col:'var(--warm)'});
+  arrow(g,115,238,115,192,RED);T(g,125,226,'p_{atm} A',{a:'start',fs:12,col:RED});vd(g,72,50,190,'h',{left:true});T(g,190,78,'area A',{a:'start',fs:11.5,col:'var(--muted)'});
+});
+
+/* ================= Section 12 ================= */
+reg(()=>{const g=E('g',{},svgIn('fig-surge',420,215,'sea-level rise under low pressure'));
+  E('path',{d:'M10,122 L160,122 C200,122 220,96 262,96 L410,96 L410,205 L10,205 Z',style:`fill:${WATER};stroke:none`},g);
+  E('path',{d:'M10,122 L160,122 C200,122 220,96 262,96 L410,96',style:'fill:none;stroke:var(--accent);stroke-width:2'},g);
+  [40,85,130].forEach(x=>arrow(g,x,58,x,118,'var(--muted)',2.2));[290,335,380].forEach(x=>arrow(g,x,62,x,92,'var(--muted)',1.4));
+  T(g,85,26,'good weather',{fs:12,bold:true});T(g,85,42,'1013 hPa',{fs:12});T(g,335,26,'typhoon centre',{fs:12,bold:true});T(g,335,42,'990 hPa',{fs:12});
+  dash(g,160,122,400,122,'var(--ink)');vd(g,395,96,122,'Δh',{left:true});T(g,85,138,'normal sea level',{fs:11,col:'var(--muted)'});
+  dash(g,10,178,410,178,'var(--ink)');T(g,210,192,'deep level: same pressure on both sides',{fs:11.5});
+});
+
+/* ================= Section 13 ================= */
+function bulb(g,cx,cy,r,fill,lbl){E('circle',{cx,cy,r,style:`fill:${fill};stroke:var(--ink);stroke-width:1.6`},g);return ()=>{E('circle',{cx,cy,r:r-1.5,style:`fill:${fill};stroke:none`},g);if(lbl)dot(g,cx,cy,lbl,-4,-10,'end');};}
+reg(()=>{const g=E('g',{},svgIn('fig-piezo',230,200,'piezometer'));
+  const cover=bulb(g,60,150,30,WATER,'A');tube(g,[[82,150],[150,150],[150,22]]);fl(g,[[82,150],[150,150],[150,60]],WATER);cover();
+  T(g,150,12,'open',{fs:12});vd(g,180,60,150,'h_1');dash(g,150,60,184,60);dash(g,90,150,184,150);T(g,40,105,'γ_1',{fs:12});dot(g,150,150,'(1)',12,-12);
+});
+reg(()=>{const g=E('g',{},svgIn('fig-utube',290,215,'simple U-tube manometer'));
+  const cover=bulb(g,48,80,24,WATER,'A');tube(g,[[66,80],[130,80],[130,190],[200,190],[200,18]]);
+  fl(g,[[66,80],[130,80],[130,120]],WATER);fl(g,[[130,120],[130,190],[200,190],[200,60]],HG);cover();
+  T(g,200,9,'open',{fs:12});dot(g,130,80,'(1)',10,-10);dot(g,130,120,'(2)',10,-9);dot(g,200,120,'(3)',10,-9);dash(g,130,120,236,120);dash(g,200,60,236,60);
+  vd(g,104,80,120,'h_1',{left:true});vd(g,232,60,120,'h_2');T(g,30,46,'γ_1',{fs:12});T(g,165,207,'γ_2 (gauge fluid)',{fs:12});
+});
+reg(function(){const el=document.getElementById('fig-mano');if(!el)return;
+  const pA=+$('m-p').value,sg=+$('m-sg').value,gas=$('m-gas').checked,g1=gas?0:9.81,g2=sg*9.81,zA=0.4;
+  let zL=(-g1*zA-pA)/(2*g2-g1),clip=false;if(zL>zA-0.03){zL=zA-0.03;clip=true;}const zR=-zL;
+  const zmin=Math.min(zL,zR)-0.08,zmax=Math.max(zA+0.12,zR+0.1),s=Math.min(400,190/(zmax-zmin)),Y=z=>30+(zmax-z)*s,yB=Y(zmin);
+  const g=E('g',{},svgIn(el,340,yB+35,'simple U-tube manometer, interactive'));const yA=Y(zA),yL=Y(zL),yR=Y(zR),fA=gas?'var(--card)':WATER;
+  const cover=bulb(g,48,yA,24,fA,'A');tube(g,[[66,yA],[130,yA],[130,yB],[200,yB],[200,Y(zmax)-10]]);
+  if(!gas)fl(g,[[66,yA],[130,yA],[130,yL]],WATER);fl(g,[[130,yL],[130,yB],[200,yB],[200,yR]],HG);cover();if(gas)T(g,48,yA+12,'gas',{fs:11});
+  T(g,200,Y(zmax)-18,'open',{fs:12});dash(g,130,yL,240,yL);dash(g,200,yR,240,yR);vd(g,236,Math.min(yL,yR),Math.max(yL,yR)+0.01,'h_2 = '+fmt(zR-zL,3)+' m');
+  if(!gas)vd(g,104,yA,yL,'h_1',{left:true});T(g,165,yB+22,'gauge fluid SG '+fmt(sg,1),{fs:12});
+  $('out-mano').innerHTML=`h<sub>2</sub> = ${fmt(zR-zL,3)} m (open side ${zR>=zL?'higher':'lower'})`+(gas?' · gas: γ<sub>1</sub>h<sub>1</sub> ignored':` · h<sub>1</sub> = ${fmt(zA-zL,3)} m`)+
+    `<br>p<sub>A</sub> = γ<sub>2</sub>h<sub>2</sub>${gas?'':' − γ<sub>1</sub>h<sub>1</sub>'} = ${fmt(g2,2)}(${fmt(zR-zL,3)})${gas?'':' − 9.81('+fmt(zA-zL,3)+')'} = <b>${fmt(g2*(zR-zL)-g1*(zA-zL),2)} kPa</b>`+
+    (clip?'<br><b>too much suction:</b> the gauge fluid would be pulled into A; use a heavier gauge fluid':'');
+});
+['m-p','m-sg','m-gas'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Section 14 ================= */
+reg(()=>{const g=E('g',{},svgIn('fig-diff',330,230,'differential U-tube manometer'));
+  const cA=bulb(g,48,120,24,WATER,'A'),cB=bulb(g,290,45,24,LIGHT,'B');
+  tube(g,[[66,120],[120,120],[120,200],[190,200],[190,45],[272,45]]);
+  fl(g,[[66,120],[120,120],[120,165]],WATER);fl(g,[[120,165],[120,200],[190,200],[190,105]],HG);fl(g,[[190,105],[190,45],[272,45]],LIGHT);cA();cB();
+  dot(g,120,120,'(1)',-26,-12);dot(g,120,165,'(2)',8,-9);dot(g,190,165,'(3)',10,0);dot(g,190,105,'(4)',10,0);dot(g,190,45,'(5)',0,-14);
+  dash(g,120,165,190,165);dash(g,165,105,190,105);dash(g,165,45,190,45);
+  vd(g,100,120,165,'h_1',{left:true});vd(g,165,105,165,'h_2',{left:true});vd(g,165,45,105,'h_3',{left:true});
+  T(g,22,88,'γ_1',{fs:12});T(g,300,85,'γ_3',{fs:12});T(g,155,218,'γ_2 (gauge fluid)',{fs:12});
+});
+
+/* ================= Section 15 ================= */
+reg(()=>{const g=E('g',{},svgIn('fig-e1718',400,215,'ENGG1205 2017-18 Figure C1(a)'));
+  rect(g,90,80,180,110,WATER);rect(g,90,40,180,150,'none','var(--ink)');ln(g,90,80,270,80,'stroke:var(--accent);stroke-width:1.4');
+  T(g,180,60,'air',{fs:12});T(g,200,140,'water',{fs:12});vd(g,110,80,170,'4 m');
+  tube(g,[[89,170],[76,170]],5);E('circle',{cx:62,cy:170,r:13,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.6'},g);ln(g,62,170,70,162,'stroke:var(--ink);stroke-width:1.6');
+  T(g,48,140,'pressure',{fs:11.5});T(g,48,153,'gauge',{fs:11.5});
+  tube(g,[[268,55],[300,55],[300,170],[350,170],[350,28]],9);fl(g,[[300,95],[300,170],[350,170],[350,125]],HG,9);
+  T(g,350,18,'open',{fs:12});dash(g,300,95,385,95);dash(g,350,125,385,125);vd(g,380,95,125,'H',{left:true});T(g,325,192,'Hg',{fs:12});
+});
+reg(()=>{const g=E('g',{transform:'translate(24,0)'},svgIn('fig-e1516',444,235,'ENGG1205 2015-16 Figure C2(a): inverted U-tube'));
+  const F=210;rect(g,40,100,110,F-100,WATER);rect(g,220,115,140,F-115,WATER);
+  E('path',{d:`M40,70 L40,${F} L150,${F} L150,70 M220,70 L220,${F} L360,${F} L360,70`,style:'fill:none;stroke:var(--ink);stroke-width:2'},g);ln(g,10,F,410,F,'stroke:var(--ink);stroke-width:2');
+  ln(g,40,100,150,100,'stroke:var(--accent);stroke-width:1.4');ln(g,220,115,360,115,'stroke:var(--accent);stroke-width:1.4');surf(g,70,100);surf(g,330,115);
+  tube(g,[[148,195],[190,195],[190,25],[255,25],[255,150]],9);
+  fl(g,[[148,195],[190,195],[190,40]],WATER,9);fl(g,[[190,40],[190,25],[255,25],[255,80]],LIGHT,9);fl(g,[[255,80],[255,150]],WATER,9);
+  T(g,222,12,'SG = 0.90',{fs:12});dot(g,190,40,'A',-10,0);dot(g,255,40,'B',10,0);dot(g,190,100,'C',-10,-8);dot(g,255,115,'D',10,8);
+  dash(g,190,40,300,40);dash(g,255,80,300,80);vd(g,296,40,80,'0.4 m');vd(g,296,80,100,'x');
+  dash(g,150,100,300,100);dash(g,255,115,400,115);dash(g,360,100,400,100);vd(g,396,100,115,'Δh',{left:true});
+  vd(g,22,100,F,'1 m',{left:true});T(g,95,170,'water',{fs:12});T(g,300,175,'water',{fs:12});
+});
+function mfig(id,o){const W=o.top==='cone'?340:300,g=E('g',{},svgIn(id,W,300,o.alt));
+  const Cx=230,Cy=150,yR=230+(o.xs||0),yL=230-o.dh-(o.xs||0);
+  if(o.top==='cone'){if(o.full){E('polygon',{points:`170,40 290,40 ${Cx},${Cy}`,style:`fill:${WATER};stroke:none`},g);surf(g,262,40);}
+    E('polygon',{points:`170,40 290,40 ${Cx},${Cy}`,style:'fill:none;stroke:var(--ink);stroke-width:2'},g);dash(g,150,40,330,40);
+    vd(g,318,40,Cy,'3 m',{left:true});dash(g,Cx,Cy,322,Cy);hd(g,24,170,290,'D = 3 m');}
+  else{tube(g,[[Cx,Cy+2],[Cx,32]],10);if(o.full){fl(g,[[Cx,Cy+2],[Cx,60]],WATER);surf(g,Cx+18,60);vd(g,262,60,Cy,'1.0 m');dash(g,Cx,60,266,60);dash(g,Cx,Cy,266,Cy);}}
+  tube(g,[[Cx,Cy],[Cx,165],[150,165],[150,265],[100,265],[100,120]],10);
+  fl(g,[[Cx,Cy],[Cx,165],[150,165],[150,yR]],WATER);fl(g,[[150,yR],[150,265],[100,265],[100,yL]],HG);
+  if(o.top==='cone'&&o.full)E('polygon',{points:`172,41 288,41 ${Cx},${Cy-2}`,style:`fill:${WATER};stroke:none`},g);
+  dot(g,Cx,Cy,'C',10,4);T(g,100,108,o.top==='cone'?'air':'open',{fs:12});T(g,160,205,'water',{a:'start',fs:12});T(g,125,288,'mercury',{fs:12});
+  dash(g,58,yL,100,yL);dash(g,58,yR,150,yR);vd(g,62,yL,yR,o.rd,{left:true});
+  if(o.xs){const y0R=230,y0L=230-o.dh;dash(g,140,y0R,175,y0R,RED);dash(g,90,y0L,112,y0L,RED);T(g,178,y0R+o.xs/2,'x',{a:'start',it:true,col:RED});T(g,116,y0L-o.xs/2,'x',{a:'start',it:true,col:RED});}
+}
+twoUp('fig-change',[id=>mfig(id,{top:'tube',dh:20,rd:'0.10 m',alt:'before: water surface at C'}),id=>mfig(id,{top:'tube',full:true,dh:20,xs:8,rd:'0.176 m',alt:'after: water 1.0 m above C'})],
+  ['Before: water surface at C, reading 0.10 m.','After: 1.0 m of water above C; each mercury level moves <i>x</i>.']);
+reg(()=>{const g=E('g',{},svgIn('fig-incl',390,200,'well-type inclined manometer'));
+  rect(g,30,113,80,57,OIL);E('path',{d:'M30,50 L30,170 L110,170 L110,158 M110,142 L110,50',style:'fill:none;stroke:var(--ink);stroke-width:2'},g);
+  const th=20*Math.PI/180,c=Math.cos(th),s=Math.sin(th),x0=110,y0=150,zx=x0+(y0-110)/Math.tan(th),Lp=115,Px=zx+Lp*c,Py=110-Lp*s,ex=zx+170*c,ey=110-170*s;
+  tube(g,[[x0-1,y0],[ex,ey]],7);fl(g,[[x0-1,y0],[Px,Py]],OIL,7);dash(g,20,110,zx+30,110);T(g,150,100,'zero level',{a:'start',fs:11,col:'var(--muted)'});
+  arrow(g,70,18,70,60,RED);T(g,78,24,'p_1 (higher)',{a:'start',fs:12,col:RED});T(g,ex,ey-14,'p_2',{fs:12,col:RED});
+  T(g,70,190,'well, area A',{fs:11.5});T(g,250,165,'tube, area a',{fs:11.5});
+  E('path',{d:`M${zx+30},110 A30,30 0 0 0 ${zx+30*c},${110-30*s}`,style:'fill:none;stroke:var(--ink);stroke-width:1.2'},g);T(g,zx+40,102,'θ',{it:true});
+  const ox=-s*14,oy=-c*14;ln(g,zx+ox,110+oy,Px+ox,Py+oy,'stroke:var(--muted);stroke-width:1');arrowHead(g,zx+ox,110+oy,-c,s,'var(--muted)',6,5);arrowHead(g,Px+ox,Py+oy,c,-s,'var(--muted)',6,5);
+  T(g,(zx+Px)/2+ox-6,(110+Py)/2+oy-10,'L',{it:true});dash(g,Px,Py,370,Py);vd(g,365,Py,110,'h = L sin θ',{left:true});dash(g,zx+30,110,370,110);
+});
+
+/* ================= Exam taster ================= */
+reg(()=>{const g=E('g',{},svgIn('fig-t2405',440,250,'May 2024 B1 figure'));
+  rect(g,150,80,180,130,OIL);E('path',{d:'M150,40 L330,40 L330,140 M330,210 L150,210 L150,40',style:'fill:none;stroke:var(--ink);stroke-width:2'},g);
+  ln(g,150,80,330,80,'stroke:var(--warm);stroke-width:1.4');arrow(g,240,52,240,78,'var(--muted)',1.6,7,5);T(g,262,58,'air',{fs:12});T(g,240,180,'oil',{fs:12});
+  rect(g,330,140,90,70,WATER);E('path',{d:'M330,210 L420,210 L420,110',style:'fill:none;stroke:var(--ink);stroke-width:2'},g);ln(g,330,140,420,140,'stroke:var(--accent);stroke-width:1.4');surf(g,398,140);
+  ln(g,330,142,330,210,'stroke:var(--c2);stroke-width:6');E('circle',{cx:330,cy:140,r:5,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.6'},g);
+  T(g,338,114,'hinge A',{a:'start',fs:12});T(g,340,200,'B',{a:'start',fs:12});T(g,312,226,'gate',{fs:11.5,col:RED});T(g,374,172,'water',{fs:12});T(g,380,98,'open',{fs:11.5});
+  vd(g,305,80,210,'h_2',{left:true});vd(g,412,140,210,'h_3');
+  tube(g,[[151,55],[110,55],[110,150],[60,150],[60,30]],9);fl(g,[[110,105],[110,150],[60,150],[60,125]],HG,9);
+  T(g,60,18,'air at atmospheric pressure',{a:'start',fs:11});dash(g,30,105,110,105);dash(g,30,125,60,125);vd(g,36,105,125,'h_1',{left:true});T(g,85,172,'mercury',{fs:11.5});
+});
+reg(()=>{const g=E('g',{},svgIn('fig-t2305',440,285,'May 2023 B1 figure'));
+  rect(g,160,80,160,110,WATER);rect(g,160,40,160,150,'none','var(--ink)');ln(g,160,80,320,80,'stroke:var(--accent);stroke-width:1.4');
+  arrow(g,240,52,240,78,'var(--ink)',1.6,7,5);T(g,252,52,'p_0',{a:'start'});T(g,292,58,'air',{fs:12});T(g,270,150,'water',{fs:12});vd(g,146,80,190,'H',{left:true});
+  tube(g,[[318,55],[350,55],[350,125],[395,125],[395,40]],9);fl(g,[[350,100],[350,125],[395,125],[395,85]],HG,9);
+  T(g,395,30,'open',{fs:12});dash(g,350,100,430,100);dash(g,395,85,430,85);vd(g,426,85,100,'h_1',{left:true});T(g,372,145,'mercury',{fs:11});
+  tube(g,[[180,189],[180,255],[90,255],[90,165]],9);fl(g,[[180,189],[180,220]],WATER,9);fl(g,[[180,220],[180,255],[90,255],[90,189]],HG,9);
+  T(g,90,155,'open',{fs:12});dash(g,180,190,215,190);dash(g,180,220,215,220);vd(g,210,190,220,'h_2');
+  dash(g,60,189,90,189);dash(g,60,220,180,220);vd(g,64,189,220,'h_3',{left:true});T(g,135,275,'mercury',{fs:11.5});
+});
+reg(()=>mfig('fig-t2205',{top:'cone',dh:20,rd:'Δh',alt:'May 2022 B1 figure: cone empty'}));
+reg(()=>mfig('fig-t2205a',{top:'cone',full:true,dh:20,xs:11.5,rd:'0.429 m',alt:'May 2022 B1: cone full, new levels'}));
+
+</script>
+</body></html>

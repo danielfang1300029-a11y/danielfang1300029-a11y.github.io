@@ -1,0 +1,947 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH1851 L1 · Limits</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (46rem) with a sticky contents rail on wide screens; graphs inline beside the maths they explain; practice and past papers at the end. Palette and type match the MECH2407 notes. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Lecture 1</p>
+  <ol>
+    <li><a href="#s0">0 · Where we are</a></li>
+    <li><a href="#s1">1 · Rates of change</a></li>
+    <li><a href="#s2">2 · What a limit is</a></li>
+    <li><a href="#s3">3 · One-sided limits, existence</a></li>
+    <li><a href="#s4">4 · Three ways to find a limit</a></li>
+    <li><a href="#s5">5 · The Limit Laws</a></li>
+    <li><a href="#s6">6 · Direct substitution</a></li>
+    <li><a href="#s7">7 · Factorisation and rationalisation</a></li>
+    <li><a href="#s8">8 · Summary</a></li>
+    <li><a href="#s9">9 · Common mistakes</a></li>
+    <li><a href="#s10">10 · Find the mistake</a></li>
+    <li><a href="#s11">11 · Group work</a></li>
+    <li><a href="#s12">12 · Concept checks</a></li>
+    <li><a href="#pastpaper">13 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MATH1851 · Calculus · Lecture 1</span>
+  <h1>Limits</h1>
+  <p class="lede">Every slide of Lecture 1 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this lecture.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this lecture sits</h2>
+<p>This is the first lecture of MATH1851 (Calculus and Ordinary Differential Equations). Part I of the course (Lectures 1 to 17) is <b>calculus</b>: the mathematics of how things <b>change</b>. Part II is about <b>ordinary differential equations</b> (equations that involve a function and its rates of change) and the <b>Laplace transform</b>, a tool for solving them.</p>
+<p>Calculus has two big ideas, and both are built on top of the idea in this lecture, the <b>limit</b>:</p>
+<ul class="list">
+  <li>the <b>derivative</b> (Lecture 5): the rate of change of a quantity at one instant, such as the speed shown on a car's speedometer at this exact moment;</li>
+  <li>the <b>integral</b> (Lectures 11 and 12): the total amount accumulated, such as the total distance travelled, found by adding up very many very small pieces.</li>
+</ul>
+<p>In both cases ordinary algebra gets stuck. A speed "at one instant" would mean distance travelled in zero time divided by zero time, which is \(\frac00\), and \(\frac00\) has no value. A limit gets round this: instead of asking what happens <b>at</b> a point, it asks what value things <b>get closer and closer to</b> as we move <b>towards</b> the point. A useful picture is zooming in on a photo: you never reach the single pixel, but as you zoom you can see clearly what colour it is heading towards.</p>
+<p>So this lecture answers three questions: why we need limits (section 1), what a limit is and when it exists (sections 2 and 3), and how to calculate one (sections 4 to 7).</p>
+
+<h3>Course information (slides 1 to 3)</h3>
+<ul class="list">
+  <li><b>Slide 1:</b> title slide, "Limits", MATH 1851 Lecture 1, The University of Hong Kong.</li>
+  <li><b>Slide 2, content:</b> course materials are on <b>HKU Moodle</b> (the university's course website) and the discussion forum is <b>Ed</b>.</li>
+  <li><b>Slide 2, assessment:</b> work is submitted and marked on <b>Gradescope</b>. The pie chart gives the weighting below. A crossed-out calculator icon indicates that calculators are not allowed. There are also <b>+3% bonus coursework points</b> for taking part in class.</li>
+</ul>
+<div class="scroll"><table>
+<tr><th>Component</th><th>Weight</th></tr>
+<tr><td>Part I assignments (3)</td><td>5%</td></tr>
+<tr><td>Part I quiz (1)</td><td>10%</td></tr>
+<tr><td>Part II assignments (3)</td><td>5%</td></tr>
+<tr><td>Part II quiz (1)</td><td>10%</td></tr>
+<tr><td>Final exam</td><td>70%</td></tr>
+</table></div>
+<p style="font-size:.92rem;color:var(--muted)">The weights are read from the labels on the slide's pie chart; they add up to 100%. Arrangements can change from year to year, so check the current course page.</p>
+<ul class="list">
+  <li><b>Slide 3, student survey:</b> a QR code links to a survey on Ed (also reachable from Moodle under "Part I: Lectures", "Ed in-class polling"). No maths content.</li>
+</ul>
+
+<h3>Textbook, objectives and timeline (slides 4 to 6)</h3>
+<div class="scroll"><table>
+<tr><th>Topic</th><th>Custom textbook</th><th>MyLab</th></tr>
+<tr><td>Rates of Change and Tangents to Curves</td><td>§1.1</td><td>§2.1</td></tr>
+<tr><td>Limit of a Function and Limit Laws</td><td>§1.2</td><td>§2.2</td></tr>
+<tr><td>One-Sided Limits</td><td>§1.4</td><td>§2.4</td></tr>
+</table></div>
+<p><b>Learning objectives (slide 5):</b> (1) motivate limits with rates of change and tangents to curves; (2) define the limit of a function; (3) apply the Limit Laws to evaluate limits and identify common mistakes.</p>
+<p><b>Lecture timeline (slide 6):</b> rates of change 5 minutes, definition of limit 10 minutes, evaluation techniques 15 minutes, group work / discussion 20 minutes.</p>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Rates of change: why we need limits</h2>
+<p>Slide 7 ("Rates of Change") shows a photo of a long sea bridge. Think of driving across it. Two different "speeds" make sense:</p>
+<ul class="list">
+  <li>your <b>average speed</b> for the whole crossing: total distance ÷ total time;</li>
+  <li>your <b>speed at one instant</b>, the number on the speedometer right now.</li>
+</ul>
+<p>The first is easy arithmetic. The second is what calculus is for. Slide 8 makes the same two ideas precise for any function \(y=f(x)\). A <b>rate of change</b> means "how much \(y\) changes for each unit change in \(x\)".</p>
+
+<div class="box def"><span class="tag">Definition (slide 8)</span>
+<p>The <b>average rate of change</b> of \(y=f(x)\) over the interval \([x_1,x_2]\) is</p>
+\[ \frac{\Delta y}{\Delta x}=\frac{f(x_2)-f(x_1)}{x_2-x_1} \]
+\[ =\frac{f(x_1+h)-f(x_1)}{h},\qquad h\ne0. \]
+<p class="word"><b>In words:</b> average rate of change = (change in output) ÷ (change in input) = (rise) ÷ (run).</p>
+</div>
+<p>Notation: \(\Delta\) (the Greek capital letter "delta") means "change in". So \(\Delta x=x_2-x_1\) is the change in \(x\) and \(\Delta y=f(x_2)-f(x_1)\) is the change in \(y\). The second form writes the step size as \(h=\Delta x\), so \(x_2=x_1+h\). We need \(h\ne0\), otherwise we would divide by zero.</p>
+<p>Geometrically, put \(P=(x_1,f(x_1))\) and \(Q=(x_2,f(x_2))\) on the graph. A <b>secant line</b> is a straight line through two points of a curve. Its slope is exactly rise ÷ run, so:</p>
+<ul class="list">
+  <li>for \(\Delta x=h\gt0\), \(m_{PQ}\) (the slope of the line \(PQ\)) is the slope of the <b>secant line</b> between \(x_1\) and \(x_2\);</li>
+  <li>as \(\Delta x\to0\) (read: "as \(\Delta x\) approaches 0"), \(m_{PQ}\) becomes the slope of the <b>tangent line</b> at \(x_1\): the straight line that just touches the curve at \(P\) and points in the same direction as the curve there.</li>
+</ul>
+
+<div class="figure"><p class="ttl">Secant lines turning into the tangent line (slide 8's picture, redrawn)</p>
+<canvas class="plot" id="fsec" style="aspect-ratio:16/10" aria-label="Curve y = x squared over 2 plus a half with a secant line through P and Q and the tangent at P"></canvas>
+<div class="ctrl"><label for="fsec-s">Side <select id="fsec-s"><option value="r">Q to the right (h &gt; 0)</option><option value="l">Q to the left (h &lt; 0)</option></select></label>
+<label for="fsec-h">Size of step |h| <input type="range" id="fsec-h" min="0.02" max="2.5" step="0.02" value="2"></label></div>
+<div class="legend"><span style="--k:var(--accent)">y = f(x) = x²/2 + 1/2</span><span style="--k:var(--c4)">secant PQ</span><span style="--k:var(--c3)">tangent at P</span><span style="--k:var(--c2)">Δx and Δy</span></div>
+<div class="readout" id="fsec-out"></div>
+<p class="cap">Here \(f(x)=\frac{x^2}{2}+\frac12\) and \(x_1=1\), so \(P=(1,1)\). Drag the slider towards 0: \(Q\) slides down the curve to \(P\), and the secant slope \(m_{PQ}=1+\frac h2\) gets closer and closer to 1, the slope of the tangent. From either side the answer is the same.</p></div>
+
+<div class="box def"><span class="tag">Definition (slide 8)</span>
+<p>The <b>instantaneous rate of change</b> of \(y=f(x)\) at \(x_1\) is the slope of the tangent line at \(x_1\).</p>
+<p class="word"><b>In words:</b> rate of change at one point = slope of the line that just touches the graph there = what the secant slopes settle down to as the second point moves onto the first.</p>
+</div>
+<p>The problem: we cannot simply put \(h=0\) in \(\frac{f(x_1+h)-f(x_1)}{h}\), because that gives \(\frac00\). We need a precise way to say "what the expression gets close to as \(h\) gets close to 0". That is a limit. (The slope of the tangent, written as a limit, is the <b>derivative</b>, Lecture 5.)</p>
+<div class="box eg"><span class="tag">Example (for the figure)</span>
+<p>For \(f(x)=\frac{x^2}2+\frac12\) at \(x_1=1\):</p>
+\[ \begin{aligned} m_{PQ}&=\frac{f(1+h)-f(1)}{h}\\ &=\frac{\frac{(1+h)^2}{2}+\frac12-1}{h}\\ &=\frac{h+\frac{h^2}{2}}{h}=1+\frac h2\quad(h\ne0). \end{aligned} \]
+<p>As \(h\) gets closer to 0 (from either side), \(1+\frac h2\) gets closer to 1, so the tangent at \(P\) has slope 1. Notice that we cancelled \(h\) <b>before</b> letting \(h\) shrink; this "simplify first, then let it approach" pattern returns in section 7.</p>
+</div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>What a limit is</h2>
+<h3>The concept (slide 9)</h3>
+<ul class="list">
+  <li>A limit studies the <b>behaviour</b> of \(f(x)\) <b>around</b> a point \(x_0\): what the values do for \(x\) near \(x_0\).</li>
+  <li>The limit of \(f(x)\) as \(x\to x_0\) <b>exists</b> if the values of \(f(x)\) get closer to a single number \(L\) as \(x\) gets closer to \(x_0\).</li>
+  <li>The value of \(f(x)\) <b>at</b> \(x_0\) itself is <b>NOT</b> taken into account. It may equal \(L\), be something else, or not exist at all; the limit does not care.</li>
+</ul>
+<p>Analogy: the limit is where the road is heading, not what is (or isn't) at the end of the road. A bridge with a missing last plank still clearly leads to the far bank.</p>
+
+<div class="box def"><span class="tag">Definition, intuitive (slide 10)</span>
+<p>Suppose \(f(x)\) is a function defined on an <b>open interval about</b> \(x_0\). We write</p>
+\[ \lim_{x\to x_0}f(x)=L \]
+<p>and say "the <b>limit</b> of \(f(x)\) as \(x\) approaches \(x_0\) is \(L\)" if we can make the values of \(f(x)\) <b>arbitrarily close</b> to \(L\) for all \(x\) <b>sufficiently close</b> to \(x_0\) but <b>not equal</b> to \(x_0\).</p>
+<p class="word"><b>In words:</b> limit of f as x approaches x₀ = the single number that f(x) can be kept as close to as you like, just by taking x close enough to (but not at) x₀.</p>
+</div>
+<p>The terms, in plain language:</p>
+<ul class="list">
+  <li><b>Open interval about \(x_0\)</b>: an interval of the form \((x_0-r,\,x_0+r)\) with \(r\gt0\), not including its endpoints. It means \(f\) is defined at points on <b>both</b> sides of \(x_0\), as close as we like.</li>
+  <li><b>Arbitrarily close to \(L\)</b>: however small a gap you name (0.1, 0.001, 0.000001, …), the distance between \(f(x)\) and \(L\) can be made smaller than it.</li>
+  <li><b>Sufficiently close to \(x_0\)</b>: close enough. How close is "enough" may depend on how small a gap you named.</li>
+  <li><b>but not equal to \(x_0\)</b>: \(x=x_0\) itself is never used.</li>
+</ul>
+<p style="font-size:.92rem;color:var(--muted)">Note on the wording: since \(x=x_0\) is never used, \(f\) need not be defined at \(x_0\) itself (slide 12's middle picture has \(g(x_0)\) undefined, yet the limit exists). So read "defined on an open interval about \(x_0\)" as "defined on an open interval about \(x_0\), except possibly at \(x_0\)", which is how the textbook states it.</p>
+<p>The slide adds: <b>the precise \(\epsilon,\delta\)-definition is out of scope for this course.</b> You will not be examined on it.</p>
+<div class="box beyond"><span class="tag">Beyond the handouts</span>
+<p>For the curious, the precise definition turns "arbitrarily close" and "sufficiently close" into numbers. \(\epsilon\) ("epsilon") is the allowed gap for \(f(x)\) and \(\delta\) ("delta") is how close \(x\) must be:</p>
+\[ \lim_{x\to x_0}f(x)=L \]
+<p>means: for every \(\epsilon\gt0\) there is a \(\delta\gt0\) such that</p>
+\[ 0\lt|x-x_0|\lt\delta\ \Rightarrow\ |f(x)-L|\lt\epsilon. \]
+<p class="word"><b>In words:</b> whatever accuracy ε you demand for f(x), there is a distance δ such that every x within δ of x₀ (other than x₀ itself) gives f(x) within ε of L. The "\(0\lt\)" part is the "not equal to \(x_0\)".</p>
+</div>
+
+<div class="figure"><p class="ttl">Approaching x₀ from both sides (slides 9 and 12)</p>
+<canvas class="plot" id="fapp" style="aspect-ratio:16/10" aria-label="A curve approaching the height L as x approaches x0 from both sides"></canvas>
+<div class="ctrl"><label for="fapp-s">Function <select id="fapp-s"><option value="f">f: f(x₀) = L</option><option value="g">g: g(x₀) not defined</option><option value="h">h: h(x₀) ≠ L</option></select></label>
+<label for="fapp-d">Distance of x from x₀ <input type="range" id="fapp-d" min="0.02" max="1.6" step="0.02" value="1.2"></label></div>
+<div class="legend"><span style="--k:var(--accent)">the function</span><span style="--k:var(--c4)">x approaching from the left</span><span style="--k:var(--c3)">x approaching from the right</span></div>
+<div class="readout" id="fapp-out"></div>
+<p class="cap">Here \(x_0=3\). The three options are the three pictures of slide 12: the same curve, but with the point at \(x_0\) filled in, missing (open circle), or moved. Shrink the distance: the orange and green points close in on the height \(L\approx2.069\) in all three cases. The limit is the same each time because the value at \(x_0\) is not taken into account.</p></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>One-sided limits, and when a limit exists</h2>
+<h3>One-sided limits (slide 11)</h3>
+<p>Sometimes the function behaves differently on the two sides of \(x_0\) (think of a staircase: just before the step you are at one height, just after it at another). Then it helps to look at each side separately.</p>
+<div class="box def"><span class="tag">Definition, intuitive (slide 11)</span>
+<p>We write</p>
+\[ \lim_{x\to x_0^-}f(x)=L \]
+<p>and say "the <b>left-hand limit</b> of \(f(x)\) as \(x\) approaches \(x_0\) is \(L\)", or "the limit of \(f(x)\) as \(x\) approaches \(x_0\) <b>from the left</b> is \(L\)", if we can make the values of \(f(x)\) arbitrarily close to \(L\) for all \(x\) sufficiently close to \(x_0\) <b>and less than</b> \(x_0\).</p>
+<p class="word"><b>In words:</b> left-hand limit = the number f(x) settles towards when x creeps up to x₀ from below (from the left on the number line).</p>
+</div>
+<p>The <b>right-hand limit</b> of \(f(x)\) is defined similarly, with \(x\to x_0^+\): use only \(x\) <b>greater than</b> \(x_0\) (approaching from the right).</p>
+<p>Notation: the small superscript is only a direction label. \(x_0^-\) is not a number "slightly less than \(x_0\)"; \(x\to x_0^-\) just means "\(x\) approaches \(x_0\) through values less than \(x_0\)". The ordinary limit \(\lim_{x\to x_0}\) is called the <b>two-sided</b> limit when we want to contrast it with these.</p>
+
+<h3>When the limit exists (slide 12)</h3>
+<p>Slide 12 shows three functions \(f\), \(g\), \(h\) with identical graphs except at \(x_0\) (choose them in the figure of section 2):</p>
+<div class="cases">
+<div><b>\(f(x_0)=L\)</b>The point at \(x_0\) is on the curve, at height \(L\).</div>
+<div><b>\(g(x_0)\) DNE</b>"DNE" = "does not exist": \(g\) is not defined at \(x_0\) (an open circle, a "hole").</div>
+<div><b>\(h(x_0)\ne L\)</b>\(h\) is defined at \(x_0\), but the dot sits away from the curve.</div>
+</div>
+<p>In all three cases</p>
+\[ \lim_{x\to x_0}f(x)=\lim_{x\to x_0}g(x)=\lim_{x\to x_0}h(x)=L\in\mathbb R \]
+<p>(\(\in\mathbb R\) means "is a real number", i.e. a finite ordinary number, not \(\infty\)), and for each of them the left-hand and right-hand limits agree:</p>
+\[ \lim_{x\to x_0^-}f(x)=\lim_{x\to x_0^+}f(x),\qquad \lim_{x\to x_0^-}g(x)=\lim_{x\to x_0^+}g(x), \]
+\[ \lim_{x\to x_0^-}h(x)=\lim_{x\to x_0^+}h(x). \]
+<p class="word"><b>In words:</b> the limit only looks at the curve near x₀, so filling in, removing or moving the single point at x₀ never changes it.</p>
+
+<h3>When the limit does not exist (slide 13)</h3>
+<p>Slide 13 shows four functions near \(x=0\). Try them in the figure below.</p>
+<div class="figure"><p class="ttl">Four ways a limit at 0 can fail (slide 13's pictures, redrawn)</p>
+<canvas class="plot" id="fdne" style="aspect-ratio:16/10" aria-label="Graphs of |x|/x, 1/x, sin(1/x) and 1/x squared near zero"></canvas>
+<div class="ctrl"><label for="fdne-s">Function <select id="fdne-s"><option value="f">f(x) = |x|/x (jump)</option><option value="g">g(x) = 1/x</option><option value="h">h(x) = sin(1/x)</option><option value="k">k(x) = 1/x²</option></select></label>
+<label for="fdne-d">Distance of x from 0 <input type="range" id="fdne-d" min="0.01" max="1" step="0.01" value="0.6"></label></div>
+<div class="legend"><span style="--k:var(--accent)">the function</span><span style="--k:var(--c4)">x = −d (from the left)</span><span style="--k:var(--c3)">x = +d (from the right)</span></div>
+<div class="readout" id="fdne-out"></div>
+<p class="cap">Slide 13's four graphs. Move the slider towards 0 and watch the two readouts: they head to two different numbers (\(f\)), off to opposite infinities (\(g\)), keep jumping about (\(h\)), or both grow without bound (\(k\)).</p></div>
+<ul class="list">
+  <li><b>\(f(x)=\dfrac{|x|}{x}\)</b>: for \(x\gt0\), \(|x|=x\) so \(f(x)=1\); for \(x\lt0\), \(|x|=-x\) so \(f(x)=-1\). Hence \(\lim_{x\to0^-}f(x)=-1\ne1=\lim_{x\to0^+}f(x)\): the one-sided limits disagree (a <b>jump</b>).</li>
+  <li><b>\(g(x)=\dfrac1x\)</b>: just left of 0 the values are huge and negative, just right of 0 huge and positive, so \(\lim_{x\to0^-}g(x)\ne\lim_{x\to0^+}g(x)\). (In fact neither side settles to a number at all.)</li>
+  <li><b>\(h(x)=\sin\left(\dfrac1x\right)\)</b> <b>oscillates infinitely</b>: as \(x\to0\), \(\frac1x\) runs through infinitely many whole turns, so \(h\) swings between \(-1\) and \(1\) infinitely often and never settles on one value.</li>
+  <li><b>\(k(x)=\dfrac1{x^2}\)</b>: from both sides the values grow without bound. We write \(\lim_{x\to0^-}k(x)=\infty=\lim_{x\to0^+}k(x)\).</li>
+</ul>
+<p>Conclusion on the slide:</p>
+\[ \lim_{x\to0}f(x),\ \lim_{x\to0}g(x),\ \lim_{x\to0}h(x)\ \text{DNE}; \]
+\[ \lim_{x\to0}k(x)=\infty. \]
+<div class="box warn"><span class="tag">What "= ∞" means</span>
+<p>\(\infty\) ("infinity") is <b>not a number</b>. Writing \(\lim_{x\to0}k(x)=\infty\) is shorthand for "the values grow larger than any number you name". The limit still does <b>not exist</b> as a real number (it is not \(L\in\mathbb R\)); the notation just records <b>how</b> it fails. Infinite limits are the topic of Lecture 3.</p>
+</div>
+
+<h3>The existence theorem (slide 14)</h3>
+<div class="box thm"><span class="tag">Theorem (slide 14)</span>
+\[ \lim_{x\to x_0}f(x)=L \]
+<p><b>if and only if</b></p>
+\[ \lim_{x\to x_0^-}f(x)=L=\lim_{x\to x_0^+}f(x). \]
+<p class="word"><b>In words:</b> the two-sided limit is L exactly when the left-hand limit and the right-hand limit are both L.</p>
+</div>
+<p>"If and only if" means the statement works in both directions: if the two-sided limit is \(L\) then both one-sided limits are \(L\); and if both one-sided limits are \(L\) then the two-sided limit is \(L\). The slide summarises the cases:</p>
+<ul class="list">
+  <li><b>Limit exists:</b> \(\lim_{x\to x_0^-}f(x)=\lim_{x\to x_0^+}f(x)=L\in\mathbb R\).</li>
+  <li><b>Limit does not exist</b>, for example when
+    <ul class="list">
+      <li>\(\lim_{x\to x_0^-}f(x)=L_1\ne L_2=\lim_{x\to x_0^+}f(x)\) (the two sides disagree, like \(\frac{|x|}x\));</li>
+      <li>\(f(x)\) oscillates infinitely (like \(\sin\frac1x\));</li>
+      <li>\(f(x)\) approaches \(\pm\infty\) (like \(\frac1x\) or \(\frac1{x^2}\)).</li>
+    </ul></li>
+</ul>
+<div class="box eg"><span class="tag">How the theorem is used</span>
+<p>Whenever a function has a different formula on each side of a point (absolute values, piecewise definitions), work out the two one-sided limits separately and compare. Same number: that is the limit. Different numbers: the limit does not exist. This is exactly how the group work questions and the exam taster's absolute-value questions are solved.</p>
+</div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Three ways to find a limit (slide 15)</h2>
+<p>Slide 15 finds one limit three ways:</p>
+\[ \lim_{x\to0}f(x),\qquad f(x)=\frac{\sqrt{x^2+1}-1}{x^2}. \]
+<p>Putting in \(x=0\) gives \(\frac{\sqrt1-1}{0}=\frac00\), which has no value, so we must work harder.</p>
+
+<h3>1. Numeric: make a table</h3>
+<p>Evaluate \(f(x)\) at values of \(x\) closer and closer to 0. Since \(f(-x)=f(x)\) (only \(x^2\) appears), the same value works for \(\pm x\).</p>
+<div class="scroll"><table>
+<tr><th>\(x\)</th><th>\(f(x)\) (slide)</th></tr>
+<tr><td>\(\pm1\)</td><td>0.414213562</td></tr>
+<tr><td>\(\pm0.5\)</td><td>0.472135955</td></tr>
+<tr><td>\(\pm0.25\)</td><td>0.492422502</td></tr>
+<tr><td>\(\pm0.1\)</td><td>0.498756211</td></tr>
+<tr><td>\(\pm0.01\)</td><td>0.499987501</td></tr>
+<tr><td>\(\pm0.001\)</td><td>0.500000000</td></tr>
+</table></div>
+<p>The values creep up towards 0.5, which suggests the limit is \(\frac12\).</p>
+<p style="font-size:.92rem;color:var(--muted)">Note on the last row: the exact value is \(f(\pm0.001)=0.499999875\ldots\), not exactly 0.5; the slide's figure is what a calculator shows after rounding. The pattern (approaching 0.5) is unaffected.</p>
+
+<h3>2. Graphic: draw the graph</h3>
+<div class="figure"><p class="ttl">The graph of f(x) = (√(x²+1) − 1)/x² (slide 15's picture, redrawn)</p>
+<canvas class="plot" id="fnum" style="aspect-ratio:16/10" aria-label="Bell-shaped graph with a hole at (0, 0.5)"></canvas>
+<div class="ctrl"><label for="fnum-s">View <select id="fnum-s"><option value="w">wide (−20 to 20, as on the slide)</option><option value="z">zoomed in (−2 to 2)</option></select></label>
+<label for="fnum-k">Table row <input type="range" id="fnum-k" min="0" max="5" step="1" value="0"></label></div>
+<div class="legend"><span style="--k:var(--accent)">y = f(x)</span><span style="--k:var(--c4)">the points x = ±(table value)</span></div>
+<div class="readout" id="fnum-out"></div>
+<p class="cap">The graph rises to a peak near height \(\frac12\) at \(x=0\), but there is a hole there because \(f(0)\) is \(\frac00\), undefined. The slider steps through the table's rows.</p></div>
+<p>Numeric and graphic methods <b>suggest</b> the answer; they do not prove it. A table can be fooled (see concept check 5), and a graph only shows what you choose to draw. The algebraic method gives the exact answer.</p>
+
+<h3>3. Algebraic: simplify, then use the Limit Laws</h3>
+<p>Multiply the top and bottom by \(\sqrt{x^2+1}+1\), the <b>conjugate</b> of the numerator (same two terms, opposite sign in the middle). This uses \((a-b)(a+b)=a^2-b^2\) to clear the square root:</p>
+\[ \begin{aligned} \lim_{x\to0}f(x)&=\lim_{x\to0}\frac{\sqrt{x^2+1}-1}{x^2}\\ &=\lim_{x\to0}\frac{x^2}{x^2\left(\sqrt{x^2+1}+1\right)}\\ &=\lim_{x\to0}\frac{1}{\sqrt{x^2+1}+1}\\ &=\frac{1}{\sqrt{(0)^2+1}+1}\\ &=\frac12. \end{aligned} \]
+<p class="word"><b>In words:</b> the factor x² that made the bottom zero cancels; what is left can be evaluated by putting x = 0.</p>
+<p>The numerator in line 2 is \(\left(\sqrt{x^2+1}\right)^2-1^2=x^2+1-1=x^2\). Cancelling \(x^2\) is allowed because the limit never uses \(x=0\), so \(x^2\ne0\). Why the last step (putting in \(x=0\)) is allowed is explained in sections 5 to 7.</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>The Limit Laws (slides 16 and 17)</h2>
+<p>The Limit Laws say that limits behave well with ordinary arithmetic: you can take the limit of each piece and then combine, <b>provided the pieces' limits exist</b>.</p>
+<div class="box thm"><span class="tag">Theorem: Limit Laws (slide 16)</span>
+<p>If \(\displaystyle\lim_{x\to c}f(x)\) and \(\displaystyle\lim_{x\to c}g(x)\) exist, then:</p>
+<p><b>1. Sum Rule</b></p>
+\[ \lim_{x\to c}[f(x)+g(x)]=\lim_{x\to c}f(x)+\lim_{x\to c}g(x) \]
+<p class="word"><b>In words:</b> limit of a sum = sum of the limits.</p>
+<p><b>2. Difference Rule</b></p>
+\[ \lim_{x\to c}[f(x)-g(x)]=\lim_{x\to c}f(x)-\lim_{x\to c}g(x) \]
+<p class="word"><b>In words:</b> limit of a difference = difference of the limits.</p>
+<p><b>3. Constant Multiple Rule</b> (\(k\in\mathbb R\), any fixed real number)</p>
+\[ \lim_{x\to c}[kf(x)]=k\lim_{x\to c}f(x) \]
+<p class="word"><b>In words:</b> a constant factor can be taken outside the limit.</p>
+<p><b>4. Product Rule</b></p>
+\[ \lim_{x\to c}[f(x)g(x)]=\lim_{x\to c}f(x)\cdot\lim_{x\to c}g(x) \]
+<p class="word"><b>In words:</b> limit of a product = product of the limits.</p>
+<p><b>5. Quotient Rule</b>, if \(\displaystyle\lim_{x\to c}g(x)\ne0\):</p>
+\[ \lim_{x\to c}\left[\frac{f(x)}{g(x)}\right]=\frac{\lim_{x\to c}f(x)}{\lim_{x\to c}g(x)} \]
+<p class="word"><b>In words:</b> limit of a quotient = quotient of the limits, but only when the bottom's limit is not zero.</p>
+<p><b>6. Power Rule</b> (\(n\in\mathbb Z^+\), a positive whole number 1, 2, 3, …)</p>
+\[ \lim_{x\to c}[f(x)]^n=\left[\lim_{x\to c}f(x)\right]^n \]
+<p class="word"><b>In words:</b> limit of a power = power of the limit.</p>
+<p><b>7. Root Rule</b> (\(n\in\mathbb Z^+\))</p>
+\[ \lim_{x\to c}\sqrt[n]{f(x)}=\sqrt[n]{\lim_{x\to c}f(x)} \]
+<p class="word"><b>In words:</b> limit of an n-th root = n-th root of the limit.</p>
+<p>(If \(n\) is even, we assume that \(\lim_{x\to c}f(x)=L\gt0\).)</p>
+</div>
+<p>Notes on the conditions:</p>
+<ul class="list">
+  <li>The whole theorem starts with "<b>if</b> both limits exist". If either limit does not exist, the laws say nothing (section 9 and the Find the Mistake show what goes wrong).</li>
+  <li>The Quotient Rule needs the bottom's limit to be non-zero, because dividing by 0 is meaningless. When the bottom's limit is 0, you must simplify first (section 7).</li>
+  <li>The Root Rule's extra condition for even \(n\) (square roots, fourth roots, …) is there because even roots of negative numbers are not real numbers. Odd roots (cube roots, …) need no condition: \(\sqrt[3]{-8}=-2\).</li>
+</ul>
+<p>The slide also notes:</p>
+<ul class="list">
+  <li>The laws are <b>proved using the precise \(\epsilon,\delta\)-definition</b> of limit (not required in this course).</li>
+  <li>They <b>apply for one-sided limits also</b>: replace every \(x\to c\) by \(x\to c^-\) (or every one by \(x\to c^+\)).</li>
+</ul>
+<div class="box beyond"><span class="tag">Beyond the handouts</span>
+<p>Two basic limits, which the textbook lists alongside the laws and which every calculation uses: for any constant \(k\),</p>
+\[ \lim_{x\to c}k=k,\qquad \lim_{x\to c}x=c. \]
+<p class="word"><b>In words:</b> a constant stays put; and as x approaches c, x itself approaches c.</p>
+<p>From these and the laws, any polynomial's limit can be found by substituting (section 6).</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 1 (slide 17)</span>
+<p>Find \(\displaystyle\lim_{z\to0}(2z-8)^{\frac13}\).</p>
+<p>Here \((2z-8)^{\frac13}=\sqrt[3]{2z-8}\), the cube root. First the inside, using the Difference Rule, then the Constant Multiple Rule and the two basic limits:</p>
+\[ \begin{aligned} \lim_{z\to0}(2z-8)&=\lim_{z\to0}2z-\lim_{z\to0}8\\ &=2\lim_{z\to0}z-8\\ &=2(0)-8=-8. \end{aligned} \]
+<p>This limit exists, so the Root Rule with \(n=3\) applies (odd, so no sign condition):</p>
+\[ \begin{aligned} \lim_{z\to0}(2z-8)^{\frac13}&=\left(\lim_{z\to0}(2z-8)\right)^{\frac13}\\ &=(-8)^{\frac13}=-2. \end{aligned} \]
+<p class="word"><b>In words:</b> the inside heads to −8, so the cube root heads to the cube root of −8, which is −2.</p>
+</div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Direct substitution (slide 18)</h2>
+<p>Using the laws step by step every time is slow. For the common types of function, the result is always the same: just put \(x=c\) in.</p>
+<div class="box thm"><span class="tag">Theorem: Direct Substitution Property (slide 18)</span>
+\[ \lim_{x\to c}f(x)=f(c) \]
+<p>if \(f\) is any of the following types of functions and \(c\) is in the <b>domain</b> of \(f\) (the set of inputs where \(f\) is defined):</p>
+<ol class="steps">
+  <li><b>Polynomial functions</b>: sums of terms \(a x^n\) with \(n\) a whole number, e.g. \(3x^4-x+7\).</li>
+  <li><b>Rational functions</b>: one polynomial divided by another, e.g. \(\dfrac{y^2+5y+6}{y+2}\).</li>
+  <li><b>Root functions</b>: \(\sqrt[n]{x}\), e.g. \(\sqrt x\), \(\sqrt[3]x\).</li>
+  <li><b>Trigonometric functions</b>: \(\sin x\), \(\cos x\), \(\tan x\), ….</li>
+</ol>
+<p class="word"><b>In words:</b> for these everyday functions, the limit as x approaches c is simply the value at c, as long as the function is defined at c.</p>
+</div>
+<p>A function with this property is called <b>continuous</b> at \(c\): its graph has no break, hole or jump there. Continuity gets its own lecture.</p>
+<p style="font-size:.92rem;color:var(--muted)">Slide 18 says "(TBD Lecture 3)" ("to be discussed in Lecture 3"); in this set of notes continuity is Lecture 4 (Lecture 3 is limits involving infinity).</p>
+<div class="box warn"><span class="tag">Trap: "c is in the domain"</span>
+<p>The condition matters. \(\dfrac{x^2-1}{x-1}\) is a rational function, but \(x=1\) is <b>not</b> in its domain (the bottom is 0), so direct substitution does not apply at 1. Putting \(x=1\) in gives \(\frac00\), which tells you nothing about the limit. You must simplify first (section 7). Also, functions built from these types by adding, multiplying, dividing and composing (e.g. \(\cos^4x\), \(\sqrt{x^2+8}\)) can be substituted into as well, as long as everything is defined at \(c\).</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 2 (slide 18)</span>
+<p>Find \(\displaystyle\lim_{y\to2}\frac{y^2+5y+6}{y+2}\).</p>
+<p>This is a rational function, and at \(y=2\) the bottom is \(2+2=4\ne0\), so \(2\) is in the domain. By direct substitution:</p>
+\[ \lim_{y\to2}\frac{y^2+5y+6}{y+2}=\frac{2^2+5(2)+6}{2+2}=\frac{20}{4}=5. \]
+<p>Check by factorising: \(y^2+5y+6=(y+2)(y+3)\), so for \(y\ne-2\) the function is \(y+3\), and \(2+3=5\). ✓</p>
+</div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>When substitution gives 0/0: factorisation and rationalisation (slides 19 and 20)</h2>
+<p>If putting \(x=c\) in gives \(\frac00\), the limit might still exist; \(\frac00\) is called an <b>indeterminate form</b>: the form alone does not determine the answer (it could turn out to be 0, 5, \(-\frac13\), anything, or not exist). The trick is to replace the function by a simpler one that agrees with it everywhere except at \(c\). This is justified by the following theorem.</p>
+<div class="box thm"><span class="tag">Theorem (slide 19)</span>
+<p>If \(f(x)=g(x)\) when \(x\ne c\), then</p>
+\[ \lim_{x\to c}f(x)=\lim_{x\to c}g(x), \]
+<p>provided the limit exists.</p>
+<p class="word"><b>In words:</b> two functions that agree everywhere near c (except possibly at c itself) have the same limit at c.</p>
+</div>
+<p>This is the "value at \(x_0\) is not taken into account" idea from section 2: the two graphs differ by at most one point, which the limit ignores. So cancelling a factor such as \((x-1)\), which is zero only at \(x=1\), does not change the limit at 1.</p>
+
+<div class="box eg"><span class="tag">Example 3: factorisation (slide 19)</span>
+<p>Find \(\displaystyle\lim_{x\to1}\frac{x^2-2x+1}{x^2+2x-3}\).</p>
+<p><b>Step 1: try substitution.</b> At \(x=1\): top \(1-2+1=0\), bottom \(1+2-3=0\). This is \(\frac00\), so simplify.</p>
+<p><b>Step 2: factorise.</b> Since both are 0 at \(x=1\), both have a factor \((x-1)\) (factor theorem):</p>
+\[ x^2-2x+1=(x-1)^2, \]
+\[ x^2+2x-3=(x-1)(x+3). \]
+<p><b>Step 3: cancel and substitute.</b> For \(x\ne1\),</p>
+\[ \frac{(x-1)^2}{(x-1)(x+3)}=\frac{x-1}{x+3}, \]
+<p>so by the theorem above, and then direct substitution (\(x+3=4\ne0\) at \(x=1\)):</p>
+\[ \lim_{x\to1}\frac{x^2-2x+1}{x^2+2x-3}=\lim_{x\to1}\frac{x-1}{x+3}=\frac{0}{4}=0. \]
+<p class="word"><b>In words:</b> after cancelling the common factor that caused 0/0, the top still heads to 0 while the bottom heads to 4, so the fraction heads to 0.</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 4: rationalisation (slide 20)</span>
+<p>Find \(\displaystyle\lim_{x\to-1}\frac{\sqrt{x^2+8}-3}{x+1}\).</p>
+<p><b>Step 1.</b> At \(x=-1\): top \(\sqrt{9}-3=0\), bottom \(0\). Again \(\frac00\).</p>
+<p><b>Step 2: rationalise</b> (remove the square root from the numerator) by multiplying top and bottom by the conjugate \(\sqrt{x^2+8}+3\):</p>
+\[ \begin{aligned} \frac{\sqrt{x^2+8}-3}{x+1}&=\frac{(x^2+8)-9}{(x+1)\left(\sqrt{x^2+8}+3\right)}\\ &=\frac{x^2-1}{(x+1)\left(\sqrt{x^2+8}+3\right)}\\ &=\frac{(x-1)(x+1)}{(x+1)\left(\sqrt{x^2+8}+3\right)}. \end{aligned} \]
+<p><b>Step 3: cancel</b> \((x+1)\) (allowed for \(x\ne-1\)) and substitute:</p>
+\[ \begin{aligned} \lim_{x\to-1}\frac{\sqrt{x^2+8}-3}{x+1}&=\lim_{x\to-1}\frac{x-1}{\sqrt{x^2+8}+3}\\ &=\frac{-1-1}{\sqrt{9}+3}=\frac{-2}{6}=-\frac13. \end{aligned} \]
+<p class="word"><b>In words:</b> multiplying by the conjugate turns "root minus 3" into "x² − 1", which contains the troublesome factor (x + 1); cancel it, then substitute.</p>
+</div>
+
+<div class="figure"><p class="ttl">Examples 3 and 4: a hole in the graph</p>
+<canvas class="plot" id="fhole" style="aspect-ratio:16/10" aria-label="Graph of the simplified function with an open circle at the excluded point"></canvas>
+<div class="ctrl"><label for="fhole-s">Example <select id="fhole-s"><option value="e3">Example 3, x → 1</option><option value="e4">Example 4, x → −1</option></select></label>
+<label for="fhole-d">Distance of x from c <input type="range" id="fhole-d" min="0.01" max="1" step="0.01" value="0.6"></label></div>
+<div class="legend"><span style="--k:var(--accent)">original function</span><span style="--k:var(--c3)">simplified function (dashed)</span><span style="--k:var(--c4)">x = c ± d</span></div>
+<div class="readout" id="fhole-out"></div>
+<p class="cap">The original function and the simplified one lie on top of each other everywhere except at \(c\), where the original has a hole (open circle). The limit is the height of the hole: \(0\) in Example 3, \(-\frac13\) in Example 4.</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Summary (slide 21)</h2>
+<ul class="list">
+  <li>Limits are the foundation of calculus, the study of the rate of change.</li>
+  <li>Limits describe the behaviour of a function as it approaches a point from the left or right, or both.</li>
+  <li>Limits may or may not exist.</li>
+  <li>We apply the Limit Laws and algebraic techniques such as substitution, factorisation and rationalisation to evaluate limits.</li>
+  <li>Only if the conditions are satisfied does a Limit Law apply.</li>
+</ul>
+<div class="box thm"><span class="tag">Method: evaluating a limit at a finite point</span>
+<ol class="steps">
+  <li><b>Plug in first.</b> If the function is defined at \(c\) and is built from polynomials, roots, trig functions, … (section 6), the answer is \(f(c)\).</li>
+  <li>If you get \(\frac{\text{non-zero}}{0}\), the limit is not a finite number (Lecture 3 handles these).</li>
+  <li>If you get \(\frac00\): factorise and cancel (polynomials), multiply by the conjugate (square roots), or combine fractions; then plug in again.</li>
+  <li>If there is an absolute value or a piecewise formula, find the left-hand and right-hand limits separately and compare (section 3).</li>
+</ol>
+</div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Common mistakes (slides 23 and 24)</h2>
+<h3>Using Limit Laws when the conditions are not met (slide 23)</h3>
+<div class="box"><div class="mistake">
+<span class="x">✗</span><span>\(\displaystyle\lim_{x\to2}\frac{2f(x)}{x-2}=\frac{2\lim_{x\to2}f(x)}{\lim_{x\to2}(x-2)}\). <span class="ok">✓</span> The Quotient Rule needs the bottom's limit to be non-zero, but \(\lim_{x\to2}(x-2)=0\). (Also, nothing says \(\lim_{x\to2}f(x)\) exists.) The right-hand side would mean dividing by 0, which is meaningless.</span>
+<span class="x">✗</span><span>\(\displaystyle\lim_{x\to0}\left(x\cdot\frac1x\right)=\lim_{x\to0}x\cdot\lim_{x\to0}\frac1x\). <span class="ok">✓</span> The Product Rule needs both limits to exist, but \(\lim_{x\to0}\frac1x\) does not (section 3). Simplify first: \(x\cdot\frac1x=1\) for \(x\ne0\), so the limit is \(1\).</span>
+</div></div>
+<h3>Substitutions resulting in indeterminate forms (slide 23)</h3>
+<div class="box"><div class="mistake">
+<span class="x">✗</span><span>\(\displaystyle\lim_{x\to0^+}\left(\frac1{x^2}-\frac1x\right)=\infty-\infty=0\). <span class="ok">✓</span> \(\infty\) is not a number, so you cannot subtract it from itself. \(\infty-\infty\) is an <b>indeterminate form</b>: the answer depends on which "infinity" grows faster. Combine the fractions instead.</span>
+<span class="x">✗</span><span>\(\displaystyle\lim_{x\to1}\left(\frac1{x-1}-\frac1{\ln x}\right)=\infty-\infty=0\). <span class="ok">✓</span> Same error. (Here \(\ln x\) is the natural logarithm, \(\log_e x\) with \(e\approx2.718\), Lecture 7.)</span>
+</div></div>
+<p>The correct values:</p>
+\[ \frac1{x^2}-\frac1x=\frac{1-x}{x^2}, \]
+<p>and as \(x\to0^+\) the top heads to \(1\) while the bottom is a tiny positive number, so</p>
+\[ \lim_{x\to0^+}\left(\frac1{x^2}-\frac1x\right)=\infty. \]
+<p>For the second one the true value is</p>
+\[ \lim_{x\to1}\left(\frac1{x-1}-\frac1{\ln x}\right)=-\frac12, \]
+<p>found with L'Hôpital's Rule <span class="pill">Beyond Lecture 1</span> (Lecture 10). Neither answer is 0. See them in the figure.</p>
+
+<div class="figure"><p class="ttl">The functions in the common mistakes</p>
+<canvas class="plot" id="fcm" style="aspect-ratio:16/10" aria-label="Graphs of x times 1/x, 1/x squared minus 1/x, and 1/(x−1) − 1/ln x"></canvas>
+<div class="ctrl"><label for="fcm-s">Function <select id="fcm-s"><option value="a">x · (1/x)</option><option value="b">1/x² − 1/x  (x &gt; 0)</option><option value="c">1/(x − 1) − 1/ln x</option></select></label></div>
+<div class="legend"><span style="--k:var(--accent)">the function</span><span style="--k:var(--c2)">the point being approached</span></div>
+<div class="readout" id="fcm-out"></div>
+<p class="cap">\(x\cdot\frac1x\) is the line \(y=1\) with a hole at \(x=0\): limit 1. \(\frac1{x^2}-\frac1x\) shoots up to \(+\infty\) as \(x\to0^+\). \(\frac1{x-1}-\frac1{\ln x}\) has a hole at height \(-\frac12\) at \(x=1\). None of them has limit 0.</p></div>
+
+<h3>Notation errors (slide 24)</h3>
+<div class="box"><div class="mistake">
+<span class="x">✗</span><span><b>Extraneous (unnecessary) limit notation:</b> \(\displaystyle\lim_{x\to1}x^2-3x+1=\lim_{x\to1}(1)^2-3(1)+1=-1\). <span class="ok">✓</span> Once you substitute \(x=1\), there is no \(x\) left to approach anything, so the "lim" must be dropped at that moment. Also put brackets round the whole expression: \(\displaystyle\lim_{x\to1}(x^2-3x+1)=(1)^2-3(1)+1=-1\).</span>
+<span class="x">✗</span><span><b>Omitting limit notation:</b> \(\displaystyle\lim_{x\to1}\frac{4x^2-4}{2(x-1)}=\frac{4(x-1)(x+1)}{2(x-1)}=\frac{4(x+1)}{2}=4\). <span class="ok">✓</span> The middle expressions are not equal to 4 (they still contain \(x\)); each must keep "\(\lim_{x\to1}\)" in front until you substitute: \(\displaystyle\lim_{x\to1}\frac{4(x-1)(x+1)}{2(x-1)}=\lim_{x\to1}\frac{4(x+1)}{2}=\frac{4(2)}{2}=4\).</span>
+<span class="x">✗</span><span><b>Omitting the function:</b> \(\displaystyle\lim_{x\to1}=5\). <span class="ok">✓</span> "lim" must always be followed by the expression whose limit is taken, e.g. \(\displaystyle\lim_{x\to1}f(x)=5\).</span>
+</div></div>
+<p>The final numbers in the first two were right; markers still deduct for wrong notation because the written statements are false.</p>
+
+<h3>More traps <span class="pill">Written for these notes</span></h3>
+<div class="box"><div class="mistake">
+<span class="x">✗</span><span>"Substitution gives \(\frac00\), so the limit is 0 (or 1, or does not exist)." <span class="ok">✓</span> \(\frac00\) only says "more work needed"; Examples 3 and 4 give 0 and \(-\frac13\), slide 15 gives \(\frac12\). <span class="pill">Written for these notes</span></span>
+<span class="x">✗</span><span>"\(f(c)\) is undefined, so \(\lim_{x\to c}f(x)\) does not exist." <span class="ok">✓</span> The value at \(c\) is ignored (slide 12's \(g\)). <span class="pill">Written for these notes</span></span>
+<span class="x">✗</span><span>"\(f(c)=5\), so \(\lim_{x\to c}f(x)=5\)." <span class="ok">✓</span> Only true for functions that have the Direct Substitution Property at \(c\) (slide 12's \(h\) is a counter-example). <span class="pill">Written for these notes</span></span>
+<span class="x">✗</span><span>Replacing \(|x|\) by \(x\) near a negative point. <span class="ok">✓</span> For \(x\lt0\), \(|x|=-x\). Decide the sign of what is inside the absolute value on the side you approach from. <span class="pill">Written for these notes</span></span>
+</div></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Find the mistake (slide 22)</h2>
+<p>The slide shows a student's handwritten answer to this question:</p>
+<div class="q"><p class="qh">If \(\lim_{x\to c}[f(x)+g(x)]=2\) and \(\lim_{x\to c}[f(x)-g(x)]=1\), find \(\lim_{x\to c}f(x)g(x)\). Use Limit Laws to evaluate and provide a clear explanation of your reasoning.</p></div>
+<p>The student's work, transcribed line by line:</p>
+<div class="handwork">
+<p>Given:</p>
+\[ \lim_{x\to c}[f(x)+g(x)]=2\ \text{ and} \]
+\[ \lim_{x\to c}[f(x)-g(x)]=1 \]
+<p>By Limit Laws:</p>
+\[ \lim_{x\to c}[f(x)+g(x)]=\lim_{x\to c}f(x)+\lim_{x\to c}g(x)=2 \]
+\[ \lim_{x\to c}[f(x)-g(x)]=\lim_{x\to c}f(x)-\lim_{x\to c}g(x)=1 \]
+<p>Elimination to reduce variable (adding):</p>
+\[ 2\left[\lim_{x\to c}f(x)\right]=3\ \ \therefore\ \lim_{x\to c}f(x)=\frac32 \]
+<p>Plug into equation:</p>
+\[ \frac32+\lim_{x\to c}g(x)=2\ \ \therefore\ \lim_{x\to c}g(x)=\frac12 \]
+<p>Calculate the \(\lim f(x)g(x)\):</p>
+\[ \begin{aligned} &\lim_{x\to c}[f(x)g(x)]\\ &\overset{\text{Limit Law (Product)}}{=}\left[\lim_{x\to c}f(x)\right]\left[\lim_{x\to c}g(x)\right] \end{aligned} \]
+\[ =\frac32\cdot\frac12=\frac34 \]
+</div>
+<details><summary>Hint 1</summary><div><p>Read the first line of the Limit Laws theorem again: "<b>If</b> \(\lim f(x)\) and \(\lim g(x)\) exist, then …". What does the question tell you about \(\lim f(x)\) and \(\lim g(x)\) on their own?</p></div></details>
+<details><summary>Hint 2</summary><div><p>Write \(f\) and \(g\) using only \(f+g\) and \(f-g\), whose limits you do know: \(f=\frac12[(f+g)+(f-g)]\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p><b>The mistake (lines 3 and 4):</b> the student splits \(\lim[f+g]\) into \(\lim f+\lim g\) using the Sum and Difference Rules. Those rules may only be used if \(\lim f(x)\) and \(\lim g(x)\) are <b>already known to exist</b>, and the question does not say so. (A sum can have a limit when its parts do not, e.g. \(\frac{|x|}x+\left(-\frac{|x|}x\right)=0\) at \(c=0\).) The final number is right, but the reasoning, which the question explicitly asks for, is not valid.</p>
+<p><b>Correct reasoning:</b> apply the laws only to functions whose limits are given. For \(x\) near \(c\),</p>
+\[ f(x)=\tfrac12\big([f(x)+g(x)]+[f(x)-g(x)]\big). \]
+<p>Both brackets have limits (2 and 1), so by the Sum and Constant Multiple Rules</p>
+\[ \lim_{x\to c}f(x)=\tfrac12(2+1)=\tfrac32 \]
+<p>and in particular this limit exists. Similarly \(g(x)=\frac12\big([f+g]-[f-g]\big)\), so by the Difference and Constant Multiple Rules</p>
+\[ \lim_{x\to c}g(x)=\tfrac12(2-1)=\tfrac12. \]
+<p>Now both limits exist, so the Product Rule applies:</p>
+\[ \lim_{x\to c}f(x)g(x)=\frac32\cdot\frac12=\frac34. \]
+<p style="font-size:.92rem;color:var(--muted)">A neat alternative: \(fg=\frac14\big[(f+g)^2-(f-g)^2\big]\), so by the Power, Difference and Constant Multiple Rules the limit is \(\frac14(2^2-1^2)=\frac34\) directly.</p>
+</div></details>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Group work (slide 25)</h2>
+
+<div class="q"><p class="qh">1. Use the graph of \(f\) below to find the limits and values of \(f(x)\):</p>
+<div class="figure"><p class="ttl">The graph of f (slide 25's picture, redrawn)</p>
+<canvas class="plot" id="fgw" style="aspect-ratio:16/10" aria-label="Piecewise graph on −2 to 2 with open and filled circles at −1, 0 and 1"></canvas>
+<div class="legend"><span style="--k:var(--accent)">y = f(x); filled dot = value of f, open circle = point not on the graph</span></div>
+<p class="cap">Three curved pieces on \([-2,2]\). Left piece: from the filled dot \((-2,2)\) down to an open circle at \((-1,0)\). Middle piece: from an open circle at \((-1,1)\) down to an open circle at \((0,0)\) and up to an open circle at \((1,1)\). Right piece: from an open circle at \((1,0)\) up to the filled dot \((2,2)\). Separate filled dots: \((-1,2)\), \((0,1)\), \((1,2)\).</p></div>
+<p class="qh">(a) \(\displaystyle\lim_{x\to0^-}f(x)\) &nbsp; (b) \(\displaystyle\lim_{x\to0^+}f(x)\) &nbsp; (c) \(\displaystyle\lim_{x\to0}f(x)\) &nbsp; (d) \(f(0)\)<br>(e) \(\displaystyle\lim_{x\to1^-}f(x)\) &nbsp; (f) \(\displaystyle\lim_{x\to1^+}f(x)\) &nbsp; (g) \(\displaystyle\lim_{x\to1}f(x)\) &nbsp; (h) \(f(1)\)</p>
+<details><summary>Hint</summary><div><p>For a one-sided limit, run your finger along the curve towards the point from that side and read the height the curve heads to; ignore the separate dots. For the value \(f(c)\), look only for the <b>filled</b> dot above \(x=c\). For a two-sided limit, use the existence theorem (slide 14).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) \(0\) &nbsp; (b) \(0\) &nbsp; (c) \(0\), since both one-sided limits are 0 &nbsp; (d) \(f(0)=1\) (the filled dot, not on the curve)</p>
+<p>(e) \(1\) (the middle piece heads to the open circle at height 1) &nbsp; (f) \(0\) (the right piece starts from the open circle at height 0) &nbsp; (g) does not exist, since \(1\ne0\) &nbsp; (h) \(f(1)=2\)</p>
+<p>Notice: at \(x=0\) the limit exists but differs from the value (like slide 12's \(h\)); at \(x=1\) the limit fails because of a jump (like slide 13's \(f\)).</p>
+</div></details></div>
+
+<div class="q"><p class="qh">2. \(\displaystyle\lim_{x\to-1}\frac{x^2+2x+1}{x^4-1}\)</p>
+<details><summary>Hint</summary><div><p>Substitution gives \(\frac00\). Factorise: the top is a perfect square, and the bottom is a difference of squares twice: \(x^4-1=(x^2-1)(x^2+1)\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ \begin{aligned} &\lim_{x\to-1}\frac{(x+1)^2}{(x-1)(x+1)(x^2+1)}\\ &=\lim_{x\to-1}\frac{x+1}{(x-1)(x^2+1)}\\ &=\frac{0}{(-2)(2)}=0. \end{aligned} \]
+</div></details></div>
+
+<div class="q"><p class="qh">3. \(\displaystyle\lim_{x\to0}\frac{\cos^4x}{5+2x^3}\)</p>
+<details><summary>Hint</summary><div><p>Plug in first. Is the bottom zero at \(x=0\)? (\(\cos^4x\) means \((\cos x)^4\).)</p></div></details>
+<details><summary>Answer</summary><div>
+<p>Top and bottom are built from trig and polynomial functions, and the bottom is \(5\ne0\) at \(x=0\). By direct substitution (or the Quotient and Power Rules):</p>
+\[ \lim_{x\to0}\frac{\cos^4x}{5+2x^3}=\frac{(\cos0)^4}{5+0}=\frac15. \]
+</div></details></div>
+
+<div class="q"><p class="qh">4. \(\displaystyle\lim_{x\to0}\frac{\sqrt{3+x}-\sqrt3}{x}\)</p>
+<details><summary>Hint</summary><div><p>\(\frac00\) with roots: multiply top and bottom by the conjugate \(\sqrt{3+x}+\sqrt3\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ \begin{aligned} &\lim_{x\to0}\frac{(3+x)-3}{x\left(\sqrt{3+x}+\sqrt3\right)}\\ &=\lim_{x\to0}\frac{1}{\sqrt{3+x}+\sqrt3}\\ &=\frac1{2\sqrt3}=\frac{\sqrt3}{6}. \end{aligned} \]
+<p style="font-size:.92rem;color:var(--muted)">This is the slope of the tangent to \(y=\sqrt x\) at \(x=3\), an "instantaneous rate of change" as in section 1 (with \(h\) called \(x\)).</p>
+</div></details></div>
+
+<div class="q"><p class="qh">5. \(\displaystyle\lim_{x\to-2}\frac{2-|x|}{2-x}\)</p>
+<details><summary>Hint</summary><div><p>Plug in first: is the bottom zero at \(x=-2\)? (Watch \(|{-2}|=2\).)</p></div></details>
+<details><summary>Answer</summary><div>
+<p>At \(x=-2\) the bottom is \(2-(-2)=4\ne0\) and the top is \(2-|{-2}|=0\). Near \(-2\), \(|x|=-x\), so the function is \(\frac{2+x}{2-x}\), a rational function defined at \(-2\):</p>
+\[ \lim_{x\to-2}\frac{2-|x|}{2-x}=\frac{2-2}{2+2}=0. \]
+<p>A trap: it is \(\frac04\), not \(\frac00\). Do not try to cancel anything.</p>
+</div></details></div>
+
+<div class="q"><p class="qh">6. \(\displaystyle\lim_{x\to0^-}\left(\frac1x-\frac1{|x|}\right)\)</p>
+<details><summary>Hint</summary><div><p>From the left, \(x\lt0\), so \(|x|=-x\). Rewrite \(\frac1{|x|}\) and combine.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>For \(x\lt0\): \(\dfrac1{|x|}=\dfrac1{-x}\), so</p>
+\[ \frac1x-\frac1{|x|}=\frac1x+\frac1x=\frac2x. \]
+<p>As \(x\to0^-\), \(\frac2x\) is negative and grows without bound in size, so</p>
+\[ \lim_{x\to0^-}\left(\frac1x-\frac1{|x|}\right)=-\infty. \]
+<p>The limit does not exist as a real number; it tends to \(-\infty\) (Lecture 3). (From the right the expression is \(\frac1x-\frac1x=0\), so it would be 0: the side matters.)</p>
+</div></details></div>
+
+<div class="q"><p class="qh">7. \(\displaystyle\lim_{x\to1^+}\frac{x-1}{\sqrt x-1}\)</p>
+<details><summary>Hint</summary><div><p>\(\frac00\). Either rationalise the bottom, or notice \(x-1=(\sqrt x-1)(\sqrt x+1)\) (difference of squares, for \(x\ge0\)).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ \begin{aligned} \lim_{x\to1^+}\frac{x-1}{\sqrt x-1}&=\lim_{x\to1^+}\frac{(\sqrt x-1)(\sqrt x+1)}{\sqrt x-1}\\ &=\lim_{x\to1^+}\left(\sqrt x+1\right)=2. \end{aligned} \]
+<p>(The two-sided limit is also 2; the one-sided version is asked so that \(x\) stays where \(\sqrt x\) is defined and the bottom is non-zero.)</p>
+</div></details></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Concept checks</h2>
+<div class="q"><p class="qh">1. You are told \(f(2)=7\). What can you conclude about \(\lim_{x\to2}f(x)\)? <span class="pill">Written for these notes</span></p>
+<details><summary>Answer</summary><div><p>Nothing. The limit ignores the value at 2 (slide 9): it could be 7, another number, or not exist. Only if \(f\) has the Direct Substitution Property at 2 (e.g. it is a polynomial) would the limit be 7.</p></div></details></div>
+
+<div class="q"><p class="qh">2. Suppose \(\lim_{x\to3^-}f(x)=4\), \(\lim_{x\to3^+}f(x)=4\) and \(f(3)=-1\). Does \(\lim_{x\to3}f(x)\) exist? If so, what is it? <span class="pill">Written for these notes</span></p>
+<details><summary>Answer</summary><div><p>Yes: by the existence theorem (slide 14), both one-sided limits equal 4, so \(\lim_{x\to3}f(x)=4\). The value \(f(3)=-1\) is irrelevant (like slide 12's \(h\)).</p></div></details></div>
+
+<div class="q"><p class="qh">3. Can \(\lim_{x\to c}[f(x)+g(x)]\) exist even though neither \(\lim_{x\to c}f(x)\) nor \(\lim_{x\to c}g(x)\) exists? <span class="pill">Written for these notes</span></p>
+<details><summary>Answer</summary><div><p>Yes. Take \(c=0\), \(f(x)=\frac{|x|}x\) and \(g(x)=-\frac{|x|}x\). Neither has a limit at 0 (jump from \(-1\) to \(1\)), but \(f(x)+g(x)=0\) for all \(x\ne0\), so the sum's limit is 0. This is why the Sum Rule only works in the direction "parts exist ⇒ sum's limit = sum of limits", and why the student in section 10 needed more care.</p></div></details></div>
+
+<div class="q"><p class="qh">4. Explain why the Quotient Rule cannot be used directly on \(\displaystyle\lim_{x\to1}\frac{x^2-1}{x-1}\), and find the limit. <span class="pill">Written for these notes</span></p>
+<details><summary>Answer</summary><div><p>The Quotient Rule needs \(\lim_{x\to1}(x-1)\ne0\), but this limit is 0. Factorise instead: for \(x\ne1\), \(\frac{(x-1)(x+1)}{x-1}=x+1\), so the limit is \(1+1=2\).</p></div></details></div>
+
+<div class="q"><p class="qh">5. A student makes a table of \(f(x)=\sin\left(\dfrac{\pi}{x}\right)\) at \(x=0.1,\ 0.01,\ 0.001\) and gets \(0,\ 0,\ 0\) (up to rounding). They conclude \(\lim_{x\to0}f(x)=0\). Are they right? <span class="pill">Written for these notes</span></p>
+<details><summary>Hint</summary><div><p>Work out \(\frac{\pi}{x}\) at those points, then try \(x=\frac{2}{5},\ \frac{2}{41},\ \frac{2}{401}\).</p></div></details>
+<details><summary>Answer</summary><div><p>No. At \(x=\frac1n\), \(\sin(n\pi)=0\), so their chosen points all happen to give 0. But at \(x=\frac{2}{4k+1}\) (e.g. \(\frac25,\frac2{41},\frac2{401}\)) we get \(\sin\left(2k\pi+\frac\pi2\right)=1\). Like slide 13's \(h(x)=\sin\frac1x\), this function oscillates infinitely between \(-1\) and \(1\) near 0, so the limit does not exist. A numeric table only suggests an answer; it can be fooled by an unlucky choice of points.</p></div></details></div>
+
+<div class="q"><p class="qh">6. Find the average rate of change of \(f(x)=x^2\) over \([1,1+h]\), and use it to find the instantaneous rate of change of \(f\) at \(x=1\). <span class="pill">Written for these notes</span></p>
+<details><summary>Answer</summary><div>
+\[ \begin{aligned} \frac{f(1+h)-f(1)}{h}&=\frac{(1+h)^2-1}{h}\\ &=\frac{2h+h^2}{h}\\ &=2+h\quad(h\ne0). \end{aligned} \]
+\[ \lim_{h\to0}(2+h)=2. \]
+<p>So the tangent to \(y=x^2\) at \((1,1)\) has slope 2: the instantaneous rate of change is 2.</p>
+</div></details></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="pastpaper"><h2><span class="n">13</span>Exam taster</h2>
+<p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
+<p style="font-size:.92rem;color:var(--muted)">Lecture 1's question types appear 7 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide. Three more questions of these types also need later lectures, so they are in later notes: May 2016 Q1(a)(i) and May 2015 Q1(a)(i) in Lecture 10, and Dec 2018 Q1(b) in Lecture 4.</p>
+<p>The first three are from May 2026, in the new answer-only format. The stem: <i>Find the following limits. Your answers should be a number, \(\infty\), \(-\infty\), or "non-existence."</i></p>
+
+<div class="q"><p class="src"><b>May 2026 Q1(a)</b><span>Q1 total 10 pts</span><a class="guide" data-guide="L1.1">Guide · L1.1 Plug in first: the limit isn't actually indeterminate</a></p>
+<p class="qh">Find the following limit. Your answer should be a number, \(\infty\), \(-\infty\), or "non-existence."</p>
+\[ \text{(a)}\quad \lim_{x\to\frac\pi2}\frac{\sin x}{x} \]
+<details><summary>Hint</summary><div><p>Plug in first. Is the bottom zero at \(x=\frac\pi2\)? (Do not confuse this with \(x\to0\), which is Lecture 2.)</p></div></details>
+<details><summary>Answer</summary><div><p>\(\dfrac2\pi\)</p><p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2026 Q1(b)</b><span>Q1 total 10 pts</span><a class="guide" data-guide="L1.3">Guide · L1.3 Absolute values and one-sided limits</a></p>
+<p class="qh">Find the following limit. Your answer should be a number, \(\infty\), \(-\infty\), or "non-existence."</p>
+\[ \text{(b)}\quad \lim_{t\to-3^+}\frac{t+3}{|2t+6|} \]
+<details><summary>Hint</summary><div><p>From the right, \(t\gt-3\), so \(2t+6\gt0\) and \(|2t+6|=2t+6=2(t+3)\). Simplify, then cancel.</p></div></details>
+<details><summary>Answer</summary><div><p>\(\dfrac12\)</p><p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2026 Q1(c)</b><span>Q1 total 10 pts</span><a class="guide" data-guide="L1.2">Guide · L1.2 0/0 with polynomials or roots: factor, rationalise or combine fractions</a></p>
+<p class="qh">Find the following limit. Your answer should be a number, \(\infty\), \(-\infty\), or "non-existence."</p>
+\[ \text{(c)}\quad \lim_{w\to-3}\frac{2-\sqrt{w^2-5}}{w+3} \]
+<details><summary>Hint</summary><div><p>\(\frac00\) with a root. Multiply top and bottom by the conjugate \(2+\sqrt{w^2-5}\); the top becomes \(4-(w^2-5)=9-w^2\), which has a factor \((w+3)\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\dfrac32\)</p><p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2021 Q1(a)</b><span>Q1 total 10%</span><a class="guide" data-guide="L1.3">Guide · L1.3 Absolute values and one-sided limits</a></p>
+<p class="qh">In each of the following, either evaluate the limit or explain carefully why the limit does not exist. Indicate clearly the theorems you have used in your argument.</p>
+\[ \text{(a)}\quad \lim_{t\to a^-}\frac{a+|t|}{|a-t|}\quad\text{where } a\lt0. \]
+<details><summary>Hint</summary><div><p>Work out the signs first. For \(t\) just to the left of \(a\): \(t\lt a\lt0\), so \(|t|=-t\), and \(a-t\gt0\), so \(|a-t|=a-t\). Rewrite the fraction without absolute values.</p></div></details>
+<details><summary>Answer</summary><div><p>\(1\)</p><p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+</section>
+</main>
+</div>
+<script>
+(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const PI=Math.PI;
+const $=id=>document.getElementById(id);
+
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+const piTicks=(lo,hi)=>{const out=[];const L={'-4':'−2π','-3':'−3π/2','-2':'−π','-1':'−π/2','0':'0','1':'π/2','2':'π','3':'3π/2','4':'2π','5':'5π/2'};for(let k=Math.ceil(lo/(PI/2));k<=Math.floor(hi/(PI/2));k++)out.push([k*PI/2,L[k]||'']);return out;};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+
+/* ---------- Fig: secant to tangent ---------- */
+function drawSec(){
+  const A=css('--accent'),C2=css('--c2'),C3=css('--c3'),C4=css('--c4'),I=css('--ink');
+  const f=x=>x*x/2+0.5, x1=1;
+  const side=$('fsec-s').value, hh=+$('fsec-h').value, h=side==='r'?hh:-hh;
+  const x2=x1+h, m=(f(x2)-f(x1))/h;
+  plot($('fsec'),{xmin:-2,xmax:4,ymin:-0.5,ymax:6,xstep:1,ystep:1,
+    curves:[{f,color:A},{f:x=>f(x1)+m*(x-x1),color:C4,width:2},{f:x=>f(x1)+(x-x1),color:C3,width:1.8,dash:[6,5]}],
+    segs:[{x1:x1,y1:f(x1),x2:x2,y2:f(x1),color:C2,width:1.6,dash:[4,4]},{x1:x2,y1:f(x1),x2:x2,y2:f(x2),color:C2,width:1.6,dash:[4,4]}],
+    pts:[{x:x1,y:f(x1),color:I,label:'P',align:side==='r'?'right':'left'},{x:x2,y:f(x2),color:C4,label:'Q',align:side==='r'?'right':'left'}]});
+  $('fsec-out').innerHTML=`h = <b>${fmt(h,2)}</b> &nbsp; Δx = ${fmt(h,2)}, Δy = ${fmt(f(x2)-f(x1),4)}<br>secant slope m<sub>PQ</sub> = Δy/Δx = <b>${fmt(m,4)}</b> &nbsp; tangent slope at P = <b>1</b>`;
+}
+['fsec-s','fsec-h'].forEach(id=>$(id).addEventListener('input',drawSec)); redraws.push(drawSec);
+
+/* ---------- Fig: approaching x0 (three cases) ---------- */
+function drawApp(){
+  const A=css('--accent'),C3=css('--c3'),C4=css('--c4'),M=css('--muted'),I=css('--ink');
+  const F=x=>1.6+1.1*Math.sin(1.1*(x-2.6)), x0=3, L=F(x0);
+  const c=$('fapp-s').value, d=+$('fapp-d').value;
+  const pts=[{x:x0-d,y:F(x0-d),color:C4,r:5},{x:x0+d,y:F(x0+d),color:C3,r:5}];
+  if(c==='f') pts.push({x:x0,y:L,color:A,r:5});
+  if(c==='g') pts.push({x:x0,y:L,color:A,open:true,r:5});
+  if(c==='h'){pts.push({x:x0,y:L,color:A,open:true,r:5});pts.push({x:x0,y:1,color:A,r:5});}
+  plot($('fapp'),{xmin:-0.5,xmax:4.6,ymin:-0.3,ymax:3,xstep:1,ystep:1,
+    xticks:[[0,'0'],[1,'1'],[2,'2'],[3,'x₀ = 3'],[4,'4']],yticks:[[0,'0'],[1,'1'],[L,'L'],[3,'3']],
+    curves:[{f:F,color:A}],
+    segs:[{x1:-0.5,y1:L,x2:x0,y2:L,color:M,width:1.2,dash:[5,4]},{x1:x0,y1:0,x2:x0,y2:L,color:M,width:1.2,dash:[5,4]},
+          {x1:x0-d,y1:0,x2:x0-d,y2:F(x0-d),color:C4,width:1.2,dash:[2,3]},{x1:x0+d,y1:0,x2:x0+d,y2:F(x0+d),color:C3,width:1.2,dash:[2,3]}],
+    pts});
+  const val=c==='f'?`f(3) = <b>${fmt(L,3)}</b> (= L)`:c==='g'?'g(3) is <b>not defined</b> (DNE)':'h(3) = <b>1</b> (≠ L)';
+  $('fapp-out').innerHTML=`x = ${fmt(x0-d,2)}: value ${fmt(F(x0-d),3)} &nbsp;|&nbsp; x = ${fmt(x0+d,2)}: value ${fmt(F(x0+d),3)}<br>gap from L ≈ 2.069: ${fmt(Math.abs(F(x0-d)-L),3)} (left), ${fmt(Math.abs(F(x0+d)-L),3)} (right)<br>${val}; limit as x → 3 = <b>L ≈ ${fmt(L,3)}</b>`;
+}
+['fapp-s','fapp-d'].forEach(id=>$(id).addEventListener('input',drawApp)); redraws.push(drawApp);
+
+/* ---------- Fig: limits that do not exist ---------- */
+function drawDne(){
+  const A=css('--accent'),C3=css('--c3'),C4=css('--c4');
+  const c=$('fdne-s').value; let d=+$('fdne-d').value;
+  let o, f, msg;
+  if(c==='f'){f=x=>x>0?1:-1;
+    o={xmin:-2,xmax:2,ymin:-2,ymax:2,xstep:1,ystep:1,curves:[{f:()=>-1,color:A,to:-0.001},{f:()=>1,color:A,from:0.001}],
+       pts:[{x:0,y:-1,color:A,open:true},{x:0,y:1,color:A,open:true}]};
+    msg='left-hand limit = <b>−1</b>, right-hand limit = <b>1</b>: different, so lim f(x) <b>DNE</b>';}
+  if(c==='g'){f=x=>1/x;
+    o={xmin:-2,xmax:2,ymin:-6,ymax:6,xstep:1,ystep:2,curves:[{f,color:A,to:-0.001},{f,color:A,from:0.001}]};
+    msg='left side → <b>−∞</b>, right side → <b>+∞</b>: lim g(x) <b>DNE</b>';}
+  if(c==='h'){f=x=>Math.sin(1/x); d=d/2;
+    o={xmin:-0.5,xmax:0.5,ymin:-1.5,ymax:1.5,xstep:0.25,ystep:0.5,curves:[{f,color:A,to:-0.0005,n:6000,width:1.4},{f,color:A,from:0.0005,n:6000,width:1.4}]};
+    msg='keeps swinging between −1 and 1 however close x gets: lim h(x) <b>DNE</b>';}
+  if(c==='k'){f=x=>1/(x*x);
+    o={xmin:-2,xmax:2,ymin:-1,ymax:10,xstep:1,ystep:2,curves:[{f,color:A,to:-0.001},{f,color:A,from:0.001}]};
+    msg='both sides → <b>+∞</b>: we write lim k(x) = ∞ (still not a real number)';}
+  const yc=v=>Math.max(o.ymin,Math.min(o.ymax,v));
+  o.pts=(o.pts||[]).concat([{x:-d,y:yc(f(-d)),color:C4},{x:d,y:yc(f(d)),color:C3}]);
+  plot($('fdne'),o);
+  $('fdne-out').innerHTML=`x = −${fmt(d,3)}: value <b>${fmt(f(-d),3)}</b> &nbsp;|&nbsp; x = ${fmt(d,3)}: value <b>${fmt(f(d),3)}</b><br>${msg}`;
+}
+['fdne-s','fdne-d'].forEach(id=>$(id).addEventListener('input',drawDne)); redraws.push(drawDne);
+
+/* ---------- Fig: slide 15 graph and table ---------- */
+function drawNum(){
+  const A=css('--accent'),C4=css('--c4');
+  const f=x=>1/(Math.sqrt(x*x+1)+1);   /* same as (sqrt(x^2+1)-1)/x^2, computed stably */
+  const rows=[1,0.5,0.25,0.1,0.01,0.001], v=$('fnum-s').value, x=rows[+$('fnum-k').value];
+  const o=v==='w'?{xmin:-20,xmax:20,ymin:0,ymax:0.6,xstep:10,ystep:0.1}:{xmin:-2,xmax:2,ymin:0.3,ymax:0.6,xstep:1,ystep:0.1};
+  o.curves=[{f,color:A}];
+  o.pts=[{x:0,y:0.5,color:A,open:true},{x:-x,y:f(x),color:C4,r:4.5},{x:x,y:f(x),color:C4,r:4.5}];
+  plot($('fnum'),o);
+  $('fnum-out').innerHTML=`x = ±${x}: f(x) = <b>${f(x).toFixed(9)}</b> &nbsp; (f(0) undefined: 0/0)<br>limit as x → 0 = <b>0.5</b>`;
+}
+['fnum-s','fnum-k'].forEach(id=>$(id).addEventListener('input',drawNum)); redraws.push(drawNum);
+
+/* ---------- Fig: Examples 3 and 4, holes ---------- */
+function drawHole(){
+  const A=css('--accent'),C3=css('--c3'),C4=css('--c4');
+  const e=$('fhole-s').value, d=+$('fhole-d').value;
+  let f,g,c,L,o;
+  if(e==='e3'){f=x=>(x*x-2*x+1)/(x*x+2*x-3); g=x=>(x-1)/(x+3); c=1; L=0;
+    o={xmin:-2,xmax:4,ymin:-1.5,ymax:1,xstep:1,ystep:0.5};}
+  else{f=x=>(Math.sqrt(x*x+8)-3)/(x+1); g=x=>(x-1)/(Math.sqrt(x*x+8)+3); c=-1; L=-1/3;
+    o={xmin:-4,xmax:2,ymin:-0.8,ymax:0.3,xstep:1,ystep:0.2};}
+  o.curves=[{f,color:A,width:5,alpha:.45},{f:g,color:C3,width:2,dash:[6,5]}];
+  o.pts=[{x:c,y:L,color:A,open:true,r:5.5},{x:c-d,y:f(c-d),color:C4,r:4.5},{x:c+d,y:f(c+d),color:C4,r:4.5}];
+  plot($('fhole'),o);
+  $('fhole-out').innerHTML=`c = ${fmt(c,0)}: original function is 0/0 there (undefined)<br>x = ${fmt(c-d,2)}: ${fmt(f(c-d),4)} &nbsp;|&nbsp; x = ${fmt(c+d,2)}: ${fmt(f(c+d),4)}<br>limit = height of the hole = <b>${e==='e3'?'0':'−1/3 ≈ −0.3333'}</b>`;
+}
+['fhole-s','fhole-d'].forEach(id=>$(id).addEventListener('input',drawHole)); redraws.push(drawHole);
+
+/* ---------- Fig: common mistakes ---------- */
+function drawCm(){
+  const A=css('--accent'),C2=css('--c2');
+  const v=$('fcm-s').value; let o,msg;
+  if(v==='a'){o={xmin:-2,xmax:2,ymin:-0.5,ymax:2,xstep:1,ystep:0.5,curves:[{f:x=>x*(1/x),color:A}],pts:[{x:0,y:1,color:C2,open:true}]};
+    msg='x · (1/x) = 1 for every x ≠ 0, so the limit as x → 0 is <b>1</b>';}
+  if(v==='b'){const f=x=>1/(x*x)-1/x;
+    o={xmin:0,xmax:3,ymin:-1,ymax:10,xstep:0.5,ystep:2,curves:[{f,color:A,from:0.01}],pts:[]};
+    msg=`at x = 0.1: ${fmt(f(0.1),1)}; at x = 0.01: ${fmt(f(0.01),0)}; grows without bound, limit as x → 0⁺ = <b>∞</b>`;}
+  if(v==='c'){const f=x=>1/(x-1)-1/Math.log(x);
+    o={xmin:0,xmax:3,ymin:-1.2,ymax:0.2,xstep:0.5,ystep:0.25,curves:[{f,color:A,from:0.02}],pts:[{x:1,y:-0.5,color:C2,open:true}]};
+    msg=`at x = 0.9: ${fmt(f(0.9),4)}; at x = 1.1: ${fmt(f(1.1),4)}; limit as x → 1 = <b>−1/2</b>`;}
+  plot($('fcm'),o);
+  $('fcm-out').innerHTML=msg;
+}
+$('fcm-s').addEventListener('input',drawCm); redraws.push(drawCm);
+
+/* ---------- Fig: group work graph ---------- */
+function drawGw(){
+  const A=css('--accent');
+  plot($('fgw'),{xmin:-2.4,xmax:2.4,ymin:-0.4,ymax:2.5,xstep:1,ystep:1,
+    curves:[{f:x=>2*(x+1)*(x+1),color:A,from:-2,to:-1},{f:x=>x*x,color:A,from:-1,to:1},{f:x=>2*(x-1)*(x-1),color:A,from:1,to:2}],
+    pts:[{x:-2,y:2,color:A},{x:2,y:2,color:A,label:'f(x)',align:'right'},{x:-1,y:0,color:A,open:true},{x:-1,y:1,color:A,open:true},{x:0,y:0,color:A,open:true},
+         {x:1,y:1,color:A,open:true},{x:1,y:0,color:A,open:true},{x:-1,y:2,color:A},{x:0,y:1,color:A},{x:1,y:2,color:A}]});
+}
+redraws.push(drawGw);
+
+const all=()=>redraws.forEach(f=>{try{f();}catch(e){}});
+all();
+let t; window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(all,120);});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);}catch(e){}
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+<script>
+/* MATH1851 bundle links: fills hrefs for a.note[data-note] and a.guide[data-guide], links "Lx guide" mentions, adds an index link on guide pages. */
+(function(){
+var B="",N={"L1": "note-L1.html", "L2": "note-L2.html", "L3": "note-L3.html", "L4": "note-L4.html", "L5": "note-L5.html", "L6": "note-L6.html", "L7": "note-L7.html", "L8": "note-L8.html", "L9": "note-L9.html", "L10": "note-L10.html", "L11": "note-L11.html", "L12": "note-L12.html", "L13": "note-L13.html", "L14": "note-L14.html", "L15": "note-L15.html", "L16": "note-L16.html", "L17": "note-L17.html", "O1": "note-O1.html", "O2": "note-O2.html", "O3": "note-O3.html", "O4": "note-O4.html", "LT": "note-LT.html"},G={"L1": "guide-L1.html", "L2": "guide-L2.html", "L3": "guide-L3.html", "L4": "guide-L4.html", "L5": "guide-L5.html", "L6": "guide-L6.html", "L7": "guide-L7.html", "L8": "guide-L8.html", "L9": "guide-L9.html", "L10": "guide-L10.html", "L12": "guide-L12.html", "L13": "guide-L13.html", "L14": "guide-L14.html", "L15": "guide-L15.html", "L16": "guide-L16.html", "L17": "guide-L17.html", "O1": "guide-O1.html", "O2": "guide-O2.html", "O3": "guide-O3.html", "O4": "guide-O4.html", "LT": "guide-LT.html"},M={"LT#forward|forward transforms and shifts": "LT#s4", "LT#partial-fractions|partial fractions": "LT#s10", "LT#second-shift|second shift and the step function": "LT#s5", "LT#repeated-factors|repeated factors and the first shift": "LT#s10", "LT#convolution|convolution": "LT#s6", "LT#s5|solving ODEs by Laplace": "LT#s12", "LT#s6|convolution and integral equations": "LT#s11", "L1#s4|limit laws": "L1#s5", "L1#s5|direct substitution": "L1#s6", "L1#s6|removing the 0/0 by algebra": "L1#s7", "L1#s7|one-sided limits": "L1#s3", "L1#s8|absolute values and piecewise functions": "L1#s3", "L2#s2|the Sandwich Theorem": "L2#s1", "L2#s3|x sin(1/x) and other examples": "L2#s2", "L2#s4|the limit sin x / x": "L2#s3", "L1#s5|one-sided limits": "L1#s3", "L3#s2|infinite limits": "L3#s1", "L3#s3|limits at infinity": "L3#s2", "L1#s6|conjugates": "L1#s7", "L3#s4|asymptotes": "L3#s5", "L9#s3|asymptotes in curve sketching": "L9#s8", "L4#s2|continuity at a point": "L4#s1", "L4#s4|continuity of combinations": "L4#s5", "L4#s3|one-sided limits and continuity": "L4#s1", "L4#s5|limits of composite functions": "L4#s7", "L4#s6|types of discontinuity": "L4#s3", "L4#s7|the Intermediate Value Theorem": "L4#s8", "L5#s2|definition of the derivative": "L5#s3", "L5#s3|one-sided derivatives": "L5#s5", "L5#s4|differentiable implies continuous": "L5#s6", "L6#s2|product and quotient rules": "L6#s2", "L6#s4|chain rule": "L6#s5", "L6#s5|implicit differentiation": "L6#s6", "L6#s6|tangent lines": "L5#s2", "L7#s5|logarithmic differentiation": "L7#s4", "L7#s4|derivatives of ln and exp": "L7#s3", "L7#s4|derivatives of exp, ln and aˣ": "L7#s3", "L7#s6|derivatives of inverse trig functions": "L7#s6", "L7#s2|derivative of an inverse function": "L7#s2", "L7#s1|one-to-one functions and inverses": "L7#s1", "L7#s5|graphs and limits of eˣ and ln x": "L7#s3", "L4#s2|continuity of composite functions": "L4#s6", "L8#s2|absolute extrema and the Extreme Value Theorem": "L8#s3", "L8#s3|critical points": "L8#s4", "L8#s4|Rolle's Theorem": "L8#s6", "L8#s5|the Mean Value Theorem": "L8#s7", "L8#s6|counting roots with Rolle's Theorem": "L8#s9", "L4#s5|the Intermediate Value Theorem": "L4#s8", "L8#s7|consequences of the MVT": "L8#s8", "L9#s2|increasing, decreasing and the first derivative test": "L9#s2", "L9#s3|concavity and inflection points": "L9#s7", "L9#s5|curve sketching checklist": "L9#s8", "L9#s2|sign of f′ and monotonicity": "L9#s1", "L9#s3|concavity from f′": "L9#s4", "L12#s4|area functions": "L12#s7", "L9#s5|curve sketching from f′ and f″": "L9#s9", "L9#s6|applied optimisation": "L9#s3", "L8#s2|absolute extrema on an interval": "L8#s5", "L9#s3|what f′ and f″ say about a graph": "L9#s4", "L10#s3|L'Hôpital's Rule": "L10#s3", "L10#s2|classifying forms": "L10#s2", "L10#s4|∞ − ∞ forms": "L10#s5", "L10#s5|0 · ∞ forms": "L10#s5", "L10#s6|indeterminate powers": "L10#s6", "L10#s7|L'Hôpital with an unknown function": "L10#s3", "L10#s8|L'Hôpital at a join": "L10#s3", "L4#s2|continuity": "L4#s1", "L5#s2|derivative by definition": "L5#s3", "L12#s4|FTC Part I": "L12#s7", "L6#s5|chain rule": "L6#s5", "L12#s2|Riemann sums and the definite integral": "L12#s1", "L11#s5|sigma notation and area": "L11#s6", "L12#s5|the area function": "L12#s7", "L12#s4|the Fundamental Theorem of Calculus": "L12#s7", "L12#s6|average value": "L12#s6", "L13#s2|substitution": "L13#s2", "L13#s3|substitution in definite integrals": "L13#s5", "L13#s4|integration by parts": "L13#s7", "L13#s5|repeated parts, ln and inverse trig": "L13#s8", "L13#s6|by parts with an unknown function": "L13#s7", "L13#s7|reduction formulas": "L13#s8", "L13#s8|the x → a − x substitution": "L13#s5", "L14#s2|partial fractions": "L14#s5", "L14#s3|repeated and quadratic factors": "L14#s5", "L14#s4|trig integrals": "L14#s3", "L14#s5|trig substitution": "L14#s4", "L15#s2|parametric curves": "L15#s1", "L15#s3|slope of a parametric curve": "L15#s3", "L15#s4|polar coordinates": "L15#s5", "L15#s5|sketching polar curves and symmetry": "L15#s7", "L15#s6|slope of a polar curve": "L15#s8", "L16#s1|area between curves": "L16#s1", "L16#s2|discs and washers": "L16#s4", "L16#s3|cylindrical shells": "L16#s5", "L16#s4|choosing discs or shells": "L16#s6", "L16#s5|volume by slicing": "L16#s3", "L17#s2|arc length": "L17#s2", "L17#s3|parametric and polar length": "L17#s3", "L14#s4|trig substitution": "L14#s4", "L17#s4|surface area": "L17#s6", "L16#s3|solids of revolution": "L16#s4", "O1#separable|separable equations": "O1#s6", "O1#linear|linear equations and the integrating factor": "O1#s5", "O1#exact|exact equations": "O1#s8", "O2#homogeneous|homogeneous equations": "O2#s5", "O2#bernoulli|Bernoulli equations": "O2#s1", "O2#riccati|Riccati equations": "O2#s2", "O2#shift|shift substitution": "O2#s6", "O2#reduction|reduction of order": "O2#s7", "O3#roots|root cases": "O3#s4", "O3#constant|constant coefficients": "O3#s3", "O3#higher|higher-order equations": "O3#s7", "O3#euler|Cauchy–Euler": "O3#s10", "O4#s2|undetermined coefficients": "O4#s2", "O4#s3|when the trial clashes": "O4#s3", "O4#s4|initial value problems": "O4#s4", "O4#variation-of-parameters|variation of parameters": "O4#s6", "O4#vop-cauchy-euler|VoP for Cauchy–Euler": "O4#s7", "O3#cauchy-euler|Cauchy–Euler homogeneous": "O3#s10", "O4#d-operator|D-operator method": "O4#s5"},IDX="index.html#part2";
+function ext(a,u){a.href=u;}
+function go(){
+  var h=document.querySelector("nav.toc .h"),m0=h&&/Exam guide\s*·\s*([A-Z0-9]+)/i.exec(h.textContent),self=m0?m0[1].toUpperCase():null,isGuide=!!(h&&/Exam guide/i.test(h.textContent));
+  document.querySelectorAll("a.note[data-note]").forEach(function(a){
+    var k=a.getAttribute("data-note"),t=a.textContent.replace(/\s+/g," ").replace(/^\s*Chapter note\s*·?\s*/,"").trim();
+    var v=M[k+"|"+t]||k,p=v.split("#"),c=p[0];
+    if(!N[c])return;
+    ext(a,B+N[c]+(p[1]&&p[1]!=="top"?"#"+p[1]:""));
+  });
+  document.querySelectorAll("a.guide[data-guide]").forEach(function(a){
+    var g=a.getAttribute("data-guide"),h=g.indexOf("#")>=0,c=h?g.split("#")[0]:g.split(".")[0],f=h?g.split("#")[1]:g.replace(".","");
+    if(!G[c])return;
+    ext(a,B+G[c]+"#"+f);
+  });
+  if(!isGuide)return;
+  var main=document.querySelector("main");
+  if(!main)return;
+  var top=main.querySelector("header.top");
+  if(top&&IDX&&self!=="INDEX"){var p=document.createElement("p");p.className="muted";var a=document.createElement("a");ext(a,B+IDX);a.textContent="← All exam-guide pages and the exam format";p.appendChild(a);top.appendChild(p);}
+  var re=/\b(L1[0-7]|L[1-9]|O[1-4]|LT) guide\b/g,skip={A:1,SCRIPT:1,STYLE:1,H1:1,H2:1,CODE:1,"MJX-CONTAINER":1,SUMMARY:1};
+  var w=document.createTreeWalker(main,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    for(var e=n.parentNode;e&&e!==main;e=e.parentNode){if(skip[e.nodeName])return NodeFilter.FILTER_REJECT;}
+    re.lastIndex=0;return re.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP;}});
+  var list=[],n;while((n=w.nextNode()))list.push(n);
+  list.forEach(function(n){
+    var s=n.nodeValue,f=document.createDocumentFragment(),last=0,m;re.lastIndex=0;
+    while((m=re.exec(s))){
+      var c=m[1];if(c===self||!G[c])continue;
+      f.appendChild(document.createTextNode(s.slice(last,m.index)));
+      var a=document.createElement("a");ext(a,B+G[c]);a.textContent=m[0];f.appendChild(a);last=m.index+m[0].length;
+    }
+    if(last===0)return;
+    f.appendChild(document.createTextNode(s.slice(last)));n.parentNode.replaceChild(f,n);
+  });
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
+})();
+</script>
+</html>

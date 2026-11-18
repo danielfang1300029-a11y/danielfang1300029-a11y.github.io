@@ -1,0 +1,764 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FINA1310 L5 · Stock valuation</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* FINA1310 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --purple:#6d3fb2; --purple-soft:#efe8fa; --green:#1f7a4d; --green-soft:#e3f4ea;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+/* ---- FINA1310 additions ---- */
+.box.prev,.prev.box{background:var(--purple-soft);border-color:transparent;border-left:4px solid var(--purple)} .prev>.tag{color:var(--purple)}
+section.prev-sec{border-top:3px solid var(--purple)} section.prev-sec>h2 .n{color:var(--purple)}
+section.prev-sec>.prevbar{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin:-8px 0 8px}
+.beyond{border-left:4px solid var(--warm)}
+.banner{background:var(--warm-soft);border:1px solid var(--warm);border-radius:8px;padding:10px 14px;font-size:.95rem}
+.banner b{color:var(--warm)}
+.conv{background:var(--green-soft);border-color:transparent;border-left:4px solid var(--green)} .conv>.tag{color:var(--green)}
+details.calc{border-left:3px solid var(--accent)}
+details.calc>summary{color:var(--accent);font-weight:500}
+details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.calc .why{color:var(--muted);font-size:.9rem}
+table.tbl td,table.tbl th{padding:6px 8px}
+.circuit{width:100%;height:auto;display:block}
+.circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
+.circuit .r{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+.circuit .node{fill:var(--ink)}
+.circuit text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.circuit .q{stroke:var(--c2);fill:var(--c2)}
+
+/* ---- exam-guide classes (promoted from guide-T3 pilot, Gate D 2026-11-17) ---- */
+.mem{border:2px solid var(--c3);background:var(--card)} .mem>.tag{color:var(--c3)}
+.mem table td{padding:5px 8px;font-size:.92rem}
+.proc{border-left:4px solid var(--accent)} .proc>.tag{color:var(--accent)}
+.skel{border-left:4px solid var(--purple)} .skel>.tag{color:var(--purple)}
+.recap{font-size:.95rem;background:var(--accent-soft);border-radius:6px;padding:8px 12px;margin:8px 0 14px}
+.recap a{font-family:var(--mono);font-size:12px;white-space:nowrap}
+details.hint>summary{color:var(--muted)}
+details.hint>summary::before{content:"Hint · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.sol{border-left:3px solid var(--accent)}
+details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.mnote{font-size:.9rem;border-left:3px solid var(--warm);padding-left:10px;color:var(--muted)}
+.mnote b{color:var(--warm);font-weight:600}
+.q .part{font-weight:600;margin-top:14px}
+.q .opts{list-style:none;padding-left:.4rem;margin:6px 0}
+.q .opts li{margin:3px 0}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
+.stats span{font-size:.88rem;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted)}
+.stats b{color:var(--ink);font-family:var(--display)}
+.small{font-size:.88rem}
+/* FINA1310: cash-flow timelines, legends, formula card */
+.tlw{margin:8px 0;overflow:hidden}
+svg.tl{width:100%;height:auto;display:block}
+svg.tl .ax{stroke:var(--axis);stroke-width:1.4}
+svg.tl text{font:12px var(--body);fill:var(--ink)}
+svg.tl text.d{fill:var(--muted);font-size:11px}
+svg.tl text.cf{font:600 12.5px var(--mono);fill:var(--accent)}
+svg.tl text.cf.neg{fill:var(--warn)}
+svg.tl text.q{font-weight:600;fill:var(--warm)}
+svg.tl .ring{fill:none;stroke:var(--warm);stroke-width:2}
+svg.tl .mv{stroke:var(--muted);stroke-width:1.3}
+svg.tl .hd{fill:var(--muted)}
+svg.tl text.ml{font-size:11px;fill:var(--muted)}
+svg.tl text.mv-v{font:600 11.5px var(--mono);fill:var(--ink)}
+svg.tl text.tot{font-weight:700;fill:var(--warm)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:4px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+table.fcard{width:100%;border-collapse:collapse;font-size:14.5px}
+table.fcard td,table.fcard th{border-bottom:1px solid var(--line);padding:6px 6px;text-align:left;vertical-align:middle}
+table.fcard th{font-weight:600;color:var(--muted);font-size:13px}
+.tblw{overflow-x:auto}
+p.tldr{font-size:15px;color:var(--muted);border-left:3px solid var(--accent);padding-left:10px;margin:6px 0 14px}
+@media (max-width:560px){table.fcard{font-size:12px} table.fcard td,table.fcard th{padding:4px 3px}}
+svg.tl text{paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round}
+.box svg.tl text{stroke:var(--card)}
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/es5/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents"><p class="h">FINA1310 · Lecture 5</p><ol>
+  <li><a href="#s0">0 · Where this sits</a></li>
+  <li><a href="#s1">1 · Stock features</a></li>
+  <li><a href="#s2">2 · Stock markets</a></li>
+  <li><a href="#s3">3 · Price = PV of dividends</a></li>
+  <li><a href="#s4">4 · Zero and constant growth</a></li>
+  <li><a href="#s5">5 · Nonconstant growth</a></li>
+  <li><a href="#s6">6 · Required return</a></li>
+  <li><a href="#s7">7 · Peer multiples</a></li>
+  <li><a href="#s8">8 · Summary and formula card</a></li>
+  <li><a href="#s9">9 · Common mistakes</a></li>
+  <li><a href="#s10">10 · Practice</a></li></ol></nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="note-L04.html">← L4 Bonds</a><a href="note-L06.html">Next: L6 Risk and return →</a></nav>
+  <span class="course">FINA1310 · Corporate Finance · Lecture 5</span>
+  <h1>Stock valuation</h1>
+  <p class="lede">What a share gives you, where it trades, and what it is worth: the present value of its expected dividends, with shortcuts for zero, constant and nonconstant growth, plus the quick alternative of pricing it like its peers.</p>
+</header>
+
+<section id="s0"><h2><span class="n">0</span>Where this sits</h2>
+<p>L4 valued a bond: promised cash flows, known end date. A share is the same calculation with dividends that are <b>expected, not promised</b>, and that run <b>forever</b>. Textbook: Chapter 8.</p>
+<div class="box thm"><span class="tag">Recap from L3 · the two formulas this lecture reuses</span>
+\[\text{Perpetuity: }PV=\frac{C}{r}\]\[\text{Growing perpetuity: }PV=\frac{C}{r-g}\]
+<p class="word"><b>In words:</b> \(C\) is the <b>first</b> cash flow, one period from now; \(g\lt r\). See <a href="note-L03.html#s3">L3 §3</a> and <a href="note-L03.html#s4">L3 §4</a>.</p></div>
+<div class="box conv"><span class="tag">Sign convention</span><p>\(t=0\) is today; \(D_t\) = dividend per share expected at the end of year \(t\); \(P_t\) = share price at \(t\) (just after that year's dividend unless stated). \(R\) = required return a year, \(g\) = dividend growth a year.</p></div>
+</section>
+
+<section id="s1"><h2><span class="n">1</span>Stock features</h2>
+<p class="tldr">Equity is ownership: votes, discretionary dividends, and whatever is left after everyone else is paid.</p>
+<div class="tblw"><table class="fcard"><tr><th></th><th>Debt (loans, bonds)</th><th>Equity (shares)</th></tr>
+<tr><td>Ownership</td><td>no; creditors do not vote</td><td>yes; common shareholders elect the board</td></tr>
+<tr><td>Payments</td><td>interest: a cost, tax-deductible</td><td>dividends: paid from after-tax profit</td></tr>
+<tr><td>Obligation</td><td>legal; a missed payment is default</td><td>none; a firm cannot default on a dividend</td></tr>
+<tr><td>Risk to the firm</td><td>too much can cause financial distress</td><td>an all-equity firm cannot go bankrupt from its financing</td></tr></table></div>
+
+<h3>Common stock</h3>
+<ul class="list"><li><b>Votes</b>: elect the board, approve major decisions (mergers, issuing new shares), in person or by <b>proxy</b> (someone you authorise to vote for you).</li>
+<li><b>Dividends</b>: the board decides when and how much, in cash or in new shares.</li>
+<li><b>Residual claim</b>: in liquidation (the firm is wound up and its assets sold), shareholders are paid last: (1) secured creditors, from their collateral; (2) priority claims such as wages and taxes; (3) unsecured creditors; (4) shareholders, preferred then common, from what is left.</li>
+<li>Dividend tax varies by place; Hong Kong does not tax dividends received by individuals.</li></ul>
+<div class="box def"><span class="tag">One share, one vote? Not always</span><p><b>Dual-class shares</b>: founders' shares carry more votes each than public shares. HKEX has allowed these <b>weighted voting rights</b> since 2018 (Xiaomi and Meituan among the first; founders' shares carry 10 votes, others 1). In the US, Alphabet's and Meta's founders control the vote with a minority of the shares. Trade-off: founders can pursue long-term plans, but outside shareholders cannot replace them.</p></div>
+
+<h3>Preferred stock: between debt and equity</h3>
+<ul class="list"><li>A fixed dividend, paid before any common dividend; often <b>cumulative</b>: missed dividends pile up and must be paid before common shareholders get anything.</li>
+<li>Paid before common shareholders in liquidation, up to a stated value. Usually no vote.</li>
+<li>Unlike interest, a skipped preferred dividend is <b>not</b> a default.</li></ul>
+<div class="box eg"><span class="tag">Example · preferred stock is a perpetuity</span><p>$5 a year forever, 8% required return: \(P=5/0.08=\$62.50\).</p></div>
+</section>
+
+<section id="s2"><h2><span class="n">2</span>Stock markets</h2>
+<ul class="list"><li><b>Primary market</b>: the firm sells <b>new</b> shares and receives the money. An <b>IPO</b> (initial public offering) is a private firm's first sale to the public; an <b>SEO</b> (seasoned equity offering) is more shares from a firm already listed. HKEX raised the most IPO money of any exchange in 2025, about HK$275 billion.</li>
+<li><b>Secondary market</b>: investors trade existing shares with each other; the firm receives nothing. It still matters to the firm: its prices reveal investors' required return, and it lets IPO buyers sell later.</li></ul>
+<div class="tblw"><table class="fcard"><tr><th>Dealer</th><th>Broker</th></tr>
+<tr><td>trades from its own inventory, at its own risk</td><td>matches buyers and sellers; no inventory</td></tr>
+<tr><td>quotes a <b>bid</b> (price it buys at) and an <b>ask</b> (price it sells at)</td><td>acts for the client</td></tr>
+<tr><td>earns the <b>spread</b> = ask − bid</td><td>earns a commission</td></tr></table></div>
+<div class="box ready"><span class="tag">How shares trade in Hong Kong</span>
+<ul class="list"><li>HKEX is <b>order-driven</b>: buy and sell orders meet on an electronic order book. Investors trade through brokers; most stocks have no designated dealer.</li>
+<li>Shares trade in <b>board lots</b> set by each company (e.g. 100 or 500 shares).</li>
+<li>Trades settle two business days later (<b>T+2</b>).</li>
+<li>Compare: NYSE is an auction market with one designated market maker per stock; Nasdaq has many competing dealers.</li></ul></div>
+</section>
+
+<section id="s3"><h2><span class="n">3</span>The general case: price = PV of dividends</h2>
+<p class="tldr">Same rule as a bond, different cash flows: price = PV of what you expect to receive.</p>
+<div class="figure"><p class="ttl">Bond vs stock: the cash flows you discount</p>
+<p class="sub">Bond: coupons C, plus face value F at maturity t</p><div class="tlw" id="tl1"></div>
+<p class="sub">Stock: expected dividends, forever</p><div class="tlw" id="tl2"></div></div>
+<div class="tblw"><table class="fcard"><tr><th></th><th>Bond</th><th>Stock</th></tr>
+<tr><td>Cash flows</td><td>coupons and face value, promised by contract</td><td>dividends, expected but not promised</td></tr>
+<tr><td>Timing</td><td>until maturity</td><td>forever</td></tr>
+<tr><td>Discount rate</td><td>the yield, set by the market</td><td>the required return \(R\), set by the market</td></tr></table></div>
+
+<h3>Why the selling price drops out</h3>
+<p>Hold for one year: you get \(D_1\) and sell at \(P_1\), so \(P_0=\dfrac{D_1+P_1}{1+R}\). The buyer at \(t=1\) values the share the same way, \(P_1=\dfrac{D_2+P_2}{1+R}\). Substitute:</p>
+\[P_0=\frac{D_1}{1+R}+\frac{D_2+P_2}{(1+R)^2}\]
+<p>Keep substituting. A price far in the future is divided by a huge \((1+R)^t\), so its weight goes to zero and only dividends are left. Your holding period does not matter: a one-year holder and a buy-and-hold investor pay the same price.</p>
+<div class="box thm"><span class="tag">Result · dividend discount model</span>
+\[\begin{aligned}P_0={}&\frac{D_1}{1+R}+\frac{D_2}{(1+R)^2}\\&+\frac{D_3}{(1+R)^3}+\cdots\end{aligned}\]
+<p class="word"><b>In words:</b> a share is worth the present value of <b>all</b> its expected dividends, discounted at the required return.</p></div>
+<div class="box def"><span class="tag">Firms that pay no dividends are not worth zero</span>
+<ul class="list"><li><b>Growth stocks</b> reinvest their earnings instead of paying them out. Their value is in dividends expected <b>later</b>, from a bigger firm.</li>
+<li>Amazon has never paid a dividend since its 1997 IPO. Microsoft listed in 1986, first dividend 2003. Meta listed in 2012, first dividend 2024.</li>
+<li>Other ways to pay shareholders: <b>share buybacks</b> (the firm buys its own shares), or a <b>takeover</b> at a premium.</li></ul></div>
+<p>Infinitely many dividends cannot be forecast one by one. Three patterns make the sum easy: <b>zero growth</b> (a perpetuity), <b>constant growth</b> (a growing perpetuity), and <b>nonconstant growth</b> (anything for a while, then constant growth: the two combined).</p>
+</section>
+
+<section id="s4"><h2><span class="n">4</span>Zero and constant growth</h2>
+<h3>Zero growth: a perpetuity</h3>
+<div class="tlw" id="tl3"></div>
+<div class="box thm"><span class="tag">Result · zero growth</span>\[P_0=\frac{D}{R}\]
+<p class="word"><b>In words:</b> the same dividend \(D\) forever, starting next year, is worth \(D/R\) today.</p></div>
+
+<h3>Cum-dividend and ex-dividend prices</h3>
+<p>\(D/R\) is the price <b>just after</b> a dividend is paid (ex-dividend). Just <b>before</b> it is paid, the price also includes that dividend (cum-dividend, “with dividend”).</p>
+<div class="box eg"><span class="tag">Example · $2 a year forever, R = 20%</span>
+<div class="tlw" id="tl4"></div>
+<p>Ex-dividend: \(2/0.20=\$10\). Cum-dividend: \(P_{\text{cum}}=2+10=\$12\), which also equals \(10\times1.20\): a year's return on the $10.</p></div>
+<div class="figure"><p class="ttl">The price path of the $2 share: a saw-tooth</p>
+<canvas class="plot" id="cvs" style="height:220px"></canvas>
+<p class="cap">Between dividends the price grows at \(R=20\%\) from $10 to $12; on each dividend date it drops by the $2 paid out. A holder earns 20% a year either way: price gain, then cash.</p></div>
+<div class="box def"><span class="tag">Ex-dividend date: who gets the dividend?</span>
+<ul class="list"><li>The board declares a dividend and a <b>record date</b>: holders on the register that day are paid.</li>
+<li>Buy <b>before</b> the <b>ex-dividend date</b> and you get the dividend; buy on or after it and the seller does. In Hong Kong, with T+2 settlement, the ex-date is one business day before the record date.</li>
+<li>CLP Holdings, Sep 2026: HK$0.63 a share; ex-date 2 Sep, record date 3 Sep, paid 15 Sep.</li>
+<li>On the ex-date the price drops by roughly the dividend.</li></ul></div>
+
+<h3>Constant growth: the Gordon model</h3>
+<div class="tlw" id="tl5"></div>
+<div class="box thm"><span class="tag">Result · dividend growth (Gordon) model, need g &lt; R</span>
+\[P_0=\frac{D_1}{R-g}=\frac{D_0(1+g)}{R-g}\]
+<p class="word"><b>In words:</b> next year's dividend divided by (required return − growth). \(D_0\) is the dividend <b>just paid</b>; the formula needs the <b>next</b> one, \(D_1\).</p></div>
+<div class="box eg"><span class="tag">Example · Gordon Growth Co.</span><p>Next year's dividend $4, \(R=16\%\), \(g=6\%\) forever. Price today, and in four years?</p>
+<ul class="list"><li>Today: \(P_0=\dfrac{4}{0.16-0.06}=\$40\).</li>
+<li>In four years the next dividend is \(D_5=4\times1.06^4=5.05\), so \(P_4=\dfrac{5.05}{0.10}=\$50.50\).</li>
+<li>Same answer from \(P_4=40\times1.06^4=\$50.50\).</li></ul></div>
+<div class="box thm"><span class="tag">Result · the price grows at g</span>\[P_t=P_0(1+g)^t\]
+<p class="word"><b>In words:</b> every dividend is \((1+g)\) times the one before, so the price one year on is the same formula with a dividend \((1+g)\) times bigger.</p></div>
+
+<h3>Why g must be below R</h3>
+<p>The PV of the dividend at \(t\) is \(D_0\left(\dfrac{1+g}{1+R}\right)^t\).</p>
+<ul class="list"><li>\(g\lt R\): the terms shrink towards zero and the sum is \(D_1/(R-g)\).</li>
+<li>\(g\ge R\): the terms never shrink, the sum is infinite, and the formula gives nonsense (a negative or infinite price).</li>
+<li>No firm can grow faster than \(R\) forever; growth above \(R\) is only ever temporary. That is the next section.</li></ul>
+</section>
+
+<section id="s5"><h2><span class="n">5</span>Nonconstant growth</h2>
+<p class="tldr">Value the early dividends one by one; value everything from \(T+1\) on as a single Gordon price \(P_T\); discount both to today.</p>
+<div class="tlw" id="tl6"></div>
+<div class="box thm"><span class="tag">Result · nonconstant growth</span>
+\[\begin{aligned}P_0={}&\frac{D_1}{1+R}+\cdots+\frac{D_T}{(1+R)^T}\\&+\frac{P_T}{(1+R)^T}\end{aligned}\]
+\[P_T=\frac{D_{T+1}}{R-g}\]
+<p class="word"><b>In words:</b> \(P_T\) sits at \(T\), one period before the first growing dividend, so it is discounted \(T\) periods, the same as \(D_T\).</p></div>
+<div class="box eg"><span class="tag">Example · three forecast dividends, then 5% growth</span>
+<p>Analysts forecast $1.00, $2.00 and $2.50 at the end of years 1–3; after that the dividend grows 5% a year forever. \(R=10\%\).</p>
+<p><b>Step 1</b>, price at \(T=3\): \(P_3=\dfrac{D_4}{R-g}=\dfrac{2.50\times1.05}{0.05}=\$52.50\).</p>
+<p><b>Step 2</b>, discount to today. At \(t=3\) you receive \(D_3+P_3=2.50+52.50=\$55.00\):</p>
+<div class="tlw" id="tl7"></div></div>
+<div class="figure"><p class="ttl">Where the $43.88 comes from</p>
+<canvas class="plot" id="cvp" style="height:200px"></canvas>
+<p class="cap">PV of each piece. The discounted price \(P_3\) is $39.44, 90% of the value: even with explicit forecasts, the long-run growth assumption dominates.</p></div>
+
+<h3>Two-stage growth</h3>
+<p>Growth \(g_1\) until \(T\), then \(g_2\) forever. The first stage is a growing annuity (L3), the second a growing perpetuity:</p>
+\[\begin{aligned}P_0={}&D_1\,\frac{1-\left(\frac{1+g_1}{1+R}\right)^T}{R-g_1}\\&+\frac{P_T}{(1+R)^T}\end{aligned}\]
+\[P_T=\frac{D_T(1+g_2)}{R-g_2}\]
+<p class="word"><b>In words:</b> growing-annuity PV of the first \(T\) dividends, plus the discounted Gordon price at \(T\). Here \(g_1\) may exceed \(R\) (the annuity has only \(T\) terms); only \(g_2\) must be below \(R\).</p>
+
+<h3>Why nonconstant growth is the realistic case</h3>
+<ul class="list"><li><b>Growth stage</b>: many investment opportunities, rapid expansion; \(g\) may exceed \(R\), dividends may be zero.</li>
+<li><b>Transition stage</b>: competition arrives; growth and margins fall.</li>
+<li><b>Mature stage</b>: growth settles below \(R\) and the growth model applies.</li></ul>
+<p>Valuing a young firm therefore means forecasting when it reaches the mature stage.</p>
+</section>
+
+<section id="s6"><h2><span class="n">6</span>Required return</h2>
+<div class="box thm"><span class="tag">Result · solve the Gordon model for R</span>
+\[R=\frac{D_1}{P_0}+g\]
+<p class="word"><b>In words:</b> required return = <b>dividend yield</b> \(D_1/P_0\) (the cash part) + <b>capital-gain yield</b> \(g\) (the price part, since the price grows at \(g\)).</p>
+<p>Gordon Growth Co.: \(4/40+6\%=10\%+6\%=16\%\). The same split as a bond's current yield plus capital-gain yield (L4).</p></div>
+<div class="box eg"><span class="tag">Hong Kong · CLP Holdings, a slow-growing utility</span>
+<ul class="list"><li>Dividends per share: HK$3.10 for 2023, 3.15 for 2024, 3.20 for 2025: about 1.6% growth a year.</li>
+<li>Price HK$76.25 (25 Sep 2026); dividend yield \(3.20/76.25=4.2\%\).</li>
+<li>If the dividend keeps growing at 1.6%, next year's is \(3.20\times1.016\approx3.25\): \(R\approx3.25/76.25+1.6\%\approx5.9\%\).</li>
+<li>A low \(R\) for a stable, regulated business; most of the return comes as dividends.</li></ul>
+<p class="flag">The 4.2% uses the dividend just paid (HK$3.20, a “trailing” yield); the \(R\) estimate correctly uses next year's HK$3.25 (4.3% yield). The slide's numbers are kept.</p>
+<p>The slide's question, a young tech firm: the opposite split. A tiny or zero dividend yield, so almost all of \(R\) is expected capital gain.</p></div>
+</section>
+
+<section id="s7"><h2><span class="n">7</span>Peer multiples</h2>
+<p class="tldr">Skip the dividend forecast: price the share like similar firms.</p>
+<div class="box def"><span class="tag">Definition · P/E ratio</span>
+<p>\(P/E=\) price per share ÷ <b>earnings per share</b> (EPS = net income ÷ number of shares). Estimated price = peers' average P/E × the firm's EPS.</p>
+<p>Peers trade at 15 times earnings and the firm expects EPS of $2: price \(\approx15\times2=\$30\).</p></div>
+<ul class="list"><li>A high P/E means investors expect fast growth, or the share is overpriced.</li>
+<li>P/E is the most widely quoted multiple and the quickest valuation.</li>
+<li>When earnings do not work: <b>price-to-sales</b> for young firms with small or negative earnings; <b>price-to-cash-flow</b>, less sensitive to accounting choices and useful across markets. Same recipe: peers' average multiple × the firm's own figure.</li>
+<li>Limits: good peers are hard to find; peers' multiples vary widely; a multiple is <b>relative</b>, so if the whole sector is overpriced, so is your estimate.</li></ul>
+<div class="beyond box"><span class="tag">Beyond the handouts · why P/E reflects growth</span><p>If a firm pays out a fraction \(b\) of next year's earnings \(E_1\), Gordon gives \(P_0/E_1=b/(R-g)\): higher expected \(g\) means a higher P/E.</p></div>
+</section>
+
+<section id="s8"><h2><span class="n">8</span>Summary and formula card</h2>
+<ul class="list"><li>Debt vs equity: votes, dividends, residual claim. Preferred stock sits between debt and common stock. Primary vs secondary markets.</li>
+<li>Price = PV of all expected dividends; the selling price drops out.</li>
+<li>Zero growth \(D/R\); constant growth \(D_1/(R-g)\) with \(g\lt R\), and the price grows at \(g\).</li>
+<li>Nonconstant growth: discount the early dividends, plus the discounted \(P_T\).</li>
+<li>\(R=D_1/P_0+g\): dividend yield + capital-gain yield.</li>
+<li>Multiples: price relative to peers (P/E, P/S, P/CF).</li></ul>
+<div class="tblw"><table class="fcard"><tr><th>Case</th><th>Formula</th><th>Note</th></tr>
+<tr><td>General</td><td>\(P_0=\sum_{t\ge1}\frac{D_t}{(1+R)^t}\)</td><td>all expected dividends</td></tr>
+<tr><td>Zero growth</td><td>\(P_0=D/R\)</td><td>ex-dividend; cum adds \(D\)</td></tr>
+<tr><td>Constant growth</td><td>\(P_0=\frac{D_1}{R-g}=\frac{D_0(1+g)}{R-g}\)</td><td>\(g\lt R\)</td></tr>
+<tr><td>Price later</td><td>\(P_t=P_0(1+g)^t=\frac{D_{t+1}}{R-g}\)</td><td>constant growth</td></tr>
+<tr><td>Nonconstant</td><td>\(\sum_{t=1}^{T}\frac{D_t}{(1+R)^t}+\frac{P_T}{(1+R)^T}\)</td><td>\(P_T=\frac{D_{T+1}}{R-g}\)</td></tr>
+<tr><td>Required return</td><td>\(R=\frac{D_1}{P_0}+g\)</td><td>dividend + capital-gain yield</td></tr>
+<tr><td>Multiple</td><td>\(P\approx\) peers' P/E × EPS</td><td>also P/S, P/CF</td></tr></table></div>
+</section>
+
+<section id="s9"><h2><span class="n">9</span>Common mistakes</h2>
+<ul class="list">
+<li><b>Just paid vs next dividend.</b> \(D_1/(R-g)\) needs the next dividend; multiply a just-paid \(D_0\) by \((1+g)\).</li>
+<li><b>Discounting \(P_T\) one period too many.</b> \(P_T=D_{T+1}/(R-g)\) sits at \(T\): divide by \((1+R)^T\), not \((1+R)^{T+1}\).</li>
+<li><b>Using \(P_T=D_T/(R-g)\).</b> The Gordon price at \(T\) needs the dividend at \(T+1\).</li>
+<li><b>Gordon with \(g\ge R\).</b> No finite value; use nonconstant growth with a lower long-run \(g\).</li>
+<li><b>Valuing a non-payer at zero.</b> Its value is the PV of later dividends.</li>
+<li><b>Cum vs ex.</b> Just before a dividend, the price includes it.</li></ul>
+</section>
+
+<section id="s10"><h2><span class="n">10</span>Practice</h2>
+<p>The first seven are the lecture's in-class quizzes; the last is written for these notes.</p>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>a share that pays no dividend</span></div>
+<p>Amazon has never paid a dividend since its 1997 IPO, yet it is one of the most valuable firms in the world. A share of a firm like this is worth: A. nothing: no cash flows, no value · B. the PV of the dividends it is expected to pay one day · C. whatever the next buyer pays: price is set by resale · D. the accounting value of its assets per share</p>
+<details><summary>Hint</summary><div><p>What is the next buyer's price based on?</p></div></details>
+<details><summary>Answer</summary><div><p><b>B</b>. Resale price (C) is itself the PV of the dividends after you sell, so it drops out (section 3). D ignores future growth.</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>a constant $2 dividend</span></div>
+<p>A firm pays $2 a share at the end of every year, forever; \(R=20\%\). What is a share worth (A) just after this year's dividend, (B) just before it, (C) in four years, just after that year's dividend?</p>
+<details><summary>Hint</summary><div><p>Zero growth: the price just after a dividend is always \(D/R\).</p></div></details>
+<details><summary>Answer</summary><div><p>(A) \(2/0.20=\boxed{\$10}\) · (B) \(2+10=\boxed{\$12}\) · (C) \(\boxed{\$10}\): with no growth, the ex-dividend price never changes.</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>the $4 dividend was just paid</span></div>
+<p>Gordon Growth Co., but the $4 dividend was just paid; \(R=16\%\), \(g=6\%\). Price today? A. $37.74 · B. $40.00 · C. $42.40 · D. $50.50</p>
+<details><summary>Hint</summary><div><p>Find \(D_1\) first.</p></div></details>
+<details><summary>Answer</summary><div>\[\frac{4\times1.06}{0.10}=\frac{4.24}{0.10}=\boxed{\$42.40}\]<p>→ <b>C</b>. ($40 forgets the growth; $37.74 \(=40/1.06\) grows the wrong way.)</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>supernormal growth</span></div>
+<p>Dividends grow 30% a year for the next three years, then 10% forever. The firm has just paid total dividends of $5 million; \(R=20\%\). Equity value? A. $55.00m · B. $69.93m · C. $87.57m · D. $120.84m</p>
+<details><summary>Hint</summary><div><p>\(D_1,D_2,D_3\) at 30%; \(P_3=D_4/(R-g)\) with \(g=10\%\).</p></div></details>
+<details><summary>Answer</summary><div><p>Dividends ($m): 6.50, 8.45, 10.985. Then</p>
+\[\begin{aligned}P_3&=\tfrac{10.985\times1.10}{0.20-0.10}=120.84\\P_0&=\tfrac{6.50}{1.20}+\tfrac{8.45}{1.20^2}+\tfrac{10.985+120.84}{1.20^3}\\&=5.42+5.87+76.28\\&=\boxed{\$87.57\text{m}}\end{aligned}\]
+<p>→ <b>C</b>. Two-stage formula check: growing-annuity part \(17.64\) plus \(120.84/1.20^3=69.93\). B is that second piece alone (dividends forgotten); D is \(P_3\) undiscounted.</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>first dividend in five years</span></div>
+<p>No dividends now. The first, $0.50 a share, is expected in five years; then 10% growth forever; \(R=20\%\). Price today? A. $0 · B. $2.01 · C. $2.41 · D. $5.00</p>
+<details><summary>Hint</summary><div><p>\(D_5/(R-g)\) is a price at \(t=4\).</p></div></details>
+<details><summary>Answer</summary><div>\[\begin{aligned}P_4&=\tfrac{0.50}{0.20-0.10}=5.00\\P_0&=\tfrac{5.00}{1.20^4}=\boxed{\$2.41}\end{aligned}\]<p>→ <b>C</b>. B discounts five years (one too many); D forgets to discount.</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>required return</span></div>
+<p>A share sells for $20. The next dividend, $1, will grow 10% a year forever. Required return? A. 5.0% · B. 10.0% · C. 15.0% · D. 15.5%</p>
+<details><summary>Answer</summary><div><p>\(1/20+10\%=5\%+10\%=\boxed{15.0\%}\) → <b>C</b>. (15.5% wrongly grows the $1, which is already the next dividend.)</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>implied growth</span></div>
+<p>A share sells for $25. The next dividend is $2; \(R=20\%\). What constant growth does the price imply? A. 8% · B. 12% · C. 20% · D. 28%</p>
+<details><summary>Hint</summary><div><p>\(g=R-D_1/P_0\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(20\%-2/25=20\%-8\%=\boxed{12\%}\) → <b>B</b>.</p></div></details></div>
+<div class="q"><div class="src"><b>Written for these notes</b><span>two growth rates</span></div>
+<p>A share just paid $1.50. Dividends grow 20% a year for two years, then 4% forever; \(R=12\%\). Price?</p>
+<details><summary>Hint</summary><div><p>\(D_1=1.80\), \(D_2=2.16\); \(P_2=D_3/(R-g)\).</p></div></details>
+<details><summary>Answer</summary><div>\[\begin{aligned}P_2&=\tfrac{2.16\times1.04}{0.08}=28.08\\P_0&=\tfrac{1.80}{1.12}+\tfrac{2.16+28.08}{1.12^2}\\&=1.61+24.11=\boxed{\$25.71}\end{aligned}\]</div></details></div>
+</section>
+</main></div>
+
+<script>
+/* FINA1310 shared helpers (from MECH2413) (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+/* ---------------- TL: cash-flow timelines (SVG) ----------------
+ TL.draw(el,{n, flows:{t:'label'}, at:'t-label or null', moves:[{from,to,lbl}], unit, title})
+   n      last date shown (dates 0..n)
+   flows  cash flow label above each date, e.g. {1:'+$100',2:'−$300'} (outflows red automatically when label starts with − or -)
+   moves  arrows below the axis from a cash flow's date to the valuation date, labelled with the factor/value
+   at     date where the total is valued (ring + "PV ?" / "FV ?" label in o.atLbl) */
+const TL=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,a,p){const e=document.createElementNS(NS,tag);if(tag==='text'&&!('text-anchor' in a))e.setAttribute('text-anchor','middle');for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function draw(host,o){
+    if(typeof host==='string')host=document.getElementById(host);
+    host.innerHTML='';
+    const n=o.n, W=Math.max(300,Math.min(640,host.clientWidth||600)), hasV=(o.moves||[]).some(m=>m.val), padL=(hasV&&o.at===0)?70:26, padR=(hasV&&o.at===n)?78:26;
+    const moves=o.moves||[], rowH=26, top=40, axisY=top+16, H=axisY+38+moves.length*rowH+(o.total?24:0);
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'tl',role:'img','aria-label':o.title||'cash-flow timeline'},host);
+    const X=t=>padL+t*(W-padL-padR)/n;
+    el('line',{x1:X(0)-8,x2:X(n)+12,y1:axisY,y2:axisY,class:'ax'},svg);
+    for(let t=0;t<=n;t++){el('line',{x1:X(t),x2:X(t),y1:axisY-5,y2:axisY+5,class:'ax'},svg);
+      const lb=el('text',{x:X(t),y:axisY+19,class:'d'},svg);lb.textContent=(o.dates&&o.dates[t]!==undefined)?o.dates[t]:(t===0?'t=0':String(t));}
+    for(const k in (o.flows||{})){const s=o.flows[k];const neg=/^[−-]/.test(s);
+      const tx=el('text',{x:X(+k),y:top,class:'cf'+(neg?' neg':'')},svg);tx.textContent=s;}
+    if(o.at!==undefined&&o.at!==null){el('circle',{cx:X(o.at),cy:axisY,r:6,class:'ring'},svg);
+      const q=el('text',{x:X(o.at)+(o.at===0?-8:o.at===n?8:0),y:top-18,class:'q','text-anchor':o.at===0?'start':o.at===n?'end':'middle'},svg);q.textContent=o.atLbl||'PV ?';}
+    moves.forEach((m,i)=>{const y=axisY+42+i*rowH;
+      el('line',{x1:X(m.from),x2:X(m.to)+(m.to<m.from?6:-6),y1:y,y2:y,class:'mv'},svg);
+      const dir=m.to<m.from?-1:1, hx=X(m.to);
+      el('path',{d:`M${hx} ${y} l${-dir*8} -4 l0 8 z`,class:'hd'},svg);
+      el('circle',{cx:X(m.from),cy:y,r:2.5,class:'hd'},svg);
+      const t=el('text',{x:(X(m.from)+X(m.to))/2,y:y-5,class:'ml'},svg);t.textContent=m.lbl||'';
+      if(m.val){const v=el('text',{x:hx+(dir<0?-12:12),y:y+4,class:'mv-v',
+        'text-anchor':dir<0?'end':'start'},svg);v.textContent=m.val;}
+      if(m.from===m.to){t.setAttribute('x',X(m.from)+8);t.setAttribute('text-anchor','start');}
+    });
+    if(o.total){const t=el('text',{x:o.at===0?4:o.at===n?W-4:X(o.at),y:H-6,class:'tot','text-anchor':o.at===0?'start':(o.at===n?'end':'middle')},svg);t.textContent=o.total;}
+  }
+  return {draw};
+})();
+
+/* bars(canvas,{cats:[..], series:[{name,vals,color}], ymax, ystep, ylabel}) — stacked bar chart */
+function bars(cv,o){
+  const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card');g.fillRect(0,0,W,H);const pl=o.pl||44,pr=10,pt=12,pb=26;
+  const Y=y=>pt+(o.ymax-y)/o.ymax*(H-pt-pb);g.font='11px Inter, system-ui, sans-serif';
+  for(let y=0;y<=o.ymax+1e-9;y+=o.ystep){g.strokeStyle=css('--grid');g.beginPath();g.moveTo(pl,Y(y));g.lineTo(W-pr,Y(y));g.stroke();
+    g.fillStyle=css('--muted');g.textAlign='right';g.textBaseline='middle';g.fillText(fmt(y,0),pl-6,Y(y));}
+  const n=o.cats.length,bw=(W-pl-pr)/n;
+  o.cats.forEach((c,i)=>{let base=0;o.series.forEach(s=>{const v=s.vals[i];g.fillStyle=s.color;
+      g.fillRect(pl+i*bw+bw*.18,Y(base+v),bw*.64,Y(base)-Y(base+v));base+=v;});
+    g.fillStyle=css('--muted');g.textAlign='center';g.textBaseline='top';g.fillText(c,pl+i*bw+bw/2,H-pb+6);});
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillStyle=css('--muted');g.fillText(o.ylabel,pl+4,pt+2);}
+}
+
+</script>
+<script>
+/* note-L05 figures */
+function tls(){
+  TL.draw('tl1',{n:6,dates:['t=0','1','2','3','…','t−1','t'],flows:{1:'C',2:'C',3:'C',5:'C',6:'C + F'},at:0,atLbl:'P₀ ?',title:'bond cash flows'});
+  TL.draw('tl2',{n:6,dates:['t=0','1','2','3','4','5','…'],flows:{1:'D₁',2:'D₂',3:'D₃',4:'D₄',5:'D₅',6:'…'},at:0,atLbl:'P₀ ?',title:'stock cash flows'});
+  TL.draw('tl3',{n:5,dates:['t=0','1','2','3','4','…'],flows:{1:'D',2:'D',3:'D',4:'D',5:'…'},at:0,atLbl:'P₀ = D / R',title:'zero growth'});
+  TL.draw('tl4',{n:5,dates:['t=0','1','2','3','4','…'],flows:{0:'$2',1:'$2',2:'$2',3:'$2',4:'$2',5:'…'},at:0,atLbl:'P cum ?',
+    moves:[{from:2,to:0,lbl:'later $2s: 2 / 0.20',val:'$10'}],total:'P cum = 2 + 10 = $12',title:'cum-dividend price'});
+  TL.draw('tl5',{n:4,dates:['t=0','1','2','3','…'],flows:{1:'D₁',2:'D₁(1+g)',3:'D₁(1+g)²',4:'…'},at:0,atLbl:'P₀ ?',title:'constant growth'});
+  TL.draw('tl6',{n:6,dates:['t=0','1','2','…','T','T+1','…'],flows:{1:'D₁',2:'D₂',4:'D(T)',5:'D(T+1)',6:'…'},at:0,atLbl:'P₀ ?',moves:[{from:5,to:4,lbl:'P(T)'}],title:'nonconstant growth: any pattern to T, then constant g'});
+  TL.draw('tl7',{n:3,flows:{1:'$1.00',2:'$2.00',3:'$55.00'},at:0,atLbl:'P₀ ?',
+    moves:[{from:1,to:0,lbl:'÷ 1.10',val:'$0.91'},{from:2,to:0,lbl:'÷ 1.10²',val:'$1.65'},{from:3,to:0,lbl:'÷ 1.10³',val:'$41.32'}],total:'P₀ = $43.88'});
+}
+redraws.push(tls);
+
+function saw(){
+  const segs=[];
+  for(let k=1;k<=4;k++) segs.push({x1:k,y1:12,x2:k,y2:10,color:css('--warm'),width:2,dash:[4,3]});
+  plot($('cvs'),{xmin:0,xmax:4.2,ymin:8,ymax:13,xstep:1,ystep:1,pl:38,xlabel:'years',ylabel:'price ($)',
+    curves:[0,1,2,3].map(k=>({f:x=>10*Math.pow(1.2,x-k),from:k,to:k+1,color:css('--accent')})),
+    pts:[{x:0,y:10,color:css('--accent'),r:4},{x:1,y:12,color:css('--warm'),r:4,label:'cum $12',align:'left'},{x:1,y:10,color:css('--accent'),r:4}],
+    segs:segs});
+}
+redraws.push(saw);
+
+function pieces(){
+  bars($('cvp'),{cats:['D₁ $1.00','D₂ $2.00','D₃ $2.50','P₃ $52.50'],ymax:40,ystep:10,ylabel:'PV today ($)',
+    series:[{vals:[0.91,1.65,1.88,39.44],color:css('--accent')}]});
+}
+redraws.push(pieces);
+
+</script>
+</body></html>

@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MECH2407 C3b · Line Integrals</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+/* MECH2407 house style (from the MATH1851 bundle): one 46rem reading column, sticky contents rail on wide screens,
+   teal accent, warm orange for "Beyond the handouts", dark mode through CSS variables. Figures read colours via css('--accent') etc. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf; --prev:#6a4c9c; --prev-soft:#efe9f8;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#7a4fc2;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518; --prev:#b9a2e6; --prev-soft:#2a2238;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#b79bff; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518; --prev:#b9a2e6; --prev-soft:#2a2238;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#b79bff; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:230px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible,nav.toc a.on{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+nav.toc .home{display:block;margin:0 0 12px 10px;font-size:12.5px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+header.top .crumbs{font-size:13px;display:flex;flex-wrap:wrap;gap:4px 14px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0;min-width:0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent} .beyond>.tag{color:var(--warm)}
+.box.prev{background:var(--prev-soft);border-color:transparent;border-left:4px solid var(--prev)} .box.prev>.tag{color:var(--prev)}
+.pill.prev{background:var(--prev-soft);color:var(--prev)}
+.analogy{border-left:4px solid var(--c3)} .analogy>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent)} .ready>.tag{color:var(--accent)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+.figure .pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+canvas.plot{width:100%;display:block;border-radius:4px;touch-action:none}
+canvas.plot.drag{cursor:grab}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+.ctrl button{font:inherit;font-size:.88rem;padding:4px 12px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums;overflow-x:auto}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px;min-width:0}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0;min-width:0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide,a.note{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+a.guide:hover,a.note:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+.boxed{border:1.5px solid var(--accent);border-radius:6px;padding:6px 10px;display:block;margin:8px 0;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+main svg[role="img"][aria-label] text{paint-order:stroke;stroke:var(--card);stroke-width:3.5px;stroke-linejoin:round}
+mjx-container svg text{stroke:none}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+footer.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px} .box,.q{padding:10px 10px} .figure{padding:10px} details{padding:0 10px} mjx-container[display="true"]{font-size:92%}}
+
+/* ---- exam-guide classes (added Phase 4; notes do not use them) ---- */
+.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:6px;padding:12px 16px;margin:14px 0;min-width:0}
+.card>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.card .row{display:grid;grid-template-columns:6.2rem 1fr;gap:4px 12px;padding:6px 0;border-top:1px solid var(--grid);min-width:0}
+.card .row>b{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+.card .row>div{min-width:0}
+@media (max-width:520px){.card .row{grid-template-columns:1fr}}
+.freq{font-family:var(--mono);font-size:12px;color:var(--muted);margin:2px 0 6px}
+.proc{border:1px solid var(--line);border-left:4px solid var(--c3,#2a9d6a);border-radius:6px;padding:10px 16px;margin:14px 0;background:var(--card);min-width:0}
+.proc>.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.marker{font-size:.9rem;background:var(--accent-soft);border-radius:6px;padding:6px 10px;margin:8px 0}
+.marker::before{content:"Marker note · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.alsoset{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 6px}
+.glance{width:100%;border-collapse:collapse;font-size:.92rem}
+.glance td,.glance th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{
+  pd:['\\frac{\\partial #1}{\\partial #2}',2], vb:['\\mathbf{#1}',1], grad:'\\nabla', R:'\\mathbb{R}',
+  ii:'\\mathbf{i}', jj:'\\mathbf{j}', kk:'\\mathbf{k}'}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="assets/mathjax/tex-svg.js"></script>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <a class="home" href="index.html">← Start Here</a>
+  <p class="h">Chapter 3b</p>
+  <ol>
+    <li><a href="#s0">0 · Where this chapter sits</a></li>
+    <li><a href="#s1">1 · Curves and parametrisation</a></li>
+    <li><a href="#s2">2 · Scalar line integrals ∫f ds</a></li>
+    <li><a href="#s3">3 · Work integrals ∫F·dr</a></li>
+    <li><a href="#s4">4 · Fundamental theorem, path independence</a></li>
+    <li><a href="#summary">Summary</a></li>
+    <li><a href="#mistakes">Common mistakes</a></li>
+    <li><a href="#find-mistake">Find the mistake</a></li>
+    <li><a href="#group-work">Practice problems</a></li>
+    <li><a href="#checks">Concept checks</a></li>
+    <li><a href="#taster">Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MECH2407 · Multivariable Calculus &amp; PDEs · Chapter 3b</span>
+  <h1>Line Integrals</h1>
+  <p class="lede">The second part of Chapter 3 (Vector Analysis), explained from scratch in the order of the course: how to describe a curve by a parameter, how to add up a quantity along a curve (the mass of a wire, the length of a helix), how to add up the work a force field does on a particle moving along a path, and the Fundamental Theorem of Line Integrals, which says that for a gradient field the work depends only on where the path starts and ends. Every curve is drawn (3D curves can be rotated), the sums that define the integrals can be watched converging, and every example is solved in full; long calculations sit in "Show the calculation" tabs with a reason for each line. Material beyond the course handouts sits in orange "Beyond the handouts" boxes. The chapter ends with real past-paper questions, each linked to its exam-guide section.</p>
+  <div class="crumbs"><a href="index.html">← Start Here</a><a href="note-C3a.html">← Previous: C3a Vector Differential Calculus</a><a href="guide-C3b.html">Exam guide for this chapter →</a><a href="note-C3c.html">Next: C3c Conservative Fields, Gauss and Stokes →</a></div>
+</header>
+
+<section id="s0">
+<h2><span class="n">0</span>Where this chapter sits</h2>
+<p>In first-year calculus, \(\displaystyle\int_a^b f(x)\,dx\) adds up the values of \(f\) along a straight piece of the \(x\)-axis, from \(x=a\) to \(x=b\). Chapter 2 of this course added up values over a <b>region</b> (double integrals) or a <b>solid</b> (triple integrals). This chapter adds up values along a <b>curve</b> in space. Such an integral is called a <b>line integral</b>, although "curve integral" would be a better name: the path can bend and twist.</p>
+<p>Two kinds of question lead to line integrals:</p>
+<ul class="list">
+<li><b>Adding a scalar along a curve.</b> A bent wire has a density (mass per unit length) that changes from point to point. What is its total mass? What is the length of one turn of a spring? This is the <b>scalar line integral</b> \(\int_C f\,ds\) of §2, where \(ds\) is a small piece of length along the curve.</li>
+<li><b>Adding up work along a path.</b> A particle moves along a path through a force field (gravity, an electric field, a fluid pushing on it). How much work does the force do? This is the <b>work integral</b> (vector line integral) \(\int_C\vb F\cdot d\vb r\) of §3. Only the part of the force <b>along</b> the path does work, so the direction of travel matters.</li>
+</ul>
+<p>The plan of the chapter:</p>
+<ol class="steps">
+  <li><b>§1</b> Curves: describing a curve by a parameter \(t\) (a <b>parametrisation</b> \(\vb r(t)\)); simple, closed and open curves; smooth and piecewise smooth curves; orientation (direction of travel). A ready-made list of standard parametrisations.</li>
+  <li><b>§2</b> The scalar line integral \(\int_C f\,ds\): definition as a limit of sums, the formula \(ds=|d\vb r/dt|\,dt\), curves made of several pieces, arc length; Examples 3.6.1–3.6.3.</li>
+  <li><b>§3</b> The work integral \(\int_C\vb F\cdot d\vb r\): from the work \(\vb F\cdot\overrightarrow{AB}\) of a constant force to a sum along a curve; the unit tangent; why reversing the path changes the sign; the forms \(\int\vb F\cdot\frac{d\vb r}{dt}dt\) and \(\int M\,dx+N\,dy+P\,dz\); Examples 3.6.4–3.6.6 (work can depend on the path).</li>
+  <li><b>§4</b> The Fundamental Theorem of Line Integrals, \(\int_C\nabla f\cdot d\vb r=f(\text{end})-f(\text{start})\), with proof; the gravitational potential (Example 3.6.7); scalar potentials, independence of path, and closed loops (the start of §3.7, continued in <a href="note-C3c.html#s1">Chapter 3c</a>).</li>
+</ol>
+<p><b>What you are assumed to know:</b> vectors with \(\ii,\jj,\kk\), the dot product, single-variable integration (substitution, \(\int\sin^2t\,dt\) etc.), and the chain rule. From earlier chapters of these notes: partial derivatives and the gradient (<a href="note-C1.html#s2">Chapter 1</a>), vector functions \(\vb r(t)\) with velocity \(d\vb r/dt\) tangent to the path (<a href="note-C3a.html#s1">Chapter 3a §1</a>), and vector fields and \(\nabla\) (<a href="note-C3a.html#s2">Chapter 3a §2–§3</a>).</p>
+<p><b>How the exam uses this chapter.</b> Across the papers collected for this bundle, 5 question parts (31 marks) are line integrals worked out by parametrising the path, in 5 different sittings (4 December, 1 May). They form one type:</p>
+<ul class="list">
+<li><b>C3b.1 Line (work) integral by parametrising the path</b>: a straight segment, a parabola \(y=x^2\), a semicircle, or the three edges of a triangle; usually 5–6 marks in December, after a part that asks for the curl of the same field, and often with the instruction "do NOT use the Fundamental Theorem" (so the parametrisation must be shown). May 2024 asked for 10 marks.</li>
+</ul>
+<p>Line integrals also appear inside many Chapter 3c questions (Stokes' theorem: compute \(\oint_C\vb F\cdot d\vb r\) round the boundary). The December formula sheet <b>gives</b> both line-integral formulas, \(\int_C g\,ds=\int g\,\sqrt{\dot x^2+\dot y^2+\dot z^2}\,dt\) and \(\int_C\vb F\cdot d\vb r=\int\vb F(t)\cdot\dot{\vb r}(t)\,dt\) (a dot over a letter means \(d/dt\)); the May papers since 2021 have no formula sheet. See the <a href="guide-C3b.html">C3b exam guide</a>.</p>
+</section>
+
+<section id="s1">
+<h2><span class="n">1</span>Curves: parametrisation, simple and closed curves, orientation <span class="muted small">(handout §3.6, p. 12)</span></h2>
+<p>A line integral is an integral more general than the integral</p>
+\[\int_a^b f(x)\,dx\]
+<p>of one variable. Instead of integrating a function over a straight line segment along the \(x\)-axis, \([a,b]\), we integrate over a <b>curve in space</b>. Such an integral is called a <b>line integral</b>, although the term "curve integral" would be more appropriate. Before defining line integrals we look at how curves are described.</p>
+
+<h3>Parametrisation</h3>
+<div class="box def"><span class="tag">Definition (parametrisation of a curve)</span>
+<p>Let</p>
+\[\vb r(t)=x(t)\,\ii+y(t)\,\jj+z(t)\,\kk,\qquad t\in[a,b]\]
+<p>describe a curve in space: as \(t\) runs from \(a\) to \(b\), the tip of the position vector \(\vb r(t)\) traces the curve, starting at the point \(\vb r(a)\) and ending at \(\vb r(b)\). This is called a <b>parametrisation</b> of the curve in the variable \(t\); \(t\) is the <b>parameter</b>.</p>
+<p class="word"><b>In words:</b> a parametrisation is a recipe "for each value of \(t\), here is a point \((x,y,z)\) on the curve". Think of \(t\) as time and \(\vb r(t)\) as the position of a bead sliding along a wire.</p>
+</div>
+<p>For a plane curve simply drop the \(\kk\)-term (\(z=0\)). One curve has many parametrisations: the bead can slide along the same wire at different speeds, or in the opposite direction. Its velocity \(d\vb r/dt=x'(t)\ii+y'(t)\jj+z'(t)\kk\) is tangent to the curve (<a href="note-C3a.html#s1">Chapter 3a §1</a>).</p>
+
+<div class="figure">
+  <p class="ttl">A parametrised curve: the point \(\vb r(t)\) moves along the curve as \(t\) increases</p>
+  <canvas class="plot" id="f-param" style="aspect-ratio:16/10" aria-label="A plane curve with the moving point r(t) and its tangent velocity"></canvas>
+  <div class="ctrl"><label>Curve <select id="pm-sel"><option value="seg">segment (0,0) to (4,2): 4t i + 2t j</option><option value="par">parabola y = x²: t i + t² j</option><option value="cir">circle radius 2: 2cos t i + 2sin t j</option><option value="semi">semicircle: cos t i + sin t j, 0 ≤ t ≤ π</option></select></label>
+  <label>\(t\) <input type="range" id="pm-t" min="0" max="1" step="0.005" value="0.35"></label>
+  <label><input type="checkbox" id="pm-rev"> reverse the direction (\(t\to a+b-t\))</label></div>
+  <div class="readout" id="pm-out"></div>
+  <p class="cap">The blue curve is traced from the green start point \(\vb r(a)\) to the red end point \(\vb r(b)\); the small arrowheads on it show the direction of travel (the orientation). The pink arrow is the position vector \(\vb r(t)\) from the origin, the red arrow the velocity \(d\vb r/dt\), tangent to the curve. Tick "reverse" to run the same curve backwards: same set of points, opposite arrows.</p>
+</div>
+
+<h3>Simple, closed and open curves</h3>
+<div class="box def"><span class="tag">Definitions</span>
+<ul class="list">
+<li>A curve is <b>closed</b> if it ends where it starts: \(\vb r(b)=\vb r(a)\). Otherwise it is <b>open</b> (it has two different end points).</li>
+<li>A curve is <b>simple</b> if it does not cross itself: different values of \(t\) give different points (for a closed curve, apart from the start and end point, which are the same).</li>
+</ul>
+<p class="word"><b>In words:</b> closed = a loop; simple = no self-crossing. A circle is simple and closed; a figure-eight is closed but not simple; a straight segment is simple and open.</p>
+</div>
+<div class="figure">
+  <p class="ttl">The four combinations (red dots: end points)</p>
+  <div class="pair">
+    <canvas class="plot" id="f-ty1" style="aspect-ratio:4/3" aria-label="Simple and open curve"></canvas>
+    <canvas class="plot" id="f-ty2" style="aspect-ratio:4/3" aria-label="Simple and closed curve"></canvas>
+    <canvas class="plot" id="f-ty3" style="aspect-ratio:4/3" aria-label="Not simple and open curve"></canvas>
+    <canvas class="plot" id="f-ty4" style="aspect-ratio:4/3" aria-label="Not simple and closed curve"></canvas>
+  </div>
+  <p class="cap">Top left: <b>simple and open</b>, an S-shaped arc with two different end points that never crosses itself. Top right: <b>simple and closed</b>, a loop whose start and end are the same dot, with no crossing. Bottom left: <b>not simple and open</b>, an arc that loops round and crosses its own path before ending somewhere else. Bottom right: <b>not simple and closed</b>, a figure-eight-like loop that crosses itself and returns to its start dot.</p>
+</div>
+
+<h3>Smooth curves and orientation</h3>
+<p>In this course we only work with <b>smooth</b> or <b>piecewise smooth</b> curves. A curve is <b>smooth</b> if it has a parametrisation whose derivative \(d\vb r/dt\) is continuous (and, strictly, never \(\vb 0\)), so the curve has a well-defined tangent direction at every point and no corners. A curve is <b>piecewise smooth</b> if it can be divided into a finite number of smooth pieces (for example, the three edges of a triangle: smooth along each edge, with corners where edges meet).</p>
+<p class="word"><b>In words:</b> smooth = no corners or cusps; piecewise smooth = finitely many smooth pieces joined end to end.</p>
+<p>In certain situations curves are considered to have a direction: they are <b>oriented</b>. An <b>oriented curve</b> is a curve together with a chosen direction of travel, from an <b>initial point</b> to a <b>terminal point</b>. A parametrisation fixes an orientation: the direction of increasing \(t\). The same curve with the opposite direction is written \(-C\). Scalar line integrals (§2) do not care about orientation; work integrals (§3) do.</p>
+
+<div class="box ready"><span class="tag">Ready-made parametrisations · beyond the handouts</span>
+<ul class="list">
+<li><b>Straight segment</b> from \(P\) (position vector \(\vb p\)) to \(Q\) (position vector \(\vb q\)): \(\vb r(t)=\vb p+t(\vb q-\vb p)\), \(0\le t\le1\); then \(d\vb r/dt=\vb q-\vb p\) (constant). Example: \((1,4,2)\) to \((0,5,1)\): \(\vb r=(1-t)\ii+(4+t)\jj+(2-t)\kk\).</li>
+<li><b>Graph</b> \(y=g(x)\) from \(x=x_0\) to \(x=x_1\): \(\vb r(t)=t\,\ii+g(t)\,\jj\), \(x_0\le t\le x_1\) (use \(x\) itself as the parameter). Example: \(y=x^2\) from \((0,0)\) to \((2,4)\): \(\vb r=t\ii+t^2\jj\), \(0\le t\le2\).</li>
+<li><b>Circle</b> of radius \(R\) centred at \((x_0,y_0)\), anticlockwise: \(\vb r(t)=(x_0+R\cos t)\ii+(y_0+R\sin t)\jj\), \(0\le t\le2\pi\); upper semicircle from \((x_0+R,y_0)\): \(0\le t\le\pi\). Clockwise: replace \(\sin t\) by \(-\sin t\).</li>
+<li><b>Helix</b> of radius \(a\) and pitch \(2\pi c\) (rise per turn) about the \(z\)-axis: \(\vb r(t)=a\cos t\,\ii+a\sin t\,\jj+ct\,\kk\).</li>
+<li><b>Reversing</b> any parametrisation on \([a,b]\): \(\vb r(a+b-t)\), \(a\le t\le b\); for a segment, \(\vb q+t(\vb p-\vb q)\).</li>
+</ul>
+<p class="word"><b>In words:</b> segment = start + \(t\) × (end − start); graph = let \(x\) be the parameter; circle = centre + radius × \((\cos t,\sin t)\).</p>
+</div>
+</section>
+
+<section id="s2">
+<h2><span class="n">2</span>Scalar line integrals \(\int_C f\,ds\) and arc length <span class="muted small">(handout §3.6, pp. 12–14)</span></h2>
+<h3>Motivation: the mass of a wire</h3>
+<p>Suppose \(C\) is a smooth curve which describes a thin wire, and that the <b>mass density</b> (mass per unit length, e.g. in kg/m) at any point \((x,y,z)\) on \(C\) is \(f(x,y,z)\). If the density were constant, mass = density × length. Since it changes along the wire, we divide the curve \(C\) into \(n\) short sections: on each one the density is nearly constant. Pick a point \((x_k,y_k,z_k)\) in the \(k\)-th section, whose length is \(\Delta s_k\). Then the mass is approximately</p>
+\[\sum_{k=1}^{n}f(x_k,y_k,z_k)\,\Delta s_k .\]
+<p class="word"><b>In words:</b> mass ≈ sum over the pieces of (density at a point of the piece) × (length of the piece).</p>
+<p>The division points along the curve are \(P_0,P_1,\dots,P_n\): \(P_0\) is the start (position vector \(\vb r(a)\)), \(P_n\) the end (position vector \(\vb r(b)\)), and \(\Delta s_k\) is the length of the arc from \(P_{k-1}\) to \(P_k\).</p>
+<div class="figure">
+  <p class="ttl">Cutting the curve into \(n\) pieces: points \(P_0,\dots,P_n\) and a sample point \((x_k,y_k,z_k)\)</p>
+  <canvas class="plot" id="f-riem" style="aspect-ratio:16/11" aria-label="Rotatable space curve divided into n arcs with a sample point"></canvas>
+  <div class="ctrl"><label>number of pieces \(n\) <input type="range" id="ri-n" min="2" max="40" step="1" value="6"></label>
+  <label>highlighted piece \(k\) <input type="range" id="ri-k" min="1" max="6" step="1" value="4"></label></div>
+  <div class="readout" id="ri-out"></div>
+  <p class="cap">Drag to rotate. The blue curve runs from \(P_0\) (position vector \(\vb r(a)\), green arrow) to \(P_n\) (position vector \(\vb r(b)\), green arrow). Red dots are the division points. The \(k\)-th arc, from \(P_{k-1}\) to \(P_k\), is drawn thick in orange; its sample point \((x_k,y_k,z_k)\) is the pink dot, with dashed pink lines dropping to the \(xy\)-plane to show its coordinates. The readout adds up \(f\,\Delta s_k\) for the density \(f=1+z\) along this wire: as \(n\) grows the sum settles on the line integral.</p>
+</div>
+
+<h3>Definition</h3>
+<div class="box def"><span class="tag">Definition (line integral of \(f\) over \(C\))</span>
+<p>If \(f(x,y,z)\) is continuous at every point on \(C\), and \(\max\{\Delta s_k\}\to0\) as \(n\to\infty\) (the longest piece shrinks to zero), then</p>
+\[\lim_{n\to\infty}\sum_{k=1}^{n}f(x_k,y_k,z_k)\,\Delta s_k=\int_C f(x,y,z)\,ds,\]
+<p>which is called the <b>line integral of \(f\) over \(C\)</b> (also the scalar line integral, or the line integral with respect to arc length). Here \(ds\) stands for a tiny length of curve, the <b>element of arc length</b>.</p>
+<p class="word"><b>In words:</b> \(\int_C f\,ds\) = the limit of (value of \(f\)) × (length of piece), added over finer and finer pieces of the curve. If \(f\) is a density, it is the mass of the wire.</p>
+</div>
+
+<h3>Computing it with a parametrisation</h3>
+<p>To compute \(\int_C f\,ds\) we turn it into an ordinary integral in \(t\). Since \(\vb r(t)=x(t)\ii+y(t)\jj+z(t)\kk\), the length travelled per unit of \(t\) is the speed:</p>
+\[\left|\frac{d\vb r}{dt}\right|=\sqrt{\Big(\frac{dx}{dt}\Big)^2+\Big(\frac{dy}{dt}\Big)^2+\Big(\frac{dz}{dt}\Big)^2}=\frac{ds}{dt}.\]
+<p class="word"><b>In words:</b> rate of covering length = length of the velocity vector (speed); so a small step \(dt\) in the parameter covers a length \(ds=|d\vb r/dt|\,dt\).</p>
+<details><summary>Show the calculation: why \(ds/dt=|d\vb r/dt|\)</summary><div>
+<ol class="steps">
+<li>Over a small step \(\Delta t\) the point moves from \(\vb r(t)\) to \(\vb r(t+\Delta t)\). The arc between them is almost straight, so its length is almost the length of the chord: \(\Delta s\approx|\Delta\vb r|\). <i>Why:</i> a short piece of a smooth curve is nearly a straight segment.</li>
+<li>Write the chord in components: \(\Delta\vb r=\Delta x\,\ii+\Delta y\,\jj+\Delta z\,\kk\), so \(|\Delta\vb r|=\sqrt{\Delta x^2+\Delta y^2+\Delta z^2}\). <i>Why:</i> Pythagoras in 3D.</li>
+<li>Divide by \(\Delta t\gt0\): \(\dfrac{\Delta s}{\Delta t}\approx\sqrt{\Big(\dfrac{\Delta x}{\Delta t}\Big)^2+\Big(\dfrac{\Delta y}{\Delta t}\Big)^2+\Big(\dfrac{\Delta z}{\Delta t}\Big)^2}\). <i>Why:</i> \(\Delta t\) is positive, so it moves inside the square root as \(\Delta t^2\).</li>
+<li>Let \(\Delta t\to0\): the approximation becomes exact and each ratio becomes a derivative, giving \(\dfrac{ds}{dt}=\sqrt{x'(t)^2+y'(t)^2+z'(t)^2}=\Big|\dfrac{d\vb r}{dt}\Big|\).</li>
+</ol></div></details>
+<p>Thus,</p>
+<div class="box thm"><span class="tag">Formula (scalar line integral)</span>
+\[\begin{aligned}&\int_C f(x,y,z)\,ds\\&=\int_a^b f(x(t),y(t),z(t))\left|\frac{d\vb r}{dt}\right|dt\\&=\int_a^b f(x(t),y(t),z(t))\\&\qquad\times\sqrt{x'(t)^2+y'(t)^2+z'(t)^2}\;dt.\end{aligned}\]
+<p class="word"><b>In words:</b> substitute the parametrisation into \(f\), multiply by the speed \(|\vb r'(t)|\), and integrate over the parameter interval from \(a\) to \(b\) (always smaller limit at the bottom).</p>
+</div>
+<p><b>Recipe.</b> (1) Parametrise \(C\) by \(\vb r(t)\), \(a\le t\le b\). (2) Compute \(\vb r'(t)\) and the speed \(|\vb r'(t)|\). (3) Write \(f\) in terms of \(t\). (4) Integrate \(f\,|\vb r'|\) from \(a\) to \(b\).</p>
+
+<h3>Piecewise smooth curves</h3>
+<p>For a piecewise smooth curve we divide the path into a number of smooth subcurves \(C_1,C_2,C_3,\dots\), joined end to end, parametrise each separately, and add:</p>
+\[\int_C f\,ds=\int_{C_1}f\,ds+\int_{C_2}f\,ds+\int_{C_3}f\,ds.\]
+<p class="word"><b>In words:</b> the integral over a path made of pieces = the sum of the integrals over the pieces.</p>
+<div class="figure">
+  <p class="ttl">A piecewise smooth curve \(C\) made of three smooth pieces \(C_1\), \(C_2\), \(C_3\)</p>
+  <canvas class="plot" id="f-pieces" style="aspect-ratio:16/8" aria-label="A path made of a curved piece, a zigzag piece and a wavy piece"></canvas>
+  <p class="cap">The path starts at the left red dot and ends at the right red dot. \(C_1\) (blue) is a smooth curved arc; \(C_2\) (green) is a straight stretch followed by a smooth bend; \(C_3\) (purple) rises and falls smoothly to the end. Grey dots mark the corners where the pieces join: the tangent direction jumps there, so the whole path is not smooth, but each piece is.</p>
+</div>
+
+<h3>Examples</h3>
+<div class="box eg"><span class="tag">Example 3.6.1</span>
+<p><b>Let \(C\) be the line segment from \((0,0,0)\) to \((1,-3,2)\). Find \(\int_C(x+y^2-2z)\,ds\).</b></p>
+<p>We parametrise \(C\) (start + \(t\) × (end − start)) by</p>
+\[\vb r(t)=t\,\ii-3t\,\jj+2t\,\kk\qquad\text{for }0\le t\le1 .\]
+<p>This implies</p>
+\[\left|\frac{d\vb r}{dt}\right|=\sqrt{1^2+(-3)^2+2^2}=\sqrt{14}=\frac{ds}{dt}\]
+<p>and hence, with \(x=t,\ y=-3t,\ z=2t\),</p>
+\[\begin{aligned}&\int_C(x+y^2-2z)\,ds\\&=\int_0^1\big[t+(-3t)^2-2(2t)\big]\sqrt{14}\,dt\\&=\tfrac32\sqrt{14}.\end{aligned}\]
+<details><summary>Show the calculation: the integral in Example 3.6.1</summary><div>
+<ol class="steps">
+<li>Simplify the bracket: \(t+9t^2-4t=9t^2-3t\). <i>Why:</i> \((-3t)^2=9t^2\) and \(2(2t)=4t\).</li>
+<li>\(\sqrt{14}\) is a constant, so take it outside: \(\sqrt{14}\int_0^1(9t^2-3t)\,dt\).</li>
+<li>Integrate term by term: \(\big[3t^3-\tfrac32t^2\big]_0^1=3-\tfrac32=\tfrac32\).</li>
+<li>Multiply back: \(\tfrac32\sqrt{14}\approx5.612\).</li>
+</ol></div></details>
+</div>
+<p>Notice that <b>reversing the direction of parametrisation does NOT change the value of \(\int_C f\,ds\)</b>. The reason: each \(\Delta s_k\) in the defining sum is a length, which is positive whichever way we walk; and in the formula, \(|d\vb r/dt|\) is positive and the limits are always taken from smaller \(t\) to larger \(t\).</p>
+<div class="box eg"><span class="tag">Example 3.6.2</span>
+<p><b>Repeat Example 3.6.1 but with the reversed direction, from \((1,-3,2)\) to \((0,0,0)\).</b></p>
+\[\begin{gathered}\vb r(t)=(1-t)\,\ii-3(1-t)\,\jj+2(1-t)\,\kk\\ \text{for }0\le t\le1 .\end{gathered}\]
+<p>The speed is again \(\sqrt{(-1)^2+3^2+(-2)^2}=\sqrt{14}\), and we have</p>
+\[\begin{aligned}&\int_C(x+y^2-2z)\,ds\\&=\int_0^1\big[(1-t)+9(1-t)^2-4(1-t)\big]\sqrt{14}\,dt\\&=\tfrac32\sqrt{14}\end{aligned}\]
+<p>as before.</p>
+<details><summary>Show the calculation: the integral in Example 3.6.2</summary><div>
+<ol class="steps">
+<li>Bracket: \((1-t)+9(1-t)^2-4(1-t)\) \(=9(1-t)^2-3(1-t)\). <i>Why:</i> \(y^2=9(1-t)^2\), \(2z=4(1-t)\).</li>
+<li>Substitute \(u=1-t\), \(du=-dt\); \(t=0\to u=1\), \(t=1\to u=0\): \(\sqrt{14}\int_1^0(9u^2-3u)(-du)\) \(=\sqrt{14}\int_0^1(9u^2-3u)\,du\). <i>Why:</i> the minus sign from \(du=-dt\) flips the limits back.</li>
+<li>This is exactly the integral of Example 3.6.1, so it equals \(\tfrac32\sqrt{14}\).</li>
+</ol></div></details>
+</div>
+
+<h3>Arc length</h3>
+<p>When \(f(x,y,z)\equiv1\) (density 1 everywhere), the "mass" is just the length:</p>
+\[\begin{aligned}\int_C f(x,y,z)\,ds&=\int_C ds\\&=\int_a^b\sqrt{x'(t)^2+y'(t)^2+z'(t)^2}\;dt\end{aligned}\]
+<p>gives the <b>arc length</b> of the curve \(C\) from \(t=a\) to \(t=b\).</p>
+<p class="word"><b>In words:</b> length of a curve = integral of its speed over the parameter interval (distance = ∫ speed dt).</p>
+<div class="box eg"><span class="tag">Example 3.6.3</span>
+<p><b>Consider the circular helix \(\vb r(t)=a\cos t\,\ii+a\sin t\,\jj+ct\,\kk\) (radius \(a\gt0\); it rises \(2\pi c\) per turn). Find the length of one coil.</b></p>
+<p>One coil is \(0\le t\le2\pi\). The length of one coil is given by</p>
+\[\begin{aligned}&\int_0^{2\pi}\sqrt{(-a\sin t)^2+(a\cos t)^2+c^2}\;dt\\&=\int_0^{2\pi}\sqrt{a^2+c^2}\;dt=2\pi\sqrt{a^2+c^2}.\end{aligned}\]
+<p>(Inside the root, \(a^2\sin^2t+a^2\cos^2t=a^2\), so the speed is the constant \(\sqrt{a^2+c^2}\).)</p>
+</div>
+<div class="figure">
+  <p class="ttl">One coil of the helix of Example 3.6.3, and the same coil unrolled</p>
+  <div class="pair">
+  <canvas class="plot" id="f-helix" style="aspect-ratio:1/1" aria-label="Rotatable helix, one coil"></canvas>
+  <canvas class="plot" id="f-unroll" style="aspect-ratio:1/1" aria-label="The coil unrolled into a straight line, the hypotenuse of a right triangle"></canvas>
+  </div>
+  <div class="ctrl"><label>radius \(a\) <input type="range" id="hx-a" min="0.3" max="1.5" step="0.05" value="1"></label>
+  <label>rise per radian \(c\) <input type="range" id="hx-c" min="0.05" max="0.6" step="0.01" value="0.25"></label></div>
+  <div class="readout" id="hx-out"></div>
+  <p class="cap">Left (drag to rotate): one coil, \(0\le t\le2\pi\), from the green start dot to the red end dot. Right: cut the cylinder the helix lies on along a vertical line and flatten it. The coil becomes a straight line: the hypotenuse of a right triangle with base \(2\pi a\) (once round the circle) and height \(2\pi c\) (the rise). Pythagoras gives the length \(\sqrt{(2\pi a)^2+(2\pi c)^2}=2\pi\sqrt{a^2+c^2}\), the same as the integral.</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts · the value does not depend on the parametrisation</span>
+<p>Any two parametrisations of the same curve give the same \(\int_C f\,ds\), because the integral is a limit of sums of (value) × (length) that never mention \(t\). For example, the segment of Example 3.6.1 can also be written \(\vb r(u)=u^2\ii-3u^2\jj+2u^2\kk\), \(0\le u\le1\) (the bead starts slowly and speeds up). Then \(|\vb r'(u)|=2u\sqrt{14}\) and \(f=9u^4-3u^2\), and \(\int_0^1(9u^4-3u^2)\,2u\sqrt{14}\,du\) \(=\sqrt{14}\big[3u^6-\tfrac32u^4\big]_0^1\) \(=\tfrac32\sqrt{14}\) again. In general the substitution \(t=g(u)\) turns one formula into the other: \(|d\vb r/du|\,du=|d\vb r/dt|\,|dt/du|\,du=|d\vb r/dt|\,dt\).</p>
+<p class="word"><b>In words:</b> going faster along the curve makes \(|\vb r'|\) bigger but the parameter interval shorter, and the two effects cancel exactly.</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts · mass and centre of mass of a wire</span>
+<p>For a wire with density \(\rho(x,y,z)\): mass \(M=\int_C\rho\,ds\); centre of mass \(\bar x=\frac1M\int_C x\rho\,ds\), \(\bar y=\frac1M\int_C y\rho\,ds\), \(\bar z=\frac1M\int_C z\rho\,ds\). Example: a semicircular wire \(\vb r=a\cos t\,\ii+a\sin t\,\jj\), \(0\le t\le\pi\), density 1. Speed \(=a\), so \(M=\int_0^\pi a\,dt=\pi a\) and \(\bar y=\frac1{\pi a}\int_0^\pi(a\sin t)\,a\,dt=\frac{2a^2}{\pi a}=\frac{2a}{\pi}\); by symmetry \(\bar x=0\).</p>
+<p class="word"><b>In words:</b> centre of mass = (mass-weighted average position), each piece weighted by its mass \(\rho\,ds\).</p>
+</div>
+</section>
+
+<section id="s3">
+<h2><span class="n">3</span>Work integrals \(\int_C\vb F\cdot d\vb r\) <span class="muted small">(handout §3.6, pp. 15–18)</span></h2>
+<h3>From a constant force to a force field</h3>
+<p>Another form of line integral is directly related to the <b>work done</b> in moving a particle in a force field. Under a constant force \(\vb F\), the work done \(W\) in moving an object along a straight line from \(A\) to \(B\), that is along the vector \(\overrightarrow{AB}\), is given by</p>
+\[W=\vb F\cdot\overrightarrow{AB}.\]
+<p class="word"><b>In words:</b> work = (component of the force along the motion) × (distance moved). A force at right angles to the motion does no work; a force against the motion does negative work.</p>
+<p>For a <b>force field</b> \(\vb F(x,y,z)\) (a force that depends on position, see <a href="note-C3a.html#s2">Chapter 3a §2</a>) we consider the work done along a curved path in space. The force changes along the path and the path keeps changing direction, so we cut the path into short pieces again, exactly as in §2.</p>
+<div class="figure">
+  <p class="ttl">A force field acting along a path from \(P_0\) to \(P_n\)</p>
+  <canvas class="plot" id="f-force" style="aspect-ratio:16/11" aria-label="Rotatable space curve with force arrows at the division points"></canvas>
+  <p class="cap">Drag to rotate. The blue path runs from \(P_0\) (position vector \(\vb r(a)\)) to \(P_n\) (position vector \(\vb r(b)\)), green arrows from the origin. At each division point \(P_0,P_1,\dots,P_n\) (red dots) a dark red arrow shows the force \(\vb F\) there: it changes in size and direction along the path, and it is generally not along the path. The dashed pink lines locate one sample point \((x_k,y_k,z_k)\).</p>
+</div>
+<p>On the short piece from \(P_{k-1}\) to \(P_k\) the force is nearly constant, \(\vb F(x_k,y_k,z_k)\), and the piece is nearly a straight step of length \(\Delta s_k\) in the direction of the <b>unit tangent vector</b> \(\vb T(x_k,y_k,z_k)\) (a vector of length 1 pointing along the curve in the direction of travel). So the step is \(\Delta s_k\,\vb T\), and the work done from \(P_{k-1}\) to \(P_k\) is approximately</p>
+\[\vb F(x_k,y_k,z_k)\cdot\big[\Delta s_k\,\vb T(x_k,y_k,z_k)\big],\]
+<p>where \(\Delta s_k\) is the arc length between \(P_{k-1}\) and \(P_k\).</p>
+<p class="word"><b>In words:</b> work on one piece ≈ (force) · (step), with step = (length of the piece) × (unit direction of travel).</p>
+<div class="figure">
+  <p class="ttl">One short piece of the path: unit tangent \(\vb T\) and force \(\vb F\) at the sample point</p>
+  <canvas class="plot" id="f-piece" style="aspect-ratio:16/9" aria-label="Short arc from P_(k-1) to P_k with unit tangent and force vectors"></canvas>
+  <div class="ctrl"><label>direction of \(\vb F\) <input type="range" id="pc-ang" min="-180" max="180" step="1" value="-40"></label></div>
+  <div class="readout" id="pc-out"></div>
+  <p class="cap">The blue arc goes from \(P_{k-1}\) to \(P_k\); the curved black arrow marks its length \(\Delta s_k\). At the sample point \((x_k,y_k,z_k)\) the green arrow is the unit tangent vector \(\vb T\) and the red arrow the force vector \(\vb F\). Only the component of \(\vb F\) along \(\vb T\), namely \(\vb F\cdot\vb T\) (the dashed shadow of \(\vb F\) on the tangent line), does work. Turn \(\vb F\): at right angles to \(\vb T\) the work on this piece is zero; pointing backwards it is negative.</p>
+</div>
+<p>The approximation of the work done along \(C\) is</p>
+\[\sum_{k=1}^{n}\big[\vb F(x_k,y_k,z_k)\cdot\vb T(x_k,y_k,z_k)\big]\Delta s_k .\]
+<p>Let \(n\to\infty\) with \(\max\{\Delta s_k\}\to0\); then</p>
+\[W=\int_C\vb F(x,y,z)\cdot\vb T(x,y,z)\,ds .\]
+<p class="word"><b>In words:</b> work = the scalar line integral (§2) of the tangential component \(\vb F\cdot\vb T\) of the force.</p>
+
+<h3>The unit tangent and \(d\vb r\)</h3>
+<p>The unit tangent is the velocity divided by its length:</p>
+\[\vb T(x,y,z)=\frac{d\vb r/dt}{|d\vb r/dt|}.\]
+<p class="word"><b>In words:</b> \(\vb T\) = the direction of the velocity, shrunk or stretched to length 1.</p>
+<p>Since \(\vb T\,|d\vb r/dt|=d\vb r/dt\), multiplying by \(dt\) gives \(\vb T\,|d\vb r|=d\vb r\), and as \(|d\vb r|=ds\) (§2),</p>
+\[\vb T(x,y,z)\,ds=d\vb r .\]
+<p>Thus</p>
+\[\int_C\vb F(x,y,z)\cdot\vb T(x,y,z)\,ds=\int_C\vb F(x,y,z)\cdot d\vb r .\]
+<p class="word"><b>In words:</b> \(d\vb r\) is a tiny step along the curve: its length is \(ds\) and its direction is \(\vb T\). The work integral adds up (force) · (tiny step).</p>
+<details><summary>Show the calculation: from \(\vb T\) to \(\vb T\,ds=d\vb r\)</summary><div>
+<ol class="steps">
+<li>Start from the definition \(\vb T=\dfrac{d\vb r/dt}{|d\vb r/dt|}\) and multiply both sides by the number \(|d\vb r/dt|\): \(\vb T\left|\dfrac{d\vb r}{dt}\right|=\dfrac{d\vb r}{dt}\).</li>
+<li>Multiply by \(dt\) (positive, so it can go inside the modulus): \(\vb T\,\Big|\dfrac{d\vb r}{dt}\Big|dt=\dfrac{d\vb r}{dt}\,dt\), i.e. \(\vb T\,|d\vb r|=d\vb r\).</li>
+<li>From §2, \(|d\vb r/dt|\,dt=ds\), so \(|d\vb r|=ds\) and the left side is \(\vb T\,ds\). Hence \(\vb T\,ds=d\vb r\), and \(\vb F\cdot\vb T\,ds=\vb F\cdot d\vb r\).</li>
+</ol></div></details>
+
+<h3>Orientation matters</h3>
+<p>The above integral requires \(C\) to be <b>oriented</b> (§1). Notice that <b>reversing the direction of integration changes the value</b> of \(\int_C\vb F\cdot d\vb r\). If we take the curve \(-C\) as the opposite orientation of \(C\), then, since the unit tangent vector at any point on \(-C\) is the negative of the unit tangent vector at the same point on \(C\), we have</p>
+\[\int_{-C}\vb F\cdot d\vb r=-\int_C\vb F\cdot d\vb r .\]
+<p class="word"><b>In words:</b> walk the path backwards and the work changes sign (a wind that helps you one way hinders you the other way). Contrast \(\int_C f\,ds\), which does not change.</p>
+<details><summary>Show the calculation: \(\int_{-C}=-\int_C\) with a parametrisation</summary><div>
+<ol class="steps">
+<li>If \(\vb r(t)\), \(a\le t\le b\) traces \(C\), then \(\vb q(t)=\vb r(a+b-t)\), \(a\le t\le b\) traces \(-C\) (§1).</li>
+<li>Chain rule: \(\vb q'(t)=-\vb r'(a+b-t)\). <i>Why:</i> the inside function \(a+b-t\) has derivative \(-1\).</li>
+<li>\(\int_{-C}\vb F\cdot d\vb r\) \(=\int_a^b\vb F(\vb r(a+b-t))\) \(\cdot\big(-\vb r'(a+b-t)\big)\,dt\).</li>
+<li>Substitute \(u=a+b-t\), \(du=-dt\), \(t=a\to u=b\), \(t=b\to u=a\): \(=\int_b^a\vb F(\vb r(u))\cdot(-\vb r'(u))(-du)\) \(=\int_b^a\vb F(\vb r(u))\cdot\vb r'(u)\,du\).</li>
+<li>Swapping the limits gives a minus sign: \(=-\int_a^b\vb F(\vb r(u))\cdot\vb r'(u)\,du=-\int_C\vb F\cdot d\vb r\). (For \(\int f\,ds\) the speed \(|\vb q'|=|\vb r'|\) has no minus sign, so there the value is unchanged.)</li>
+</ol></div></details>
+<p>For plane curves, going <b>anticlockwise</b> around a closed path is taken as the <b>positive</b> direction. For a closed curve the integral is often written with a circle on the integral sign, \(\oint_C\vb F\cdot d\vb r\), and called the <b>circulation</b> of \(\vb F\) around \(C\).</p>
+
+<h3>Ways to write and compute the work integral</h3>
+<p>Furthermore, if \(\vb r(t)=x(t)\ii+y(t)\jj+z(t)\kk\), then \(d\vb r(t)=\big(x'(t)\ii+y'(t)\jj+z'(t)\kk\big)\,dt\), and we have</p>
+<div class="box thm"><span class="tag">Formula (work integral with a parametrisation)</span>
+\[\begin{aligned}&\int_C\vb F(x,y,z)\cdot d\vb r\\&=\int_a^b\vb F\big(x(t),y(t),z(t)\big)\cdot\frac{d\vb r}{dt}\,dt .\end{aligned}\]
+<p class="word"><b>In words:</b> substitute the path into the field, dot with the velocity \(\vb r'(t)\), and integrate from the start value \(a\) to the end value \(b\) of the parameter. No square root: the speed does not appear.</p>
+</div>
+<p>Yet another form is obtained if \(\vb F(x,y,z)\) \(=M(x,y,z)\,\ii+N(x,y,z)\,\jj+P(x,y,z)\,\kk\) and \(d\vb r=dx\,\ii+dy\,\jj+dz\,\kk\); then</p>
+\[\int_C\vb F(x,y,z)\cdot d\vb r=\int_C M\,dx+N\,dy+P\,dz .\]
+<p class="word"><b>In words:</b> the work integral is \(M\) times the small change in \(x\), plus \(N\) times the small change in \(y\), plus \(P\) times the small change in \(z\), added along the path. (The whole expression \(M\,dx+N\,dy+P\,dz\) is under one integral sign.) To compute it, replace \(dx\) by \(x'(t)\,dt\), etc.</p>
+<p>These are the many forms line integrals can take: \(\int_C\vb F\cdot\vb T\,ds\), \(\int_C\vb F\cdot d\vb r\), \(\int_a^b\vb F\cdot\vb r'(t)\,dt\) and \(\int_C M\,dx+N\,dy+P\,dz\) are the same number.</p>
+<div class="box analogy"><span class="tag">Analogy</span>
+<p>Cycling through a wind field. The wind \(\vb F\) changes from street to street. On each short stretch only the part of the wind along your direction of travel helps (tailwind, positive work) or hinders you (headwind, negative work); a pure crosswind does nothing. The work integral totals this help over the whole route. Ride the route backwards and every tailwind becomes a headwind: the total changes sign. Choose a different route between the same two places and, in general, the total changes too (Example 3.6.5).</p>
+</div>
+
+<h3>Examples</h3>
+<div class="box eg"><span class="tag">Example 3.6.4</span>
+<p><b>A particle moves upward along the circular helix \(C\) parametrised by \(\vb r(t)=\cos t\,\ii+\sin t\,\jj+t\,\kk\) for \(0\le t\le2\pi\), under a force given by \(\vb F(x,y,z)=-zy\,\ii+zx\,\jj+xy\,\kk\). Find the work done by the force.</b></p>
+<p>Here we have \(x(t)=\cos t\), \(y(t)=\sin t\) and \(z(t)=t\), thus</p>
+\[\frac{d\vb r}{dt}=-\sin t\,\ii+\cos t\,\jj+\kk .\]
+<p>Therefore</p>
+\[\begin{aligned}W&=\int_C\vb F\cdot d\vb r\\&=\int_0^{2\pi}\vb F(x(t),y(t),z(t))\cdot\frac{d\vb r}{dt}\,dt\\&=\int_0^{2\pi}\big(t\sin^2t+t\cos^2t+\cos t\sin t\big)\,dt\\&=\Big[\tfrac12t^2+\tfrac12\sin^2t\Big]_0^{2\pi}=2\pi^2 .\end{aligned}\]
+<details><summary>Show the calculation: the dot product and the integral in Example 3.6.4</summary><div>
+<ol class="steps">
+<li>Substitute the path into the field: \(\vb F(\vb r(t))\) \(=-(t)(\sin t)\,\ii\) \(+\:(t)(\cos t)\,\jj\) \(+\:(\cos t)(\sin t)\,\kk\). <i>Why:</i> \(-zy=-t\sin t\), \(zx=t\cos t\), \(xy=\cos t\sin t\).</li>
+<li>Dot with \(\vb r'(t)=(-\sin t,\cos t,1)\): \((-t\sin t)(-\sin t)\) \(+\:(t\cos t)(\cos t)\) \(+\:(\cos t\sin t)(1)\) \(=t\sin^2t+t\cos^2t+\cos t\sin t\).</li>
+<li>Simplify: \(t(\sin^2t+\cos^2t)=t\), so the integrand is \(t+\sin t\cos t\).</li>
+<li>Antiderivatives: \(\int t\,dt=\tfrac12t^2\); \(\int\sin t\cos t\,dt=\tfrac12\sin^2t\) (substitute \(u=\sin t\), \(du=\cos t\,dt\)).</li>
+<li>Evaluate: \(\tfrac12(2\pi)^2+\tfrac12\sin^2(2\pi)-0\) \(=2\pi^2+0\) \(=2\pi^2\) \(\approx19.74\).</li>
+</ol></div></details>
+<p>It is fairly obvious that when the path is reversed (the particle moves down the helix), we have</p>
+\[\int_{2\pi}^{0}\vb F(x(t),y(t),z(t))\cdot\frac{d\vb r}{dt}\,dt=-2\pi^2 .\]
+</div>
+
+<div class="box eg"><span class="tag">Example 3.6.5 · "work done is dependent on the path taken"</span>
+<p><b>Use the force of Example 3.6.4, but this time the particle moves along a straight line \(C'\) with the same initial and terminal points, \((1,0,0)\) and \((1,0,2\pi)\).</b></p>
+<p>For such a straight line, we have</p>
+\[\vb r(t)=\ii+t\,\kk\qquad\text{for }0\le t\le2\pi .\]
+<p>Here \(x(t)=1\), \(y(t)=0\), \(z(t)=t\) and \(\dfrac{d\vb r}{dt}=\kk\). On this line \(\vb F=-t(0)\ii+t(1)\jj+(1)(0)\kk=t\,\jj\). Consequently,</p>
+\[\begin{aligned}W&=\int_{C'}\vb F\cdot d\vb r\\&=\int_0^{2\pi}(0\,\ii+t\,\jj+0\,\kk)\cdot\kk\,dt=0 .\end{aligned}\]
+<p>The force is at right angles to the straight path everywhere, so it does no work there; along the helix it did \(2\pi^2\). Same start, same end, different work: <b>the work depends on the path</b>. (In §4 we see which fields avoid this.)</p>
+</div>
+<div class="figure">
+  <p class="ttl">Examples 3.6.4 and 3.6.5: the helix \(C\) and the straight line \(C'\) through the force field</p>
+  <canvas class="plot" id="f-work" style="aspect-ratio:1/1" aria-label="Rotatable helix and vertical line with force arrows and running work"></canvas>
+  <div class="ctrl"><label>path <select id="wk-p"><option value="h">helix C (Example 3.6.4)</option><option value="l">straight line C′ (Example 3.6.5)</option></select></label>
+  <label>\(t\) <input type="range" id="wk-t" min="0" max="1" step="0.005" value="0.6"></label></div>
+  <div class="readout" id="wk-out"></div>
+  <p class="cap">Drag to rotate. Both paths start at the green dot \((1,0,0)\) and end at the red dot \((1,0,2\pi)\) (the \(z\)-axis is drawn compressed). The blue curve is the helix, the purple line the straight path \(C'\). At the moving point the red arrow is the force \(\vb F=-zy\,\ii+zx\,\jj+xy\,\kk\) and the green arrow the direction of travel. On the helix the force pushes round the coil with the motion, so the work keeps growing; on \(C'\) the force (\(t\,\jj\)) is horizontal while the motion is vertical, so the running work stays 0. The readout gives the work done so far, \(\int_0^t\vb F\cdot\vb r'\,dt\).</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 3.6.6</span>
+<p><b>Evaluate \(\displaystyle\int_C y^2\,dx+2xy\,dy\) from the origin \((0,0,0)\) to the point \((4,2,0)\) along the paths:</b></p>
+<ol class="steps">
+<li><b>\(C_1\): a straight line,</b></li>
+<li><b>\(C_2\): the parabola \(y^2=x\),</b></li>
+<li><b>\(C_3\): part of the \(x\)-axis and then the line \(x=4\).</b></li>
+</ol>
+<p>This is equivalent to evaluating \(\int_C\vb F\cdot d\vb r\) where \(\vb F=y^2\,\ii+2xy\,\jj\) (\(M=y^2\), \(N=2xy\), no \(\kk\)-part). Everything happens in the plane \(z=0\); here \(x\) (or \(y\)) itself is used as the parameter.</p>
+<p><b>\(C_1\): \(y=\tfrac12x\)</b>, \(x\) from 0 to 4. We have \(\dfrac{dy}{dx}=\tfrac12\), i.e. \(dy=\tfrac12\,dx\), and hence</p>
+\[\begin{aligned}&\int_{C_1}y^2\,dx+2xy\,dy\\&=\int_{x=0}^{4}\Big(\frac x2\Big)^2dx+2x\Big(\frac x2\Big)\frac12\,dx\\&=\int_{x=0}^{4}\frac34x^2\,dx=16 .\end{aligned}\]
+<p><b>\(C_2\): \(y^2=x\)</b>, \(x\) from 0 to 4 (\(y=\sqrt x\ge0\)). We have \(2y\dfrac{dy}{dx}=1\), i.e. \(dy=\dfrac{dx}{2y}\), and hence</p>
+\[\begin{aligned}&\int_{C_2}y^2\,dx+2xy\,dy\\&=\int_{x=0}^{4}x\,dx+2xy\cdot\frac1{2y}\,dx\\&=\int_{x=0}^{4}2x\,dx=16 .\end{aligned}\]
+<p><b>\(C_3\)</b>: first along the \(x\)-axis from \((0,0)\) to \((4,0)\) (\(y=0\), \(dy=0\)), then up the line \(x=4\) from \((4,0)\) to \((4,2)\) (\(dx=0\)):</p>
+\[\begin{aligned}&\int_{(0,0)}^{(4,2)}y^2\,dx+2xy\,dy\\&=\int_{x=0}^{4}0\,dx+2x\cdot0\cdot0\\&\quad+\int_{y=0}^{2}y^2\cdot0+2\cdot4y\,dy\\&=\int_{y=0}^{2}8y\,dy=16 .\end{aligned}\]
+<details><summary>Show the calculation: the three integrals of Example 3.6.6</summary><div>
+<ol class="steps">
+<li>\(C_1\): substitute \(y=x/2\), \(dy=dx/2\): \(y^2\,dx=\frac{x^2}4dx\) and \(2xy\,dy=2x\cdot\frac x2\cdot\frac12dx=\frac{x^2}2dx\). Sum \(\frac34x^2\,dx\); \(\int_0^4\frac34x^2\,dx=\frac14\big[x^3\big]_0^4=\frac{64}4=16\).</li>
+<li>\(C_2\): substitute \(y^2=x\) in the first term and \(dy=dx/(2y)\) in the second: \(y^2\,dx=x\,dx\); \(2xy\cdot\frac{dx}{2y}=x\,dx\) (the \(y\) cancels). Sum \(2x\,dx\); \(\int_0^4 2x\,dx=\big[x^2\big]_0^4=16\). (Parametrising instead by \(\vb r=t^2\ii+t\jj\), \(0\le t\le2\), gives \(\int_0^2(t^2\cdot2t+2t^2\cdot t)\,dt=\int_0^2 4t^3\,dt=16\).)</li>
+<li>\(C_3\), horizontal part: \(y=0\) so \(y^2=0\), and \(dy=0\): the integrand is 0.</li>
+<li>\(C_3\), vertical part: \(x=4\) fixed so \(dx=0\), and \(2xy\,dy=8y\,dy\); \(\int_0^2 8y\,dy=\big[4y^2\big]_0^2=16\). Total \(0+16=16\).</li>
+</ol></div></details>
+<p>Is the result just a coincidence? Unlikely! Unlike Examples 3.6.4 and 3.6.5, all three paths give the same work. The reason is the Fundamental Theorem of §4: \(\vb F=y^2\ii+2xy\jj\) is the gradient of \(f=xy^2\).</p>
+</div>
+<div class="figure">
+  <p class="ttl">Example 3.6.6: three paths from \((0,0)\) to \((4,2)\) through the field \(\vb F=y^2\ii+2xy\jj\)</p>
+  <canvas class="plot" id="f-three" style="aspect-ratio:16/10" aria-label="Three paths from the origin to (4,2) over the field arrows"></canvas>
+  <div class="ctrl"><label>path <select id="th-p"><option value="1">C₁: straight line y = x/2</option><option value="2">C₂: parabola y² = x</option><option value="3">C₃: x-axis, then x = 4</option></select></label>
+  <label>progress <input type="range" id="th-t" min="0" max="1" step="0.005" value="1"></label>
+  <label><input type="checkbox" id="th-f" checked> show the field</label></div>
+  <div class="readout" id="th-out"></div>
+  <p class="cap">\(C_1\) is the red straight line \(y=x/2\); \(C_2\) the blue parabola \(y^2=x\) (above \(C_1\)); \(C_3\) the green path along the \(x\)-axis to \((4,0)\) and straight up to \((4,2)\). Faint arrows show \(\vb F=y^2\ii+2xy\jj\) (colour = strength). Slide "progress" to move along the chosen path; the readout gives the work done so far. All three totals are 16, even though the running totals differ on the way.</p>
+</div>
+</section>
+
+<section id="s4">
+<h2><span class="n">4</span>The Fundamental Theorem of Line Integrals and path independence <span class="muted small">(handout §3.6–§3.7, pp. 18–20)</span></h2>
+<p>Example 3.6.6 gave 16 along three different paths, while Examples 3.6.4–3.6.5 gave different answers along different paths. The theorem below explains the difference. Recall from <a href="note-C1.html#s6">Chapter 1</a> and <a href="note-C3a.html#s3">Chapter 3a §3</a> that the <b>gradient</b> of a scalar function \(f(x,y,z)\) is the vector field \(\operatorname{grad}f=\nabla f=\pd fx\ii+\pd fy\jj+\pd fz\kk\).</p>
+<div class="box thm"><span class="tag">The Fundamental Theorem of Line Integrals</span>
+<p>Let \(C\) be an oriented curve with initial point \((x_0,y_0,z_0)\) and terminal point \((x_1,y_1,z_1)\). Let \(f(x,y,z)\) be a function that is differentiable at every point on \(C\), and assume that \(\operatorname{grad}f\) is continuous on \(C\). Then</p>
+\[\begin{aligned}\int_C\operatorname{grad}f\cdot d\vb r&=\int_C\nabla f\cdot d\vb r\\&=f(x_1,y_1,z_1)-f(x_0,y_0,z_0).\end{aligned}\]
+<p class="word"><b>In words:</b> the work done by a gradient field along a path = (value of \(f\) at the end) − (value of \(f\) at the start). The shape of the path in between does not matter.</p>
+</div>
+<p><b>Proof.</b> We first consider the case in which \(C\) is smooth, and let \(\vb r(t)=x(t)\ii+y(t)\jj+z(t)\kk\) be a smooth parametrisation of \(C\) with \(a\le t\le b\). Then, using the formula of §3 and the chain rule,</p>
+\[\begin{aligned}&\int_C\operatorname{grad}f\cdot d\vb r\\&=\int_a^b\operatorname{grad}f(x(t),y(t),z(t))\cdot\frac{d\vb r}{dt}\,dt\\&=\int_a^b\frac{d}{dt}f(x(t),y(t),z(t))\,dt\\&=f(x(b),y(b),z(b))-f(x(a),y(a),z(a))\\&=f(x_1,y_1,z_1)-f(x_0,y_0,z_0),\end{aligned}\]
+<p>where the second last step is due to the Fundamental Theorem of Calculus. Hence the result.</p>
+<details><summary>Show the calculation: every line of the proof</summary><div>
+<ol class="steps">
+<li>Work-integral formula (§3): \(\int_C\nabla f\cdot d\vb r=\int_a^b\nabla f(\vb r(t))\cdot\vb r'(t)\,dt\).</li>
+<li>Write out the dot product: \(\nabla f\cdot\vb r'\) \(=\pd fx(x(t),y(t),z(t))\,x'(t)\) \(+\:\pd fy(x(t),y(t),z(t))\,y'(t)\) \(+\:\pd fz(x(t),y(t),z(t))\,z'(t)\). <i>Why:</i> components of \(\nabla f\) times components of \(\vb r'\).</li>
+<li>Recognise the chain rule (<a href="note-C1.html#s3">Chapter 1 §3</a>): for \(F(t)=f(x(t),y(t),z(t))\), \(\dfrac{dF}{dt}=\pd fx\dfrac{dx}{dt}+\pd fy\dfrac{dy}{dt}+\pd fz\dfrac{dz}{dt}\), exactly the expression of step 2. So the integrand is \(\dfrac{d}{dt}f(x(t),y(t),z(t))\).</li>
+<li>Fundamental Theorem of Calculus: \(\int_a^b F'(t)\,dt\) \(=F(b)-F(a)\) \(=f(\vb r(b))-f(\vb r(a))\).</li>
+<li>\(\vb r(b)\) is the terminal point \((x_1,y_1,z_1)\) and \(\vb r(a)\) the initial point \((x_0,y_0,z_0)\).</li>
+</ol></div></details>
+<p>If the curve \(C\) is piecewise smooth and can be decomposed into, say, two smooth portions \(C_1\) and \(C_2\) joined at \((x',y',z')\), then we can apply the theorem above to each piece and obtain</p>
+\[\begin{aligned}\int_C\operatorname{grad}f\cdot d\vb r&=\int_{C_1}\operatorname{grad}f\cdot d\vb r+\int_{C_2}\operatorname{grad}f\cdot d\vb r\\&=[f(x',y',z')-f(x_0,y_0,z_0)]\\&\quad+[f(x_1,y_1,z_1)-f(x',y',z')]\\&=f(x_1,y_1,z_1)-f(x_0,y_0,z_0)\end{aligned}\]
+<p>as before (the value at the joint cancels). The result is known as the <b>Fundamental Theorem of Line Integrals</b>, and it is reminiscent of the formula</p>
+\[\int_a^b f'(x)\,dx=f(b)-f(a)\]
+<p>for functions of one variable: in both, integrating a derivative gives the change in the function between the end points. The gradient plays the role of the derivative.</p>
+<p class="word"><b>In words:</b> adding up the small changes \(\nabla f\cdot d\vb r=df\) of \(f\) along any path gives the total change of \(f\).</p>
+<p><b>Back to Example 3.6.6.</b> \(\vb F=y^2\ii+2xy\jj=\nabla(xy^2)\), since \(\partial(xy^2)/\partial x=y^2\) and \(\partial(xy^2)/\partial y=2xy\). So along any path from \((0,0,0)\) to \((4,2,0)\), \(\int_C\vb F\cdot d\vb r=4\cdot2^2-0=16\). Not a coincidence.</p>
+
+<div class="box eg"><span class="tag">Example 3.6.7 · gravitational potential</span>
+<p><b>Let \(C\) be a piecewise smooth curve from \((1,-2,3)\) to \((1,0,0)\) and \(\vb F\) the gravitational field of a point mass \(m\) at the origin, where</b></p>
+\[\begin{aligned}\vb F&=-\frac{Gm}{(x^2+y^2+z^2)^{3/2}}(x\ii+y\jj+z\kk)\\&=-\frac{Gm}{|\vb r|^3}\vb r\end{aligned}\]
+<p><b>and \(\vb r=x\ii+y\jj+z\kk\) (\(G\) is the gravitational constant). Find the work \(W\) done by \(\vb F\) on a unit point mass that traverses \(C\).</b></p>
+<p>We are not told the shape of \(C\), so we cannot parametrise it: we need the Fundamental Theorem. Consider</p>
+\[f(x,y,z)=\frac{Gm}{\sqrt{x^2+y^2+z^2}}=\frac{Gm}{|\vb r|};\]
+<p>we have</p>
+\[\begin{aligned}\nabla f&=Gm\Big(\pd{}{x}\frac1{|\vb r|}\ii+\pd{}{y}\frac1{|\vb r|}\jj+\pd{}{z}\frac1{|\vb r|}\kk\Big)\\&=Gm\Big(-\frac{x}{|\vb r|^3}\ii-\frac{y}{|\vb r|^3}\jj-\frac{z}{|\vb r|^3}\kk\Big)\\&=-\frac{Gm}{|\vb r|^3}\vb r=\vb F .\end{aligned}\]
+<details><summary>Show the calculation: \(\partial(1/|\vb r|)/\partial x=-x/|\vb r|^3\)</summary><div>
+<ol class="steps">
+<li>Write \(\dfrac1{|\vb r|}=(x^2+y^2+z^2)^{-1/2}\).</li>
+<li>Chain rule (power rule on the outside, \(\partial/\partial x\) of the inside \(=2x\)): \(\pd{}{x}(x^2+y^2+z^2)^{-1/2}\) \(=-\tfrac12(x^2+y^2+z^2)^{-3/2}\cdot2x\).</li>
+<li>Simplify: \(=-x(x^2+y^2+z^2)^{-3/2}=-\dfrac{x}{|\vb r|^3}\). By symmetry the \(y\)- and \(z\)-derivatives are \(-y/|\vb r|^3\) and \(-z/|\vb r|^3\).</li>
+</ol></div></details>
+<p>Hence, with \(|(1,0,0)|=1\) and \(|(1,-2,3)|=\sqrt{1+4+9}=\sqrt{14}\),</p>
+\[\begin{aligned}W=\int_C\vb F\cdot d\vb r&=f(1,0,0)-f(1,-2,3)\\&=Gm\Big(1-\frac1{\sqrt{14}}\Big).\end{aligned}\]
+<p>The function \(f(x,y,z)\) is called a <b>gravitational potential</b>. The work is positive: the unit mass moves from distance \(\sqrt{14}\approx3.74\) to distance 1, closer to the attracting mass, i.e. "downhill" in the gravity field.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Example 3.6.7: two different paths from \((1,-2,3)\) to \((1,0,0)\) in the gravity field of a mass at the origin</p>
+  <canvas class="plot" id="f-grav" style="aspect-ratio:1/1" aria-label="Rotatable 3D picture with the attracting mass, field arrows and two paths"></canvas>
+  <div class="readout" id="gv-out"></div>
+  <p class="cap">Drag to rotate. The black dot at the origin is the mass \(m\). The short arrows show \(\vb F\), pointing towards the mass and stronger close to it (colour = strength). From the green start dot \((1,-2,3)\) to the red end dot \((1,0,0)\), the purple path is a straight segment and the blue path a curved detour. The readout gives the work along each, computed numerically by adding \(\vb F\cdot\Delta\vb r\) over 4000 small steps (with \(Gm=1\)): both equal \(1-1/\sqrt{14}\approx0.7327\).</p>
+</div>
+
+<h3>Scalar potentials and conservative fields</h3>
+<div class="box def"><span class="tag">Definition (scalar potential)</span>
+<p>In general, if \(\vb F=\nabla f\), then \(f\) is called a <b>scalar potential</b> of the vector field \(\vb F\). (In physics, it is conventional to take \(f\) such that \(\vb F=-\nabla f\) as the scalar potential; then the potential energy decreases in the direction of the force. In this course \(\vb F=\nabla f\), as in Example 3.6.7.)</p>
+<p class="word"><b>In words:</b> a scalar potential is a function whose gradient is the field; the field is "the uphill direction" of its potential.</p>
+</div>
+<p>Another way to describe the Fundamental Theorem of Line Integrals is: <b>if \(\vb F\) is continuous and has a scalar potential \(f\), then \(\int_C\vb F\cdot d\vb r\) is independent of path</b>, where \(C\) lies entirely in a region such that \(\nabla f=\vb F\). "Independent of path" means: any two paths with the same initial point and the same terminal point give the same value. A field with this property is called <b>conservative</b> (the name, and how to test for it, are developed in <a href="note-C3c.html#s1">Chapter 3c §1</a>).</p>
+<div class="figure">
+  <p class="ttl">Two paths from \(A\) to \(B\) make a closed loop</p>
+  <canvas class="plot" id="f-loop" style="aspect-ratio:16/10" aria-label="Closed curve through A and B split into upper path C1 and lower path C2"></canvas>
+  <p class="cap">A closed oriented curve \(C\) through the points \(A\) (lower left) and \(B\) (upper right). Its upper part \(C_1\) (blue, arrow pointing right) goes from \(A\) to \(B\); its lower part \(C_2\) (purple, arrow pointing left) comes back from \(B\) to \(A\). Going round \(C\) once means \(C_1\) followed by \(C_2\).</p>
+</div>
+<p>Thus, if \(C\) is a closed oriented curve which is composed of \(C_1\) and \(C_2\), then we have</p>
+\[\oint_C\vb F\cdot d\vb r=\int_{C_1}\vb F\cdot d\vb r+\int_{C_2}\vb F\cdot d\vb r .\]
+<p>The property of independence of path implies that</p>
+\[\int_{C_1}\vb F\cdot d\vb r=f(B)-f(A)=-\int_{C_2}\vb F\cdot d\vb r\]
+<p>where \(\nabla f=\vb F\) (\(C_2\) runs from \(B\) to \(A\), so it gives \(f(A)-f(B)\)). That is:</p>
+<div class="box thm"><span class="tag">Closed paths</span>
+<p>If there exists \(f\) such that \(\vb F=\nabla f\), then</p>
+\[\oint_C\vb F\cdot d\vb r=0\]
+<p>where \(C\) is any closed path within the domain of \(\vb F\). Another way to describe this is: \(\displaystyle\int_{AB}\vb F\cdot d\vb r\) is independent of the path from \(A\) to \(B\).</p>
+<p class="word"><b>In words:</b> a gradient field does no net work around any loop: going out and coming back, the change in \(f\) is zero.</p>
+</div>
+<div class="figure">
+  <p class="ttl">Path independence test: a gradient field versus a swirling field</p>
+  <canvas class="plot" id="f-indep" style="aspect-ratio:16/10" aria-label="Four paths from (0,0) to (4,2) over a selectable vector field"></canvas>
+  <div class="ctrl"><label>field <select id="in-f"><option value="g">F = y² i + 2xy j (gradient of xy²)</option><option value="s">F = −y i + x j (swirl, no potential)</option></select></label></div>
+  <div class="readout" id="in-out"></div>
+  <p class="cap">The four paths from \((0,0)\) to \((4,2)\): \(C_1\) straight (red), \(C_2\) parabola \(y^2=x\) (blue), \(C_3\) along the axis then up (green), and a wiggly path (purple). The readout gives \(\int\vb F\cdot d\vb r\) along each (numerical sum over small steps). For the gradient field all four are 16. For the swirl \(-y\ii+x\jj\) they are \(0\), \(-8/3\), \(8\) and something else again: no potential exists, and (§3) a loop such as \(C_3\) followed by \(-C_1\) has non-zero circulation \(8\).</p>
+</div>
+<div class="box warn"><span class="tag">Watch out</span>
+<p>The theorem needs \(\vb F=\nabla f\) on a region containing the whole path. The helix field of Example 3.6.4, \(-zy\ii+zx\jj+xy\kk\), is <b>not</b> a gradient (its work depends on the path: \(2\pi^2\) versus 0), so there no shortcut exists and the path must be parametrised. Exam questions sometimes say "do NOT use the Fundamental Theorem of Line Integrals": then parametrise, even if a potential exists (you may still use the theorem to check your answer).</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond this chapter · how to tell whether a potential exists</span>
+<p>Since \(\nabla\times(\nabla f)=\vb 0\) for every \(f\) (<a href="note-C3a.html#s6">Chapter 3a §6</a>), a gradient field must have zero curl. The helix field fails: \(\nabla\times(-zy\ii+zx\jj+xy\kk)\) \(=0\,\ii-2y\,\jj+2z\,\kk\) \(\ne\vb 0\). The field of Example 3.6.6 passes: \(\nabla\times(y^2\ii+2xy\jj)=(2y-2y)\kk=\vb 0\). The converse (zero curl ⇒ a potential exists, on a suitable region) and the method for finding \(f\) are in <a href="note-C3c.html#s1">Chapter 3c §1–§2</a>.</p>
+</div>
+</section>
+
+<section id="summary">
+<h2><span class="n">◆</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Formula</th><th>In words</th></tr>
+<tr><td>Parametrisation</td><td>\(\vb r(t)=x(t)\ii+y(t)\jj+z(t)\kk\), \(a\le t\le b\)</td><td>a point on the curve for each \(t\); direction of increasing \(t\) = orientation</td></tr>
+<tr><td>Segment \(P\to Q\)</td><td>\(\vb r=\vb p+t(\vb q-\vb p)\), \(0\le t\le1\)</td><td>start + \(t\)(end − start)</td></tr>
+<tr><td>Curve types</td><td>closed: \(\vb r(b)=\vb r(a)\); simple: no self-crossing</td><td>smooth = no corners; piecewise smooth = finitely many smooth pieces</td></tr>
+<tr><td>Arc-length element</td><td>\(ds=|\vb r'(t)|\,dt=\sqrt{x'^2+y'^2+z'^2}\,dt\)</td><td>length covered = speed × time</td></tr>
+<tr><td>Scalar line integral</td><td>\(\int_C f\,ds=\int_a^b f(\vb r(t))\,|\vb r'(t)|\,dt\)</td><td>mass of a wire; unchanged by reversing</td></tr>
+<tr><td>Arc length</td><td>\(\int_C ds=\int_a^b|\vb r'(t)|\,dt\)</td><td>helix coil: \(2\pi\sqrt{a^2+c^2}\)</td></tr>
+<tr><td>Unit tangent</td><td>\(\vb T=\vb r'/|\vb r'|\), \(\vb T\,ds=d\vb r\)</td><td>direction of travel, length 1</td></tr>
+<tr><td>Work integral</td><td>\(\int_C\vb F\cdot d\vb r=\int_C\vb F\cdot\vb T\,ds=\int_a^b\vb F(\vb r(t))\cdot\vb r'(t)\,dt\)</td><td>adds (force along the path) × (length); no square root</td></tr>
+<tr><td>Component form</td><td>\(\int_C M\,dx+N\,dy+P\,dz\)</td><td>replace \(dx\) by \(x'(t)\,dt\), etc.</td></tr>
+<tr><td>Orientation</td><td>\(\int_{-C}\vb F\cdot d\vb r=-\int_C\vb F\cdot d\vb r\)</td><td>reverse the path, flip the sign; anticlockwise = positive</td></tr>
+<tr><td>Pieces</td><td>\(\int_C=\int_{C_1}+\int_{C_2}+\cdots\)</td><td>parametrise each smooth piece separately</td></tr>
+<tr><td>Fundamental Theorem</td><td>\(\int_C\nabla f\cdot d\vb r=f(\text{end})-f(\text{start})\)</td><td>a gradient field's work depends only on the end points</td></tr>
+<tr><td>Scalar potential</td><td>\(\vb F=\nabla f\) (physics: \(\vb F=-\nabla f\))</td><td>gravity: \(f=Gm/|\vb r|\)</td></tr>
+<tr><td>Path independence</td><td>\(\vb F=\nabla f\Rightarrow\oint_C\vb F\cdot d\vb r=0\)</td><td>no net work round any loop</td></tr>
+<tr><td>Examples</td><td>3.6.1: \(\tfrac32\sqrt{14}\); 3.6.4: \(2\pi^2\) vs 3.6.5: 0; 3.6.6: 16 three ways; 3.6.7: \(Gm(1-1/\sqrt{14})\)</td><td>work can depend on the path, unless \(\vb F=\nabla f\)</td></tr>
+</table></div>
+</section>
+
+<section id="mistakes">
+<h2><span class="n">◆</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Leaving out the speed in \(\int_C f\,ds\), i.e. writing \(\int f(\vb r(t))\,dt\). <b>Fix:</b> \(ds=|\vb r'(t)|\,dt\); for a segment \(|\vb r'|\) is the length of \(\vb q-\vb p\) (e.g. \(\sqrt{14}\) in Example 3.6.1).</span>
+<span class="x">✗</span><span>Putting the speed into the work integral, \(\int\vb F\cdot\vb r'\,|\vb r'|\,dt\). <b>Fix:</b> \(d\vb r=\vb r'(t)\,dt\) already contains the length; no square root appears in \(\int\vb F\cdot d\vb r\).</span>
+<span class="x">✗</span><span>Parametrising a segment as \(\vb p+t\vb q\). <b>Fix:</b> \(\vb p+t(\vb q-\vb p)\); check \(\vb r(0)=\) start and \(\vb r(1)=\) end.</span>
+<span class="x">✗</span><span>Running the parameter the wrong way in a work integral (e.g. clockwise when anticlockwise was asked) and not adjusting. <b>Fix:</b> the parameter must go from the start to the end of the oriented path; otherwise change the sign at the end, \(\int_{-C}=-\int_C\).</span>
+<span class="x">✗</span><span>Substituting only some of \(x,y,z\) into \(\vb F\), or forgetting that \(z=0\) on a plane path. <b>Fix:</b> replace every \(x\), \(y\), \(z\) by its function of \(t\) before dotting; the result must contain only \(t\).</span>
+<span class="x">✗</span><span>In \(\int M\,dx+N\,dy\), keeping both terms on a horizontal or vertical piece. <b>Fix:</b> on a horizontal piece \(dy=0\); on a vertical piece \(dx=0\) (Example 3.6.6, \(C_3\)).</span>
+<span class="x">✗</span><span>Using one formula across a corner (e.g. one parametrisation for all three sides of a triangle). <b>Fix:</b> split a piecewise smooth path into its smooth pieces, parametrise each, add.</span>
+<span class="x">✗</span><span>Using \(f(\text{end})-f(\text{start})\) for a field that is not a gradient, or when the question says not to. <b>Fix:</b> the Fundamental Theorem needs \(\vb F=\nabla f\); a field with non-zero curl has no potential. When told "do NOT use the Fundamental Theorem", parametrise and use it only to check.</span>
+</div>
+</section>
+
+<section id="find-mistake">
+<h2><span class="n">◆</span>Find the mistake</h2>
+<p class="muted small">Written for these notes. Each "solution" has one error. Find it before opening the answer.</p>
+<div class="q"><p class="qh">1. A scalar line integral</p>
+<p>"\(C\): segment from \((0,0,0)\) to \((1,-3,2)\), \(\vb r=t\ii-3t\jj+2t\kk\). Then \(\int_C(x+y^2-2z)\,ds\) \(=\int_0^1(t+9t^2-4t)\,dt\) \(=3-\tfrac32\) \(=\tfrac32\)."</p>
+<details><summary>Answer</summary><div><p>The factor \(ds/dt=|\vb r'(t)|=\sqrt{1+9+4}=\sqrt{14}\) is missing: \(ds\) is a length, not \(dt\). Correct value \(\tfrac32\sqrt{14}\) (Example 3.6.1).</p></div></details></div>
+<div class="q"><p class="qh">2. A work integral</p>
+<p>"Work of \(\vb F=-zy\ii+zx\jj+xy\kk\) along \(\vb r=\cos t\ii+\sin t\jj+t\kk\), \(0\le t\le2\pi\): \(W=\int\vb F\cdot\vb T\,ds\) with \(\vb T=\vb r'\) and \(ds=|\vb r'|\,dt=\sqrt2\,dt\), so \(W=\sqrt2\int_0^{2\pi}(t+\sin t\cos t)\,dt=2\sqrt2\,\pi^2\)."</p>
+<details><summary>Answer</summary><div><p>\(\vb T\) is the <b>unit</b> tangent, \(\vb r'/|\vb r'|=\vb r'/\sqrt2\), not \(\vb r'\). With the correct \(\vb T\) the \(\sqrt2\) cancels: \(\vb T\,ds=\vb r'\,dt\), and \(W=\int_0^{2\pi}(t+\sin t\cos t)\,dt=2\pi^2\) (Example 3.6.4).</p></div></details></div>
+<div class="q"><p class="qh">3. Path independence</p>
+<p>"Find \(\int_C(-y\,dx+x\,dy)\) along the upper half of the unit circle from \((1,0)\) to \((-1,0)\). Work done only depends on the end points, so use the straight segment along the \(x\)-axis instead: there \(y=0\) and \(dy=0\), so the answer is 0."</p>
+<details><summary>Answer</summary><div><p>Work depends only on the end points <b>only for a gradient field</b>. \(\vb F=-y\ii+x\jj\) has curl \(2\kk\ne\vb 0\), so it has no potential. On the semicircle \(\vb r=\cos t\ii+\sin t\jj\), \(0\le t\le\pi\): \(-y\,dx+x\,dy=(\sin^2t+\cos^2t)\,dt=dt\), so the integral is \(\pi\), not 0.</p></div></details></div>
+</section>
+
+<section id="group-work">
+<h2><span class="n">◆</span>Practice problems (written for these notes)</h2>
+<p class="muted small">The Chapter 3b handout has no group-work questions, so these are written for these notes, at least one per section. Answers checked in sympy.</p>
+<div class="q"><p class="qh">1. (§1) Parametrise (a) the segment from \((1,2,0)\) to \((3,-1,4)\); (b) the same segment in the opposite direction; (c) the circle \(x^2+y^2=4\) traced clockwise starting from \((2,0)\).</p>
+<details><summary>Hint</summary><div><p>Start + \(t\)(end − start); for clockwise, change the sign of the sine term.</p></div></details>
+<details><summary>Answer</summary><div><p>(a) \(\vb r=(1+2t)\ii+(2-3t)\jj+4t\,\kk\), \(0\le t\le1\). (b) \(\vb r=(3-2t)\ii+(-1+3t)\jj+(4-4t)\kk\), \(0\le t\le1\). (c) \(\vb r=2\cos t\,\ii-2\sin t\,\jj\), \(0\le t\le2\pi\) (at \(t=\pi/2\) it is at \((0,-2)\): clockwise).</p></div></details></div>
+<div class="q"><p class="qh">2. (§2) Evaluate \(\int_C xy\,ds\), where \(C\) is the quarter of the unit circle from \((1,0)\) to \((0,1)\).</p>
+<details><summary>Hint</summary><div><p>\(\vb r=\cos t\ii+\sin t\jj\), \(0\le t\le\pi/2\); the speed is 1.</p></div></details>
+<details><summary>Answer</summary><div><p>\(\int_0^{\pi/2}\cos t\sin t\cdot1\,dt=\big[\tfrac12\sin^2t\big]_0^{\pi/2}=\tfrac12\).</p></div></details></div>
+<div class="q"><p class="qh">3. (§2) Find the arc length of the curve \(y=x^{3/2}\) from \(x=0\) to \(x=4\).</p>
+<details><summary>Hint</summary><div><p>\(\vb r=t\ii+t^{3/2}\jj\), speed \(\sqrt{1+\tfrac94t}\); substitute \(u=1+\tfrac94t\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\dfrac{8}{27}\big(10\sqrt{10}-1\big)\approx9.07\).</p>
+<details><summary>Show the calculation</summary><div><ol class="steps">
+<li>\(\vb r'=\ii+\tfrac32t^{1/2}\jj\), so \(|\vb r'|=\sqrt{1+\tfrac94t}\).</li>
+<li>\(u=1+\tfrac94t\), \(du=\tfrac94dt\), so \(dt=\tfrac49du\); \(t=0\to u=1\), \(t=4\to u=10\).</li>
+<li>\(\int_1^{10}u^{1/2}\cdot\tfrac49\,du\) \(=\tfrac49\cdot\tfrac23\big[u^{3/2}\big]_1^{10}\) \(=\tfrac8{27}\big(10^{3/2}-1\big)\) \(=\tfrac8{27}(10\sqrt{10}-1)\).</li></ol></div></details></div></details></div>
+<div class="q"><p class="qh">4. (§3) Evaluate \(\oint_C(-y\,dx+x\,dy)\) once round the unit circle, (a) anticlockwise, (b) clockwise.</p>
+<details><summary>Hint</summary><div><p>Anticlockwise: \(x=\cos t\), \(y=\sin t\), \(dx=-\sin t\,dt\), \(dy=\cos t\,dt\).</p></div></details>
+<details><summary>Answer</summary><div><p>(a) \(\int_0^{2\pi}(\sin^2t+\cos^2t)\,dt=2\pi\). (b) \(-2\pi\) (reversing the orientation flips the sign). The circulation is not 0, so \(-y\ii+x\jj\) is not a gradient field.</p></div></details></div>
+<div class="q"><p class="qh">5. (§3) Evaluate \(\oint_C x\,dy\) anticlockwise round the triangle with vertices \((0,0)\), \((1,0)\), \((0,1)\).</p>
+<details><summary>Hint</summary><div><p>Three pieces. On the bottom side \(dy=0\); on the left side \(x=0\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(0+\tfrac12+0=\tfrac12\) (which is the area of the triangle; the reason is Green's theorem, <a href="note-C3c.html#s8">Chapter 3c §8</a>, out of 2026 syllabus).</p>
+<details><summary>Show the calculation</summary><div><ol class="steps">
+<li>\((0,0)\to(1,0)\): \(y=0\), \(dy=0\): contributes 0.</li>
+<li>\((1,0)\to(0,1)\): \(\vb r=(1-t)\ii+t\jj\), \(0\le t\le1\); \(x\,dy=(1-t)\,dt\); \(\int_0^1(1-t)\,dt=\tfrac12\).</li>
+<li>\((0,1)\to(0,0)\): \(x=0\): contributes 0. Total \(\tfrac12\).</li></ol></div></details></div></details></div>
+<div class="q"><p class="qh">6. (§4) Let \(\vb F=2xy\,\ii+(x^2+2z)\,\jj+2y\,\kk\). Show that \(\vb F=\nabla f\) with \(f=x^2y+2yz\), and find the work done by \(\vb F\) along any path from \((0,0,0)\) to \((1,2,3)\). Check by integrating along the straight segment.</p>
+<details><summary>Hint</summary><div><p>Compute the three partial derivatives of \(f\). Then use the Fundamental Theorem. For the check, \(\vb r=t\ii+2t\jj+3t\kk\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\nabla f=2xy\,\ii+(x^2+2z)\,\jj+2y\,\kk=\vb F\). Work \(=f(1,2,3)-f(0,0,0)=2+12=14\). Check: \(\vb F\cdot\vb r'\) \(=2t\cdot2t\cdot1+(t^2+6t)\cdot2+4t\cdot3\) \(=6t^2+24t\), \(\int_0^1(6t^2+24t)\,dt=2+12=14\). Round any closed path the work is 0.</p></div></details></div>
+</section>
+
+<section id="checks">
+<h2><span class="n">◆</span>Concept checks</h2>
+<p class="muted small">Written for these notes.</p>
+<div class="q"><p class="qh">1. You reverse the direction of a curve \(C\). What happens to \(\int_C f\,ds\)? To \(\int_C\vb F\cdot d\vb r\)?</p>
+<details><summary>Answer</summary><div><p>\(\int_C f\,ds\) is unchanged (lengths \(\Delta s_k\) are positive either way). \(\int_C\vb F\cdot d\vb r\) changes sign (every tangent \(\vb T\) is reversed).</p></div></details></div>
+<div class="q"><p class="qh">2. A force is perpendicular to the path at every point. How much work does it do?</p>
+<details><summary>Answer</summary><div><p>None: \(\vb F\cdot\vb T=0\) everywhere, so \(\int\vb F\cdot\vb T\,ds=0\). Example 3.6.5 is such a case (\(\vb F=t\jj\), motion along \(\kk\)).</p></div></details></div>
+<div class="q"><p class="qh">3. What is \(\int_C ds\) when \(C\) is a circle of radius 3?</p>
+<details><summary>Answer</summary><div><p>The length of \(C\): \(\int_0^{2\pi}3\,dt=6\pi\).</p></div></details></div>
+<div class="q"><p class="qh">4. What is the unit tangent vector along the segment of Example 3.6.1, from \((0,0,0)\) to \((1,-3,2)\)?</p>
+<details><summary>Answer</summary><div><p>\(\vb T=\vb r'/|\vb r'|=\dfrac{\ii-3\jj+2\kk}{\sqrt{14}}\), the same at every point of a straight segment.</p></div></details></div>
+<div class="q"><p class="qh">5. \(\vb F=2x\ii+2y\jj+2z\kk\). Find the work done along a complicated path from \((1,0,0)\) to \((0,0,2)\), and round any closed loop.</p>
+<details><summary>Answer</summary><div><p>\(\vb F=\nabla(x^2+y^2+z^2)\), so the work is \(f(0,0,2)-f(1,0,0)=4-1=3\) whatever the path, and 0 round any closed loop.</p></div></details></div>
+<div class="q"><p class="qh">6. Can the force of Example 3.6.4, \(-zy\ii+zx\jj+xy\kk\), be the gradient of some function? Answer using Examples 3.6.4 and 3.6.5 only.</p>
+<details><summary>Answer</summary><div><p>No. Two paths with the same end points gave different work (\(2\pi^2\) on the helix, 0 on the line). For a gradient field the Fundamental Theorem would force both to equal \(f(1,0,2\pi)-f(1,0,0)\).</p></div></details></div>
+</section>
+
+<section id="taster">
+<h2><span class="n">◆</span>Exam taster</h2>
+<p>Real past-paper questions of this chapter's single type, C3b.1 (line or work integral by parametrising the path), newest December first, then the May format. December papers: answer 4 of 5 questions, 25 marks each, 3 hours; the formula sheet gives \(\int_C\vb F\cdot d\vb r=\int\vb F(t)\cdot\dot{\vb r}(t)\,dt\) and \(\int_C g\,ds=\int g\sqrt{\dot x^2+\dot y^2+\dot z^2}\,dt\). May papers since 2021 have no formula sheet. Each question has a hint and the final answer with a short outline; full worked solutions with marker notes, and the other parts of this type (Dec 2025 Q4(a)(iii), Dec 2017 Q3(a)(iii)), are in the exam guide (follow the tag).</p>
+
+<div class="q"><div class="src"><b>Dec 2024 Q4(a)(iii)</b><span>5 marks</span><a class="guide" href="guide-C3b.html#C3b-1">Guide C3b.1 · line integral by parametrising</a></div>
+<p>Consider a vector field defined in \(\R^3\) given by \(\vb F=y^a e^{xy}\,\ii+x^a e^{xy}\,\jj\), where \(a\gt0\) is a constant. (Earlier parts of the question: (i) find the value of \(a\) such that \(\vb F\) is irrotational, which gives \(a=1\); (ii) find a scalar potential of \(\vb F\).)</p>
+<p>(iii) With \(a\) in Q4(a)(i), evaluate \(\displaystyle\int_C\vb F\cdot d\vb r\) where \(C\) is the straight line segment from \((0,0)\) to \((1,\pi)\) using a parametrisation of the line segment. (Do <b>NOT</b> use the Fundamental Theorem of Line Integrals as no marks will be given.)</p>
+<details><summary>Hint</summary><div><p>With \(a=1\), \(\vb F=y e^{xy}\ii+x e^{xy}\jj\). Parametrise \(\vb r(t)=t\,\ii+\pi t\,\jj\), \(0\le t\le1\), so \(xy=\pi t^2\). The integrand is of the form \(g'(t)e^{g(t)}\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\displaystyle \int_C\vb F\cdot d\vb r\) \(\displaystyle =\int_0^1 2\pi t\,e^{\pi t^2}\,dt\) \(\displaystyle =\boxed{e^{\pi}-1}\) \(\displaystyle \approx22.14\). (Check, not for marks: the potential \(e^{xy}\) gives \(e^{\pi}-e^0\).)</p>
+<details><summary>Show the calculation: outline</summary><div><ol class="steps">
+<li>\(\vb r(t)=t\ii+\pi t\jj\), \(\vb r'(t)=\ii+\pi\jj\); on the path \(x=t\), \(y=\pi t\), \(e^{xy}=e^{\pi t^2}\).</li>
+<li>\(\vb F(\vb r(t))=\pi t\,e^{\pi t^2}\ii+t\,e^{\pi t^2}\jj\).</li>
+<li>\(\vb F\cdot\vb r'=\pi t\,e^{\pi t^2}+\pi t\,e^{\pi t^2}=2\pi t\,e^{\pi t^2}\).</li>
+<li>Substitute \(u=\pi t^2\), \(du=2\pi t\,dt\): \(\int_0^\pi e^u\,du=e^\pi-1\).</li></ol></div></details></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2016 Q3(a)(iii)</b><span>5 marks</span><a class="guide" href="guide-C3b.html#C3b-1">Guide C3b.1 · line integral by parametrising</a></div>
+<p>Given a vector field in \(\R^3\): \(\vb F\) \(=(\alpha y^2+4zx)\,\ii\) \(+\:y(\beta x+2z)\,\jj\) \(+\:(\alpha y^2+2x^2)\,\kk\), where \(\alpha\) and \(\beta\) are constants. (Earlier parts: (i) find the conditions on \(\alpha\) and \(\beta\) such that \(\vb F\) is irrotational; (ii) find the divergence of \(\vb F\).)</p>
+<p>(iii) Evaluate \(\displaystyle\int_C\vb F\cdot d\vb r\) in terms of \(\alpha,\beta\), where \(C\) is the semi-circular path \(\vb r(t)=\cos t\,\ii+\sin t\,\jj\) for \(t\in[0,\pi]\).</p>
+<details><summary>Hint</summary><div><p>On \(C\), \(z=0\), so most terms vanish: \(\vb F=\alpha y^2\ii+\beta xy\jj+(\cdots)\kk\), and \(\vb r'(t)\) has no \(\kk\)-component. You need \(\int_0^\pi\sin^3t\,dt\) and \(\int_0^\pi\sin t\cos^2t\,dt\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\displaystyle \int_C\vb F\cdot d\vb r\) \(\displaystyle =\int_0^\pi\big(-\alpha\sin^3t+\beta\sin t\cos^2t\big)\,dt\) \(\displaystyle =\boxed{\tfrac{2\beta-4\alpha}{3}}\). (Check: the irrotational case of part (i) is \(\alpha=1,\ \beta=2\), which gives 0, as it must, since the potential \(xy^2+y^2z+2x^2z\) takes the same value 0 at both ends \((1,0,0)\) and \((-1,0,0)\).)</p>
+<details><summary>Show the calculation: outline</summary><div><ol class="steps">
+<li>On the path \(x=\cos t\), \(y=\sin t\), \(z=0\): \(\vb F\) \(=\alpha\sin^2t\,\ii\) \(+\:\beta\cos t\sin t\,\jj\) \(+\:(\alpha\sin^2t+2\cos^2t)\kk\); \(\vb r'=-\sin t\,\ii+\cos t\,\jj\).</li>
+<li>\(\vb F\cdot\vb r'=-\alpha\sin^3t+\beta\sin t\cos^2t\) (the \(\kk\)-part meets a 0).</li>
+<li>\(\int_0^\pi\sin^3t\,dt\) \(=\int_0^\pi(1-\cos^2t)\sin t\,dt\) \(=\big[-\cos t+\tfrac13\cos^3t\big]_0^\pi\) \(=\tfrac43\).</li>
+<li>\(\int_0^\pi\sin t\cos^2t\,dt\) \(=\big[-\tfrac13\cos^3t\big]_0^\pi\) \(=\tfrac23\).</li>
+<li>Total: \(-\tfrac43\alpha+\tfrac23\beta=\tfrac{2\beta-4\alpha}3\).</li></ol></div></details></div></details></div>
+
+<div class="q"><div class="src"><b>May 2024 Q3(a)</b><span>10 marks</span><span class="older">May format</span><a class="guide" href="guide-C3b.html#C3b-1">Guide C3b.1 · line integral by parametrising</a></div>
+<p>Determine the work done by \(\vec F=x\,\hat i+3xy\,\hat j-(x+z)\,\hat k\) over a straight path from \((1,4,2)\) to \((0,5,1)\).</p>
+<details><summary>Hint</summary><div><p>Segment: start + \(t\)(end − start), \(0\le t\le1\). Work \(=\int_0^1\vb F(\vb r(t))\cdot\vb r'(t)\,dt\). The May format has no formula sheet: state the formula you use.</p></div></details>
+<details><summary>Answer</summary><div><p>\(W=\displaystyle\int_0^1\big(14-10t-3t^2\big)\,dt=\boxed{8}\).</p>
+<details><summary>Show the calculation: outline</summary><div><ol class="steps">
+<li>\(\vb r(t)\) \(=(1,4,2)+t(-1,1,-1)\) \(=(1-t)\ii+(4+t)\jj+(2-t)\kk\), \(\vb r'=-\ii+\jj-\kk\).</li>
+<li>\(\vb F(\vb r(t))\) \(=(1-t)\ii\) \(+\:3(1-t)(4+t)\jj\) \(-\:(3-2t)\kk\) (since \(x+z=3-2t\)).</li>
+<li>\(\vb F\cdot\vb r'\) \(=-(1-t)\) \(+\:3(1-t)(4+t)\) \(+\:(3-2t)\) \(=-1+t+12-9t-3t^2+3-2t\) \(=14-10t-3t^2\).</li>
+<li>\(\int_0^1(14-10t-3t^2)\,dt\) \(=14-5-1\) \(=8\).</li></ol></div></details></div></details></div>
+</section>
+
+<footer class="foot">MECH2407 Revision Bundle · written for students revising on their own. Material in orange "Beyond the handouts" boxes is not in the course handouts. <a href="index.html">Start Here</a></footer>
+</main>
+</div>
+
+<script>
+/* ===== MV: shared plotting helpers (2D plot, 3D surface, contour map, vector field) ===== */
+window.MV=(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+function hex(c){c=c.replace('#','');if(c.length===3)c=c.split('').map(x=>x+x).join('');return [0,2,4].map(i=>parseInt(c.substr(i,2),16));}
+function mix(a,b,t){const A=hex(a),B=hex(b);return 'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')+')';}
+function ramp(t){t=Math.max(0,Math.min(1,t));return t<.5?mix(css('--accent'),css('--c3'),t*2):mix(css('--c3'),css('--warm'),(t-.5)*2);}
+function setup(cv){const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return null;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card');g.fillRect(0,0,W,H);g.font='11px Inter, system-ui, sans-serif';return {g,W,H};}
+function arrow(g,x1,y1,x2,y2,col,w,head){g.strokeStyle=col;g.fillStyle=col;g.lineWidth=w||2;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  const a=Math.atan2(y2-y1,x2-x1),L=head||8;g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-L*Math.cos(a-.4),y2-L*Math.sin(a-.4));g.lineTo(x2-L*Math.cos(a+.4),y2-L*Math.sin(a+.4));g.closePath();g.fill();}
+function label(g,t,x,y,col,align,bold){g.font=(bold?'600 ':'')+'12px Inter, system-ui, sans-serif';g.fillStyle=col;g.textAlign=align||'left';g.textBaseline='middle';g.save();g.strokeStyle=css('--card');g.lineWidth=3.5;g.lineJoin='round';g.strokeText(t,x,y);g.restore();g.fillText(t,x,y);g.font='11px Inter, system-ui, sans-serif';}
+
+/* ---- 2D axes. o: xmin,xmax,ymin,ymax,xstep,ystep,equal, curves[{f,color,dash,width,from,to}], param[{x(t),y(t),t0,t1,color}],
+   segs[{x1,y1,x2,y2,color,dash}], arrows[{x1,y1,x2,y2,color,label}], pts[{x,y,color,label,open}], extra(g,X,Y) ---- */
+function axes2d(cv,o){
+  const s=setup(cv);if(!s)return;const {g,W,H}=s;
+  const pl=34,pr=12,pt=12,pb=26;
+  if(o.equal){const sx=(W-pl-pr)/(o.xmax-o.xmin),sy=(H-pt-pb)/(o.ymax-o.ymin);if(sx>sy){const c=(o.xmin+o.xmax)/2,h=(W-pl-pr)/sy/2;o=Object.assign({},o,{xmin:c-h,xmax:c+h});}else{const c=(o.ymin+o.ymax)/2,h=(H-pt-pb)/sx/2;o=Object.assign({},o,{ymin:c-h,ymax:c+h});}}
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr), Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const xs=o.xstep||1,ys=o.ystep||1;
+  const xt=range(Math.ceil(o.xmin/xs)*xs,o.xmax,xs),yt=range(Math.ceil(o.ymin/ys)*ys,o.ymax,ys);
+  g.strokeStyle=css('--grid');g.lineWidth=1;
+  xt.forEach(v=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(v=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis');g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted');g.textAlign='center';g.textBaseline='top';
+  xt.forEach(v=>{if(v!==0)g.fillText(fmt(v,2),X(v),H-pb+6);});
+  g.textAlign='right';g.textBaseline='middle';yt.forEach(v=>{if(v!==0)g.fillText(fmt(v,2),pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr-2,Y(Math.max(o.ymin,Math.min(0,o.ymax)))-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,X(Math.max(o.xmin,Math.min(0,o.xmax)))+5,pt+2);}
+  g.save();g.beginPath();g.rect(pl,pt,W-pl-pr,H-pt-pb);g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{const a=c.from!==undefined?c.from:o.xmin,b=c.to!==undefined?c.to:o.xmax,N=c.n||600;
+    g.strokeStyle=c.color;g.lineWidth=c.width||2.4;g.setLineDash(c.dash||[]);g.beginPath();let pen=false,py=null;
+    for(let i=0;i<=N;i++){const x=a+(b-a)*i/N,y=c.f(x);if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*.5)pen=false;if(!pen){g.moveTo(X(x),Y(y));pen=true;}else g.lineTo(X(x),Y(y));py=y;}
+    g.stroke();g.setLineDash([]);});
+  (o.param||[]).forEach(c=>{const N=c.n||400;g.strokeStyle=c.color;g.lineWidth=c.width||2.4;g.setLineDash(c.dash||[]);g.beginPath();
+    for(let i=0;i<=N;i++){const t=c.t0+(c.t1-c.t0)*i/N;const x=c.x(t),y=c.y(t);i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y));}g.stroke();g.setLineDash([]);});
+  (o.segs||[]).forEach(q=>{g.strokeStyle=q.color;g.lineWidth=q.width||2;g.setLineDash(q.dash||[]);g.beginPath();g.moveTo(X(q.x1),Y(q.y1));g.lineTo(X(q.x2),Y(q.y2));g.stroke();g.setLineDash([]);});
+  if(o.extra)o.extra(g,X,Y);
+  g.restore();
+  (o.arrows||[]).forEach(a=>{arrow(g,X(a.x1),Y(a.y1),X(a.x2),Y(a.y2),a.color,a.width||2.2);if(a.label)label(g,a.label,X(a.x2)+6,Y(a.y2)-8,a.color,'left',true);});
+  (o.pts||[]).forEach(p=>{g.beginPath();g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label)label(g,p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-10,p.color,p.align||'left',true);});
+  return {X,Y,g};
+}
+
+/* ---- 3D surface z=f(x,y) (or parametric o.P), drag to rotate. o: f, x:[a,b], y:[c,d] (box), z:[lo,hi] (clip), n (grid), view {yaw,elev}, psurfs[{P,s,t,color,alpha}],
+   f2 (second surface, e.g. tangent plane), curves3d[{pts:[[x,y,z]...],color,width}], pts3d[{p:[x,y,z],color,label}],
+   arrows3d[{from,to,color,label}], labels {x,y,z}, alpha, mask(x,y)->bool ---- */
+function surface(cv,o){
+  if(!cv._view){cv._view=Object.assign({yaw:-0.65,elev:0.45},o.view||{});attachDrag(cv);}
+  cv._o=o;const s=setup(cv);if(!s)return;const {g,W,H}=s;const v=cv._view;
+  const [xa,xb]=o.x,[ya,yb]=o.y;let [za,zb]=o.z;
+  const nx=x=>2*(x-xa)/(xb-xa)-1, ny=y=>2*(y-ya)/(yb-ya)-1, zs=o.zscale||0.8, nz=z=>zs*(2*(z-za)/(zb-za)-1);
+  const cy=Math.cos(v.yaw),sy=Math.sin(v.yaw),ce=Math.cos(v.elev),se=Math.sin(v.elev);
+  const sc=Math.min(W,H)*0.33, ox=W/2, oy=H/2+H*0.03;
+  function P(x,y,z){const X=nx(x),Y=ny(y),Z=nz(z);const u=X*cy-Y*sy,d=X*sy+Y*cy;return [ox+sc*u, oy-sc*(Z*ce+d*se), d*ce-Z*se];}
+  // axes box floor + axes
+  g.lineWidth=1;g.strokeStyle=css('--grid');
+  const fl=[[xa,ya],[xb,ya],[xb,yb],[xa,yb],[xa,ya]].map(q=>P(q[0],q[1],za));
+  g.beginPath();fl.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();
+  const ax=[[P(xa,ya,za),P(xb,ya,za),o.labels?o.labels.x:'x'],[P(xa,ya,za),P(xa,yb,za),o.labels?o.labels.y:'y'],[P(xa,ya,za),P(xa,ya,zb),o.labels?o.labels.z:'z']];
+  ax.forEach(a=>{arrow(g,a[0][0],a[0][1],a[1][0],a[1][1],css('--axis'),1.3,6);label(g,a[2],a[1][0]+(a[1][0]>a[0][0]?6:-6),a[1][1]-6,css('--muted'),a[1][0]>a[0][0]?'left':'right');});
+  const quads=[];
+  function addGrid(pt,N,M,col,alpha,isMain){const G=[];
+    for(let i=0;i<=N;i++){G[i]=[];for(let j=0;j<=M;j++){const q=pt(i/N,j/M);const ok=q&&q.every(isFinite)&&q[2]>=za-1e-9&&q[2]<=zb+1e-9&&(!o.mask||o.mask(q[0],q[1]));G[i][j]={q,ok};}}
+    for(let i=0;i<N;i++)for(let j=0;j<M;j++){const c=[G[i][j],G[i+1][j],G[i+1][j+1],G[i][j+1]];if(c.some(q=>!q.ok))continue;
+      const pp=c.map(q=>P(q.q[0],q.q[1],q.q[2]));const zm=(c[0].q[2]+c[1].q[2]+c[2].q[2]+c[3].q[2])/4;
+      quads.push({pp,depth:(pp[0][2]+pp[1][2]+pp[2][2]+pp[3][2])/4,fill:col?col:ramp((zm-za)/(zb-za)),alpha,isMain});}}
+  function addSurf(f,col,alpha,isMain){const N=o.n||28;addGrid((u,w)=>{const x=xa+(xb-xa)*u,y=ya+(yb-ya)*w;return [x,y,f(x,y)];},N,N,col,alpha,isMain);}
+  // parametric piece: {P:(s,t)=>[x,y,z], s:[a,b], t:[c,d], n, m, color (css var; omit for height colours), alpha}
+  function addParam(q,isMain){const [sa,sb]=q.s,[ta,tb]=q.t;addGrid((u,w)=>q.P(sa+(sb-sa)*u,ta+(tb-ta)*w),q.n||24,q.m||48,q.color?css(q.color):null,q.alpha||(isMain?0.92:0.5),isMain);}
+  if(o.f)addSurf(o.f,null,o.alpha||0.92,true);
+  if(o.P)addParam(Object.assign({alpha:o.alpha||0.92},o.P),true);
+  if(o.f2)addSurf(o.f2,css(o.f2color||'--warm'),o.f2alpha||0.55,false);
+  (o.surfs||[]).forEach(q=>addSurf(q.f,css(q.color),q.alpha||0.5,false));
+  (o.psurfs||[]).forEach(q=>addParam(q,false));
+  quads.sort((a,b)=>b.depth-a.depth);
+  const line=css('--card');
+  quads.forEach(q=>{g.globalAlpha=q.alpha;g.fillStyle=q.fill;g.beginPath();q.pp.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();g.fill();
+    g.globalAlpha=q.isMain?0.35:0.2;g.strokeStyle=line;g.lineWidth=0.6;g.stroke();});
+  g.globalAlpha=1;
+  (o.curves3d||[]).forEach(c=>{g.strokeStyle=c.color;g.lineWidth=c.width||2.6;g.setLineDash(c.dash||[]);g.beginPath();c.pts.forEach((q,i)=>{const p=P(q[0],q[1],q[2]);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]);});g.stroke();g.setLineDash([]);});
+  (o.arrows3d||[]).forEach(a=>{const p=P(...a.from),q=P(...a.to);arrow(g,p[0],p[1],q[0],q[1],a.color,2.4);if(a.label)label(g,a.label,q[0]+6,q[1]-8,a.color,'left',true);});
+  (o.pts3d||[]).forEach(t=>{const p=P(...t.p);g.beginPath();g.arc(p[0],p[1],t.r||5,0,7);g.fillStyle=t.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();if(t.label)label(g,t.label,p[0]+8,p[1]-10,t.color,'left',true);});
+  g.fillStyle=css('--muted');g.font='11px Inter, system-ui, sans-serif';g.textAlign='right';g.textBaseline='bottom';g.fillText('drag to rotate',W-8,H-6);
+}
+function attachDrag(cv){cv.classList.add('drag');let d=null;
+  cv.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY,yaw:cv._view.yaw,elev:cv._view.elev};cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!d)return;cv._view.yaw=d.yaw-(e.clientX-d.x)*0.01;cv._view.elev=Math.max(-0.2,Math.min(1.45,d.elev+(e.clientY-d.y)*0.01));surface(cv,cv._o);});
+  ['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>{d=null;}));}
+
+/* ---- contour map of f(x,y). o: f, x,y ranges, levels [..], labels (bool), equal, plus any axes2d options (pts, arrows, curves, param) ---- */
+function contour(cv,o){
+  const base=Object.assign({xmin:o.x[0],xmax:o.x[1],ymin:o.y[0],ymax:o.y[1]},o);
+  base.extra=function(g,X,Y){
+    const N=o.n||120,[xa,xb]=[base.xmin,base.xmax],[ya,yb]=[base.ymin,base.ymax];const F=[];
+    for(let i=0;i<=N;i++){F[i]=[];for(let j=0;j<=N;j++)F[i][j]=o.f(xa+(xb-xa)*i/N,ya+(yb-ya)*j/N);}
+    const L=o.levels,lo=Math.min(...L),hi=Math.max(...L);
+    L.forEach(c=>{g.strokeStyle=o.color?css(o.color):ramp(hi>lo?(c-lo)/(hi-lo):0.5);g.lineWidth=1.8;g.beginPath();
+      for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+        const x0=xa+(xb-xa)*i/N,x1=xa+(xb-xa)*(i+1)/N,y0=ya+(yb-ya)*j/N,y1=ya+(yb-ya)*(j+1)/N;
+        const v=[F[i][j],F[i+1][j],F[i+1][j+1],F[i][j+1]],P=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]],e=[];
+        if(v.some(q=>!isFinite(q)))continue;
+        for(let k=0;k<4;k++){const a=v[k]-c,b=v[(k+1)%4]-c;if((a<0)!==(b<0)){const t=a/(a-b),A=P[k],B=P[(k+1)%4];e.push([A[0]+t*(B[0]-A[0]),A[1]+t*(B[1]-A[1])]);}}
+        for(let k=0;k+1<e.length;k+=2){g.moveTo(X(e[k][0]),Y(e[k][1]));g.lineTo(X(e[k+1][0]),Y(e[k+1][1]));}}
+      g.stroke();});
+    if(o.extra2)o.extra2(g,X,Y);
+  };
+  return axes2d(cv,base);
+}
+
+/* ---- vector field F(x,y) -> [u,v]. o: F, x,y ranges, n (arrows per side), plus axes2d options ---- */
+function field(cv,o){
+  const base=Object.assign({xmin:o.x[0],xmax:o.x[1],ymin:o.y[0],ymax:o.y[1],equal:true},o);
+  base.extra=function(g,X,Y){const n=o.n||13,[xa,xb]=o.x,[ya,yb]=o.y,h=Math.min((xb-xa),(yb-ya))/n;let mx=0;const A=[];
+    for(let i=0;i<=n;i++)for(let j=0;j<=n;j++){const x=xa+(xb-xa)*i/n,y=ya+(yb-ya)*j/n,F=o.F(x,y);const m=Math.hypot(F[0],F[1]);if(isFinite(m)){A.push([x,y,F,m]);mx=Math.max(mx,m);}}
+    A.forEach(([x,y,F,m])=>{if(m<1e-12)return;const L=0.42*h*(o.uniform?1:Math.sqrt(m/mx))/m;
+      arrow(g,X(x-F[0]*L),Y(y-F[1]*L),X(x+F[0]*L),Y(y+F[1]*L),ramp(m/mx),1.6,5);});
+    if(o.extra2)o.extra2(g,X,Y);};
+  return axes2d(cv,base);
+}
+
+function mount(id,draw){const el=document.getElementById(id);if(!el)return;const f=()=>draw(el);redraws.push(f);f();return f;}
+function slider(id,cb){const el=document.getElementById(id);if(el)el.addEventListener('input',cb);return el;}
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>redraws.forEach(f=>f()),120);});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>redraws.forEach(f=>f()));
+document.addEventListener('DOMContentLoaded',()=>{ // highlight current section in rail
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];if(!('IntersectionObserver' in window)||!links.length)return;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));}}),{rootMargin:'-20% 0px -70% 0px'});
+  links.forEach(a=>{const s=document.getElementById(a.getAttribute('href').slice(1));if(s)io.observe(s);});});
+return {css,fmt,range,mix,ramp,arrow,label,axes2d,surface,contour,field,mount,slider,redraw:()=>redraws.forEach(f=>f())};
+})();
+</script>
+<script>
+(function(){
+const {css,fmt,mount,surface,axes2d,field,label,arrow,ramp}=MV;
+const $=id=>document.getElementById(id);
+const lin=(a,b,n)=>Array.from({length:n+1},(_,i)=>a+(b-a)*i/n);
+const on=(ids,f)=>ids.forEach(id=>{const e=$(id);if(e){e.addEventListener('input',f);e.addEventListener('change',f);}});
+const T=(g,s,x,y,col,al)=>label(g,s,x,y,col||css('--ink'),al||'left',true);
+const PI=Math.PI;
+function curve(g,X,Y,P,col,w,dash){g.save();g.strokeStyle=col;g.lineWidth=w||2.2;g.setLineDash(dash||[]);g.beginPath();P.forEach((p,i)=>i?g.lineTo(X(p[0]),Y(p[1])):g.moveTo(X(p[0]),Y(p[1])));g.stroke();g.restore();}
+function arr(g,X,Y,x1,y1,x2,y2,col,w,head){arrow(g,X(x1),Y(y1),X(x2),Y(y2),col,w||2.2,head||8);}
+function dot(g,X,Y,x,y,col,r){g.beginPath();g.arc(X(x),Y(y),r||4,0,7);g.fillStyle=col;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.2;g.stroke();}
+/* small arrowhead on a curve at parameter s (direction from p(s-h) to p(s+h)) */
+function head(g,X,Y,p,s,col,h){h=h||0.004;const a=p(s-h),b=p(s+h);const x1=X(a[0]),y1=Y(a[1]),x2=X(b[0]),y2=Y(b[1]);const an=Math.atan2(y2-y1,x2-x1),L=9;
+  const cx=(x1+x2)/2,cy=(y1+y2)/2;g.save();g.fillStyle=col;g.beginPath();g.moveTo(cx+L*0.6*Math.cos(an),cy+L*0.6*Math.sin(an));
+  g.lineTo(cx-L*Math.cos(an-.45),cy-L*Math.sin(an-.45));g.lineTo(cx-L*Math.cos(an+.45),cy-L*Math.sin(an+.45));g.closePath();g.fill();g.restore();}
+/* numerical work of a 2D/3D field along p(s), s in [0,S] */
+function work(F,p,S,N){N=N||2000;let w=0,q=p(0);for(let i=1;i<=N;i++){const r=p(S*i/N),m=q.map((v,j)=>(v+r[j])/2),f=F(...m);for(let j=0;j<q.length;j++)w+=f[j]*(r[j]-q[j]);q=r;}return w;}
+
+/* ======================= §1 parametrisation ======================= */
+const PM={seg:{r:t=>[4*t,2*t],v:t=>[4,2],a:0,b:1,name:'r(t) = 4t i + 2t j, 0 ≤ t ≤ 1',box:[-0.6,4.8,-0.6,2.6]},
+  par:{r:t=>[t,t*t],v:t=>[1,2*t],a:0,b:2,name:'r(t) = t i + t² j, 0 ≤ t ≤ 2',box:[-0.6,2.8,-0.4,4.4]},
+  cir:{r:t=>[2*Math.cos(t),2*Math.sin(t)],v:t=>[-2*Math.sin(t),2*Math.cos(t)],a:0,b:2*PI,name:'r(t) = 2cos t i + 2sin t j, 0 ≤ t ≤ 2π',box:[-2.8,2.8,-2.6,2.6]},
+  semi:{r:t=>[Math.cos(t),Math.sin(t)],v:t=>[-Math.sin(t),Math.cos(t)],a:0,b:PI,name:'r(t) = cos t i + sin t j, 0 ≤ t ≤ π',box:[-1.5,1.5,-0.4,1.4]}};
+function drawParam(cv){const C=PM[$('pm-sel').value],rev=$('pm-rev').checked,u=+$('pm-t').value,t=C.a+(C.b-C.a)*u;
+  const r=rev?(s=>C.r(C.a+C.b-s)):C.r,v=rev?(s=>C.v(C.a+C.b-s).map(c=>-c)):C.v;
+  const B=C.box,p=r(t),vv=v(t),sp=Math.hypot(...vv),sc=Math.min(B[1]-B[0],B[3]-B[2])*0.22/sp;
+  axes2d(cv,{xmin:B[0],xmax:B[1],ymin:B[2],ymax:B[3],equal:true,xstep:1,ystep:1,xlabel:'x',ylabel:'y',
+    extra:(g,X,Y)=>{const ps=lin(C.a,C.b,300).map(r);curve(g,X,Y,ps,css('--accent'),2.6);
+      const pf=s=>r(C.a+(C.b-C.a)*s);[0.17,0.42,0.67,0.9].forEach(s=>head(g,X,Y,pf,s,css('--accent')));
+      arr(g,X,Y,0,0,p[0],p[1],css('--c4'),2);arr(g,X,Y,p[0],p[1],p[0]+vv[0]*sc,p[1]+vv[1]*sc,css('--c2'),2.4);
+      const s0=r(C.a),s1=r(C.b);dot(g,X,Y,s0[0],s0[1],css('--c3'),5.5);dot(g,X,Y,s1[0],s1[1],css('--c2'),4);
+      T(g,'r(a)',X(s0[0])+8,Y(s0[1])+12,css('--c3'));if(Math.hypot(s1[0]-s0[0],s1[1]-s0[1])>0.01)T(g,'r(b)',X(s1[0])+8,Y(s1[1])-12,css('--c2'));
+      dot(g,X,Y,p[0],p[1],css('--c4'),4.5);T(g,'r(t)',X(p[0]/2)+6,Y(p[1]/2)-8,css('--c4'));T(g,'dr/dt',X(p[0]+vv[0]*sc)+4,Y(p[1]+vv[1]*sc)-10,css('--c2'));}});
+  $('pm-out').innerHTML=(rev?'reversed: r(a+b−t) with ':'')+C.name+' · t = '+fmt(t,3)+' · point ('+fmt(p[0],2)+', '+fmt(p[1],2)+') · velocity ('+fmt(vv[0],2)+', '+fmt(vv[1],2)+'), speed '+fmt(sp,3);}
+if($('f-param')){on(['pm-sel','pm-t','pm-rev'],()=>drawParam($('f-param')));mount('f-param',drawParam);}
+
+/* four curve types */
+const TY=[
+  {id:'f-ty1',ttl:'Simple and open',p:t=>[t,0.9*Math.sin(2*t)+0.35*t],a:0,b:3.1,box:[-0.3,3.4,-1.2,2.7],closed:false},
+  {id:'f-ty2',ttl:'Simple and closed',p:t=>{const R=1+0.22*Math.cos(3*t)+0.12*Math.sin(2*t);return [R*Math.cos(t),1.15*R*Math.sin(t)];},a:-2.2,b:-2.2+2*PI,box:[-1.6,1.6,-1.5,2.0],closed:true},
+  {id:'f-ty3',ttl:'Not simple and open',p:t=>[0.5*(t-2.2*Math.sin(t)),0.5*(1-2.2*Math.cos(t))],a:2.6,b:9.6,box:[-0.2,5.4,-0.8,2.4],closed:false},
+  {id:'f-ty4',ttl:'Not simple and closed',p:t=>[1.3*Math.cos(t),0.9*Math.sin(2*t)+0.15*Math.cos(t)],a:0.5,b:0.5+2*PI,box:[-1.6,1.6,-1.2,1.7],closed:true}];
+TY.forEach(Q=>{if($(Q.id))mount(Q.id,cv=>{const B=Q.box,o=10,p=t=>{const q=Q.p(t);return [q[0]+o,q[1]+o];};
+  const R=axes2d(cv,{xmin:B[0]+o,xmax:B[1]+o,ymin:B[2]+o,ymax:B[3]+o,equal:true,xstep:100,ystep:100,
+  extra:(g,X,Y)=>{const ps=lin(Q.a,Q.b,400).map(p);curve(g,X,Y,ps,css('--accent'),2.6);
+    const s=p(Q.a),e=p(Q.b);dot(g,X,Y,s[0],s[1],css('--c2'),5.5);if(!Q.closed)dot(g,X,Y,e[0],e[1],css('--c2'),5.5);}});
+  if(R){const g=R.g;g.save();g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=css('--ink');g.textAlign='center';g.textBaseline='top';g.fillText(Q.ttl,cv.clientWidth/2,4);g.restore();}});});
+
+/* ======================= §2 Riemann sum on a space curve ======================= */
+const RC=t=>[0.3+1.5*t+0.25*Math.sin(3*t),0.3+2.4*t,1.0+0.5*Math.sin(2*PI*t)+0.9*t*t];
+const RB={x:[0,2.2],y:[0,3],z:[0,2.6]};
+function arcLen(p,a,b,N){let L=0,q=p(a);for(let i=1;i<=N;i++){const r=p(a+(b-a)*i/N);L+=Math.hypot(r[0]-q[0],r[1]-q[1],r[2]-q[2]);q=r;}return L;}
+let riExact=null;
+function drawRiem(cv){const n=+$('ri-n').value,ks=$('ri-k');ks.max=n;if(+ks.value>n)ks.value=n;const k=+ks.value;
+  const tk=lin(0,1,n),P=tk.map(RC),pts=lin(0,1,300).map(RC);
+  const piece=lin(tk[k-1],tk[k],40).map(RC),sm=RC((tk[k-1]+tk[k])/2);
+  let S=0;for(let i=1;i<=n;i++){const ds=arcLen(RC,tk[i-1],tk[i],60),m=RC((tk[i-1]+tk[i])/2);S+=(1+m[2])*ds;}
+  if(riExact===null){riExact=0;const N=4000;for(let i=1;i<=N;i++){const a=RC((i-1)/N),b=RC(i/N);riExact+=(1+(a[2]+b[2])/2)*Math.hypot(b[0]-a[0],b[1]-a[1],b[2]-a[2]);}}
+  const pa=P[0],pb=P[n];
+  surface(cv,Object.assign({},RB,{view:{yaw:-0.55,elev:0.32},
+    curves3d:[{pts,color:css('--accent'),width:2.4},{pts:piece,color:css('--warm'),width:5},
+      {pts:[[sm[0],sm[1],sm[2]],[sm[0],sm[1],0]],color:css('--c4'),width:1.3,dash:[4,3]},
+      {pts:[[sm[0],sm[1],0],[sm[0],0,0]],color:css('--c4'),width:1.3,dash:[4,3]},{pts:[[sm[0],sm[1],0],[0,sm[1],0]],color:css('--c4'),width:1.3,dash:[4,3]}],
+    arrows3d:[{from:[0,0,0],to:pa,color:css('--c3'),label:'r(a)'},{from:[0,0,0],to:pb,color:css('--c3'),label:'r(b)'}],
+    pts3d:P.map((q,i)=>({p:q,color:css('--c2'),r:3.6,label:(i===0?'P0':i===n?'Pn':(i===k-1&&n<=12?'P'+(k-1):(i===k&&n<=12?'P'+k:'')))})).concat([{p:sm,color:css('--c4'),r:4.5,label:'(xk,yk,zk)'}])}));
+  const dk=arcLen(RC,tk[k-1],tk[k],60);
+  $('ri-out').innerHTML='n = '+n+' · piece k = '+k+': Δs<sub>k</sub> = '+fmt(dk,3)+', sample point ('+sm.map(c=>fmt(c,2)).join(', ')+'), f = 1 + z = '+fmt(1+sm[2],3)+' · Σ f Δs<sub>k</sub> = <b>'+fmt(S,4)+'</b> (limit, the line integral: '+fmt(riExact,4)+')';}
+if($('f-riem')){on(['ri-n','ri-k'],()=>drawRiem($('f-riem')));mount('f-riem',drawRiem);}
+
+/* piecewise curve C1, C2, C3 */
+const PC1=s=>[0.2+1.6*s-0.1*Math.sin(PI*s),0.5+1.6*Math.sin(PI*s/2)*(1-0.4*s)];
+const PC2=s=>{const a=PC1(1);return s<0.5?[a[0]+2.4*s,a[1]+0.2*s]:[a[0]+1.2+1.4*(s-0.5),a[1]+0.1+1.6*Math.sin(PI*(s-0.5))*0.9];};
+const PC3=s=>{const a=PC2(1);return [a[0]+2.2*s,a[1]+0.7*Math.sin(2*PI*s)*(1-s)+0.9*s*s];};
+if($('f-pieces'))mount('f-pieces',cv=>{axes2d(cv,{xmin:0,xmax:7.2,ymin:0,ymax:3.6,equal:true,xstep:100,ystep:100,
+  extra:(g,X,Y)=>{const S=lin(0,1,200);curve(g,X,Y,S.map(PC1),css('--accent'),2.6);curve(g,X,Y,S.map(PC2),css('--c3'),2.6);curve(g,X,Y,S.map(PC3),css('--c4'),2.6);
+    [[PC1,0.6],[PC2,0.3],[PC3,0.45]].forEach(([p,s],i)=>head(g,X,Y,p,s,[css('--accent'),css('--c3'),css('--c4')][i],0.01));
+    const a=PC1(0),b=PC1(1),c=PC2(1),d=PC3(1),m1=PC1(0.5),m2=PC2(0.25),m3=PC3(0.6);
+    dot(g,X,Y,a[0],a[1],css('--c2'),5.5);dot(g,X,Y,d[0],d[1],css('--c2'),5.5);dot(g,X,Y,b[0],b[1],css('--muted'),4);dot(g,X,Y,c[0],c[1],css('--muted'),4);
+    T(g,'C1',X(m1[0])+10,Y(m1[1])+14,css('--accent'));T(g,'C2',X(m2[0]),Y(m2[1])+16,css('--c3'));T(g,'C3',X(m3[0])+10,Y(m3[1])+14,css('--c4'));
+    T(g,'start',X(a[0])+8,Y(a[1])+12,css('--c2'));T(g,'end',X(d[0])-30,Y(d[1])-12,css('--c2'));}});});
+
+/* helix one coil + unrolled */
+function hxVals(){return [+$('hx-a').value,+$('hx-c').value];}
+function drawHelix(cv){const [a,c]=hxVals(),ts=lin(0,2*PI,300),pts=ts.map(t=>[a*Math.cos(t),a*Math.sin(t),c*t]);
+  const cyl=[];for(let k=0;k<8;k++){const th=2*PI*k/8;cyl.push({pts:[[a*Math.cos(th),a*Math.sin(th),0],[a*Math.cos(th),a*Math.sin(th),2*PI*c]],color:css('--grid'),width:1});}
+  surface(cv,{x:[-1.6,1.6],y:[-1.6,1.6],z:[0,2*PI*0.6],view:{yaw:-0.6,elev:0.35},
+    curves3d:cyl.concat([{pts:ts.map(t=>[a*Math.cos(t),a*Math.sin(t),0]),color:css('--muted'),width:1.2,dash:[4,3]},{pts,color:css('--accent'),width:2.8}]),
+    pts3d:[{p:[a,0,0],color:css('--c3'),label:'t = 0'},{p:[a,0,2*PI*c],color:css('--c2'),label:'t = 2π'}]});}
+function drawUnroll(cv){const [a,c]=hxVals(),W=2*PI*a,H=2*PI*c;
+  axes2d(cv,{xmin:-0.4,xmax:10,ymin:-0.6,ymax:4.2,equal:true,xstep:2,ystep:1,
+    extra:(g,X,Y)=>{g.save();g.globalAlpha=0.15;g.fillStyle=css('--accent');g.beginPath();g.moveTo(X(0),Y(0));g.lineTo(X(W),Y(0));g.lineTo(X(W),Y(H));g.closePath();g.fill();g.restore();
+      curve(g,X,Y,[[0,0],[W,0]],css('--muted'),1.6,[5,4]);curve(g,X,Y,[[W,0],[W,H]],css('--muted'),1.6,[5,4]);curve(g,X,Y,[[0,0],[W,H]],css('--accent'),2.8);
+      dot(g,X,Y,0,0,css('--c3'),5);dot(g,X,Y,W,H,css('--c2'),5);
+      T(g,'2πa = '+fmt(W,2),X(W/2),Y(0)+14,css('--muted'),'center');T(g,'2πc = '+fmt(H,2),X(W)+6,Y(H/2),css('--muted'));
+      T(g,'length',X(W/2)-50,Y(H/2)-14,css('--accent'));}});}
+function hxAll(){const [a,c]=hxVals();if($('f-helix'))drawHelix($('f-helix'));if($('f-unroll'))drawUnroll($('f-unroll'));
+  let L=0;const N=3000;for(let i=1;i<=N;i++)L+=Math.sqrt(a*a+c*c)*2*PI/N;
+  $('hx-out').innerHTML='a = '+fmt(a,2)+', c = '+fmt(c,2)+' · speed √(a²+c²) = '+fmt(Math.sqrt(a*a+c*c),4)+' · one coil: 2π√(a²+c²) = <b>'+fmt(2*PI*Math.sqrt(a*a+c*c),4)+'</b> · hypotenuse √((2πa)²+(2πc)²) = '+fmt(Math.hypot(2*PI*a,2*PI*c),4);}
+if($('f-helix')){on(['hx-a','hx-c'],hxAll);mount('f-helix',drawHelix);mount('f-unroll',drawUnroll);hxAll();}
+
+/* ======================= §3 force field along a path ======================= */
+const FF=(x,y,z)=>[0.55-0.25*y,0.25*x+0.1,0.45+0.15*y-0.1*z];
+if($('f-force'))mount('f-force',cv=>{const n=8,tk=lin(0,1,n),P=tk.map(RC);const sm=RC((tk[4]+tk[5])/2);
+  surface(cv,Object.assign({},RB,{view:{yaw:-0.55,elev:0.32},
+    curves3d:[{pts:lin(0,1,300).map(RC),color:css('--accent'),width:2.4},
+      {pts:[sm,[sm[0],sm[1],0]],color:css('--c4'),width:1.3,dash:[4,3]},{pts:[[sm[0],sm[1],0],[sm[0],0,0]],color:css('--c4'),width:1.3,dash:[4,3]},{pts:[[sm[0],sm[1],0],[0,sm[1],0]],color:css('--c4'),width:1.3,dash:[4,3]}],
+    arrows3d:[{from:[0,0,0],to:P[0],color:css('--c3'),label:'r(a)'},{from:[0,0,0],to:P[n],color:css('--c3'),label:'r(b)'}].concat(P.map(q=>{const f=FF(...q);return {from:q,to:[q[0]+f[0],q[1]+f[1],q[2]+f[2]],color:css('--warn')};})),
+    pts3d:P.map((q,i)=>({p:q,color:css('--c2'),r:3.8,label:i===0?'P0':i===n?'Pn':(i===4?'Pk−1':(i===5?'Pk':''))})).concat([{p:sm,color:css('--c4'),r:4,label:''}])}));});
+
+/* one piece: T and F */
+const PK=s=>[4*s,1.6*s*s+0.3*Math.sin(PI*s)];
+function drawPiece(cv){const ang=+$('pc-ang').value*PI/180,s0=0.55,p=PK(s0),h=1e-4,d=[(PK(s0+h)[0]-PK(s0-h)[0]),(PK(s0+h)[1]-PK(s0-h)[1])],L=Math.hypot(...d),Tv=[d[0]/L,d[1]/L];
+  const ca=Math.cos(ang),sa=Math.sin(ang),Fm=1.6,Fv=[Fm*(Tv[0]*ca-Tv[1]*sa),Fm*(Tv[0]*sa+Tv[1]*ca)],ft=Fv[0]*Tv[0]+Fv[1]*Tv[1];
+  const ds=arcLen(s=>[...PK(s),0],0,1,200);
+  axes2d(cv,{xmin:-0.8,xmax:6,ymin:-1.9,ymax:2.6,equal:true,xstep:100,ystep:100,
+    extra:(g,X,Y)=>{curve(g,X,Y,lin(0,1,120).map(PK),css('--accent'),2.8);
+      curve(g,X,Y,[[p[0]-Tv[0]*2.2,p[1]-Tv[1]*2.2],[p[0]+Tv[0]*2.6,p[1]+Tv[1]*2.6]],css('--muted'),1,[3,4]);
+      const off=lin(0.05,0.95,60).map(s=>{const q=PK(s);return [q[0]-0.35*Math.sin(PI*s)*0.3-0.25,q[1]+0.55];});curve(g,X,Y,off,css('--ink'),1.2);
+      arr(g,X,Y,off[57][0],off[57][1],off[59][0]+0.05,off[59][1]+0.06,css('--ink'),1.2,7);arr(g,X,Y,off[2][0],off[2][1],off[0][0]-0.05,off[0][1]-0.02,css('--ink'),1.2,7);
+      T(g,'Δs_k',X(off[30][0])-10,Y(off[30][1])-10);
+      curve(g,X,Y,[[p[0]+Fv[0],p[1]+Fv[1]],[p[0]+ft*Tv[0],p[1]+ft*Tv[1]]],css('--c2'),1.1,[3,3]);
+      curve(g,X,Y,[[p[0],p[1]],[p[0]+ft*Tv[0],p[1]+ft*Tv[1]]],css('--c2'),5,[]);
+      arr(g,X,Y,p[0],p[1],p[0]+Tv[0]*1.4,p[1]+Tv[1]*1.4,css('--c3'),2.6);arr(g,X,Y,p[0],p[1],p[0]+Fv[0],p[1]+Fv[1],css('--warn'),2.6);
+      dot(g,X,Y,0,0,css('--ink'),4);dot(g,X,Y,4,1.6,css('--ink'),4);dot(g,X,Y,p[0],p[1],css('--c4'),4.5);
+      T(g,'Pk−1',X(0)-10,Y(0)+16,css('--ink'),'center');T(g,'Pk',X(4)+8,Y(1.6),css('--ink'));T(g,'(xk,yk,zk)',X(p[0])+8,Y(p[1])+16,css('--c4'));
+      T(g,'T',X(p[0]+Tv[0]*1.4)+6,Y(p[1]+Tv[1]*1.4)-8,css('--c3'));T(g,'F',X(p[0]+Fv[0])+6,Y(p[1]+Fv[1])+4,css('--warn'));}});
+  $('pc-out').innerHTML='angle between F and T: '+fmt(+$('pc-ang').value,0)+'° · |F| = 1.6, F·T = '+fmt(ft,3)+' · Δs<sub>k</sub> = '+fmt(ds,3)+' · work on this piece ≈ (F·T)Δs<sub>k</sub> = <b>'+fmt(ft*ds,3)+'</b>';}
+if($('f-piece')){on(['pc-ang'],()=>drawPiece($('f-piece')));mount('f-piece',drawPiece);}
+
+/* Examples 3.6.4 / 3.6.5 */
+const F4=(x,y,z)=>[-z*y,z*x,x*y];
+function drawWork(cv){const path=$('wk-p').value,u=+$('wk-t').value,t=2*PI*u;
+  const H=s=>[Math.cos(s),Math.sin(s),s],Lp=s=>[1,0,s],P=path==='h'?H:Lp,dP=path==='h'?(s=>[-Math.sin(s),Math.cos(s),1]):(s=>[0,0,1]);
+  const p=P(t),f=F4(...p),fm=Math.hypot(...f)||1,sc=0.9/Math.max(fm,1)*Math.min(1,fm),dv=dP(t),dm=Math.hypot(...dv);
+  const ar=[];lin(0,2*PI,10).forEach(s=>{const q=P(s),ff=F4(...q),m=Math.hypot(...ff);if(m>1e-9){const k=0.35/Math.sqrt(1+m);ar.push({from:q,to:[q[0]+ff[0]*k,q[1]+ff[1]*k,q[2]+ff[2]*k],color:css('--warn')});}});
+  if(fm>1e-9)ar.push({from:p,to:[p[0]+f[0]*0.9/Math.sqrt(1+fm),p[1]+f[1]*0.9/Math.sqrt(1+fm),p[2]+f[2]*0.9/Math.sqrt(1+fm)],color:css('--c2'),label:'F'});
+  ar.push({from:p,to:[p[0]+dv[0]/dm*0.9,p[1]+dv[1]/dm*0.9,p[2]+dv[2]/dm*1.6],color:css('--c3'),label:'T'});
+  surface(cv,{x:[-1.6,1.6],y:[-1.6,1.6],z:[0,2*PI],zscale:0.9,view:{yaw:-0.7,elev:0.3},
+    curves3d:[{pts:lin(0,2*PI,300).map(H),color:css('--accent'),width:path==='h'?3:1.6},{pts:[[1,0,0],[1,0,2*PI]],color:css('--c4'),width:path==='l'?3:1.6}],
+    arrows3d:ar,pts3d:[{p:[1,0,0],color:css('--c3'),label:'(1,0,0)'},{p:[1,0,2*PI],color:css('--c2'),label:'(1,0,2π)'},{p,color:css('--ink'),r:4.5}]});
+  const W=path==='h'?(t*t/2+Math.sin(t)**2/2):0;
+  $('wk-out').innerHTML=(path==='h'?'helix C':'line C′')+' · t = '+fmt(t,3)+' · F = ('+f.map(c=>fmt(c,2)).join(', ')+') · F·r′ = '+fmt(f[0]*dv[0]+f[1]*dv[1]+f[2]*dv[2],3)+' · work so far = <b>'+fmt(W,4)+'</b> (total: '+(path==='h'?'2π² ≈ 19.739':'0')+')';}
+if($('f-work')){on(['wk-p','wk-t'],()=>drawWork($('f-work')));mount('f-work',drawWork);}
+
+/* Example 3.6.6 three paths */
+const F6=(x,y)=>[y*y,2*x*y];
+const P3={1:s=>[4*s,2*s],2:s=>[4*s*s,2*s],3:s=>s<0.5?[8*s,0]:[4,4*(s-0.5)],4:s=>[4*s,2*s+0.5*Math.sin(3*PI*s)]};
+const P3c={1:'--c2',2:'--accent',3:'--c3',4:'--c4'};
+function pathsDraw(g,X,Y,which,upto){[1,2,3].concat(which===4||which==='all'?[4]:[]).forEach(k=>{const sel=(+which===k)||which==='all';
+  const S=lin(0,sel&&upto!==undefined?upto:1,300);if(sel&&upto!==undefined&&upto<1)curve(g,X,Y,lin(0,1,300).map(P3[k]),css(P3c[k]),1.2,[4,4]);
+  curve(g,X,Y,S.map(P3[k]),css(P3c[k]),sel?3:1.4);});}
+function drawThree(cv){const k=+$('th-p').value,u=+$('th-t').value,sh=$('th-f').checked;
+  const ex=(g,X,Y)=>{pathsDraw(g,X,Y,k,u);const p=P3[k](u);dot(g,X,Y,0,0,css('--ink'),4);dot(g,X,Y,4,2,css('--ink'),4);dot(g,X,Y,p[0],p[1],css(P3c[k]),5.5);
+    T(g,'(0,0)',X(0)+6,Y(0)+14);T(g,'(4,2)',X(4)-14,Y(2)-12,css('--ink'),'center');T(g,'(4,0)',X(4)+6,Y(0)+14);
+    T(g,'C1',X(2.6)+6,Y(1.3)+12,css('--c2'));T(g,'C2',X(1.4)-6,Y(Math.sqrt(1.4))-12,css('--accent'));T(g,'C3',X(4)+6,Y(1),css('--c3'));};
+  const o={xmin:-0.4,xmax:4.8,ymin:-0.5,ymax:2.6,x:[-0.2,4.6],y:[-0.2,2.4],xstep:1,ystep:1,equal:true,xlabel:'x',ylabel:'y',n:12,F:F6};
+  if(sh)field(cv,Object.assign(o,{extra2:ex}));else axes2d(cv,Object.assign(o,{extra:ex}));
+  const W=work(F6,P3[k],u,3000);$('th-out').innerHTML='path C'+k+' · progress '+fmt(u,2)+' · work so far = <b>'+fmt(W,3)+'</b>'+(u===1?' (exact 16)':'');}
+if($('f-three')){on(['th-p','th-t','th-f'],()=>drawThree($('f-three')));mount('f-three',drawThree);}
+
+/* ======================= §4 ======================= */
+/* gravity, Example 3.6.7 (Gm = 1) */
+const FG=(x,y,z)=>{const r=Math.hypot(x,y,z);return [-x/r**3,-y/r**3,-z/r**3];};
+const G1=s=>[1,-2+2*s,3-3*s],G2=s=>[1+Math.sin(PI*s),-2+2*s,3-3*s*s];
+let gvW=null;
+if($('f-grav'))mount('f-grav',cv=>{const ar=[];let mx=0;const pts=[];
+  [-0.5,0.5,1.5].forEach(x=>[-2.5,-1.5,-0.5,0.5].forEach(y=>[0.25,1.25,2.25,3.25].forEach(z=>{const f=FG(x,y,z),m=Math.hypot(...f);pts.push([x,y,z,f,m]);mx=Math.max(mx,m);})));
+  pts.forEach(([x,y,z,f,m])=>{const L=0.42/m*Math.pow(m/mx,0.3);ar.push({from:[x,y,z],to:[x+f[0]*L,y+f[1]*L,z+f[2]*L],color:ramp(Math.pow(m/mx,0.4))});});
+  surface(cv,{x:[-0.7,2.2],y:[-2.7,0.7],z:[0,3.4],view:{yaw:-0.9,elev:0.3},
+    curves3d:[{pts:lin(0,1,200).map(G1),color:css('--c4'),width:2.8},{pts:lin(0,1,200).map(G2),color:css('--accent'),width:2.8}],
+    arrows3d:ar,pts3d:[{p:[0,0,0],color:css('--ink'),r:6,label:'m'},{p:[1,-2,3],color:css('--c3'),label:'(1,−2,3)'},{p:[1,0,0],color:css('--c2'),label:'(1,0,0)'}]});
+  if(gvW===null)gvW=[work(FG,G1,1,4000),work(FG,G2,1,4000)];
+  $('gv-out').innerHTML='Gm = 1 · straight path: <b>'+fmt(gvW[0],4)+'</b> · curved path: <b>'+fmt(gvW[1],4)+'</b> · f(1,0,0) − f(1,−2,3) = 1 − 1/√14 = '+fmt(1-1/Math.sqrt(14),4);});
+
+/* closed loop through A and B */
+const LP=th=>{const ph=0.35,a=2.3,b=1.1+0.15*Math.sin(2*th);const u=a*Math.cos(th),v=b*Math.sin(th)+0.25*Math.sin(3*th)*Math.sin(th);return [u*Math.cos(ph)-v*Math.sin(ph),u*Math.sin(ph)+v*Math.cos(ph)];};
+if($('f-loop'))mount('f-loop',cv=>{axes2d(cv,{xmin:-3,xmax:3,ymin:-2.2,ymax:2.3,equal:true,xstep:100,ystep:100,
+  extra:(g,X,Y)=>{const up=lin(PI,0,200).map(LP),lo=lin(0,-PI,200).map(LP);curve(g,X,Y,up,css('--accent'),2.8);curve(g,X,Y,lo,css('--c4'),2.8);
+    head(g,X,Y,s=>LP(PI-PI*s),0.5,css('--accent'),0.01);head(g,X,Y,s=>LP(-PI*s),0.5,css('--c4'),0.01);
+    const A=LP(PI),B=LP(0),m1=LP(PI/2),m2=LP(-PI/2);dot(g,X,Y,A[0],A[1],css('--c2'),5);dot(g,X,Y,B[0],B[1],css('--c2'),5);
+    T(g,'A',X(A[0])-14,Y(A[1]),css('--ink'));T(g,'B',X(B[0])+10,Y(B[1]),css('--ink'));
+    T(g,'C1',X(m1[0])-10,Y(m1[1])-16,css('--accent'));T(g,'C2',X(m2[0])+6,Y(m2[1])+16,css('--c4'));}});});
+
+/* path independence */
+const FS=(x,y)=>[-y,x];
+function drawIndep(cv){const fs=$('in-f').value,F=fs==='g'?F6:FS;
+  field(cv,{xmin:-0.4,xmax:4.8,ymin:-0.6,ymax:2.8,x:[-0.2,4.6],y:[-0.4,2.6],xstep:1,ystep:1,equal:true,n:12,F,
+    extra2:(g,X,Y)=>{pathsDraw(g,X,Y,'all');dot(g,X,Y,0,0,css('--ink'),4);dot(g,X,Y,4,2,css('--ink'),4);T(g,'(0,0)',X(0)+6,Y(0)+14);T(g,'(4,2)',X(4)+6,Y(2)-10);}});
+  const W=[1,2,3,4].map(k=>work(F,P3[k],1,4000));
+  $('in-out').innerHTML=(fs==='g'?'gradient field y² i + 2xy j':'swirl −y i + x j')+' · C1 (red): <b>'+fmt(W[0],3)+'</b> · C2 (blue): <b>'+fmt(W[1],3)+'</b> · C3 (green): <b>'+fmt(W[2],3)+'</b> · wiggly (purple): <b>'+fmt(W[3],3)+'</b>';}
+if($('f-indep')){on(['in-f'],()=>drawIndep($('f-indep')));mount('f-indep',drawIndep);}
+})();
+
+</script>
+</body>
+</html>

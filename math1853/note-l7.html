@@ -1,0 +1,1199 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MATH1853 L7 · Orthogonality and Least Squares</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MATH1853 revision bundle · house style from MATH1851: one 46rem reading column, sticky contents rail on wide screens, dark mode through CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+.tcard{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:10px 14px;margin:10px 0;font-size:.95rem}
+.tcard h3{margin:0 0 4px;font-size:1rem;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.tcard h3 a{font-family:var(--mono);font-size:.85rem;text-decoration:none}
+.tcard h3 .cnt{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400}
+.tcard p{margin:3px 0}
+.tcard .k{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:6px}
+.tcard .k.w{color:var(--warn)}
+
+.typehead{display:grid;gap:10px}
+.cue{border-left:4px solid var(--accent)} .cue>.tag{color:var(--accent)}
+.also{font-size:.88rem;color:var(--muted);margin:2px 0 8px}
+.also b{color:var(--ink);font-weight:500}
+.mark{font-size:.9rem;color:var(--muted);border-left:3px solid var(--c3);padding-left:10px;margin:8px 0}
+.mark b{color:var(--c3);font-weight:600}
+.final{background:var(--accent-soft);border-radius:6px;padding:6px 12px;margin:10px 0}
+.equiv{font-size:.93rem}
+.glance td:first-child{font-family:var(--mono);font-size:.85rem;white-space:nowrap}
+.glance td.num{text-align:right}
+.todo{border:1px dashed var(--axis);background:transparent;color:var(--muted);font-size:.93rem}
+.todo>.tag{color:var(--muted)}
+/* calculus additions */
+.proc{border-left:4px solid var(--c3)} .proc>.tag{color:var(--c3)}
+.proc ol{padding-left:1.4rem;margin:6px 0}
+.proc li{margin:8px 0}
+.proc li::marker{font-family:var(--mono);font-weight:500;color:var(--c3)}
+.proc .sub{list-style:none;padding-left:0;margin:4px 0}
+.proc .sub li{margin:4px 0;padding-left:1.1rem;position:relative}
+.proc .sub li::before{content:"→";position:absolute;left:0;color:var(--muted)}
+.start td:first-child{min-width:9rem}
+.start td:nth-child(3){min-width:12rem}
+.start td:nth-child(2){font-family:var(--mono);font-size:.85rem;white-space:nowrap}
+.start td.cnt{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.st{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;padding:1px 7px;border-radius:4px;border:1px solid var(--c3);color:var(--c3);margin-right:4px;vertical-align:1px;white-space:nowrap}
+.worked{border-left:4px solid var(--accent)}
+.worked .why{font-size:.88rem;color:var(--muted);margin:2px 0 10px 0;padding-left:10px;border-left:2px dotted var(--line)}
+.cov td:first-child{white-space:nowrap}
+.proc .ex{font-size:.85rem;color:var(--muted)}
+
+/* ---- MATH1853 additions ---- */
+.muted{font-size:.92rem;color:var(--muted)}
+.crumbs{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;display:flex;flex-wrap:wrap;gap:4px 14px}
+.crumbs a{color:var(--muted);text-decoration:none}
+.crumbs a:hover{color:var(--accent);text-decoration:underline}
+/* earlier-syllabus content (past-paper topics not in the 2026 handouts) */
+.earlier{background:var(--warm-soft);border:1px dashed var(--warm);font-size:.95rem} .earlier>.tag{color:var(--warm)}
+/* reading of a slide that looks wrong */
+.slidefix{font-size:.92rem;color:var(--muted);border-left:3px solid var(--warn);padding:2px 0 2px 12px;margin:10px 0}
+.slidefix b{color:var(--warn);font-weight:600}
+/* row-reduction player */
+.rr{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.rr .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+.rr .stage{display:flex;justify-content:center;overflow-x:auto;padding:6px 0}
+.rr .op{font-family:var(--mono);font-size:.85rem;text-align:center;min-height:2.6em;color:var(--accent);margin:4px 0}
+.rr .why{font-size:.9rem;color:var(--muted);text-align:center;min-height:1.6em;margin:2px 0 6px}
+.rr .bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.rr button,.btn{font:inherit;font-size:.88rem;padding:5px 12px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+.rr button:hover:not(:disabled),.btn:hover{border-color:var(--accent);color:var(--accent)}
+.rr button:disabled{opacity:.4;cursor:default}
+.rr .count{font-family:var(--mono);font-size:.8rem;color:var(--muted);min-width:5.5em;text-align:center}
+table.mat{border-collapse:separate;border-spacing:0;width:auto;font-family:var(--mono);font-size:.95rem;font-variant-numeric:tabular-nums;border-left:2px solid var(--ink);border-right:2px solid var(--ink);border-radius:5px;padding:2px 2px}
+table.mat td{border:0;padding:3px 9px;text-align:right;transition:background .25s}
+table.mat td.aug{border-left:1.5px solid var(--axis)}
+table.mat tr.hl td{background:var(--accent-soft)}
+table.mat tr.hl2 td{background:var(--warm-soft)}
+table.mat td.piv{color:var(--accent);font-weight:600;box-shadow:inset 0 0 0 1.5px var(--accent);border-radius:3px}
+table.mat td.zero{color:var(--muted)}
+@media (max-width:480px){table.mat{font-size:.82rem} table.mat td{padding:2px 6px}}
+canvas.plot3d{width:100%;display:block;border-radius:4px;touch-action:none;cursor:grab}
+canvas.plot3d:active{cursor:grabbing}
+svg.diag{width:100%;height:auto;display:block}
+svg.diag text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+svg.diag .m{fill:var(--muted)}
+.kbd{font-family:var(--mono);font-size:.85em;padding:0 5px;border:1px solid var(--line);border-radius:4px;background:var(--paper)}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{R:'\\mathbb{R}',vb:['\\mathbf{#1}',1]}},svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/es5/tex-svg.js"></script>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Chapter L7</p>
+  <ol>
+    <li><a href="#s0">0 · Where this chapter sits</a></li>
+    <li><a href="#s1">1 · The scalar product</a></li>
+    <li><a href="#s2">2 · Length and unit vectors</a></li>
+    <li><a href="#s3">3 · Cauchy–Schwarz, angles, triangle inequality</a></li>
+    <li><a href="#s4">4 · Orthogonality and orthonormal bases</a></li>
+    <li><a href="#s5">5 · Pythagoras and the parallelogram law</a></li>
+    <li><a href="#s6">6 · Projection of v along u</a></li>
+    <li><a href="#s7">7 · Least squares: the best-fit line</a></li>
+    <li><a href="#s8">8 · Gram–Schmidt orthogonalization</a></li>
+    <li><a href="#s9">9 · Summary</a></li>
+    <li><a href="#s10">10 · Common mistakes</a></li>
+    <li><a href="#s11">11 · Find the mistake</a></li>
+    <li><a href="#s12">12 · Concept checks</a></li>
+    <li><a href="#s13">13 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <nav class="crumbs" aria-label="Bundle"><a href="index.html">← Start Here</a><a href="guide-L7.html">Exam guide · L7</a><a href="note-P1.html">Next: P1 Complex variables →</a></nav>
+  <span class="course">MATH1853 · Part IB · Linear algebra · Chapter L7</span>
+  <h1>Orthogonality and Least Squares</h1>
+  <p class="lede">Every slide of the L7 handout explained from scratch: the scalar (dot) product for vectors and for functions, length and unit vectors, the Cauchy–Schwarz and triangle inequalities, orthogonal and orthonormal bases, Pythagoras and the parallelogram law, the projection of one vector along another, the best-fit line by least squares, and Gram–Schmidt orthogonalization. Every worked example is solved in full, and you can move the vectors, the fitted line and the Gram–Schmidt steps yourself. The exam taster at the end shows how the exam asks about this chapter.</p>
+</header>
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>MATH1853 (Linear Algebra, Probability and Statistics) has two halves. <b>Part I</b> is linear algebra: Part IA (chapters L1 to L4: linear systems, vectors, matrices, determinants) and Part IB (L5 to L7: eigenvalues, their applications, and this chapter, orthogonality and least squares). <b>Part II</b> is complex numbers, probability and statistics (P1 to P4). This is chapter L7, the last linear-algebra chapter.</p>
+<p>In <a href="note-L2.html#s2">L2</a> you added vectors and multiplied them by numbers, and in <a href="note-L2.html#s9">L2</a> you met a basis. None of that said anything about <b>lengths</b> or <b>angles</b>. This chapter adds one new operation, the <b>scalar product</b> (dot product) of two vectors, and from it gets length, angle, "perpendicular", and the projection of one vector along another. Two big uses follow:</p>
+<ul class="list">
+  <li><b>Least squares</b> (section 7): when a system \(X\mathbf a=\mathbf y\) has no solution (more equations than unknowns, as with measured data), find the \(\mathbf a\) that comes <b>closest</b>. This is how a best-fit straight line through data points is found.</li>
+  <li><b>Gram–Schmidt</b> (section 8): turn any basis into an <b>orthonormal</b> basis, one whose vectors have length 1 and are mutually perpendicular, which makes coordinates and projections easy.</li>
+</ul>
+<p>HKDSE M2 has the dot product of vectors in \(\mathbb R^2\) and \(\mathbb R^3\): \(\mathbf a\cdot\mathbf b=|\mathbf a||\mathbf b|\cos\theta\), and \(\mathbf a\cdot\mathbf b=0\) for perpendicular vectors. This chapter starts from the <b>rules</b> a dot product obeys instead, so that the same ideas work in \(\mathbb R^n\) for any \(n\) and even for <b>functions</b> (section 1, Example 2), where "length" and "angle" cannot be drawn.</p>
+<p>The handout has no contents slide. Its order is: scalar product and examples (slides 2 to 6), length (7 to 9), Cauchy–Schwarz and triangle inequalities (10), orthogonality and orthonormal bases (11, 12), Pythagoras and the parallelogram law (13), projection (14), least squares (15), Gram–Schmidt (16). Sections 1 to 8 follow the same order.</p>
+
+<h3>The handout (slide 1)</h3>
+<ul class="list">
+  <li><b>Slide 1:</b> MATH1853 Linear Algebra, Probability and Statistics (Part 1B), "Orthogonality and Least Squares", by Joseph Sai Hung Cheung, Department of Civil Engineering, Faculty of Engineering, The University of Hong Kong (jhcheung@hku.hk).</li>
+</ul>
+<p>The handout is short (16 slides), but the past papers ask more about this chapter than the slides show: projection onto a whole plane, finding vectors perpendicular to several given vectors, and short proofs about orthonormal sets. Orange <span class="pill">Beyond the handouts</span> boxes teach those, built only from the slides' ideas.</p>
+<p class="muted">How this note is laid out: grey-bordered boxes are definitions and examples from the slides, blue boxes are theorems and methods, red boxes are warnings, and orange boxes marked <span class="pill">Beyond the handouts</span> add material that is not on the slides but that the exam uses or that makes the slides easier to follow. A dashed orange box marks a topic from an <b>earlier syllabus</b> that old papers still ask about. The "In words" lines under a formula say what it means in plain language.</p>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>The scalar product</h2>
+<p>In HKDSE M2 the dot product of \(\mathbf a=(a_1,a_2,a_3)\) and \(\mathbf b=(b_1,b_2,b_3)\) is \(a_1b_1+a_2b_2+a_3b_3\), a single number. Slide 2 does not start from a formula. It lists the <b>rules</b> that any sensible "product of two vectors giving a number" must obey, and calls anything that obeys them a scalar product. Then every result proved from the rules holds for all of them at once.</p>
+<div class="box def"><span class="tag">Definition: scalar product (slide 2)</span>
+<p>Let \(V\) be a vector space over a field \(K\). A <b>scalar product</b> or a <b>dot product</b> on \(V\) is the association of a scalar to any pair of elements \(\mathbf u,\mathbf v\) of \(V\), denoted by \(\langle\mathbf u,\mathbf v\rangle\) or \(\mathbf u\cdot\mathbf v\), satisfying the following properties:</p>
+<ul class="list">
+<li><b>SP1, commutative:</b> \(\langle\mathbf u,\mathbf v\rangle=\langle\mathbf v,\mathbf u\rangle\) for all \(\mathbf u,\mathbf v\in V\).</li>
+<li><b>SP2, distributive:</b> \(\langle\mathbf u,\mathbf v+\mathbf w\rangle=\langle\mathbf u,\mathbf v\rangle+\langle\mathbf u,\mathbf w\rangle\) for all \(\mathbf u,\mathbf v,\mathbf w\in V\).</li>
+<li><b>SP3, factorization:</b> \(\langle\alpha\mathbf u,\mathbf v\rangle=\langle\mathbf u,\alpha\mathbf v\rangle=\alpha\langle\mathbf u,\mathbf v\rangle\) for all \(\mathbf u,\mathbf v\in V\), \(\alpha\in K\).</li>
+</ul>
+<p>The slide's title writes this as a map \(\langle\cdot,\cdot\rangle:V\times V\to K\): it takes a <b>pair</b> of vectors (an element of \(V\times V\)) and returns a number (an element of \(K\)).</p>
+<p class="word"><b>In words:</b> a scalar product eats two vectors and returns one number. The order of the two vectors does not matter, and it expands over sums and lets numbers be pulled out, exactly like ordinary multiplication.</p>
+</div>
+<p>Words used on the slide:</p>
+<ul class="list">
+<li>A <b>vector space</b> \(V\) is a set of objects ("vectors") that can be added and multiplied by numbers, with the usual rules. \(\mathbb R^n\) from <a href="note-L2.html#s1">L2</a> is one; Example 2 below uses another, a space of functions.</li>
+<li>A <b>field</b> \(K\) is the set of numbers you may multiply vectors by. In this course \(K=\mathbb R\), the real numbers, throughout.</li>
+<li>The symbol \(\forall\) means "for all", and \(\in\) means "belongs to".</li>
+</ul>
+<div class="box beyond"><span class="tag">Beyond the handouts: the fourth rule</span>
+<p>Textbooks add one more rule, and slide 7 uses it without saying so:</p>
+<p><b>SP4, positive:</b> \(\langle\mathbf v,\mathbf v\rangle\ge0\) for every \(\mathbf v\), and \(\langle\mathbf v,\mathbf v\rangle=0\) only when \(\mathbf v=\mathbf 0\).</p>
+<p>Without it, "the length \(\sqrt{\langle\mathbf v,\mathbf v\rangle}\)" in section 2 could be the square root of a negative number. Both examples below satisfy SP4: a sum of squares \(a_1^2+\cdots+a_n^2\), and an integral \(\int_0^1 f(t)^2\,dt\) of a square, are never negative, and are zero only if every \(a_k\) (or \(f\) itself) is zero. A scalar product with all four rules is often called an <b>inner product</b>; past papers use "scalar product" and "inner product" for the same thing.</p>
+<p>Two consequences of SP1 to SP3 used all the time: the product also expands over sums on the <b>left</b>, \(\langle\mathbf u+\mathbf v,\mathbf w\rangle=\langle\mathbf u,\mathbf w\rangle+\langle\mathbf v,\mathbf w\rangle\) (use SP1 to swap, SP2, then swap back), and \(\langle\mathbf 0,\mathbf v\rangle=0\) (take \(\alpha=0\) in SP3).</p>
+</div>
+
+<h3>Example 1: the dot product on ℝⁿ (slides 3 and 4)</h3>
+<div class="box eg"><span class="tag">Example 1 (slide 3)</span>
+<p>Let \(V=\mathbb R^n\), \(\mathbf a=(a_1,a_2,\dots,a_n)\), \(\mathbf b=(b_1,b_2,\dots,b_n)\). Then</p>
+\[ \begin{aligned} \mathbf a\cdot\mathbf b&=\sum_{k=1}^n a_kb_k\\ &=a_1b_1+a_2b_2+\cdots+a_nb_n \end{aligned} \]
+<p>is a scalar product. The slide checks the three rules for all \(\mathbf a,\mathbf b\in V\) (with \(\mathbf c=(c_1,\dots,c_n)\) a third vector):</p>
+<p><b>SP1:</b></p>
+\[ \begin{aligned} \langle\mathbf a,\mathbf b\rangle&=\sum_{k=1}^n a_kb_k=\sum_{k=1}^n b_ka_k\\ &=\langle\mathbf b,\mathbf a\rangle \end{aligned} \]
+<p><b>SP2:</b></p>
+\[ \begin{aligned} \langle\mathbf a,\mathbf b+\mathbf c\rangle&=\sum_{k=1}^n a_k(b_k+c_k)\\ &=\sum_{k=1}^n a_kb_k+\sum_{k=1}^n a_kc_k\\ &=\langle\mathbf a,\mathbf b\rangle+\langle\mathbf a,\mathbf c\rangle \end{aligned} \]
+<p><b>SP3:</b></p>
+\[ \begin{aligned} \sum_{k=1}^n(\alpha a_k)b_k&=\sum_{k=1}^n a_k(\alpha b_k)\\ &=\alpha\sum_{k=1}^n a_kb_k \end{aligned} \]
+\[ \Rightarrow\ \langle\alpha\mathbf a,\mathbf b\rangle=\langle\mathbf a,\alpha\mathbf b\rangle=\alpha\langle\mathbf a,\mathbf b\rangle \]
+<p>Thus \(\langle\mathbf a,\mathbf b\rangle=\mathbf a\cdot\mathbf b=\sum_{k=1}^n a_kb_k\) is a scalar product on \(V\).</p>
+<p class="word"><b>In words:</b> multiply matching entries and add. Each rule holds because it holds for ordinary numbers in every term of the sum.</p>
+</div>
+<div class="box eg"><span class="tag">Example 1.1 (slide 4)</span>
+<p>\(V=\mathbb R^3\), \(\mathbf a=\begin{bmatrix}1\\2\\-1\end{bmatrix}\), \(\mathbf b=\begin{bmatrix}2\\-1\\1\end{bmatrix}\).</p>
+\[ \begin{aligned} \mathbf a\cdot\mathbf b&=\sum_{k=1}^3a_kb_k=\mathbf a^T\mathbf b\\ &=\begin{bmatrix}1&2&-1\end{bmatrix}\begin{bmatrix}2\\-1\\1\end{bmatrix}\\ &=(1)(2)+(2)(-1)+(-1)(1)\\ &=-1 \end{aligned} \]
+\[ \begin{aligned} \mathbf b\cdot\mathbf a&=\mathbf b^T\mathbf a=\begin{bmatrix}2&-1&1\end{bmatrix}\begin{bmatrix}1\\2\\-1\end{bmatrix}\\ &=(2)(1)+(-1)(2)+(1)(-1)\\ &=-1 \end{aligned} \]
+<p>The two agree, as SP1 says they must.</p>
+</div>
+<div class="box thm"><span class="tag">The dot product as a matrix product (slide 4)</span>
+\[ \mathbf a\cdot\mathbf b=\mathbf a^T\mathbf b \]
+<p>for column vectors \(\mathbf a,\mathbf b\in\mathbb R^n\). \(\mathbf a^T\) (the <a href="note-L3.html#s6">transpose</a>) is a \(1\times n\) row, \(\mathbf b\) is \(n\times1\), and the product is \(1\times1\): a single number, by the <a href="note-L3.html#s3">row-column rule</a>.</p>
+<p class="word"><b>In words:</b> lay \(\mathbf a\) on its side and multiply it into \(\mathbf b\). This form is what makes least squares (section 7) a matrix calculation.</p>
+</div>
+
+<h3>Example 2: a scalar product of functions (slides 5 and 6)</h3>
+<p>Functions can be added (\((f+g)(t)=f(t)+g(t)\)) and multiplied by numbers, so they form a vector space. The sum \(\sum a_kb_k\) "multiply matching entries and add" has a natural version for functions: multiply the values \(f(t)g(t)\) at each point and "add them all up", which for a continuous range of \(t\) means integrate.</p>
+<div class="box eg"><span class="tag">Example 2 (slide 5)</span>
+<p>Let \(V\) be the vector space of continuous real-valued functions on the interval \([0,1]\). Then</p>
+\[ \langle f,g\rangle=\int_0^1 f(t)\,g(t)\,dt\qquad\forall f,g\in V \]
+<p>is a scalar product. The slide checks the rules for all \(f,g\in V\) (and \(h\) a third function):</p>
+<p><b>SP1:</b></p>
+\[ \begin{aligned} \langle f,g\rangle&=\int_0^1 f(t)g(t)\,dt\\ &=\int_0^1 g(t)f(t)\,dt=\langle g,f\rangle \end{aligned} \]
+<p><b>SP2:</b></p>
+\[ \begin{aligned} \langle f,g+h\rangle&=\int_0^1 f(t)\big(g(t)+h(t)\big)\,dt\\ &=\int_0^1 f(t)g(t)\,dt\\ &\quad+\int_0^1 f(t)h(t)\,dt\\ &=\langle f,g\rangle+\langle f,h\rangle \end{aligned} \]
+<p><b>SP3:</b></p>
+\[ \begin{aligned} \int_0^1\alpha f(t)g(t)\,dt&=\int_0^1 f(t)\big(\alpha g(t)\big)\,dt\\ &=\alpha\int_0^1 f(t)g(t)\,dt \end{aligned} \]
+\[ \Rightarrow\ \langle\alpha f,g\rangle=\langle f,\alpha g\rangle=\alpha\langle f,g\rangle \]
+<p>Thus \(\langle f,g\rangle\) is a scalar product on \(V\).</p>
+<p class="word"><b>In words:</b> the "dot product" of two functions is the integral of their product. Each rule is a familiar rule of integrals: \(\int(F+G)=\int F+\int G\) and \(\int\alpha F=\alpha\int F\).</p>
+</div>
+<div class="box eg"><span class="tag">Example 2.1 (slide 6)</span>
+<p>In Example 2, let \(f(t)=t\) and \(g(t)=1-t\). Then</p>
+\[ \begin{aligned} \langle f,g\rangle&=\int_0^1 f(t)g(t)\,dt=\int_0^1 t(1-t)\,dt\\ &=\int_0^1(t-t^2)\,dt=\left[\frac{t^2}2-\frac{t^3}3\right]_0^1\\ &=\frac12-\frac13=\frac16, \end{aligned} \]
+<p>and \(\langle g,f\rangle=\frac16\) as well (SP1).</p>
+</div>
+<div class="figure"><p class="ttl">The scalar product of two functions on [0, 1]</p>
+<canvas class="plot" id="fFn" style="height:250px"></canvas>
+<div class="ctrl"><label>pair <select id="fFn-s">
+<option value="0">f(t) = t, g(t) = 1 − t (slide 6)</option>
+<option value="1">f(t) = t, g(t) = t (slide 9)</option>
+<option value="2">f(t) = 1 − t, g(t) = 1 − t (slide 9)</option>
+<option value="3">f(t) = 1, g(t) = t</option>
+<option value="4">f(t) = 1, g(t) = t − 1/2</option>
+<option value="5">f(t) = t − 1/2, g(t) = t² − t + 1/6</option>
+</select></label></div>
+<div class="legend"><span style="--k:var(--accent)">f(t)</span><span style="--k:var(--c2)">g(t)</span><span style="--k:var(--c3)">f(t)g(t), whose integral is ⟨f, g⟩</span></div>
+<div class="readout" id="fFn-out"></div>
+<p class="cap">The green curve is the product \(f(t)g(t)\); \(\langle f,g\rangle\) is the signed area under it from 0 to 1 (area below the axis counts as negative). The last two pairs give 0: those functions are "perpendicular" (section 4), and they reappear in section 8.</p></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Length and unit vectors</h2>
+<p>In \(\mathbb R^2\), Pythagoras gives the length of \((v_1,v_2)\) as \(\sqrt{v_1^2+v_2^2}\), and that is \(\sqrt{\mathbf v\cdot\mathbf v}\). Slide 7 turns this into the definition of length for <b>any</b> scalar product.</p>
+<div class="box def"><span class="tag">Definition: length or norm (slide 7)</span>
+<p>The length (or norm) of a vector is defined as</p>
+\[ \|\mathbf v\|=\sqrt{\langle\mathbf v,\mathbf v\rangle}\ \ge0, \]
+<p>and \(\mathbf v=\mathbf 0\) if and only if \(\|\mathbf v\|=0\).</p>
+<ul class="list">
+<li>\(\mathbf u\in V\) is a <b>unit vector</b> if \(\|\mathbf u\|=1\).</li>
+<li>If \(\mathbf v\in V\) and \(\mathbf v\ne\mathbf 0\), then \(\dfrac{\mathbf v}{\|\mathbf v\|}\) is a unit vector.</li>
+</ul>
+<p class="word"><b>In words:</b> the length of a vector is the square root of its scalar product with itself. Dividing a non-zero vector by its own length keeps its direction and makes its length exactly 1; this is called <b>normalizing</b> the vector.</p>
+</div>
+<p>Why is \(\mathbf v/\|\mathbf v\|\) a unit vector? Write \(c=\frac1{\|\mathbf v\|}\). By SP3 twice, \(\langle c\mathbf v,c\mathbf v\rangle=c^2\langle\mathbf v,\mathbf v\rangle=\frac{\|\mathbf v\|^2}{\|\mathbf v\|^2}=1\). The same calculation shows \(\|c\mathbf v\|=|c|\,\|\mathbf v\|\) for any number \(c\): stretching a vector by \(c\) stretches its length by \(|c|\).</p>
+<p>The notation \(\|\mathbf v\|\) (double bars) is used for the norm so that it is not confused with \(|x|\) for a number; HKDSE M2 writes \(|\mathbf v|\) for the same thing in \(\mathbb R^3\), and some past papers do too.</p>
+<div class="box eg"><span class="tag">Example 3 (slide 8)</span>
+<p>Let \(\mathbf v=\begin{bmatrix}1\\2\\-1\end{bmatrix}\). Find the norm of \(\mathbf v\) and a unit vector \(\mathbf u\) in the same direction as \(\mathbf v\).</p>
+<p><b>Solution.</b> The norm of \(\mathbf v\) is</p>
+\[ \begin{aligned} \|\mathbf v\|&=\sqrt{\langle\mathbf v,\mathbf v\rangle}\\ &=\sqrt{1^2+2^2+(-1)^2}=\sqrt6, \end{aligned} \]
+\[ \mathbf u=\frac{\mathbf v}{\|\mathbf v\|}=\frac1{\sqrt6}\begin{bmatrix}1\\2\\-1\end{bmatrix}. \]
+<p><b>Check:</b> \(\|\mathbf u\|^2=\frac16(1+4+1)=1\ \checkmark\)</p>
+</div>
+<div class="box eg"><span class="tag">Example 4 (slide 9)</span>
+<p>In Example 2.1 (\(f(t)=t\), \(g(t)=1-t\) on \([0,1]\)), find the norm of \(f\) and of \(g\).</p>
+<p><b>Solution.</b></p>
+\[ \begin{aligned} \|f\|&=\sqrt{\langle f,f\rangle}=\sqrt{\int_0^1 f^2(t)\,dt}\\ &=\sqrt{\int_0^1t^2\,dt}=\sqrt{\left[\frac{t^3}3\right]_0^1}=\frac1{\sqrt3}. \end{aligned} \]
+\[ \begin{aligned} \|g\|&=\sqrt{\langle g,g\rangle}=\sqrt{\int_0^1 g^2(t)\,dt}\\ &=\sqrt{\int_0^1(1-t)^2\,dt}\\ &=\sqrt{\left[-\frac{(1-t)^3}3\right]_{t=0}^{t=1}}\\ &=\sqrt{0-\left(-\frac13\right)}=\frac1{\sqrt3}. \end{aligned} \]
+<p>Slide 9 also offers a second way to write the same evaluation, using \(1-t\) as the variable: \(\sqrt{\left[\frac{(1-t)^3}3\right]_{1-t=0}^{1-t=1}}\). As \(t\) goes from 0 to 1, \(1-t\) goes from 1 down to 0, and swapping the limits absorbs the minus sign: \(\frac{1^3}3-\frac{0^3}3=\frac13\).</p>
+<p>(Here \(f^2(t)\) means \(\big(f(t)\big)^2\).) A unit "vector" in the direction of \(f\) is \(f/\|f\|=\sqrt3\,t\): indeed \(\int_0^1 3t^2\,dt=1\).</p>
+</div>
+<p>For \(-\frac{(1-t)^3}{3}\): differentiate it and you get \(-\frac{3(1-t)^2\cdot(-1)}{3}=(1-t)^2\), the integrand. The minus sign comes from the chain rule (the inside \(1-t\) has derivative \(-1\)). Expanding \((1-t)^2=1-2t+t^2\) and integrating term by term gives \(1-1+\frac13=\frac13\) too.</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Cauchy–Schwarz, angles, triangle inequality</h2>
+<p>Slide 10 states two inequalities that every scalar product obeys. The first one lets us define the <b>angle</b> between two vectors, even in \(\mathbb R^{10}\) or between two functions.</p>
+<div class="box thm"><span class="tag">Cauchy–Schwarz inequality (slide 10)</span>
+\[ |\mathbf u\cdot\mathbf v|\le\|\mathbf u\|\,\|\mathbf v\| \]
+<p class="word"><b>In words:</b> the size of the scalar product of two vectors is never more than the product of their lengths. It equals the product of the lengths exactly when one vector is a multiple of the other (they lie on one line).</p>
+</div>
+<p>The slide states this without proof. Here is the short standard one; it uses only the rules of section 1 and the HKDSE fact that a quadratic that is never negative has discriminant \(\le0\).</p>
+<div class="box beyond"><span class="tag">Beyond the handouts: proof of Cauchy–Schwarz</span>
+<p>If \(\mathbf v=\mathbf 0\) both sides are 0. Otherwise, for every real number \(x\), the length of \(\mathbf u-x\mathbf v\) squared is \(\ge0\):</p>
+\[ \begin{aligned} 0&\le\|\mathbf u-x\mathbf v\|^2\\ &=\langle\mathbf u-x\mathbf v,\mathbf u-x\mathbf v\rangle\\ &=\|\mathbf v\|^2x^2-2\langle\mathbf u,\mathbf v\rangle x+\|\mathbf u\|^2. \end{aligned} \]
+<p>(Expand with SP2 and SP3 as you would \((a-xb)^2\), and use SP1 to combine the two middle terms.) This is a quadratic in \(x\) with positive leading coefficient that is never negative, so it has at most one real root and its discriminant is \(\le0\):</p>
+\[ 4\langle\mathbf u,\mathbf v\rangle^2-4\|\mathbf u\|^2\|\mathbf v\|^2\le0 \]
+\[ \Rightarrow\ |\langle\mathbf u,\mathbf v\rangle|\le\|\mathbf u\|\,\|\mathbf v\|. \]
+<p>Equality means the quadratic touches 0 at some \(x\), that is \(\mathbf u=x\mathbf v\).</p>
+</div>
+
+<h3>The angle between two vectors (slide 10)</h3>
+<p>Cauchy–Schwarz says \(-1\le\dfrac{\mathbf u\cdot\mathbf v}{\|\mathbf u\|\|\mathbf v\|}\le1\) for non-zero \(\mathbf u,\mathbf v\). Every number in \([-1,1]\) is \(\cos\theta\) for exactly one \(\theta\) between \(0\) and \(\pi\), so the following definition makes sense.</p>
+<div class="box def"><span class="tag">Definition: angle (slide 10)</span>
+<p>With Cauchy–Schwarz, one can define the angle \(\theta\) between two non-zero vectors by</p>
+\[ \cos\theta=\frac{\mathbf u\cdot\mathbf v}{\|\mathbf u\|\,\|\mathbf v\|},\qquad 0\le\theta\le\pi. \]
+<p class="word"><b>In words:</b> the scalar product divided by both lengths is the cosine of the angle between the vectors. This is HKDSE's \(\mathbf u\cdot\mathbf v=|\mathbf u||\mathbf v|\cos\theta\), turned round to define \(\theta\).</p>
+</div>
+<p class="slidefix"><b>Note on slide 10.</b> The slide writes \(\cos\theta=|\mathbf u\cdot\mathbf v|/(\|\mathbf u\|\|\mathbf v\|)\le1\), with absolute-value bars on the top. With the bars, \(\cos\theta\) could never be negative, so an obtuse angle (one more than \(90^\circ\)) could never come out. The standard definition, used here and in the past papers (for example May 2013 Q2(a)(ii), "the cosine of the angle between them"), has <b>no</b> bars: \(\cos\theta=\mathbf u\cdot\mathbf v/(\|\mathbf u\|\|\mathbf v\|)\). The bars belong to Cauchy–Schwarz, which says this fraction lies between \(-1\) and \(1\).</p>
+<div class="box eg"><span class="tag">Example (slide 4's vectors and slide 9's functions)</span>
+<p><b>Vectors.</b> \(\mathbf a=(1,2,-1)\), \(\mathbf b=(2,-1,1)\): \(\mathbf a\cdot\mathbf b=-1\) (slide 4), \(\|\mathbf a\|=\|\mathbf b\|=\sqrt6\). So</p>
+\[ \cos\theta=\frac{-1}{\sqrt6\sqrt6}=-\frac16, \]
+<p>an angle a little more than \(90^\circ\). Cauchy–Schwarz: \(|-1|\le\sqrt6\cdot\sqrt6=6\ \checkmark\)</p>
+<p><b>Functions.</b> \(f(t)=t\), \(g(t)=1-t\): \(\langle f,g\rangle=\frac16\) (slide 6), \(\|f\|=\|g\|=\frac1{\sqrt3}\) (slide 9). Cauchy–Schwarz: \(\frac16\le\frac1{\sqrt3}\cdot\frac1{\sqrt3}=\frac13\ \checkmark\), and \(\cos\theta=\frac{1/6}{1/3}=\frac12\): the "angle" between these two functions is \(60^\circ\).</p>
+</div>
+
+<h3>The triangle inequality (slide 10)</h3>
+<div class="box thm"><span class="tag">Triangle inequality (slide 10)</span>
+\[ \|\mathbf u+\mathbf v\|\le\|\mathbf u\|+\|\mathbf v\| \]
+<p><b>Proof</b> (slide 10):</p>
+\[ \begin{aligned} \|\mathbf u+\mathbf v\|^2&=\langle\mathbf u+\mathbf v,\mathbf u+\mathbf v\rangle\\ &=\langle\mathbf u,\mathbf u\rangle+2\langle\mathbf u,\mathbf v\rangle+\langle\mathbf v,\mathbf v\rangle\\ &\le\|\mathbf u\|^2+2\|\mathbf u\|\|\mathbf v\|+\|\mathbf v\|^2\\ &=(\|\mathbf u\|+\|\mathbf v\|)^2 \end{aligned} \]
+\[ \Rightarrow\ \|\mathbf u+\mathbf v\|\le\|\mathbf u\|+\|\mathbf v\|. \]
+<p class="word"><b>In words:</b> one side of a triangle is never longer than the other two sides together: going straight from start to finish is never longer than going via a corner.</p>
+</div>
+<p>The step marked \(\le\) is Cauchy–Schwarz: \(\langle\mathbf u,\mathbf v\rangle\le|\langle\mathbf u,\mathbf v\rangle|\le\|\mathbf u\|\|\mathbf v\|\). The last step takes square roots, which is allowed because both sides are \(\ge0\). The slide calls it the "triangular inequality"; the usual name is the triangle inequality.</p>
+<div class="figure" style="max-width:520px;margin:12px auto"><svg class="diag" viewBox="0 0 520 190" role="img" aria-label="Left: vectors u and v at an angle theta. Right: a triangle with sides u, then v placed at the tip of u, and u plus v as the third side.">
+<g stroke-width="2.4" fill="none">
+<line x1="40" y1="160" x2="200" y2="150" style="stroke:var(--accent)"/><line x1="40" y1="160" x2="130" y2="40" style="stroke:var(--c2)"/>
+<path d="M78 158 A38 38 0 0 0 63 130" style="stroke:var(--muted)" stroke-width="1.4"/>
+<line x1="300" y1="160" x2="440" y2="160" style="stroke:var(--accent)"/><line x1="440" y1="160" x2="480" y2="40" style="stroke:var(--c2)"/><line x1="300" y1="160" x2="480" y2="40" style="stroke:var(--ink)"/>
+</g>
+<polygon points="200,150 190,145 191,156" style="fill:var(--accent)"/><polygon points="130,40 129,52 120,46" style="fill:var(--c2)"/>
+<polygon points="440,160 429,155 429,165" style="fill:var(--accent)"/><polygon points="480,40 474,51 468,47" style="fill:var(--c2)"/><polygon points="480,40 468,43 472,52" style="fill:var(--ink)"/>
+<text x="150" y="175">u</text><text x="70" y="90">v</text><text x="84" y="146" class="m">θ</text>
+<text x="370" y="180">u</text><text x="468" y="110">v</text><text x="360" y="92">u + v</text>
+</svg><p class="cap">Left: the angle \(\theta\) between \(\mathbf u\) and \(\mathbf v\). Right: \(\mathbf u+\mathbf v\) is the third side of a triangle with sides \(\|\mathbf u\|\) and \(\|\mathbf v\|\), so it is no longer than their sum.</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Orthogonality and orthonormal bases</h2>
+<p>In \(\mathbb R^2\) and \(\mathbb R^3\), perpendicular vectors are exactly those with \(\mathbf u\cdot\mathbf v=0\) (\(\cos90^\circ=0\)). Slide 11 makes this the definition in every space with a scalar product.</p>
+<div class="box def"><span class="tag">Definition: orthogonal (slide 11)</span>
+<p>Let \(V\) be a vector space with a scalar product. We define elements \(\mathbf u,\mathbf v\) of \(V\) to be <b>orthogonal</b> or <b>perpendicular</b>, written \(\mathbf u\perp\mathbf v\), if</p>
+\[ \langle\mathbf u,\mathbf v\rangle=0. \]
+<p class="word"><b>In words:</b> two vectors are perpendicular when their scalar product is zero. "Orthogonal" is the general word; in \(\mathbb R^2\) and \(\mathbb R^3\) it is the usual right angle.</p>
+</div>
+<p>By this definition the zero vector is orthogonal to every vector (\(\langle\mathbf 0,\mathbf v\rangle=0\)), and it is the only vector orthogonal to itself (SP4). Two functions can be orthogonal too: section 1's figure shows \(\langle 1,\,t-\tfrac12\rangle=\int_0^1(t-\tfrac12)\,dt=0\).</p>
+<div class="box eg"><span class="tag">Example (slide 11)</span>
+<p>\(V=\mathbb R^3\), \(\mathbf a=\begin{bmatrix}1\\2\\-1\end{bmatrix}\), \(\mathbf b=\begin{bmatrix}2\\-1\\0\end{bmatrix}\). Show that \(\mathbf a\) and \(\mathbf b\) are orthogonal.</p>
+\[ \begin{aligned} \mathbf a\cdot\mathbf b&=\sum_{k=1}^3a_kb_k\\ &=(1)(2)+(2)(-1)+(-1)(0)=0. \end{aligned} \]
+<p>Thus \(\mathbf a\) and \(\mathbf b\) are orthogonal.</p>
+</div>
+
+<div class="box def"><span class="tag">Definition: orthogonal and orthonormal basis (slide 12)</span>
+<p>Let \(\{\mathbf v_1,\mathbf v_2,\dots,\mathbf v_n\}\) be a <a href="note-L2.html#s9">basis</a> of \(V\). It is an <b>orthogonal basis</b> if</p>
+\[ \langle\mathbf v_i,\mathbf v_j\rangle=0\quad\forall i\ne j. \]
+<p>If \(\mathbf v_1,\mathbf v_2,\dots,\mathbf v_n\) are also unit vectors, it is an <b>orthonormal basis</b>. For a finite-dimensional vector space \(V\) with a scalar product, an orthogonal basis can always be found.</p>
+<p class="word"><b>In words:</b> orthogonal basis = every two different basis vectors are perpendicular. Orthonormal = perpendicular <b>and</b> each of length 1 ("ortho" for perpendicular, "normal" for normalized). Every space we meet has one; section 8's Gram–Schmidt process is how to build it.</p>
+</div>
+<p>In one line: \(\{\mathbf u_1,\dots,\mathbf u_n\}\) is orthonormal when \(\langle\mathbf u_i,\mathbf u_j\rangle=0\) for \(i\ne j\) and \(=1\) for \(i=j\).</p>
+<div class="box eg"><span class="tag">Example (slide 12)</span>
+\[ \left\{\begin{bmatrix}1\\0\\0\end{bmatrix},\begin{bmatrix}0\\1\\0\end{bmatrix},\begin{bmatrix}0\\0\\1\end{bmatrix}\right\} \]
+<p>is an orthonormal basis of \(\mathbb R^3\): each pair has dot product 0 and each vector has length 1.</p>
+\[ \left\{\begin{bmatrix}1\\1\\0\end{bmatrix},\begin{bmatrix}1\\0\\1\end{bmatrix},\begin{bmatrix}0\\1\\1\end{bmatrix}\right\} \]
+<p>is also a basis of \(\mathbb R^3\) but not an orthogonal basis.</p>
+<p><b>Why</b> (the slide does not show it): it is a basis because the three vectors are independent (the matrix with these columns has determinant \(-2\ne0\), <a href="note-L4.html">L4</a>; or row reduce, <a href="note-L2.html#s7">L2</a>). It is not orthogonal because \((1,1,0)\cdot(1,0,1)=1\ne0\).</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts: why orthonormal bases are so useful</span>
+<p>The past papers (type L7.4) ask for these three facts with proof. Let \(\{\mathbf u_1,\dots,\mathbf u_n\}\) be orthonormal.</p>
+<p><b>1. They are linearly independent.</b> Suppose \(c_1\mathbf u_1+\cdots+c_n\mathbf u_n=\mathbf 0\). Take the scalar product of both sides with \(\mathbf u_i\). Every term \(c_j\langle\mathbf u_j,\mathbf u_i\rangle\) with \(j\ne i\) is 0 and \(\langle\mathbf u_i,\mathbf u_i\rangle=1\), so \(c_i=\langle\mathbf 0,\mathbf u_i\rangle=0\). This holds for every \(i\), so all weights are 0: <a href="note-L2.html#s7">independent</a>. (The same proof works for an orthogonal set of <b>non-zero</b> vectors, dividing by \(\langle\mathbf u_i,\mathbf u_i\rangle\ne0\).)</p>
+<p><b>2. Coordinates are just scalar products.</b> If \(\mathbf v=\alpha_1\mathbf u_1+\cdots+\alpha_n\mathbf u_n\), the same trick (scalar product with \(\mathbf u_i\)) gives</p>
+\[ \alpha_i=\langle\mathbf v,\mathbf u_i\rangle. \]
+<p>So the weights are fixed by \(\mathbf v\): the representation is unique. No row reduction is needed to find them.</p>
+<p><b>3. Length from coordinates.</b> Expanding \(\langle\mathbf v,\mathbf v\rangle\) with all the cross terms zero:</p>
+\[ \|\mathbf v\|^2=\alpha_1^2+\alpha_2^2+\cdots+\alpha_n^2. \]
+<p class="word"><b>In words:</b> in an orthonormal basis, each coordinate is "how much of \(\mathbf v\) points along \(\mathbf u_i\)", and Pythagoras holds for the coordinates exactly as for \(x,y,z\).</p>
+<p><b>Example.</b> Section 8 builds the orthonormal basis \(\mathbf u_1=\frac1{\sqrt{14}}(1,2,3)\), \(\mathbf u_2=\frac1{\sqrt{21}}(4,1,-2)\), \(\mathbf u_3=\frac1{\sqrt6}(-1,2,-1)\). For \(\mathbf v=(2,5,7)\):</p>
+\[ \alpha_1=\frac{2+10+21}{\sqrt{14}}=\frac{33}{\sqrt{14}}, \]
+\[ \alpha_2=\frac{8+5-14}{\sqrt{21}}=-\frac1{\sqrt{21}}, \]
+\[ \alpha_3=\frac{-2+10-7}{\sqrt6}=\frac1{\sqrt6}, \]
+\[ \begin{aligned} \alpha_1^2+\alpha_2^2+\alpha_3^2&=\frac{1089}{14}+\frac1{21}+\frac16\\ &=\frac{3267+2+7}{42}=78\\ &=2^2+5^2+7^2\ \checkmark \end{aligned} \]
+<p>If only some of the \(\mathbf u_i\) are used, the sum of squares can only be smaller: \(\sum_{i=1}^r\alpha_i^2\le\|\mathbf v\|^2\) for \(r\le n\) (this is called <b>Bessel's inequality</b>).</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts: vectors perpendicular to given vectors</span>
+<p>Many questions ask for all vectors \(\mathbf x\) orthogonal to some given vectors \(\mathbf a_1,\dots,\mathbf a_m\) (the set of them is called the <b>orthogonal complement</b>). Each condition \(\mathbf a_i\cdot\mathbf x=0\) is one linear equation, so:</p>
+<ol class="steps">
+<li>Write the given vectors as the <b>rows</b> of a matrix \(A\). Then "\(\mathbf x\) is orthogonal to all of them" is \(A\mathbf x=\mathbf 0\) (row \(i\) of \(A\mathbf x\) is \(\mathbf a_i\cdot\mathbf x\), <a href="note-L3.html#s2">L3</a>).</li>
+<li>Solve \(A\mathbf x=\mathbf 0\) by row reduction, with free variables as in <a href="note-L1.html#s9">L1</a>.</li>
+<li>If a unit vector is asked for, divide by the length. If an orthogonal or orthonormal basis of the solutions is asked for, apply Gram–Schmidt (section 8) to the basic solutions.</li>
+</ol>
+<p><b>Example.</b> Vectors perpendicular to both \((1,1,0)\) and \((0,1,1)\): \(x_1+x_2=0\), \(x_2+x_3=0\). With \(x_3=s\) free, \(x_2=-s\), \(x_1=s\): \(\mathbf x=s(1,-1,1)\). Check: \(1-1+0=0\), \(0-1+1=0\ \checkmark\). The unit vectors are \(\pm\frac1{\sqrt3}(1,-1,1)\).</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts: orthogonal matrices</span>
+<p>A square matrix \(U\) whose columns form an orthonormal basis is called an <b>orthogonal matrix</b> (older papers say "orthonormal matrix"). Entry \((i,j)\) of \(U^TU\) is (column \(i\))\(\cdot\)(column \(j\)), so the definition says exactly</p>
+\[ U^TU=I,\qquad\text{that is}\qquad U^{-1}=U^T. \]
+<p>Two facts the past papers ask you to prove:</p>
+<ul class="list">
+<li>\(\det U=\pm1\): from \(U^TU=I\) and the determinant rules \(\det(AB)=\det A\det B\), \(\det A^T=\det A\) (<a href="note-L4.html">L4</a>), \((\det U)^2=\det I=1\).</li>
+<li>\(U\) keeps lengths:
+\[ \begin{aligned} \|U\mathbf x\|^2&=(U\mathbf x)^T(U\mathbf x)\\ &=\mathbf x^TU^TU\mathbf x\\ &=\mathbf x^T\mathbf x=\|\mathbf x\|^2, \end{aligned} \]
+using \((AB)^T=B^TA^T\) (<a href="note-L3.html#s6">L3</a>).</li>
+</ul>
+<p>Orthogonal matrices appear in <a href="note-L6.html">L6</a>, where a symmetric matrix is diagonalized with one.</p>
+</div>
+
+<div class="box earlier"><span class="tag">Earlier syllabus — not in the 2026 handouts</span>
+<p><b>The cross product in \(\mathbb R^3\).</b> Older papers (May 2013) ask for \(\mathbf a\times\mathbf b\). It is a <b>vector</b> (not a number) defined only for vectors in \(\mathbb R^3\):</p>
+\[ \mathbf a\times\mathbf b=\begin{bmatrix}a_2b_3-a_3b_2\\ a_3b_1-a_1b_3\\ a_1b_2-a_2b_1\end{bmatrix}. \]
+<p>To remember it, expand a "determinant" along its first row, whose entries are the unit vectors \(\mathbf i=(1,0,0)\), \(\mathbf j=(0,1,0)\), \(\mathbf k=(0,0,1)\) (cofactor expansion, <a href="note-L4.html">L4</a>):</p>
+\[ \mathbf a\times\mathbf b=\begin{vmatrix}\mathbf i&\mathbf j&\mathbf k\\a_1&a_2&a_3\\b_1&b_2&b_3\end{vmatrix}. \]
+<p>Its properties:</p>
+<ul class="list">
+<li>\(\mathbf a\times\mathbf b\) is orthogonal to both \(\mathbf a\) and \(\mathbf b\) (check: \(\mathbf a\cdot(\mathbf a\times\mathbf b)=0\) by expanding). So it is a quick way to find a vector perpendicular to two given vectors in \(\mathbb R^3\).</li>
+<li>\(\|\mathbf a\times\mathbf b\|=\|\mathbf a\|\|\mathbf b\|\sin\theta\), the area of the parallelogram on \(\mathbf a\) and \(\mathbf b\).</li>
+<li>\(\mathbf b\times\mathbf a=-\,\mathbf a\times\mathbf b\) (order matters), and \(\mathbf a\times\mathbf a=\mathbf 0\).</li>
+</ul>
+<p><b>Examples.</b></p>
+\[ \begin{aligned} &(1,0,0)\times(0,1,0)\\ &=(0\cdot0-0\cdot1,\ 0\cdot0-1\cdot0,\\ &\qquad 1\cdot1-0\cdot0)\\ &=(0,0,1). \end{aligned} \]
+<p>And</p>
+\[ \begin{aligned} &(1,1,0)\times(0,1,1)\\ &=(1-0,\ 0-1,\ 1-0)=(1,-1,1), \end{aligned} \]
+<p>the same direction found by solving equations in the box above.</p>
+<p>Taught here because older past papers ask it. All such questions are solved on <a href="guide-beyond.html#B-L7-1">the earlier-syllabus page</a>.</p>
+</div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Pythagoras and the parallelogram law</h2>
+<p>Both results on slide 13 are proved the same way: write the squared length as a scalar product and expand it like \((a+b)^2\).</p>
+<div class="box thm"><span class="tag">Pythagoras theorem (slide 13)</span>
+<p>If \(\mathbf u\perp\mathbf v\), then</p>
+\[ \|\mathbf u+\mathbf v\|^2=\|\mathbf u\|^2+\|\mathbf v\|^2. \]
+<p><b>Proof</b> (slide 13):</p>
+\[ \begin{aligned} \|\mathbf u+\mathbf v\|^2&=\langle\mathbf u+\mathbf v,\mathbf u+\mathbf v\rangle\\ &=\langle\mathbf u,\mathbf u\rangle+2\underbrace{\langle\mathbf u,\mathbf v\rangle}_{=0\ \because\ \mathbf u\perp\mathbf v}+\langle\mathbf v,\mathbf v\rangle\\ &=\|\mathbf u\|^2+\|\mathbf v\|^2. \end{aligned} \]
+<p class="word"><b>In words:</b> when two vectors are perpendicular, the square on their sum equals the sum of their squares, as in a right-angled triangle with legs \(\mathbf u\), \(\mathbf v\) and hypotenuse \(\mathbf u+\mathbf v\).</p>
+</div>
+<p>The expansion in the middle line uses SP2 (and its left-hand version) to get four terms \(\langle\mathbf u,\mathbf u\rangle+\langle\mathbf u,\mathbf v\rangle+\langle\mathbf v,\mathbf u\rangle+\langle\mathbf v,\mathbf v\rangle\), then SP1 to combine the two middle ones. The symbol \(\because\) means "because".</p>
+<div class="box eg"><span class="tag">Exercise (slide 13): verify Pythagoras for \(\mathbf u=(3,4)\) and \(\mathbf v=(-4,3)\)</span>
+<p>First, they are perpendicular: \(\mathbf u\cdot\mathbf v=3(-4)+4(3)=0\).</p>
+<p>\(\mathbf u+\mathbf v=(-1,7)\), so \(\|\mathbf u+\mathbf v\|^2=(-1)^2+7^2=50\).</p>
+\[ \begin{aligned} \|\mathbf u\|^2+\|\mathbf v\|^2&=(9+16)+(16+9)\\ &=25+25=50\ \checkmark \end{aligned} \]
+</div>
+<div class="box thm"><span class="tag">Parallelogram law (slide 13)</span>
+\[ \|\mathbf u+\mathbf v\|^2+\|\mathbf u-\mathbf v\|^2=2\|\mathbf u\|^2+2\|\mathbf v\|^2 \]
+<p><b>Proof</b> (slide 13):</p>
+\[ \begin{aligned} &\|\mathbf u+\mathbf v\|^2+\|\mathbf u-\mathbf v\|^2\\ &=\langle\mathbf u+\mathbf v,\mathbf u+\mathbf v\rangle+\langle\mathbf u-\mathbf v,\mathbf u-\mathbf v\rangle\\ &=\langle\mathbf u,\mathbf u\rangle+2\langle\mathbf u,\mathbf v\rangle+\langle\mathbf v,\mathbf v\rangle\\ &\quad+\langle\mathbf u,\mathbf u\rangle-2\langle\mathbf u,\mathbf v\rangle+\langle\mathbf v,\mathbf v\rangle\\ &=2\|\mathbf u\|^2+2\|\mathbf v\|^2. \end{aligned} \]
+<p class="word"><b>In words:</b> in any parallelogram, the squares of the two diagonals add up to the squares of all four sides. The \(\pm2\langle\mathbf u,\mathbf v\rangle\) terms cancel, so no right angle is needed.</p>
+</div>
+<div class="figure" style="max-width:460px;margin:12px auto"><svg class="diag" viewBox="0 0 460 200" role="img" aria-label="A parallelogram with sides u and v from the same corner; its long diagonal is u plus v and its short diagonal is u minus v.">
+<g stroke-width="2.4" fill="none">
+<line x1="60" y1="170" x2="300" y2="170" style="stroke:var(--accent)"/><line x1="60" y1="170" x2="150" y2="40" style="stroke:var(--c2)"/>
+<line x1="300" y1="170" x2="390" y2="40" style="stroke:var(--line)"/><line x1="150" y1="40" x2="390" y2="40" style="stroke:var(--line)"/>
+<line x1="60" y1="170" x2="390" y2="40" style="stroke:var(--ink)"/><line x1="150" y1="40" x2="300" y2="170" style="stroke:var(--c3)" stroke-dasharray="7 4"/>
+</g>
+<polygon points="300,170 289,165 289,175" style="fill:var(--accent)"/><polygon points="150,40 147,52 139,46" style="fill:var(--c2)"/><polygon points="390,40 378,42 382,52" style="fill:var(--ink)"/><polygon points="300,170 288,167 295,159" style="fill:var(--c3)"/>
+<text x="180" y="190">u</text><text x="85" y="100">v</text><text x="290" y="88">u + v</text><text x="292" y="140">u − v</text>
+</svg><p class="cap">The parallelogram on \(\mathbf u\) and \(\mathbf v\). Its diagonals are \(\mathbf u+\mathbf v\) and \(\mathbf u-\mathbf v\) (from the tip of \(\mathbf v\) to the tip of \(\mathbf u\)). If \(\mathbf u\perp\mathbf v\) it is a rectangle and both diagonals have the same length.</p></div>
+<p>For slide 13's pair: \(\mathbf u-\mathbf v=(7,1)\), so</p>
+\[ \begin{aligned} &\|\mathbf u+\mathbf v\|^2+\|\mathbf u-\mathbf v\|^2\\ &=50+50=100\\ &=2(25)+2(25)\ \checkmark \end{aligned} \]
+<p>A related fact asked in an old paper (May 2013 Q2(b)): if \(\|\mathbf u\|=\|\mathbf v\|\) then \((\mathbf u+\mathbf v)\perp(\mathbf u-\mathbf v)\). Expand: \(\langle\mathbf u+\mathbf v,\mathbf u-\mathbf v\rangle=\|\mathbf u\|^2-\|\mathbf v\|^2=0\). In pictures: the diagonals of a rhombus are perpendicular.</p>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Projection of v along u</h2>
+<p>Shine a light straight down onto the line through \(\mathbf u\): the shadow of \(\mathbf v\) on that line is its <b>projection</b>. The shadow is some multiple \(\alpha\mathbf u\), and what is left over, \(\mathbf v-\alpha\mathbf u\), must stand at a right angle to the line. Slide 14 uses exactly this to find \(\alpha\).</p>
+<div class="box thm"><span class="tag">Projection and Fourier coefficient (slide 14)</span>
+<p>For \(\mathbf u,\mathbf v\in V\), \(\mathbf u,\mathbf v\ne\mathbf 0\), there exists a unique value \(\alpha\) such that \(\mathbf v-\alpha\mathbf u\) is perpendicular to \(\mathbf u\):</p>
+\[ \begin{aligned} \mathbf u\perp(\mathbf v-\alpha\mathbf u)&\Rightarrow\langle\mathbf u,\mathbf v-\alpha\mathbf u\rangle=0\\ &\Rightarrow\langle\mathbf u,\mathbf v\rangle-\alpha\langle\mathbf u,\mathbf u\rangle=0 \end{aligned} \]
+\[ \Rightarrow\ \text{Fourier's coefficient}\quad \alpha=\frac{\langle\mathbf u,\mathbf v\rangle}{\langle\mathbf u,\mathbf u\rangle}. \]
+<p>We call \(\alpha\mathbf u\) the <b>projection of \(\mathbf v\) along \(\mathbf u\)</b>.</p>
+<p class="word"><b>In words:</b> the projection of \(\mathbf v\) onto \(\mathbf u\) is \(\dfrac{\mathbf u\cdot\mathbf v}{\mathbf u\cdot\mathbf u}\,\mathbf u\): the dot product of the two, divided by the squared length of the one you project <b>onto</b>, times that vector.</p>
+</div>
+<p>Why is \(\alpha\) unique? The last equation is linear in \(\alpha\), and \(\langle\mathbf u,\mathbf u\rangle=\|\mathbf u\|^2\ne0\) because \(\mathbf u\ne\mathbf 0\), so there is exactly one solution. (The slide's condition \(\mathbf v\ne\mathbf 0\) is not needed: for \(\mathbf v=\mathbf 0\) the formula gives \(\alpha=0\).)</p>
+<p>So every \(\mathbf v\) splits into two perpendicular pieces:</p>
+\[ \mathbf v=\underbrace{\alpha\mathbf u}_{\text{along }\mathbf u}+\underbrace{(\mathbf v-\alpha\mathbf u)}_{\perp\ \mathbf u}. \]
+<p>Past papers call \(\alpha\mathbf u\) the <b>component of \(\mathbf v\) along</b> (or in the direction of) \(\mathbf u\), and \(\mathbf v-\alpha\mathbf u\) the <b>component of \(\mathbf v\) perpendicular to \(\mathbf u\)</b>. Some older papers mean by "component of \(\mathbf v\) in the direction of \(\mathbf u\)" the signed <b>length</b> \(\dfrac{\mathbf u\cdot\mathbf v}{\|\mathbf u\|}\) of the shadow instead; if it is unclear, give both.</p>
+<div class="figure"><p class="ttl">Slide 14: the projection of v along u</p>
+<canvas class="plot" id="fPr" style="height:300px"></canvas>
+<div class="ctrl"><label>v₁ <input type="range" id="fPr-x" min="-5" max="5" step="1" value="4"></label><label>v₂ <input type="range" id="fPr-y" min="-5" max="5" step="1" value="3"></label>
+<label>u <select id="fPr-u"><option value="3,4">(3, 4) (slide 14)</option><option value="1,0">(1, 0)</option><option value="2,-1">(2, −1)</option><option value="-1,2">(−1, 2)</option></select></label></div>
+<div class="legend"><span style="--k:var(--accent)">u</span><span style="--k:var(--ink)">v</span><span style="--k:var(--c2)">projection αu</span><span style="--k:var(--c3)">v − αu (perpendicular part)</span></div>
+<div class="readout" id="fPr-out"></div>
+<p class="cap">Start: slide 14's \(\mathbf z=(4,3)\) on \(\mathbf u=(3,4)\). Set \(\mathbf v=(-4,3)\) to see the first part of slide 14: the projection shrinks to the zero vector. The green piece always meets the line through \(\mathbf u\) at a right angle, and it is the shortest way from the tip of \(\mathbf v\) to that line.</p></div>
+<div class="box eg"><span class="tag">Example (slide 14)</span>
+<p>Find the projection of \(\mathbf v=(-4,3)\) on \(\mathbf u=(3,4)\) and the projection of \(\mathbf z=(4,3)\) on \(\mathbf u=(3,4)\).</p>
+<ol class="steps">
+<li>The projection of \(\mathbf v\) on \(\mathbf u\) is \((0,0)\), as \(\mathbf v\perp\mathbf u\) (\(3(-4)+4(3)=0\)), so that \(\alpha=0\).</li>
+<li>To find the projection of \(\mathbf z\) on \(\mathbf u\):
+\[ \alpha=\frac{\langle\mathbf u,\mathbf z\rangle}{\langle\mathbf u,\mathbf u\rangle}=\frac{3(4)+4(3)}{3(3)+4(4)}=\frac{24}{25}. \]
+The projection of \(\mathbf z\) on \(\mathbf u\) is
+\[ \begin{aligned} \alpha\mathbf u&=\frac{24}{25}(3,4)=\left(\frac{72}{25},\frac{96}{25}\right)\\ &=(2.88,\,3.84). \end{aligned} \]
+</ol>
+<p><b>Going one step further</b> (not on the slide): the perpendicular part is</p>
+\[ \begin{aligned} \mathbf z-\alpha\mathbf u&=\left(4-\frac{72}{25},\ 3-\frac{96}{25}\right)\\ &=\left(\frac{28}{25},-\frac{21}{25}\right)=\frac7{25}(4,-3). \end{aligned} \]
+<p>Check it is perpendicular to \(\mathbf u\): \(\frac7{25}\big(3(4)+4(-3)\big)=0\ \checkmark\). Its length, \(\frac7{25}\cdot5=\frac75\), is the distance from the point \((4,3)\) to the line through the origin in the direction \((3,4)\).</p>
+</div>
+<div class="box warn"><span class="tag">Trap: which vector goes on the bottom</span>
+<p>Projecting \(\mathbf v\) <b>onto \(\mathbf u\)</b> divides by \(\mathbf u\cdot\mathbf u\) and multiplies \(\mathbf u\). Projecting \(\mathbf u\) onto \(\mathbf v\) is a different vector, \(\frac{\mathbf u\cdot\mathbf v}{\mathbf v\cdot\mathbf v}\mathbf v\), along the other line. Also, the answer is a <b>vector</b>; \(\alpha\) alone is only its coefficient.</p>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts: the perpendicular part is the shortest distance</span>
+<p>For any other multiple \(c\mathbf u\), the vector \(\mathbf v-c\mathbf u=(\mathbf v-\alpha\mathbf u)+(\alpha-c)\mathbf u\) is a sum of two perpendicular pieces, so by Pythagoras (section 5)</p>
+\[ \begin{aligned} \|\mathbf v-c\mathbf u\|^2&=\|\mathbf v-\alpha\mathbf u\|^2+(\alpha-c)^2\|\mathbf u\|^2\\ &\ge\|\mathbf v-\alpha\mathbf u\|^2. \end{aligned} \]
+<p>So \(\alpha\mathbf u\) is the point of the line through \(\mathbf u\) <b>closest</b> to \(\mathbf v\), and \(\|\mathbf v-\alpha\mathbf u\|\) is the distance from \(\mathbf v\) to that line. "Closest point = foot of the perpendicular" is the whole idea behind least squares, next.</p>
+<p>A useful formula for the length of the perpendicular part, again by Pythagoras:</p>
+\[ \begin{aligned} \|\mathbf v-\alpha\mathbf u\|^2&=\|\mathbf v\|^2-\alpha^2\|\mathbf u\|^2\\ &=\|\mathbf v\|^2-\dfrac{(\mathbf u\cdot\mathbf v)^2}{\|\mathbf u\|^2}. \end{aligned} \]
+<p>For \(\mathbf z\): \(25-\frac{24^2}{25}=\frac{49}{25}\), length \(\frac75\ \checkmark\)</p>
+</div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Least squares: the best-fit line</h2>
+<p>Measured data never lie exactly on a straight line. Five points give five equations for the two unknowns of a line \(y=a_0+a_1x\), and in general no line passes through all five: the system has <b>no solution</b> (<a href="note-L1.html#s10">L1</a>). Slide 15 asks for the next best thing: the line that comes <b>closest</b>, in the sense that the sum of the squared vertical errors is as small as possible. Hence "least squares".</p>
+<div class="box eg"><span class="tag">Problem (slide 15)</span>
+<p>Find the best approximating line (\(y\) approximated by \(a_0+a_1x\)) for the data:</p>
+<div class="scroll"><table style="width:auto"><tbody>
+<tr><th>\(x\)</th><td>1</td><td>3</td><td>4</td><td>6</td><td>7</td></tr>
+<tr><th>\(y\)</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+</tbody></table></div>
+</div>
+
+<h3>Setting it up as vectors (slide 15)</h3>
+<p>Put the five measured \(y\) values in one vector, and the five values the line predicts at \(x=1,3,4,6,7\) in another:</p>
+\[ \mathbf y=\begin{bmatrix}1\\2\\3\\4\\5\end{bmatrix} \]
+\[  \text{approximation}=\begin{bmatrix}a_0+a_1(1)\\a_0+a_1(3)\\a_0+a_1(4)\\a_0+a_1(6)\\a_0+a_1(7)\end{bmatrix} \]
+\[ =\begin{bmatrix}1&1\\1&3\\1&4\\1&6\\1&7\end{bmatrix}\begin{bmatrix}a_0\\a_1\end{bmatrix}=X\mathbf a. \]
+<p>Here \(X\) is the \(5\times2\) matrix (a column of 1s, then the \(x\) values) and \(\mathbf a=\begin{bmatrix}a_0\\a_1\end{bmatrix}\) holds the two unknowns. Denote the best \(\mathbf a\) by \(\mathbf a^*\).</p>
+<p>The error vector \(\mathbf y-X\mathbf a\) holds the five vertical gaps between the data and the line, and its squared length \(\|\mathbf y-X\mathbf a\|^2\) is the sum of their squares. So "least squares" means: <b>make \(\|\mathbf y-X\mathbf a\|\) as small as possible</b>.</p>
+
+<h3>The key idea: closest means perpendicular</h3>
+<p>As \(\mathbf a\) varies, \(X\mathbf a=a_0(\text{column }1)+a_1(\text{column }2)\) runs over all <a href="note-L2.html#s3">linear combinations</a> of the two columns of \(X\): a plane through the origin inside \(\mathbb R^5\). We want the point \(X\mathbf a^*\) of that plane closest to \(\mathbf y\). Section 6 showed that, for a line, the closest point is the foot of the perpendicular. The same holds for a plane: the error \(\mathbf y-X\mathbf a^*\) must be perpendicular to <b>every</b> vector \(X\mathbf a\) of the plane. Reason: if \(\mathbf y-X\mathbf a^*\) is perpendicular to the plane, then for any other point \(X\mathbf a\), Pythagoras gives</p>
+\[ \begin{aligned} \|\mathbf y-X\mathbf a\|^2&=\|\mathbf y-X\mathbf a^*\|^2\\ &\quad+\|X\mathbf a^*-X\mathbf a\|^2\\ &\ge\|\mathbf y-X\mathbf a^*\|^2. \end{aligned} \]
+<div class="box thm"><span class="tag">Derivation of the normal equations (slide 15)</span>
+\[ (\mathbf y-X\mathbf a^*)\perp X\mathbf a\ \ \forall\mathbf a \]
+\[ \Rightarrow\ (\mathbf y-X\mathbf a^*)\cdot X\mathbf a=0 \]
+\[ \Rightarrow\ (X\mathbf a)^T(\mathbf y-X\mathbf a^*)=0 \]
+\[ \Rightarrow\ \mathbf a^T\big[X^T(\mathbf y-X\mathbf a^*)\big]=0\ \ \forall\mathbf a \]
+\[ \Rightarrow\ X^T(\mathbf y-X\mathbf a^*)=\mathbf 0 \]
+\[ \Rightarrow\ (X^TX)\,\mathbf a^*=X^T\mathbf y. \]
+<p class="word"><b>In words:</b> the best \(\mathbf a^*\) solves the square system \(X^TX\mathbf a^*=X^T\mathbf y\), the <b>normal equations</b>: multiply the unsolvable system \(X\mathbf a=\mathbf y\) on the left by \(X^T\), and solve that instead.</p>
+</div>
+<p>The steps, one by one:</p>
+<ul class="list">
+<li>The dot product is \(\mathbf p\cdot\mathbf q=\mathbf p^T\mathbf q\) (section 1), and \(\mathbf p\cdot\mathbf q=\mathbf q\cdot\mathbf p\), so \((\mathbf y-X\mathbf a^*)\cdot X\mathbf a=(X\mathbf a)^T(\mathbf y-X\mathbf a^*)\).</li>
+<li>\((X\mathbf a)^T=\mathbf a^TX^T\), since a transpose reverses a product (<a href="note-L3.html#s6">L3</a>).</li>
+<li>Write \(\mathbf r=X^T(\mathbf y-X\mathbf a^*)\), a vector with 2 entries. \(\mathbf a^T\mathbf r=\mathbf a\cdot\mathbf r=0\) for <b>every</b> \(\mathbf a\); choosing \(\mathbf a=\mathbf r\) gives \(\|\mathbf r\|^2=0\), so \(\mathbf r=\mathbf 0\).</li>
+<li>Expanding \(X^T\mathbf y-X^TX\mathbf a^*=\mathbf 0\) gives the last line.</li>
+</ul>
+<p>Sizes: \(X^T\) is \(2\times5\), so \(X^TX\) is \(2\times2\) and \(X^T\mathbf y\) is \(2\times1\). Five equations have become two.</p>
+
+<h3>Solving slide 15's example</h3>
+<p>Slide 15 writes the normal equations out in full, \(X^TX\,\mathbf a^*=X^T\mathbf y\):</p>
+\[ X^TX=\begin{bmatrix}1&1&1&1&1\\1&3&4&6&7\end{bmatrix}\begin{bmatrix}1&1\\1&3\\1&4\\1&6\\1&7\end{bmatrix}, \]
+\[ X^T\mathbf y=\begin{bmatrix}1&1&1&1&1\\1&3&4&6&7\end{bmatrix}\begin{bmatrix}1\\2\\3\\4\\5\end{bmatrix}. \]
+<p>Each entry is a row of \(X^T\) times a column (row-column rule):</p>
+<ul class="list">
+<li>\((1,1)\): \(1+1+1+1+1=5\) (the number of points); \((1,2)=(2,1)\): \(1+3+4+6+7=21\) (sum of \(x\)); \((2,2)\): \(1+9+16+36+49=111\) (sum of \(x^2\)).</li>
+<li>\(X^T\mathbf y\): \(1+2+3+4+5=15\) (sum of \(y\)); sum of \(xy\):
+\[ \begin{aligned} &1(1)+3(2)+4(3)+6(4)+7(5)\\ &=1+6+12+24+35=78. \end{aligned} \]</li>
+</ul>
+\[ \Rightarrow\ \begin{bmatrix}5&21\\21&111\end{bmatrix}\begin{bmatrix}a_0^*\\a_1^*\end{bmatrix}=\begin{bmatrix}15\\78\end{bmatrix}. \]
+<p>Solve with the \(2\times2\) inverse (<a href="note-L3.html#s9">L3</a>): \(ad-bc=5(111)-21(21)=555-441=114\), so</p>
+\[ \begin{aligned} \begin{bmatrix}a_0^*\\a_1^*\end{bmatrix}&=\frac1{114}\begin{bmatrix}111&-21\\-21&5\end{bmatrix}\begin{bmatrix}15\\78\end{bmatrix}\\ &=\frac1{114}\begin{bmatrix}1665-1638\\-315+390\end{bmatrix}=\frac1{114}\begin{bmatrix}27\\75\end{bmatrix}\\ &=\begin{bmatrix}9/38\\25/38\end{bmatrix}\approx\begin{bmatrix}0.24\\0.66\end{bmatrix}. \end{aligned} \]
+<div class="box eg"><span class="tag">Result (slide 15)</span>
+<p>The best approximating line: \(y=0.24+0.66x\) (exactly \(y=\frac9{38}+\frac{25}{38}x\)).</p>
+<p>Slide 15's figure plots the five points with this "best fit line" through them.</p>
+</div>
+<p>The slide gives the coefficients to 2 decimal places (\(\frac9{38}=0.2368\ldots\), \(\frac{25}{38}=0.6578\ldots\)). Without a calculator in the exam, leave them as fractions.</p>
+<p><b>Check that it is really the best.</b> The fitted values \(X\mathbf a^*\) are \(\frac{17}{19},\frac{42}{19},\frac{109}{38},\frac{159}{38},\frac{92}{19}\), so the errors \(\mathbf y-X\mathbf a^*\) are \(\frac2{19},-\frac4{19},\frac5{38},-\frac7{38},\frac3{19}\). They add to 0 (perpendicular to column 1, the 1s), and</p>
+\[ \begin{aligned} &1(\tfrac2{19})+3(-\tfrac4{19})+4(\tfrac5{38})\\ &\quad+6(-\tfrac7{38})+7(\tfrac3{19})\\ &=\tfrac{4-24+20-42+42}{38}=0 \end{aligned} \]
+<p>(perpendicular to column 2). The minimum sum of squared errors is \(\frac5{38}\approx0.13\). Try to beat it in the figure.</p>
+<div class="figure"><p class="ttl">Slide 15: move the line and watch the sum of squared errors</p>
+<canvas class="plot" id="fLS" style="height:280px"></canvas>
+<div class="ctrl"><label>a₀ <input type="range" id="fLS-a" min="-1.5" max="2" step="0.01" value="1"></label><label>a₁ <input type="range" id="fLS-b" min="0" max="1.2" step="0.01" value="0.4"></label><button type="button" class="btn" id="fLS-best">best line</button></div>
+<div class="legend"><span style="--k:var(--accent)">line y = a₀ + a₁x</span><span style="--k:var(--c2)">vertical errors</span></div>
+<div class="readout" id="fLS-out"></div>
+<p class="cap">Each red segment is one entry of the error vector \(\mathbf y-X\mathbf a\). Least squares makes the sum of their squares as small as possible; "best line" sets \(a_0=\frac9{38}\), \(a_1=\frac{25}{38}\).</p></div>
+<div class="box thm"><span class="tag">Method: best-fit line \(y=a_0+a_1x\) through \(n\) points</span>
+<ol class="steps">
+<li>Build \(X\) (first column all 1s, second column the \(x\) values) and \(\mathbf y\) (the \(y\) values).</li>
+<li>Compute
+\[ X^TX=\begin{bmatrix}n&\sum x\\ \sum x&\sum x^2\end{bmatrix}, \]
+\[ X^T\mathbf y=\begin{bmatrix}\sum y\\ \sum xy\end{bmatrix}. \]
+<li>Solve \(X^TX\,\mathbf a^*=X^T\mathbf y\) (the \(2\times2\) inverse, or elimination).</li>
+<li>Write the line \(y=a_0^*+a_1^*x\). Optional check: the errors add to 0.</li>
+</ol>
+</div>
+<div class="box beyond"><span class="tag">Beyond the handouts: the closest point of any subspace</span>
+<p>Nothing above used that the columns of \(X\) come from a line fit. For <b>any</b> matrix \(A\) and vector \(\mathbf y\): the point of the span of the columns of \(A\) closest to \(\mathbf y\) is \(A\mathbf c\), where \(\mathbf c\) solves \(A^TA\,\mathbf c=A^T\mathbf y\). This \(A\mathbf c\) is called the <b>projection of \(\mathbf y\) onto the subspace</b>, and \(\mathbf y-A\mathbf c\) is perpendicular to every column of \(A\).</p>
+<p><b>Example.</b> The point of \(V=\operatorname{span}\{(1,1,0),(0,1,1)\}\) closest to \(\mathbf y=(1,0,0)\). With these as the columns of \(A\):</p>
+\[ A^TA=\begin{bmatrix}2&1\\1&2\end{bmatrix},\quad A^T\mathbf y=\begin{bmatrix}1\\0\end{bmatrix} \]
+\[ \Rightarrow\ \mathbf c=\frac13\begin{bmatrix}2&-1\\-1&2\end{bmatrix}\begin{bmatrix}1\\0\end{bmatrix}=\begin{bmatrix}2/3\\-1/3\end{bmatrix}, \]
+<p>so the closest point is \(\frac23(1,1,0)-\frac13(0,1,1)=\left(\frac23,\frac13,-\frac13\right)\). Check: \(\mathbf y-A\mathbf c=\frac13(1,-1,1)\), and \((1,-1,1)\) is perpendicular to both spanning vectors (section 4) \(\checkmark\). Section 8 gives a second way, with an orthogonal basis.</p>
+<p>If the columns of \(A\) are dependent, \(A^TA\) is not invertible and the normal equations have infinitely many solutions \(\mathbf c\); they all give the same closest point \(A\mathbf c\).</p>
+</div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Gram–Schmidt orthogonalization</h2>
+<p>Section 4 showed how convenient an orthonormal basis is, and slide 12 claimed one always exists. Gram–Schmidt is the recipe that builds it from any basis, using nothing but section 6's projection: take the vectors one at a time, and from each one <b>subtract its projections along the vectors already built</b>. What is left is perpendicular to all of them. Finally divide each by its length.</p>
+<div class="box thm"><span class="tag">Method: Gram–Schmidt (the pattern of slide 16)</span>
+<p>Given a basis \(\{\mathbf v_1,\mathbf v_2,\mathbf v_3,\dots\}\):</p>
+\[ \mathbf w_1=\mathbf v_1, \]
+\[ \mathbf w_2=\mathbf v_2-\frac{\langle\mathbf v_2,\mathbf w_1\rangle}{\langle\mathbf w_1,\mathbf w_1\rangle}\mathbf w_1, \]
+\[ \begin{aligned} \mathbf w_3=\mathbf v_3&-\frac{\langle\mathbf v_3,\mathbf w_1\rangle}{\langle\mathbf w_1,\mathbf w_1\rangle}\mathbf w_1\\ &-\frac{\langle\mathbf v_3,\mathbf w_2\rangle}{\langle\mathbf w_2,\mathbf w_2\rangle}\mathbf w_2, \end{aligned} \]
+<p>and so on (each new \(\mathbf w_k\) subtracts the projections of \(\mathbf v_k\) along <b>all</b> earlier \(\mathbf w\)'s). Then \(\{\mathbf w_1,\mathbf w_2,\dots\}\) is an orthogonal basis, and</p>
+\[ \mathbf u_k=\frac{\mathbf w_k}{\|\mathbf w_k\|} \]
+<p>gives an orthonormal basis.</p>
+<p class="word"><b>In words:</b> keep the first vector. From the second, remove the part that points along the first. From the third, remove the parts that point along the first two. Then shrink every vector to length 1.</p>
+</div>
+<p>Why \(\mathbf w_3\perp\mathbf w_1\): take the scalar product of the \(\mathbf w_3\) line with \(\mathbf w_1\). Since \(\langle\mathbf w_2,\mathbf w_1\rangle=0\) already, the last term contributes nothing, and the middle term contributes exactly \(-\langle\mathbf v_3,\mathbf w_1\rangle\), cancelling the first. The same argument with \(\mathbf w_2\) gives \(\mathbf w_3\perp\mathbf w_2\). The \(\mathbf w\)'s still span the same space as the \(\mathbf v\)'s, because each \(\mathbf w_k\) is \(\mathbf v_k\) plus a combination of earlier vectors.</p>
+<p>Two practical points. (1) Multiplying a \(\mathbf w\) by a non-zero number does not change the projections along it (the number cancels top and bottom), so you may clear fractions, for example use \((4,1,-2)\) instead of \(\frac17(4,1,-2)\). Slide 16 does exactly this. (2) If some \(\mathbf w_k\) comes out as \(\mathbf 0\), then \(\mathbf v_k\) was a combination of the earlier vectors (the set was not independent): drop it and carry on.</p>
+
+<div class="box eg"><span class="tag">Example (slide 16)</span>
+<p>Construct an orthonormal basis \(\{\mathbf u_1,\mathbf u_2,\mathbf u_3\}\) for the basis vectors</p>
+\[ \{(1,2,3),\,(2,3,4),\,(2,5,7)\} \]
+\[ =\{\mathbf v_1,\mathbf v_2,\mathbf v_3\}. \]
+<p><b>Step 1.</b></p>
+\[ \mathbf w_1=\mathbf v_1, \]
+\[ \begin{aligned} \mathbf u_1&=\frac{(1,2,3)}{\sqrt{1^2+2^2+3^2}}\\ &=\left(\frac1{\sqrt{14}},\frac2{\sqrt{14}},\frac3{\sqrt{14}}\right). \end{aligned} \]
+<p><b>Step 2.</b></p>
+\[ \begin{aligned} \langle\mathbf v_2,\mathbf w_1\rangle&=(2,3,4)\cdot(1,2,3)\\ &=2+6+12=20 \end{aligned} \]
+<p>and \(\langle\mathbf w_1,\mathbf w_1\rangle=14\):</p>
+\[ \begin{aligned} \mathbf w_2&=\mathbf v_2-\alpha_1\mathbf w_1\\ &=(2,3,4)-\frac{(2,3,4)\cdot(1,2,3)}{14}(1,2,3)\\ &=(2,3,4)-\frac{10}7(1,2,3)\\ &=\left(\frac{14-10}7,\frac{21-20}7,\frac{28-30}7\right)\\ &=\frac17(4,1,-2), \end{aligned} \]
+\[ \mathbf u_2=\left(\frac4{\sqrt{21}},\frac1{\sqrt{21}},\frac{-2}{\sqrt{21}}\right) \]
+<p>(since \(4^2+1^2+(-2)^2=21\)).</p>
+<p>Check: \((4,1,-2)\cdot(1,2,3)=4+2-6=0\ \checkmark\)</p>
+<p><b>Step 3.</b> \(\mathbf w_3=\mathbf v_3-\alpha_1\mathbf w_1-\alpha_2\mathbf w_2\), projecting along \((1,2,3)\) and along \((4,1,-2)\) (which is \(7\mathbf w_2\)):</p>
+\[ \begin{aligned} &\mathbf w_3\\ &=(2,5,7)-\frac{(2,5,7)\cdot(1,2,3)}{14}(1,2,3)\\ &\quad-\frac{(2,5,7)\cdot(4,1,-2)}{21}(4,1,-2)\\ &=(2,5,7)-\frac{33}{14}(1,2,3)+\frac1{21}(4,1,-2)\\ &=\frac{(-1,2,-1)}6. \end{aligned} \]
+<p>The dot products: \(2+10+21=33\) and \(8+5-14=-1\), so the second subtraction becomes \(+\frac1{21}(4,1,-2)\). The last step, over the common denominator 42:</p>
+\[ \begin{aligned} &\tfrac1{42}\big[(84,210,294)-(99,198,297)\\ &\qquad+(8,2,-4)\big]\\ &=\frac{(-7,14,-7)}{42}=\frac{(-1,2,-1)}6. \end{aligned} \]
+\[ \mathbf u_3=\left(\frac{-1}{\sqrt6},\frac2{\sqrt6},\frac{-1}{\sqrt6}\right) \]
+<p>(since \(1+4+1=6\)).</p>
+<p><b>Check:</b> \((-1,2,-1)\cdot(1,2,3)=-1+4-3=0\) and \((-1,2,-1)\cdot(4,1,-2)=-4+2+2=0\ \checkmark\) Each \(\mathbf u_k\) has length 1 by construction.</p>
+</div>
+<p>On slide 16, \(\alpha_1,\alpha_2\) are just the Fourier coefficients (section 6) of each step; \(\alpha_1\) means \(\frac{20}{14}\) in step 2 but \(\frac{33}{14}\) in step 3. The slide writes the projections in the step-3 line along \((1,2,3)\) and \((4,1,-2)\) rather than along \(\mathbf w_1\) and \(\mathbf w_2\), which gives the same result by point (1) above.</p>
+<div class="figure"><p class="ttl">Slide 16 in 3D: Gram–Schmidt step by step</p>
+<canvas class="plot3d" id="fGS" style="height:320px"></canvas>
+<div class="ctrl"><label>show <select id="fGS-s">
+<option value="0">the basis v₁, v₂, v₃</option>
+<option value="1">step 1: w₁ = v₁</option>
+<option value="2">step 2: w₂ = v₂ − projection along w₁</option>
+<option value="3">step 3: w₃ = v₃ − projections along w₁, w₂</option>
+<option value="4">the orthonormal basis u₁, u₂, u₃</option>
+</select></label></div>
+<div class="readout" id="fGS-out"></div>
+<p class="cap">Drag to turn. The three \(\mathbf v\)'s point in nearly the same direction; Gram–Schmidt keeps \(\mathbf v_1\)'s direction and replaces the others by their perpendicular parts. The dashed segments are the projections being removed. (\(\mathbf w_2\), \(\mathbf w_3\) and the \(\mathbf u\)'s are short, so they are drawn 3 times longer; directions are exact.)</p></div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts: Gram–Schmidt for functions</span>
+<p>The recipe uses only scalar products, so it works for the function scalar product \(\langle f,g\rangle=\int_0^1f(t)g(t)\,dt\) of section 1 too. Past papers ask this (May 2019 Q5).</p>
+<p><b>Example.</b> Orthonormalize \(\{1,\ t\}\) on \([0,1]\).</p>
+<p>\(w_1=1\), with \(\langle1,1\rangle=\int_0^11\,dt=1\), so \(u_1=1\) already has length 1.</p>
+<p>\(\langle t,1\rangle=\int_0^1t\,dt=\frac12\), so \(w_2=t-\frac{1/2}{1}\cdot1=t-\frac12\).</p>
+\[ \begin{aligned} \|w_2\|^2&=\int_0^1\left(t-\tfrac12\right)^2dt=\left[\tfrac13\left(t-\tfrac12\right)^3\right]_0^1\\ &=\tfrac1{24}+\tfrac1{24}=\tfrac1{12}, \end{aligned} \]
+<p>so</p>
+\[ \begin{aligned} u_2&=\dfrac{t-\frac12}{1/\sqrt{12}}=\sqrt{12}\left(t-\tfrac12\right)\\ &=\sqrt3\,(2t-1). \end{aligned} \]
+<p>Check: \(\int_0^1\sqrt3(2t-1)\,dt=\sqrt3\,[t^2-t]_0^1=0\ \checkmark\) (orthogonal to 1) and \(\int_0^13(2t-1)^2\,dt=3\cdot\frac13=1\ \checkmark\)</p>
+<p>Adding \(t^2\) as a third function gives the third pair shown in section 1's figure; the exam taster finishes it.</p>
+</div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts: projection onto a subspace with an orthogonal basis</span>
+<p>If \(\{\mathbf q_1,\dots,\mathbf q_k\}\) is an <b>orthogonal</b> basis of a subspace \(W\), the point of \(W\) closest to \(\mathbf y\) (its projection onto \(W\)) is the sum of the projections along each basis vector:</p>
+\[ \begin{aligned} \operatorname{proj}_W\mathbf y=&\ \frac{\langle\mathbf y,\mathbf q_1\rangle}{\langle\mathbf q_1,\mathbf q_1\rangle}\mathbf q_1+\cdots\\ &+\frac{\langle\mathbf y,\mathbf q_k\rangle}{\langle\mathbf q_k,\mathbf q_k\rangle}\mathbf q_k. \end{aligned} \]
+<p class="word"><b>In words:</b> with a perpendicular basis, project along each basis vector separately and add. (With a basis that is not orthogonal this is wrong; use Gram–Schmidt first, or the normal equations of section 7.)</p>
+<p><b>Example</b> (section 7's): \(W=\operatorname{span}\{(1,1,0),(0,1,1)\}\), \(\mathbf y=(1,0,0)\). Gram–Schmidt: \(\mathbf q_1=(1,1,0)\), \(\mathbf q_2=(0,1,1)-\frac12(1,1,0)=\left(-\frac12,\frac12,1\right)\). Then \(\frac{\langle\mathbf y,\mathbf q_1\rangle}{\langle\mathbf q_1,\mathbf q_1\rangle}=\frac12\) and \(\frac{\langle\mathbf y,\mathbf q_2\rangle}{\langle\mathbf q_2,\mathbf q_2\rangle}=\frac{-1/2}{3/2}=-\frac13\), so</p>
+\[ \begin{aligned} \operatorname{proj}_W\mathbf y&=\tfrac12(1,1,0)-\tfrac13\left(-\tfrac12,\tfrac12,1\right)\\ &=\left(\tfrac23,\tfrac13,-\tfrac13\right), \end{aligned} \]
+<p>the same point as with the normal equations \(\checkmark\)</p>
+</div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Summary</h2>
+<ul class="list">
+<li>A <b>scalar product</b> \(\langle\mathbf u,\mathbf v\rangle\) gives a number from two vectors and is commutative (SP1), distributive (SP2) and lets numbers out (SP3); also \(\langle\mathbf v,\mathbf v\rangle\ge0\), with 0 only for \(\mathbf v=\mathbf 0\).</li>
+<li>On \(\mathbb R^n\): \(\mathbf a\cdot\mathbf b=\sum a_kb_k=\mathbf a^T\mathbf b\). On continuous functions on \([0,1]\): \(\langle f,g\rangle=\int_0^1f(t)g(t)\,dt\).</li>
+<li><b>Length</b> \(\|\mathbf v\|=\sqrt{\langle\mathbf v,\mathbf v\rangle}\); \(\mathbf v/\|\mathbf v\|\) is the unit vector in the direction of \(\mathbf v\ne\mathbf 0\).</li>
+<li><b>Cauchy–Schwarz</b> \(|\mathbf u\cdot\mathbf v|\le\|\mathbf u\|\|\mathbf v\|\); angle: \(\cos\theta=\dfrac{\mathbf u\cdot\mathbf v}{\|\mathbf u\|\|\mathbf v\|}\). <b>Triangle inequality</b> \(\|\mathbf u+\mathbf v\|\le\|\mathbf u\|+\|\mathbf v\|\).</li>
+<li>\(\mathbf u\perp\mathbf v\) means \(\langle\mathbf u,\mathbf v\rangle=0\). <b>Orthogonal basis</b>: basis vectors pairwise perpendicular; <b>orthonormal</b>: also of length 1.</li>
+<li>In an orthonormal basis, coordinates are \(\alpha_i=\langle\mathbf v,\mathbf u_i\rangle\) and \(\|\mathbf v\|^2=\sum\alpha_i^2\); orthonormal vectors are independent.</li>
+<li><b>Pythagoras</b>: \(\mathbf u\perp\mathbf v\Rightarrow\|\mathbf u+\mathbf v\|^2=\|\mathbf u\|^2+\|\mathbf v\|^2\). <b>Parallelogram law</b>: \(\|\mathbf u+\mathbf v\|^2+\|\mathbf u-\mathbf v\|^2=2\|\mathbf u\|^2+2\|\mathbf v\|^2\).</li>
+<li><b>Projection</b> of \(\mathbf v\) along \(\mathbf u\): \(\alpha\mathbf u\) with \(\alpha=\dfrac{\langle\mathbf u,\mathbf v\rangle}{\langle\mathbf u,\mathbf u\rangle}\); \(\mathbf v-\alpha\mathbf u\perp\mathbf u\) is the perpendicular component, and its length is the distance from \(\mathbf v\) to the line.</li>
+<li><b>Least squares</b>: the best \(\mathbf a^*\) for an unsolvable \(X\mathbf a=\mathbf y\) makes the error \(\mathbf y-X\mathbf a^*\) perpendicular to the columns of \(X\): solve \(X^TX\mathbf a^*=X^T\mathbf y\). Same equations give the closest point of any subspace.</li>
+<li><b>Gram–Schmidt</b>: \(\mathbf w_k=\mathbf v_k-\) (projections of \(\mathbf v_k\) along \(\mathbf w_1,\dots,\mathbf w_{k-1}\)), then \(\mathbf u_k=\mathbf w_k/\|\mathbf w_k\|\).</li>
+</ul>
+<div class="box thm"><span class="tag">Method: components along and perpendicular to u</span>
+<ol class="steps">
+<li>Compute \(\mathbf u\cdot\mathbf v\) and \(\mathbf u\cdot\mathbf u\) (the vector you project <b>onto</b> goes on the bottom).</li>
+<li>Along: \(\alpha\mathbf u\) with \(\alpha=\frac{\mathbf u\cdot\mathbf v}{\mathbf u\cdot\mathbf u}\).</li>
+<li>Perpendicular: \(\mathbf v-\alpha\mathbf u\). <b>Check</b> its dot product with \(\mathbf u\) is 0.</li>
+<li>Its length: directly, or \(\|\mathbf v\|^2-\frac{(\mathbf u\cdot\mathbf v)^2}{\mathbf u\cdot\mathbf u}\) under a square root.</li>
+</ol>
+</div>
+<div class="box thm"><span class="tag">Method: an orthonormal basis</span>
+<ol class="steps">
+<li>If the space is given by equations (\(A\mathbf x=\mathbf 0\), or "perpendicular to \(\mathbf a,\mathbf b\)"), first find a basis by row reduction (section 4).</li>
+<li>Gram–Schmidt: \(\mathbf w_1=\mathbf v_1\), then subtract projections along every earlier \(\mathbf w\). Scale a \(\mathbf w\) to clear fractions if you like.</li>
+<li>Check each new \(\mathbf w\) against the earlier ones (dot product 0).</li>
+<li>Divide each \(\mathbf w\) by its length.</li>
+</ol>
+</div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Common mistakes</h2>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Projection of \(\mathbf v\) on \(\mathbf u\) written as \(\frac{\mathbf u\cdot\mathbf v}{\|\mathbf u\|}\mathbf u\) (dividing by the length, not its square), or as \(\frac{\mathbf u\cdot\mathbf v}{\mathbf v\cdot\mathbf v}\mathbf v\) (wrong vector).</span>
+<span class="ok">✔</span><span>\(\frac{\mathbf u\cdot\mathbf v}{\mathbf u\cdot\mathbf u}\mathbf u\): the vector projected <b>onto</b> appears three times (twice on the bottom, once outside). Test: projecting \(\mathbf u\) on itself must give \(\mathbf u\).</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Answering a "perpendicular component" question with the projection, or the other way round.</span>
+<span class="ok">✔</span><span>Along \(\mathbf u\): \(\alpha\mathbf u\). Perpendicular to \(\mathbf u\): \(\mathbf v-\alpha\mathbf u\). They add up to \(\mathbf v\).</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>In Gram–Schmidt, projecting along the <b>original</b> \(\mathbf v_1,\mathbf v_2\) instead of the new \(\mathbf w_1,\mathbf w_2\), or forgetting one of the projections in \(\mathbf w_3\).</span>
+<span class="ok">✔</span><span>Every projection is along an already-orthogonal \(\mathbf w\). \(\mathbf w_3\) subtracts one projection for <b>each</b> earlier \(\mathbf w\). Check the dot products are 0 before normalizing.</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Stopping at an orthogonal basis when the question says <b>orthonormal</b> (or normalizing when only "orthogonal" was asked, which is harmless but costs time).</span>
+<span class="ok">✔</span><span>Orthonormal = orthogonal <b>and</b> unit length: divide each \(\mathbf w\) by \(\|\mathbf w\|\) at the end.</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>In least squares, cancelling \(X^T\) from \(X^TX\mathbf a=X^T\mathbf y\) to get \(X\mathbf a=\mathbf y\), or computing \(XX^T\) (a \(5\times5\) matrix) instead of \(X^TX\).</span>
+<span class="ok">✔</span><span>\(X^T\) is not square and has no inverse; the whole point is that \(X\mathbf a=\mathbf y\) has no solution. \(X^TX\) is small: \(2\times2\) for a line.</span>
+</div></div>
+<div class="box"><div class="mistake">
+<span class="x">✘</span><span>Function scalar products: \(\langle f,f\rangle\) computed as \(\left(\int_0^1f\,dt\right)^2\), or \(\|f\|\) left as \(\int_0^1f^2\,dt\) without the square root.</span>
+<span class="ok">✔</span><span>\(\|f\|=\sqrt{\int_0^1f(t)^2\,dt}\): square first, then integrate, then take the root. For \(f=t\): \(\sqrt{1/3}\), not \(\frac12\).</span>
+</div></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Find the mistake</h2>
+<p class="muted">Written for these notes (the handout has no exercises of this kind).</p>
+<div class="q"><p class="qh">1. A student projects \(\mathbf z=(4,3)\) on \(\mathbf u=(3,4)\):</p>
+<div class="handwork">
+\[ \mathbf u\cdot\mathbf z=24,\quad \|\mathbf u\|=5, \]
+\[ \text{projection}=\frac{24}{5}(3,4)=\left(\frac{72}5,\frac{96}5\right). \]
+</div>
+<details><summary>Hint</summary><div><p>Compute \(\mathbf z-\text{projection}\) and its dot product with \(\mathbf u\). Is the projection longer than \(\mathbf z\) itself?</p></div></details>
+<details><summary>Answer</summary><div>
+<p>The student divided by \(\|\mathbf u\|=5\) instead of \(\langle\mathbf u,\mathbf u\rangle=\|\mathbf u\|^2=25\). The answer has length \(\frac{24}5\cdot5=24\), far longer than \(\|\mathbf z\|=5\), which a shadow can never be. Correct (slide 14): \(\frac{24}{25}(3,4)=(2.88,3.84)\); then \(\mathbf z-\alpha\mathbf u=\frac7{25}(4,-3)\perp\mathbf u\ \checkmark\)</p>
+</div></details></div>
+
+<div class="q"><p class="qh">2. Continuing slide 16 after finding \(\mathbf w_1=(1,2,3)\) and \(\mathbf w_2=\frac17(4,1,-2)\), a student writes:</p>
+<div class="handwork">
+\[ \begin{aligned} \mathbf w_3=\mathbf v_3&-\frac{\mathbf v_3\cdot\mathbf v_1}{\mathbf v_1\cdot\mathbf v_1}\mathbf v_1-\frac{\mathbf v_3\cdot\mathbf v_2}{\mathbf v_2\cdot\mathbf v_2}\mathbf v_2\\ =(2,5,7)&-\frac{33}{14}(1,2,3)-\frac{47}{29}(2,3,4). \end{aligned} \]
+</div>
+<details><summary>Hint</summary><div><p>Work out \(\mathbf w_3\cdot\mathbf w_1\) without simplifying \(\mathbf w_3\) first: dot each of the three terms with \((1,2,3)\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>The second projection is along \(\mathbf v_2\), which is <b>not</b> perpendicular to \(\mathbf w_1\), so it brings back a part along \(\mathbf w_1\):</p>
+\[ \begin{aligned} \mathbf w_3\cdot\mathbf w_1&=33-\tfrac{33}{14}(14)-\tfrac{47}{29}(20)\\ &=-\tfrac{940}{29}\ne0. \end{aligned} \]
+<p>Project along \(\mathbf w_2\) (or \((4,1,-2)\)) instead:</p>
+\[ \begin{aligned} \mathbf w_3&=(2,5,7)-\tfrac{33}{14}(1,2,3)\\ &\quad+\tfrac1{21}(4,1,-2)\\ &=\tfrac16(-1,2,-1). \end{aligned} \]
+</div></details></div>
+
+<div class="q"><p class="qh">3. For slide 15's data a student writes the normal equations from memory:</p>
+<div class="handwork">
+\[ \begin{bmatrix}\sum x^2&\sum x\\ \sum x&n\end{bmatrix}\begin{bmatrix}a_0\\a_1\end{bmatrix}=\begin{bmatrix}\sum y\\ \sum xy\end{bmatrix}, \]
+\[ \begin{bmatrix}111&21\\21&5\end{bmatrix}\begin{bmatrix}a_0\\a_1\end{bmatrix}=\begin{bmatrix}15\\78\end{bmatrix}. \]
+</div>
+<details><summary>Hint</summary><div><p>Rebuild \(X^TX\) from \(X\) (first column 1s, second the \(x\) values). Which entry multiplies \(a_0\) in the equation that comes from the row of 1s?</p></div></details>
+<details><summary>Answer</summary><div>
+<p>The matrix has its diagonal swapped, so it no longer matches the unknowns and the right-hand side. From the row of 1s of \(X^T\): \(na_0+(\sum x)a_1=\sum y\); from the row of \(x\)'s: \((\sum x)a_0+(\sum x^2)a_1=\sum xy\). So \(\begin{bmatrix}5&21\\21&111\end{bmatrix}\mathbf a=\begin{bmatrix}15\\78\end{bmatrix}\), giving \(a_0=\frac9{38}\), \(a_1=\frac{25}{38}\). Building \(X^TX\) from \(X\) every time avoids memory slips.</p>
+</div></details></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1. Find the unit vector in the direction of \((2,-1,2)\).</p>
+<details><summary>Answer</summary><div><p>\(\|(2,-1,2)\|=\sqrt{4+1+4}=3\), so the unit vector is \(\left(\frac23,-\frac13,\frac23\right)\).</p></div></details></div>
+<div class="q"><p class="qh">2. For which \(k\) are \((1,k,2)\) and \((k,3,-1)\) orthogonal?</p>
+<details><summary>Answer</summary><div><p>\(k+3k-2=0\), so \(k=\frac12\).</p></div></details></div>
+<div class="q"><p class="qh">3. Split \(\mathbf v=(1,1,1)\) into a part along \(\mathbf u=(1,0,1)\) and a part perpendicular to \(\mathbf u\).</p>
+<details><summary>Answer</summary><div><p>\(\alpha=\frac{\mathbf u\cdot\mathbf v}{\mathbf u\cdot\mathbf u}=\frac22=1\): along \(\mathbf u\) is \((1,0,1)\), perpendicular is \((0,1,0)\). Check: \((0,1,0)\cdot(1,0,1)=0\).</p></div></details></div>
+<div class="q"><p class="qh">4. Is \(\{(1,1),(1,-1)\}\) an orthogonal basis of \(\mathbb R^2\)? An orthonormal one? Write \((3,1)\) in it.</p>
+<details><summary>Answer</summary><div><p>Orthogonal: \(1-1=0\). Not orthonormal: both have length \(\sqrt2\); \(\left\{\frac1{\sqrt2}(1,1),\frac1{\sqrt2}(1,-1)\right\}\) is. Coefficients by projection: \(\frac{(3,1)\cdot(1,1)}{2}=2\) and \(\frac{(3,1)\cdot(1,-1)}{2}=1\), so \((3,1)=2(1,1)+1(1,-1)\).</p></div></details></div>
+<div class="q"><p class="qh">5. With \(\langle f,g\rangle=\int_0^1f(t)g(t)\,dt\), find \(\langle1,t^2\rangle\) and \(\|t^2\|\).</p>
+<details><summary>Answer</summary><div><p>\(\langle1,t^2\rangle=\int_0^1t^2\,dt=\frac13\). \(\|t^2\|=\sqrt{\int_0^1t^4\,dt}=\frac1{\sqrt5}\).</p></div></details></div>
+<div class="q"><p class="qh">6. In a least-squares straight-line fit \(y=a_0+a_1x\), why do the errors \(y_i-(a_0^*+a_1^*x_i)\) always add up to 0?</p>
+<details><summary>Answer</summary><div><p>The error vector is perpendicular to every column of \(X\) (the normal equations say \(X^T(\mathbf y-X\mathbf a^*)=\mathbf 0\)). The first column is all 1s, and its dot product with the error vector is the sum of the errors.</p></div></details></div>
+<div class="q"><p class="qh">7. True or false: \(\langle\mathbf u,\mathbf v\rangle=u_1v_1-u_2v_2\) is a scalar product on \(\mathbb R^2\).</p>
+<details><summary>Answer</summary><div><p>False. SP1 to SP3 hold, but \(\langle(0,1),(0,1)\rangle=-1\lt0\), so "length" \(\sqrt{\langle\mathbf v,\mathbf v\rangle}\) would make no sense: the positivity rule (section 1, Beyond box) fails.</p></div></details></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Exam taster</h2>
+<p>Real past-paper questions, about one per question type of this chapter, newest first within each type, so you can see how the exam asks about it. Each has a hint and the final answer; the full working and the standard method for each type are in the <a href="guide-L7.html">L7 exam guide</a>.</p>
+<p class="muted">This chapter's four question types (projections and components; Gram–Schmidt and orthonormal bases; least squares; proofs about orthonormal sets and orthogonal matrices) account for 28 question parts in 18 questions of the past papers (Dec 2012 to May 2026). Every May paper since 2023 has at least one 5- or 6-mark question from this chapter: a projection in May 2023, 2025 and 2026, and in May 2024 both slide 16's Gram–Schmidt example and a best-fit line. No calculators: keep fractions and surds exact.</p>
+
+<div class="q" id="t1"><p class="src"><b>May 2026 Q5</b><span>5 marks</span><a class="guide" href="guide-L7.html#L7-1">Guide · L7.1 Projections and orthogonal components</a></p>
+<p class="qh">Given</p>
+\[ \mathbf u=\begin{bmatrix}k\\-k\\2k\end{bmatrix} \]
+\[ \text{and}\quad\mathbf w=\begin{bmatrix}1\\2\\-1\end{bmatrix}, \]
+<p class="qh">if the length of the component of \(\mathbf u\) which is perpendicular to \(\mathbf w\) is 3 units, what are the values of \(k\)?</p>
+<details><summary>Hint</summary><div><p>The component perpendicular to \(\mathbf w\) is \(\mathbf u-\frac{\mathbf u\cdot\mathbf w}{\mathbf w\cdot\mathbf w}\mathbf w\) (section 6). Here \(\mathbf u\cdot\mathbf w\) is a multiple of \(k\), so the whole vector is \(k\) times a fixed vector. Set its length equal to 3; remember \(\sqrt{k^2}=|k|\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>The perpendicular component is \(\left(\frac{3k}2,0,\frac{3k}2\right)\), of length \(\frac{3\sqrt2}{2}|k|\), so</p>
+\[ k=\pm\sqrt2. \]
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t2"><p class="src"><b>Dec 2021 Q4(b)</b><span>5 marks</span><a class="guide" href="guide-L7.html#L7-1">Guide · L7.1 Closest point in a subspace</a></p>
+<p class="qh">Let \(V\subset\mathbb R^3\) be the subspace with basis \(\mathbf v_1=[1,1,0]^T\), \(\mathbf v_2=[0,1,1]^T\). Find the vector \(\mathbf v\in V\) closest (in the Euclidean distance) to \(\mathbf y=[8,0,6]^T\).</p>
+<details><summary>Hint</summary><div><p>The closest point is the projection of \(\mathbf y\) onto \(V\). Either solve the normal equations \(A^TA\mathbf c=A^T\mathbf y\) with \(\mathbf v_1,\mathbf v_2\) as the columns of \(A\) (section 7, Beyond box), or make the basis orthogonal first and add the two projections (section 8, Beyond box). Check that \(\mathbf y-\mathbf v\) is perpendicular to both \(\mathbf v_1\) and \(\mathbf v_2\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ \mathbf v=\tfrac{10}3\mathbf v_1+\tfrac43\mathbf v_2=\left[\tfrac{10}3,\tfrac{14}3,\tfrac43\right]^T. \]
+<p>(\(\mathbf y-\mathbf v=\frac{14}3[1,-1,1]^T\), perpendicular to \(V\).)</p>
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t3"><p class="src"><b>May 2024 Q6</b><span>6 marks</span><a class="guide" href="guide-L7.html#L7-2">Guide · L7.2 Gram–Schmidt and orthonormal bases</a></p>
+<p class="qh">Construct an orthonormal basis for the vectors \(\{(1,2,3),\,(2,3,4),\,(2,5,7)\}\).</p>
+<details><summary>Hint</summary><div><p>This is word for word slide 16's example (section 8). Keep \(\mathbf w_1=(1,2,3)\); subtract from \((2,3,4)\) its projection along \(\mathbf w_1\); subtract from \((2,5,7)\) its projections along \(\mathbf w_1\) and \(\mathbf w_2\); then normalize.</p></div></details>
+<details><summary>Answer</summary><div>
+\[ \begin{aligned} &\tfrac1{\sqrt{14}}(1,2,3),\\ &\tfrac1{\sqrt{21}}(4,1,-2),\\ &\tfrac1{\sqrt6}(-1,2,-1) \end{aligned} \]
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t4"><p class="src"><b>May 2019 Q5</b><span>9 marks</span><span class="older">older format</span><a class="guide" href="guide-L7.html#L7-2">Guide · L7.2 Gram–Schmidt for functions</a></p>
+<p class="qh">Consider the scalar product \(\langle f,g\rangle=\int_0^1f(x)g(x)\,dx\). Let \(V\) be spanned by \(f_1=1\), \(f_2=x\), \(f_3=x^2\). Find an orthonormal basis of \(V\).</p>
+<details><summary>Hint</summary><div><p>Section 8's Beyond box already did the first two: \(1\) and \(\sqrt3(2x-1)\). For the third, subtract from \(x^2\) its projections along \(1\) and along \(x-\frac12\) (\(\langle x^2,1\rangle=\frac13\), \(\langle x^2,x-\frac12\rangle=\frac1{12}\), \(\|x-\frac12\|^2=\frac1{12}\)), then divide by the length.</p></div></details>
+<details><summary>Answer</summary><div>
+\[ \left\{1,\ \sqrt3\,(2x-1),\ \sqrt5\,(6x^2-6x+1)\right\} \]
+<p>(The third comes from \(w_3=x^2-x+\frac16\), with \(\|w_3\|^2=\frac1{180}\).)</p>
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t5"><p class="src"><b>May 2024 Q7</b><span>6 marks</span><a class="guide" href="guide-L7.html#L7-3">Guide · L7.3 Least squares</a></p>
+<p class="qh">Using the least-squares solution, find the best-fit line for \((1,-2)\), \((2,-8)\), \((3,-11)\), \((4,-18)\).</p>
+<details><summary>Hint</summary><div><p>Follow slide 15 (section 7): \(X\) has a column of 1s and the column \((1,2,3,4)\); \(\mathbf y=(-2,-8,-11,-18)\). Then \(X^TX=\begin{bmatrix}4&10\\10&30\end{bmatrix}\); find \(X^T\mathbf y\) (sum of \(y\), sum of \(xy\)) and solve the \(2\times2\) system.</p></div></details>
+<details><summary>Answer</summary><div>
+\[ y=3-\tfrac{51}{10}x\quad(=3-5.1x). \]
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q" id="t6"><p class="src"><b>May 2019 Q4</b><span>10 marks</span><span class="older">older format</span><a class="guide" href="guide-L7.html#L7-4">Guide · L7.4 Proofs about orthonormal sets</a></p>
+<p class="qh">Let \(\{\mathbf u_1,\mathbf u_2,\dots,\mathbf u_n\}\) be orthonormal vectors of a real vector space \(V\).</p>
+<p>(a) [3 marks] Show that they are linearly independent.<br>(b) [3 marks] Show that the representation \(\mathbf v=\alpha_1\mathbf u_1+\cdots+\alpha_n\mathbf u_n\) is unique.<br>(c) [4 marks] Find the coordinates \(\alpha_i\) of \(\mathbf v\) with respect to \(\{\mathbf u_i\}\). Express \(\|\mathbf v\|\) in terms of the \(\alpha_i\).</p>
+<details><summary>Hint</summary><div><p>One trick does all three parts: take the scalar product of the equation with \(\mathbf u_i\), and use \(\langle\mathbf u_j,\mathbf u_i\rangle=0\) for \(j\ne i\), \(=1\) for \(j=i\) (section 4, first Beyond box). For (b), suppose two representations and subtract them.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) Every weight in \(\sum c_j\mathbf u_j=\mathbf 0\) is \(c_i=0\). (b) The difference of two representations has all weights 0 by (a). (c)</p>
+\[ \alpha_i=\langle\mathbf v,\mathbf u_i\rangle, \]
+\[ \|\mathbf v\|=\sqrt{\alpha_1^2+\cdots+\alpha_n^2}. \]
+<p class="muted">Full working: see this question in the exam guide.</p></div></details></div>
+</section>
+
+</main>
+</div>
+<script>
+(function(){
+/* ===== MATH1853 shared helpers (TEMPLATE, frozen after the L1 pilot) ===== */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const PI=Math.PI;
+const $=id=>document.getElementById(id);
+
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+const piTicks=(lo,hi)=>{const out=[];const L={'-4':'−2π','-3':'−3π/2','-2':'−π','-1':'−π/2','0':'0','1':'π/2','2':'π','3':'3π/2','4':'2π','5':'5π/2'};for(let k=Math.ceil(lo/(PI/2));k<=Math.floor(hi/(PI/2));k++)out.push([k*PI/2,L[k]||'']);return out;};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+
+/* ---------- exact fractions for readouts: frac(0.75) -> "3/4" ---------- */
+function frac(v,maxDen=60){
+  if(!isFinite(v))return '∞';
+  const s=v<0?'−':'';v=Math.abs(v);
+  for(let d=1;d<=maxDen;d++){const n=Math.round(v*d);if(Math.abs(n/d-v)<1e-9)return s+(d===1?String(n):n+'/'+d);}
+  return s+fmt(v,4);
+}
+/* entry formatter for matrices: numbers, or strings such as "3/2", "λ−5" */
+const ent=v=>typeof v==='number'?frac(v):String(v).replace(/-/g,'−');
+
+
+/* matrix as an HTML table: matHTML(M,{aug:true, hl:[rows], hl2:[rows], piv:[[r,c]]}) */
+function matHTML(M,o={}){
+  const nc=M[0].length, aug=o.aug!==false, pv=new Set((o.piv||[]).map(p=>p[0]+','+p[1]));
+  let h='<table class="mat"><tbody>';
+  M.forEach((row,r)=>{
+    const cls=(o.hl||[]).includes(r)?' class="hl"':(o.hl2||[]).includes(r)?' class="hl2"':'';
+    h+=`<tr${cls}>`+row.map((v,c)=>{
+      const cl=[]; if(aug&&c===nc-1)cl.push('aug'); if(pv.has(r+','+c))cl.push('piv'); if(v===0||v==='0')cl.push('zero');
+      return `<td${cl.length?' class="'+cl.join(' ')+'"':''}>${ent(v)}</td>`;}).join('')+'</tr>';
+  });
+  return h+'</tbody></table>';
+}
+
+/* ---------- row-reduction player ----------
+   rrPlayer('id',{title, aug:true, steps:[{M:[[..]], op:'R₂ ← R₂ − 5R₁', why:'...', hl:[1], hl2:[2], piv:[[0,0]]}]})
+   aug: last column is the right-hand side (drawn after a bar). Rows/cols in hl/piv are 0-based. */
+function rrPlayer(id,cfg){
+  const host=$(id); if(!host) return;
+  host.classList.add('rr');
+  host.innerHTML=(cfg.title?`<p class="ttl">${cfg.title}</p>`:'')+
+    `<div class="op" aria-live="polite"></div><div class="stage"></div><p class="why"></p>`+
+    `<div class="bar"><button type="button" data-a="first" aria-label="Back to the start">⟲ Start</button>`+
+    `<button type="button" data-a="prev" aria-label="Previous step">◀ Back</button><span class="count"></span>`+
+    `<button type="button" data-a="next" aria-label="Next step">Next ▶</button></div>`;
+  let k=0; const S=cfg.steps, aug=cfg.aug!==false;
+  function render(){
+    const st=S[k], h=matHTML(st.M,{aug,hl:st.hl,hl2:st.hl2,piv:st.piv});
+    host.querySelector('.stage').innerHTML=h;
+    host.querySelector('.op').textContent=st.op||(k===0?'Start':'');
+    host.querySelector('.why').innerHTML=st.why||'';
+    host.querySelector('.count').textContent=`step ${k} of ${S.length-1}`;
+    host.querySelector('[data-a=prev]').disabled=k===0;
+    host.querySelector('[data-a=first]').disabled=k===0;
+    host.querySelector('[data-a=next]').disabled=k===S.length-1;
+  }
+  host.addEventListener('click',e=>{const a=e.target.closest('button');if(!a)return;
+    const t=a.dataset.a; if(t==='next')k=Math.min(S.length-1,k+1); if(t==='prev')k=Math.max(0,k-1); if(t==='first')k=0; render();});
+  render();
+}
+
+/* ---------- 3D view with drag-to-rotate ----------
+   view3d('canvasId',{scale, yaw, pitch, draw:(V)=>{ V.axes(L,labels); V.line(p,q,color,w,dash); V.poly([p..],color,alpha); V.point(p,color,label) }})
+   Points are [x,y,z]; z is drawn upwards. Primitives are depth-sorted (painter's algorithm). Returns {redraw}. */
+function view3d(id,o){
+  const cv=$(id); if(!cv) return {redraw(){},setView(){}};
+  let yaw=o.yaw??-0.9, pitch=o.pitch??0.45, drag=null;
+  function redraw(){
+    const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight; if(!W||!H)return;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+    g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+    const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+    const s=(o.scale||1)*Math.min(W,H)/2.2, c=(typeof o.center==='function'?o.center():o.center)||[0,0,0];
+    const P=p=>{const x=p[0]-c[0],y=p[1]-c[1],z=p[2]-c[2];
+      const X1=x*cy-y*sy, Y1=x*sy+y*cy;            /* turn about the vertical axis */
+      const Y2=Y1*cp-z*sp, Z2=Y1*sp+z*cp;           /* tilt towards the viewer */
+      return [W/2+X1*s, H/2-Z2*s, Y2];};
+    const prims=[];
+    const V={
+      P,
+      line(p,q,color,w=2,dash){const a=P(p),b=P(q);prims.push({d:(a[2]+b[2])/2,f(){g.strokeStyle=color;g.lineWidth=w;g.setLineDash(dash||[]);g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.stroke();g.setLineDash([]);}});},
+      poly(pts,color,alpha=.25){const q=pts.map(P),d=q.reduce((t,v)=>t+v[2],0)/q.length;prims.push({d,f(){g.globalAlpha=alpha;g.fillStyle=color;g.beginPath();q.forEach((v,i)=>i?g.lineTo(v[0],v[1]):g.moveTo(v[0],v[1]));g.closePath();g.fill();g.globalAlpha=1;}});},
+      point(p,color,label,r=5){const a=P(p);prims.push({d:a[2]-1e3,f(){g.beginPath();g.arc(a[0],a[1],r,0,7);g.fillStyle=color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();
+        if(label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=color;g.textAlign='left';g.textBaseline='bottom';g.fillText(label,a[0]+8,a[1]-6);}}});},
+      text(p,str,color){const a=P(p);prims.push({d:a[2]-1e3,f(){g.font='12px Inter, system-ui, sans-serif';g.fillStyle=color||css('--muted');g.textAlign='center';g.textBaseline='middle';g.fillText(str,a[0],a[1]);}});},
+      axes(L=3,lab=['x₁','x₂','x₃']){const A=css('--axis');
+        [[L,0,0],[0,L,0],[0,0,L]].forEach((e,i)=>{V.line([-e[0],-e[1],-e[2]].map((v,j)=>v+c[j]*0),e,A,1.2);V.text(e.map(v=>v*1.1),lab[i],A);});}
+    };
+    o.draw(V);
+    prims.sort((a,b)=>b.d-a.d).forEach(p=>p.f());
+    g.font='11px Inter, system-ui, sans-serif';g.fillStyle=css('--muted');g.textAlign='right';g.textBaseline='bottom';g.fillText('drag to turn',W-8,H-6);
+  }
+  const pos=e=>e.touches?[e.touches[0].clientX,e.touches[0].clientY]:[e.clientX,e.clientY];
+  cv.addEventListener('pointerdown',e=>{drag=pos(e);cv.setPointerCapture&&cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!drag)return;const p=pos(e);yaw+=(p[0]-drag[0])*0.01;pitch=Math.max(-1.45,Math.min(1.45,pitch+(p[1]-drag[1])*0.01));drag=p;redraw();});
+  ['pointerup','pointercancel','pointerleave'].forEach(t=>cv.addEventListener(t,()=>drag=null));
+  redraws.push(redraw);
+  return {redraw,setView(y,p){yaw=y;pitch=p;redraw();}};
+}
+
+/* plane a·x = b drawn as a square patch around point p0 (half-width h), tiled so depth sorting works */
+function planePatch(V,a,b,p0,h,color,alpha=.22,n=6){
+  const nn=Math.hypot(...a), u0=Math.abs(a[2])<0.9*nn?[0,0,1]:[1,0,0];
+  const cr=(x,y)=>[x[1]*y[2]-x[2]*y[1],x[2]*y[0]-x[0]*y[2],x[0]*y[1]-x[1]*y[0]];
+  const nz=v=>{const L=Math.hypot(...v);return v.map(t=>t/L);};
+  const u=nz(cr(a,u0)), w=nz(cr(a,u));
+  const t=(b-a.reduce((s,ai,i)=>s+ai*p0[i],0))/(nn*nn), c=p0.map((v,i)=>v+t*a[i]);
+  const at=(i,j)=>c.map((v,k)=>v+(-h+2*h*i/n)*u[k]+(-h+2*h*j/n)*w[k]);
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++)V.poly([at(i,j),at(i+1,j),at(i+1,j+1),at(i,j+1)],color,alpha);
+  [[0,0,n,0],[n,0,n,n],[n,n,0,n],[0,n,0,0]].forEach(e=>V.line(at(e[0],e[1]),at(e[2],e[3]),color,1.2));
+}
+
+/* ===== page figures ===== */
+/* ===== L7 Orthogonality and least squares: figures ===== */
+const rnd=v=>Math.round(v*1e9)/1e9;
+const dot2=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0);
+const nrm=a=>Math.sqrt(dot2(a,a));
+/* surd-style readout: sqrt(n) if the value squared is a fraction */
+function surd(v){const q=frac(v);if(!/\d\.\d{4}/.test(q))return q;const s=v*v,f=frac(s);if(/\d\.\d{4}/.test(f))return fmt(v,3);return (v<0?'−':'')+'√('+f.replace('−','')+')';}
+
+/* ---------- Fig: function scalar product (slides 5, 6, 9) ---------- */
+(function(){
+  const P=[
+    [t=>t,t=>1-t,'t','1 − t',1/6],
+    [t=>t,t=>t,'t','t',1/3],
+    [t=>1-t,t=>1-t,'1 − t','1 − t',1/3],
+    [t=>1,t=>t,'1','t',1/2],
+    [t=>1,t=>t-0.5,'1','t − 1/2',0],
+    [t=>t-0.5,t=>t*t-t+1/6,'t − 1/2','t² − t + 1/6',0]];
+  function draw(){
+    const k=+$('fFn-s').value,[f,g,fs,gs,val]=P[k];
+    const N=400;let s=0;for(let i=0;i<N;i++){const t=(i+0.5)/N;s+=f(t)*g(t)/N;}
+    plot($('fFn'),{xmin:-0.05,xmax:1.05,ymin:-0.7,ymax:1.2,xstep:0.25,ystep:0.5,
+      curves:[{f,color:css('--accent'),from:0,to:1},{f:g,color:css('--c2'),from:0,to:1,dash:[7,4]},{f:t=>f(t)*g(t),color:css('--c3'),from:0,to:1,width:3}]});
+    $('fFn-out').innerHTML=`f(t) = ${fs}, g(t) = ${gs}: ⟨f, g⟩ = ∫₀¹ f(t)g(t) dt = <b>${frac(val)}</b>`+
+      (val===0?' → f and g are <b>orthogonal</b>':'')+`<br>numerical check of the area: ${fmt(s,4)}`;
+  }
+  $('fFn-s').addEventListener('input',draw);redraws.push(draw);
+})();
+
+/* ---------- Fig: projection (slide 14) ---------- */
+(function(){
+  function draw(){
+    const v=[+$('fPr-x').value,+$('fPr-y').value],u=$('fPr-u').value.split(',').map(Number);
+    const a=dot2(u,v)/dot2(u,u),p=[a*u[0],a*u[1]],w=[v[0]-p[0],v[1]-p[1]];
+    const A=css('--accent'),I=css('--ink'),C2=css('--c2'),C3=css('--c3'),M=css('--muted');
+    const L=6.5,L2=9/Math.hypot(...u);
+    const segs=[{x1:-L2*u[0],y1:-L2*u[1],x2:L2*u[0],y2:L2*u[1],color:M,width:1,dash:[4,4]},
+      {x1:0,y1:0,x2:u[0],y2:u[1],color:A,width:3.4},{x1:0,y1:0,x2:v[0],y2:v[1],color:I,width:2.4},
+      {x1:0,y1:0,x2:p[0],y2:p[1],color:C2,width:4},{x1:p[0],y1:p[1],x2:v[0],y2:v[1],color:C3,width:2.4,dash:[6,4]}];
+    const n=nrm(u),e=[u[0]/n*0.35,u[1]/n*0.35],nw=nrm(w);
+    if(nw>1e-9&&Math.abs(a)>1e-9){const f=[w[0]/nw*0.35,w[1]/nw*0.35],b=[p[0]-Math.sign(a)*e[0],p[1]-Math.sign(a)*e[1]];
+      segs.push({x1:b[0],y1:b[1],x2:b[0]+f[0],y2:b[1]+f[1],color:M,width:1.2},{x1:b[0]+f[0],y1:b[1]+f[1],x2:p[0]+f[0],y2:p[1]+f[1],color:M,width:1.2});}
+    plot($('fPr'),{xmin:-L,xmax:L,ymin:-L*0.75,ymax:L*0.75,xstep:1,ystep:1,segs,
+      pts:[{x:u[0],y:u[1],color:A,label:'u'},{x:v[0],y:v[1],color:I,label:'v'},{x:p[0],y:p[1],color:C2,r:4,label:'αu',align:'right'}]});
+    const nv=nrm(v),c=nv>0?dot2(u,v)/(n*nv):NaN;
+    $('fPr-out').innerHTML=`u·v = ${frac(dot2(u,v))}, u·u = ${frac(dot2(u,u))} → α = <b>${frac(a)}</b>, projection αu = <b>(${frac(p[0])}, ${frac(p[1])})</b><br>`+
+      `v − αu = (${frac(w[0])}, ${frac(w[1])}); check u·(v − αu) = ${frac(rnd(dot2(u,w)))}; distance from v to the line = ${surd(nw)}<br>`+
+      (isNaN(c)?'v = 0: no angle':`cos θ = u·v / (‖u‖‖v‖) = ${fmt(c,3)}${Math.abs(c)<1e-9?' → <b>v ⊥ u</b>, projection is 0':''}`);
+  }
+  ['fPr-x','fPr-y','fPr-u'].forEach(id=>$(id).addEventListener('input',draw));redraws.push(draw);
+})();
+
+/* ---------- Fig: least squares line (slide 15) ---------- */
+(function(){
+  const xs=[1,3,4,6,7],ys=[1,2,3,4,5];
+  let ex=null;
+  function draw(){
+    const a=ex?ex[0]:+$('fLS-a').value,b=ex?ex[1]:+$('fLS-b').value;
+    const segs=xs.map((x,i)=>({x1:x,y1:ys[i],x2:x,y2:a+b*x,color:css('--c2'),width:2.4}));
+    plot($('fLS'),{xmin:0,xmax:8,ymin:-1,ymax:7,xstep:1,ystep:1,curves:[{f:x=>a+b*x,color:css('--accent')}],segs,
+      pts:xs.map((x,i)=>({x,y:ys[i],color:css('--ink')}))});
+    const e=xs.map((x,i)=>ys[i]-(a+b*x)),S=e.reduce((s,v)=>s+v*v,0);
+    $('fLS-out').innerHTML=`line y = ${ex?'9/38 + (25/38)x':fmt(a,2)+' + '+fmt(b,2)+'x'}<br>errors y − (a₀ + a₁x): ${e.map(v=>fmt(v,2)).join(', ')}<br>sum of squared errors = <b>${fmt(S,3)}</b> &nbsp;(least possible: 5/38 ≈ 0.132)`;
+  }
+  ['fLS-a','fLS-b'].forEach(id=>$(id).addEventListener('input',()=>{ex=null;draw();}));
+  $('fLS-best').addEventListener('click',()=>{ex=[9/38,25/38];$('fLS-a').value=ex[0];$('fLS-b').value=ex[1];draw();});
+  redraws.push(draw);
+})();
+
+/* ---------- Fig: Gram-Schmidt in 3D (slide 16) ---------- */
+(function(){
+  const v=[[1,2,3],[2,3,4],[2,5,7]],w2=[4/7,1/7,-2/7],w3=[-1/6,2/6,-1/6];
+  const sc=(a,c)=>a.map(x=>x*c),un=a=>sc(a,1/nrm(a));
+  const p2=sc(v[0],20/14),p3=sc(v[0],33/14).map((x,i)=>x+sc(w2,-1/3)[i]);
+  const V3=view3d('fGS',{scale:.17,yaw:0.5,pitch:.3,center:[0.8,1.8,3.2],draw(V){
+    const k=+$('fGS-s').value,A=css('--accent'),C2=css('--c2'),C3=css('--c3'),I=css('--ink'),M=css('--muted');
+    V.axes(4);
+    const arrow=(p,q,c,lab,wd=2.6,d)=>{V.line(p,q,c,wd,d);if(lab)V.point(q,c,lab,3.5);};
+    const O=[0,0,0];
+    if(k===0){arrow(O,v[0],A,'v₁');arrow(O,v[1],C2,'v₂');arrow(O,v[2],C3,'v₃');}
+    if(k>=1&&k<=3){arrow(O,v[0],A,'w₁ = v₁');}
+    if(k===2){arrow(O,v[1],M,'v₂',1.6);arrow(O,p2,C2,null,1.6,[5,4]);V.line(p2,v[1],C2,1.4,[5,4]);arrow(O,sc(w2,3),C2,'w₂ (×3)');}
+    if(k===3){arrow(O,sc(w2,3),C2,'w₂ (×3)');arrow(O,v[2],M,'v₃',1.6);V.line(O,p3,C3,1.6,[5,4]);V.line(p3,v[2],C3,1.4,[5,4]);arrow(O,sc(w3,3),C3,'w₃ (×3)');}
+    if(k===4){arrow(O,sc(un(v[0]),3),A,'u₁ (×3)');arrow(O,sc(un(w2),3),C2,'u₂ (×3)');arrow(O,sc(un(w3),3),C3,'u₃ (×3)');}
+  }});
+  const T=['v₁ = (1, 2, 3), v₂ = (2, 3, 4), v₃ = (2, 5, 7): a basis, but far from perpendicular (angle between v₁ and v₂ only about 7°).',
+    'w₁ = v₁ = (1, 2, 3), ‖w₁‖² = 14.',
+    'projection of v₂ along w₁ = (20/14)(1, 2, 3); w₂ = v₂ − that = (1/7)(4, 1, −2). w₂·w₁ = 0.',
+    'projection of v₃ onto the plane of w₁, w₂ = (33/14)(1, 2, 3) − (1/21)(4, 1, −2); w₃ = (1/6)(−1, 2, −1). w₃·w₁ = w₃·w₂ = 0.',
+    'u₁ = (1, 2, 3)/√14, u₂ = (4, 1, −2)/√21, u₃ = (−1, 2, −1)/√6: unit length, mutually perpendicular (drawn at length 3).'];
+  const out=()=>{$('fGS-out').innerHTML=T[+$('fGS-s').value];};
+  $('fGS-s').addEventListener('input',()=>{out();V3.redraw();});out();
+})();
+
+/* ===== redraw on resize / theme / fonts ===== */
+const all=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+all();
+let t; window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(all,120);});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);}catch(e){}
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+<script>
+/* MATH1853 bundle navigation. Link targets are fixed (notes: note-<CH>.html#sN; guides: guide-<CH>.html#<CH>-<n>; earlier-syllabus page: guide-beyond.html#B-<CH>-<n>), so hrefs are written directly in the HTML. This script only marks the current section in the contents rail. */
+(function(){
+  var links=[].slice.call(document.querySelectorAll('nav.toc a[href^="#"]'));
+  if(!links.length||!('IntersectionObserver' in window))return;
+  var map={};links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a;});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.removeAttribute('aria-current');});var a=map[e.target.id];if(a)a.setAttribute('aria-current','true');}});},{rootMargin:'0px 0px -70% 0px'});
+  Object.keys(map).forEach(function(id){var s=document.getElementById(id);if(s)io.observe(s);});
+})();
+</script>
+</body>
+</html>

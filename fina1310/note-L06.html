@@ -1,0 +1,941 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FINA1310 L6 · Risk and return</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* FINA1310 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --purple:#6d3fb2; --purple-soft:#efe8fa; --green:#1f7a4d; --green-soft:#e3f4ea;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+/* ---- FINA1310 additions ---- */
+.box.prev,.prev.box{background:var(--purple-soft);border-color:transparent;border-left:4px solid var(--purple)} .prev>.tag{color:var(--purple)}
+section.prev-sec{border-top:3px solid var(--purple)} section.prev-sec>h2 .n{color:var(--purple)}
+section.prev-sec>.prevbar{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin:-8px 0 8px}
+.beyond{border-left:4px solid var(--warm)}
+.banner{background:var(--warm-soft);border:1px solid var(--warm);border-radius:8px;padding:10px 14px;font-size:.95rem}
+.banner b{color:var(--warm)}
+.conv{background:var(--green-soft);border-color:transparent;border-left:4px solid var(--green)} .conv>.tag{color:var(--green)}
+details.calc{border-left:3px solid var(--accent)}
+details.calc>summary{color:var(--accent);font-weight:500}
+details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.calc .why{color:var(--muted);font-size:.9rem}
+table.tbl td,table.tbl th{padding:6px 8px}
+.circuit{width:100%;height:auto;display:block}
+.circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
+.circuit .r{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+.circuit .node{fill:var(--ink)}
+.circuit text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.circuit .q{stroke:var(--c2);fill:var(--c2)}
+
+/* ---- exam-guide classes (promoted from guide-T3 pilot, Gate D 2026-11-17) ---- */
+.mem{border:2px solid var(--c3);background:var(--card)} .mem>.tag{color:var(--c3)}
+.mem table td{padding:5px 8px;font-size:.92rem}
+.proc{border-left:4px solid var(--accent)} .proc>.tag{color:var(--accent)}
+.skel{border-left:4px solid var(--purple)} .skel>.tag{color:var(--purple)}
+.recap{font-size:.95rem;background:var(--accent-soft);border-radius:6px;padding:8px 12px;margin:8px 0 14px}
+.recap a{font-family:var(--mono);font-size:12px;white-space:nowrap}
+details.hint>summary{color:var(--muted)}
+details.hint>summary::before{content:"Hint · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.sol{border-left:3px solid var(--accent)}
+details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.mnote{font-size:.9rem;border-left:3px solid var(--warm);padding-left:10px;color:var(--muted)}
+.mnote b{color:var(--warm);font-weight:600}
+.q .part{font-weight:600;margin-top:14px}
+.q .opts{list-style:none;padding-left:.4rem;margin:6px 0}
+.q .opts li{margin:3px 0}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
+.stats span{font-size:.88rem;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted)}
+.stats b{color:var(--ink);font-family:var(--display)}
+.small{font-size:.88rem}
+/* FINA1310: cash-flow timelines, legends, formula card */
+.tlw{margin:8px 0;overflow:hidden}
+svg.tl{width:100%;height:auto;display:block}
+svg.tl .ax{stroke:var(--axis);stroke-width:1.4}
+svg.tl text{font:12px var(--body);fill:var(--ink)}
+svg.tl text.d{fill:var(--muted);font-size:11px}
+svg.tl text.cf{font:600 12.5px var(--mono);fill:var(--accent)}
+svg.tl text.cf.neg{fill:var(--warn)}
+svg.tl text.q{font-weight:600;fill:var(--warm)}
+svg.tl .ring{fill:none;stroke:var(--warm);stroke-width:2}
+svg.tl .mv{stroke:var(--muted);stroke-width:1.3}
+svg.tl .hd{fill:var(--muted)}
+svg.tl text.ml{font-size:11px;fill:var(--muted)}
+svg.tl text.mv-v{font:600 11.5px var(--mono);fill:var(--ink)}
+svg.tl text.tot{font-weight:700;fill:var(--warm)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:4px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+table.fcard{width:100%;border-collapse:collapse;font-size:14.5px}
+table.fcard td,table.fcard th{border-bottom:1px solid var(--line);padding:6px 6px;text-align:left;vertical-align:middle}
+table.fcard th{font-weight:600;color:var(--muted);font-size:13px}
+.tblw{overflow-x:auto}
+p.tldr{font-size:15px;color:var(--muted);border-left:3px solid var(--accent);padding-left:10px;margin:6px 0 14px}
+@media (max-width:560px){table.fcard{font-size:12px} table.fcard td,table.fcard th{padding:4px 3px}}
+svg.tl text{paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round}
+.box svg.tl text{stroke:var(--card)}
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/es5/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents"><p class="h">FINA1310 · Lecture 6</p><ol>
+  <li><a href="#s0">0 · Where this sits</a></li>
+  <li><a href="#s1">1 · Statistics primer</a></li>
+  <li><a href="#s2">2 · Returns</a></li>
+  <li><a href="#s3">3 · Capital-market history</a></li>
+  <li><a href="#s4">4 · Market efficiency</a></li>
+  <li><a href="#s5">5 · Expected return and variance</a></li>
+  <li><a href="#s6">6 · Portfolios</a></li>
+  <li><a href="#s7">7 · Diversification and systematic risk</a></li>
+  <li><a href="#s8">8 · Beta and the CAPM</a></li>
+  <li><a href="#s9">9 · Summary and formula card</a></li>
+  <li><a href="#s10">10 · Common mistakes</a></li>
+  <li><a href="#s11">11 · Practice</a></li></ol></nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="note-L05.html">← L5 Stocks</a><a href="note-L07.html">Next: L7 NPV and criteria →</a></nav>
+  <span class="course">FINA1310 · Corporate Finance · Lecture 6</span>
+  <h1>Risk and return</h1>
+  <p class="lede">Where the discount rate R comes from: measuring return and risk, why diversification removes some risk, and why only the rest (measured by beta) earns a reward: the CAPM.</p>
+</header>
+
+<section id="s0"><h2><span class="n">0</span>Where this sits</h2>
+<p>L4–L5 discounted at a required return \(R\) that was simply given. This lecture finds it: \(R\) = risk-free rate + a reward for the risk that cannot be diversified away. Textbook: Chapters 12 and 13.</p>
+<div class="box conv"><span class="tag">Conventions</span><p>Returns are per year unless stated. In formulas, write returns as decimals (12% = 0.12); variance is then in decimal² (0.0090), and standard deviation is back in % (9.49%).</p></div>
+<p>Opening question: CLP Holdings' share price moved about 15% a year (standard deviation), Alibaba's about 54%. Which should investors require the higher return on? (Answer at the end of section 8, and as the first practice question.)</p>
+</section>
+
+<section id="s1"><h2><span class="n">1</span>Statistics primer</h2>
+<p class="tldr">Five numbers describe returns: the mean (typical value), variance and standard deviation (spread), covariance and correlation (moving together). No statistics background is assumed.</p>
+<div class="tblw"><table class="fcard"><tr><th>Symbol</th><th>Meaning</th><th>First used</th></tr>
+<tr><td>\(R_t,\ T\)</td><td>return in period \(t\); number of periods</td><td>s3</td></tr>
+<tr><td>\(\bar R\)</td><td>average of past returns</td><td>s3</td></tr>
+<tr><td>\(\sigma^2,\ \sigma\)</td><td>variance, standard deviation</td><td>s3</td></tr>
+<tr><td>\(p_s,\ R_s,\ N\)</td><td>probability of state \(s\), return in state \(s\), number of states</td><td>s5</td></tr>
+<tr><td>\(E(R)\)</td><td>expected return</td><td>s5</td></tr>
+<tr><td>\(w_i\)</td><td>portfolio weight of asset \(i\)</td><td>s6</td></tr>
+<tr><td>\(\text{Cov},\ \rho\)</td><td>covariance, correlation</td><td>s6</td></tr>
+<tr><td>\(\beta,\ R_f,\ R_M\)</td><td>beta, risk-free rate, market return</td><td>s8</td></tr></table></div>
+<p><b>\(\Sigma\) means “add up”.</b> \(\sum_{t=1}^{T}R_t=R_1+R_2+\dots+R_T\) and \(\sum_{s=1}^{N}p_sR_s=p_1R_1+\dots+p_NR_N\). The letter under \(\Sigma\) is only a counter.</p>
+
+<div class="box def"><span class="tag">The five measures · one formula each</span>
+<ul class="list">
+<li><b>Mean</b> (average): the typical return. Past data: \(\bar R=\frac1T\sum R_t\). Future: weight each outcome by its probability, \(E(R)=\sum p_sR_s\).</li>
+<li><b>Variance</b>: the average <i>squared</i> distance from the mean; squaring stops ups and downs cancelling. \(\sigma^2=\sum p_s\big(R_s-E(R)\big)^2\). For a sample of past returns, divide by \(T-1\) instead (section 3).</li>
+<li><b>Standard deviation (SD)</b> \(\sigma=\sqrt{\sigma^2}\): the same spread, back in % like the returns. Bigger \(\sigma\) = riskier.</li>
+<li><b>Covariance</b>: do two returns move together? Multiply their deviations state by state and average:
+\[\begin{aligned}\text{Cov}(R_A,R_B)=\sum p_s&\big(R_{A,s}-E(R_A)\big)\\[-2pt]\times&\big(R_{B,s}-E(R_B)\big)\end{aligned}\]
+Positive: same direction; negative: opposite.</li>
+<li><b>Correlation</b>: covariance rescaled to lie between −1 and +1, so its size means something: \(\rho_{AB}=\dfrac{\text{Cov}(R_A,R_B)}{\sigma_A\sigma_B}\). +1 = always together, −1 = always opposite, 0 = unrelated.</li></ul>
+<p>Two more built from these, explained later: <b>beta</b> \(\beta_i=\text{Cov}(R_i,R_M)/\sigma_M^2\), the slope of a stock's returns on the market's (s8); and the <b>portfolio rules</b>: expected return and beta are weighted averages, variance is not, it picks up a covariance term (s6).</p></div>
+
+<h3>The normal distribution: how far from the average?</h3>
+<p>If returns follow the bell-shaped <b>normal distribution</b>, about 68% of outcomes lie within 1\(\sigma\) of the mean, 95% within 2\(\sigma\), 99.7% within 3\(\sigma\). US large stocks 1928–2025 (mean 11.85%, \(\sigma\) = 19.40%) fit well:</p>
+<div class="tblw"><table class="fcard"><tr><th>Range</th><th>Normal</th><th>US range of returns</th><th>US share of years</th></tr>
+<tr><td>mean ± 1σ</td><td>≈ 68%</td><td>−7.5% to 31.3%</td><td>66%</td></tr>
+<tr><td>mean ± 2σ</td><td>≈ 95%</td><td>−27.0% to 50.7%</td><td>96%</td></tr>
+<tr><td>mean ± 3σ</td><td>≈ 99.7%</td><td>−46.4% to 70.1%</td><td>100%</td></tr></table></div>
+</section>
+
+<section id="s2"><h2><span class="n">2</span>Returns: dollar and percentage</h2>
+<div class="box def"><span class="tag">Definitions</span>
+<p><b>Total dollar return</b> = income + capital gain (or loss). Income: dividends on a stock, coupons on a bond. <b>Capital gain</b>: the price change \(P_{t+1}-P_t\); it counts whether you sell or keep the asset.</p>
+\[R_{t+1}=\underbrace{\frac{D_{t+1}}{P_t}}_{\text{dividend yield}}+\underbrace{\frac{P_{t+1}-P_t}{P_t}}_{\text{capital-gain yield}}\]
+<p class="word"><b>In words:</b> percentage return = income per dollar invested + price change per dollar invested.</p>
+<p>Both met before: for a bond the dividend yield is the <b>current yield</b> and \(R\) is the one-period holding-period return (L4); for a stock \(R=D_1/P_0+g\) (L5).</p></div>
+<div class="box eg"><span class="tag">Example · 1,000 shares bought at $5, $0.20 dividend each</span>
+<div class="tlw" id="tl1"></div>
+<ul class="list"><li>Price ends at $5.50: \(200+500=\$700\) dollar return; \(700/5{,}000=14\%\) (4% dividend yield + 10% capital gain).</li>
+<li>Price ends at $4.60: \(200-400=-\$200\); \(-4\%\) (4% − 8%).</li></ul></div>
+<div class="box eg"><span class="tag">Example · bought at $25, $2 dividend</span>
+<p>Ends at $35: \(\frac{2}{25}+\frac{10}{25}=8\%+40\%=48\%\). Ends at $20: \(8\%-20\%=-12\%\).</p></div>
+</section>
+
+<section id="s3"><h2><span class="n">3</span>Capital-market history: average returns and risk</h2>
+<p class="tldr">Over a century, riskier assets earned more on average, but swung more from year to year.</p>
+<ul class="list"><li><b>$1 invested at the end of 1927</b> (income reinvested): stocks grew by far the most, then bonds, then Treasury bills.</li>
+<li><b>US large stocks year by year</b> (1928–2025): returns swing widely; T-bill returns are a smooth line.</li>
+<li><b>Hang Seng Index</b> (1987–2025, price only): Hong Kong swings even more.</li></ul>
+
+<h3>Two ways to average</h3>
+<div class="box thm"><span class="tag">Arithmetic and geometric average</span>
+\[\bar R=\frac{R_1+R_2+\dots+R_T}{T}\]
+\[\begin{aligned}(1+R_G)^T=(1+R_1)&(1+R_2)\\\times\dots\times&(1+R_T)\end{aligned}\]
+<p class="word"><b>In words:</b> arithmetic = the return in a typical year; geometric = the constant yearly return that would have produced what you actually ended with. Geometric is below arithmetic unless every return is the same; the bigger the swings, the bigger the gap.</p></div>
+<div class="box eg"><span class="tag">Example · Hang Seng Index 2021–2025</span>
+<p>Annual changes: −14.08%, −15.46%, −13.82%, +17.67%, +27.77%.</p>
+<p>Arithmetic:</p>\[\begin{aligned}&\tfrac{-14.08-15.46-13.82+17.67+27.77}{5}\\&=0.42\%\end{aligned}\]
+<p>Geometric:</p>\[\begin{aligned}&0.8592\times0.8454\times0.8618\\&\times1.1767\times1.2777=0.9411\end{aligned}\]<p>so \(0.9411^{1/5}-1=-1.21\%\) a year.</p>
+<p>Up 0.42% on average, yet $100 at the end of 2020 was worth $94.11 at the end of 2025: you lost money.</p></div>
+
+<h3>Variance and standard deviation of past returns</h3>
+<div class="box thm"><span class="tag">Sample variance</span>
+\[\sigma^2=\frac{1}{T-1}\sum_{t=1}^{T}\big(R_t-\bar R\big)^2\]
+<p class="word"><b>In words:</b> the average squared deviation from the average, but dividing by \(T-1\), not \(T\), because the data are a sample of past returns. \(\sigma=\sqrt{\sigma^2}\), in %.</p></div>
+<div class="box eg"><span class="tag">Example · returns 10%, 12%, 3%, −9%</span>
+<div class="tblw"><table class="fcard"><tr><th>Year</th><th>Return</th><th>Deviation from 4%</th><th>Squared</th></tr>
+<tr><td>1</td><td>0.10</td><td>0.06</td><td>0.0036</td></tr>
+<tr><td>2</td><td>0.12</td><td>0.08</td><td>0.0064</td></tr>
+<tr><td>3</td><td>0.03</td><td>−0.01</td><td>0.0001</td></tr>
+<tr><td>4</td><td>−0.09</td><td>−0.13</td><td>0.0169</td></tr>
+<tr><td>Total</td><td>0.16</td><td>0.00</td><td>0.0270</td></tr></table></div>
+<p>Average \(0.16/4=4\%\); variance \(0.0270/3=0.0090\); \(\sigma=\sqrt{0.0090}=9.49\%\). Geometric average 3.66%. Deviations always total zero, which is why we square them.</p></div>
+<div class="box ready"><span class="tag">Tools · Excel (template sheet Average_SD, returns in B14:B17)</span>
+<p><code>=AVERAGE(B14:B17)</code> 4.00% · <code>=VAR.S(B14:B17)</code> 0.0090 · <code>=STDEV.S(B14:B17)</code> 9.49% · <code>=PRODUCT(1+B14:B17)^(1/4)-1</code> 3.66% · expected return (s5): <code>=SUMPRODUCT(probabilities, returns)</code>. The <code>.S</code> versions divide by \(T-1\). Calculators: use the sample SD key (often \(s_x\)), not \(\sigma_x\).</p></div>
+<p>US stocks 1928–2025, years per 10-point band: most years fall within one SD of the mean, as the normal table in section 1 says.</p>
+
+<h3>Average returns and risk, US 1928–2025</h3>
+<div class="tblw"><table class="fcard"><tr><th>Investment</th><th>Average</th><th>SD</th><th>Premium over T-bills</th></tr>
+<tr><td>Small-company stocks</td><td>17.8%</td><td>38.0%</td><td>14.4%</td></tr>
+<tr><td>Large-company stocks</td><td>11.9%</td><td>19.4%</td><td>8.4%</td></tr>
+<tr><td>Corporate bonds (Baa)</td><td>6.9%</td><td>7.7%</td><td>3.5%</td></tr>
+<tr><td>Long-term government bonds</td><td>4.8%</td><td>7.9%</td><td>1.4%</td></tr>
+<tr><td>Treasury bills</td><td>3.4%</td><td>3.0%</td><td>0.0%</td></tr>
+<tr><td>Inflation</td><td>3.1%</td><td>3.9%</td><td></td></tr></table></div>
+<p class="flag">Large stocks: 11.9 − 3.4 would be 8.5%; the slide's 8.4% comes from unrounded averages (11.85% − about 3.4x%). Kept as 8.4%.</p>
+<p>Plotted as average return against SD, the points rise from T-bills to small stocks: higher risk, higher average return.</p>
+<div class="box thm"><span class="tag">Two lessons</span>
+<p><b>Risk-free asset</b>: a short-term government bill. Little default risk, little interest-rate risk, so its return is mostly pure time value of money: about 2.7% on a 3-month HK Exchange Fund Bill (Aug 2026).</p>
+<p><b>Risk premium</b> = return on a risky asset − risk-free rate.</p>
+<ol class="list"><li>Risky assets earn a risk premium on average.</li><li>The greater the risk, the greater the reward on average.</li></ol>
+<p>Open question, answered in section 7: <i>which kind</i> of risk earns the reward?</p></div>
+</section>
+
+<section id="s4"><h2><span class="n">4</span>Capital-market efficiency</h2>
+<div class="box def"><span class="tag">Definition · efficient market</span><p>An <b>efficient capital market</b> is one where prices fully reflect available information. Why: many investors research and trade the moment news arrives; buying on good news pushes the price up, selling on bad news pushes it down, so prices adjust quickly and correctly. The <b>efficient markets hypothesis (EMH)</b>: large, well-organised markets (HKEX, the NYSE) are efficient.</p></div>
+<p><b>How prices should react to news.</b> Efficient: one immediate jump on the announcement day, then flat. Not efficient: a <i>delayed reaction</i> (price drifts up over the following days) or an <i>overreaction</i> (jumps too far, then falls back).</p>
+<p><b>Only the surprise moves the price.</b> Announcement = expected part + surprise; the expected part is already in the price. Profits up 20% when the market expected 30% → the price falls. A price falling on “good” news is no evidence against efficiency.</p>
+
+<h3>Three forms: what is already in the price?</h3>
+<p>Each form contains the one before: weak ⊂ semistrong ⊂ strong.</p>
+<div class="tblw"><table class="fcard"><tr><th>Form</th><th>Prices reflect</th><th>No extra return from</th><th>Evidence</th></tr>
+<tr><td>Weak</td><td>past prices and trading volume</td><td>technical analysis (reading price charts)</td><td>largely holds</td></tr>
+<tr><td>Semistrong</td><td>+ all public information (statements, announcements, news)</td><td>fundamental analysis of public data</td><td>mostly holds, debated</td></tr>
+<tr><td>Strong</td><td>+ private information (insiders' plans, unannounced results)</td><td>even inside information</td><td>fails: insiders profit</td></tr></table></div>
+<ul class="list">
+<li><b>Weak form</b> → prices follow a <b>random walk</b>: past changes do not predict the next one, so chart reading earns only the normal risk premium. Evidence: HSI monthly changes 1987–2026, this month vs next month, correlation −0.003 (essentially zero).</li>
+<li><b>Semistrong</b> → only news not yet public could earn an extra return. Evidence: takeover targets jump on the announcement day, then stay flat.</li>
+<li><b>Strong</b> fails: insiders who trade before news is public earn excess returns. That is why insider dealing is illegal (in Hong Kong, under the Securities and Futures Ordinance, SFO).</li></ul>
+
+<h3>Evidence and interpretation</h3>
+<ul class="list">
+<li>Professionals rarely beat the market after costs: mutual funds earned no risk-adjusted abnormal return (Carhart, 1997); 79% of active US large-cap funds trailed the S&amp;P 500 in 2025, about 90% over 15 years.</li>
+<li>Some anomalies remain: prices underreact to news about a firm's customers (Cohen and Frazzini, 2008). Tracking insiders' reported trades earned more (strong form fails).</li>
+<li><b>“Efficiently inefficient”</b> (Pedersen, 2015): prices are inefficient enough to pay active managers' research and trading costs, efficient enough that profits after costs attract no new money. With perfectly efficient prices no one would pay to research, and prices could not stay efficient. The book covers hedge-fund strategies (equity, macro, arbitrage) with interviews of Asness, Chanos, Griffin, Paulson, Scholes, Soros and others.</li></ul>
+<div class="box warn"><span class="tag">What efficiency does and does not mean</span>
+<ul class="list"><li>It does <b>not</b> mean you cannot make money: on average you earn a return that matches the risk you bear.</li>
+<li>It does <b>not</b> mean prices are right after the fact: they are the best guess with today's information.</li>
+<li>It does <b>not</b> protect you from bad choices: an undiversified portfolio bears risk with no extra reward (section 7).</li>
+<li>It <b>does</b> mean no free lunch: higher expected return only with more risk.</li></ul></div>
+</section>
+
+<section id="s5"><h2><span class="n">5</span>Expected return and variance</h2>
+<p class="tldr">Looking forward, replace “years of data” with “states of the economy, each with a probability”.</p>
+<div class="box thm"><span class="tag">Result · expected return and variance</span>
+\[E(R)=p_1R_1+p_2R_2+\dots+p_NR_N\]
+\[\sigma^2=\sum_{s=1}^{N}p_s\big(R_s-E(R)\big)^2\]
+<p class="word"><b>In words:</b> the probability-weighted average return, and the probability-weighted squared deviation. Probabilities sum to 1. Same ideas as section 3: history weights each year equally (\(1/T\), or \(1/(T-1)\) for variance); here each state gets its probability. History is our estimate of the future.</p></div>
+<div class="box eg"><span class="tag">Example · two stocks, three states</span>
+<div class="tblw"><table class="fcard"><tr><th>State</th><th>\(p\)</th><th>A</th><th>\(p\times R_A\)</th><th>B</th><th>\(p\times R_B\)</th></tr>
+<tr><td>Boom</td><td>0.3</td><td>20%</td><td>6.0%</td><td>15%</td><td>4.5%</td></tr>
+<tr><td>Normal</td><td>0.5</td><td>10%</td><td>5.0%</td><td>10%</td><td>5.0%</td></tr>
+<tr><td>Recession</td><td>0.2</td><td>5%</td><td>1.0%</td><td>8%</td><td>1.6%</td></tr>
+<tr><td>Total</td><td>1.0</td><td></td><td><b>12.0%</b></td><td></td><td><b>11.1%</b></td></tr></table></div>
+<details class="calc"><summary>Show the calculation: the variances</summary><div>
+<div class="tblw"><table class="fcard"><tr><th>State</th><th>\(p\)</th><th>A: \((R-0.12)^2\)</th><th>× \(p\)</th></tr>
+<tr><td>Boom</td><td>0.3</td><td>0.0064</td><td>0.00192</td></tr>
+<tr><td>Normal</td><td>0.5</td><td>0.0004</td><td>0.00020</td></tr>
+<tr><td>Recession</td><td>0.2</td><td>0.0049</td><td>0.00098</td></tr>
+<tr><td>Total</td><td></td><td></td><td>0.00310</td></tr></table></div>
+<div class="tblw"><table class="fcard"><tr><th>State</th><th>\(p\)</th><th>B: \((R-0.111)^2\)</th><th>× \(p\)</th></tr>
+<tr><td>Boom</td><td>0.3</td><td>0.001521</td><td>0.000456</td></tr>
+<tr><td>Normal</td><td>0.5</td><td>0.000121</td><td>0.000061</td></tr>
+<tr><td>Recession</td><td>0.2</td><td>0.000961</td><td>0.000192</td></tr>
+<tr><td>Total</td><td></td><td></td><td>0.000709</td></tr></table></div>
+<p>Each row: deviation from the expected return, squared, times the state's probability; then add.</p></div></details>
+<p>\(\sigma_A=\sqrt{0.00310}=5.57\%\), \(\sigma_B=\sqrt{0.000709}=2.66\%\).</p>
+<p><b>Which is better?</b> With a 3% risk-free rate, A's expected risk premium is 9.0%, B's 8.1%: A pays 0.9 percentage points more for a \(\sigma\) of 5.57% instead of 2.66%. Whether that is enough depends on which risk is rewarded, and at what price (sections 7–8).</p></div>
+</section>
+
+<section id="s6"><h2><span class="n">6</span>Portfolios</h2>
+<p class="tldr">A portfolio's expected return is the weighted average of its assets'. Its risk is not: it depends on how the assets move together.</p>
+<div class="box def"><span class="tag">Definition · portfolio weight</span><p>\(w_i\) = share of your money in asset \(i\); weights sum to 1. 100 shares of A at $30 ($3,000) + 500 of B at $4 ($2,000): \(w_A=60\%\), \(w_B=40\%\).</p>
+<p>Weights can be <b>negative</b>. <b>Short selling</b> = borrowing shares and selling them now, to buy back later; borrowing cash is a negative weight on the risk-free asset. With $1,000 of your own money: borrow $400 (−40%), short 20 A at $30 (−$600, −60%), buy 500 B at $4 ($2,000, +200%). Total $1,000 = 100%.</p></div>
+
+<h3>Expected return: a weighted average</h3>
+\[E(R_P)=w_AE(R_A)+w_BE(R_B)\]
+<p>60% A, 40% B (from section 5), two routes to the same answer:</p>
+<div class="tblw"><table class="fcard"><tr><th>State</th><th>\(p\)</th><th>A</th><th>B</th><th>Portfolio \(0.6R_A+0.4R_B\)</th></tr>
+<tr><td>Boom</td><td>0.3</td><td>20%</td><td>15%</td><td>18.0%</td></tr>
+<tr><td>Normal</td><td>0.5</td><td>10%</td><td>10%</td><td>10.0%</td></tr>
+<tr><td>Recession</td><td>0.2</td><td>5%</td><td>8%</td><td>6.2%</td></tr></table></div>
+<ul class="list"><li>State by state: \(0.3(18)+0.5(10)+0.2(6.2)=11.64\%\)</li>
+<li>Weighted average: \(0.6(12.0)+0.4(11.1)=11.64\%\)</li></ul>
+
+<h3>Variance: treat the portfolio as one asset</h3>
+<p>Use the portfolio's return in each state and apply the section 5 formula:</p>
+\[\begin{aligned}\sigma_P^2&=0.3(0.0636)^2+0.5(-0.0164)^2\\&\quad+0.2(-0.0544)^2\\&=0.0012135+0.0001345\\&\quad+0.0005919=0.00194\end{aligned}\]
+<p>\(\sigma_P=4.40\%\). Not the weighted average of the two variances: what matters is how the assets move together.</p>
+<div class="box eg"><span class="tag">Same risk alone, very different risk together</span>
+<p>Three stocks, each with \(E(R)=10\%\) and \(\sigma^2=0.005\). Boom (0.25) / normal (0.5) / recession (0.25):</p>
+<div class="tblw"><table class="fcard"><tr><th></th><th>Boom</th><th>Normal</th><th>Recession</th><th>\(E(R)\)</th><th>\(\sigma^2\)</th></tr>
+<tr><td>Stock 1</td><td>20%</td><td>10%</td><td>0%</td><td>10%</td><td>0.005</td></tr>
+<tr><td>Stock 2</td><td>20%</td><td>10%</td><td>0%</td><td>10%</td><td>0.005</td></tr>
+<tr><td>Stock 3</td><td>0%</td><td>10%</td><td>20%</td><td>10%</td><td>0.005</td></tr>
+<tr><td>50% in 1, 50% in 2</td><td>20%</td><td>10%</td><td>0%</td><td>10%</td><td>0.005</td></tr>
+<tr><td>50% in 1, 50% in 3</td><td>10%</td><td>10%</td><td>10%</td><td>10%</td><td><b>0</b></td></tr></table></div>
+<p>1 and 2 move together: combining them changes nothing. 1 and 3 move oppositely: all risk disappears.</p></div>
+<div class="box eg"><span class="tag">Example · two stocks moving in opposite directions</span>
+<p>A: 30% in a boom (prob. 0.4), −10% in a bust (0.6). B: −5% in a boom, 25% in a bust. 50% in each.</p>
+<ul class="list"><li>\(E(R_A)=0.4(30)+0.6(-10)=6\%\); \(E(R_B)=0.4(-5)+0.6(25)=13\%\)</li>
+<li>Portfolio: 12.5% in a boom, 7.5% in a bust; \(E(R_P)=9.5\%\) (= average of 6 and 13).</li>
+<li>SDs: \(\sigma_A=19.6\%\), \(\sigma_B=14.7\%\), \(\sigma_P=2.45\%\):</li></ul>
+\[\begin{aligned}\sigma_A&=\sqrt{0.4(0.24)^2+0.6(0.16)^2}\\\sigma_P&=\sqrt{0.4(0.03)^2+0.6(0.02)^2}\end{aligned}\]
+<p>The portfolio earns the average return with far less risk than either stock alone.</p></div>
+
+<h3>Covariance and correlation</h3>
+<p>Definitions in section 1: covariance = probability-weighted product of the two deviations; correlation \(\rho=\text{Cov}/(\sigma_A\sigma_B)\) between −1 and +1; \(\rho\gt0\) together, \(\rho\lt0\) opposite, \(\rho=0\) unrelated.</p>
+<div class="box eg"><span class="tag">Example · section 5's stocks A and B</span>
+<div class="tblw"><table class="fcard"><tr><th>State</th><th>\(p\)</th><th>A dev.</th><th>B dev.</th><th>\(p\) × product</th></tr>
+<tr><td>Boom</td><td>0.3</td><td>0.08</td><td>0.039</td><td>0.000936</td></tr>
+<tr><td>Normal</td><td>0.5</td><td>−0.02</td><td>−0.011</td><td>0.000110</td></tr>
+<tr><td>Recession</td><td>0.2</td><td>−0.07</td><td>−0.031</td><td>0.000434</td></tr>
+<tr><td>Total</td><td></td><td></td><td></td><td>0.00148</td></tr></table></div>
+<p>dev. = return − expected return (12% for A, 11.1% for B). \(\rho=0.00148/(0.0557\times0.0266)=0.998\): A and B move almost perfectly together.</p></div>
+<p class="flag">The slides reuse the names A and B: the covariance table uses the three-state stocks of section 5, not the boom/bust A and B of the example just above. Read as such here.</p>
+<div class="box thm"><span class="tag">Result · two-asset portfolio variance</span>
+\[\begin{aligned}\sigma_P^2={}&w_A^2\sigma_A^2+w_B^2\sigma_B^2\\&+2w_Aw_B\rho_{AB}\sigma_A\sigma_B\end{aligned}\]
+<p class="word"><b>In words:</b> each asset's own variance, weighted by its weight squared, plus a co-movement term \(2w_Aw_B\,\text{Cov}(R_A,R_B)\). Co-movement adds risk; opposite movement (negative covariance) removes it. Gives the same answer as the state-by-state route.</p>
+<p>Check, 60/40 in A and B: the four cells of the 2 × 2 table are \(0.6^2(0.00310)=0.001116\), two cross cells \(0.6\times0.4\times0.00148=0.000355\) each, and \(0.4^2(0.000709)=0.000113\). Sum \(0.00194\), \(\sigma_P=4.40\%\), as before. ✓</p></div>
+<div class="box thm"><span class="tag">Result · n assets</span>
+\[\begin{aligned}\sigma_P^2=\sum_{i=1}^{n}w_i^2\sigma_i^2+\sum_{i\ne j}w_iw_j\rho_{ij}\sigma_i\sigma_j\end{aligned}\]
+<p class="word"><b>In words:</b> add every cell of an \(n\times n\) table: variances on the diagonal (\(n\) terms), covariances off it (\(n(n-1)\) cells: each of the \(n(n-1)/2\) pairs appears twice, hence the 2 in the two-asset formula).</p></div>
+<div class="box eg"><span class="tag">Example · three stocks with a short sale</span>
+<p>Stock 1: $20, \(E(R)=20\%\), \(\sigma^2=0.25\). Stock 2: $5, 12%, 0.16. Stock 3: $10, 18%, 0.2025. \(\rho_{12}=0.3\), \(\rho_{23}=0.1\), \(\rho_{13}=0.6\). Buy 500 of Stock 1 and 1,000 of Stock 2; short 500 of Stock 3.</p>
+<ul class="list"><li>Values $10,000, $5,000, −$5,000; total $10,000 → \(w=1,\ 0.5,\ -0.5\).</li>
+<li>\(E(R_P)=20+6-9=17\%\) (weights × expected returns).</li>
+<li>SDs: \(\sigma=0.5,\ 0.4,\ 0.45\).</li></ul>
+<details class="calc"><summary>Show the calculation: the variance</summary><div>
+<p>Variance terms \(w_i^2\sigma_i^2\):</p>\[\begin{aligned}&1^2(0.25)+0.5^2(0.16)\\&+(-0.5)^2(0.2025)=0.3406\end{aligned}\]
+<p>Covariance terms \(2w_iw_j\rho_{ij}\sigma_i\sigma_j\):</p>
+\[\begin{aligned}1,2:&\ 2(1)(0.5)(0.3)(0.5)(0.4)\\&=0.06\\2,3:&\ 2(0.5)(-0.5)(0.1)(0.4)(0.45)\\&=-0.009\\1,3:&\ 2(1)(-0.5)(0.6)(0.5)(0.45)\\&=-0.135\end{aligned}\]
+<p>Sum:</p>\[\begin{aligned}&0.3406+0.06-0.009-0.135\\&=0.2566\end{aligned}\]</div></details>
+<p>\(\sigma_P^2=0.2566\) (\(\sigma_P=50.7\%\)). Shorting Stock 3, which moves with Stock 1, <b>lowers</b> the variance: a negative weight turns a positive correlation into a hedge.</p></div>
+
+<div class="figure"><p class="ttl">Try it · combining two stocks: the risk–return trade-off</p>
+<canvas class="plot" id="cvf" style="height:260px"></canvas>
+<div class="ctrl"><label>correlation ρ <input type="range" id="rho" min="-1" max="1" step="0.1" value="0.3"></label></div><div class="readout" id="fout"></div>
+<p class="cap">Stock 1: \(E(R)=20\%\), \(\sigma=50\%\); Stock 2: 12%, 40%. Solid: both weights positive; dashed: short one stock. At \(\rho=0.3\) the lowest-risk mix (34% in Stock 1) has \(\sigma=35.4\%\), below <i>both</i> stocks' SDs. Lower \(\rho\) bends the curve further left; at \(\rho=1\) it is a straight line (no benefit).</p></div>
+</section>
+
+<section id="s7"><h2><span class="n">7</span>Diversification and systematic risk</h2>
+<p class="tldr">Diversification removes each firm's own risk; the risk all firms share remains, and only that risk is rewarded.</p>
+<div class="box thm"><span class="tag">Result · n equally weighted stocks</span>
+<p>Each stock has SD \(\sigma\), every pair correlation \(\rho\), weights \(1/n\):</p>
+\[\sigma_P^2=\frac{\sigma^2}{n}+\Big(1-\frac1n\Big)\rho\sigma^2\]
+<p class="word"><b>In words:</b> as \(n\) grows, the first term vanishes (each stock's own risk is diversified away) and the second tends to \(\rho\sigma^2\) (shared risk cannot be). If \(\rho=1\) there is no benefit at all: \(\sigma_P=\sigma\).</p>
+<details class="calc"><summary>Show the calculation: from the n-asset formula</summary><div>
+<p>Diagonal: \(n\) terms of \((1/n)^2\sigma^2\) → \(\sigma^2/n\).</p>
+<p>Off-diagonal: \(n(n-1)\) terms of \((1/n)^2\rho\sigma^2\) → \(\frac{n-1}{n}\rho\sigma^2\).</p></div></details></div>
+<div class="figure"><p class="ttl">Try it · more stocks, less risk, down to a floor (each σ = 30%)</p>
+<canvas class="plot" id="cvd" style="height:240px"></canvas>
+<div class="ctrl"><label>ρ <input type="range" id="drho" min="0" max="1" step="0.05" value="0.2"></label><label>n <input type="range" id="dn" min="1" max="50" step="1" value="10"></label></div><div class="readout" id="dout"></div>
+<p class="cap">Grey curves: \(\rho=1,\ 0.5,\ 0.2,\ 0\). The floor is \(\sigma\sqrt{\rho}\): 21.2% at \(\rho=0.5\), 13.4% at 0.2, zero only if \(\rho=0\). Most of the drop happens in the first 10–20 stocks.</p></div>
+<div class="box thm"><span class="tag">The principle of diversification</span>
+<ul class="list"><li>Spreading money across assets cuts risk by more than it cuts expected return: bad news for one firm is offset by good news for another.</li>
+<li>The less correlated the assets, the stronger the effect. Many assets is not enough: 50 internet stocks are not diversified.</li>
+<li>Some risk remains however many assets you hold.</li></ul></div>
+
+<h3>Systematic and unsystematic risk</h3>
+<p>Every return = expected part + surprise: \(R=E(R)+U\), and the surprise splits into \(U=m+\varepsilon\):</p>
+<div class="tblw"><table class="fcard"><tr><th></th><th>Systematic risk \(m\)</th><th>Unsystematic risk \(\varepsilon\)</th></tr>
+<tr><td>Also called</td><td>market risk</td><td>firm-specific (idiosyncratic) risk</td></tr>
+<tr><td>Hits</td><td>most firms at once</td><td>one firm or a few</td></tr>
+<tr><td>Examples</td><td>interest rates (HIBOR jumps), GDP, inflation, China's growth slows, a global recession</td><td>a CEO leaves, a factory fire, a product recall, a lawsuit</td></tr>
+<tr><td>Diversifiable?</td><td>no</td><td>yes</td></tr></table></div>
+<p>Total risk = systematic risk + unsystematic risk.</p>
+<div class="box thm"><span class="tag">The systematic risk principle</span>
+<p>The reward for bearing risk depends <b>only on systematic risk</b>. Unsystematic risk can be removed at almost no cost, so the market does not pay you for bearing it.</p>
+<p class="word"><b>In words:</b> expected return = risk-free rate + (amount of systematic risk) × (reward per unit). An asset's expected return does not depend on its total risk \(\sigma\). Next: measure the amount.</p></div>
+</section>
+
+<section id="s8"><h2><span class="n">8</span>Beta and the CAPM</h2>
+<div class="box def"><span class="tag">Definition · beta</span>
+\[\beta_i=\frac{\text{Cov}(R_i,R_M)}{\sigma_M^2}=\rho_{iM}\frac{\sigma_i}{\sigma_M}\]
+<p class="word"><b>In words:</b> asset \(i\)'s systematic risk relative to the <b>market portfolio</b> (all risky assets, e.g. the HSI): if the market moves 1%, the stock moves \(\beta\)% on average. \(\beta_M=1\); \(\beta\gt1\): more systematic risk than the market; \(\beta\lt1\): less. Through \(\rho_{iM}\), beta keeps only the part of \(\sigma_i\) that moves with the market.</p></div>
+<div class="box eg"><span class="tag">Hong Kong betas · high σ does not mean high β</span>
+<p>Monthly returns, Oct 2021–Sep 2026; market = Tracker Fund (HSI).</p>
+<div class="tblw"><table class="fcard"><tr><th>Stock</th><th>β</th><th>σ a year</th><th>ρ with market</th></tr>
+<tr><td>CLP Holdings</td><td>0.28</td><td>15.4%</td><td>0.45</td></tr>
+<tr><td>China Mobile</td><td>0.28</td><td>15.6%</td><td>0.44</td></tr>
+<tr><td>HSBC Holdings</td><td>0.66</td><td>25.2%</td><td>0.64</td></tr>
+<tr><td>Sun Hung Kai Properties</td><td>0.72</td><td>28.6%</td><td>0.61</td></tr>
+<tr><td>AIA</td><td>1.02</td><td>30.6%</td><td>0.81</td></tr>
+<tr><td>Tencent</td><td>1.29</td><td>36.8%</td><td>0.86</td></tr>
+<tr><td>HKEX</td><td>1.43</td><td>38.7%</td><td>0.90</td></tr>
+<tr><td>Alibaba</td><td>1.84</td><td>54.4%</td><td>0.82</td></tr></table></div>
+<p>Check: every row gives \(\sigma_M=\rho\sigma_i/\beta\approx24\%\), e.g. Tencent \(0.86\times36.8/1.29=24.5\%\). SHKP has a higher \(\sigma\) than HSBC but a lower \(\rho\), so the betas are close.</p></div>
+<div class="box thm"><span class="tag">Result · portfolio beta</span>
+\[\beta_P=w_1\beta_1+w_2\beta_2+\dots+w_n\beta_n\]
+<p class="word"><b>In words:</b> unlike SD, beta <b>does</b> average out: a portfolio's systematic risk is the weighted sum of its holdings'.</p></div>
+
+<h3>Same reward per unit of beta</h3>
+<div class="box def"><span class="tag">Reward-to-risk ratio</span>
+\[\text{reward-to-risk}=\frac{E(R_i)-R_f}{\beta_i}\]
+<p class="word"><b>In words:</b> risk premium per unit of systematic risk.</p>
+<p>\(R_f=3\%\), \(E(R_M)=9\%\). Asset A: \(E(R)=15\%\), \(\beta=1.6\), ratio \((15-3)/1.6=7.5\%\). Market: \((9-3)/1=6\%\). A pays more per unit of beta, so investors buy it; its price rises and its expected return falls until its ratio is 6% too. In equilibrium every asset offers the same ratio.</p></div>
+<div class="box thm"><span class="tag">Result · capital asset pricing model (CAPM)</span>
+\[E(R_i)=R_f+\beta_i\big(E(R_M)-R_f\big)\]
+<p class="word"><b>In words:</b> expected return = reward for waiting (\(R_f\), pure time value of money) + amount of systematic risk (\(\beta_i\)) × reward per unit of beta (the <b>market risk premium</b> \(E(R_M)-R_f\)). Holds for single assets and portfolios; \(\beta=1\) gives the market's return, \(\beta=0\) the risk-free rate.</p></div>
+<div class="figure"><p class="ttl">The security market line (SML): \(E(R)=3\%+\beta\times6\%\)</p>
+<canvas class="plot" id="cvs" style="height:250px"></canvas>
+<p class="cap">The <b>SML</b> plots the CAPM: required return against beta, starting at \(R_f=3\%\) when \(\beta=0\) and passing through the market at \(\beta=1\). Above the line = underpriced; below = overpriced.</p></div>
+<ul class="list"><li><b>B</b>: \(\beta=0.8\) requires \(3+0.8(6)=7.8\%\) but offers 10%. Above the line, underpriced: investors buy, its price rises, its expected return falls to 7.8%.</li>
+<li><b>C</b>: \(\beta=1.4\) requires \(3+1.4(6)=11.4\%\) but offers 8%. Below, overpriced: investors sell, its price falls, its expected return rises to 11.4%.</li></ul>
+<p class="flag">The SML chart's “A” (\(\beta=1.5\), 12%, on the line) is a different asset from the reward-to-risk example's A (\(\beta=1.6\), 15%). Labelled A* on the chart here.</p>
+<div class="box eg"><span class="tag">Example · using the CAPM (\(R_f=3\%\), \(E(R_M)=9\%\))</span>
+<ol class="list"><li>\(\beta=1.5\): \(E(R)=3+1.5(9-3)=12\%\).</li>
+<li>\(E(R)=10.5\%\): \(\beta=(10.5-3)/6=1.25\).</li></ol></div>
+<div class="box eg"><span class="tag">Required returns for Hong Kong shares (\(R_f=3\%\), premium 6%)</span>
+<div class="tblw"><table class="fcard"><tr><th>Stock</th><th>β</th><th>\(3\%+\beta\times6\%\)</th></tr>
+<tr><td>CLP Holdings</td><td>0.28</td><td>4.7%</td></tr>
+<tr><td>HSBC Holdings</td><td>0.66</td><td>7.0%</td></tr>
+<tr><td>AIA</td><td>1.02</td><td>9.1%</td></tr>
+<tr><td>Tencent</td><td>1.29</td><td>10.7%</td></tr>
+<tr><td>Alibaba</td><td>1.84</td><td>14.0%</td></tr></table></div>
+<p>The opening question: Alibaba (14.0%) over CLP (4.7%), because of its higher <b>beta</b>, not its higher \(\sigma\).</p></div>
+<div class="box ready"><span class="tag">What the CAPM gives</span>
+<p><b>Investors</b>: the required return that compensates systematic risk. <b>Firms</b>: the cost of capital, what investors expect for funding them. It is the \(R\) used to discount dividends in stock valuation (<a href="note-L05.html">L5</a>). About three in four CFOs use the CAPM to estimate the cost of equity; <a href="note-L10.html">L10</a> builds on it.</p></div>
+<div class="box ready"><span class="tag">Try it yourself · data sources</span>
+<p>HK prices: Yahoo Finance, Historical Data (^HSI, 2800.HK, 0700.HK, …; monthly adjusted close, dividends included). US returns 1928–2025: Damodaran Online. HK risk-free rate: HKMA Exchange Fund Bill yields. Active funds vs index: SPIVA scorecards (S&amp;P Global). Prices behind the HK betas: Excel template, sheet Beta.</p></div>
+</section>
+
+<section id="s9"><h2><span class="n">9</span>Summary and formula card</h2>
+<ul class="list"><li>Return = dividend yield + capital-gain yield.</li>
+<li>History: arithmetic vs geometric average; sample variance divides by \(T-1\). Risky assets earned a risk premium, larger for more risk.</li>
+<li>Efficient markets: weak, semistrong (both largely hold), strong (fails). No free lunch.</li>
+<li>Portfolios: expected return and beta average; variance does not (covariance term).</li>
+<li>Diversification removes unsystematic risk; only systematic risk, measured by \(\beta\), is rewarded: CAPM.</li></ul>
+<div class="tblw"><table class="fcard"><tr><th>Quantity</th><th>Formula</th></tr>
+<tr><td>Return</td><td>\(\frac{D_{t+1}}{P_t}+\frac{P_{t+1}-P_t}{P_t}\)</td></tr>
+<tr><td>Arithmetic average</td><td>\(\bar R=\frac1T\sum R_t\)</td></tr>
+<tr><td>Geometric average</td><td>\(\big[\prod(1+R_t)\big]^{1/T}-1\)</td></tr>
+<tr><td>Sample variance</td><td>\(\frac{1}{T-1}\sum(R_t-\bar R)^2\)</td></tr>
+<tr><td>Expected return</td><td>\(E(R)=\sum p_sR_s\)</td></tr>
+<tr><td>Variance (states)</td><td>\(\sum p_s(R_s-E(R))^2\)</td></tr>
+<tr><td>Correlation</td><td>\(\rho=\text{Cov}/(\sigma_A\sigma_B)\)</td></tr>
+<tr><td>Portfolio return</td><td>\(E(R_P)=\sum w_iE(R_i)\)</td></tr>
+<tr><td>Two-asset variance</td><td>\(w_A^2\sigma_A^2+w_B^2\sigma_B^2+2w_Aw_B\rho\sigma_A\sigma_B\)</td></tr>
+<tr><td>Beta</td><td>\(\text{Cov}(R_i,R_M)/\sigma_M^2\); \(\beta_P=\sum w_i\beta_i\)</td></tr>
+<tr><td>CAPM</td><td>\(R_f+\beta_i(E(R_M)-R_f)\)</td></tr></table></div>
+</section>
+
+<section id="s10"><h2><span class="n">10</span>Common mistakes</h2>
+<ul class="list">
+<li><b>Dividing by \(T\)</b> for a sample of past returns. Use \(T-1\) (Excel <code>VAR.S</code>, <code>STDEV.S</code>). With probabilities, no division at all.</li>
+<li><b>Averaging variances or SDs</b> for a portfolio. Only expected return and beta average.</li>
+<li><b>Forgetting the 2</b> in \(2w_Aw_B\text{Cov}\), or the sign of a negative weight or covariance.</li>
+<li><b>Quoting the arithmetic average as what you earned</b> over several years. That is the geometric average.</li>
+<li><b>Judging risk by \(\sigma\)</b> when asking about required return. The CAPM uses \(\beta\).</li>
+<li><b>Using the market return, not the market risk premium</b>, as the slope: \(3\%+\beta\times9\%\) is wrong when \(E(R_M)=9\%\); it is \(3\%+\beta\times6\%\).</li>
+<li><b>Above the SML = overpriced.</b> No: above means it offers more than required, so it is <b>under</b>priced.</li></ul>
+</section>
+
+<section id="s11"><h2><span class="n">11</span>Practice</h2>
+<p>The first ten are the lecture's quizzes; the last two are written for these notes.</p>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>which share should offer more?</span></div>
+<p>CLP's share price moved about 15% a year (SD), Alibaba's about 54%. Which should investors require the higher return on? A. CLP: a steady utility is worth more · B. Alibaba: investors want more for the risk they cannot avoid · C. The same: both trade on HKEX · D. Cannot tell: past moves say nothing</p>
+<details><summary>Hint</summary><div><p>Which risk is rewarded (section 7)?</p></div></details>
+<details><summary>Answer</summary><div><p><b>B</b>. The reason is beta: 1.84 vs 0.28, giving \(\boxed{14.0\%\text{ vs }4.7\%}\) by the CAPM. High \(\sigma\) alone would not be enough.</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>total percentage return</span></div>
+<p>Bought at $35, dividends $1.25, now $40. Total percentage return? A. 3.57% · B. 14.29% · C. 15.63% · D. 17.86%</p>
+<details><summary>Hint</summary><div><p>Dividend yield + capital-gain yield, both over the purchase price.</p></div></details>
+<details><summary>Answer</summary><div>\[\begin{aligned}&\tfrac{1.25}{35}+\tfrac{5}{35}=3.57\%+14.29\%\\&=\boxed{17.86\%}\end{aligned}\]<p>→ <b>D</b>.</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>up 50%, then down 50%</span></div>
+<p>$100 rises 50%, then falls 50%. Geometric average annual return? A. −25.00% · B. −13.40% · C. 0.00% · D. 25.00%</p>
+<details><summary>Answer</summary><div><p>$100 → $150 → $75. \(\sqrt{1.5\times0.5}-1=\boxed{-13.40\%}\) → <b>B</b>. (Arithmetic average: 0%.)</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>which form fails?</span></div>
+<p>A director buys shares a week before unexpectedly strong results and earns 20% when the news comes out. If this happens often, which form of efficiency fails? A. Weak · B. Semistrong · C. Strong · D. None: the director took a risk</p>
+<details><summary>Answer</summary><div><p>Private information earned an excess return → <b>C, \(\boxed{\text{strong form}}\)</b>.</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>expected return</span></div>
+<p>Stock T: 25% in a boom (0.3), 20% normal (0.5), 1% in a recession (0.2). Expected return? A. 15.33% · B. 17.70% · C. 20.00% · D. 25.00%</p>
+<details><summary>Answer</summary><div><p>\(7.5+10+0.2=\boxed{17.70\%}\) → <b>B</b>. (A is the unweighted average.)</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>a four-stock portfolio</span></div>
+<p>$15,000: $2,000 in Stock 1 (19.69%), $3,000 in Stock 2 (5.25%), $4,000 in Stock 3 (16.65%), $6,000 in Stock 4 (18.24%). Portfolio expected return? A. 12.50% · B. 14.96% · C. 15.41% · D. 18.24%</p>
+<details><summary>Hint</summary><div><p>Weights 2/15, 3/15, 4/15, 6/15.</p></div></details>
+<details><summary>Answer</summary><div>\[\begin{aligned}&\tfrac{2(19.69)+3(5.25)+4(16.65)+6(18.24)}{15}\\&=\tfrac{231.17}{15}=\boxed{15.41\%}\end{aligned}\]<p>→ <b>C</b>.</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>a negative covariance</span></div>
+<p>A: \(E(R)=14\%\), \(\sigma^2=0.0012\). B: 22.5%, \(\sigma^2=0.0081\). Covariance −0.003. SD of a 50/50 portfolio? A. 2.87% · B. 6.23% · C. 9.08% · D. 18.25%</p>
+<details><summary>Answer</summary><div>\[\begin{aligned}\sigma_P^2&=0.25(0.0012)+0.25(0.0081)\\&\quad+2(0.25)(-0.003)\\&=0.000825\end{aligned}\]<p>\(\sigma_P=\boxed{2.87\%}\) → <b>A</b>, below both stocks' SDs (3.46%, 9%).</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>total or systematic risk?</span></div>
+<p>Asset A: SD 20%, β 1.2. Asset B: SD 30%, β 0.6. Which has more total risk? More systematic risk? A higher \(E(R)\)?</p>
+<details><summary>Answer</summary><div><p>Total risk: <b>B</b> (higher SD). Systematic risk: <b>A</b> (higher β). Higher \(E(R)\): \(\boxed{\text{A}}\), because only systematic risk is rewarded.</p></div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>a portfolio's beta</span></div>
+<p>Buy 200 A ($20, β 1.2), 400 B ($5, 0.6), 50 C ($100, 2.8), 500 D ($10, 0.3). Portfolio beta?</p>
+<details><summary>Hint</summary><div><p>Values first: $4,000, $2,000, $5,000, $5,000.</p></div></details>
+<details><summary>Answer</summary><div>\[\begin{aligned}\beta_P&=\tfrac{4(1.2)+2(0.6)+5(2.8)+5(0.3)}{16}\\&=\tfrac{21.5}{16}=\boxed{1.34}\end{aligned}\]</div></details></div>
+<div class="q"><div class="src"><b>Lecture quiz</b><span>a two-stock portfolio</span></div>
+<p>Half in Tencent (β 1.29), half in CLP (β 0.28); \(R_f=3\%\), market risk premium 6%. CAPM expected return? A. 4.68% · B. 7.71% · C. 10.74% · D. 12.00%</p>
+<details><summary>Answer</summary><div><p>\(\beta_P=0.785\); \(3+0.785(6)=\boxed{7.71\%}\) → <b>B</b>.</p></div></details></div>
+<div class="q"><div class="src"><b>Written for these notes</b><span>sample SD and averages</span></div>
+<p>Returns of 20%, −10%, 15%. Arithmetic average, geometric average and sample SD?</p>
+<details><summary>Answer</summary><div><p>Arithmetic \(25/3=8.33\%\). Geometric: \(1.2\times0.9\times1.15=1.242\), and \(1.242^{1/3}-1=7.49\%\).</p>
+\[\begin{aligned}\sigma^2&=\tfrac{0.1167^2+0.1833^2+0.0667^2}{2}\\&=0.02583\end{aligned}\]<p>\(\sigma=\boxed{16.07\%}\)</p></div></details></div>
+<div class="q"><div class="src"><b>Written for these notes</b><span>on or off the SML?</span></div>
+<p>\(R_f=2.5\%\), \(E(R_M)=8.5\%\). Stock X: \(\beta=1.2\), expected return 11%. Under- or overpriced?</p>
+<details><summary>Answer</summary><div><p>Required \(2.5+1.2(6)=9.7\%\) &lt; 11% offered: above the SML → \(\boxed{\text{underpriced}}\). Buying pushes its price up until it offers 9.7%.</p></div></details></div>
+</section>
+</main></div>
+
+<script>
+/* FINA1310 shared helpers (from MECH2413) (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+/* ---------------- TL: cash-flow timelines (SVG) ----------------
+ TL.draw(el,{n, flows:{t:'label'}, at:'t-label or null', moves:[{from,to,lbl}], unit, title})
+   n      last date shown (dates 0..n)
+   flows  cash flow label above each date, e.g. {1:'+$100',2:'−$300'} (outflows red automatically when label starts with − or -)
+   moves  arrows below the axis from a cash flow's date to the valuation date, labelled with the factor/value
+   at     date where the total is valued (ring + "PV ?" / "FV ?" label in o.atLbl) */
+const TL=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,a,p){const e=document.createElementNS(NS,tag);if(tag==='text'&&!('text-anchor' in a))e.setAttribute('text-anchor','middle');for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function draw(host,o){
+    if(typeof host==='string')host=document.getElementById(host);
+    host.innerHTML='';
+    const n=o.n, W=Math.max(300,Math.min(640,host.clientWidth||600)), hasV=(o.moves||[]).some(m=>m.val), padL=(hasV&&o.at===0)?70:26, padR=(hasV&&o.at===n)?78:26;
+    const moves=o.moves||[], rowH=26, top=40, axisY=top+16, H=axisY+38+moves.length*rowH+(o.total?24:0);
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'tl',role:'img','aria-label':o.title||'cash-flow timeline'},host);
+    const X=t=>padL+t*(W-padL-padR)/n;
+    el('line',{x1:X(0)-8,x2:X(n)+12,y1:axisY,y2:axisY,class:'ax'},svg);
+    for(let t=0;t<=n;t++){el('line',{x1:X(t),x2:X(t),y1:axisY-5,y2:axisY+5,class:'ax'},svg);
+      const lb=el('text',{x:X(t),y:axisY+19,class:'d'},svg);lb.textContent=(o.dates&&o.dates[t]!==undefined)?o.dates[t]:(t===0?'t=0':String(t));}
+    for(const k in (o.flows||{})){const s=o.flows[k];const neg=/^[−-]/.test(s);
+      const tx=el('text',{x:X(+k),y:top,class:'cf'+(neg?' neg':'')},svg);tx.textContent=s;}
+    if(o.at!==undefined&&o.at!==null){el('circle',{cx:X(o.at),cy:axisY,r:6,class:'ring'},svg);
+      const q=el('text',{x:X(o.at)+(o.at===0?-8:o.at===n?8:0),y:top-18,class:'q','text-anchor':o.at===0?'start':o.at===n?'end':'middle'},svg);q.textContent=o.atLbl||'PV ?';}
+    moves.forEach((m,i)=>{const y=axisY+42+i*rowH;
+      el('line',{x1:X(m.from),x2:X(m.to)+(m.to<m.from?6:-6),y1:y,y2:y,class:'mv'},svg);
+      const dir=m.to<m.from?-1:1, hx=X(m.to);
+      el('path',{d:`M${hx} ${y} l${-dir*8} -4 l0 8 z`,class:'hd'},svg);
+      el('circle',{cx:X(m.from),cy:y,r:2.5,class:'hd'},svg);
+      const t=el('text',{x:(X(m.from)+X(m.to))/2,y:y-5,class:'ml'},svg);t.textContent=m.lbl||'';
+      if(m.val){const v=el('text',{x:hx+(dir<0?-12:12),y:y+4,class:'mv-v',
+        'text-anchor':dir<0?'end':'start'},svg);v.textContent=m.val;}
+      if(m.from===m.to){t.setAttribute('x',X(m.from)+8);t.setAttribute('text-anchor','start');}
+    });
+    if(o.total){const t=el('text',{x:o.at===0?4:o.at===n?W-4:X(o.at),y:H-6,class:'tot','text-anchor':o.at===0?'start':(o.at===n?'end':'middle')},svg);t.textContent=o.total;}
+  }
+  return {draw};
+})();
+
+/* bars(canvas,{cats:[..], series:[{name,vals,color}], ymax, ystep, ylabel}) — stacked bar chart */
+function bars(cv,o){
+  const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card');g.fillRect(0,0,W,H);const pl=o.pl||44,pr=10,pt=12,pb=26;
+  const Y=y=>pt+(o.ymax-y)/o.ymax*(H-pt-pb);g.font='11px Inter, system-ui, sans-serif';
+  for(let y=0;y<=o.ymax+1e-9;y+=o.ystep){g.strokeStyle=css('--grid');g.beginPath();g.moveTo(pl,Y(y));g.lineTo(W-pr,Y(y));g.stroke();
+    g.fillStyle=css('--muted');g.textAlign='right';g.textBaseline='middle';g.fillText(fmt(y,0),pl-6,Y(y));}
+  const n=o.cats.length,bw=(W-pl-pr)/n;
+  o.cats.forEach((c,i)=>{let base=0;o.series.forEach(s=>{const v=s.vals[i];g.fillStyle=s.color;
+      g.fillRect(pl+i*bw+bw*.18,Y(base+v),bw*.64,Y(base)-Y(base+v));base+=v;});
+    g.fillStyle=css('--muted');g.textAlign='center';g.textBaseline='top';g.fillText(c,pl+i*bw+bw/2,H-pb+6);});
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillStyle=css('--muted');g.fillText(o.ylabel,pl+4,pt+2);}
+}
+
+</script>
+<script>
+/* note-L06 figures */
+function tls(){
+  TL.draw('tl1',{n:4,dates:['','start of year','','end of year',''],flows:{1:'−$5,000',3:'+$200 + shares'},title:'buy 1,000 shares at $5; receive dividends and keep the shares'});
+}
+redraws.push(tls);
+
+/* two-stock frontier: Stock 1 (20%, 50%), Stock 2 (12%, 40%) */
+function fdraw(){
+  const rho=+$('rho').value, s1=.5, s2=.4, e1=20, e2=12, c=rho*s1*s2;
+  const sd=w=>100*Math.sqrt(Math.max(0,w*w*s1*s1+(1-w)*(1-w)*s2*s2+2*w*(1-w)*c));
+  const er=w=>w*e1+(1-w)*e2;
+  const segs=[];
+  for(let i=-30;i<150;i++){const a=i/100,b=(i+1)/100,inside=a>=0&&b<=1;
+    segs.push({x1:sd(a),y1:er(a),x2:sd(b),y2:er(b),color:inside?css('--accent'):css('--warm'),dash:inside?[]:[6,4],width:inside?2.4:1.8});}
+  const den=s1*s1+s2*s2-2*c, wmin=den>1e-12?(s2*s2-c)/den:0.5;
+  const pts=[{x:50,y:20,color:css('--ink'),label:'Stock 1'},{x:40,y:12,color:css('--ink'),label:'Stock 2'}];
+  if(wmin>=0&&wmin<=1) pts.push({x:sd(wmin),y:er(wmin),color:css('--warm'),label:'lowest risk',align:'right'});
+  plot($('cvf'),{xmin:0,xmax:65,ymin:6,ymax:24,xstep:10,ystep:2,pl:38,xlabel:'standard deviation (%)',ylabel:'expected return (%)',segs,pts});
+  $('fout').innerHTML='ρ = <b>'+rho.toFixed(1)+'</b> → lowest-risk mix: <b>'+(100*wmin).toFixed(0)+'%</b> in Stock 1, σ = <b>'+sd(wmin).toFixed(1)+'%</b>, E(R) = '+er(wmin).toFixed(2)+'%';
+}
+$('rho').addEventListener('input',fdraw);redraws.push(fdraw);
+
+/* diversification: n equal-weight stocks, sigma 30% */
+function ddraw(){
+  const rho=+$('drho').value, n=+$('dn').value, s=30;
+  const f=r=>x=>s*Math.sqrt(1/x+(1-1/x)*r);
+  const grey=[1,.5,.2,0].map(r=>({f:f(r),from:1,to:50,color:css('--muted'),width:1.2,dash:[4,3]}));
+  plot($('cvd'),{xmin:0,xmax:50,ymin:0,ymax:36,xstep:10,ystep:5,pl:34,xlabel:'number of stocks n',ylabel:'portfolio σ (%)',
+    curves:[...grey,{f:f(rho),from:1,to:50,color:css('--accent')},{f:()=>s*Math.sqrt(rho),color:css('--warm'),dash:[6,4],width:1.4}],
+    pts:[{x:n,y:f(rho)(n),color:css('--warm'),label:f(rho)(n).toFixed(1)+'%',align:n>40?'right':'left'}]});
+  $('dout').innerHTML='ρ = <b>'+rho.toFixed(2)+'</b>, n = <b>'+n+'</b> → σ<sub>P</sub> = <b>'+f(rho)(n).toFixed(1)+'%</b>; floor σ√ρ = '+(s*Math.sqrt(rho)).toFixed(1)+'%';
+}
+$('drho').addEventListener('input',ddraw);$('dn').addEventListener('input',ddraw);redraws.push(ddraw);
+
+/* SML */
+function sdraw(){
+  plot($('cvs'),{xmin:0,xmax:2,ymin:0,ymax:16,xstep:0.25,ystep:2,pl:34,xlabel:'beta β',ylabel:'expected return (%)',
+    curves:[{f:b=>3+6*b,color:css('--accent')}],
+    pts:[{x:0,y:3,color:css('--muted')},{x:1,y:9,color:css('--accent')},{x:0.9,y:5.4,r:0.01,color:css('--accent'),label:'↑ market, β = 1'},
+         {x:1.5,y:12,color:css('--accent'),label:'A*: on the line',align:'right'},
+         {x:0.8,y:10,color:css('--green'),label:'B: underpriced',align:'right'},
+         {x:1.4,y:8,color:css('--warm'),label:'C: overpriced',align:'left'}]});
+}
+redraws.push(sdraw);
+
+</script>
+</body></html>

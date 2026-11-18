@@ -1,0 +1,820 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH1851 L2 · Sandwich Theorem</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (46rem) with a sticky contents rail on wide screens; graphs inline beside the maths they explain; practice and past papers at the end. Palette and type match the MECH2407 notes. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Lecture 2</p>
+  <ol>
+    <li><a href="#s0">0 · Where this lecture sits</a></li>
+    <li><a href="#s1">1 · The Sandwich Theorem</a></li>
+    <li><a href="#s2">2 · Examples 1–3: squeezing a wiggle</a></li>
+    <li><a href="#s3">3 · The key limit sin θ / θ → 1</a></li>
+    <li><a href="#s4">4 · Corollary: limit of 1/f</a></li>
+    <li><a href="#s5">5 · Examples 4–6: make the boxes match</a></li>
+    <li><a href="#s6">6 · Summary</a></li>
+    <li><a href="#s7">7 · Common mistakes</a></li>
+    <li><a href="#s8">8 · Find the mistake</a></li>
+    <li><a href="#s9">9 · Group work</a></li>
+    <li><a href="#s10">10 · Concept checks</a></li>
+    <li><a href="#pastpaper">11 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MATH1851 · Calculus · Lecture 2</span>
+  <h1>Sandwich Theorem</h1>
+  <p class="lede">Every slide of Lecture 2 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this lecture.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this lecture sits</h2>
+<p><b>What came before.</b> Lecture 1 introduced the <b>limit</b>: \(\lim_{x\to c} f(x)=L\) means that the output \(f(x)\) can be made as close to the number \(L\) as we like by taking the input \(x\) close enough to \(c\), but not equal to \(c\). What happens exactly at \(x=c\) does not matter. A <b>one-sided limit</b> only lets \(x\) approach from one side: \(x\to c^{+}\) means from the right (values bigger than \(c\)), and \(x\to c^{-}\) means from the left (values smaller than \(c\)).</p>
+<p><b>What this lecture adds.</b> Some limits cannot be done with the limit laws, because one of the pieces has no limit at all. The classic case is \(\sin\frac1x\), which wiggles faster and faster as \(x\to0\). The <b>Sandwich Theorem</b> handles these by trapping the function between two simpler functions. It also gives the most important trig limit of the course, \(\lim_{\theta\to0}\frac{\sin\theta}{\theta}=1\), which you will meet again whenever derivatives of trig functions appear.</p>
+
+<h3>Recall: the limit laws (slide 2)</h3>
+<p>The slide recalls the <b>limit laws</b> from Lecture 1. They all start with the same condition: <b>if \(\lim_{x\to c}f(x)\) and \(\lim_{x\to c}g(x)\) both exist</b> (are finite numbers), then:</p>
+<div class="scroll"><table>
+<tr><th>Rule</th><th>Formula</th><th>In words</th></tr>
+<tr><td>1. Sum</td><td>\(\lim\limits_{x\to c}[f(x)+g(x)]=\lim\limits_{x\to c}f(x)+\lim\limits_{x\to c}g(x)\)</td><td>limit of a sum = sum of the limits</td></tr>
+<tr><td>2. Difference</td><td>\(\lim\limits_{x\to c}[f(x)-g(x)]=\lim\limits_{x\to c}f(x)-\lim\limits_{x\to c}g(x)\)</td><td>limit of a difference = difference of the limits</td></tr>
+<tr><td>3. Constant multiple</td><td>\(\lim\limits_{x\to c}[kf(x)]=k\lim\limits_{x\to c}f(x)\)</td><td>a constant factor can be taken outside the limit</td></tr>
+<tr><td>4. Product</td><td>\(\lim\limits_{x\to c}[f(x)g(x)]=\lim\limits_{x\to c}f(x)\cdot\lim\limits_{x\to c}g(x)\)</td><td>limit of a product = product of the limits</td></tr>
+<tr><td>5. Quotient</td><td>\(\lim\limits_{x\to c}\dfrac{f(x)}{g(x)}=\dfrac{\lim_{x\to c}f(x)}{\lim_{x\to c}g(x)}\), if \(\lim\limits_{x\to c}g(x)\ne0\)</td><td>limit of a quotient = quotient of the limits, as long as the bottom limit is not 0</td></tr>
+<tr><td>6. Power</td><td>\(\lim\limits_{x\to c}[f(x)]^n=\Big[\lim\limits_{x\to c}f(x)\Big]^n\), \(n\in\mathbb Z^{+}\)</td><td>limit of a power = power of the limit</td></tr>
+<tr><td>7. Root</td><td>\(\lim\limits_{x\to c}\sqrt[n]{f(x)}=\sqrt[n]{\lim\limits_{x\to c}f(x)}\), \(n\in\mathbb Z^{+}\)</td><td>limit of a root = root of the limit</td></tr>
+</table></div>
+<p>Here \(\mathbb Z^{+}\) means the positive integers \(1,2,3,\dots\). For the Root Rule with \(n\) even (square roots, fourth roots, …) the slide adds: <b>assume \(\lim_{x\to c}f(x)=L\gt0\)</b>, because an even root of a negative number is not a real number. The slide also notes that <b>all seven laws work for one-sided limits too</b> (replace \(x\to c\) by \(x\to c^{+}\) or \(x\to c^{-}\) throughout).</p>
+<div class="box warn"><span class="tag">Why we need something new</span><p>Every law needs <b>both</b> limits to exist. In \(x^2\sin\frac1x\) the factor \(\sin\frac1x\) has no limit as \(x\to0\), so the Product Rule cannot even be started. The Sandwich Theorem is the tool for exactly this situation.</p></div>
+
+<h3>Admin slides (slides 1, 3–6)</h3>
+<ul class="list">
+<li><b>Slide 1:</b> title slide (Sandwich Theorem, MATH1851 Lecture 2).</li>
+<li><b>Slide 3, Review questions:</b> a QR code and the Ed Discussion logo, pointing to in-class polling questions on Ed (reached through HKU Moodle). The slide itself contains no maths.</li>
+<li><b>Slide 4, Textbook reference:</b> “Limit of a Function and Limit Laws”: Custom textbook §1.2, MyLab §2.2. “One-Sided Limits”: Custom §1.4, MyLab §2.4.</li>
+<li><b>Slide 5, Learning objectives:</b> (1) apply the Sandwich Theorem and its Corollary to evaluate limits; (2) practise and identify common mistakes.</li>
+<li><b>Slide 6, Lecture timeline:</b> Sandwich Theorem (15 min), Sandwich Theorem Corollary (15 min), Group work / discussion (20 min).</li>
+</ul>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>The Sandwich Theorem</h2>
+<p>First, three terms used in the statement.</p>
+<div class="box def"><span class="tag">Definitions</span>
+<p><b>Open interval containing \(c\):</b> a stretch of the number line \((a,b)\), meaning all \(x\) with \(a\lt x\lt b\), that has \(c\) inside it, for example \((c-0.1,\,c+0.1)\). It can be as small as you like. So the condition only has to hold <b>near \(c\)</b>, not everywhere.</p>
+<p><b>“Except possibly at \(x=c\)”:</b> the inequality does not need to hold at \(c\) itself, and the function does not even need to be defined there. This matches the idea of a limit (Lecture 1): the value at \(c\) never matters.</p>
+<p><b>Bound:</b> a function used as a floor (lower bound) or a ceiling (upper bound) for another function.</p>
+</div>
+
+<div class="box thm"><span class="tag">Theorem: Sandwich Theorem (slide 7)</span>
+<p>Suppose that</p>
+<ol class="steps">
+<li>\(g(x)\le f(x)\le h(x)\) for all \(x\) in some open interval containing \(c\), except possibly at \(x=c\), and</li>
+<li>\(\lim\limits_{x\to c}g(x)=\lim\limits_{x\to c}h(x)=L\).</li>
+</ol>
+<p>Then</p>
+\[\lim_{x\to c}f(x)=L.\]
+<p class="word"><b>In words:</b> if a function is trapped between a floor and a ceiling near \(c\), and the floor and the ceiling both head to the same height \(L\), then the trapped function has no choice: it also heads to \(L\).</p>
+<p>* The theorem also applies to <b>one-sided limits</b>: if the inequality holds just to the right of \(c\) and both bounds tend to \(L\) as \(x\to c^{+}\), then \(\lim_{x\to c^{+}}f(x)=L\) (and similarly for \(x\to c^{-}\)).</p>
+</div>
+<p>It is also called the <b>Squeeze Theorem</b> or the <b>Pinching Theorem</b>. The slide shows a sandwich: \(g\) is the bottom slice of bread, \(h\) is the top slice, and \(f\) is the filling. Squash the two slices together at \(x=c\) and the filling is squashed to the same point.</p>
+<p>The slide's picture is redrawn below: \(h\) (top, red) and \(g\) (bottom, orange) both pass through the point \((c,L)\), and \(f\) (blue) wiggles between them, so it is forced through \((c,L)\) too.</p>
+<div class="figure"><p class="ttl">The idea of the Sandwich Theorem (slide 7 picture, redrawn)</p>
+<canvas class="plot" id="sw" style="aspect-ratio:16/10" aria-label="Three curves g, f, h meeting at the point (c, L)"></canvas>
+<div class="legend"><span style="--k:var(--c2)">h (upper bound)</span><span style="--k:var(--accent)">f (squeezed)</span><span style="--k:var(--c4)">g (lower bound)</span></div>
+<p class="cap">Away from \(c\) the three curves can be far apart and \(f\) can wiggle freely. Near \(c\) the gap between \(g\) and \(h\) closes, so \(f\) is pinned to \(L\).</p></div>
+<div class="box eg"><span class="tag">Analogy</span><p>Two police officers walk a suspect between them. If both officers walk into the police station, the suspect ends up in the police station too, however much he wriggles on the way.</p></div>
+<div class="box warn"><span class="tag">Both conditions matter</span>
+<p>The theorem needs <b>both</b>: the inequality \(g\le f\le h\) near \(c\) <b>and</b> equal limits of \(g\) and \(h\). If the bounds tend to different numbers (say \(-1\) and \(1\)), the filling can be anywhere in between, and the theorem says nothing. If no such bounds exist (the function is <b>unbounded</b>, meaning it shoots off towards \(\pm\infty\)), the theorem cannot be used at all.</p></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Examples 1–3: squeezing a wiggle</h2>
+<p>All three examples contain \(\sin\frac1x\). As \(x\to0\), \(\frac1x\) becomes huge, so \(\sin\frac1x\) runs through complete waves faster and faster, swinging between \(-1\) and \(1\) forever. It has <b>no limit</b> at 0. But it is <b>bounded</b>: a function is bounded if its values stay between two fixed numbers. Here, for every \(x\ne0\),</p>
+\[-1\le\sin\frac1x\le1.\]
+<p class="word"><b>In words:</b> sine of anything is between −1 and 1.</p>
+<p>That fact is what we sandwich with. The interactive picture below shows each example with its bounds. Use the slider to zoom in towards \(x=0\).</p>
+
+<div class="figure"><p class="ttl">Squeeze explorer: a wiggle trapped between two shrinking bounds</p>
+<canvas class="plot" id="sq" style="aspect-ratio:16/10" aria-label="Oscillating function between two bounding curves near x = 0"></canvas>
+<div class="ctrl"><label for="sq-s">Function <select id="sq-s">
+<option value="e1">Example 1: x² sin(1/x)</option>
+<option value="e2">Example 2: x sin(1/x)</option>
+<option value="e3">Example 3: √x sin(1/x), x &gt; 0</option>
+<option value="s">sin(1/x) on its own</option>
+<option value="fm">Find the mistake: sin x · e^cos(1/x³), x &gt; 0</option>
+</select></label>
+<label for="sq-z">Zoom in <input type="range" id="sq-z" min="0" max="100" value="20"></label></div>
+<div class="legend"><span style="--k:var(--accent)">f</span><span style="--k:var(--c2)">upper bound</span><span style="--k:var(--c4)">lower bound</span></div>
+<div class="readout" id="sq-out"></div>
+<p class="cap">Zoom in: in Examples 1–3 the band between the bounds shrinks to nothing at \(x=0\), pinning \(f\) to 0. For \(\sin\frac1x\) on its own the bounds stay at \(\pm1\), so nothing is pinned and there is no limit.</p></div>
+
+<div class="box eg"><span class="tag">Example 1 (slide 8)</span>
+<p>Find \(\displaystyle\lim_{x\to0}x^2\sin\left(\frac1x\right)\).</p>
+<p><b>Why the limit laws fail.</b> The Product Rule would need \(\lim_{x\to0}\sin\frac1x\), which does not exist.</p>
+<p><b>Step 1: start from the bounded part.</b> For \(x\ne0\): \(-1\le\sin\frac1x\le1\).</p>
+<p><b>Step 2: multiply through by \(x^2\).</b> Since \(x^2\gt0\) for \(x\ne0\), multiplying keeps the inequality signs the same way round:</p>
+\[-x^2\le x^2\sin\frac1x\le x^2\quad(x\ne0).\]
+<p><b>Step 3: limits of the bounds.</b> \(\lim_{x\to0}(-x^2)=0\) and \(\lim_{x\to0}x^2=0\). They are equal.</p>
+<p><b>Step 4: conclude.</b> By the Sandwich Theorem (with \(g(x)=-x^2\), \(h(x)=x^2\), \(L=0\)),</p>
+\[\lim_{x\to0}x^2\sin\frac1x=0.\]
+<p class="word"><b>In words:</b> (something shrinking to 0) × (something stuck between −1 and 1) shrinks to 0.</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 2 (slide 9)</span>
+<p>Find \(\displaystyle\lim_{x\to0}x\sin\left(\frac1x\right)\).</p>
+<p><b>The catch.</b> If we multiply \(-1\le\sin\frac1x\le1\) by \(x\), the direction of the inequality depends on the sign of \(x\): for \(x\lt0\) the signs flip. So “\(-x\le x\sin\frac1x\le x\)” is <b>false</b> for negative \(x\) (this is the first common mistake in Section 7).</p>
+<p><b>The fix: use absolute values.</b> \(|x\sin\frac1x|=|x|\,|\sin\frac1x|\le|x|\cdot1=|x|\). A number whose size is at most \(|x|\) lies between \(-|x|\) and \(|x|\):</p>
+\[-|x|\le x\sin\frac1x\le|x|\quad(x\ne0).\]
+<p><b>Limits of the bounds.</b> \(\lim_{x\to0}|x|=0\) and \(\lim_{x\to0}(-|x|)=0\).</p>
+<p><b>Conclude.</b> By the Sandwich Theorem,</p>
+\[\lim_{x\to0}x\sin\frac1x=0.\]
+<p class="word"><b>In words:</b> the size of the function is at most the distance of \(x\) from 0, and that distance goes to 0.</p>
+</div>
+<div class="box thm"><span class="tag">Useful pattern</span>
+<p>If \(|f(x)|\le B(x)\) near \(c\) and \(\lim_{x\to c}B(x)=0\), then \(\lim_{x\to c}f(x)=0\) (sandwich between \(-B(x)\) and \(B(x)\)).</p>
+<p class="word"><b>In words:</b> if the size of \(f\) is squeezed to 0, then \(f\) itself goes to 0.</p></div>
+
+<div class="box eg"><span class="tag">Example 3 (slide 10)</span>
+<p>Find \(\displaystyle\lim_{x\to0^{+}}\sqrt{x}\,\sin\left(\frac1x\right)\).</p>
+<p><b>Why one-sided?</b> \(\sqrt x\) is only defined for \(x\ge0\), and \(\frac1x\) needs \(x\ne0\). So the function only exists for \(x\gt0\): we can only approach 0 from the right.</p>
+<p><b>Bounds.</b> For \(x\gt0\), \(\sqrt x\gt0\), so multiplying \(-1\le\sin\frac1x\le1\) by \(\sqrt x\) keeps the signs:</p>
+\[-\sqrt x\le\sqrt x\sin\frac1x\le\sqrt x\quad(x\gt0).\]
+<p><b>Limits of the bounds.</b> \(\lim_{x\to0^{+}}\sqrt x=0\) and \(\lim_{x\to0^{+}}(-\sqrt x)=0\).</p>
+<p><b>Conclude.</b> By the (one-sided) Sandwich Theorem,</p>
+\[\lim_{x\to0^{+}}\sqrt x\sin\frac1x=0.\]
+<p class="word"><b>In words:</b> from the right, the wiggle is squeezed between \(-\sqrt x\) and \(\sqrt x\), and both go to 0.</p>
+</div>
+<div class="box eg"><span class="tag">The method in four lines</span>
+<ol class="steps"><li>Find the bounded wiggly part and write its bounds (\(-1\le\sin(\text{anything})\le1\), \(-1\le\cos(\text{anything})\le1\), \(0\le\sin^2(\text{anything})\le1\)).</li>
+<li>Multiply or add to rebuild \(f(x)\). When multiplying by something that could be negative, use absolute values.</li>
+<li>Check that both bounds have the <b>same</b> limit.</li>
+<li>Conclude, naming the Sandwich Theorem.</li></ol></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>The key limit \(\frac{\sin\theta}{\theta}\to1\)</h2>
+<p>A <b>corollary</b> is a result that follows quickly from a theorem just proved. The slide calls the next limit the Sandwich Corollary, because it is proved with the Sandwich Theorem.</p>
+<div class="box thm"><span class="tag">Corollary: Sandwich (slide 11)</span>
+\[\lim_{\theta\to0}\frac{\sin\theta}{\theta}=1\]
+<p class="word"><b>In words:</b> for a very small angle measured in radians, sine of the angle ÷ the angle ≈ 1, i.e. sine of a tiny angle is almost the angle itself.</p>
+</div>
+<div class="box def"><span class="tag">Definition: radian</span>
+<p>The limit is only true when \(\theta\) is measured in <b>radians</b>. On a circle of radius 1, an angle of \(\theta\) radians cuts off an arc of length \(\theta\). A full turn is \(2\pi\) radians (\(=360^\circ\)), so \(\pi\) radians \(=180^\circ\) and \(1\) radian \(\approx57.3^\circ\). From now on, all angles in calculus are in radians unless stated otherwise.</p></div>
+<p><b>Why this is not obvious.</b> Putting \(\theta=0\) gives \(\frac{0}{0}\), which means nothing. The Quotient Rule fails because the bottom limit is 0. We cannot cancel anything either. The table shows what happens numerically:</p>
+<div class="scroll"><table>
+<tr><th>\(\theta\) (radians)</th><td>1</td><td>0.5</td><td>0.1</td><td>0.01</td><td>0.001</td></tr>
+<tr><th>\(\frac{\sin\theta}{\theta}\)</th><td>0.84147</td><td>0.95885</td><td>0.99833</td><td>0.99998</td><td>1.00000</td></tr>
+</table></div>
+<p>A table suggests the answer but does not prove it. The proof traps \(\frac{\sin\theta}{\theta}\) between \(\cos\theta\) and \(1\) using areas in a unit circle (a circle of radius 1 centred at the origin). Drag the slider to see it.</p>
+
+<div class="figure"><p class="ttl">Unit-circle picture behind sin x / x → 1</p>
+<canvas class="plot" id="uc" style="aspect-ratio:4/5;max-width:440px;margin:0 auto" aria-label="Unit circle with triangle OAP, sector OAP and triangle OAT"></canvas>
+<div class="ctrl"><label for="uc-x">Angle x (radians) <input type="range" id="uc-x" min="2" max="100" value="70"></label></div>
+<div class="legend"><span style="--k:var(--c3)">triangle OAP</span><span style="--k:var(--accent)">sector OAP</span><span style="--k:var(--c4)">triangle OAT</span></div>
+<div class="readout" id="uc-out"></div>
+<p class="cap">The three shapes are nested: the small triangle sits inside the sector, which sits inside the big triangle. So their areas are in order. As \(x\) shrinks, \(\cos x\to1\) and the ratio \(\frac{\sin x}{x}\) is squeezed to 1.</p></div>
+
+<div class="box beyond"><span class="tag">Beyond the handouts: proof that sin θ / θ → 1</span>
+<p>The slide states the result without proof. Here is the standard proof. Take \(0\lt\theta\lt\frac\pi2\). On the unit circle let \(O\) be the centre, \(A=(1,0)\), \(P=(\cos\theta,\sin\theta)\), and \(T=(1,\tan\theta)\), where the line \(OP\) meets the vertical line \(x=1\).</p>
+<ul class="list">
+<li>Triangle \(OAP\): base \(OA=1\), height \(\sin\theta\), area \(\frac12\sin\theta\).</li>
+<li>Sector \(OAP\): it is \(\frac{\theta}{2\pi}\) of the whole circle of area \(\pi\), so its area is \(\frac{\theta}{2\pi}\cdot\pi=\frac12\theta\).</li>
+<li>Triangle \(OAT\): base \(OA=1\), height \(AT=\tan\theta\), area \(\frac12\tan\theta\).</li>
+</ul>
+<p>The shapes are nested, so</p>
+\[\frac12\sin\theta\le\frac12\theta\le\frac12\tan\theta.\]
+<p>Multiply by 2 and divide by \(\sin\theta\gt0\):</p>
+\[1\le\frac{\theta}{\sin\theta}\le\frac{1}{\cos\theta}.\]
+<p>Take reciprocals of positive numbers, which reverses the inequalities:</p>
+\[\cos\theta\le\frac{\sin\theta}{\theta}\le1.\]
+<p class="word"><b>In words:</b> cosine of the angle ≤ sine ÷ angle ≤ 1.</p>
+<p>As \(\theta\to0^{+}\), \(\cos\theta\to1\) (on the unit circle, \(P\) slides down to \(A=(1,0)\), so its \(x\)-coordinate \(\cos\theta\) tends to 1), and the constant 1 stays at 1. By the Sandwich Theorem, \(\lim_{\theta\to0^{+}}\frac{\sin\theta}{\theta}=1\).</p>
+<p>For \(\theta\lt0\): \(\frac{\sin(-\theta)}{-\theta}=\frac{-\sin\theta}{-\theta}=\frac{\sin\theta}{\theta}\), so the graph is symmetric about the \(y\)-axis and the left-hand limit is also 1. Both one-sided limits are 1, so the two-sided limit is 1.</p>
+</div>
+
+<div class="figure"><p class="ttl">The graph of sin x / x, squeezed between cos x and 1</p>
+<canvas class="plot" id="sx" style="aspect-ratio:16/9" aria-label="Graph of sin x over x between cos x and the line y = 1"></canvas>
+<div class="legend"><span style="--k:var(--accent)">sin x / x</span><span style="--k:var(--c4)">cos x (lower bound)</span><span style="--k:var(--c2)">y = 1 (upper bound)</span></div>
+<p class="cap">The function is not defined at \(x=0\) (open circle), but its graph heads to height 1 from both sides. Near 0 it is trapped between \(\cos x\) and 1, which meet at height 1.</p></div>
+<div class="box beyond"><span class="tag">Beyond the handouts: degrees break it</span>
+<p>If \(x\) were in degrees, \(\sin(x^\circ)=\sin\left(\frac{\pi x}{180}\right)\), and then \(\lim_{x\to0}\frac{\sin(x^\circ)}{x}=\frac{\pi}{180}\), not 1. This is one reason calculus always uses radians.</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Corollary: the limit of a reciprocal</h2>
+<p>Slide 12 starts with an observation. Take \(f(x)=x+2\). Then \(\lim_{x\to2}f(x)=4\), and \(\lim_{x\to2}\frac{1}{f(x)}=\frac14\). The slide's picture is redrawn below.</p>
+<div class="figure"><p class="ttl">f(x) = x + 2 and 1/f(x) = 1/(x + 2) near x = 2 (slide 12 picture, redrawn)</p>
+<canvas class="plot" id="rc" style="aspect-ratio:16/10" aria-label="Line y = x + 2 and curve y = 1/(x + 2) with dashed guides at x = 2"></canvas>
+<div class="legend"><span style="--k:var(--accent)">f(x) = x + 2</span><span style="--k:var(--c3)">1/f(x) = 1/(x + 2)</span></div>
+<p class="cap">As \(x\to2\) the line heads to height 4 and the reciprocal curve heads to height \(\frac14\).</p></div>
+<div class="box thm"><span class="tag">Corollary: Quotient Rule (slide 12)</span>
+<p>If \(\lim_{x\to c}f(x)=L\), then</p>
+\[\lim_{x\to c}\frac{1}{f(x)}=\frac1L,\]
+<p>provided \(\lim_{x\to c}f(x)\) exists and \(L\ne0\).</p>
+<p class="word"><b>In words:</b> the limit of one over a function = one over the limit of the function, as long as that limit is not 0.</p>
+</div>
+<p><b>Why it is true.</b> Use the Quotient Rule (slide 2) with the top function equal to the constant 1 and the bottom function equal to \(f\): \(\lim\frac{1}{f(x)}=\frac{\lim 1}{\lim f(x)}=\frac1L\). The condition \(L\ne0\) is the Quotient Rule's condition that the bottom limit is not 0.</p>
+<p style="font-size:.92rem;color:var(--muted)">Note on slide 12: it says “proved by setting \(g(x)=1\) in Quotient Rule”. In the Quotient Rule as written on slide 2, \(\frac{f(x)}{g(x)}\), \(g\) is the bottom function, so setting \(g=1\) would give nothing new. The intended reading is: set the <b>top</b> function to 1 and keep the given function on the bottom, which is what is done above.</p>
+<p><b>Why it is needed now.</b> Turning the key limit upside down gives</p>
+\[\lim_{\theta\to0}\frac{\theta}{\sin\theta}=\frac{1}{1}=1.\]
+<p class="word"><b>In words:</b> angle ÷ sine of the angle also tends to 1.</p>
+<p>This is used in Examples 5 and 6.</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Examples 4–6: make the boxes match</h2>
+<p>The key limit works for <b>any</b> expression in place of \(\theta\), as long as that expression tends to 0. Think of \(\theta\) as a box:</p>
+\[\lim\frac{\sin\Box}{\Box}=1\quad\text{whenever }\Box\to0.\]
+<p class="word"><b>In words:</b> sine of a box ÷ the same box → 1, provided the box shrinks to 0 (and is never exactly 0 along the way).</p>
+<p>The contents of the two boxes must be <b>identical</b>. Most of the work is rearranging so they match. To be precise, this is a <b>change of variable</b>: set \(\theta=\Box\), check that \(\theta\to0\) (and \(\theta\ne0\)) as \(x\) approaches its target, then use the key limit in the variable \(\theta\).</p>
+
+<div class="box eg"><span class="tag">Example 4 (slide 13)</span>
+<p>Find \(\displaystyle\lim_{x\to0}\frac{\sin kx}{x}\), where \(k\in\mathbb R\) (\(k\) is any real constant).</p>
+<p><b>Case \(k=0\).</b> Then \(\sin kx=\sin0=0\), so \(\frac{\sin kx}{x}=0\) for every \(x\ne0\), and the limit is \(0\).</p>
+<p><b>Case \(k\ne0\).</b> The box on top is \(kx\), but the bottom is only \(x\). Multiply top and bottom by \(k\) to make the boxes match:</p>
+\[\frac{\sin kx}{x}=k\cdot\frac{\sin kx}{kx}.\]
+<p>Let \(\theta=kx\). As \(x\to0\), \(\theta\to0\), and \(\theta\ne0\) when \(x\ne0\). So</p>
+\[\begin{aligned}\lim_{x\to0}\frac{\sin kx}{x}&=k\lim_{\theta\to0}\frac{\sin\theta}{\theta}\\&=k\cdot1=k.\end{aligned}\]
+<p><b>Answer.</b> In both cases the limit is \(k\) (when \(k=0\), \(k=0\) agrees).</p>
+\[\lim_{x\to0}\frac{\sin kx}{x}=k\]
+<p class="word"><b>In words:</b> for small \(x\), \(\sin kx\approx kx\), so dividing by \(x\) leaves \(k\).</p>
+</div>
+<div class="figure"><p class="ttl">sin(kx)/x heads to height k at x = 0</p>
+<canvas class="plot" id="kx" style="aspect-ratio:16/10" aria-label="Graph of sin(kx)/x for a chosen k"></canvas>
+<div class="ctrl"><label for="kx-s">k = <select id="kx-s"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="-2">−2</option><option value="0.5">0.5</option></select></label></div>
+<div class="legend"><span style="--k:var(--accent)">sin(kx)/x</span><span style="--k:var(--c2)">height k</span></div>
+<div class="readout" id="kx-out"></div>
+<p class="cap">The open circle at \((0,k)\) marks the limit: the function is undefined at \(x=0\) itself.</p></div>
+
+<div class="box eg"><span class="tag">Example 5 (slide 14)</span>
+<p>Find \(\displaystyle\lim_{x\to0}\frac{\tan3x}{\sin8x}\).</p>
+<p><b>Step 1: write tan in terms of sin and cos.</b> \(\tan3x=\frac{\sin3x}{\cos3x}\), so</p>
+\[\frac{\tan3x}{\sin8x}=\frac{\sin3x}{\cos3x\,\sin8x}.\]
+<p><b>Step 2: make the boxes match.</b> Next to \(\sin3x\) we want \(3x\); next to \(\sin8x\) we want \(8x\). Insert them and compensate:</p>
+\[\begin{aligned}\frac{\tan3x}{\sin8x}&=\frac{\sin3x}{3x}\cdot\frac{8x}{\sin8x}\\&\quad\cdot\frac{1}{\cos3x}\cdot\frac{3x}{8x}.\end{aligned}\]
+<p>(Check: the \(3x\) and \(8x\) we inserted cancel with \(\frac{3x}{8x}\).) For \(x\ne0\), \(\frac{3x}{8x}=\frac38\).</p>
+<p><b>Step 3: limit of each factor.</b></p>
+<ul class="list">
+<li>\(\frac{\sin3x}{3x}\to1\) (key limit with \(\theta=3x\to0\)).</li>
+<li>\(\frac{8x}{\sin8x}\to1\) (the reciprocal corollary of Section 4 with \(\theta=8x\to0\)).</li>
+<li>\(\frac{1}{\cos3x}\to\frac{1}{\cos0}=1\) (\(\cos3x\to\cos0=1\), then the reciprocal corollary).</li>
+</ul>
+<p><b>Step 4: Product Rule</b> (all limits exist):</p>
+\[\lim_{x\to0}\frac{\tan3x}{\sin8x}=1\cdot1\cdot1\cdot\frac38=\frac38.\]
+<p class="word"><b>In words:</b> for small \(x\), \(\tan3x\approx3x\) and \(\sin8x\approx8x\), so the ratio is about \(\frac{3x}{8x}=\frac38\).</p>
+</div>
+
+<div class="box eg"><span class="tag">Example 6 (slide 15)</span>
+<p>Find \(\displaystyle\lim_{x\to0^{+}}\frac{x}{\sin\sqrt x}\).</p>
+<p><b>Why one-sided?</b> \(\sqrt x\) needs \(x\ge0\).</p>
+<p><b>Make the box match.</b> The box inside sine is \(\sqrt x\). Split \(x=\sqrt x\cdot\sqrt x\) (true for \(x\gt0\)):</p>
+\[\frac{x}{\sin\sqrt x}=\sqrt x\cdot\frac{\sqrt x}{\sin\sqrt x}.\]
+<p>Let \(\theta=\sqrt x\). As \(x\to0^{+}\), \(\theta\to0^{+}\) and \(\theta\ne0\). By the reciprocal corollary, \(\frac{\theta}{\sin\theta}\to1\). Also \(\sqrt x\to0\). By the Product Rule,</p>
+\[\lim_{x\to0^{+}}\frac{x}{\sin\sqrt x}=0\cdot1=0.\]
+<p class="word"><b>In words:</b> for small positive \(x\), \(\sin\sqrt x\approx\sqrt x\), so the expression is about \(\frac{x}{\sqrt x}=\sqrt x\), which goes to 0.</p>
+</div>
+<div class="box warn"><span class="tag">Trap</span><p>It is tempting to write \(\frac{x}{\sin\sqrt x}\to1\) because “it looks like \(\frac{\theta}{\sin\theta}\)”. It does not: the top is \(x\), the box is \(\sqrt x\). The boxes must match exactly.</p></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Summary</h2>
+<p>The slide's summary, point by point:</p>
+<ul class="list">
+<li>The Sandwich Theorem is a powerful tool to evaluate limits for <b>oscillating functions</b> (functions that keep swinging up and down, like \(\sin\frac1x\) near 0) or limits where <b>direct substitution fails</b> (where putting \(x=c\) into the formula gives nonsense such as \(\frac00\), as in \(\frac{\sin\theta}{\theta}\)).</li>
+<li>Choose bounds for the given function whose limits are <b>simpler</b> to compute, not harder, and whose limits are <b>equal</b>. (In Examples 1–3, \(\pm x^2\), \(\pm|x|\), \(\pm\sqrt x\) all have obvious limits.)</li>
+<li>The Sandwich Theorem does not apply to <b>unbounded</b> functions (no floor and ceiling exist) <b>or</b> when the limits of the bounds are not equal.</li>
+<li>Ensure that the conditions of the Sandwich Theorem are satisfied, to avoid logical and computational errors: the inequality \(g\le f\le h\) must really hold near \(c\), and \(\lim g=\lim h\).</li>
+</ul>
+<div class="box thm"><span class="tag">Key formulas of Lecture 2</span>
+\[g\le f\le h,\ \ \lim g=\lim h=L\ \Rightarrow\ \lim f=L\]
+\[\lim_{\theta\to0}\frac{\sin\theta}{\theta}=1,\qquad\lim_{\theta\to0}\frac{\theta}{\sin\theta}=1\]
+\[\lim_{x\to c}\frac{1}{f(x)}=\frac1L\ \ (L\ne0)\]
+</div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Common mistakes</h2>
+<p>The four mistakes on slide 18, each explained.</p>
+<h3>1. Choosing incorrect bounds</h3>
+<div class="box"><div class="mistake"><span class="x">✗</span><span>\(-x\le x\sin\frac1x\le x\ \Rightarrow\ \lim_{x\to0}x\sin\frac1x=0\)</span></div></div>
+<p>The inequality is false when \(x\lt0\). For example, at \(x=-\frac{2}{\pi}\): \(\sin\frac1x=\sin\left(-\frac\pi2\right)=-1\), so \(x\sin\frac1x=\frac2\pi\gt0\), but the “upper bound” \(x=-\frac2\pi\) is negative. The final answer 0 happens to be right, but the argument is wrong and loses the marks.</p>
+<div class="box"><div class="mistake"><span class="ok">✓</span><span>\(-|x|\le x\sin\frac1x\le|x|\) (Example 2).</span></div></div>
+
+<h3>2. Choosing bounds with unequal limits</h3>
+<div class="box"><div class="mistake"><span class="x">✗</span><span>\(-1\le x^2\sin\frac1x\le1\) near 0, but \(\lim_{x\to0}(-1)\ne\lim_{x\to0}1\)</span></div></div>
+<p>The inequality is true, but useless: the bounds tend to \(-1\) and \(1\), so all we learn is that the function stays between \(-1\) and \(1\). The bounds must close in on a single value.</p>
+<div class="box"><div class="mistake"><span class="ok">✓</span><span>\(-x^2\le x^2\sin\frac1x\le x^2\), both bounds → 0 (Example 1).</span></div></div>
+
+<h3>3. Writing strict inequality for the bounds</h3>
+<div class="box"><div class="mistake"><span class="x">✗</span><span>\(-\sqrt x\lt\sqrt x\sin\frac1x\lt\sqrt x\ \Rightarrow\ \lim_{x\to0}\sqrt x=0\)</span></div></div>
+<p>The strict signs \(\lt\) are false: whenever \(\sin\frac1x=1\) (for instance at \(x=\frac{2}{\pi}\), \(\frac{2}{5\pi}\), \(\frac2{9\pi}\), … arbitrarily close to 0) the middle equals the upper bound. Use \(\le\), which is what the theorem asks for. Two further slips in this line, written for these notes: the limit should be \(x\to0^{+}\) (\(\sqrt x\) needs \(x\ge0\)), and the conclusion should be about the function itself, \(\lim_{x\to0^{+}}\sqrt x\sin\frac1x=0\), not just about the bound.</p>
+
+<h3>4. Omitting the substitution for a change of variable</h3>
+<div class="box"><div class="mistake"><span class="x">✗</span><span>\(\lim_{x\to0}\frac{\sin(x^2)}{x^2}=1\) since \(\lim_{x\to0}\frac{\sin x}{x}=1\)</span></div></div>
+<p>The answer is right but the reason is incomplete: \(\frac{\sin(x^2)}{x^2}\) is not the same function as \(\frac{\sin x}{x}\). Write the substitution: let \(\theta=x^2\); as \(x\to0\), \(\theta\to0\) and \(\theta\ne0\) for \(x\ne0\); so the limit is \(\lim_{\theta\to0}\frac{\sin\theta}{\theta}=1\).</p>
+
+<h3>More traps <span class="pill">Written for these notes</span></h3>
+<div class="box"><div class="mistake">
+<span class="x">✗</span><span>“\(\lim x^2\sin\frac1x=\lim x^2\cdot\lim\sin\frac1x=0\cdot(\text{something})=0\).” The Product Rule needs both limits to exist, and \(\lim_{x\to0}\sin\frac1x\) does not. Use the Sandwich Theorem.</span>
+<span class="x">✗</span><span>“\(\frac{\sin3x}{\sin8x}=\frac{3x}{8x}\), cancel the sin.” Sine is not a number you can cancel. Make the boxes match instead (Example 5).</span>
+<span class="x">✗</span><span>“\(\frac{\sin kx}{x}\to1\).” The boxes \(kx\) and \(x\) do not match; the limit is \(k\) (Example 4).</span>
+<span class="x">✗</span><span>Using degrees. The key limit is 1 only in radians.</span>
+</div></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Find the mistake</h2>
+<p>Slide 17 shows a student's handwritten answer to this question:</p>
+<div class="q"><p class="qh">3. Let \(f(x)=\sin x\cdot e^{\cos\left(\frac{1}{x^3}\right)}\). Apply the Sandwich Theorem to prove</p>
+\[\lim_{x\to0^{+}}\left(\sin x\cdot e^{\cos\left(\frac{1}{x^3}\right)}\right)=0.\]</div>
+<p>The student's work, copied line by line (as written, including the student's shorthand):</p>
+<div class="handwork">
+\[-1\lt\cos\frac{1}{x^3}\lt1\]
+\[e^{-1}\lt e^{\cos\frac{1}{x^3}}\lt e^{1}\]
+\[\frac1e\sin x\lt fx\lt e\sin x\]
+\[\lim\frac{\sin x}{e}=0\]
+\[\lim e\sin x=0\]
+\[\lim f(x)=0\]
+</div>
+<p>(Here \(e\approx2.718\) is the base of the natural exponential, and “fx” means \(f(x)\).) Try to find what is wrong before opening the hints. You can also see this function in the squeeze explorer of Section 2 (last option).</p>
+<details><summary>Hint 1</summary><div><p>Does \(\cos\frac{1}{x^3}\) ever equal exactly 1 or −1 for \(x\) near 0? Compare with mistake 3 in Section 7.</p></div></details>
+<details><summary>Hint 2</summary><div><p>Line 3 multiplies an inequality by \(\sin x\). When is that allowed without flipping the signs? Why does the question say \(x\to0^{+}\)?</p></div></details>
+<details><summary>Answer</summary><div>
+<p>The conclusion (limit 0) is correct, but the argument has these problems:</p>
+<ol class="steps">
+<li><b>Strict inequalities are false.</b> \(\cos\frac1{x^3}=1\) whenever \(\frac1{x^3}=2n\pi\), i.e. \(x=(2n\pi)^{-1/3}\), and such \(x\) come arbitrarily close to 0. So line 1 must use \(\le\): \(-1\le\cos\frac1{x^3}\le1\), and every later line must use \(\le\) too.</li>
+<li><b>Unexplained multiplication by \(\sin x\).</b> Multiplying by \(\sin x\) keeps the inequality signs only if \(\sin x\ge0\). This is true for \(0\lt x\lt\pi\), which is why the limit is one-sided (\(x\to0^{+}\)). The student must say so; for \(x\lt0\) the inequality would flip and the bounds would be wrong.</li>
+<li><b>The limits are not labelled.</b> Every “lim” should say \(x\to0^{+}\), and the conclusion should name the Sandwich Theorem.</li>
+<li>Line 2 uses that \(e^{t}\) is an increasing function (bigger input, bigger output), so applying it keeps the inequality. Worth a few words in an exam.</li>
+</ol>
+<p>A correct write-up:</p>
+\[-1\le\cos\frac{1}{x^3}\le1\quad(x\ne0)\]
+\[\Rightarrow\ e^{-1}\le e^{\cos(1/x^3)}\le e\]
+<p>since \(e^t\) is increasing. For \(0\lt x\lt\pi\), \(\sin x\gt0\), so multiplying by \(\sin x\) keeps the signs:</p>
+\[\frac{\sin x}{e}\le f(x)\le e\sin x.\]
+<p>Since \(\lim_{x\to0^{+}}\frac{\sin x}{e}=\frac{0}{e}=0\) and \(\lim_{x\to0^{+}}e\sin x=0\), the Sandwich Theorem gives \(\lim_{x\to0^{+}}f(x)=0\).</p>
+</div></details>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Group work</h2>
+<p>Slide 19's six limits. Decide first which tool fits: the Sandwich Theorem (a bounded wiggle times something going to 0), or the key limit (match the boxes).</p>
+
+<div class="q"><p class="qh">1. Find</p>
+\[\lim_{x\to0}\left[\sin x\cdot\sin\left(\frac{1}{x^2}\right)\right].\]
+<details><summary>Hint</summary><div><p>\(\sin\frac1{x^2}\) is a bounded wiggle with no limit. Bound the size: \(\left|\sin x\sin\frac1{x^2}\right|\le|\sin x|\). What does \(|\sin x|\) tend to?</p></div></details>
+<details><summary>Answer</summary><div>
+<p>For \(x\ne0\), \(\left|\sin\frac1{x^2}\right|\le1\), so</p>
+\[-|\sin x|\le\sin x\sin\frac1{x^2}\le|\sin x|.\]
+<p>As \(x\to0\), \(\sin x\to\sin0=0\), so both bounds tend to 0. By the Sandwich Theorem the limit is <b>0</b>.</p></div></details></div>
+
+<div class="q"><p class="qh">2. Find</p>
+\[\lim_{x\to0}\sqrt{x^3+x^2}\,\sin\frac{\pi}{x}.\]
+<p style="font-size:.9rem;color:var(--muted)">The square root covers \(x^3+x^2\) only; \(\sin\frac\pi x\) is outside it.</p>
+<details><summary>Hint</summary><div><p>\(\sin\frac\pi x\) is between −1 and 1, and \(\sqrt{x^3+x^2}\ge0\), so no sign problem. Find \(\lim_{x\to0}\sqrt{x^3+x^2}\) with the Root Rule.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>Near 0 (for \(x\ge-1\), \(x\ne0\)), \(\sqrt{x^3+x^2}\ge0\), so multiplying \(-1\le\sin\frac\pi x\le1\) by it gives</p>
+\[\begin{aligned}-\sqrt{x^3+x^2}&\le\sqrt{x^3+x^2}\sin\frac\pi x\\&\le\sqrt{x^3+x^2}.\end{aligned}\]
+<p>\(\lim_{x\to0}\sqrt{x^3+x^2}=\sqrt{0}=0\) (Root Rule). Both bounds → 0, so the limit is <b>0</b> by the Sandwich Theorem.</p></div></details></div>
+
+<div class="q"><p class="qh">3. Find</p>
+\[\lim_{x\to0^{+}}\sqrt x\left[1+\sin^2\left(\frac{2\pi}{x}\right)\right].\]
+<details><summary>Hint</summary><div><p>A square is never negative and \(\sin^2\le1\), so \(0\le\sin^2(\ldots)\le1\). Add 1, then multiply by \(\sqrt x\gt0\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(0\le\sin^2\frac{2\pi}{x}\le1\) gives \(1\le1+\sin^2\frac{2\pi}{x}\le2\). For \(x\gt0\) multiply by \(\sqrt x\gt0\):</p>
+\[\sqrt x\le\sqrt x\left[1+\sin^2\frac{2\pi}x\right]\le2\sqrt x.\]
+<p>Both \(\sqrt x\) and \(2\sqrt x\) tend to 0 as \(x\to0^{+}\). By the Sandwich Theorem the limit is <b>0</b>. (The bounds need not be mirror images; they just need the same limit.)</p></div></details></div>
+
+<div class="q"><p class="qh">4. Find</p>
+\[\lim_{x\to0}\frac{\sin\left(x^2\right)}{x}.\]
+<details><summary>Hint</summary><div><p>The box is \(x^2\). Multiply top and bottom by \(x\) so that \(x^2\) appears underneath.</p></div></details>
+<details><summary>Answer</summary><div>
+\[\frac{\sin(x^2)}{x}=x\cdot\frac{\sin(x^2)}{x^2}.\]
+<p>Let \(\theta=x^2\): as \(x\to0\), \(\theta\to0\) with \(\theta\ne0\), so \(\frac{\sin(x^2)}{x^2}\to1\). Also \(x\to0\). By the Product Rule the limit is \(0\cdot1=\) <b>0</b>.</p></div></details></div>
+
+<div class="q"><p class="qh">5. Find</p>
+\[\lim_{x\to0^{+}}\frac{\sin x}{\sin\sqrt x}.\]
+<details><summary>Hint</summary><div><p>Two boxes: \(x\) and \(\sqrt x\). Give each sine its own matching box, then see what is left over.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>For \(x\gt0\) (small),</p>
+\[\frac{\sin x}{\sin\sqrt x}=\frac{\sin x}{x}\cdot\frac{\sqrt x}{\sin\sqrt x}\cdot\frac{x}{\sqrt x}.\]
+<p>The first factor → 1 (key limit), the second → 1 (reciprocal corollary with \(\theta=\sqrt x\to0^{+}\)), and \(\frac{x}{\sqrt x}=\sqrt x\to0\). So the limit is \(1\cdot1\cdot0=\) <b>0</b>.</p></div></details></div>
+
+<div class="q"><p class="qh">6. Find</p>
+\[\lim_{x\to0}\frac{\sin(2x)}{x\cos(3x)}.\]
+<details><summary>Hint</summary><div><p>Separate the cosine: \(\frac{\sin2x}{x}\cdot\frac{1}{\cos3x}\). The first factor is Example 4 with \(k=2\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[\frac{\sin2x}{x\cos3x}=2\cdot\frac{\sin2x}{2x}\cdot\frac{1}{\cos3x}.\]
+<p>\(\frac{\sin2x}{2x}\to1\) and \(\frac1{\cos3x}\to\frac1{\cos0}=1\). So the limit is \(2\cdot1\cdot1=\) <b>2</b>.</p></div></details></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Concept checks <span class="pill">Written for these notes</span></h2>
+
+<div class="q"><p class="qh">1. True or false: “Since \(-1\le\sin\frac1x\le1\), the limit \(\lim_{x\to0}\sin\frac1x\) is some number between −1 and 1.”</p>
+<details><summary>Answer</summary><div><p><b>False.</b> The limit does not exist: \(\sin\frac1x\) keeps hitting both 1 and −1 at points arbitrarily close to 0, so it never settles. Being bounded is not the same as having a limit. The bounds −1 and 1 have different limits, so the Sandwich Theorem gives nothing.</p></div></details></div>
+
+<div class="q"><p class="qh">2. Suppose \(1-\frac{x^2}{4}\le u(x)\le1+\frac{x^2}{2}\) for all \(x\ne0\). Find \(\lim_{x\to0}u(x)\). Do you need a formula for \(u\)?</p>
+<details><summary>Answer</summary><div><p>Both bounds tend to \(1\) as \(x\to0\), so by the Sandwich Theorem \(\lim_{x\to0}u(x)=\) <b>1</b>. No formula for \(u\) is needed: the bounds alone decide the limit.</p></div></details></div>
+
+<div class="q"><p class="qh">3. Find \(\displaystyle\lim_{x\to0}x\cos\frac1x\).</p>
+<details><summary>Answer</summary><div><p>\(\left|x\cos\frac1x\right|\le|x|\), so \(-|x|\le x\cos\frac1x\le|x|\), and both bounds → 0. The limit is <b>0</b> (Sandwich Theorem). Using \(\pm x\) as the bounds would be mistake 1 of Section 7.</p></div></details></div>
+
+<div class="q"><p class="qh">4. Find \(\displaystyle\lim_{x\to0}\frac{\sin5x}{\sin2x}\).</p>
+<details><summary>Answer</summary>
+<div>\[\begin{aligned}\frac{\sin5x}{\sin2x}&=\frac{\sin5x}{5x}\cdot\frac{2x}{\sin2x}\cdot\frac52\\&\to1\cdot1\cdot\frac52=\frac52.\end{aligned}\]</div></details></div>
+
+<div class="q"><p class="qh">5. Find \(\displaystyle\lim_{x\to1}\frac{\sin(x-1)}{x^2-1}\).</p>
+<details><summary>Hint</summary><div><p>The box is \(x-1\), which tends to 0 as \(x\to1\). Factorise \(x^2-1\).</p></div></details>
+<details><summary>Answer</summary>
+<div>\[\begin{aligned}\frac{\sin(x-1)}{x^2-1}&=\frac{\sin(x-1)}{x-1}\cdot\frac{1}{x+1}\\&\to1\cdot\frac12=\frac12.\end{aligned}\]<p>With \(\theta=x-1\to0\). The key limit works at any point, as long as the box tends to 0.</p></div></details></div>
+
+<div class="q"><p class="qh">6. Find \(\displaystyle\lim_{x\to0}\frac{1-\cos x}{x^2}\).</p>
+<details><summary>Hint</summary><div><p>Multiply top and bottom by \(1+\cos x\) and use \(1-\cos^2x=\sin^2x\).</p></div></details>
+<details><summary>Answer</summary>
+<div>\[\begin{aligned}\frac{1-\cos x}{x^2}&=\frac{\sin^2x}{x^2(1+\cos x)}\\&=\left(\frac{\sin x}{x}\right)^2\cdot\frac{1}{1+\cos x}\end{aligned}\]
+<p>which tends to \(1^2\cdot\frac12=\frac12\). This trick (rewriting \(1-\cos x\) with \(\sin^2x\)) is useful in the exam taster below.</p></div></details></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="pastpaper"><h2><span class="n">11</span>Exam taster</h2>
+<p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
+<p style="font-size:.92rem;color:var(--muted)">Lecture 2's question types appear 8 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide. Four more questions that use this lecture also need later material, so they are housed in later notes: Dec 2019 Q2(b) in Lecture 6, and May 2024 Q1(a), Dec 2018 Q1(a) and May 2017 Q1(b)(ii) in Lecture 10.</p>
+
+<div class="q"><p class="src"><b>May 2025 Q1(a)</b><span>Q1 total 10%</span><a class="guide" data-guide="L2.2">Guide · L2.2 sin of a box over the same box: make the boxes match</a></p>
+<p class="qh">Evaluate the limit</p>
+\[\lim_{x\to0}\sqrt{1+\frac{1}{x^2}}\cdot\sin x\]
+<p>or explain carefully why the limit does not exist.</p>
+<details><summary>Hint</summary><div><p>Combine under the root: \(\sqrt{1+\frac1{x^2}}=\frac{\sqrt{x^2+1}}{\sqrt{x^2}}=\frac{\sqrt{x^2+1}}{|x|}\), because \(\sqrt{x^2}=|x|\), not \(x\). So the expression is \(\sqrt{x^2+1}\cdot\frac{\sin x}{|x|}\). Treat \(x\to0^{+}\) and \(x\to0^{-}\) separately.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>The limit <b>does not exist</b>: the right-hand limit is \(1\) and the left-hand limit is \(-1\).</p>
+<p style="font-size:.9rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2024 Q1(b)</b><span>5%</span><a class="guide" data-guide="L2.2">Guide · L2.2 sin of a box over the same box: make the boxes match</a></p>
+<p class="qh">What is the smallest natural number \(n\) for which the limit</p>
+\[\lim_{x\to0}\frac{\sin^nx}{\cos^2x\,(1-\cos x)^3}\]
+<p>exists?</p>
+<details><summary>Hint</summary><div><p>Rewrite \(1-\cos x=\frac{\sin^2x}{1+\cos x}\) (multiply top and bottom by \(1+\cos x\), as in concept check 6). Then the denominator contains \(\sin^6x\); compare with the \(\sin^nx\) on top. “Exists” means a finite number.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(n=6\) (the limit is then \(8\); for \(n\le5\) the expression blows up as \(x\to0\)).</p>
+<p style="font-size:.9rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2024 Q1(b)</b><span>Q1 total 10%</span><a class="guide" data-guide="L2.1">Guide · L2.1 Bounded wiggle times something shrinking to 0 (squeeze)</a></p>
+<p class="qh">Determine, with justification, the value(s) of \(b\) so that</p>
+\[\lim_{x\to0}\left(\sin\left(bx+\frac1x\right)-\sin\left(\frac1x\right)\right)\]
+<p>exists.</p>
+<details><summary>Hint</summary><div><p>Expand with the compound-angle formula \(\sin(A+B)=\sin A\cos B+\cos A\sin B\) (not in HKDSE Core): the expression becomes</p>
+\[\sin(bx)\cos\tfrac1x+\big(\cos(bx)-1\big)\sin\tfrac1x.\]
+<p>Each term is (something tending to 0) × (a bounded wiggle). Squeeze each one.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>The limit exists for <b>every real \(b\)</b>, and its value is \(0\).</p>
+<p style="font-size:.9rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2021 Q1(d)</b><span>Q1 total 10%</span><a class="guide" data-guide="L2.1">Guide · L2.1 Bounded wiggle times something shrinking to 0 (squeeze)</a><a class="guide" data-guide="L2.2">Guide · L2.2 sin of a box over the same box: make the boxes match</a></p>
+<p class="qh">In each of the following, either evaluate the limit or explain carefully why the limit does not exist. Indicate clearly the theorems you have used in your argument.</p>
+<p>(d)</p>
+\[\lim_{x\to0}\left(x+x^2\sin\frac1x\right)(x+\sin x)^{-1}\]
+<details><summary>Hint</summary><div><p>\((\ldots)^{-1}\) means 1 over it. Divide the top and the bottom by \(x\): you get \(\frac{1+x\sin\frac1x}{1+\frac{\sin x}{x}}\). Then one squeeze (Example 2) and the key limit.</p></div></details>
+<details><summary>Answer</summary><div>
+\[\lim_{x\to0}\frac{x+x^2\sin\frac1x}{x+\sin x}=\frac12\]
+<p style="font-size:.9rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+</section>
+</main>
+</div>
+
+<script>
+(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const PI=Math.PI;
+const $=id=>document.getElementById(id);
+
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+const piTicks=(lo,hi)=>{const out=[];const L={'-4':'−2π','-3':'−3π/2','-2':'−π','-1':'−π/2','0':'0','1':'π/2','2':'π','3':'3π/2','4':'2π','5':'5π/2'};for(let k=Math.ceil(lo/(PI/2));k<=Math.floor(hi/(PI/2));k++)out.push([k*PI/2,L[k]||'']);return out;};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+
+function nt(lo,hi,n){const st0=(hi-lo)/n;const p=Math.pow(10,Math.floor(Math.log10(st0)));const m=st0/p;const s=(m<1.5?1:m<3?2:m<7?5:10)*p;const out=[];
+  for(let k=Math.ceil(lo/s-1e-9);k*s<=hi+1e-12;k++){const v=k*s;const r=Math.abs(v)<s*1e-6?0:v;out.push([r,r===0?'0':String(+r.toPrecision(3)).replace('-','−')]);}return out;}
+
+/* slide 7 picture */
+function drawSW(){
+  const c=2,L=2;
+  const h=x=>L+0.32*(x-c)**2*(1+0.35*Math.sin(1.7*x));
+  const g=x=>L-0.28*(x-c)**2*(1+0.4*Math.cos(1.3*x));
+  const f=x=>(g(x)+h(x))/2+(h(x)-g(x))/2*0.92*Math.sin(5*x+0.6);
+  plot($('sw'),{xmin:-0.3,xmax:4.4,ymin:-0.4,ymax:4.2,xticks:[[c,'c']],yticks:[[L,'L']],
+    curves:[{f:h,color:css('--c2')},{f:g,color:css('--c4')},{f:f,color:css('--accent')}],
+    segs:[{x1:c,y1:0,x2:c,y2:L,color:css('--muted'),dash:[5,4],width:1.3},{x1:0,y1:L,x2:c,y2:L,color:css('--muted'),dash:[5,4],width:1.3}],
+    pts:[{x:c,y:L,color:css('--ink'),label:'(c, L)',r:4}]});
+}
+redraws.push(drawSW);
+
+/* squeeze explorer */
+const SQ={
+  e1:{f:x=>x*x*Math.sin(1/x),b:x=>x*x,pos:false,bl:'±x²'},
+  e2:{f:x=>x*Math.sin(1/x),b:x=>Math.abs(x),pos:false,bl:'±|x|'},
+  e3:{f:x=>Math.sqrt(x)*Math.sin(1/x),b:x=>Math.sqrt(x),pos:true,bl:'±√x'},
+  s:{f:x=>Math.sin(1/x),b:x=>1,pos:false,bl:'±1'},
+  fm:{f:x=>Math.sin(x)*Math.exp(Math.cos(1/(x*x*x))),b:x=>Math.E*Math.sin(x),lo:x=>Math.sin(x)/Math.E,pos:true,bl:'sin x / e and e·sin x'}
+};
+function drawSQ(){
+  const k=$('sq-s').value, d=SQ[k], z=+$('sq-z').value;
+  const w=Math.pow(10,-2*z/100);
+  const xmin=d.pos?-0.06*w:-w, xmax=w;
+  const B=d.b(w), ymax=1.3*B, ymin=k==='fm'?-0.25*B:-1.3*B;
+  const lo=d.lo||(x=>-d.b(x));
+  const from=d.pos?1e-9*w:undefined;
+  plot($('sq'),{xmin,xmax,ymin,ymax,xticks:nt(xmin,xmax,4),yticks:nt(ymin,ymax,4),pl:50,
+    curves:[{f:d.f,color:css('--accent'),width:1.4,n:5000,from},{f:d.b,color:css('--c2'),from:d.pos?0:undefined},{f:lo,color:css('--c4'),from:d.pos?0:undefined}]});
+  let msg;
+  if(k==='s') msg=`Window ${d.pos?'0 &lt; x':'0 &lt; |x|'} ≤ <b>${fmt(w,4)}</b>. Bounds: <b>−1</b> and <b>1</b> at every zoom level. They never meet, so the Sandwich Theorem gives no limit (there is none).`;
+  else if(k==='fm') msg=`Window 0 &lt; x ≤ <b>${fmt(w,4)}</b>. At the right edge: lower bound sin x / e = <b>${fmt(lo(w),5)}</b>, upper bound e·sin x = <b>${fmt(B,5)}</b>. Both → 0 as x → 0⁺.`;
+  else msg=`Window ${d.pos?'0 &lt; x':'0 &lt; |x|'} ≤ <b>${fmt(w,4)}</b>. Bounds ${d.bl}: at the window edge they are ±<b>${fmt(B,6)}</b>, and f stays inside them. Both bounds → 0, so f → 0.`;
+  $('sq-out').innerHTML=msg;
+}
+$('sq-s').addEventListener('input',drawSQ);$('sq-z').addEventListener('input',drawSQ);redraws.push(drawSQ);
+
+/* unit circle */
+function drawUC(){
+  const cv=$('uc'),x=+$('uc-x').value/100;
+  const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.fillStyle=css('--card');g.fillRect(0,0,W,H);
+  const x0=-0.22,x1=1.42,y0=-0.22,y1=1.8;
+  const s=Math.min(W/(x1-x0),H/(y1-y0));const ox=(W-s*(x1-x0))/2,oy=(H-s*(y1-y0))/2;
+  const X=u=>ox+(u-x0)*s,Y=v=>H-oy-(v-y0)*s;
+  const font='11px Inter, system-ui, sans-serif';g.font=font;
+  g.strokeStyle=css('--axis');g.lineWidth=1.2;
+  g.beginPath();g.moveTo(X(x0),Y(0));g.lineTo(X(x1),Y(0));g.moveTo(X(0),Y(y0));g.lineTo(X(0),Y(y1));g.stroke();
+  g.strokeStyle=css('--grid');g.beginPath();g.moveTo(X(1),Y(y0));g.lineTo(X(1),Y(y1));g.stroke();
+  g.strokeStyle=css('--muted');g.lineWidth=1.3;g.beginPath();g.arc(X(0),Y(0),s,0.12,-PI/2-0.12,true);g.stroke();
+  const c=Math.cos(x),sn=Math.sin(x),t=Math.tan(x);
+  const fill=(col,a,path)=>{g.globalAlpha=a;g.fillStyle=col;g.beginPath();path();g.closePath();g.fill();g.globalAlpha=1;};
+  fill(css('--c4'),0.22,()=>{g.moveTo(X(0),Y(0));g.lineTo(X(1),Y(0));g.lineTo(X(1),Y(t));});
+  fill(css('--accent'),0.30,()=>{g.moveTo(X(0),Y(0));g.arc(X(0),Y(0),s,0,-x,true);});
+  fill(css('--c3'),0.40,()=>{g.moveTo(X(0),Y(0));g.lineTo(X(1),Y(0));g.lineTo(X(c),Y(sn));});
+  g.lineWidth=2;
+  g.strokeStyle=css('--ink');g.beginPath();g.moveTo(X(0),Y(0));g.lineTo(X(1),Y(t));g.stroke();
+  g.strokeStyle=css('--c4');g.lineWidth=3;g.beginPath();g.moveTo(X(1),Y(0));g.lineTo(X(1),Y(t));g.stroke();
+  g.strokeStyle=css('--c3');g.setLineDash([5,4]);g.lineWidth=2;g.beginPath();g.moveTo(X(c),Y(0));g.lineTo(X(c),Y(sn));g.stroke();g.setLineDash([]);
+  g.strokeStyle=css('--accent');g.lineWidth=3;g.beginPath();g.arc(X(0),Y(0),s,0,-x,true);g.stroke();
+  g.strokeStyle=css('--muted');g.lineWidth=1.2;g.beginPath();g.arc(X(0),Y(0),0.16*s,0,-x,true);g.stroke();
+  const dot=(u,v,col)=>{g.beginPath();g.arc(X(u),Y(v),4,0,7);g.fillStyle=col;g.fill();};
+  dot(0,0,css('--ink'));dot(1,0,css('--ink'));dot(c,sn,css('--ink'));dot(1,t,css('--ink'));
+  g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=css('--ink');
+  g.textAlign='right';g.textBaseline='top';g.fillText('O',X(0)-4,Y(0)+4);
+  g.textAlign='left';g.fillText('A',X(1)+5,Y(0)+4);
+  g.textBaseline='bottom';g.textAlign='right';g.fillText('P',X(c)-6,Y(sn)-3);
+  g.textAlign='left';g.fillText('T',X(1)+6,Y(t));
+  g.font=font;g.fillStyle=css('--muted');g.textAlign='left';g.textBaseline='middle';
+  g.fillText('x',X(0.2*Math.cos(x/2)),Y(0.2*Math.sin(x/2)));
+  g.fillStyle=css('--c4');g.fillText('tan x',X(1)+6,Y(t/2));
+  g.fillStyle=css('--c3');g.textAlign='right';g.fillText('sin x',X(c)-4,Y(sn*0.45));
+  g.fillStyle=css('--muted');g.textAlign='center';g.textBaseline='top';g.fillText('cos x',X(c/2),Y(0)+4);
+  $('uc-out').innerHTML=`x = <b>${fmt(x,2)}</b> rad<br>area △OAP = ½ sin x = <b>${fmt(sn/2,4)}</b><br>area sector = ½ x = <b>${fmt(x/2,4)}</b><br>area △OAT = ½ tan x = <b>${fmt(t/2,4)}</b><br>so cos x = <b>${fmt(c,4)}</b> ≤ sin x / x = <b>${fmt(sn/x,4)}</b> ≤ 1`;
+}
+$('uc-x').addEventListener('input',drawUC);redraws.push(drawUC);
+
+/* sin x / x */
+function drawSX(){
+  plot($('sx'),{xmin:-3*PI,xmax:3*PI,ymin:-0.4,ymax:1.25,xticks:piTicks(-3*PI,3*PI).filter((p,i)=>i%2===0).map(([v])=>[v,({'-6':'−3π','-4':'−2π','-2':'−π','0':'0','2':'π','4':'2π','6':'3π'})[String(Math.round(v/(PI/2)))]||'']),ystep:0.5,
+    curves:[{f:x=>Math.sin(x)/x,color:css('--accent')},{f:Math.cos,color:css('--c4'),from:-PI/2,to:PI/2,dash:[6,4]},{f:x=>1,color:css('--c2'),dash:[6,4],width:1.6}],
+    pts:[{x:0,y:1,color:css('--accent'),open:true}]});
+}
+redraws.push(drawSX);
+
+/* slide 12 */
+function drawRC(){
+  plot($('rc'),{xmin:-2.6,xmax:4.4,ymin:-0.6,ymax:5.4,xstep:1,ystep:1,
+    yticks:[[1,'1'],[2,'2'],[3,'3'],[4,'4'],[5,'5'],[0.25,'¼']],
+    curves:[{f:x=>x+2,color:css('--accent')},{f:x=>1/(x+2),color:css('--c3'),from:-1.83}],
+    segs:[{x1:2,y1:0,x2:2,y2:4,color:css('--muted'),dash:[5,4],width:1.3},{x1:0,y1:4,x2:2,y2:4,color:css('--muted'),dash:[5,4],width:1.3},{x1:0,y1:0.25,x2:2,y2:0.25,color:css('--muted'),dash:[5,4],width:1.3}],
+    pts:[{x:2,y:4,color:css('--accent'),label:'(2, 4)'},{x:2,y:0.25,color:css('--c3'),label:'(2, ¼)'}]});
+}
+redraws.push(drawRC);
+
+/* sin kx / x */
+function drawKX(){
+  const k=+$('kx-s').value;
+  const f=x=>Math.sin(k*x)/x;
+  const ymin=Math.min(-1,k-0.8), ymax=Math.max(1,k+0.8);
+  plot($('kx'),{xmin:-4,xmax:4,ymin:Math.floor(ymin),ymax:Math.ceil(ymax),xstep:1,ystep:1,
+    curves:[{f,color:css('--accent')},{f:x=>k,color:css('--c2'),dash:[6,4],width:1.4}],
+    pts:[{x:0,y:k,color:css('--accent'),open:true,label:'(0, '+fmt(k).replace('−','−')+')',align:k>0?'left':'left'}]});
+  $('kx-out').innerHTML=`k = <b>${fmt(k)}</b>: f(0.1) = <b>${fmt(f(0.1),5)}</b>, f(0.01) = <b>${fmt(f(0.01),5)}</b>, f(0.001) = <b>${fmt(f(0.001),5)}</b> → k = <b>${fmt(k)}</b>`;
+}
+$('kx-s').addEventListener('input',drawKX);redraws.push(drawKX);
+
+const all=()=>redraws.forEach(f=>{try{f();}catch(e){}});
+all();
+let t; window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(all,120);});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);}catch(e){}
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+
+<script>
+/* MATH1851 bundle links: fills hrefs for a.note[data-note] and a.guide[data-guide], links "Lx guide" mentions, adds an index link on guide pages. */
+(function(){
+var B="",N={"L1": "note-L1.html", "L2": "note-L2.html", "L3": "note-L3.html", "L4": "note-L4.html", "L5": "note-L5.html", "L6": "note-L6.html", "L7": "note-L7.html", "L8": "note-L8.html", "L9": "note-L9.html", "L10": "note-L10.html", "L11": "note-L11.html", "L12": "note-L12.html", "L13": "note-L13.html", "L14": "note-L14.html", "L15": "note-L15.html", "L16": "note-L16.html", "L17": "note-L17.html", "O1": "note-O1.html", "O2": "note-O2.html", "O3": "note-O3.html", "O4": "note-O4.html", "LT": "note-LT.html"},G={"L1": "guide-L1.html", "L2": "guide-L2.html", "L3": "guide-L3.html", "L4": "guide-L4.html", "L5": "guide-L5.html", "L6": "guide-L6.html", "L7": "guide-L7.html", "L8": "guide-L8.html", "L9": "guide-L9.html", "L10": "guide-L10.html", "L12": "guide-L12.html", "L13": "guide-L13.html", "L14": "guide-L14.html", "L15": "guide-L15.html", "L16": "guide-L16.html", "L17": "guide-L17.html", "O1": "guide-O1.html", "O2": "guide-O2.html", "O3": "guide-O3.html", "O4": "guide-O4.html", "LT": "guide-LT.html"},M={"LT#forward|forward transforms and shifts": "LT#s4", "LT#partial-fractions|partial fractions": "LT#s10", "LT#second-shift|second shift and the step function": "LT#s5", "LT#repeated-factors|repeated factors and the first shift": "LT#s10", "LT#convolution|convolution": "LT#s6", "LT#s5|solving ODEs by Laplace": "LT#s12", "LT#s6|convolution and integral equations": "LT#s11", "L1#s4|limit laws": "L1#s5", "L1#s5|direct substitution": "L1#s6", "L1#s6|removing the 0/0 by algebra": "L1#s7", "L1#s7|one-sided limits": "L1#s3", "L1#s8|absolute values and piecewise functions": "L1#s3", "L2#s2|the Sandwich Theorem": "L2#s1", "L2#s3|x sin(1/x) and other examples": "L2#s2", "L2#s4|the limit sin x / x": "L2#s3", "L1#s5|one-sided limits": "L1#s3", "L3#s2|infinite limits": "L3#s1", "L3#s3|limits at infinity": "L3#s2", "L1#s6|conjugates": "L1#s7", "L3#s4|asymptotes": "L3#s5", "L9#s3|asymptotes in curve sketching": "L9#s8", "L4#s2|continuity at a point": "L4#s1", "L4#s4|continuity of combinations": "L4#s5", "L4#s3|one-sided limits and continuity": "L4#s1", "L4#s5|limits of composite functions": "L4#s7", "L4#s6|types of discontinuity": "L4#s3", "L4#s7|the Intermediate Value Theorem": "L4#s8", "L5#s2|definition of the derivative": "L5#s3", "L5#s3|one-sided derivatives": "L5#s5", "L5#s4|differentiable implies continuous": "L5#s6", "L6#s2|product and quotient rules": "L6#s2", "L6#s4|chain rule": "L6#s5", "L6#s5|implicit differentiation": "L6#s6", "L6#s6|tangent lines": "L5#s2", "L7#s5|logarithmic differentiation": "L7#s4", "L7#s4|derivatives of ln and exp": "L7#s3", "L7#s4|derivatives of exp, ln and aˣ": "L7#s3", "L7#s6|derivatives of inverse trig functions": "L7#s6", "L7#s2|derivative of an inverse function": "L7#s2", "L7#s1|one-to-one functions and inverses": "L7#s1", "L7#s5|graphs and limits of eˣ and ln x": "L7#s3", "L4#s2|continuity of composite functions": "L4#s6", "L8#s2|absolute extrema and the Extreme Value Theorem": "L8#s3", "L8#s3|critical points": "L8#s4", "L8#s4|Rolle's Theorem": "L8#s6", "L8#s5|the Mean Value Theorem": "L8#s7", "L8#s6|counting roots with Rolle's Theorem": "L8#s9", "L4#s5|the Intermediate Value Theorem": "L4#s8", "L8#s7|consequences of the MVT": "L8#s8", "L9#s2|increasing, decreasing and the first derivative test": "L9#s2", "L9#s3|concavity and inflection points": "L9#s7", "L9#s5|curve sketching checklist": "L9#s8", "L9#s2|sign of f′ and monotonicity": "L9#s1", "L9#s3|concavity from f′": "L9#s4", "L12#s4|area functions": "L12#s7", "L9#s5|curve sketching from f′ and f″": "L9#s9", "L9#s6|applied optimisation": "L9#s3", "L8#s2|absolute extrema on an interval": "L8#s5", "L9#s3|what f′ and f″ say about a graph": "L9#s4", "L10#s3|L'Hôpital's Rule": "L10#s3", "L10#s2|classifying forms": "L10#s2", "L10#s4|∞ − ∞ forms": "L10#s5", "L10#s5|0 · ∞ forms": "L10#s5", "L10#s6|indeterminate powers": "L10#s6", "L10#s7|L'Hôpital with an unknown function": "L10#s3", "L10#s8|L'Hôpital at a join": "L10#s3", "L4#s2|continuity": "L4#s1", "L5#s2|derivative by definition": "L5#s3", "L12#s4|FTC Part I": "L12#s7", "L6#s5|chain rule": "L6#s5", "L12#s2|Riemann sums and the definite integral": "L12#s1", "L11#s5|sigma notation and area": "L11#s6", "L12#s5|the area function": "L12#s7", "L12#s4|the Fundamental Theorem of Calculus": "L12#s7", "L12#s6|average value": "L12#s6", "L13#s2|substitution": "L13#s2", "L13#s3|substitution in definite integrals": "L13#s5", "L13#s4|integration by parts": "L13#s7", "L13#s5|repeated parts, ln and inverse trig": "L13#s8", "L13#s6|by parts with an unknown function": "L13#s7", "L13#s7|reduction formulas": "L13#s8", "L13#s8|the x → a − x substitution": "L13#s5", "L14#s2|partial fractions": "L14#s5", "L14#s3|repeated and quadratic factors": "L14#s5", "L14#s4|trig integrals": "L14#s3", "L14#s5|trig substitution": "L14#s4", "L15#s2|parametric curves": "L15#s1", "L15#s3|slope of a parametric curve": "L15#s3", "L15#s4|polar coordinates": "L15#s5", "L15#s5|sketching polar curves and symmetry": "L15#s7", "L15#s6|slope of a polar curve": "L15#s8", "L16#s1|area between curves": "L16#s1", "L16#s2|discs and washers": "L16#s4", "L16#s3|cylindrical shells": "L16#s5", "L16#s4|choosing discs or shells": "L16#s6", "L16#s5|volume by slicing": "L16#s3", "L17#s2|arc length": "L17#s2", "L17#s3|parametric and polar length": "L17#s3", "L14#s4|trig substitution": "L14#s4", "L17#s4|surface area": "L17#s6", "L16#s3|solids of revolution": "L16#s4", "O1#separable|separable equations": "O1#s6", "O1#linear|linear equations and the integrating factor": "O1#s5", "O1#exact|exact equations": "O1#s8", "O2#homogeneous|homogeneous equations": "O2#s5", "O2#bernoulli|Bernoulli equations": "O2#s1", "O2#riccati|Riccati equations": "O2#s2", "O2#shift|shift substitution": "O2#s6", "O2#reduction|reduction of order": "O2#s7", "O3#roots|root cases": "O3#s4", "O3#constant|constant coefficients": "O3#s3", "O3#higher|higher-order equations": "O3#s7", "O3#euler|Cauchy–Euler": "O3#s10", "O4#s2|undetermined coefficients": "O4#s2", "O4#s3|when the trial clashes": "O4#s3", "O4#s4|initial value problems": "O4#s4", "O4#variation-of-parameters|variation of parameters": "O4#s6", "O4#vop-cauchy-euler|VoP for Cauchy–Euler": "O4#s7", "O3#cauchy-euler|Cauchy–Euler homogeneous": "O3#s10", "O4#d-operator|D-operator method": "O4#s5"},IDX="index.html#part2";
+function ext(a,u){a.href=u;}
+function go(){
+  var h=document.querySelector("nav.toc .h"),m0=h&&/Exam guide\s*·\s*([A-Z0-9]+)/i.exec(h.textContent),self=m0?m0[1].toUpperCase():null,isGuide=!!(h&&/Exam guide/i.test(h.textContent));
+  document.querySelectorAll("a.note[data-note]").forEach(function(a){
+    var k=a.getAttribute("data-note"),t=a.textContent.replace(/\s+/g," ").replace(/^\s*Chapter note\s*·?\s*/,"").trim();
+    var v=M[k+"|"+t]||k,p=v.split("#"),c=p[0];
+    if(!N[c])return;
+    ext(a,B+N[c]+(p[1]&&p[1]!=="top"?"#"+p[1]:""));
+  });
+  document.querySelectorAll("a.guide[data-guide]").forEach(function(a){
+    var g=a.getAttribute("data-guide"),h=g.indexOf("#")>=0,c=h?g.split("#")[0]:g.split(".")[0],f=h?g.split("#")[1]:g.replace(".","");
+    if(!G[c])return;
+    ext(a,B+G[c]+"#"+f);
+  });
+  if(!isGuide)return;
+  var main=document.querySelector("main");
+  if(!main)return;
+  var top=main.querySelector("header.top");
+  if(top&&IDX&&self!=="INDEX"){var p=document.createElement("p");p.className="muted";var a=document.createElement("a");ext(a,B+IDX);a.textContent="← All exam-guide pages and the exam format";p.appendChild(a);top.appendChild(p);}
+  var re=/\b(L1[0-7]|L[1-9]|O[1-4]|LT) guide\b/g,skip={A:1,SCRIPT:1,STYLE:1,H1:1,H2:1,CODE:1,"MJX-CONTAINER":1,SUMMARY:1};
+  var w=document.createTreeWalker(main,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    for(var e=n.parentNode;e&&e!==main;e=e.parentNode){if(skip[e.nodeName])return NodeFilter.FILTER_REJECT;}
+    re.lastIndex=0;return re.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP;}});
+  var list=[],n;while((n=w.nextNode()))list.push(n);
+  list.forEach(function(n){
+    var s=n.nodeValue,f=document.createDocumentFragment(),last=0,m;re.lastIndex=0;
+    while((m=re.exec(s))){
+      var c=m[1];if(c===self||!G[c])continue;
+      f.appendChild(document.createTextNode(s.slice(last,m.index)));
+      var a=document.createElement("a");ext(a,B+G[c]);a.textContent=m[0];f.appendChild(a);last=m.index+m[0].length;
+    }
+    if(last===0)return;
+    f.appendChild(document.createTextNode(s.slice(last)));n.parentNode.replaceChild(f,n);
+  });
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
+})();
+</script>
+</html>

@@ -1,0 +1,1104 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH2413 C1 · Introduction to PID Control</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH2413 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Control · C1</p>
+  <ol>
+    <li><a href="#s0">0 · Where this sits</a></li>
+    <li><a href="#s1">1 · Control in everyday life</a></li>
+    <li><a href="#s2">2 · Target, input, output</a></li>
+    <li><a href="#s3">3 · Four roles, disturbances</a></li>
+    <li><a href="#s4">4 · Open-loop control</a></li>
+    <li><a href="#s5">5 · Feedback and the closed loop</a></li>
+    <li><a href="#s6">6 · Negative feedback</a></li>
+    <li><a href="#s7">7 · Open or closed?</a></li>
+    <li><a href="#s8">8 · Reading a response curve</a></li>
+    <li><a href="#s9">9 · Case study: the water tank</a></li>
+    <li><a href="#s10">10 · One feedback cycle</a></li>
+    <li><a href="#s11">11 · The PID control law</a></li>
+    <li><a href="#s12">12 · P: current error</a></li>
+    <li><a href="#s13">13 · I: accumulated error</a></li>
+    <li><a href="#s14">14 · D: rate of change</a></li>
+    <li><a href="#s15">15 · PID and the comparison</a></li>
+    <li><a href="#s16">16 · Changing a gain</a></li>
+    <li><a href="#s17">17 · Worked example: pump command</a></li>
+    <li><a href="#s18">18 · Two tests of a controller</a></li>
+    <li><a href="#s19">19 · Check your understanding</a></li>
+    <li><a href="#s20">20 · Review and design task</a></li>
+    <li><a href="#s21">21 · Summary</a></li>
+    <li><a href="#s22">22 · Common mistakes</a></li>
+    <li><a href="#s23">23 · Find the mistake</a></li>
+    <li><a href="#s24">24 · Concept checks</a></li>
+    <li><a href="#s25">25 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-C1.html">Exam guide · C1</a><a href="note-D3.html">← D3</a></nav>
+  <span class="course">MECH2413 · Engineering Mechanics · Control</span>
+  <h1>Introduction to PID Control</h1>
+  <p class="lede">Every slide of the control handout (PID Control · Introduction, 36 slides) explained from scratch: what control is, open-loop versus closed-loop (feedback) control, how to read a response curve, and the three terms of a PID controller, all through the handout's water-tank case study. The tank responses are re-simulated so you can change the gains yourself. There are no past-paper questions on this part of the course yet; the exam taster gives practice questions in the style of the handout's worked example.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>MECH2413 ends with a short control part (Prof. X. Li, about 9 hours). Statics (S1–S7) asked what forces keep a body still; dynamics (D1–D3) asked how forces make it move. Control asks the next question: <b>how do we choose the force (or voltage, or pump speed) so that the motion does what we want</b>, even when the load or the surroundings change?</p>
+<p>The handout's three aims (slide 1):</p>
+<ol class="steps">
+<li>identify <b>targets, inputs, outputs and disturbances</b> in a system (Sections 1–3);</li>
+<li>compare <b>open-loop</b> and <b>closed-loop</b> control (Sections 4–7);</li>
+<li>explain the basic roles of <b>P</b>, <b>I</b> and <b>D</b> (Sections 11–18).</li>
+</ol>
+<p>Maths needed: derivatives, integrals and first-order ODEs from MATH1851. The handout itself uses only the PID formula and one flow-balance equation; anything more is in orange "Beyond" boxes.</p>
+<div class="box conv"><span class="tag">Sign convention and units for this chapter</span>
+<ul class="list">
+<li><b>Error</b> \(e(t)=r(t)-y_{\rm m}(t)\): target minus measured output. \(e\gt0\) means the output is <b>below</b> the target.</li>
+<li>Water-tank case study: level \(h\) and target \(r\) in cm, time in s. The pump command \(u\) is a fraction of full pump effort (0 to 1; \(u=0.23\) means 23%). The pump cannot run backwards, so \(u\) never goes below 0.</li>
+<li>Gains then carry units: \(K_{\rm p}\) in cm⁻¹, \(K_{\rm i}\) in (cm·s)⁻¹, \(K_{\rm d}\) in s·cm⁻¹, so that every term of \(u\) is dimensionless.</li>
+<li>Response curves: output on the vertical axis, time on the horizontal; rise time is measured 10% → 90% and settling uses a ±2% band (slide 15).</li>
+</ul></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Control in everyday life and engineering (slides 2–4)</h2>
+<p>The handout opens with three applications. Each has the same three ingredients: a <b>desired condition</b>, a <b>measured result</b>, and an <b>action</b> that changes the result (slide 4).</p>
+<div class="scroll"><table>
+<tr><th>Application</th><th>Desired condition</th><th>Action</th><th>What upsets it</th></tr>
+<tr><td><b>Room temperature</b> (slide 2, a smart thermostat)</td><td>a setpoint of 24 °C; a sensor reports the present temperature</td><td>heating or cooling, which changes the temperature <b>gradually</b>: the output does not jump to the target</td><td>doors opening, sunlight, people in the room change the load</td></tr>
+<tr><td><b>Robot motion</b> (slide 3, welding robots)</td><td>reach a position or follow a path at a required speed</td><td>motors and transmissions; position sensors report what the robot actually does</td><td>a heavier payload, friction, or contact with a part</td></tr>
+<tr><td><b>Flight conditions</b> (slide 4, a cockpit)</td><td>hold an altitude (stay near a setpoint) or move to a new one</td><td>control surfaces (flaps, elevators) or thrust</td><td>wind gusts; the action must also respect speed and load limits</td></tr>
+</table></div>
+<div class="box def"><span class="tag">Definitions · setpoint, regulation, tracking</span>
+<ul class="list">
+<li><b>Setpoint</b>: the desired value of the controlled quantity (24 °C, 40 cm).</li>
+<li><b>Regulation</b>: keeping the output near a fixed setpoint despite disturbances (holding altitude).</li>
+<li><b>Tracking</b>: making the output follow a changing target (a new altitude command, a robot path).</li>
+</ul></div>
+<p class="word"><b>Key idea (slide 2):</b> the controlled result is the room <b>temperature</b>, not whether the heater is switched on. A command being sent is not the same as the goal being reached (slide 3).</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>The control task: target, input and output (slide 5)</h2>
+<p><b>Control</b> means selecting and applying actions so that a system behaves in a desired way. Four words describe every control task:</p>
+<div class="box def"><span class="tag">Definitions · the control task</span>
+<ul class="list">
+<li><b>Target \(r\)</b> (reference): the desired quantity and value, e.g. a speed of 80 km/h, or a prescribed motion trajectory.</li>
+<li><b>Output \(y\)</b>: the actual quantity being controlled (speed, temperature, position). It may differ from the target.</li>
+<li><b>Input \(u\)</b>: the adjustable action we can apply (torque, cooling rate, voltage). Input and output often have <b>different units</b>: a voltage changes a speed.</li>
+<li><b>Constraints</b>: physical limits on the input's size, its rate of change, and the operating range. The controller must respect them.</li>
+</ul>
+<p class="word"><b>In words:</b> the input is the knob we can turn; the output is the result we want to change or hold; the target is where we want the output to be.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes · car cruise control</span>
+<p>Target \(r=80\u{km/h}\); output \(y\) = actual road speed (km/h); input \(u\) = throttle (engine torque demand, a fraction of full throttle); constraint: \(0\le u\le1\), and throttle cannot change instantly; disturbances: hills and headwind (Section 3).</p></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Four roles in a control system; disturbances (slides 6–7)</h2>
+<p>A <b>closed loop</b> carries physical actions <b>forward</b> and measurement information <b>back</b> (slide 6):</p>
+<div class="figure"><div id="fig-roles"></div><p class="cap">The controller decides, the actuator acts, the plant responds, and the sensor reports the result (slide 6).</p></div>
+<div class="box def"><span class="tag">Definitions · the four roles</span>
+<ul class="list">
+<li><b>Controller</b>: calculates the action from the information it receives (a computer program, a circuit, or a person).</li>
+<li><b>Actuator</b>: the device that applies the controller's command to the plant (a motor, a pump, a heater, a valve).</li>
+<li><b>Plant</b>: the system being controlled (the room, the robot arm, the aircraft, the tank of water).</li>
+<li><b>Sensor</b>: measures the output and returns the measurement (thermometer, encoder, level gauge).</li>
+</ul>
+<p><b>Action path</b>: controller → actuator → plant. <b>Feedback</b>: sensor → back to the controller, to guide the next action.</p></div>
+<p>Slide 7: the same input can give different results when conditions or system properties change.</p>
+<div class="cases">
+<div><b>Disturbance</b>An outside effect that pushes the output away: an uphill road or headwind increases resistance, so the car slows if the drive force stays the same.</div>
+<div><b>Uncertainty</b>The real plant differs from the model: the load, friction or efficiency are not what we assumed.</div>
+<div><b>Measurement problems</b>Noise (random jitter) or bias (a constant offset) make the measured output differ from the true output, and so mislead the controller.</div>
+<div><b>Two tasks</b>A new speed target tests <b>tracking</b>. A changed load at the same target tests <b>disturbance rejection</b>.</div>
+</div>
+<p class="word"><b>In words:</b> a changed target and a changed environment are two different tests of a controller (slide 7); Section 18 runs both on the water tank.</p>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Open-loop control: following a preset plan (slides 8–9)</h2>
+<div class="box def"><span class="tag">Definition · open-loop control</span>
+<p>The input is decided by a <b>preset</b> time, program or model, and the output is <b>never used</b> to correct it. Slide 8's example: run a fan for a fixed time, then stop, without looking at air-quality measurements.</p></div>
+<div class="figure"><div id="fig-open"></div><p class="cap">Open loop (slide 8): the chain runs forward only.</p></div>
+<p>It suits tasks where conditions are predictable. Slide 9 weighs it up:</p>
+<div class="scroll"><table>
+<tr><th>Potential benefits</th><th>Important limits</th></tr>
+<tr><td>A simple structure, easy to implement and inspect, especially for a fixed sequence of actions.</td><td>An unexpected disturbance can make the planned input unsuitable for the desired result.</td></tr>
+<tr><td>No continuous output measurement is needed, which can reduce cost.</td><td>It relies on its assumptions: output error does not correct the action while it runs.</td></tr>
+<tr><td>Repeatable results when the initial conditions, environment and load are consistent.</td><td>Knowing that a command was sent does not prove that the desired result was achieved.</td></tr>
+</table></div>
+<p class="word"><b>In words:</b> open loop is "do the plan and hope". Whether that is acceptable depends on how predictable the conditions are and how much error the task can tolerate (slide 9). A washing machine's timer is fine; landing an aircraft is not.</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Feedback and the closed loop (slides 10–11)</h2>
+<div class="box def"><span class="tag">Definition · feedback control</span>
+<p><b>Feedback</b> means the measured output is used to decide the next action (slide 10). It is a repeated cycle:</p>
+<ol class="steps">
+<li><b>Measure</b> the current output (e.g. vehicle speed) and check the reading is credible.</li>
+<li><b>Compare</b> it with the target to find the direction and size of the error.</li>
+<li><b>Adjust</b> the action, observe the new result, and repeat.</li>
+</ol>
+<p>Displaying or storing a reading is only <b>monitoring</b>. It becomes <b>feedback control</b> only when the reading changes the input.</p></div>
+<p>Slide 11 draws the standard <b>closed-loop block diagram</b>. The circle with Σ is a <b>summing junction</b>: it adds its inputs with the signs shown, so here it outputs \(r-y_{\rm m}\), the error.</p>
+<div class="figure"><div id="fig-closed"></div><p class="cap">Closed loop (slide 11). Forward path: the actuator applies the command and the plant responds over time. Feedback path: the returned measurement influences the next action.</p></div>
+\[e(t)=r(t)-y_{\rm m}(t)\]
+<p class="word"><b>In words:</b> error = target − measured output. The controller sees only this error (in the basic structure), and turns it into the input \(u\).</p>
+<p>The loop defines the <b>connections</b>; it does not say how to compute \(u\) from \(e\). That rule is the <b>control law</b>, and PID is one possible control law (slide 11).</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · block diagrams</span>
+<p>A <b>block diagram</b> shows signals as arrows and processes as boxes; each box turns its input signal into its output signal. Engineers write the rule inside each box as a <i>transfer function</i> (using the Laplace transform), so the whole loop can be analysed algebraically. MECH2413 does not use transfer functions; you only need to read and draw the diagram.</p></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Negative feedback: acting to reduce error (slide 12)</h2>
+<div class="box def"><span class="tag">Definition · negative feedback</span>
+<p>The measured output is <b>subtracted</b> from the target (the "−" at the summing junction), and the action is chosen to <b>reduce</b> the error.</p></div>
+<div class="cases">
+<div><b>Below target</b>Target 80 km/h, reading 75 km/h: \(e=80-75=+5\u{km/h}\). Increase the action that raises speed.</div>
+<div><b>Above target</b>Reading 85 km/h: \(e=-5\u{km/h}\). Reduce drive effort, or brake if the actuator permits it.</div>
+<div><b>Direction and time</b>The action should reduce error, but too much gain, delay, or bad measurements can still spoil the response.</div>
+</div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Negative feedback fixes the correcting <b>direction</b>, but it does <b>not</b> guarantee <b>stability</b> (slide 12). Correct too hard or too late and the output overshoots, then over-corrects the other way, and can oscillate with growing size. Think of an over-eager shower user swinging the tap between too hot and too cold.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · stability</span>
+<p>A closed loop is <b>stable</b> if, after a change of target or a disturbance, the output settles to a steady value instead of oscillating forever or running away. Whether a loop is stable depends on the plant and on the gains together.</p></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Open loop versus closed loop (slides 13–14)</h2>
+<div class="box ready"><span class="tag">Ready table · open vs closed loop (slide 13)</span>
+<div class="scroll"><table>
+<tr><th>Feature</th><th>Open loop</th><th>Closed loop</th></tr>
+<tr><td>Decision basis</td><td>preset program or model</td><td>target and feedback information</td></tr>
+<tr><td>Output feedback</td><td>does not correct the input</td><td>influences later input decisions</td></tr>
+<tr><td>Changing conditions</td><td>can shift the result from the target</td><td>can trigger a corrective response</td></tr>
+<tr><td>Main requirement</td><td>assumptions match the task</td><td>reliable sensing and suitable dynamics</td></tr>
+<tr><td>Typical cost</td><td>limited adaptation to unknown changes</td><td>more sensing, computation and tuning</td></tr>
+</table></div>
+<p class="word"><b>The test:</b> is a measurement of the <b>controlled output</b> used to correct the input? Yes → closed loop. No → open loop.</p></div>
+<h3>Does automatic mean closed loop? (slide 14)</h3>
+<p>Slide 14 lists four ways of controlling a car's speed and asks "open or closed?" for each.</p>
+<div class="scroll"><table>
+<tr><th>Situation</th><th>Decision-maker</th><th>Speed-control loop</th></tr>
+<tr><td>Follow a preset pedal plan without reading speed</td><td>automatic device</td><td><details><summary>Answer</summary><div><p><b>Open</b>: automatic, but speed is never used.</p></div></details></td></tr>
+<tr><td>Read the speedometer and adjust the pedal</td><td>driver</td><td><details><summary>Answer</summary><div><p><b>Closed</b>: manual, but the measured speed changes the pedal. The driver is the controller.</p></div></details></td></tr>
+<tr><td>Read speed and update the drive command</td><td>control program</td><td><details><summary>Answer</summary><div><p><b>Closed</b> (automatic feedback, e.g. cruise control).</p></div></details></td></tr>
+<tr><td>Log speed but keep the same pedal plan</td><td>automatic device</td><td><details><summary>Answer</summary><div><p><b>Open</b>: the speed is only monitored (stored), not used to correct the input.</p></div></details></td></tr>
+</table></div>
+<p class="word"><b>In words:</b> "automatic or manual" says <b>who</b> decides; "open or closed loop" says whether the decision <b>uses feedback</b>. The two are independent (slide 14).</p>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Reading a response curve (slide 15)</h2>
+<p>To compare controllers we change the target in one step and plot the output against time: the <b>step response</b>. A useful response reaches the target promptly, stays near it, and avoids large excursions.</p>
+<div class="figure"><p class="ttl">A typical step response (written for these notes; final value 1)</p>
+<canvas class="plot" id="cv-resp" style="height:260px"></canvas>
+<p class="cap">Dashed: the target (here equal to the final value) and the ±2% band. Green ticks: the 10% and 90% crossing times. The curve overshoots (red dot), swings below the target (orange dot), then settles.</p></div>
+<div class="box def"><span class="tag">Definitions · what to measure (slide 15)</span>
+<ul class="list">
+<li><b>Rise time</b>: the time to go from 10% to 90% of the final change. (Other conventions exist, e.g. 0–100%, so state yours.)</li>
+<li><b>Overshoot</b>: the peak excursion above the final value, usually given as a percentage of the change:
+\[\text{overshoot}=\frac{y_{\rm peak}-y_\infty}{y_\infty-y_0}\times100\%.\]
+<p class="word"><b>In words:</b> how far past the end value the output went, compared with how far it had to travel.</p></li>
+<li><b>Settling time</b>: the time after which the output enters a chosen band around the final value (e.g. ±2%) and <b>stays</b> there.</li>
+<li><b>Steady-state error</b>: what is left at the end,
+\[e_{\rm ss}=r-y_\infty.\]
+<p class="word"><b>In words:</b> target minus final output, once everything has stopped changing.</p></li>
+</ul></div>
+<div class="box warn"><span class="tag">Watch</span><p>State the rise-time convention and the settling band <b>before</b> comparing controllers (slide 15). "Settles at 150 s" means nothing without "±2%".</p></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Case study: holding the water level at 40 cm (slides 16–18)</h2>
+<p>The rest of the handout uses one apparatus (slide 16): a tank of water, a variable-speed pump that fills it, an outlet valve that drains it, and a level sensor. The task: <b>adjust the inlet flow so that the water level approaches 40 cm and recovers after outlet changes</b>.</p>
+<div class="figure"><div id="fig-tank"></div><p class="cap">The apparatus (slide 16). The controller drives the pump; the level sensor reports the level; opening the outlet valve wider is a disturbance.</p></div>
+<ul class="list">
+<li>The level sensor reports the result; the controller adjusts the pump through its drive.</li>
+<li>The start switch only <b>enables</b> operation. Opening the outlet valve creates a <b>disturbance</b>.</li>
+<li>The pump only supplies water: it cannot pump water out. After it stops, the outlet can still lower the level.</li>
+</ul>
+<p class="word"><b>Key idea (slide 16):</b> the program changes the pump command; the level changes only through the <b>balance</b> of inflow and outflow.</p>
+<h3>Water level depends on both flows (slide 17)</h3>
+<div class="box thm"><span class="tag">Result · flow balance (slide 17)</span>
+\[A\frac{\mathrm dh}{\mathrm dt}=q_{\rm in}-q_{\rm out}\]
+<p>\(A\) = tank cross-sectional area (cm²), \(h\) = level (cm), \(q_{\rm in},q_{\rm out}\) = volume flow rates in and out (cm³/s).</p>
+<p class="word"><b>In words:</b> the rate at which the stored volume \(Ah\) grows equals what comes in minus what goes out. Dimension check: cm² × cm/s = cm³/s ✓.</p></div>
+<ul class="list">
+<li><b>Flow balance:</b> the level rises when inflow exceeds outflow; equal flows hold the level constant.</li>
+<li><b>Accumulation:</b> a larger cross-section \(A\) gives a slower level change for the same net flow.</li>
+<li><b>Continuing outflow:</b> in this teaching model, outflow increases with the level. So <b>holding</b> a level still needs inflow.</li>
+</ul>
+<p class="word"><b>Analogy:</b> a bath with the plug pulled out. To keep the water at one height you must leave the tap running exactly as fast as the water drains. A constant level does not mean a stopped pump (slide 17).</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · the model used for the simulations on this page</span>
+<p>The handout's curves (slides 24–31) come from a simulation whose details are not given. Slide 25 does give its steady state: \(h_\infty=(80\u{cm})\,u_\infty\), so with the outlet as set, a steady command \(u\) holds a level of \(80u\) cm (outflow proportional to level). The curves on this page use:</p>
+\[\begin{aligned}\tau_{\rm t}\frac{\mathrm dh}{\mathrm dt}&=(80\u{cm})\,q-h,\\ \tau_{\rm p}\frac{\mathrm dq}{\mathrm dt}&=u-q,\quad 0\le u\le1,\end{aligned}\]
+<p>with tank time constant \(\tau_{\rm t}=80\u{s}\), pump lag \(\tau_{\rm p}=30\u{s}\) (\(q\) = pump flow as a fraction of full flow), starting from \(h=20\u{cm}\), \(q=0\).</p>
+<p class="word"><b>In words:</b> the first line is slide 17's flow balance divided through by the outflow constant; the second says the pump takes about 30 s to respond to a new command. A tank alone (no pump lag) could never overshoot under P control, but slide 24 shows a small overshoot, so the plant must have a second lag. These two time constants were chosen to reproduce the handout's curves (P settles at 30.48 cm; PI peaks near 44 cm at about 110 s); they are a reconstruction, not the lecturer's model.</p></div>
+<h3>Closing the water-level loop (slide 18)</h3>
+<div class="figure"><div id="fig-tankloop"></div><p class="cap">The tank loop (slide 18): \(e(t)=r(t)-h_{\rm m}(t)\). Compare the measured level with the target to find the error; adjust the inflow; use the next measurement to decide again.</p></div>
+<p>The loop is closed only when the level measurement actually influences the pump command (slide 18).</p>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>One cycle of feedback control; designing the controller (slides 19–20)</h2>
+<p>Target 40 cm, sensor reads 32 cm. At each update (slide 19):</p>
+<ol class="steps">
+<li><b>Measure:</b> read 32 cm and check the reading is credible.</li>
+<li><b>Compare:</b> \(e=40-32=+8\u{cm}\). The level is 8 cm below target: a positive error. This gives the direction, but not yet the pump command.</li>
+<li><b>Calculate:</b> apply a <b>control law</b> to decide how much water the pump should supply.</li>
+<li><b>Observe again:</b> let the process evolve, read the new level, update the action.</li>
+</ol>
+<p class="word"><b>In words:</b> feedback says how information returns; the control law says what to do with it (slide 19).</p>
+<p>Slide 20 poses the design question: the controller receives "level error 8 cm" and must output "pump command ?%". Should it use only the <b>current</b> error, or also <b>how the error changes</b> over time? The answer is the control law, and the rest of the handout uses PID.</p>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>The PID control law (slides 21–23)</h2>
+<p><b>PID</b> stands for <b>Proportional–Integral–Derivative</b>. Each letter uses the error information in a different way (slide 21). The handout explains it as a ship's <b>helmsman</b>, following Nicolas Minorsky's 1922 mathematical study of automatic ship steering, an early milestone in PID control:</p>
+<div class="cases">
+<div><b>P · current error</b>How far are we off course <b>now</b>?</div>
+<div><b>I · persistent error</b>What correction must be <b>maintained</b> (e.g. to hold against a steady side-current)?</div>
+<div><b>D · rate of change</b>How quickly are we already turning towards the target?</div>
+</div>
+<div class="box thm"><span class="tag">Result · the basic PID control law (slide 22)</span>
+\[\begin{aligned}u(t)&=K_{\rm p}\,e(t)+K_{\rm i}\int_0^t e(\tau)\,\mathrm d\tau\\ &\quad+K_{\rm d}\,\frac{\mathrm de(t)}{\mathrm dt}\end{aligned}\]
+<ul class="list">
+<li>\(e\): error, target minus measured level.</li>
+<li>\(u\): control command sent to the pump.</li>
+<li>\(K_{\rm p}\): <b>proportional gain</b>, scales the current error.</li>
+<li>\(K_{\rm i}\): <b>integral gain</b>, scales the accumulated error. (\(\tau\) is just the integration variable, running over past times from 0 to now.)</li>
+<li>\(K_{\rm d}\): <b>derivative gain</b>, scales the error rate.</li>
+</ul>
+<p class="word"><b>In words:</b> command = (gain × how wrong we are now) + (gain × how wrong we have been, added up over time) + (gain × how fast the error is changing). Each gain sets the strength of one action; setting a gain to zero removes that term.</p></div>
+<div class="figure"><div id="fig-pid"></div><p class="cap">Inside the basic PID controller (slide 23): all three branches use the same error; their outputs add to give the pump command.</p></div>
+<p><b>P, PI, PD and PID</b> are the same loop with different branches switched on: PI means \(K_{\rm d}=0\), PD means \(K_{\rm i}=0\), and so on (slide 23).</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · discrete updates</span>
+<p>A computer updates the command every \(\Delta t\) seconds, so the integral becomes a running sum and the derivative a difference:</p>
+\[\begin{aligned}I_k&=I_{k-1}+K_{\rm i}\,e_k\,\Delta t,\\ u_k&=K_{\rm p}e_k+I_k+K_{\rm d}\,\frac{e_k-e_{k-1}}{\Delta t}.\end{aligned}\]
+<p class="word"><b>In words:</b> add this step's error × time step to the stored total; estimate the slope from the last two errors. This is exactly how the simulations on this page work (\(\Delta t=0.05\u{s}\)).</p></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>P: act on the current error (slides 24–25)</h2>
+<div class="box thm"><span class="tag">Result · proportional action (slide 24)</span>
+\[u_{\rm P}(t)=K_{\rm p}\,e(t),\qquad e(t)=r(t)-h_{\rm m}(t)\]
+<p class="word"><b>In words:</b> the command is proportional to how far below the target the level is now. Twice the error, twice the pumping.</p></div>
+<p>Slide 24's numbers: \(K_{\rm p}=0.04\u{cm^{-1}}\), \(e=8\u{cm}\Rightarrow u_{\rm P}=0.04\times8=0.32\) (32% pump effort). Units: cm⁻¹ × cm = dimensionless ✓.</p>
+<div class="figure"><p class="ttl">P control, \(K_{\rm p}=0.04\u{cm^{-1}}\), from 20 cm (re-simulated, cf. slide 24)</p>
+<canvas class="plot" id="cv-P" style="height:220px"></canvas>
+<div class="legend"><span style="--k:var(--c4)">P</span><span style="--k:var(--muted)">target</span></div>
+<p class="cap">Fast reaction, then a final <b>offset</b>: the level settles near 30.48 cm, below the 40 cm target.</p></div>
+<h3>Why can pure P stop below the target? (slide 25)</h3>
+<div class="pair">
+<div class="box"><span class="tag">Holding a level needs inflow</span><p>The open outlet continuously removes water. At 40 cm the pump must replace the outgoing water. But with no bias, zero error gives zero proportional command: at 40 cm a P controller would switch the pump off.</p></div>
+<div class="box"><span class="tag">So it settles lower</span><p>A positive error is needed to keep the pump running. At equilibrium, inflow equals outflow at a command of about 38.1%. A larger \(K_{\rm p}\) reduces the offset but can worsen the transient.</p></div>
+</div>
+<div class="box eg"><span class="tag">Worked example · slide 25 · the P-only equilibrium</span>
+<p>At equilibrium nothing changes, so the plant gives \(h_\infty=(80\u{cm})\,u_\infty\), and the controller gives \(u_\infty=K_{\rm p}(r-h_\infty)\):</p>
+\[\begin{aligned}h_\infty&=(80\u{cm})(0.04\u{cm^{-1}})\\ &\quad\times(40\u{cm}-h_\infty)\\ &=3.2\,(40\u{cm}-h_\infty)\\ \Rightarrow\ 4.2\,h_\infty&=128\u{cm}\\ h_\infty&=\boxed{30.48\u{cm}},\\ u_\infty&=\frac{30.48}{80}=\boxed{0.381\ (38.1\%)}.\end{aligned}\]
+<p>Check: \(K_{\rm p}e_\infty=0.04\times9.52=0.381\) ✓. Steady-state error \(e_{\rm ss}=9.52\u{cm}\).</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · the general offset formula</span>
+<p>Write \(G=80\u{cm}\) for the plant's steady-state gain (level per unit command) and \(K=GK_{\rm p}\) for the <b>loop gain</b>. The same algebra gives</p>
+\[h_\infty=\frac{K}{1+K}\,r,\qquad e_{\rm ss}=\frac{r}{1+K}.\]
+<p class="word"><b>In words:</b> the offset shrinks as the loop gain grows but never reaches zero for finite \(K_{\rm p}\). With \(K_{\rm p}=0.08\u{cm^{-1}}\): \(K=6.4\), \(h_\infty=34.59\u{cm}\), \(e_{\rm ss}=5.41\u{cm}\).</p></div>
+<p class="word"><b>Key idea:</b> this result depends on a continuing outlet flow and a P controller with no bias (slide 25). A tank with no outlet would reach 40 cm under P alone, because zero inflow would then be exactly right.</p>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>I: accumulate a persistent error (slide 26)</h2>
+<div class="box thm"><span class="tag">Result · integral action (slide 26)</span>
+\[I(t)=I(0)+K_{\rm i}\int_0^t e(\tau)\,\mathrm d\tau\]
+<p class="word"><b>In words:</b> the integral term is a running total. While the error stays positive the total keeps growing, so the pump is pushed harder and harder until the error is gone. When \(e=0\) the total stops growing but keeps its value.</p></div>
+<div class="figure"><p class="ttl">P versus PI: \(K_{\rm p}=0.04\u{cm^{-1}}\), \(K_{\rm i}=0.0006\u{(cm\,s)^{-1}}\) (re-simulated, cf. slide 26)</p>
+<canvas class="plot" id="cv-PI" style="height:220px"></canvas>
+<div class="legend"><span style="--k:var(--c4)">P</span><span style="--k:var(--accent)">PI</span><span style="--k:var(--muted)">target</span></div>
+<p class="cap">First the final error: PI reaches 40 cm while P stays at 30.48 cm. Then the transient: these PI gains overshoot before settling.</p></div>
+<ul class="list">
+<li><b>PI removes the offset.</b> At 40 cm the P term is zero, but the stored integral can still hold the command at the 50% needed (\(u=40/80=0.5\)).</li>
+<li><b>Zero error stops further accumulation; it does not erase the stored integral</b> (slide 26). That stored value is what keeps the pump running at zero error.</li>
+<li>The price: the integral is still growing as the level passes 40 cm, so the level overshoots, and the integral must "unwind" (shrink during negative error) before the level settles.</li>
+</ul>
+<p class="word"><b>Key idea (slide 26):</b> for a stable loop with a reachable target, I can remove a constant steady-state error.</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · integral windup</span>
+<p>If the actuator is at its limit (pump at 100%) and the error stays large, the integral keeps growing even though the pump cannot do more. When the error finally changes sign, this oversized total takes a long time to unwind, causing a big overshoot. This is <b>integral windup</b>; practical controllers stop integrating while the actuator is saturated ("anti-windup"). It is also why a target that is <b>not reachable</b> (slide 33, test B) is a problem for I.</p></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>D: respond to how fast the error changes (slide 27)</h2>
+<div class="box thm"><span class="tag">Result · derivative action (slide 27)</span>
+\[\begin{aligned}u_{\rm D}(t)&=K_{\rm d}\frac{\mathrm de}{\mathrm dt}\\ &=-K_{\rm d}\frac{\mathrm dh_{\rm m}}{\mathrm dt}\quad(r\ \text{const.})\end{aligned}\]
+<p class="word"><b>In words:</b> with a fixed target, \(e=r-h_{\rm m}\), so the error falls exactly as fast as the level rises. A rising level gives a <b>negative</b> D term that eases off the pump before the target is reached, like braking as you approach a stop line.</p></div>
+<div class="figure"><p class="ttl">P versus PD: same \(K_{\rm p}\), \(K_{\rm d}=0.50\u{s\,cm^{-1}}\) (re-simulated, cf. slide 27)</p>
+<canvas class="plot" id="cv-PD" style="height:220px"></canvas>
+<div class="legend"><span style="--k:var(--c4)">P</span><span style="--k:var(--c2)">PD</span><span style="--k:var(--muted)">target</span></div>
+<p class="cap">PD reduces the swing around the final level. Both settle near 30.48 cm: at constant level the derivative term is zero.</p></div>
+<p class="word"><b>Key idea (slide 27):</b> D changes the <b>transient</b> (the path to the end); it does not remove this tank's steady-state offset, because at steady state \(\mathrm de/\mathrm dt=0\) and D contributes nothing.</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · derivative kick and noise</span>
+<p>If the target jumps suddenly, \(\mathrm de/\mathrm dt=\mathrm dr/\mathrm dt\) is huge for an instant and the D term "kicks" the actuator. Many controllers therefore differentiate only the measurement, \(-K_{\rm d}\,\mathrm dh_{\rm m}/\mathrm dt\), which is the form slide 27 uses. Differentiating a noisy measurement amplifies the noise, so D is usually combined with a filter.</p></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>PID: combining offset removal and damping (slides 28, 31, 32)</h2>
+<p>Same plant and initial state, \(K_{\rm p}=0.04\u{cm^{-1}}\), \(K_{\rm i}=0.0006\u{(cm\,s)^{-1}}\), \(K_{\rm d}=0.50\u{s\,cm^{-1}}\) (slide 28):</p>
+<div class="figure"><p class="ttl">PI versus PID (re-simulated, cf. slide 28)</p>
+<canvas class="plot" id="cv-PID" style="height:220px"></canvas>
+<div class="legend"><span style="--k:var(--accent)">PI</span><span style="--k:var(--c3)">PID</span><span style="--k:var(--muted)">target</span></div>
+<p class="cap">Identical P and I gains. Adding D slightly reduces overshoot and shortens settling here. Both eventually reach 40 cm; their transient paths differ.</p></div>
+<p class="word"><b>Key idea (slide 28):</b> the benefit of D depends on the plant and gains. More terms do not automatically mean better control.</p>
+<h3>One tank, four controllers (slides 31–32)</h3>
+<div class="figure"><p class="ttl">P, PI, PD and PID on one plant, one target, one initial state (cf. slide 31)</p>
+<canvas class="plot" id="cv-all" style="height:240px"></canvas>
+<div class="legend"><span style="--k:var(--c4)">P</span><span style="--k:var(--accent)">PI</span><span style="--k:var(--c2)">PD</span><span style="--k:var(--c3)">PID</span><span style="--k:var(--muted)">target</span></div>
+<div class="scroll"><table id="tab-sim"></table></div>
+<p class="cap">Numbers read from this page's re-simulation (the handout gives only the final levels). P and PD keep a final offset; PI and PID remove it; D changes the transient. Compare overshoot, settling and final error <b>separately</b>.</p></div>
+<div class="box ready"><span class="tag">Ready table · what each controller adds (slide 32)</span>
+<div class="scroll"><table>
+<tr><th>Controller</th><th>Result for this tank</th><th>Interpretation</th></tr>
+<tr><td>P</td><td>final level about 30.48 cm</td><td>immediate response to error; a continuing offset supplies the required inflow</td></tr>
+<tr><td>PI</td><td>final level 40 cm, with overshoot</td><td>integral action provides the steady inflow even when the error becomes zero</td></tr>
+<tr><td>PD</td><td>final level about 30.48 cm, less swing</td><td>derivative action changes the transient but vanishes at steady state</td></tr>
+<tr><td>PID</td><td>final level 40 cm, improved transient</td><td>combines integral compensation and derivative action, for these gains</td></tr>
+</table></div>
+<p class="word"><b>In words:</b> separate the question of <b>steady-state accuracy</b> (only I fixes the offset) from the question of <b>transient response</b> (P sets the speed, D the damping).</p></div>
+<div class="figure"><p class="ttl">Try it · tune the tank controller yourself</p>
+<div class="ctrl"><span>Preset:</span><button type="button" data-preset="P">P</button><button type="button" data-preset="PI">PI</button><button type="button" data-preset="PD">PD</button><button type="button" data-preset="PID">PID</button></div>
+<div class="ctrl"><label>\(K_{\rm p}\) (cm⁻¹) <input type="range" id="kp" min="0" max="0.3" step="0.005" value="0.04"></label>
+<label>\(K_{\rm i}\) (10⁻⁴ (cm·s)⁻¹) <input type="range" id="ki" min="0" max="30" step="1" value="6"></label>
+<label>\(K_{\rm d}\) (s/cm) <input type="range" id="kd" min="0" max="3" step="0.05" value="0.5"></label>
+<label>target (cm) <input type="range" id="rt" min="30" max="50" step="1" value="40"></label>
+<label><input type="checkbox" id="dist"> open the outlet wider at 300 s</label></div>
+<canvas class="plot" id="cv-live" style="height:240px"></canvas>
+<canvas class="plot" id="cv-live-u" style="height:130px"></canvas>
+<div class="readout" id="live-out"></div>
+<p class="cap">Top: level (dashed = target). Bottom: pump command \(u\), limited to 0–1. Things to try: raise \(K_{\rm p}\) with \(K_{\rm i}=K_{\rm d}=0\) (offset shrinks, overshoot grows); raise \(K_{\rm i}\) a lot (oscillation); add \(K_{\rm d}\) (damping); set the target to 50 cm (the pump saturates at 100%); tick the disturbance box with and without I.</p></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span>What happens when a gain increases? (slide 29)</h2>
+<p>Change one gain at a time and compare the <b>complete</b> response, including the control effort \(u\) (slide 29).</p>
+<div class="box ready"><span class="tag">Ready table · effect of increasing one gain (slide 29)</span>
+<div class="scroll"><table>
+<tr><th>Gain increased</th><th>Typical tendency</th><th>Possible trade-off</th></tr>
+<tr><td>\(K_{\rm p}\)</td><td>stronger immediate correction; often a faster initial response and a smaller offset</td><td>more overshoot or oscillation; excessive gain can destabilise some plants</td></tr>
+<tr><td>\(K_{\rm i}\)</td><td>faster accumulation of compensation; removes a persistent offset sooner</td><td>more overshoot or a longer settling process if too much error accumulates</td></tr>
+<tr><td>\(K_{\rm d}\)</td><td>can add damping and reduce overshoot by reacting to the error rate</td><td>may slow the response; rapid measurement variations (noise) can create large commands</td></tr>
+</table></div>
+<p class="word"><b>In words:</b> P = strength, I = persistence, D = anticipation. Each helps up to a point and then hurts.</p></div>
+<div class="box warn"><span class="tag">Watch</span><p>These are useful <b>tendencies</b>, not universal laws: the plant dynamics and the other gains also matter (slide 29). In an exam, say "typically" or "tends to", and give the trade-off.</p></div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17"><h2><span class="n">17</span>Worked example: calculate the pump command (slide 30)</h2>
+<div class="box eg"><span class="tag">Worked example · slide 30</span>
+<p><b>Given</b> the current state and gains: \(r=40\u{cm}\), \(h_{\rm m}=38\u{cm}\), integral contribution \(I=0.25\), \(K_{\rm p}=0.04\u{cm^{-1}}\), \(K_{\rm d}=0.50\u{s\,cm^{-1}}\). The target is fixed and the level is rising at \(\mathrm dh_{\rm m}/\mathrm dt=+0.20\u{cm\,s^{-1}}\). Find the pump command.</p>
+<p class="muted">The signal path is the PID diagram of Section 11: one error feeds three branches whose outputs add.</p>
+<ol class="steps">
+<li><b>Error:</b> \(e=r-h_{\rm m}=40-38=2\u{cm}\).</li>
+<li><b>P term:</b> \(u_{\rm P}=K_{\rm p}e=0.04\u{cm^{-1}}\times2\u{cm}=0.08\).</li>
+<li><b>D term:</b> the target is fixed, so \(\mathrm de/\mathrm dt=-\mathrm dh_{\rm m}/\mathrm dt=-0.20\u{cm\,s^{-1}}\), and
+\[\begin{aligned}u_{\rm D}&=0.50\u{s\,cm^{-1}}\\ &\quad\times(-0.20\u{cm\,s^{-1}})\\ &=-0.10.\end{aligned}\]</li>
+<li><b>Add the given I contribution:</b>
+\[u=0.08+0.25-0.10=0.23.\]</li>
+<li><b>Units:</b> every term is dimensionless (cm⁻¹·cm; s·cm⁻¹·cm·s⁻¹), as a fraction of full pump effort must be ✓.</li>
+</ol>
+<p>\(\boxed{u=0.23\ \text{(23% pump effort)}}\)</p>
+<p class="word"><b>In words:</b> a negative D term <b>reduces</b> inflow; it does not reverse the pump (slide 30). The level is close and rising, so D eases off to avoid overshooting.</p></div>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="s18"><h2><span class="n">18</span>Two simple tests of the same controller (slide 33)</h2>
+<p>Keep the plant and the gains unchanged, change <b>one</b> condition at a time, and record both the water level and the pump command (slide 33).</p>
+<div class="pair">
+<div class="box"><span class="tag">Test A · change the target (tracking)</span><p>Raise the target gradually from 40 cm to 45 cm. Predict how the error and the pump command change before drawing the level response; then record rise time, overshoot, final error and the command.</p></div>
+<div class="box"><span class="tag">Test B · open the outlet valve (disturbance rejection)</span><p>Keep the target at 40 cm and increase the outflow. Predict the response of each PID term. Check whether the pump can supply enough water to restore the target.</p></div>
+</div>
+<div class="figure"><p class="ttl">Written for these notes · the two tests on the re-simulated tank, PID gains of slide 28, starting at rest at 40 cm</p>
+<canvas class="plot" id="cv-testA" style="height:200px"></canvas>
+<canvas class="plot" id="cv-testB" style="height:200px"></canvas>
+<div class="legend"><span style="--k:var(--c3)">PID</span><span style="--k:var(--c2)">PD with a fixed 50% bias (no I)</span><span style="--k:var(--muted)">target</span></div>
+<p class="cap">Top (test A): the target ramps from 40 to 45 cm between 100 s and 200 s; the level lags behind, then catches up. Bottom (test B): at 100 s the outlet opens 25% wider. PID dips and recovers to 40 cm; without I the level settles lower.</p></div>
+<details><summary>Predictions, term by term</summary><div>
+<p><b>Test A.</b> As the target rises, \(e\) becomes positive: P raises the command at once; the ramp also makes \(\mathrm de/\mathrm dt\gt0\) so D adds a boost; I slowly builds up to the new steady command, \(45/80=0.5625\) (it was 0.5). Final error zero.</p>
+<p><b>Test B.</b> The level starts to fall, so \(e\gt0\) and \(\mathrm de/\mathrm dt\gt0\): P and D both raise the pump command immediately; I keeps growing until the level is back at 40 cm, where the extra outflow needs \(u=1.25\times0.5=0.625\). Since that is below 1, the pump <b>can</b> restore the target. If the outlet opened so wide that \(u\) would have to exceed 1, the target would be unreachable: the level settles lower and the integral winds up.</p></div></details>
+</section>
+
+<!-- ============ 19 ============ -->
+<section id="s19"><h2><span class="n">19</span>Check your understanding (slide 34)</h2>
+<p>Slide 34 asks four questions. Explain the signal path and the physical balance before choosing a gain to change.</p>
+<div class="q"><p class="qh">1 · A timer runs the pump without reading the level. Does automatic operation make this a closed loop?</p>
+<details><summary>Answer</summary><div><p><b>No.</b> It is open loop: the level (the controlled output) never influences the pump command. Automatic only says that a device, not a person, makes the decision (slide 14).</p></div></details></div>
+<div class="q"><p class="qh">2 · P and PD both settle below the target. Why does D fail to remove the final offset?</p>
+<details><summary>Answer</summary><div><p>At steady state the level is constant, so \(\mathrm de/\mathrm dt=0\) and the D term is zero. The command is then just \(K_{\rm p}e\), which must be about 0.381 to balance the outflow, so \(e\) must stay at about 9.52 cm, exactly as with P alone.</p></div></details></div>
+<div class="q"><p class="qh">3 · The level is 40 cm while the pump keeps running. Which term can keep a nonzero output at zero error?</p>
+<details><summary>Answer</summary><div><p>The <b>I</b> term. At \(e=0\) the P term is zero and (at constant level) the D term is zero, but the stored integral keeps its value, here 0.5, which runs the pump at 50% to replace the outflow.</p></div></details></div>
+<div class="q"><p class="qh">4 · PID has less overshoot in this comparison. Is that guaranteed for every plant and every gain?</p>
+<details><summary>Answer</summary><div><p><b>No.</b> The benefit of D depends on the plant and on the gains; too much \(K_{\rm d}\) can slow the response or amplify noise (slides 28–29). Try a large \(K_{\rm d}\) in the simulator in Section 15.</p></div></details></div>
+</section>
+
+<!-- ============ 20 ============ -->
+<section id="s20"><h2><span class="n">20</span>Review and a first design task (slides 35–36)</h2>
+<div class="scroll"><table>
+<tr><th>Topic</th><th>What you should be able to do (slide 35)</th></tr>
+<tr><td>Control concepts</td><td>identify the target, input, output, disturbance, and the information that closes the loop</td></tr>
+<tr><td>PID information</td><td>P uses present error, I accumulates past error, D uses the rate at which error changes</td></tr>
+<tr><td>Four structures</td><td>compare P, PI, PD and PID through final error, overshoot, settling, and input effort</td></tr>
+<tr><td>Your task</td><td>draw the tank loop and the PID branches; predict what happens when the outlet opens, then test your prediction</td></tr>
+</table></div>
+<div class="q"><p class="qh">Design task (slide 35)</p>
+<p>Draw the tank loop and PID branches. Predict what happens when the outlet opens, then test your prediction.</p>
+<details><summary>Hint</summary><div><p>Start from the diagrams of Sections 9 and 11; then go term by term as in the test B prediction of Section 18.</p></div></details>
+<details><summary>Answer</summary><div><p>Loop: target \(r\) → Σ (+r, −\(h_{\rm m}\)) → \(e\) → three branches \(K_{\rm p}e\), \(K_{\rm i}\int e\), \(K_{\rm d}\,\mathrm de/\mathrm dt\) → Σ → \(u\) → pump → tank → \(h\) → level sensor → back to Σ. Outlet opening is a disturbance entering at the tank. Prediction: the level dips; P and D push the pump up at once; I builds up until the level returns to 40 cm, provided the pump can supply the new outflow (\(u\le1\)). Test it with the disturbance box in the Section 15 simulator.</p></div></details></div>
+<p>Slide 36 ends with "Tank You!" and a link to a cartoon introduction to PID control from the IFAC project (https://youtu.be/BiQjCmzFsrU), worth watching as revision.</p>
+</section>
+
+<!-- ============ 21 ============ -->
+<section id="s21"><h2><span class="n">21</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>Control task</td><td>target \(r\), input \(u\), output \(y\), constraints</td><td>turn the knob \(u\) so that the result \(y\) reaches \(r\)</td></tr>
+<tr><td>Four roles</td><td>controller → actuator → plant → sensor</td><td>decide, act, respond, report</td></tr>
+<tr><td>Open loop</td><td>preset plan, no output feedback</td><td>simple, but blind to disturbances</td></tr>
+<tr><td>Closed loop</td><td>\(e=r-y_{\rm m}\) drives \(u\)</td><td>measure, compare, adjust, repeat</td></tr>
+<tr><td>Negative feedback</td><td>act to reduce \(e\)</td><td>right direction, but not automatically stable</td></tr>
+<tr><td>Response curve</td><td>rise time (10–90%), overshoot, settling (±2%), \(e_{\rm ss}=r-y_\infty\)</td><td>state the conventions first</td></tr>
+<tr><td>Flow balance</td><td>\(A\,\mathrm dh/\mathrm dt=q_{\rm in}-q_{\rm out}\)</td><td>holding a level needs inflow</td></tr>
+<tr><td>PID law</td><td>\(u=K_{\rm p}e+K_{\rm i}\int e\,\mathrm d\tau+K_{\rm d}\,\mathrm de/\mathrm dt\)</td><td>now + past + trend</td></tr>
+<tr><td>P only</td><td>\(h_\infty=80u_\infty\), \(u_\infty=K_{\rm p}(r-h_\infty)\) → 30.48 cm</td><td>an offset is needed to keep the pump running</td></tr>
+<tr><td>I</td><td>removes a constant steady-state error</td><td>stored total holds the command at \(e=0\)</td></tr>
+<tr><td>D</td><td>\(-K_{\rm d}\,\mathrm dh_{\rm m}/\mathrm dt\) for fixed \(r\)</td><td>damps the transient, zero at steady state</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 22 ============ -->
+<section id="s22"><h2><span class="n">22</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Calling any automatic system "closed loop".</span>
+<span class="ok">✓</span><span>Closed loop means the measured <b>output</b> changes the input; automatic only says who decides.</span>
+<span class="x">✗</span><span>Treating logging or displaying a reading as feedback.</span>
+<span class="ok">✓</span><span>That is monitoring; feedback requires the reading to influence the action (slide 10).</span>
+<span class="x">✗</span><span>Writing \(e=y-r\).</span>
+<span class="ok">✓</span><span>\(e=r-y_{\rm m}\): positive when the output is below target.</span>
+<span class="x">✗</span><span>Taking \(\mathrm de/\mathrm dt=+\mathrm dh/\mathrm dt\) in the D term.</span>
+<span class="ok">✓</span><span>With a fixed target \(\mathrm de/\mathrm dt=-\mathrm dh_{\rm m}/\mathrm dt\): a rising level gives a negative D term (slide 30).</span>
+<span class="x">✗</span><span>Saying D (or a larger \(K_{\rm p}\)) removes the steady-state error.</span>
+<span class="ok">✓</span><span>D is zero at steady state; larger \(K_{\rm p}\) only shrinks the offset. Only I removes it (for a stable loop and a reachable target).</span>
+<span class="x">✗</span><span>Thinking that when \(e=0\) the integral term is zero.</span>
+<span class="ok">✓</span><span>Zero error stops accumulation; the stored value stays (slide 26).</span>
+<span class="x">✗</span><span>Comparing controllers from different starting levels, targets or axes.</span>
+<span class="ok">✓</span><span>Same plant, target, initial state and axes (slide 31).</span>
+<span class="x">✗</span><span>Giving gain effects as certain ("increasing \(K_{\rm d}\) always reduces overshoot").</span>
+<span class="ok">✓</span><span>They are tendencies, with trade-offs (slide 29).</span>
+</div>
+</section>
+
+<!-- ============ 23 ============ -->
+<section id="s23"><h2><span class="n">23</span>Find the mistake</h2>
+<div class="q"><p class="qh">1 · A student's pump command</p>
+<p>"\(r=40\u{cm}\), \(h_{\rm m}=38\u{cm}\), \(\mathrm dh_{\rm m}/\mathrm dt=+0.2\u{cm/s}\), \(I=0.25\), \(K_{\rm p}=0.04\u{cm^{-1}}\), \(K_{\rm d}=0.5\u{s/cm}\). \(u=0.08+0.25+0.5(0.2)=0.43\)."</p>
+<details><summary>Hint</summary><div><p>What is \(\mathrm de/\mathrm dt\) when the target is fixed?</p></div></details>
+<details><summary>Answer</summary><div><p>\(\mathrm de/\mathrm dt=-\mathrm dh_{\rm m}/\mathrm dt=-0.2\u{cm/s}\), so \(u_{\rm D}=-0.10\) and \(u=0.23\) (slide 30). A rising level must make D ease off, not push harder.</p></div></details></div>
+<div class="q"><p class="qh">2 · A student's P-only equilibrium</p>
+<p>"At equilibrium the error is zero, so the P controller holds the level at exactly 40 cm."</p>
+<details><summary>Hint</summary><div><p>What pump command does \(e=0\) give, and what does the outlet do meanwhile?</p></div></details>
+<details><summary>Answer</summary><div><p>\(e=0\) gives \(u=0\): the pump stops while the outlet keeps draining. The level must sit below 40 cm so that \(K_{\rm p}e\) supplies the outflow: 30.48 cm with \(u=0.381\) (slide 25).</p></div></details></div>
+<div class="q"><p class="qh">3 · A student's classification</p>
+<p>"The fan in slide 8 is closed loop, because the air-quality sensor stores a reading every minute."</p>
+<details><summary>Answer</summary><div><p>Storing readings is monitoring. The fan runs a fixed time regardless of the readings, so it is open loop.</p></div></details></div>
+</section>
+
+<!-- ============ 24 ============ -->
+<section id="s24"><h2><span class="n">24</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Name the parts</p><p>A drone holds a height of 2 m using a downward-facing range sensor that controls the rotor speed. Identify \(r\), \(u\), \(y\), the actuator, the plant, the sensor and one disturbance.</p>
+<details><summary>Answer</summary><div><p>\(r\) = 2 m height; \(u\) = rotor speed (or motor voltage/throttle) command; \(y\) = actual height; actuator = motors and propellers; plant = the drone's vertical motion; sensor = range sensor; disturbance = a gust, or a heavier payload.</p></div></details></div>
+<div class="q"><p class="qh">2 · Integral update</p><p>The level stays 2 cm below target for 50 s. With \(K_{\rm i}=0.0006\u{(cm\,s)^{-1}}\), by how much does the integral contribution grow?</p>
+<details><summary>Answer</summary><div><p>\(\Delta I=K_{\rm i}\int e\,\mathrm d\tau=0.0006\times2\times50=0.06\) (6% pump effort). Units: (cm·s)⁻¹ × cm × s = 1 ✓.</p></div></details></div>
+<div class="q"><p class="qh">3 · Bigger tank</p><p>The same pump and outlet are fitted to a tank with twice the cross-section \(A\). What changes in the response, and what stays the same?</p>
+<details><summary>Answer</summary><div><p>For the same net flow the level changes half as fast (slide 17), so the response is slower. The steady state (\(h_\infty=80u_\infty\)) depends on the flows, not on \(A\), so the P offset (30.48 cm) and PI's final 40 cm do not change (though the gains may need retuning for a good transient).</p></div></details></div>
+<div class="q"><p class="qh">4 · Which term?</p><p>Which PID term responds when the level is at the target but falling fast? Which when it has sat 1 cm low for a long time?</p>
+<details><summary>Answer</summary><div><p>Falling fast at the target: \(e=0\) but \(\mathrm de/\mathrm dt\gt0\), so <b>D</b> responds (raises the command). Steadily 1 cm low: <b>I</b> keeps growing (P gives a small constant push, D gives nothing).</p></div></details></div>
+<div class="q"><p class="qh">5 · Open loop can be fine</p><p>Give a task where open loop is a good choice, and say why.</p>
+<details><summary>Answer</summary><div><p>A toaster or a washing-machine timer: conditions are predictable, the error tolerance is wide, and a sensor would add cost (slide 9).</p></div></details></div>
+</section>
+
+<!-- ============ 25 ============ -->
+<section id="s25"><h2><span class="n">25</span>Exam taster</h2>
+<p><b>There are no past-paper questions on control.</b> All the available papers (2013–2024) predate this part of the course, and the 2026 exam format is not yet known. The practice questions below are <b>written for these notes</b>, in the styles the handout itself uses: classify a loop and name its parts (slides 5, 14), compute a PID command (slide 30), find a P-only steady state (slide 25), and explain the role of each term (slides 26–32). Likely question styles and full method: <a href="guide-C1.html">Exam guide · C1</a>.</p>
+
+<div class="q"><div class="src"><b>Practice 1 · written for these notes</b><span>about 4 marks</span><a class="guide" href="guide-C1.html">C1 · loops and roles</a></div>
+<p>A car's cruise control reads the wheel speed and adjusts the throttle to hold 100 km/h. (a) Draw the block diagram, labelling target, error, input, output, controller, actuator, plant and sensor. (b) Is the system open- or closed-loop? (c) Name one disturbance and one source of uncertainty.</p>
+<details><summary>Hint</summary><div><p>Follow slide 11's diagram; the question in (b) is whether the measured speed changes the throttle.</p></div></details>
+<details><summary>Answer</summary><div><p>(a) \(r=100\u{km/h}\) → Σ (+, − measured speed) → \(e\) → controller (cruise-control program) → \(u\) = throttle command → actuator (throttle and engine) → plant (car on the road) → \(y\) = speed → sensor (wheel-speed sensor) → back to Σ.</p><p>(b) <b>Closed loop</b>: the measured speed changes the throttle.</p><p>(c) Disturbance: a hill or a headwind. Uncertainty: the car's mass with passengers, rolling friction, engine efficiency.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Practice 2 · written for these notes</b><span>about 4 marks</span><a class="guide" href="guide-C1.html">C1 · PID command</a></div>
+<p>For the water tank, \(r=40\u{cm}\) (fixed), \(h_{\rm m}=35\u{cm}\), the level is falling at \(0.10\u{cm/s}\), the integral contribution is \(I=0.10\), \(K_{\rm p}=0.04\u{cm^{-1}}\) and \(K_{\rm d}=0.50\u{s\,cm^{-1}}\). Calculate the pump command and say what each term is doing.</p>
+<details><summary>Hint</summary><div><p>Falling level ⇒ \(\mathrm dh_{\rm m}/\mathrm dt=-0.10\u{cm/s}\) ⇒ \(\mathrm de/\mathrm dt=+0.10\u{cm/s}\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(e=5\u{cm}\); \(u_{\rm P}=0.04\times5=0.20\); \(u_{\rm D}=0.50\times(+0.10)=+0.05\);</p>
+\[\begin{aligned}u&=0.20+0.10+0.05\\ &=\boxed{0.35\ (35\%)}.\end{aligned}\]
+<p>P pushes because the level is low; I adds the stored correction; D adds a little more because the error is growing (level falling).</p></div></details></div>
+
+<div class="q"><div class="src"><b>Practice 3 · written for these notes</b><span>about 5 marks</span><a class="guide" href="guide-C1.html">C1 · P-only offset</a></div>
+<p>The tank of slide 25 (\(h_\infty=(80\u{cm})u_\infty\)) is run with P control only, \(K_{\rm p}=0.08\u{cm^{-1}}\), target 40 cm. (a) Find the steady level and pump command. (b) Compare with \(K_{\rm p}=0.04\u{cm^{-1}}\) and comment. (c) What must be added to reach 40 cm, and what will its stored value be there?</p>
+<details><summary>Hint</summary><div><p>Equate the plant's and the controller's steady-state relations, as in slide 25.</p></div></details>
+<details><summary>Answer</summary><div>
+\[\begin{aligned}h_\infty&=80\times0.08\,(40-h_\infty)\\ &=6.4(40-h_\infty)\\ \Rightarrow h_\infty&=\frac{256}{7.4}=\boxed{34.59\u{cm}},\\ u_\infty&=\boxed{0.432}.\end{aligned}\]
+<p>(b) With 0.04 cm⁻¹: 30.48 cm. Doubling \(K_{\rm p}\) cuts the error from 9.52 to 5.41 cm but does not remove it, and typically increases overshoot (slide 29).</p>
+<p>(c) Integral action (PI or PID). At 40 cm, P and D are zero, so the integral must hold \(u=40/80=\boxed{0.5}\).</p></div></details></div>
+
+<div class="q"><div class="src"><b>Practice 4 · written for these notes</b><span>about 6 marks</span><a class="guide" href="guide-C1.html">C1 · reading responses</a></div>
+<p>A tank starts at 20 cm with target 40 cm. Under controller X the level peaks at 43.2 cm and then settles at 40.0 cm; under controller Y it settles at 30.5 cm with a small peak of 31.5 cm. (a) Compute the overshoot of each (as % of the change). (b) Which of P, PI, PD, PID could each be, and why? (c) Explain why the controller that removes the offset overshoots more.</p>
+<details><summary>Hint</summary><div><p>Overshoot = (peak − final)/(final − start). A final offset means no I term.</p></div></details>
+<details><summary>Answer</summary><div><p>(a) X: \((43.2-40)/(40-20)=16\%\). Y: \((31.5-30.5)/(30.5-20)=9.5\%\).</p>
+<p>(b) X has no steady-state error, so it has I: PI or PID. Y keeps an offset, so it has no I: P or PD.</p>
+<p>(c) The integral keeps growing while the level is below target, so when the level reaches 40 cm the stored command is already too high; the level overshoots until negative error unwinds the integral (slide 26).</p></div></details></div>
+</section>
+</main>
+</div>
+
+<script>
+/* MECH2413 shared helpers (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-C1 figures. Page-level helpers only (lib.js is frozen).
+   BD.draw(id,{w,h,alt},items): block diagrams as inline SVG (classes from extra.css .fbd).
+   items: box{x,y,w,h,s,sub,k}  sum{x,y,signs:{l:'+',b:'−'}}  arr{p:[[x,y],...],lbl,lx,ly,k}  txt{x,y,s,cls,a}
+   k: 'fb' = feedback path (accent), default = forward path (ink). */
+const BD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)if(a[k]!==undefined)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function txt(g,x,y,s,cls,a,size){const t=el('text',{x,y,'text-anchor':a||'middle','dominant-baseline':'middle',class:cls||''},g);if(size)t.setAttribute('font-size',size);t.textContent=s;return t;}
+  function draw(id,o,items){
+    const svg=el('svg',{viewBox:`0 0 ${o.w} ${o.h}`,class:'fbd',role:'img','aria-label':o.alt||'block diagram'});
+    svg.style.maxWidth=(o.maxw||o.w)+'px';svg.style.margin='0 auto';
+    items.forEach(it=>{
+      if(it.t==='box'){el('rect',{x:it.x,y:it.y,width:it.w,height:it.h,rx:5,class:it.k==='plain'?'member':'member2'},svg);
+        txt(svg,it.x+it.w/2,it.y+it.h/2-(it.sub?7:0),it.s,'',null,it.fs||14);
+        if(it.sub)txt(svg,it.x+it.w/2,it.y+it.h/2+10,it.sub,'lbl-dim',null,11);}
+      else if(it.t==='sum'){el('circle',{cx:it.x,cy:it.y,r:11,class:'sup'},svg);txt(svg,it.x,it.y+1,'Σ','',null,13);
+        const s=it.signs||{};if(s.l)txt(svg,it.x-17,it.y-11,s.l,'lbl-dim',null,13);if(s.b)txt(svg,it.x-12,it.y+20,s.b,'lbl-dim',null,14);if(s.t)txt(svg,it.x-12,it.y-20,s.t,'lbl-dim',null,13);}
+      else if(it.t==='arr'){const cls=it.k==='fb'?'react':it.k==='good'?'good':'ink';
+        const p=it.p,n=p.length,[x1,y1]=p[n-2],[x2,y2]=p[n-1],L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;
+        const pts=p.slice(0,-1).concat([[x2-ux*8,y2-uy*8]]);
+        el('polyline',{points:pts.map(q=>q.join(',')).join(' '),style:`fill:none;stroke-width:1.7;${it.dash?'stroke-dasharray:5 4;':''}`,class:cls},svg);
+        if(!it.nohead){const bx=x2-ux*9,by=y2-uy*9,nx=-uy,ny=ux;el('polygon',{points:`${x2},${y2} ${bx+nx*4},${by+ny*4} ${bx-nx*4},${by-ny*4}`,class:cls==='ink'?'':cls,style:cls==='ink'?'fill:var(--ink)':''},svg);}
+        if(it.lbl)txt(svg,it.lx,it.ly,it.lbl,it.k==='fb'?'lbl-react':(it.lc||'lbl-dim'),it.a,12);}
+      else if(it.t==='txt'){txt(svg,it.x,it.y,it.s,it.cls,it.a,it.fs);}
+      else if(it.t==='rect'){el('rect',{x:it.x,y:it.y,width:it.w,height:it.h,class:it.cls||'member',style:it.style||''},svg);}
+      else if(it.t==='line'){el('polyline',{points:it.p.map(q=>q.join(',')).join(' '),class:it.cls||'ink',style:it.style||''},svg);}
+      else if(it.t==='circ'){el('circle',{cx:it.x,cy:it.y,r:it.r,class:it.cls||'sup'},svg);}
+    });
+    const host=$(id);host.innerHTML='';host.appendChild(svg);return svg;}
+  return {draw};
+})();
+
+/* ---------- slide 6: four roles ---------- */
+BD.draw('fig-roles',{w:520,h:150,alt:'controller, actuator, plant, sensor loop'},[
+  {t:'box',x:10,y:20,w:120,h:46,s:'Controller',sub:'calculates the action'},
+  {t:'box',x:200,y:20,w:120,h:46,s:'Actuator',sub:'applies the command'},
+  {t:'box',x:390,y:20,w:120,h:46,s:'Plant',sub:'responds'},
+  {t:'box',x:390,y:96,w:120,h:40,s:'Sensor'},
+  {t:'arr',p:[[130,43],[200,43]],lbl:'command',lx:165,ly:31},
+  {t:'arr',p:[[320,43],[390,43]],lbl:'action',lx:355,ly:31},
+  {t:'arr',p:[[450,66],[450,96]]},
+  {t:'arr',k:'fb',p:[[390,116],[70,116],[70,66]],lbl:'feedback: the measurement returns',lx:230,ly:104}]);
+
+/* ---------- slide 8: open loop ---------- */
+BD.draw('fig-open',{w:520,h:100,alt:'open loop chain'},[
+  {t:'box',x:10,y:20,w:130,h:44,s:'Preset plan',sub:'time / program / model'},
+  {t:'box',x:195,y:20,w:130,h:44,s:'Actuator'},
+  {t:'box',x:380,y:20,w:130,h:44,s:'Plant'},
+  {t:'arr',p:[[140,42],[195,42]],lbl:'u',lx:167,ly:30},{t:'arr',p:[[325,42],[380,42]]},
+  {t:'arr',p:[[510,42],[518,42]],nohead:true},
+  {t:'txt',x:260,y:86,s:'the output y never returns to correct the command',cls:'lbl-dim',fs:12}]);
+
+/* ---------- slides 11 and 18: closed loop ---------- */
+function loop(id,names,io){
+  BD.draw(id,{w:560,h:150,alt:'closed loop'},[
+    {t:'arr',p:[[4,45],[54,45]],lbl:io[0],lx:24,ly:30},
+    {t:'sum',x:66,y:45,signs:{l:'+',b:'−'}},
+    {t:'arr',p:[[77,45],[130,45]],lbl:'e',lx:103,ly:32,lc:'lbl-good'},
+    {t:'box',x:130,y:24,w:100,h:42,s:names[0]},
+    {t:'arr',p:[[230,45],[280,45]],lbl:'u',lx:255,ly:32},
+    {t:'box',x:280,y:24,w:100,h:42,s:names[1]},
+    {t:'arr',p:[[380,45],[420,45]]},
+    {t:'box',x:420,y:24,w:90,h:42,s:names[2]},
+    {t:'arr',p:[[510,45],[556,45]],lbl:io[1],lx:534,ly:30},
+    {t:'line',p:[[530,45],[530,118],[470,118]],cls:'react',style:'fill:none;stroke-width:1.7'},
+    {t:'box',x:360,y:100,w:110,h:36,s:names[3],k:'plain',fs:13},
+    {t:'arr',k:'fb',p:[[360,118],[66,118],[66,57]],lbl:io[2],lx:210,ly:106},
+    {t:'txt',x:300,y:12,s:'forward path →',cls:'lbl-dim',fs:11},{t:'txt',x:210,y:132,s:'← feedback path',cls:'lbl-react',fs:11}]);
+}
+loop('fig-closed',['Controller','Actuator','Plant','Sensor'],['r','y','measured y_m']);
+loop('fig-tankloop',['Controller','Pump','Tank','Level sensor'],['r','h','measured h_m']);
+
+/* ---------- slide 23: inside PID ---------- */
+BD.draw('fig-pid',{w:560,h:220,alt:'PID controller with three branches'},[
+  {t:'arr',p:[[4,110],[44,110]],lbl:'r',lx:20,ly:96},{t:'sum',x:56,y:110,signs:{l:'+',b:'−'}},
+  {t:'line',p:[[67,110],[110,110]],cls:'good',style:'fill:none;stroke-width:1.7'},
+  {t:'txt',x:88,y:98,s:'e',cls:'lbl-good it',fs:13},
+  {t:'arr',k:'good',p:[[110,110],[110,40],[140,40]]},{t:'arr',k:'good',p:[[110,110],[140,110]]},{t:'arr',k:'good',p:[[110,110],[110,180],[140,180]]},
+  {t:'box',x:140,y:20,w:150,h:40,s:'P:  Kp·e'},{t:'box',x:140,y:90,w:150,h:40,s:'I:  Ki·∫e dτ'},{t:'box',x:140,y:160,w:150,h:40,s:'D:  Kd·de/dt'},
+  {t:'arr',p:[[290,40],[330,40],[330,99]]},{t:'arr',p:[[290,110],[319,110]]},{t:'arr',p:[[290,180],[330,180],[330,121]]},
+  {t:'sum',x:330,y:110},{t:'arr',p:[[341,110],[400,110]],lbl:'u',lx:370,ly:97},
+  {t:'box',x:400,y:88,w:120,h:44,s:'Pump + tank'},{t:'arr',p:[[520,110],[556,110]],lbl:'h',lx:540,ly:97},
+  {t:'line',p:[[540,110],[540,205],[56,205],[56,121]],cls:'react',style:'fill:none;stroke-width:1.5'},
+  {t:'txt',x:460,y:196,s:'level sensor h_m',cls:'lbl-react',fs:11},
+  {t:'rect',x:100,y:8,w:250,h:204,cls:'faint',style:'fill:none'},{t:'txt',x:225,y:76,s:'basic PID controller',cls:'lbl-dim',fs:10}]);
+
+/* ---------- slides 16-17: the apparatus ---------- */
+BD.draw('fig-tank',{w:520,h:240,alt:'tank with pump, level sensor and outlet valve'},[
+  {t:'box',x:10,y:20,w:130,h:50,s:'Controller +',sub:'actuator (drive)'},
+  {t:'txt',x:81,y:100,s:'start / stop (enable)',cls:'lbl-dim',fs:11,a:'start'},
+  {t:'line',p:[[250,60],[250,220],[410,220],[410,60]],cls:'ink',style:'fill:none;stroke-width:2.4'},
+  {t:'rect',x:252,y:120,w:156,h:98,cls:'member2',style:'stroke:none'},
+  {t:'line',p:[[252,120],[408,120]],cls:'react',style:'fill:none;stroke-width:1.5'},
+  {t:'txt',x:330,y:170,s:'water level h',fs:13},
+  {t:'line',p:[[252,100],[408,100]],cls:'faint'},{t:'txt',x:330,y:90,s:'target 40 cm',cls:'lbl-dim',fs:11},
+  {t:'circ',x:190,y:205,r:14},{t:'txt',x:190,y:206,s:'P',fs:12},{t:'txt',x:185,y:232,s:'variable-speed pump',cls:'lbl-dim',fs:11},
+  {t:'arr',p:[[204,205],[230,205],[230,40],[300,40],[300,75]],lbl:'inlet q_in',lx:268,ly:52},
+  {t:'arr',k:'fb',p:[[408,215],[470,215]],lbl:'outlet q_out',lx:470,ly:200},
+  {t:'line',p:[[440,206],[452,224]],cls:'ink'},{t:'line',p:[[440,224],[452,206]],cls:'ink'},{t:'txt',x:470,y:235,s:'outlet valve',cls:'lbl-dim',fs:11},
+  {t:'box',x:380,y:6,w:120,h:30,s:'Level sensor',k:'plain',fs:12},{t:'line',p:[[400,36],[400,120]],cls:'react',style:'fill:none;stroke-width:1.2;stroke-dasharray:3 3'},
+  {t:'arr',k:'fb',p:[[380,21],[150,21],[150,35],[140,35]],lbl:'level feedback',lx:250,ly:10},
+  {t:'arr',p:[[75,70],[75,205],[176,205]],lbl:'pump command u',lx:118,ly:194}]);
+
+/* ---------- tank + pump model (reconstruction, see the Beyond box in Section 9) ----------
+   tank:  tau_t dh/dt = 80 cm * q - h   (q = pump flow as a fraction of full flow; steady state h = 80 q)
+   pump:  tau_p dq/dt = u - q,  u clamped to [0, 1]
+   PID:   u = Kp e + I + Kd de/dt,  e = r - h,  I' = Ki e,  de/dt = dr/dt - dh/dt */
+const TANK={tt:80,tp:30,G:80};
+function simTank(o){
+  const dt=0.05,T=o.T||600,G=o.G||TANK.G;let h=o.h0===undefined?20:o.h0,q=o.q0||0,I=o.I0||0,t=0;const out=[];
+  for(let k=0;t<=T+1e-9;k++,t=k*dt){
+    const r=o.r(t),rp=(o.r(t+dt)-r)/dt,c=o.out?o.out(t):1;           // c: outlet opening factor (1 = normal)
+    const dh=(G*q-c*h)/TANK.tt, e=r-h;
+    let u=o.Kp*e+I+o.Kd*(rp-dh); u=Math.min(1,Math.max(0,u));
+    if(k%10===0)out.push([t,h,u,r]);
+    q+=dt*(u-q)/TANK.tp; h+=dt*dh; I+=dt*o.Ki*e;
+  }
+  return out;
+}
+function metrics(d,r0,r1,h0){ // step metrics for a step from h0 towards target r1
+  const fin=d[d.length-1][1],ch=fin-h0;let peak=-1e9,tp=0;d.forEach(p=>{if(p[1]>peak){peak=p[1];tp=p[0];}});
+  const t10=(d.find(p=>p[1]>=h0+0.1*ch)||[NaN])[0],t90=(d.find(p=>p[1]>=h0+0.9*ch)||[NaN])[0];
+  let ts=0;for(let i=d.length-1;i>=0;i--){if(Math.abs(d[i][1]-fin)>0.02*Math.abs(ch)){ts=d[i][0];break;}}
+  return {fin,peak,tp,os:Math.max(0,(peak-fin)/ch*100),tr:t90-t10,ts,ess:r1-fin};
+}
+const COLS={P:'--c4',PI:'--accent',PD:'--c2',PID:'--c3'};
+const GAINS={P:[0.04,0,0],PI:[0.04,0.0006,0],PD:[0.04,0,0.5],PID:[0.04,0.0006,0.5]};
+function levelPlot(id,list,o){
+  const curves=list.map(L=>({f:(x=>{const i=Math.min(L.d.length-1,Math.round(x/0.5));return L.d[i][1];}),color:css(L.col),width:2.2}));
+  curves.push({f:x=>o.target?o.target(x):40,color:css('--muted'),dash:[5,4],width:1.4});
+  plot($(id),{xmin:0,xmax:o.T||600,ymin:o.ymin||20,ymax:o.ymax||50,xstep:o.xstep||150,ystep:5,xlabel:'time / s',ylabel:'level / cm',curves});
+}
+/* slide 15: annotated response curve */
+(function(){
+  const f=t=>1-Math.exp(-0.35*t)*(Math.cos(0.9*t)+0.389*Math.sin(0.9*t)); // under-damped 2nd order, final value 1
+  const d=()=>{const pk=Math.PI/0.9;plot($('cv-resp'),{xmin:0,xmax:16,ymin:0,ymax:1.4,xstep:2,ystep:0.2,xlabel:'time',ylabel:'output',pl:40,
+    curves:[{f,color:css('--accent')},{f:x=>1,color:css('--muted'),dash:[5,4],width:1.3},{f:x=>1.02,color:css('--axis'),dash:[2,3],width:1},{f:x=>0.98,color:css('--axis'),dash:[2,3],width:1}],
+    pts:[{x:pk,y:f(pk),color:css('--c2'),label:'peak: overshoot '+Math.round((f(pk)-1)*100)+'%',r:4},{x:2*Math.PI/0.9,y:f(2*Math.PI/0.9),color:css('--c4'),r:3.5}],
+    segs:[{x1:0.494,y1:0.1,x2:0.494,y2:0,color:css('--c3'),width:1.5},{x1:1.951,y1:0.9,x2:1.951,y2:0,color:css('--c3'),width:1.5,dash:[3,3]}]});};
+  redraws.push(d);d();
+})();
+
+/* slides 24-28, 31: the four controllers */
+const RUNS={};Object.keys(GAINS).forEach(k=>{const g=GAINS[k];RUNS[k]=simTank({Kp:g[0],Ki:g[1],Kd:g[2],r:t=>40});});
+function cmp(id,keys){const d=()=>levelPlot(id,keys.map(k=>({d:RUNS[k],col:COLS[k]})),{});redraws.push(d);d();}
+cmp('cv-P',['P']);cmp('cv-PI',['P','PI']);cmp('cv-PD',['P','PD']);cmp('cv-PID',['PI','PID']);cmp('cv-all',['P','PI','PD','PID']);
+(function(){const rows=Object.keys(GAINS).map(k=>{const m=metrics(RUNS[k],0,40,20);
+  return `<tr><td>${k}</td><td>${fmt(m.fin,2)} cm</td><td>${fmt(m.ess,2)} cm</td><td>${fmt(m.peak,2)} cm at ${fmt(m.tp,0)} s</td><td>${fmt(m.ts,0)} s</td></tr>`;}).join('');
+  $('tab-sim').innerHTML='<tr><th>Controller</th><th>Final level</th><th>Final error</th><th>Peak</th><th>Settles (±2%)</th></tr>'+rows;})();
+
+/* ---------- interactive: tune it yourself ---------- */
+(function(){
+  const ids=['kp','ki','kd','rt'];
+  function set(k){const g=GAINS[k];$('kp').value=g[0];$('ki').value=g[1]*1e4;$('kd').value=g[2];run();}
+  function run(){
+    const Kp=+$('kp').value,Ki=+$('ki').value/1e4,Kd=+$('kd').value,r1=+$('rt').value,dist=$('dist').checked,tgt=t=>t<0?40:40;
+    const r=t=>r1, out=t=>dist&&t>=300?1.25:1;
+    const d=simTank({Kp,Ki,Kd,r,out,T:600});
+    const m=metrics(d.filter(p=>p[0]<300||!dist),20,r1,20);
+    levelPlot('cv-live',[{d,col:'--accent'}],{target:x=>r1,ymin:15,ymax:55});
+    plot($('cv-live-u'),{xmin:0,xmax:600,ymin:0,ymax:1.05,xstep:150,ystep:0.25,xlabel:'time / s',ylabel:'pump command u',
+      curves:[{f:x=>d[Math.min(d.length-1,Math.round(x/0.5))][2],color:css('--c4'),width:2}]});
+    const fin=d[d.length-1][1];
+    $('live-out').innerHTML=`K<sub>p</sub> = <b>${fmt(Kp,3)}</b> cm⁻¹ · K<sub>i</sub> = <b>${fmt(Ki,5)}</b> (cm·s)⁻¹ · K<sub>d</sub> = <b>${fmt(Kd,2)}</b> s/cm<br>`+
+      (dist?`before the outlet opens (t &lt; 300 s): overshoot <b>${fmt(m.os,1)}%</b>, level at 300 s <b>${fmt(d[600][1],2)} cm</b> · `:`overshoot <b>${fmt(m.os,1)}%</b> · rise time (10–90%) <b>${fmt(m.tr,0)} s</b> · settling (±2%) <b>${fmt(m.ts,0)} s</b> · `)+
+      `final level <b>${fmt(fin,2)} cm</b> (error ${fmt(r1-fin,2)} cm)`;
+  }
+  ids.forEach(i=>$(i).addEventListener('input',run));$('dist').addEventListener('input',run);
+  document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>set(b.dataset.preset)));
+  redraws.push(run);set('PID');
+})();
+
+/* slide 33 test A: ramp target 40 -> 45; test B: outlet opens */
+(function(){
+  const g=GAINS.PID;
+  const rA=t=>t<100?40:t<200?40+5*(t-100)/100:45;
+  const dA=simTank({Kp:g[0],Ki:g[1],Kd:g[2],r:rA,h0:40,q0:0.5,I0:0.5});
+  const dB=simTank({Kp:g[0],Ki:g[1],Kd:g[2],r:t=>40,h0:40,q0:0.5,I0:0.5,out:t=>t>=100?1.25:1});
+  const dBp=simTank({Kp:g[0],Ki:0,Kd:g[2],r:t=>40,h0:40,q0:0.5,I0:0.5,out:t=>t>=100?1.25:1});
+  const d=()=>{levelPlot('cv-testA',[{d:dA,col:'--c3'}],{target:rA,ymin:35,ymax:50,xstep:100});
+    levelPlot('cv-testB',[{d:dB,col:'--c3'},{d:dBp,col:'--c2'}],{ymin:30,ymax:45,xstep:100});};
+  redraws.push(d);d();
+})();
+
+</script>
+</body></html>

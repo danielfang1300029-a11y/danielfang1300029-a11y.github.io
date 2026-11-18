@@ -1,0 +1,952 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH1851 LT · The Laplace Transform</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (46rem) with a sticky contents rail on wide screens; graphs inline beside the maths they explain; practice and past papers at the end. Palette and type match the MECH2407 notes. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Laplace transform</p>
+  <ol>
+    <li><a href="#s0">0 · Where we are</a></li>
+    <li><a href="#s1">1 · Why transform at all?</a></li>
+    <li><a href="#s2">2 · The definition</a></li>
+    <li><a href="#s3">3 · Elementary transforms</a></li>
+    <li><a href="#s4">4 · Linearity, first shift</a></li>
+    <li><a href="#s5">5 · Step function, second shift</a></li>
+    <li><a href="#s6">6 · Convolution</a></li>
+    <li><a href="#s7">7 · Transforms of derivatives</a></li>
+    <li><a href="#s8">8 · Multiplying by tⁿ, dividing by t</a></li>
+    <li><a href="#s9">9 · When does it exist?</a></li>
+    <li><a href="#s10">10 · Partial fractions</a></li>
+    <li><a href="#s11">11 · Inverting by convolution</a></li>
+    <li><a href="#s12">12 · Solving an ODE</a></li>
+    <li><a href="#s13">13 · Two IVPs, three methods</a></li>
+    <li><a href="#s14">14 · Transform table</a></li>
+    <li><a href="#s15">15 · Summary</a></li>
+    <li><a href="#s16">16 · Common mistakes</a></li>
+    <li><a href="#s17">17 · Find the mistake</a></li>
+    <li><a href="#s18">18 · Group work</a></li>
+    <li><a href="#s19">19 · Concept checks</a></li>
+    <li><a href="#pastpaper">20 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <span class="course">MATH1851 · ODE · Laplace transform</span>
+  <h1>The Laplace Transform</h1>
+  <p class="lede">Every slide of the Laplace handout explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this part.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this part sits</h2>
+<p>The Laplace handout (38 slides, title slide 1: "Laplace transforms", Professor K. W. Chow, Mechanical Engineering, HKU) is the last part of the ODE half of MATH1851. An <b>ODE</b> (ordinary differential equation) is an equation linking an unknown function \(y(t)\) with its derivatives \(y'\), \(y''\), …; an <b>initial value problem (IVP)</b> is an ODE together with the values of \(y\) (and its derivatives) at the start, \(t=0\).</p>
+<p>What came before:</p>
+<ul class="list">
+<li><b>Part O1</b>: first-order ODEs solved directly (separable equations, integrating factors, exact equations).</li>
+<li><b>Part O3</b>: linear equations with constant coefficients and zero right-hand side, solved with the <b>characteristic equation</b> (try \(y=e^{mt}\)).</li>
+<li><b>Part O4</b>: the same equations with a right-hand side ("forcing"), solved by <b>undetermined coefficients</b> (guess the form of a particular solution) or <b>variation of parameters</b>.</li>
+<li>From calculus: integration by parts (Lecture 13) and partial fractions (Lecture 14) are used constantly here.</li>
+</ul>
+<p>What this part adds: a completely different route to the <i>same</i> IVPs. The Laplace transform turns a differential equation into an algebra problem, the initial values are built in automatically, and the answer comes back through a table of transforms plus partial fractions. It also handles right-hand sides that switch on suddenly (step functions) and lets you invert products by <b>convolution</b>.</p>
+<p>The handout has no textbook-section or learning-objectives slide. After this note you should be able to:</p>
+<ol class="steps">
+<li>compute Laplace transforms from the definition and from the table, using linearity, the two shift properties and multiplication by \(t^n\);</li>
+<li>invert transforms using partial fractions (unrepeated, repeated and complex factors, cover-up rule), the delay factor \(e^{-as}\) and convolution;</li>
+<li>solve first- and second-order IVPs (and simple integral equations) by Laplace transform.</li>
+</ol>
+<div class="box warn"><span class="tag">Exam fact</span><p>Every recent paper has a Laplace question pair (forward transforms, inverse transforms, convolution or a first-order equation) plus a second-order IVP "solve by Laplace transform". The exam prints a <b>Laplace table on the formula sheet</b> (\(t^n\), \(t^nf\), sin, cos, shift, Heaviside, convolution), so you need to know how to <i>use</i> the table quickly, not memorise it. Section 14 reproduces that table with every row explained.</p></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Why transform at all? (slides 2 to 7)</h2>
+<h3>Physical motivation (slide 2)</h3>
+<p>The idea is to look at the unknown quantity (the <b>dependent variable</b>, e.g. the displacement of a guitar string, which depends on position and time) from another point of view. Instead of asking "how high is the string at this place and time?", we ask "how much of each wavelength (or frequency) is in this shape?". This new description is called the <b>frequency domain</b> or <b>wavelength domain</b>. It describes the shape as a <b>superposition</b> (adding together) of simple waves of various wavelengths.</p>
+<h3>Superposition of waves (slide 3)</h3>
+<p>An arbitrary wave form consists of one portion of a 1 cm wavelength wave, another portion of a 2 cm wavelength wave, and so on. To rebuild the wave form, we only need the <b>relative weight</b> of each portion (how much of each wave to add). The list of weights is the "transformed" description. Try it below.</p>
+<div class="figure"><p class="ttl">Building a wave form from two simple waves (slide 3)</p>
+<canvas class="plot" id="fsup" style="aspect-ratio:16/9" aria-label="Two sine waves of wavelength 1 cm and 2 cm, weighted by sliders, and their sum"></canvas>
+<div class="ctrl"><label for="fsup-w1">weight of 1 cm wave <input type="range" id="fsup-w1" min="-1" max="1" step="0.1" value="0.6"></label>
+<label for="fsup-w2">weight of 2 cm wave <input type="range" id="fsup-w2" min="-1" max="1" step="0.1" value="1"></label></div>
+<div class="legend"><span style="--k:var(--c3)">1 cm wave × weight</span><span style="--k:var(--c4)">2 cm wave × weight</span><span style="--k:var(--accent)">sum (the wave form)</span></div>
+<div class="readout" id="fsup-out"></div>
+<p class="cap">Horizontal axis: position \(x\) in cm. The thick curve is \(w_1\sin(2\pi x/1)+w_2\sin(2\pi x/2)\). Two numbers \((w_1,w_2)\) describe the whole thick curve: that pair of weights is the "other perspective" of slide 2.</p></div>
+
+<h3>Mathematical motivation (slide 4)</h3>
+<p>Mathematically, an <b>integral transform</b> takes the unknown function \(f(t)\), multiplies it by a chosen auxiliary function \(K(s,t)\) called the <b>kernel</b>, and integrates over \(t\):</p>
+\[ F(s)=\int K(s,t)\,f(t)\,dt. \]
+<p class="word"><b>In words:</b> transformed function at \(s\) = total area under (kernel × original function).</p>
+<p>The kernel contains a <b>free parameter</b> \(s\). For each value of \(s\) the definite integral is just a number, so the result is a new function of \(s\). The immediate goal is to study how this definite integral changes as \(s\) changes.</p>
+<h3>In practice (slide 5)</h3>
+<p>The useful effect: derivatives with respect to the original (independent) variable disappear. A partial differential equation in two variables becomes an equation with one fewer independent variable; and for an ODE (one independent variable, \(t\)), the integral transform turns the ODE into an <b>algebraic equation</b> (no derivatives at all) for \(F(s)\). We will see exactly why in section 7.</p>
+<h3>Commonly used kernels (slide 6)</h3>
+<ol class="steps">
+<li><b>Decaying exponential</b> kernel \(e^{-st}\): the <b>Laplace transform</b> (this part of the course).</li>
+<li><b>Oscillatory / sinusoidal</b> kernel (\(\sin\), \(\cos\), or the complex exponential \(e^{-i\omega t}\)): the <b>Fourier</b>, <b>Fourier sine</b> and <b>Fourier cosine</b> transforms. <span class="pill">Beyond the handouts</span> These are not examined in MATH1851; they are the tool behind the "superposition of wavelengths" picture of slides 2 and 3.</li>
+</ol>
+<h3>"Is this a convoluted way of doing things?" (slide 7)</h3>
+<p>Why not just solve the equation directly? The slide's answer: often we <b>cannot</b> (or simply do not know how to) solve the equation directly, and the transform is the only way to make progress. For the equations in this course you <i>can</i> also use Parts O1 to O4, and section 13 compares the methods; but Laplace is the method that copes best with switched-on forcing, resonance and integral equations.</p>
+<p><b>Analogy (HKDSE Core):</b> logarithms. To multiply two huge numbers, take logs, <i>add</i> (easier), then take the antilog. Laplace does the same with calculus: take the transform, do <i>algebra</i> instead of calculus, then transform back.</p>
+<p style="text-align:center;font-family:var(--mono);font-size:.9rem">ODE for \(y(t)\) &nbsp;→ (transform) →&nbsp; algebra for \(Y(s)\) &nbsp;→ (solve) →&nbsp; \(Y(s)\) &nbsp;→ (inverse transform) →&nbsp; \(y(t)\)</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>The definition (slides 8 to 10)</h2>
+<div class="box def"><span class="tag">Definition · Laplace transform (slides 8, 9)</span>
+<p>For a function \(f(t)\) defined for \(t\ge0\),</p>
+\[ \mathcal L\big(f(t)\big)=F(s)=\int_0^\infty f(t)\,e^{-st}\,dt. \]
+<p class="word"><b>In words:</b> transform of \(f\) at \(s\) = total area under the curve "\(f(t)\) times the decaying weight \(e^{-st}\)", from time 0 to forever.</p>
+<ul class="list">
+<li>\(t\) is time (the original variable);</li>
+<li>\(\mathcal L\) is the operation "take the Laplace transform" (the slides write a plain L);</li>
+<li>\(F\) is the transformed function (convention: capital letter for the transform of the lower-case function, \(Y=\mathcal L(y)\), \(G=\mathcal L(g)\));</li>
+<li>\(s\) is the <b>transform parameter</b>, a new variable. In this course \(s\) is a real number large enough for the integral to exist.</li>
+</ul></div>
+<div class="box def"><span class="tag">Definition · improper integral <span class="pill">Beyond Lecture 12</span></span>
+<p>An integral up to \(\infty\) means a limit of ordinary definite integrals:</p>
+\[ \int_0^\infty g(t)\,dt=\lim_{T\to\infty}\int_0^T g(t)\,dt. \]
+<p class="word"><b>In words:</b> integrate up to a finite time \(T\), then let \(T\) grow without bound. If this limit is a finite number the integral <b>converges</b>; otherwise it <b>diverges</b> and the transform does not exist at that \(s\).</p></div>
+<p>Only the values of \(f\) for \(t\ge0\) matter: the transform never looks at negative times. That is why the second shift property (section 5) needs a step function.</p>
+<div class="figure"><p class="ttl">The transform as an area: move \(s\) and watch the area change</p>
+<canvas class="plot" id="fker" style="aspect-ratio:16/10" aria-label="f(t), the kernel e^(-st) and their product with the area under the product shaded"></canvas>
+<div class="ctrl"><label for="fker-f">f(t) = <select id="fker-f"><option value="one">1</option><option value="t">t</option><option value="sin">sin t</option><option value="e1">e^t</option><option value="et2">e^(t²)</option></select></label>
+<label for="fker-s">s <input type="range" id="fker-s" min="0.2" max="3" step="0.1" value="1.5"></label></div>
+<div class="legend"><span style="--k:var(--muted)">f(t)</span><span style="--k:var(--c3)">kernel e^(−st)</span><span style="--k:var(--accent)">product f(t)e^(−st), area shaded</span></div>
+<div class="readout" id="fker-out"></div>
+<p class="cap">The shaded area (from 0 to ∞) is \(F(s)\). A bigger \(s\) makes the kernel die faster, so the area shrinks. For \(e^{t}\) the area is finite only when \(s\gt1\); for \(e^{t^2}\) no \(s\) works (section 9).</p></div>
+<div class="box def"><span class="tag">Definition · inverse Laplace transform (slide 10)</span>
+\[ f(t)=\mathcal L^{-1}\big(F(s)\big) \]
+<p class="word"><b>In words:</b> the inverse transform undoes the transform: from \(F(s)\) it recovers the original \(f(t)\).</p>
+<p>In practice you never compute \(\mathcal L^{-1}\) with a formula: you rearrange \(F(s)\) into pieces that appear in the table and read the table backwards. This works because two continuous functions with the same transform are equal (for \(t\ge 0\)), so the answer is unique. <span class="pill">Beyond the handouts</span> (this uniqueness result is "Lerch's theorem").</p></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Transforms of elementary functions (slides 11 to 13)</h2>
+<div class="box thm"><span class="tag">Results (slides 11 to 13)</span>
+\[ \mathcal L(1)=\frac1s,\qquad \mathcal L(t^n)=\frac{n!}{s^{n+1}}\ (n=0,1,2,\dots) \]
+\[ \mathcal L(\sin at)=\frac{a}{s^2+a^2} \]
+\[ \mathcal L(\cos at)=\frac{s}{s^2+a^2} \]
+\[ \mathcal L(e^{at})=\frac{1}{s-a}\quad(s\gt a) \]
+<p class="word"><b>In words:</b> transform of the constant 1 = one over \(s\); transform of \(t\) to the power \(n\) = \(n\) factorial over \(s\) to the power \(n+1\); transform of sine = frequency over (\(s^2\) + frequency²); transform of cosine = \(s\) over (\(s^2\) + frequency²); transform of \(e^{at}\) = one over (\(s\) minus the growth rate).</p>
+<p>Memory aid: <b>sin</b> has the constant \(a\) on top, <b>cos</b> has \(s\) on top. (Recall \(n!=n(n-1)\cdots2\cdot1\), and \(0!=1\).)</p></div>
+
+<h3>Deriving \(\mathcal L(1)\)</h3>
+\[ \begin{aligned} \mathcal L(1)&=\lim_{T\to\infty}\int_0^T e^{-st}\,dt\\ &=\lim_{T\to\infty}\left[-\frac{e^{-st}}{s}\right]_0^T\\ &=\lim_{T\to\infty}\frac{1-e^{-sT}}{s}=\frac1s\quad(s\gt0). \end{aligned} \]
+<p>For \(s\gt 0\), \(e^{-sT}\to0\) as \(T\to\infty\).</p>
+
+<h3>Deriving \(\mathcal L(t^n)\) (integration by parts, Lecture 13)</h3>
+<p>Take \(u=t^n\), \(dv=e^{-st}\,dt\), so \(du=nt^{n-1}dt\), \(v=-\frac{e^{-st}}{s}\):</p>
+\[ \begin{aligned} \mathcal L(t^n)&=\left[-\frac{t^ne^{-st}}{s}\right]_0^\infty+\frac ns\int_0^\infty t^{n-1}e^{-st}\,dt\\ &=0+\frac ns\,\mathcal L(t^{n-1}). \end{aligned} \]
+<p>The boundary term is 0: at \(t=0\) it is 0 (for \(n\ge1\)), and as \(t\to\infty\), \(t^ne^{-st}\to0\) because an exponential beats any power (L'Hôpital's Rule \(n\) times, Lecture 10). Repeating the reduction:</p>
+\[ \mathcal L(t^n)=\frac ns\cdot\frac{n-1}s\cdots\frac1s\,\mathcal L(1)=\frac{n!}{s^n}\cdot\frac1s=\frac{n!}{s^{n+1}}. \]
+<p class="word"><b>In words:</b> each power of \(t\) removed costs a factor (that power)/\(s\).</p>
+<div class="box eg"><span class="tag">Examples</span>
+<p>\(\mathcal L(t)=\dfrac1{s^2}\), \(\mathcal L(t^2)=\dfrac2{s^3}\), \(\mathcal L(t^3)=\dfrac{6}{s^4}\). Backwards: \(\mathcal L^{-1}\!\left(\dfrac1{s^3}\right)=\dfrac{t^2}{2}\) (divide by the factorial \(2!\)).</p></div>
+<div class="box beyond"><span class="tag">Beyond the handouts · the Gamma function (slide 11's "advanced note")</span>
+<p>Slide 11 notes that for a general real power \(n\) (not a whole number) the factorial is replaced by the <b>Gamma function</b>, defined by</p>
+\[ \Gamma(x)=\int_0^\infty u^{x-1}e^{-u}\,du,\qquad \Gamma(n+1)=n!. \]
+<p class="word"><b>In words:</b> Gamma is a smooth version of the factorial that also works between whole numbers.</p>
+<p>Then \(\mathcal L(t^\nu)=\dfrac{\Gamma(\nu+1)}{s^{\nu+1}}\) for \(\nu\gt-1\). For example \(\mathcal L(\sqrt t)=\dfrac{\Gamma(3/2)}{s^{3/2}}=\dfrac{\sqrt\pi}{2s^{3/2}}\). Not examined.</p></div>
+
+<h3>Deriving \(\mathcal L(\sin at)\) and \(\mathcal L(\cos at)\): method 1, parts twice (slide 12)</h3>
+<p>Let \(I=\int_0^\infty \sin(at)\,e^{-st}dt\) and \(J=\int_0^\infty\cos(at)\,e^{-st}dt\). Integrate by parts with \(dv=e^{-st}dt\), \(v=-e^{-st}/s\):</p>
+\[ \begin{aligned} I&=\left[-\frac{\sin(at)e^{-st}}{s}\right]_0^\infty+\frac as J=\frac as J,\\ J&=\left[-\frac{\cos(at)e^{-st}}{s}\right]_0^\infty-\frac as I=\frac1s-\frac as I. \end{aligned} \]
+<p>(At \(t=0\): \(\sin 0=0\), \(\cos0=1\); at \(\infty\) the factor \(e^{-st}\) kills everything.) Substitute \(J\) into the first line:</p>
+\[ \begin{aligned} I&=\frac a{s^2}-\frac{a^2}{s^2}I\\ I\left(\frac{s^2+a^2}{s^2}\right)&=\frac a{s^2}\\ I&=\frac{a}{s^2+a^2}, \end{aligned} \]
+\[ J=\frac1s-\frac as\cdot\frac a{s^2+a^2}=\frac{s}{s^2+a^2}. \]
+<h3>Method 2: the complex variable technique (slide 12)</h3>
+<p>Slide 12 mentions <b>Euler's formula</b> \(e^{it}=\cos t+i\sin t\), where \(i^2=-1\) (complex numbers are in HKDSE Core; Euler's formula itself is <span class="pill">Beyond the handouts</span>). Replacing \(t\) by \(at\): \(e^{iat}=\cos at+i\sin at\). Using \(\mathcal L(e^{ct})=\frac1{s-c}\) with the complex number \(c=ia\):</p>
+\[ \begin{aligned} \mathcal L(e^{iat})&=\frac{1}{s-ia}=\frac{s+ia}{(s-ia)(s+ia)}\\ &=\frac{s}{s^2+a^2}+i\,\frac{a}{s^2+a^2}. \end{aligned} \]
+<p class="word"><b>In words:</b> the real part gives the transform of cosine, the imaginary part gives the transform of sine, both in one line.</p>
+
+<h3>Deriving \(\mathcal L(e^{at})\) (slide 13)</h3>
+\[ \begin{aligned} \mathcal L(e^{at})&=\int_0^\infty e^{-(s-a)t}\,dt\\ &=\left[-\frac{e^{-(s-a)t}}{s-a}\right]_0^\infty=\frac1{s-a}\quad(s\gt a). \end{aligned} \]
+<p class="word"><b>In words:</b> \(e^{at}\) times \(e^{-st}\) is a single exponential with rate \(s-a\); it dies out only if \(s\gt a\).</p>
+<div class="box eg"><span class="tag">Examples</span>
+<p>\(\mathcal L(\sin3t)=\dfrac{3}{s^2+9}\), \(\mathcal L(\cos t)=\dfrac{s}{s^2+1}\), \(\mathcal L(e^{-4t})=\dfrac1{s+4}\). Backwards: \(\mathcal L^{-1}\!\left(\dfrac1{s^2+4}\right)=\dfrac12\sin2t\) (the table needs \(a=2\) on top, so multiply and divide by 2).</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Linearity and the first shift property (slide 14)</h2>
+<div class="box thm"><span class="tag">Property 1 · Linearity (slide 14)</span>
+\[ \mathcal L(af+bg)=a\,\mathcal L(f)+b\,\mathcal L(g) \]
+<p>(\(a\), \(b\) real constants.)</p>
+<p class="word"><b>In words:</b> the transform of a sum is the sum of the transforms, and constants come straight out.</p>
+<p>Reason: an integral of a sum is the sum of the integrals, and constants factor out of integrals (Lecture 12). The same is true for \(\mathcal L^{-1}\).</p></div>
+<div class="box eg"><span class="tag">Example</span>
+\[ \begin{aligned} &\mathcal L(3t^2-2e^{-4t}+5\cos2t)\\ &=\frac{6}{s^3}-\frac{2}{s+4}+\frac{5s}{s^2+4}. \end{aligned} \]</div>
+<div class="box thm"><span class="tag">Property 2 · First shift property (slide 14)</span>
+\[ \mathcal L\big(e^{at}f(t)\big)=F(s-a) \]
+<p class="word"><b>In words:</b> multiplying by \(e^{at}\) in the \(t\)-world = replacing every \(s\) by \(s-a\) (sliding the transform \(a\) units to the right) in the \(s\)-world.</p>
+<p>Proof: \(\displaystyle\int_0^\infty e^{at}f(t)e^{-st}dt=\int_0^\infty f(t)e^{-(s-a)t}dt\), which is the definition of \(F\) evaluated at \(s-a\).</p></div>
+<div class="box eg"><span class="tag">Examples</span>
+<p>(a) \(\mathcal L(\cos3t)=\dfrac{s}{s^2+9}\), so \(\mathcal L(e^{2t}\cos3t)=\dfrac{s-2}{(s-2)^2+9}\).</p>
+<p>(b) \(\mathcal L(t^2)=\dfrac2{s^3}\), so \(\mathcal L(t^2e^{-t})=\dfrac{2}{(s+1)^3}\) (here \(a=-1\), so \(s-a=s+1\)).</p>
+<p>(c) Backwards: \(\mathcal L^{-1}\!\left(\dfrac1{(s-a)^2}\right)=te^{at}\), because \(\frac1{s^2}\) is \(\mathcal L(t)\), shifted by \(a\). This is the key to repeated factors in section 10.</p></div>
+<div class="box warn"><span class="tag">Trap</span><p>The sign: \(e^{+2t}\) gives \(s-2\), \(e^{-t}\) gives \(s+1\). Check with \(f=1\): \(\mathcal L(e^{at}\cdot1)=F(s-a)=\frac1{s-a}\), matching slide 13.</p></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>The Heaviside step function and the second shift property (slide 15)</h2>
+<div class="box def"><span class="tag">Definition · Heaviside step function (slide 15)</span>
+\[ H(z)=\begin{cases}1,& z\gt0\\ 0,& z\lt0\end{cases} \]
+<p class="word"><b>In words:</b> the step function is an on/off switch: off (0) for negative input, on (1) for positive input.</p>
+<p>The slide writes \(S(z)\) and spells it "Heavside"; it is named after Oliver <b>Heaviside</b>, and exam papers write \(H\) (some books write \(u\)). Its value at exactly \(z=0\) is left undefined; one point never changes an integral, so it does not matter.</p>
+<p>Shifted: \(H(t-a)\) is 0 for \(t\lt a\) and 1 for \(t\gt a\): <b>a switch that turns on at time \(a\)</b>. Products with it switch things on: \(10H(t-2)\) is "a 10-volt battery connected at \(t=2\)"; \(H(t-1)-H(t-3)\) is "on between 1 and 3, off otherwise" (a pulse).</p></div>
+<div class="box thm"><span class="tag">Property 3 · Second shift property (slide 15)</span>
+\[ \mathcal L\big(f(t-a)H(t-a)\big)=e^{-as}F(s)\qquad(a\ge0) \]
+<p class="word"><b>In words:</b> delaying a function by \(a\) (and keeping it switched off until then) = multiplying its transform by \(e^{-as}\).</p>
+<p>Proof: the step function makes the integrand 0 before \(t=a\); then substitute \(u=t-a\) (so \(t=u+a\), \(dt=du\)):</p>
+\[ \begin{aligned} &\int_a^\infty f(t-a)e^{-st}dt\\ &=\int_0^\infty f(u)e^{-s(u+a)}du\\ &=e^{-as}\int_0^\infty f(u)e^{-su}du\\ &=e^{-as}F(s). \end{aligned} \]
+<p>The slide says "\(a\) = real parameter"; the property needs \(a\ge0\) (a delay). For \(a\lt0\), \(H(t-a)=1\) for all \(t\ge0\) and the formula fails.</p></div>
+<div class="figure"><p class="ttl">A function and its delayed version \(f(t-a)H(t-a)\)</p>
+<canvas class="plot" id="fdel" style="aspect-ratio:16/10" aria-label="Original function dashed and its delayed switched-on copy solid"></canvas>
+<div class="ctrl"><label for="fdel-f">f(t) = <select id="fdel-f"><option value="sin">sin t</option><option value="sq">t²</option><option value="exp">e^(−t)</option><option value="one">1 (gives H itself)</option></select></label>
+<label for="fdel-a">delay a <input type="range" id="fdel-a" min="0" max="4" step="0.1" value="2"></label></div>
+<div class="legend"><span style="--k:var(--muted)">f(t)</span><span style="--k:var(--c3)">switch H(t−a)</span><span style="--k:var(--accent)">f(t−a)H(t−a)</span></div>
+<div class="readout" id="fdel-out"></div>
+<p class="cap">The solid curve is an exact copy of the dashed one, slid \(a\) units to the right, and set to 0 before \(t=a\). Note the delayed sine starts at 0 at \(t=a\) (it is \(\sin(t-a)\), not \(\sin t\)).</p></div>
+<div class="box eg"><span class="tag">Examples</span>
+<p>(a) \(\mathcal L\big(H(t-a)\big)=e^{-as}\cdot\dfrac1s=\dfrac{e^{-as}}{s}\) (take \(f=1\)).</p>
+<p>(b) \(\mathcal L\big((t-2)^2H(t-2)\big)=e^{-2s}\cdot\dfrac{2}{s^3}\).</p>
+<p>(c) Pulse: \(\mathcal L\big(H(t-1)-H(t-3)\big)=\dfrac{e^{-s}-e^{-3s}}{s}\).</p>
+<p>(d) Inverse: \(\mathcal L^{-1}\!\left(\dfrac{e^{-2s}}{s-3}\right)\). Without the exponential, \(\frac1{s-3}\) inverts to \(e^{3t}\). The factor \(e^{-2s}\) means "delay by 2": replace \(t\) by \(t-2\) and switch on at 2:</p>
+\[ \mathcal L^{-1}\!\left(\frac{e^{-2s}}{s-3}\right)=e^{3(t-2)}H(t-2). \]
+<p>(e) \(\mathcal L^{-1}\!\left(\dfrac{e^{-3s}}{s^2}\right)=(t-3)H(t-3)\).</p></div>
+<div class="box warn"><span class="tag">Trap: the function must be written in terms of \(t-a\)</span>
+<p>\(\mathcal L\big(t^2H(t-1)\big)\) is <b>not</b> \(e^{-s}\cdot\frac{2}{s^3}\): that would be the transform of \((t-1)^2H(t-1)\). First rewrite \(t^2\) in powers of \((t-1)\): \(t^2=(t-1)^2+2(t-1)+1\). Then</p>
+\[ \mathcal L\big(t^2H(t-1)\big)=e^{-s}\left(\frac2{s^3}+\frac2{s^2}+\frac1s\right). \]</div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Convolution (slides 16 and 17)</h2>
+<div class="box def"><span class="tag">Definition · convolution (slide 16)</span>
+\[ (f*g)(t)=\int_0^t f(\xi)\,g(t-\xi)\,d\xi \]
+<p class="word"><b>In words:</b> convolution of \(f\) and \(g\) at time \(t\) = add up, over every earlier time \(\xi\) between 0 and \(t\), the value of \(f\) at that earlier time times the value of \(g\) at the time elapsed since then (\(t-\xi\)).</p>
+<p>\(\xi\) (Greek "xi"; slide 31 uses \(\tau\), "tau") is a dummy variable of integration: the answer depends only on \(t\). The symbol \(*\) here is <b>not</b> ordinary multiplication.</p></div>
+<p><b>Analogy (medicine in the body).</b> Suppose you take medicine at rate \(f(\xi)\) mg per hour at time \(\xi\), and a fraction \(g(\text{elapsed})\) of any dose is still in your body after "elapsed" hours. The dose taken around time \(\xi\) has been in the body for \(t-\xi\) hours at time \(t\), so it contributes \(f(\xi)\,g(t-\xi)\,d\xi\). Adding the contributions from all past times gives the amount in the body now: \((f*g)(t)\). Convolution = "inputs from the past, each weighted by how much of it survives until now".</p>
+<p><b>Picture.</b> As a function of \(\xi\), \(g(t-\xi)\) is the graph of \(g\) <b>flipped</b> (left-right) and <b>slid</b> so that its starting point sits at \(\xi=t\). Multiply it by \(f(\xi)\), and the area of the product between 0 and \(t\) is the convolution. As \(t\) grows, the flipped copy slides right and the overlap grows.</p>
+<div class="figure"><p class="ttl">Convolution as a sliding overlap</p>
+<canvas class="plot" id="fconv" style="aspect-ratio:16/9" aria-label="f(xi), flipped and shifted g(t - xi) and their product shaded from 0 to t"></canvas>
+<canvas class="plot" id="fconv2" style="aspect-ratio:16/7;margin-top:8px" aria-label="the convolution f*g as a function of t, with the current t marked"></canvas>
+<div class="ctrl"><label for="fconv-p">pair <select id="fconv-p"><option value="11">1 * 1</option><option value="1t">1 * t</option><option value="tt">t * t</option><option value="ss">sin t * sin t</option><option value="e1">e^(−t) * 1</option></select></label>
+<label for="fconv-t">t <input type="range" id="fconv-t" min="0" max="4" step="0.05" value="2"></label></div>
+<div class="legend"><span style="--k:var(--accent)">f(ξ)</span><span style="--k:var(--c2)">g(t−ξ) (flipped, slid)</span><span style="--k:var(--c3)">product, area shaded = (f*g)(t)</span><span style="--k:var(--c4)">lower panel: (f*g) against t</span></div>
+<div class="readout" id="fconv-out"></div>
+<p class="cap">Top: horizontal axis is \(\xi\). Bottom: horizontal axis is \(t\); the dot is the current shaded area. The readout compares the area (computed numerically) with the formula.</p></div>
+<div class="box eg"><span class="tag">Simple examples (slide 17), worked</span>
+\[ 1*1=\int_0^t 1\cdot1\,d\xi=t. \]
+\[ 1*t=\int_0^t 1\cdot(t-\xi)\,d\xi=\left[t\xi-\frac{\xi^2}2\right]_0^t=\frac{t^2}{2}. \]
+\[ \begin{aligned} t*t&=\int_0^t \xi\,(t-\xi)\,d\xi=\left[\frac{t\xi^2}{2}-\frac{\xi^3}{3}\right]_0^t\\ &=\frac{t^3}2-\frac{t^3}3=\frac{t^3}{6}. \end{aligned} \]
+<p>Note \(1*1=t\), not 1: convolving with 1 is <b>not</b> "doing nothing". In fact \((1*f)(t)=\int_0^t f(\xi)\,d\xi\): convolving with 1 integrates.</p></div>
+<div class="box thm"><span class="tag">Commutative (slide 16)</span>
+<p>\(f*g=g*f\). Proof: substitute \(u=t-\xi\) (\(d\xi=-du\); \(\xi=0\to u=t\), \(\xi=t\to u=0\)):</p>
+\[ \begin{aligned} \int_0^t f(\xi)g(t-\xi)\,d\xi&=\int_t^0 f(t-u)g(u)(-du)\\ &=\int_0^t g(u)f(t-u)\,du. \end{aligned} \]
+<p class="word"><b>In words:</b> it does not matter which function you flip.</p></div>
+<div class="box thm"><span class="tag">Property 4 · Convolution theorem (slides 16, 31)</span>
+\[ \mathcal L(f*g)=F(s)\,G(s) \]
+<p class="word"><b>In words:</b> the transform of a convolution = the product of the transforms. Read backwards: to invert a product \(F(s)G(s)\), convolve the two inverses.</p>
+<p>Check with slide 17: \(\mathcal L(t*t)=\frac1{s^2}\cdot\frac1{s^2}=\frac1{s^4}\), and \(\mathcal L\!\left(\frac{t^3}{6}\right)=\frac16\cdot\frac{3!}{s^4}=\frac1{s^4}\). ✓</p></div>
+<div class="box beyond"><span class="tag">Beyond the handouts · why the theorem holds</span>
+<p>\(F(s)G(s)=\int_0^\infty\!\!\int_0^\infty f(\xi)g(u)e^{-s(\xi+u)}\,du\,d\xi\). Put \(t=\xi+u\) in the inner integral and swap the order of integration (the region is \(0\le\xi\le t\lt\infty\)): this becomes \(\int_0^\infty e^{-st}\left[\int_0^t f(\xi)g(t-\xi)\,d\xi\right]dt=\mathcal L(f*g)\).</p></div>
+<div class="box warn"><span class="tag">Trap</span><p>\(\mathcal L(fg)\ne F\,G\). The ordinary product \(f(t)g(t)\) has no simple transform; it is the <i>convolution</i> that matches the product of transforms. Example: \(f=g=1\) gives \(\mathcal L(1\cdot1)=\frac1s\), but \(F\,G=\frac1{s^2}=\mathcal L(t)=\mathcal L(1*1)\).</p></div>
+<div class="box thm"><span class="tag">Consequence · transform of an integral <span class="pill">Beyond the handouts, used in exams</span></span>
+<p>Since \(\int_0^t f(\xi)\,d\xi=(f*1)(t)\) and \(\mathcal L(1)=\frac1s\):</p>
+\[ \mathcal L\!\left(\int_0^t f(\xi)\,d\xi\right)=\frac{F(s)}{s}. \]
+<p class="word"><b>In words:</b> integrating from 0 to \(t\) in the \(t\)-world = dividing by \(s\) in the \(s\)-world (the opposite of differentiating, which multiplies by \(s\), section 7).</p></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Transforms of derivatives (slide 18)</h2>
+<div class="box thm"><span class="tag">Property 5 · Transform of derivatives (slide 18)</span>
+\[ \mathcal L(f')=sF(s)-f(0) \]
+\[ \mathcal L(f'')=s^2F(s)-sf(0)-f'(0) \]
+\[ \mathcal L(f''')=s^3F(s)-s^2f(0)-sf'(0)-f''(0) \]
+<p class="word"><b>In words:</b> each derivative becomes "multiply by \(s\)", minus a tidy list of starting values: powers of \(s\) count down while the derivatives at 0 count up.</p></div>
+<p><b>Proof</b> (parts with \(u=e^{-st}\), \(dv=f'(t)\,dt\)):</p>
+\[ \begin{aligned} \mathcal L(f')&=\int_0^\infty f'(t)e^{-st}dt\\ &=\Big[f(t)e^{-st}\Big]_0^\infty+s\int_0^\infty f(t)e^{-st}dt\\ &=(0-f(0))+sF(s). \end{aligned} \]
+<p>(At infinity \(f(t)e^{-st}\to0\) whenever the transform exists, section 9.) Apply the rule to \(f'\) instead of \(f\):</p>
+\[ \begin{aligned} \mathcal L(f'')&=s\,\mathcal L(f')-f'(0)\\ &=s\big(sF-f(0)\big)-f'(0)\\ &=s^2F-sf(0)-f'(0). \end{aligned} \]
+<p>Once more gives the third derivative. In general, \(\mathcal L(f^{(n)})=s^nF-s^{n-1}f(0)-s^{n-2}f'(0)-\cdots-f^{(n-1)}(0)\).</p>
+<p><b>This is why the method works</b> (slide 5): derivatives disappear and become powers of \(s\), and the initial values \(y(0)\), \(y'(0)\) enter by themselves. There are no arbitrary constants to find at the end.</p>
+<div class="box eg"><span class="tag">Example · checks</span>
+<p>(a) \(f=e^{at}\): \(f'=ae^{at}\) has transform \(\frac a{s-a}\); and \(sF-f(0)=\frac s{s-a}-1=\frac{a}{s-a}\). ✓</p>
+<p>(b) Getting cosine from sine: \(f=\sin at\), \(f'=a\cos at\), \(f(0)=0\). So \(a\,\mathcal L(\cos at)=s\cdot\frac{a}{s^2+a^2}-0\), giving \(\mathcal L(\cos at)=\frac{s}{s^2+a^2}\). ✓</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Multiplying by \(t^n\) and dividing by \(t\) (slide 19)</h2>
+<div class="box thm"><span class="tag">Property 6 · "Differentiation" (slide 19)</span>
+\[ \mathcal L\big(t^nf(t)\big)=(-1)^n\frac{d^n}{ds^n}F(s) \]
+<p class="word"><b>In words:</b> multiplying by \(t^n\) in the \(t\)-world = differentiating the transform \(n\) times with respect to \(s\), with a minus sign for each derivative.</p>
+<p>Reason: differentiate \(F(s)=\int_0^\infty f(t)e^{-st}dt\) with respect to \(s\) inside the integral (<span class="pill">Beyond the handouts</span>: this is allowed for the functions in this course). \(\frac{d}{ds}e^{-st}=-te^{-st}\), so \(F'(s)=\int_0^\infty(-t)f(t)e^{-st}dt=-\mathcal L(tf)\). Repeat \(n\) times.</p></div>
+<div class="box eg"><span class="tag">Examples</span>
+<p>(a) \(\mathcal L(te^{2t})=-\dfrac{d}{ds}\dfrac{1}{s-2}=\dfrac1{(s-2)^2}\) (same as the first shift gives).</p>
+<p>(b) Using the quotient rule (Lecture 6):</p>
+\[ \mathcal L(t\sin at)=-\frac{d}{ds}\frac{a}{s^2+a^2}=\frac{2as}{(s^2+a^2)^2}. \]
+<p>(c) With \(n=2\): \(\mathcal L(t^2e^{3t})=\dfrac{d^2}{ds^2}\dfrac1{s-3}=\dfrac{2}{(s-3)^3}\).</p></div>
+<div class="box thm"><span class="tag">Property 7 · "Integration" (slide 19)</span>
+\[ \mathcal L\!\left(\frac{f(t)}{t}\right)=\int_s^\infty F(s')\,ds' \]
+<p class="word"><b>In words:</b> dividing by \(t\) in the \(t\)-world = integrating the transform from \(s\) up to infinity.</p>
+<p>\(s'\) is a dummy variable (any letter other than \(s\) would do). This needs \(f(t)/t\) to stay finite as \(t\to0^+\) (so \(f(0)=0\)). It is the reverse of Property 6 with \(n=1\): if \(g=f/t\) then \(f=tg\), so \(F=-G'\), and integrating from \(s\) to \(\infty\) (where \(G\to0\)) gives \(G(s)=\int_s^\infty F\).</p></div>
+<div class="box eg"><span class="tag">Example</span>
+<p>\(\mathcal L\!\left(\dfrac{\sin t}{t}\right)\): here \(F(s')=\frac{1}{s'^2+1}\) and \(\frac{\sin t}{t}\to1\) as \(t\to0\) (Lecture 2). Using \(\int\frac{du}{u^2+1}=\tan^{-1}u\) (Lecture 7):</p>
+\[ \begin{aligned} \mathcal L\!\left(\frac{\sin t}{t}\right)&=\int_s^\infty\frac{ds'}{s'^2+1}\\ &=\lim_{T\to\infty}\tan^{-1}T-\tan^{-1}s\\ &=\frac\pi2-\tan^{-1}s. \end{aligned} \]<p>For \(s\gt0\) this also equals \(\tan^{-1}\frac1s\).</p></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>When does the transform exist? (slides 20 and 21)</h2>
+<div class="box thm"><span class="tag">Property 8 · Existence (slide 20)</span>
+<p>The Laplace transform of \(f\) generally exists if \(f\) does not grow faster than exponentially for large \(t\). The question is: can the decaying factor \(e^{-st}\) "damp out" the growth of \(f\)?</p>
+<p>Precisely <span class="pill">Beyond the handouts</span>: if \(|f(t)|\le Me^{ct}\) for all large \(t\) (constants \(M\), \(c\); "\(f\) is of <b>exponential order</b> \(c\)") and \(f\) has no infinite jumps, then \(F(s)\) exists for every \(s\gt c\).</p>
+<p class="word"><b>In words:</b> if \(f\) grows no faster than some exponential \(e^{ct}\), any kernel \(e^{-st}\) that decays faster (\(s\gt c\)) wins, and the area is finite.</p></div>
+<div class="box eg"><span class="tag">Examples (slide 21)</span>
+<p>(a) \(f=e^{t^2}\): grows too fast. \(e^{t^2}e^{-st}=e^{t(t-s)}\), and once \(t\gt s\) the exponent is positive and growing, so no \(s\) can make \(e^{t^2-st}\) bounded for large positive \(t\). \(\mathcal L(e^{t^2})\) does not exist.</p>
+<p>(b) \(f=e^{2t}\): \(e^{2t-st}=e^{-(s-2)t}\) is a dying exponential for large \(t\) if \(s\gt2\). Hence \(\mathcal L(e^{2t})=\frac1{s-2}\) exists for \(s\gt2\).</p>
+<p>Polynomials, \(\sin\), \(\cos\), \(e^{at}\) and their products are all of exponential order, so every function in this course has a transform. Try the options \(e^t\) and \(e^{t^2}\) in the area figure of section 2.</p></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Partial fractions for inverting transforms (slides 22 to 30)</h2>
+<p>When inverting, you frequently meet <b>rational functions</b> of \(s\): one polynomial divided by another, \(\frac{P(s)}{Q(s)}\). It is convenient to break them into smaller units, called <b>partial fractions</b>, each of which is in the table (slide 22). This is the technique of Lecture 14, now in the letter \(s\). We assume the fraction is <b>proper</b> (degree of \(P\) less than degree of \(Q\)), which is always the case for the transforms in this course.</p>
+<p>Objective (slide 23): decompose \(\dfrac{s}{(s-a)(s-b)}\) into \(\dfrac{A}{s-a}+\dfrac{B}{s-b}\). For example:</p>
+\[ \frac{1}{(x-1)(x-2)}=\frac{1}{x-2}-\frac{1}{x-1}. \]
+<p>Check: \(\frac{(x-1)-(x-2)}{(x-1)(x-2)}=\frac{1}{(x-1)(x-2)}\). ✓ Inverse in \(s\): \(\mathcal L^{-1}\!\left(\frac1{(s-1)(s-2)}\right)=e^{2t}-e^{t}\).</p>
+
+<h3>(1) Unrepeated (distinct linear) factors (slide 24)</h3>
+\[ \frac{s}{(s-a)(s-b)}=\frac{A}{s-a}+\frac{B}{s-b} \]
+<p>Multiply both sides by \((s-a)(s-b)\): we need</p>
+\[ s=A(s-b)+B(s-a). \]
+<p>Set \(s=a\): \(a=A(a-b)\), so \(A=\frac{a}{a-b}\). Set \(s=b\): \(b=B(b-a)\), so \(B=\frac{b}{b-a}\). Hence (\(a\ne b\))</p>
+\[ \frac{s}{(s-a)(s-b)}=\frac1{a-b}\left[\frac{a}{s-a}-\frac{b}{s-b}\right] \]
+\[ \mathcal L^{-1}\!\left(\frac{s}{(s-a)(s-b)}\right)=\frac{ae^{at}-be^{bt}}{a-b}. \]
+<p class="word"><b>In words:</b> each distinct factor \(s-a\) produces one exponential \(e^{at}\) in the answer.</p>
+<div class="box eg"><span class="tag">Example</span><p>With \(a=2\), \(b=5\): \(\dfrac{s}{(s-2)(s-5)}=-\dfrac{2/3}{s-2}+\dfrac{5/3}{s-5}\), so the inverse is \(\dfrac{5e^{5t}-2e^{2t}}{3}\).</p></div>
+
+<h3>(2) Repeated factors (slide 25)</h3>
+<p>A squared factor \((s-a)^2\) needs <b>two</b> terms, one for each power:</p>
+\[ \frac{1}{(s-a)^2(s-b)}=\frac{A_1}{s-a}+\frac{A_2}{(s-a)^2}+\frac{B}{s-b}. \]
+<p>Multiply out: \(1=A_1(s-a)(s-b)+A_2(s-b)+B(s-a)^2\).</p>
+<ul class="list">
+<li>\(s=a\): \(1=A_2(a-b)\), so \(A_2=\frac1{a-b}\).</li>
+<li>\(s=b\): \(1=B(b-a)^2\), so \(B=\frac1{(a-b)^2}\).</li>
+<li>Compare \(s^2\) coefficients: \(0=A_1+B\), so \(A_1=-\frac1{(a-b)^2}\).</li>
+</ul>
+<p>Invert using \(\mathcal L^{-1}\!\left(\frac{1}{(s-a)^2}\right)=te^{at}\) (section 4):</p>
+\[ \mathcal L^{-1}\!\left(\frac{1}{(s-a)^2(s-b)}\right)=\frac{-e^{at}+e^{bt}}{(a-b)^2}+\frac{te^{at}}{a-b}. \]
+<p class="word"><b>In words:</b> a repeated factor produces \(e^{at}\) <i>and</i> \(te^{at}\): the extra \(t\) is the signature of a repeated root (compare the repeated root of the characteristic equation in Part O3).</p>
+<div class="box eg"><span class="tag">Example</span><p>\(a=2\), \(b=5\): \(\dfrac{1}{(s-2)^2(s-5)}=-\dfrac{1/9}{s-2}-\dfrac{1/3}{(s-2)^2}+\dfrac{1/9}{s-5}\), inverse \(\dfrac{e^{5t}-e^{2t}-3te^{2t}}{9}\).</p></div>
+
+<h3>(3) Unrepeated complex factors (slide 26)</h3>
+<p>A quadratic factor \((s-a)^2+b^2\) (with \(b\ne0\)) has no real roots: its roots are the complex numbers \(a\pm ib\). It gets a <b>linear</b> numerator:</p>
+\[ \frac{1}{\big((s-a)^2+b^2\big)(s-c)}=\frac{As+B}{(s-a)^2+b^2}+\frac{\beta}{s-c}. \]
+<p>To invert the quadratic piece, rewrite the top in terms of \(s-a\): \(As+B=A(s-a)+(Aa+B)\). Then by the first shift on \(\cos bt\) and \(\sin bt\):</p>
+\[ \begin{aligned} &\mathcal L^{-1}\!\left(\frac{A(s-a)+(Aa+B)}{(s-a)^2+b^2}\right)\\ &=e^{at}\left[A\cos bt+\frac{Aa+B}{b}\sin bt\right]. \end{aligned} \]
+<p class="word"><b>In words:</b> a complex factor produces a decaying (or growing) oscillation: \(e^{at}\) times cos and sin of \(bt\).</p>
+<div class="box eg"><span class="tag">Example · invert \(\dfrac{1}{(s^2+2s+5)(s-1)}\)</span>
+<p>Complete the square: \(s^2+2s+5=(s+1)^2+4\), so \(a=-1\), \(b=2\), \(c=1\).</p>
+<p>Write \(1=(As+B)(s-1)+\beta(s^2+2s+5)\). At \(s=1\): \(1=8\beta\), \(\beta=\frac18\). Compare \(s^2\): \(0=A+\beta\), \(A=-\frac18\). Compare constants: \(1=-B+5\beta\), \(B=-\frac38\).</p>
+\[ \begin{aligned} &\frac{1}{(s^2+2s+5)(s-1)}\\ &=\frac{1/8}{s-1}-\frac18\cdot\frac{(s+1)+2}{(s+1)^2+4}, \end{aligned} \]
+\[ \mathcal L^{-1}=\frac{e^{t}}8-\frac{e^{-t}}8\big(\cos2t+\sin2t\big). \]</div>
+
+<h3>(4) General theorem for unrepeated factors (slides 27 to 30)</h3>
+<div class="box thm"><span class="tag">Theorem (slide 27)</span>
+<p>If \(Q(x)=(x-a_1)(x-a_2)\cdots(x-a_n)\) with all \(a_r\) different, and \(P\) has degree less than \(n\), then</p>
+\[ \frac{P(x)}{Q(x)}=\sum_{r=1}^{n}\frac{P(a_r)}{Q'(a_r)}\cdot\frac{1}{x-a_r}. \]
+<p class="word"><b>In words:</b> the coefficient over \(x-a_r\) = top evaluated at the root ÷ derivative of the bottom evaluated at the root.</p>
+<p>So \(\mathcal L^{-1}\!\left(\frac{P(s)}{Q(s)}\right)=\displaystyle\sum_{r=1}^n\frac{P(a_r)}{Q'(a_r)}e^{a_rt}\).</p></div>
+<p><b>Proof (slide 28).</b> Write \(\frac{P(x)}{Q(x)}=\frac{A}{x-a_1}+\text{(the rest)}\). Cross-multiply by \(Q(x)\): \(P(x)=A\,R(x)+(x-a_1)\times(\text{stuff})\), where \(R(x)=\frac{Q(x)}{x-a_1}=(x-a_2)\cdots(x-a_n)\). Set \(x=a_1\): \(P(a_1)=A\,R(a_1)\). Finally \(R(a_1)=Q'(a_1)\): by the product rule, \(Q=(x-a_1)R\) gives \(Q'=R+(x-a_1)R'\), and at \(x=a_1\) the second term vanishes.</p>
+<p><b>Trick (slide 29).</b> If \(Q(x)=(x-1)(x-2)(x-3)\), how do we calculate \(Q'(2)\)? Answer: \((2-1)(2-3)=-1\). In other words, "cover up" the factor \(x-2\) in \(Q(x)\) and substitute \(x=2\) in the remaining factors. (Check by expanding: \(Q=x^3-6x^2+11x-6\), \(Q'(2)=12-24+11=-1\). ✓)</p>
+<div class="box thm"><span class="tag">The cover-up rule (slide 30), for UNREPEATED factors only</span>
+\[ \begin{aligned} \frac{x}{(x-a)(x-b)}&=\frac{a}{(a-b)(x-a)}\\ &\quad+\frac{b}{(b-a)(x-b)} \end{aligned} \]
+<p class="word"><b>In words:</b> to get the number over \(x-a\), cover up \(x-a\) in the original fraction and put \(x=a\) in everything left.</p></div>
+<div class="box eg"><span class="tag">Example · invert \(\dfrac{s+1}{(s-1)(s-2)(s-3)}\)</span>
+<p>Cover up each factor in turn:</p>
+<ul class="list">
+<li>over \(s-1\): \(\frac{1+1}{(1-2)(1-3)}=\frac{2}{2}=1\);</li>
+<li>over \(s-2\): \(\frac{2+1}{(2-1)(2-3)}=\frac{3}{-1}=-3\);</li>
+<li>over \(s-3\): \(\frac{3+1}{(3-1)(3-2)}=\frac{4}{2}=2\).</li>
+</ul>
+\[ \begin{aligned} &\mathcal L^{-1}\!\left(\frac{s+1}{(s-1)(s-2)(s-3)}\right)\\ &=e^{t}-3e^{2t}+2e^{3t}. \end{aligned} \]</div>
+<div class="box warn"><span class="tag">Trap</span><p>Cover-up gives every coefficient only when all factors are distinct. With a repeated factor \((s-a)^2\) it gives only the coefficient of the highest power, \(\frac{A_2}{(s-a)^2}\); \(A_1\) must be found another way (compare coefficients, as in (2)). Complex quadratic factors need comparing coefficients too.</p></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Inverting by convolution; integral equations (slides 31 and 32)</h2>
+<p>Slide 31 restates the convolution theorem with the dummy variable \(\tau\):</p>
+\[ \mathcal L(f*g)=\mathcal L(f)\,\mathcal L(g), \]
+\[ f*g=g*f=\int_0^t f(\tau)\,g(t-\tau)\,d\tau. \]
+<p class="word"><b>In words:</b> a product of two transforms inverts to the convolution of the two separate inverses.</p>
+<p>In practice (slide 32): to invert a complicated expression in \(s\), identify its "components" (factors whose inverses you know) and invert by convolution.</p>
+<div class="box eg"><span class="tag">Example (slide 32) · invert \(\dfrac{1}{(s^2+a^2)^2}\)</span>
+<p>Components: \(\frac1{s^2+a^2}\cdot\frac1{s^2+a^2}\), and \(\mathcal L^{-1}\!\left(\frac{1}{s^2+a^2}\right)=\frac{\sin at}{a}\). So the slide's answer is</p>
+\[ \begin{aligned} &\mathcal L^{-1}\!\left(\frac{1}{(s^2+a^2)^2}\right)=\frac{\sin at}{a}*\frac{\sin at}{a}\\ &=\frac1{a^2}\int_0^t\sin(a\tau)\sin\big(a(t-\tau)\big)\,d\tau. \end{aligned} \]
+<p>The slide stops there; here is the integral worked out. Use \(\sin A\sin B=\frac12[\cos(A-B)-\cos(A+B)]\) with \(A-B=2a\tau-at\), \(A+B=at\):</p>
+\[ \begin{aligned} &\int_0^t\sin(a\tau)\sin(at-a\tau)\,d\tau\\ &=\frac12\int_0^t\big[\cos(2a\tau-at)-\cos at\big]d\tau\\ &=\frac12\left[\frac{\sin(2a\tau-at)}{2a}\right]_0^t-\frac t2\cos at\\ &=\frac12\cdot\frac{\sin at+\sin at}{2a}-\frac t2\cos at\\ &=\frac{\sin at}{2a}-\frac{t\cos at}{2}. \end{aligned} \]
+\[ \mathcal L^{-1}\!\left(\frac{1}{(s^2+a^2)^2}\right)=\frac{\sin at-at\cos at}{2a^3}. \]
+<p>(Product-to-sum formulas: Lecture 14.) The convolution figure in section 6 shows \(\sin t*\sin t=\frac{\sin t-t\cos t}{2}\), the case \(a=1\).</p></div>
+<div class="box beyond"><span class="tag">Beyond the handouts · integral equations (an exam question type)</span>
+<p>An <b>integral equation</b> has the unknown \(y\) inside an integral. If the integral is \(\int_0^t y(\tau)\,d\tau\) or a convolution \(\int_0^t k(t-\tau)y(\tau)\,d\tau\), transform both sides: the integral becomes \(\frac{Y}{s}\) or \(K(s)Y(s)\) (section 6), and you get algebra for \(Y\).</p>
+<p><b>Example 1.</b> \(y(t)=1+\int_0^ty(\tau)\,d\tau\). Transform: \(Y=\frac1s+\frac Ys\), so \(Y\left(1-\frac1s\right)=\frac1s\), \(Y=\frac{1}{s-1}\), \(y=e^t\). (Check: \(1+\int_0^te^\tau d\tau=1+e^t-1=e^t\). ✓)</p>
+<p><b>Example 2.</b> \(y(t)=t+\int_0^t\sin(t-\tau)\,y(\tau)\,d\tau\). The integral is \(\sin t*y\), so</p>
+\[ \begin{aligned} Y&=\frac1{s^2}+\frac{Y}{s^2+1}\\ Y\cdot\frac{s^2}{s^2+1}&=\frac1{s^2}\\ Y&=\frac{s^2+1}{s^4}=\frac1{s^2}+\frac1{s^4}, \end{aligned} \]
+<p>so \(y=t+\dfrac{t^3}{6}\).</p></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Applying the Laplace transform to solve an ODE (slides 33 and 34)</h2>
+<div class="box eg"><span class="tag">Example (slides 33, 34) · \(\dfrac{dy}{dt}-y=1,\ y(0)=0\)</span>
+<p><b>(1) Apply the Laplace transform to both sides.</b> With \(Y=\mathcal L(y)\), \(\mathcal L(y')=sY-y(0)=sY\) and \(\mathcal L(1)=\frac1s\):</p>
+\[ sY(s)-Y(s)=\frac1s. \]
+<p><b>(2) The transformed ODE is now an algebraic equation</b> (no derivatives).</p>
+<p><b>(3) Solve and simplify by partial fractions.</b> \((s-1)Y=\frac1s\), so</p>
+\[ Y=\frac{1}{s(s-1)}=\frac{1}{s-1}-\frac1s. \]
+<p><b>(4) Apply the inverse transform</b> (table: \(\frac1{s-1}\to e^t\), \(\frac1s\to1\)):</p>
+\[ y(t)=e^t-1. \]
+<p><b>(5) Verify by a method known earlier</b>: integrating factor (Part O1). The integrating factor of \(y'-y=1\) is \(e^{-t}\):</p>
+\[ \begin{aligned} (ye^{-t})'&=e^{-t}\\ ye^{-t}&=-e^{-t}+C. \end{aligned} \]
+<p>\(y(0)=0\) gives \(C=1\), so \(y=e^t-1\). ✓ Direct check: \(y'-y=e^t-(e^t-1)=1\) and \(y(0)=0\).</p></div>
+<p class="word"><b>In words (the 5-step recipe):</b> transform → algebra → solve for \(Y\) and split into partial fractions → read each piece backwards from the table → check.</p>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Two IVPs solved by three methods (slides 35 to 38)</h2>
+<p>Slide 38: these equations are solved by three <b>independent</b> methods: (a) complementary function and particular solution (Parts O3, O4), (b) variation of parameters (Part O4), (c) Laplace transforms. Getting the same answer three ways is a strong check. The slides give only the exact solutions; all working is written out below.</p>
+
+<div class="box eg"><span class="tag">Example A ("straightforward", slide 35) · \(y''-y=t,\ y(0)=1,\ y'(0)=1\)</span>
+<p>Slide's exact solution: \(y=\frac32e^t-\frac12e^{-t}-t\).</p>
+<p><b>(c) Laplace.</b> \(\mathcal L(y'')=s^2Y-s\,y(0)-y'(0)=s^2Y-s-1\) and \(\mathcal L(t)=\frac1{s^2}\):</p>
+\[ \begin{aligned} s^2Y-s-1-Y&=\frac1{s^2}\\ (s^2-1)Y&=(s+1)+\frac1{s^2}\\ Y&=\frac{1}{s-1}+\frac{1}{s^2(s^2-1)}. \end{aligned} \]
+<p>Split: \(\frac{1}{s^2(s^2-1)}=\frac1{s^2-1}-\frac1{s^2}\) (check: \(\frac{s^2-(s^2-1)}{s^2(s^2-1)}\)), and \(\frac{1}{s^2-1}=\frac12\left(\frac1{s-1}-\frac1{s+1}\right)\). So</p>
+\[ Y=\frac{3/2}{s-1}-\frac{1/2}{s+1}-\frac1{s^2}, \]
+\[ y=\frac32e^t-\frac12e^{-t}-t. \]
+<p><b>(a) CF + PS.</b> Characteristic equation \(m^2-1=0\), \(m=\pm1\): \(y_c=C_1e^t+C_2e^{-t}\). Trial \(y_p=At+B\): \(0-(At+B)=t\), so \(A=-1\), \(B=0\). Then \(y=C_1e^t+C_2e^{-t}-t\); \(y(0)=C_1+C_2=1\), \(y'(0)=C_1-C_2-1=1\). So \(C_1=\frac32\), \(C_2=-\frac12\). ✓</p>
+<p><b>(b) Variation of parameters.</b> \(y_1=e^t\), \(y_2=e^{-t}\), Wronskian \(W=y_1y_2'-y_1'y_2=-2\), right side \(g=t\):</p>
+\[ \begin{aligned} u_1'&=-\frac{y_2g}{W}=\frac{te^{-t}}2, & u_1&=-\frac{(t+1)e^{-t}}{2},\\ u_2'&=\frac{y_1g}{W}=-\frac{te^{t}}2, & u_2&=-\frac{(t-1)e^{t}}{2}. \end{aligned} \]
+<p>\(y_p=u_1y_1+u_2y_2=-\frac{t+1}2-\frac{t-1}2=-t\), the same particular solution; the constants follow as in (a). ✓</p></div>
+
+<div class="box eg"><span class="tag">Example B ("more involved", slides 36, 37) · \(y''+2y'+y=e^{-t},\ y(0)=-1,\ y'(0)=1\)</span>
+<p>Slide's exact solution: \(y=\left(\frac{t^2}{2}-1\right)e^{-t}\).</p>
+<p><b>Resonance (slide 36).</b> The right side \(e^{-t}\) itself solves the homogeneous equation \(y''+2y'+y=0\) (characteristic equation \(m^2+2m+1=(m+1)^2=0\), double root \(m=-1\), so \(e^{-t}\) and \(te^{-t}\) are both homogeneous solutions). Forcing a system at its own natural response is called <b>resonance</b>; the response picks up extra powers of \(t\).</p>
+<p><b>(c) Laplace.</b> \(\mathcal L(y'')=s^2Y+s-1\), \(\mathcal L(y')=sY+1\), \(\mathcal L(e^{-t})=\frac1{s+1}\):</p>
+\[ \begin{aligned} &(s^2Y+s-1)+2(sY+1)+Y=\frac{1}{s+1}\\ &(s+1)^2Y+(s+1)=\frac{1}{s+1}\\ &Y=\frac{1}{(s+1)^3}-\frac{1}{s+1}. \end{aligned} \]
+<p>Using \(\mathcal L(t^2e^{-t})=\frac{2}{(s+1)^3}\) (first shift):</p>
+\[ y=\frac{t^2}{2}e^{-t}-e^{-t}=\left(\frac{t^2}2-1\right)e^{-t}. \]
+<p>Notice: Laplace needs no special "resonance" guess. The resonance simply shows up as the repeated factor \((s+1)^3\).</p>
+<p><b>(a) CF + PS.</b> \(y_c=(C_1+C_2t)e^{-t}\). Because \(e^{-t}\) and \(te^{-t}\) are already in \(y_c\), the trial is \(y_p=At^2e^{-t}\) (Part O4). Then \(y_p'=A(2t-t^2)e^{-t}\), \(y_p''=A(2-4t+t^2)e^{-t}\), and \(y_p''+2y_p'+y_p=2Ae^{-t}\), so \(A=\frac12\). With \(y=(C_1+C_2t)e^{-t}+\frac{t^2}2e^{-t}\): \(y(0)=C_1=-1\), \(y'(0)=-C_1+C_2=1\), so \(C_2=0\). ✓</p>
+<p><b>(b) Variation of parameters.</b> \(y_1=e^{-t}\), \(y_2=te^{-t}\), \(W=e^{-2t}\), \(g=e^{-t}\): \(u_1'=-\frac{y_2g}{W}=-t\), \(u_1=-\frac{t^2}2\); \(u_2'=\frac{y_1g}{W}=1\), \(u_2=t\). So \(y_p=-\frac{t^2}{2}e^{-t}+t^2e^{-t}=\frac{t^2}2e^{-t}\). ✓</p></div>
+
+<div class="figure"><p class="ttl">IVP solutions from Laplace, compared with the forcing</p>
+<canvas class="plot" id="fivp" style="aspect-ratio:16/10" aria-label="solution y(t) and forcing term for the selected initial value problem"></canvas>
+<div class="ctrl"><label for="fivp-s">IVP <select id="fivp-s"><option value="a">y′ − y = 1, y(0)=0 (slide 33)</option><option value="b">y″ − y = t (slide 35)</option><option value="c">y″ + 2y′ + y = e^(−t) (slide 36)</option><option value="d">y″ + y = H(t−1), at rest (Group work 3)</option></select></label></div>
+<div class="legend"><span style="--k:var(--accent)">solution y(t)</span><span style="--k:var(--c4)">forcing (right-hand side)</span></div>
+<div class="readout" id="fivp-out"></div>
+<p class="cap">Slide 35: the solution grows like \(\frac32e^t\) while the forcing \(t\) grows slowly. Slide 36 (resonance): the forcing \(e^{-t}\) decays, but the response \(\left(\frac{t^2}2-1\right)e^{-t}\) first climbs above 0 (to about 0.18 at \(t=1+\sqrt3\)) before decaying. Last option: nothing happens until the forcing switches on at \(t=1\).</p></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>The transform table (as on the exam formula sheet)</h2>
+<p>The exam prints a table like this; the slide numbers say where each row is explained. The word column is how to read the row.</p>
+<div class="scroll"><table>
+<thead><tr><th>\(f(t)\)</th><th>\(F(s)=\mathcal L(f)\)</th><th>In words</th></tr></thead>
+<tbody>
+<tr><td>\(1\)</td><td>\(\dfrac1s\)</td><td>constant → one over \(s\) (slide 11)</td></tr>
+<tr><td>\(t^n\)</td><td>\(\dfrac{n!}{s^{n+1}}\)</td><td>power of \(t\) → factorial over one higher power of \(s\) (slide 11)</td></tr>
+<tr><td>\(e^{at}\)</td><td>\(\dfrac1{s-a}\)</td><td>exponential → one over (\(s\) minus rate) (slide 13)</td></tr>
+<tr><td>\(\sin at\)</td><td>\(\dfrac{a}{s^2+a^2}\)</td><td>sine → frequency on top (slide 12)</td></tr>
+<tr><td>\(\cos at\)</td><td>\(\dfrac{s}{s^2+a^2}\)</td><td>cosine → \(s\) on top (slide 12)</td></tr>
+<tr><td>\(af+bg\)</td><td>\(aF+bG\)</td><td>sums and constants pass straight through (slide 14)</td></tr>
+<tr><td>\(e^{at}f(t)\)</td><td>\(F(s-a)\)</td><td>first shift: times \(e^{at}\) → replace \(s\) by \(s-a\) (slide 14)</td></tr>
+<tr><td>\(t^nf(t)\)</td><td>\((-1)^n\dfrac{d^nF}{ds^n}\)</td><td>times \(t^n\) → differentiate \(n\) times in \(s\), sign \((-1)^n\) (slide 19)</td></tr>
+<tr><td>\(\dfrac{f(t)}{t}\)</td><td>\(\displaystyle\int_s^\infty F(s')\,ds'\)</td><td>divide by \(t\) → integrate \(F\) from \(s\) to \(\infty\) (slide 19)</td></tr>
+<tr><td>\(H(t-a)\)</td><td>\(\dfrac{e^{-as}}{s}\)</td><td>switch on at time \(a\) (slide 15)</td></tr>
+<tr><td>\(f(t-a)H(t-a)\)</td><td>\(e^{-as}F(s)\)</td><td>second shift: delay by \(a\) → times \(e^{-as}\) (slide 15)</td></tr>
+<tr><td>\((f*g)(t)\)</td><td>\(F(s)G(s)\)</td><td>convolution → product (slides 16, 31)</td></tr>
+<tr><td>\(\displaystyle\int_0^t f(\tau)\,d\tau\)</td><td>\(\dfrac{F(s)}{s}\)</td><td>integrate from 0 → divide by \(s\) (section 6)</td></tr>
+<tr><td>\(f'(t)\)</td><td>\(sF-f(0)\)</td><td>derivative → times \(s\), minus start value (slide 18)</td></tr>
+<tr><td>\(f''(t)\)</td><td>\(s^2F-sf(0)-f'(0)\)</td><td>second derivative (slide 18)</td></tr>
+<tr><td>\(f'''(t)\)</td><td>\(s^3F-s^2f(0)-sf'(0)-f''(0)\)</td><td>third derivative (slide 18)</td></tr>
+</tbody></table></div>
+<p>Useful combinations (derived above): \(\mathcal L(te^{at})=\frac{1}{(s-a)^2}\), \(\mathcal L(t^ne^{at})=\frac{n!}{(s-a)^{n+1}}\), \(\mathcal L(e^{at}\sin bt)=\frac{b}{(s-a)^2+b^2}\), \(\mathcal L(e^{at}\cos bt)=\frac{s-a}{(s-a)^2+b^2}\).</p>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Summary <span class="pill">Written for these notes</span></h2>
+<p>The handout has no summary slide; this one collects its main points.</p>
+<ul class="list">
+<li>\(\mathcal L(f)=F(s)=\int_0^\infty f(t)e^{-st}dt\): an integral transform with kernel \(e^{-st}\). It exists when \(f\) grows no faster than an exponential (\(s\) large enough); \(\mathcal L(e^{t^2})\) does not exist.</li>
+<li>Basic transforms: \(1,\ t^n,\ e^{at},\ \sin at,\ \cos at\) (section 14 table).</li>
+<li>Properties: linearity; first shift \(e^{at}f\to F(s-a)\); second shift \(f(t-a)H(t-a)\to e^{-as}F\); convolution \(f*g\to FG\); derivatives \(f'\to sF-f(0)\), \(f''\to s^2F-sf(0)-f'(0)\); \(t^nf\to(-1)^nF^{(n)}\); \(f/t\to\int_s^\infty F\).</li>
+<li>Inverting: break into partial fractions (distinct factors by cover-up / \(P(a_r)/Q'(a_r)\); repeated factors need every power and give \(te^{at}\); complex factors give \(e^{at}\cos bt,\ e^{at}\sin bt\)); a factor \(e^{-as}\) means delay and switch on at \(a\); a product can be inverted by convolution.</li>
+<li>Solving an IVP: transform both sides, solve the algebra for \(Y\), partial fractions, invert, check. The initial values enter automatically, and resonance needs no special guess.</li>
+</ul>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span>Common mistakes <span class="pill">Written for these notes</span></h2>
+<p>The handout has no common-mistakes slide. These are the errors that cost marks most often in this topic.</p>
+<div class="box"><div class="mistake">
+<span class="x">✗</span><span><b>Wrong sign in the first shift.</b> \(\mathcal L(e^{-2t}\cos3t)=\frac{s+2}{(s+2)^2+9}\), not \(\frac{s-2}{\dots}\). <span class="ok">✓</span> \(e^{at}\) gives \(s-a\); test with \(a=-2\).</span>
+<span class="x">✗</span><span><b>Forgetting the initial values.</b> \(\mathcal L(y')=sY-y(0)\), not \(sY\). Dropping \(y(0)\) or \(y'(0)\) silently changes the problem.</span>
+<span class="x">✗</span><span><b>Delay without the switch, or without shifting \(t\).</b> \(\mathcal L^{-1}\!\left(\frac{e^{-2s}}{s-3}\right)\) is \(e^{3(t-2)}H(t-2)\), not \(e^{3t}H(t-2)\) and not \(e^{3(t-2)}\).</span>
+<span class="x">✗</span><span><b>Using \(\mathcal L(fg)=FG\).</b> Only convolution turns into a product. \(\mathcal L(t\sin t)\) needs the "multiply by \(t\)" rule, not \(\frac1{s^2}\cdot\frac1{s^2+1}\).</span>
+<span class="x">✗</span><span><b>Off-by-one in \(t^n\).</b> \(\mathcal L(t^n)=\frac{n!}{s^{n+1}}\), so \(\mathcal L^{-1}\!\left(\frac1{s^3}\right)=\frac{t^2}{2}\), not \(\frac{t^3}{6}\).</span>
+<span class="x">✗</span><span><b>Mixing up sin and cos.</b> \(\frac{s}{s^2+a^2}\to\cos at\); \(\frac{1}{s^2+a^2}\to\frac{\sin at}{a}\) (do not forget the \(\frac1a\)).</span>
+<span class="x">✗</span><span><b>Cover-up on a repeated factor.</b> It gives only the top-power coefficient; the \(\frac{A_1}{s-a}\) term is lost.</span>
+<span class="x">✗</span><span><b>Not completing the square.</b> \(\frac{s}{s^2+4s+13}\) must become \(\frac{(s+2)-2}{(s+2)^2+9}\) before reading the table.</span>
+<span class="x">✗</span><span><b>Applying the second shift to a function not written in \(t-a\).</b> \(t^2H(t-1)\) must first be rewritten as \(\big[(t-1)^2+2(t-1)+1\big]H(t-1)\).</span>
+</div></div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17"><h2><span class="n">17</span>Find the mistake <span class="pill">Written for these notes</span></h2>
+<p>The handout has no find-the-mistake slide; this exercise was written for these notes. A student answered:</p>
+<div class="q"><p class="qh">Solve \(y'+2y=H(t-3)\), \(y(0)=1\), by Laplace transform.</p></div>
+<p>The student's work:</p>
+<div class="handwork">
+\[ sY+2Y=\frac{e^{-3s}}{s} \]
+\[ Y=\frac{e^{-3s}}{s(s+2)}=e^{-3s}\cdot\frac12\left(\frac1s-\frac1{s+2}\right) \]
+\[ y=\frac12\left(1-e^{-2t}\right)H(t-3) \]
+</div>
+<details><summary>Hint 1</summary><div><p>Look at line 1: what is \(\mathcal L(y')\) exactly? Where does the condition \(y(0)=1\) appear?</p></div></details>
+<details><summary>Hint 2</summary><div><p>Look at line 3: when you delay by 3, what happens to <i>every</i> \(t\) in the inverse of \(\frac12\left(\frac1s-\frac1{s+2}\right)\)?</p></div></details>
+<details><summary>Answer</summary><div>
+<p><b>Mistake 1 (line 1): the initial value is missing.</b> \(\mathcal L(y')=sY-y(0)=sY-1\). The student's answer gives \(y(0)=0\), which contradicts \(y(0)=1\).</p>
+<p><b>Mistake 2 (line 3): the delay was applied to the switch but not to \(t\).</b> \(\frac12\left(\frac1s-\frac1{s+2}\right)\) inverts to \(\frac12(1-e^{-2t})\); multiplying by \(e^{-3s}\) replaces \(t\) by \(t-3\): \(\frac12\left(1-e^{-2(t-3)}\right)H(t-3)\).</p>
+<p><b>What is right:</b> \(\mathcal L(H(t-3))=\frac{e^{-3s}}s\), and the partial fractions \(\frac{1}{s(s+2)}=\frac12\left(\frac1s-\frac1{s+2}\right)\).</p>
+<p><b>Correct solution:</b></p>
+\[ \begin{aligned} sY-1+2Y&=\frac{e^{-3s}}{s}\\ Y&=\frac{1}{s+2}\\ &\quad+e^{-3s}\cdot\frac12\left(\frac1s-\frac1{s+2}\right) \end{aligned} \]
+\[ y=e^{-2t}+\frac12\left(1-e^{-2(t-3)}\right)H(t-3). \]
+<p>Check: for \(t\lt3\), \(y=e^{-2t}\) solves \(y'+2y=0\) with \(y(0)=1\); for \(t\gt3\), \(y'+2y=-2e^{-2t}+e^{-2(t-3)}+2e^{-2t}+1-e^{-2(t-3)}=1\). ✓</p>
+</div></details>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="s18"><h2><span class="n">18</span>Group work <span class="pill">Written for these notes</span></h2>
+<p>The handout has no group-work slide; these problems practise each skill in turn.</p>
+<div class="q"><p class="qh">1. Find (a) \(\mathcal L(t^2e^{-3t})\); (b) \(\mathcal L\big(e^{t}H(t-2)\big)\).</p>
+<details><summary>Hint (a)</summary><div><p>Start from \(\mathcal L(t^2)\) and use the first shift with \(a=-3\).</p></div></details>
+<details><summary>Hint (b)</summary><div><p>Write \(e^t\) in terms of \(t-2\): \(e^t=e^2\,e^{t-2}\). Then the second shift applies to \(f(u)=e^u\).</p></div></details>
+<details><summary>Answer</summary><div><p>(a) \(\dfrac{2}{(s+3)^3}\). (b) \(e^2\cdot e^{-2s}\cdot\dfrac{1}{s-1}=\dfrac{e^{-2(s-1)}}{s-1}\).</p></div></details></div>
+<div class="q"><p class="qh">2. Find (a) \(\mathcal L^{-1}\!\left(\dfrac{2s+3}{s^2+4s+13}\right)\); (b) \(\mathcal L^{-1}\!\left(\dfrac{e^{-\pi s}}{s^2+1}\right)\).</p>
+<details><summary>Hint (a)</summary><div><p>Complete the square: \(s^2+4s+13=(s+2)^2+9\). Write the top as \(2(s+2)-1\).</p></div></details>
+<details><summary>Hint (b)</summary><div><p>\(\frac1{s^2+1}\to\sin t\); then delay by \(\pi\). Simplify \(\sin(t-\pi)\).</p></div></details>
+<details><summary>Answer</summary><div><p>(a) \(e^{-2t}\left(2\cos3t-\dfrac13\sin3t\right)\).</p><p>(b) \(\sin(t-\pi)H(t-\pi)=-\sin t\,H(t-\pi)\).</p></div></details></div>
+<div class="q"><p class="qh">3. Solve \(y''+y=H(t-1)\), \(y(0)=0\), \(y'(0)=0\) (a system at rest, pushed with a constant force from \(t=1\)).</p>
+<details><summary>Hint</summary><div><p>Transform: \((s^2+1)Y=\frac{e^{-s}}{s}\). Split \(\frac{1}{s(s^2+1)}=\frac1s-\frac{s}{s^2+1}\), invert, then delay by 1.</p></div></details>
+<details><summary>Answer</summary><div><p>\(y=\big(1-\cos(t-1)\big)H(t-1)\): zero until \(t=1\), then oscillating between 0 and 2. (Shown as the last option of the IVP figure in section 13.)</p></div></details></div>
+<div class="q"><p class="qh">4. Compute \(e^{t}*e^{2t}\) (a) directly from the definition, (b) by the convolution theorem.</p>
+<details><summary>Hint</summary><div><p>(a) \(\int_0^te^{\tau}e^{2(t-\tau)}d\tau=e^{2t}\int_0^te^{-\tau}d\tau\). (b) \(\frac1{s-1}\cdot\frac1{s-2}\), then partial fractions.</p></div></details>
+<details><summary>Answer</summary><div><p>Both give \(e^{2t}-e^{t}\).</p></div></details></div>
+</section>
+
+<!-- ============ 19 ============ -->
+<section id="s19"><h2><span class="n">19</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<div class="q"><p class="qh">1. \(\mathcal L(e^{100t})\) exists but \(\mathcal L(e^{t^2})\) does not. Explain in one sentence each.</p>
+<details><summary>Answer</summary><div><p>\(e^{100t}e^{-st}=e^{-(s-100)t}\) dies out once \(s\gt100\), so the area is finite (\(F=\frac1{s-100}\)). \(e^{t^2}e^{-st}=e^{t(t-s)}\) eventually grows for every fixed \(s\) (once \(t\gt s\)), so the area is infinite for all \(s\).</p></div></details></div>
+<div class="q"><p class="qh">2. If \(\mathcal L(f)=F(s)\), what is \(\mathcal L(e^{-3t}f(t))\)? And \(\mathcal L(f(t-3)H(t-3))\)?</p>
+<details><summary>Answer</summary><div><p>\(F(s+3)\) (first shift with \(a=-3\)), and \(e^{-3s}F(s)\) (second shift). Exponential in \(t\) → shift in \(s\); shift in \(t\) → exponential in \(s\).</p></div></details></div>
+<div class="q"><p class="qh">3. Is \(\mathcal L(f\,g)=F\,G\)? Test with \(f=g=1\).</p>
+<details><summary>Answer</summary><div><p>No. \(\mathcal L(1\cdot1)=\frac1s\) but \(F\,G=\frac1{s^2}\), which is \(\mathcal L(t)=\mathcal L(1*1)\). The product of transforms belongs to the convolution.</p></div></details></div>
+<div class="q"><p class="qh">4. \(\mathcal L\big((t-1)^2\big)\) and \(\mathcal L\big((t-1)^2H(t-1)\big)\): are they the same? Find both.</p>
+<details><summary>Answer</summary><div><p>No. \((t-1)^2=t^2-2t+1\) gives \(\frac2{s^3}-\frac2{s^2}+\frac1s\). With the step function, the function is 0 before \(t=1\), and the transform is \(\frac{2e^{-s}}{s^3}\). They differ because the plain \((t-1)^2\) is not zero on \(0\lt t\lt1\).</p></div></details></div>
+<div class="q"><p class="qh">5. Why do you never need to "find \(C_1\) and \(C_2\)" at the end of a Laplace solution?</p>
+<details><summary>Answer</summary><div><p>The transform of each derivative already contains the initial values (\(sY-y(0)\), \(s^2Y-sy(0)-y'(0)\)), so the algebraic equation for \(Y\) has the conditions built in. Its solution is the one particular function that satisfies them.</p></div></details></div>
+<div class="q"><p class="qh">6. A solution has \(Y(s)=\dfrac{1}{(s+2)^2}\). What is \(y(t)\), and which feature of \(Y\) produced the factor \(t\)?</p>
+<details><summary>Answer</summary><div><p>\(y=te^{-2t}\). The repeated factor \((s+2)^2\): \(\frac1{s^2}\to t\), shifted by \(-2\). Repeated factors in \(Y\) correspond to repeated roots / resonance in the ODE.</p></div></details></div>
+</section>
+
+<!-- ============ EXAM ============ -->
+<section id="pastpaper"><h2><span class="n">20</span>Exam taster</h2>
+<p>A few real past-paper questions, about one for each main question type in this part, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
+<p style="font-size:.92rem;color:var(--muted)">The Laplace transform part's question types appear 93 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide. Since Dec 2025 many parts are answer-only, so speed with the table matters.</p>
+
+<div class="q"><p class="src"><b>May 2026 Q9(a)</b><span>Q9 total 10 pts</span><a class="guide" data-guide="LT.1">Guide · LT.1 Forward transforms: shifts, multiplying by t, tⁿ</a><a class="guide" data-guide="LT.5">Guide · LT.5 Convolution</a></p>
+<p class="qh">(\(a,b,c,\alpha,\beta,\gamma\) are distinct real numbers.) (a) Find the Laplace transforms of (i) \(t\cos(\gamma t)\), (ii) \(\exp(bt)\,t\sin(\beta t)\), (iii) \(t*\sin(\alpha t)\), where \(*\) is the convolution operator.</p>
+<details><summary>Hint</summary><div><p>(i) Multiply by \(t\): \(-\frac{d}{ds}\) of \(\mathcal L(\cos\gamma t)\). (ii) First find \(\mathcal L(t\sin\beta t)\) the same way, then replace \(s\) by \(s-b\). (iii) Convolution theorem: \(\mathcal L(t)\times\mathcal L(\sin\alpha t)\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ \text{(i)}\ \frac{s^2-\gamma^2}{(s^2+\gamma^2)^2}\qquad \text{(ii)}\ \frac{2\beta(s-b)}{\big((s-b)^2+\beta^2\big)^2} \]
+\[ \text{(iii)}\ \frac{\alpha}{s^2(s^2+\alpha^2)} \]
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2026 Q9(b)</b><span>Q9 total 10 pts</span><a class="guide" data-guide="LT.3">Guide · LT.3 Inverse transform with a delay e^(−as)</a></p>
+<p class="qh">(\(a,b,c,\alpha,\beta,\gamma\) are distinct real numbers.) (b) Find the inverse Laplace transform of \(\exp(-bs)\dfrac{s}{s^2+a^2}\).</p>
+<details><summary>Hint</summary><div><p>Ignore \(e^{-bs}\) first: \(\frac{s}{s^2+a^2}\to\cos at\). Then the factor \(e^{-bs}\) delays by \(b\): replace \(t\) by \(t-b\) and multiply by \(H(t-b)\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(\cos\big(a(t-b)\big)\,H(t-b)\)</p>
+<p style="font-size:.92rem;color:var(--muted)">As with any delay, this reading takes \(b\ge0\). Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2025 Q17(b)</b><span>Q17 total 10 pts</span><a class="guide" data-guide="LT.2">Guide · LT.2 Inverse transform by partial fractions</a><a class="guide" data-guide="LT.3">Guide · LT.3 Inverse transform with a delay</a></p>
+<p class="qh">(b) Find the inverse Laplace transform of (i) \(\dfrac{s^2}{(s-a)(s-b)(s-c)}\), where \(a\), \(b\), and \(c\) are real and distinct, (ii) \(\dfrac{e^{-as}}{s^3}\), where \(a\) is a real parameter.</p>
+<details><summary>Hint</summary><div><p>(i) Three distinct factors: cover-up rule, coefficient over \(s-a\) is \(\frac{a^2}{(a-b)(a-c)}\), and so on. (ii) \(\frac{1}{s^3}\to\frac{t^2}{2}\), then delay by \(a\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[ \begin{aligned} \text{(i)}\ &\frac{a^2e^{at}}{(a-b)(a-c)}+\frac{b^2e^{bt}}{(b-a)(b-c)}\\ &+\frac{c^2e^{ct}}{(c-a)(c-b)} \end{aligned} \]
+\[ \text{(ii)}\ \frac{(t-a)^2}{2}\,H(t-a) \]
+<p style="font-size:.92rem;color:var(--muted)">In (ii) the paper says only "real parameter"; the delay reading needs \(a\ge0\) (for \(a\lt0\), \(e^{-as}/s^3\) is not the transform of any function, since it grows without bound as \(s\to\infty\)). Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2025 Q17(c)</b><span>Q17 total 10 pts</span><a class="guide" data-guide="LT.6">Guide · LT.6 First-order equation by Laplace</a></p>
+<p class="qh">(c) Solve \(\dfrac{dy}{dt}+y=3\), \(y(0)=y_0\), a constant, using Laplace transform.</p>
+<details><summary>Hint</summary><div><p>\(sY-y_0+Y=\frac3s\), so \(Y=\frac{y_0}{s+1}+\frac{3}{s(s+1)}\). Split the second term into partial fractions.</p></div></details>
+<details><summary>Answer</summary><div><p>\(y=3+(y_0-3)e^{-t}\)</p>
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>May 2026 Q10</b><span>10 pts</span><a class="guide" data-guide="LT.7">Guide · LT.7 Second-order initial value problem by Laplace</a></p>
+<p class="qh">Solve the following differential equation by Laplace transform (\(a,b\) are distinct real numbers):</p>
+\[ \frac{d^2y}{dt^2}-(a+b)\frac{dy}{dt}+aby=3ab, \]
+\[ y(0)=5,\quad y'(0)=a+b. \]
+<details><summary>Hint</summary><div><p>Transform with \(\mathcal L(y'')=s^2Y-5s-(a+b)\) and \(\mathcal L(y')=sY-5\). The coefficient of \(Y\) is \(s^2-(a+b)s+ab=(s-a)(s-b)\). Solve for \(Y\) and use cover-up on the three distinct factors \(s\), \(s-a\), \(s-b\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(y=3+e^{at}+e^{bt}\)</p>
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+
+<div class="q"><p class="src"><b>Dec 2023 Q9(c)</b><span>Q9 total 10%</span><a class="guide" data-guide="LT.8">Guide · LT.8 Integral equations</a></p>
+<p class="qh">(c) Solve the integral equation \(y(t)=t^2+\displaystyle\int_0^ty(\tau)\,d\tau\).</p>
+<details><summary>Hint</summary><div><p>Transform both sides: the integral becomes \(\frac{Y}{s}\) (section 6). So \(Y=\frac{2}{s^3}+\frac Ys\); solve for \(Y\), then partial fractions with a repeated factor \(s^2\).</p></div></details>
+<details><summary>Answer</summary><div><p>\(y=2e^t-2-2t\)</p>
+<p style="font-size:.92rem;color:var(--muted)">Full working: see this question in the exam guide.</p></div></details></div>
+</section>
+</main>
+</div>
+<script>
+(function(){
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const PI=Math.PI;
+const $=id=>document.getElementById(id);
+
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+const piTicks=(lo,hi)=>{const out=[];const L={'-4':'−2π','-3':'−3π/2','-2':'−π','-1':'−π/2','0':'0','1':'π/2','2':'π','3':'3π/2','4':'2π','5':'5π/2'};for(let k=Math.ceil(lo/(PI/2));k<=Math.floor(hi/(PI/2));k++)out.push([k*PI/2,L[k]||'']);return out;};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+
+/* shared: map for drawing on top of a plot() canvas (same padding as plot) */
+function mapper(cv,o){
+  const W=cv.clientWidth,H=cv.clientHeight,pl=34,pr=12,pt=12,pb=26;
+  const g=cv.getContext('2d');
+  return {g,W,H,pl,pr,pt,pb,
+    X:x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr),
+    Y:y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb)};
+}
+function shade(cv,o,f,a,b,color,alpha){
+  if(b<=a) return;
+  const m=mapper(cv,o),g=m.g,N=300;
+  g.save(); g.beginPath(); g.rect(m.pl,m.pt,m.W-m.pl-m.pr,m.H-m.pt-m.pb); g.clip();
+  g.globalAlpha=alpha||0.22; g.fillStyle=color; g.beginPath(); g.moveTo(m.X(a),m.Y(0));
+  for(let i=0;i<=N;i++){const x=a+(b-a)*i/N;let y=f(x);if(!isFinite(y))y=o.ymax*5;y=Math.max(Math.min(y,o.ymax*5+5),o.ymin*5-5);g.lineTo(m.X(x),m.Y(y));}
+  g.lineTo(m.X(b),m.Y(0)); g.closePath(); g.fill(); g.restore(); g.globalAlpha=1;
+}
+function vline(cv,o,x,color,label){
+  const m=mapper(cv,o),g=m.g; g.save(); g.strokeStyle=color; g.lineWidth=1.2; g.setLineDash([4,4]);
+  g.beginPath(); g.moveTo(m.X(x),m.pt); g.lineTo(m.X(x),m.H-m.pb); g.stroke(); g.setLineDash([]);
+  if(label){g.font='600 12px Inter, system-ui, sans-serif'; g.fillStyle=color; g.textAlign='left'; g.textBaseline='top'; g.fillText(label,m.X(x)+5,m.pt+2);}
+  g.restore();
+}
+function simpson(f,a,b,N){N=N||2000;if(N%2)N++;const h=(b-a)/N;let S=f(a)+f(b);for(let i=1;i<N;i++)S+=(i%2?4:2)*f(a+i*h);return S*h/3;}
+
+/* --- superposition of waves (slide 3) --- */
+function drawSup(){
+  const w1=+$('fsup-w1').value,w2=+$('fsup-w2').value;
+  const f1=x=>w1*Math.sin(2*PI*x), f2=x=>w2*Math.sin(PI*x);
+  plot($('fsup'),{xmin:0,xmax:4,ymin:-2.2,ymax:2.2,xstep:1,ystep:1,curves:[
+    {f:f1,color:css('--c3'),width:1.6,dash:[5,4]},
+    {f:f2,color:css('--c4'),width:1.6,dash:[5,4]},
+    {f:x=>f1(x)+f2(x),color:css('--accent'),width:3}]});
+  $('fsup-out').innerHTML='wave form = <b>'+fmt(w1,1)+'</b> × (1 cm wave) + <b>'+fmt(w2,1)+'</b> × (2 cm wave)&nbsp;&nbsp;→ "transformed" description: weights ('+fmt(w1,1)+', '+fmt(w2,1)+')';
+}
+$('fsup-w1').addEventListener('input',drawSup); $('fsup-w2').addEventListener('input',drawSup); redraws.push(drawSup);
+
+/* --- the transform as an area --- */
+const KER={
+  one:{f:t=>1,F:s=>1/s,txt:'1/s',ymax:1.6,ymin:-0.3},
+  t:{f:t=>t,F:s=>1/(s*s),txt:'1/s²',ymax:1.6,ymin:-0.3},
+  sin:{f:t=>Math.sin(t),F:s=>1/(s*s+1),txt:'1/(s²+1)',ymax:1.3,ymin:-0.8},
+  e1:{f:t=>Math.exp(t),F:s=>s>1?1/(s-1):Infinity,txt:'1/(s−1), only for s > 1',ymax:3,ymin:-0.3},
+  et2:{f:t=>Math.exp(t*t),F:s=>Infinity,txt:'does not exist',ymax:3,ymin:-0.3}
+};
+function drawKer(){
+  const k=KER[$('fker-f').value], s=+$('fker-s').value, cv=$('fker');
+  const prod=t=>k.f(t)*Math.exp(-s*t);
+  const o={xmin:0,xmax:6,ymin:k.ymin,ymax:k.ymax,xstep:1,ystep:0.5,curves:[
+    {f:k.f,color:css('--muted'),width:1.6,dash:[5,4]},
+    {f:t=>Math.exp(-s*t),color:css('--c3'),width:1.6,dash:[2,3]},
+    {f:prod,color:css('--accent'),width:2.8}]};
+  plot(cv,o); shade(cv,o,prod,0,6,css('--accent'),0.2);
+  const part=simpson(prod,0,6,1200), Fv=k.F(s);
+  const ps=part>1e5?part.toExponential(2).replace('e+',' × 10^'):fmt(part,4);
+  let txt='s = <b>'+fmt(s,1)+'</b>: shaded area from 0 to 6 = <b>'+ps+'</b>. ';
+  if(isFinite(Fv)){txt+='Full area to ∞ = F(s) = '+k.txt.split(',')[0]+' = <b>'+fmt(Fv,4)+'</b>.';}
+  else txt+='The area keeps growing as the end time increases: the integral diverges. '+( $('fker-f').value==='et2'?'F(s) does not exist for any s.':'F('+fmt(s,1)+') does not exist (need s &gt; 1).');
+  $('fker-out').innerHTML=txt;
+}
+$('fker-f').addEventListener('input',drawKer); $('fker-s').addEventListener('input',drawKer); redraws.push(drawKer);
+
+/* --- delayed function f(t-a)H(t-a) --- */
+const DEL={
+  sin:{f:t=>Math.sin(t),ymin:-1.4,ymax:1.6,ystep:0.5,F:'1/(s²+1)',name:'sin(t − a)'},
+  sq:{f:t=>t*t,ymin:-1,ymax:10,ystep:2,F:'2/s³',name:'(t − a)²'},
+  exp:{f:t=>Math.exp(-t),ymin:-0.4,ymax:2.8,ystep:0.5,F:'1/(s+1)',name:'e^(−(t − a))'},
+  one:{f:t=>1,ymin:-0.4,ymax:1.6,ystep:0.5,F:'1/s',name:'1'}
+};
+function drawDel(){
+  const k=DEL[$('fdel-f').value], a=+$('fdel-a').value, cv=$('fdel');
+  const o={xmin:-1,xmax:9,ymin:k.ymin,ymax:k.ymax,xstep:1,ystep:k.ystep,curves:[
+    {f:k.f,color:css('--muted'),width:1.6,dash:[5,4]},
+    {f:t=>t<a?0:1,color:css('--c3'),width:1.4,from:-1,to:9,n:1400},
+    {f:t=>0,color:css('--accent'),width:3,from:-1,to:a},
+    {f:t=>k.f(t-a),color:css('--accent'),width:3,from:a,to:9}],
+    segs:[{x1:a,y1:0,x2:a,y2:k.f(0),color:css('--accent'),width:1.2,dash:[2,3]}],
+    pts:[{x:a,y:k.f(0),color:css('--accent'),r:4}]};
+  plot(cv,o); vline(cv,o,a,css('--c3'),'t = a = '+fmt(a,1));
+  $('fdel-out').innerHTML='a = <b>'+fmt(a,1)+'</b>: function = 0 for t &lt; '+fmt(a,1)+', = '+k.name.replace(/a/g,fmt(a,1))+' for t &gt; '+fmt(a,1)+'<br>transform = e^(−'+fmt(a,1)+'s) × '+k.F;
+}
+$('fdel-f').addEventListener('input',drawDel); $('fdel-a').addEventListener('input',drawDel); redraws.push(drawDel);
+
+/* --- convolution sliding overlap --- */
+const CONV={
+  '11':{f:x=>1,g:x=>1,c:t=>t,ct:'t',y1:[-0.3,1.5],y2:[-0.3,4.5],ys1:0.5,ys2:1},
+  '1t':{f:x=>1,g:x=>x,c:t=>t*t/2,ct:'t²/2',y1:[-0.3,4.4],y2:[-0.5,8.5],ys1:1,ys2:2},
+  'tt':{f:x=>x,g:x=>x,c:t=>t*t*t/6,ct:'t³/6',y1:[-0.3,4.4],y2:[-0.5,11],ys1:1,ys2:2},
+  'ss':{f:x=>Math.sin(x),g:x=>Math.sin(x),c:t=>(Math.sin(t)-t*Math.cos(t))/2,ct:'(sin t − t cos t)/2',y1:[-1.3,1.3],y2:[-0.6,1.6],ys1:0.5,ys2:0.5},
+  'e1':{f:x=>Math.exp(-x),g:x=>1,c:t=>1-Math.exp(-t),ct:'1 − e^(−t)',y1:[-0.3,1.4],y2:[-0.2,1.2],ys1:0.5,ys2:0.5}
+};
+function drawConv(){
+  const k=CONV[$('fconv-p').value], t=+$('fconv-t').value, cv=$('fconv'), cv2=$('fconv2');
+  const prod=x=>k.f(x)*k.g(t-x);
+  const o={xmin:-0.5,xmax:4.5,ymin:k.y1[0],ymax:k.y1[1],xstep:1,ystep:k.ys1,curves:[
+    {f:k.f,color:css('--accent'),width:2.4,from:0,to:4.5},
+    {f:x=>k.g(t-x),color:css('--c2'),width:2.4,from:Math.max(-0.5,t-4.5),to:t},
+    {f:prod,color:css('--c3'),width:1.6,from:0,to:t}]};
+  plot(cv,o); if(t>0) shade(cv,o,prod,0,t,css('--c3'),0.28); vline(cv,o,t,css('--c2'),'ξ = t');
+  const o2={xmin:-0.5,xmax:4.5,ymin:k.y2[0],ymax:k.y2[1],xstep:1,ystep:k.ys2,curves:[{f:k.c,color:css('--c4'),width:2.6,from:0,to:4.5}],
+    pts:[{x:t,y:k.c(t),color:css('--c4'),label:'(f*g)('+fmt(t,2)+')'}]};
+  if(o2.pts[0].x>3.2) o2.pts[0].align='right';
+  plot(cv2,o2);
+  const area=t>0?simpson(prod,0,t,400):0;
+  $('fconv-out').innerHTML='t = <b>'+fmt(t,2)+'</b>: shaded area ∫₀ᵗ f(ξ)g(t−ξ)dξ ≈ <b>'+fmt(area,4)+'</b>; formula f*g = '+k.ct+' gives <b>'+fmt(k.c(t),4)+'</b>';
+}
+$('fconv-p').addEventListener('input',drawConv); $('fconv-t').addEventListener('input',drawConv); redraws.push(drawConv);
+
+/* --- IVP solutions vs forcing --- */
+const IVP={
+  a:{y:t=>Math.exp(t)-1,q:t=>1,xmax:2.5,ymin:-1,ymax:12,ys:2,txt:'Y(s) = 1/(s(s−1)) = 1/(s−1) − 1/s &nbsp;→&nbsp; y = e^t − 1'},
+  b:{y:t=>1.5*Math.exp(t)-0.5*Math.exp(-t)-t,q:t=>t,xmax:2.5,ymin:-1,ymax:16,ys:2,txt:'Y(s) = (3/2)/(s−1) − (1/2)/(s+1) − 1/s² &nbsp;→&nbsp; y = (3/2)e^t − (1/2)e^(−t) − t'},
+  c:{y:t=>(t*t/2-1)*Math.exp(-t),q:t=>Math.exp(-t),xmax:8,ymin:-1.2,ymax:1.2,ys:0.5,txt:'Y(s) = 1/(s+1)³ − 1/(s+1) &nbsp;→&nbsp; y = (t²/2 − 1)e^(−t)'},
+  d:{y:t=>t<1?0:1-Math.cos(t-1),q:t=>t<1?0:1,xmax:12,ymin:-0.4,ymax:2.4,ys:0.5,txt:'Y(s) = e^(−s)/(s(s²+1)) = e^(−s)[1/s − s/(s²+1)] &nbsp;→&nbsp; y = (1 − cos(t−1))H(t−1)'}
+};
+function drawIvp(){
+  const k=IVP[$('fivp-s').value], cv=$('fivp');
+  plot(cv,{xmin:0,xmax:k.xmax,ymin:k.ymin,ymax:k.ymax,xstep:k.xmax>5?1:0.5,ystep:k.ys,curves:[
+    {f:k.q,color:css('--c4'),width:2,dash:[6,4],n:1400},
+    {f:k.y,color:css('--accent'),width:3,n:1400}],
+    pts:[{x:0,y:k.y(0),color:css('--accent'),label:'y(0) = '+fmt(k.y(0),2)}]});
+  $('fivp-out').innerHTML=k.txt+'<br>y('+fmt(k.xmax,1)+') = <b>'+fmt(k.y(k.xmax),3)+'</b>, forcing there = '+fmt(k.q(k.xmax),3);
+}
+$('fivp-s').addEventListener('input',drawIvp); redraws.push(drawIvp);
+
+
+const all=()=>redraws.forEach(f=>{try{f();}catch(e){}});
+all();
+let t; window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(all,120);});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);}catch(e){}
+new MutationObserver(all).observe(root,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+<script>
+/* MATH1851 bundle links: fills hrefs for a.note[data-note] and a.guide[data-guide], links "Lx guide" mentions, adds an index link on guide pages. */
+(function(){
+var B="",N={"L1": "note-L1.html", "L2": "note-L2.html", "L3": "note-L3.html", "L4": "note-L4.html", "L5": "note-L5.html", "L6": "note-L6.html", "L7": "note-L7.html", "L8": "note-L8.html", "L9": "note-L9.html", "L10": "note-L10.html", "L11": "note-L11.html", "L12": "note-L12.html", "L13": "note-L13.html", "L14": "note-L14.html", "L15": "note-L15.html", "L16": "note-L16.html", "L17": "note-L17.html", "O1": "note-O1.html", "O2": "note-O2.html", "O3": "note-O3.html", "O4": "note-O4.html", "LT": "note-LT.html"},G={"L1": "guide-L1.html", "L2": "guide-L2.html", "L3": "guide-L3.html", "L4": "guide-L4.html", "L5": "guide-L5.html", "L6": "guide-L6.html", "L7": "guide-L7.html", "L8": "guide-L8.html", "L9": "guide-L9.html", "L10": "guide-L10.html", "L12": "guide-L12.html", "L13": "guide-L13.html", "L14": "guide-L14.html", "L15": "guide-L15.html", "L16": "guide-L16.html", "L17": "guide-L17.html", "O1": "guide-O1.html", "O2": "guide-O2.html", "O3": "guide-O3.html", "O4": "guide-O4.html", "LT": "guide-LT.html"},M={"LT#forward|forward transforms and shifts": "LT#s4", "LT#partial-fractions|partial fractions": "LT#s10", "LT#second-shift|second shift and the step function": "LT#s5", "LT#repeated-factors|repeated factors and the first shift": "LT#s10", "LT#convolution|convolution": "LT#s6", "LT#s5|solving ODEs by Laplace": "LT#s12", "LT#s6|convolution and integral equations": "LT#s11", "L1#s4|limit laws": "L1#s5", "L1#s5|direct substitution": "L1#s6", "L1#s6|removing the 0/0 by algebra": "L1#s7", "L1#s7|one-sided limits": "L1#s3", "L1#s8|absolute values and piecewise functions": "L1#s3", "L2#s2|the Sandwich Theorem": "L2#s1", "L2#s3|x sin(1/x) and other examples": "L2#s2", "L2#s4|the limit sin x / x": "L2#s3", "L1#s5|one-sided limits": "L1#s3", "L3#s2|infinite limits": "L3#s1", "L3#s3|limits at infinity": "L3#s2", "L1#s6|conjugates": "L1#s7", "L3#s4|asymptotes": "L3#s5", "L9#s3|asymptotes in curve sketching": "L9#s8", "L4#s2|continuity at a point": "L4#s1", "L4#s4|continuity of combinations": "L4#s5", "L4#s3|one-sided limits and continuity": "L4#s1", "L4#s5|limits of composite functions": "L4#s7", "L4#s6|types of discontinuity": "L4#s3", "L4#s7|the Intermediate Value Theorem": "L4#s8", "L5#s2|definition of the derivative": "L5#s3", "L5#s3|one-sided derivatives": "L5#s5", "L5#s4|differentiable implies continuous": "L5#s6", "L6#s2|product and quotient rules": "L6#s2", "L6#s4|chain rule": "L6#s5", "L6#s5|implicit differentiation": "L6#s6", "L6#s6|tangent lines": "L5#s2", "L7#s5|logarithmic differentiation": "L7#s4", "L7#s4|derivatives of ln and exp": "L7#s3", "L7#s4|derivatives of exp, ln and aˣ": "L7#s3", "L7#s6|derivatives of inverse trig functions": "L7#s6", "L7#s2|derivative of an inverse function": "L7#s2", "L7#s1|one-to-one functions and inverses": "L7#s1", "L7#s5|graphs and limits of eˣ and ln x": "L7#s3", "L4#s2|continuity of composite functions": "L4#s6", "L8#s2|absolute extrema and the Extreme Value Theorem": "L8#s3", "L8#s3|critical points": "L8#s4", "L8#s4|Rolle's Theorem": "L8#s6", "L8#s5|the Mean Value Theorem": "L8#s7", "L8#s6|counting roots with Rolle's Theorem": "L8#s9", "L4#s5|the Intermediate Value Theorem": "L4#s8", "L8#s7|consequences of the MVT": "L8#s8", "L9#s2|increasing, decreasing and the first derivative test": "L9#s2", "L9#s3|concavity and inflection points": "L9#s7", "L9#s5|curve sketching checklist": "L9#s8", "L9#s2|sign of f′ and monotonicity": "L9#s1", "L9#s3|concavity from f′": "L9#s4", "L12#s4|area functions": "L12#s7", "L9#s5|curve sketching from f′ and f″": "L9#s9", "L9#s6|applied optimisation": "L9#s3", "L8#s2|absolute extrema on an interval": "L8#s5", "L9#s3|what f′ and f″ say about a graph": "L9#s4", "L10#s3|L'Hôpital's Rule": "L10#s3", "L10#s2|classifying forms": "L10#s2", "L10#s4|∞ − ∞ forms": "L10#s5", "L10#s5|0 · ∞ forms": "L10#s5", "L10#s6|indeterminate powers": "L10#s6", "L10#s7|L'Hôpital with an unknown function": "L10#s3", "L10#s8|L'Hôpital at a join": "L10#s3", "L4#s2|continuity": "L4#s1", "L5#s2|derivative by definition": "L5#s3", "L12#s4|FTC Part I": "L12#s7", "L6#s5|chain rule": "L6#s5", "L12#s2|Riemann sums and the definite integral": "L12#s1", "L11#s5|sigma notation and area": "L11#s6", "L12#s5|the area function": "L12#s7", "L12#s4|the Fundamental Theorem of Calculus": "L12#s7", "L12#s6|average value": "L12#s6", "L13#s2|substitution": "L13#s2", "L13#s3|substitution in definite integrals": "L13#s5", "L13#s4|integration by parts": "L13#s7", "L13#s5|repeated parts, ln and inverse trig": "L13#s8", "L13#s6|by parts with an unknown function": "L13#s7", "L13#s7|reduction formulas": "L13#s8", "L13#s8|the x → a − x substitution": "L13#s5", "L14#s2|partial fractions": "L14#s5", "L14#s3|repeated and quadratic factors": "L14#s5", "L14#s4|trig integrals": "L14#s3", "L14#s5|trig substitution": "L14#s4", "L15#s2|parametric curves": "L15#s1", "L15#s3|slope of a parametric curve": "L15#s3", "L15#s4|polar coordinates": "L15#s5", "L15#s5|sketching polar curves and symmetry": "L15#s7", "L15#s6|slope of a polar curve": "L15#s8", "L16#s1|area between curves": "L16#s1", "L16#s2|discs and washers": "L16#s4", "L16#s3|cylindrical shells": "L16#s5", "L16#s4|choosing discs or shells": "L16#s6", "L16#s5|volume by slicing": "L16#s3", "L17#s2|arc length": "L17#s2", "L17#s3|parametric and polar length": "L17#s3", "L14#s4|trig substitution": "L14#s4", "L17#s4|surface area": "L17#s6", "L16#s3|solids of revolution": "L16#s4", "O1#separable|separable equations": "O1#s6", "O1#linear|linear equations and the integrating factor": "O1#s5", "O1#exact|exact equations": "O1#s8", "O2#homogeneous|homogeneous equations": "O2#s5", "O2#bernoulli|Bernoulli equations": "O2#s1", "O2#riccati|Riccati equations": "O2#s2", "O2#shift|shift substitution": "O2#s6", "O2#reduction|reduction of order": "O2#s7", "O3#roots|root cases": "O3#s4", "O3#constant|constant coefficients": "O3#s3", "O3#higher|higher-order equations": "O3#s7", "O3#euler|Cauchy–Euler": "O3#s10", "O4#s2|undetermined coefficients": "O4#s2", "O4#s3|when the trial clashes": "O4#s3", "O4#s4|initial value problems": "O4#s4", "O4#variation-of-parameters|variation of parameters": "O4#s6", "O4#vop-cauchy-euler|VoP for Cauchy–Euler": "O4#s7", "O3#cauchy-euler|Cauchy–Euler homogeneous": "O3#s10", "O4#d-operator|D-operator method": "O4#s5"},IDX="index.html#part2";
+function ext(a,u){a.href=u;}
+function go(){
+  var h=document.querySelector("nav.toc .h"),m0=h&&/Exam guide\s*·\s*([A-Z0-9]+)/i.exec(h.textContent),self=m0?m0[1].toUpperCase():null,isGuide=!!(h&&/Exam guide/i.test(h.textContent));
+  document.querySelectorAll("a.note[data-note]").forEach(function(a){
+    var k=a.getAttribute("data-note"),t=a.textContent.replace(/\s+/g," ").replace(/^\s*Chapter note\s*·?\s*/,"").trim();
+    var v=M[k+"|"+t]||k,p=v.split("#"),c=p[0];
+    if(!N[c])return;
+    ext(a,B+N[c]+(p[1]&&p[1]!=="top"?"#"+p[1]:""));
+  });
+  document.querySelectorAll("a.guide[data-guide]").forEach(function(a){
+    var g=a.getAttribute("data-guide"),h=g.indexOf("#")>=0,c=h?g.split("#")[0]:g.split(".")[0],f=h?g.split("#")[1]:g.replace(".","");
+    if(!G[c])return;
+    ext(a,B+G[c]+"#"+f);
+  });
+  if(!isGuide)return;
+  var main=document.querySelector("main");
+  if(!main)return;
+  var top=main.querySelector("header.top");
+  if(top&&IDX&&self!=="INDEX"){var p=document.createElement("p");p.className="muted";var a=document.createElement("a");ext(a,B+IDX);a.textContent="← All exam-guide pages and the exam format";p.appendChild(a);top.appendChild(p);}
+  var re=/\b(L1[0-7]|L[1-9]|O[1-4]|LT) guide\b/g,skip={A:1,SCRIPT:1,STYLE:1,H1:1,H2:1,CODE:1,"MJX-CONTAINER":1,SUMMARY:1};
+  var w=document.createTreeWalker(main,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    for(var e=n.parentNode;e&&e!==main;e=e.parentNode){if(skip[e.nodeName])return NodeFilter.FILTER_REJECT;}
+    re.lastIndex=0;return re.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP;}});
+  var list=[],n;while((n=w.nextNode()))list.push(n);
+  list.forEach(function(n){
+    var s=n.nodeValue,f=document.createDocumentFragment(),last=0,m;re.lastIndex=0;
+    while((m=re.exec(s))){
+      var c=m[1];if(c===self||!G[c])continue;
+      f.appendChild(document.createTextNode(s.slice(last,m.index)));
+      var a=document.createElement("a");ext(a,B+G[c]);a.textContent=m[0];f.appendChild(a);last=m.index+m[0].length;
+    }
+    if(last===0)return;
+    f.appendChild(document.createTextNode(s.slice(last)));n.parentNode.replaceChild(f,n);
+  });
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
+})();
+</script>
+</html>

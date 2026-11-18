@@ -1,0 +1,1134 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH2413 D2 · Dynamics of Rigid Bodies</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH2413 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Dynamics · D2</p>
+  <ol>
+    <li><a href="#s0">0 · Where this sits</a></li>
+    <li><a href="#s1">1 · Rigid bodies and planar motion</a></li>
+    <li><a href="#s2">2 · Translation: \(\sum F=ma_G\)</a></li>
+    <li><a href="#s3">3 · Rotation about a fixed axis</a></li>
+    <li><a href="#s4">4 · Relative velocity</a></li>
+    <li><a href="#s5">5 · Instantaneous centre, rolling</a></li>
+    <li><a href="#s6">6 · A rod in the plane</a></li>
+    <li><a href="#s7">7 · Two connected links</a></li>
+    <li><a href="#s8">8 · Slider-crank mechanism</a></li>
+    <li><a href="#s9">9 · Other mechanisms</a></li>
+    <li><a href="#s10">10 · Torque and \(M=I\alpha\)</a></li>
+    <li><a href="#s11">11 · Moment of inertia</a></li>
+    <li><a href="#s12">12 · \(I\) by integration</a></li>
+    <li><a href="#s13">13 · Parallel axis theorem</a></li>
+    <li><a href="#s14">14 · Flywheels and rotational KE</a></li>
+    <li><a href="#s15">15 · Summary</a></li>
+    <li><a href="#s16">16 · Common mistakes</a></li>
+    <li><a href="#s17">17 · Find the mistake</a></li>
+    <li><a href="#s18">18 · Concept checks</a></li>
+    <li><a href="#s19">19 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-D2.html">Exam guide · D2</a><a href="note-D1.html">← D1</a><a href="note-D3.html">Next: D3 →</a></nav>
+  <span class="course">MECH2413 · Engineering Mechanics · Dynamics chapter 2</span>
+  <h1>Dynamics of Rigid Bodies</h1>
+  <p class="lede">Every slide of the Dynamics chapter 2 handout (slides 45–78) explained from scratch: the kinds of planar motion, rotation about a fixed axis, relative velocity with \(\vb v_B=\vb v_A+\vb\omega\times\vb r_{B/A}\), linked bars and the slider-crank, torque and \(M=I\alpha\), moment of inertia by integration, the parallel axis theorem and flywheels. Every worked example is solved in full with a sketch and a velocity diagram or free-body diagram. Section B question 2 in the last four papers came entirely from this chapter, so the exam taster at the end matters.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>In <a href="note-D1.html">D1</a> every object was a <b>particle</b>: a point with mass but no size, so it could move but not turn. Real machine parts have size, and they <b>rotate</b>: crankshafts, flywheels, robot arms, wheels. This chapter adds rotation. It has two halves:</p>
+<ol class="steps">
+<li><b>Kinematics</b> (Sections 1–9): describing how a rigid body moves, without asking why. The key tool is the relative velocity equation, used for linkages and the slider-crank.</li>
+<li><b>Kinetics</b> (Sections 10–14): the link between moments and rotation, \(M=I\alpha\), and the quantity that resists rotation, the <b>moment of inertia</b> \(I\). It ends with flywheels and rotational kinetic energy.</li>
+</ol>
+<p class="muted">Slide numbers: the handout's pages are printed 45 to 78, continuing the numbering of the D1 handout. These notes cite the printed numbers.</p>
+
+<div class="box conv"><span class="tag">Sign convention for this chapter</span>
+<ul class="list">
+<li>\(x\) right, \(y\) up, \(z\) out of the page (right-handed). Unit vectors \(\hat\imath,\hat\jmath,\hat k\) (the handout also writes \(\e{x},\e{y},\e{z}\)).</li>
+<li>In plane motion the angular velocity is a vector along \(z\): \(\vb\omega=\omega\hat k\). <b>\(\omega\gt0\) means anticlockwise</b>; a clockwise rotation of 10 rad/s is \(\omega=-10\u{rad/s}\) (slide 59). The same holds for angular acceleration \(\alpha\).</li>
+<li>Position vectors: \(\vb r_{B/A}\) points <b>from \(A\) to \(B\)</b> ("B relative to A").</li>
+<li>Keep the signs in the formulas and put the signed numbers in. Say the direction in words at the end ("5.20 m/s to the right", "15 rad/s anticlockwise").</li>
+<li>In kinetics (Section 10, taster) a different positive sense is sometimes handier (e.g. clockwise for a wheel rolling to the right); when that happens it is stated next to the equation.</li>
+</ul></div>
+
+<div class="box ready"><span class="tag">What the exam formula sheet gives (Dec 2021 to Dec 2024)</span>
+<p>Printed at the start of Section B: the relative velocity of a rigid body (\(\vb r_{B/O}=\vb r_{A/O}+\vb r_{B/A}\); \(\vb v_{B/O}=\vb v_{A/O}+\vb v_{B/A}\); \(\vb v_B=\vb v_A+\vb\omega\times\vb r_{B/A}\)) and \(I=\int r^2\,\mathrm dm\).</p>
+<p><b>Not given:</b> the slider-crank formula, the table of moments of inertia (\(\tfrac12mR^2\), \(\tfrac1{12}mL^2\), …), the parallel axis theorem, \(KE=\tfrac12I\omega^2\), \(M=I\alpha\), or the constant-\(\alpha\) equations. Learn those.</p></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>Rigid bodies and the types of planar motion (slides 46–48)</h2>
+<div class="box def"><span class="tag">Definition · rigid body (slide 46)</span>
+<p>A <b>rigid body</b> is a system of particles for which the distances between the particles never change. We must consider its <b>size</b> (unlike a particle) but we assume <b>no deformation</b>. The model suits any object of considerable size that rotates, such as the barbell plate on the slide.</p></div>
+<p>A body in <b>planar motion</b> moves so that every point stays in one plane (or parallel planes). Slide 47 lists three types, plus their combination:</p>
+<div class="cases">
+<div><b>(1) Rectilinear translation</b>Every line in the body keeps its direction and every point moves along a straight line. Example: a rocket test sled.</div>
+<div><b>(2) Curvilinear translation</b>Every line keeps its direction, but the points move along curves (identical curves, shifted). Example: the plate of a parallel-link swinging mechanism, which stays level while swinging.</div>
+<div><b>(3) Rotation about a fixed axis</b>Every point moves in a circle about one fixed axis. Example: a compound pendulum.</div>
+<div><b>(1)+(2)+(3) General plane motion</b>Translation and rotation together. Example: the connecting rod of a reciprocating engine.</div>
+</div>
+<div id="fig-s1-types"></div>
+<div class="box thm"><span class="tag">Fact · translation (slide 47)</span>
+<p>In a <b>translation</b> (types 1 and 2) all points of the body move with the <b>same velocity and the same acceleration</b>. So a translating rigid body can be treated as a single particle.</p></div>
+<div class="box thm"><span class="tag">Mozzi–Chasles theorem (slide 48)</span>
+<p>Any general plane motion can be split into a <b>translation</b> that carries a chosen reference point \(A\) along its path, plus a <b>rotation about \(A\)</b>. The slide draws a plate moving from \(ABCD\) to \(A'B'C'D'\): first slide it so \(A\) lands on \(A'\), then turn it about \(A'\).</p>
+<p class="word"><b>In words:</b> total motion = translation + rotation. The translation part is governed by \(\sum F=ma_G\) (forces → acceleration of the centre of mass \(G\)); the rotation part by \(\sum M_G=I_G\alpha\) (moments about \(G\) → angular acceleration).</p></div>
+<p class="word"><b>Analogy:</b> carry a tray across a room while turning to face the door. Your feet do the translation; your turn is the rotation. The tray's final position does not care in which order you did them.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Translation: Newton's laws for a system of particles (slides 49–51)</h2>
+<p>Slide 49 (a reminder from ENGG1000) treats a body as many particles \(m_i\) at positions \(\vb r_i\). The <b>centre of mass</b> \(G\) is the mass-weighted average position:</p>
+\[\vb r_G=\frac{\sum m_i\vb r_i}{\sum m_i}=\frac{\sum m_i\vb r_i}{m}.\]
+<p>Each particle obeys Newton's second law, \(\vb F_i+\vb f_i=m_i\vb a_i\), where \(\vb F_i\) is the resultant <b>external</b> force on it and \(\vb f_i\) the resultant <b>internal</b> force (from the other particles). Add over all particles: internal forces come in action–reaction pairs and cancel, \(\sum\vb f_i=\vb 0\). Differentiating \(\sum m_i\vb r_i=m\vb r_G\) twice gives \(\sum m_i\vb a_i=m\vb a_G\). Hence</p>
+<div class="box thm"><span class="tag">Result · motion of the centre of mass (slides 49–50)</span>
+\[\textstyle\sum\vb F=m\,\vb a_G\]
+<p class="word"><b>In words:</b> the sum of the external forces equals the total mass times the acceleration of the centre of mass. The centre of mass moves as if all the mass were there and all the forces acted there, so the D1 methods (rectilinear and curvilinear motion of a particle) apply to it.</p></div>
+<div class="box def"><span class="tag">Conservation of angular momentum (slide 49)</span>
+<p>The <b>angular momentum</b> of a particle about \(G\) is \(\vb H=\vb r\times m\vb v\) ("moment of momentum"). For the whole system, \(\vb H_G=\sum\vb r_i\times m_i\vb v_i\) with \(\vb r_i\) measured from \(G\). If there is no external angular impulse,</p>
+\[\begin{aligned}&\int_{t_1}^{t_2}\textstyle\sum\vb M_G\,\mathrm dt=0\\ &\Rightarrow\ \textstyle\sum\vb H_G=\text{constant}.\end{aligned}\]
+<p class="word"><b>In words:</b> with no net twist from outside, the spin about the centre of mass cannot change. This holds even though \(G\) itself may be accelerating (a non-inertial point), because the moments of the "inertial forces" about \(G\) always add to zero. (A skater pulling in her arms spins faster for this reason.)</p></div>
+<p>Slide 50 concludes: find the centre of mass, use \(\sum\vb F=m\vb a_G\), and treat the body as a particle for its translation. <b>The rest of the chapter is about rotation.</b> Slide 51 shows where rotation matters: a V8 crankshaft engine, a slider-crank, a robotic arm, "and many more machines".</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Rotation about a fixed axis (slides 52–54)</h2>
+<p>When a body rotates about a fixed axis, every point \(P\) travels on a <b>circle</b> centred on the axis. Its <b>angular position</b> \(\theta\) is the angle of the line from the axis to \(P\), measured from a fixed reference line (slide 52).</p>
+<div class="box def"><span class="tag">Definitions · angular displacement, velocity, acceleration (slide 52)</span>
+<ul class="list">
+<li><b>Angular displacement</b> \(\mathrm d\theta\): a change in angular position, in radians or revolutions; \(1\ \text{rev}=2\pi\ \text{rad}\).</li>
+<li><b>Angular velocity</b> \(\omega=\dfrac{\mathrm d\theta}{\mathrm dt}\) (rad/s), positive anticlockwise.</li>
+<li><b>Angular acceleration</b> \(\alpha=\dfrac{\mathrm d^2\theta}{\mathrm dt^2}=\dfrac{\mathrm d\omega}{\mathrm dt}=\omega\dfrac{\mathrm d\omega}{\mathrm d\theta}\) (rad/s²).</li>
+</ul>
+<p class="word"><b>In words:</b> these are exactly the D1 definitions \(v=\mathrm ds/\mathrm dt\), \(a=\mathrm dv/\mathrm dt=v\,\mathrm dv/\mathrm ds\), with the distance \(s\) replaced by the angle \(\theta\).</p></div>
+<p>The direction of \(\vb\omega\) follows the right-hand rule (the thumbs on slide 52): curl your fingers the way the body turns, and your thumb points along the axis in the direction of \(\vb\omega\).</p>
+
+<h3>Constant angular acceleration (slide 53)</h3>
+<div class="box thm"><span class="tag">Result · constant \(\alpha=\alpha_c\)</span>
+\[\begin{aligned}\omega&=\omega_0+\alpha_ct,\\ \theta&=\theta_0+\omega_0t+\tfrac12\alpha_ct^2,\\ \omega^2&=\omega_0^2+2\alpha_c(\theta-\theta_0).\end{aligned}\]
+<p>\(\theta_0\) and \(\omega_0\) are the initial angular position and angular velocity.</p>
+<p class="word"><b>In words:</b> the "suvat" equations of rectilinear motion with \(s\to\theta\), \(u\to\omega_0\), \(v\to\omega\), \(a\to\alpha_c\). Use them only when \(\alpha\) is constant.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A grinding wheel turning at \(\omega_0=2\u{rad/s}\) speeds up at a constant \(3\u{rad/s^2}\) for 4 s. Find its final angular velocity and the angle turned.</p>
+\[\begin{aligned}\omega&=2+3(4)=14\u{rad/s},\\ \theta-\theta_0&=2(4)+\tfrac12(3)(4)^2\\ &=32\u{rad}=5.09\ \text{rev}.\end{aligned}\]
+<p>Check with the third equation: \(2^2+2(3)(32)=196=14^2\) ✓. \(\boxed{\omega=14\u{rad/s},\ \ \Delta\theta=32\u{rad}}\)</p></div>
+
+<h3>Velocity and acceleration of a point \(P\) (slide 54)</h3>
+<p>\(P\) moves on a circle of radius \(r\) about centre \(O\), and its position is the vector \(\vb r_P\) from the axis.</p>
+<div class="box thm"><span class="tag">Result · point on a rotating body</span>
+\[\begin{aligned}v&=r\omega\qquad\text{(speed)},\\ \vb v&=\vb\omega\times\vb r_P\qquad\text{(direction)},\\ \vb a&=\vb a_t+\vb a_n=\vb\alpha\times\vb r_P+\vb\omega\times(\vb\omega\times\vb r_P)\\ &=\vb\alpha\times\vb r-\omega^2\vb r.\end{aligned}\]
+<p class="word"><b>In words:</b> the velocity is tangent to the circle, size "radius × angular speed". The acceleration has two parts: a <b>tangential</b> part \(a_t=r\alpha\) (from speeding up the spin) and a <b>normal</b> (centripetal) part \(a_n=r\omega^2\) pointing <b>towards the centre</b> (the minus sign in \(-\omega^2\vb r\)). These are the D1 \(n\)–\(t\) components with \(v=r\omega\), \(a_n=v^2/r\).</p></div>
+<div id="fig-s3-pt"></div>
+<div class="box eg"><span class="tag">Example · written for these notes</span>
+<p>A point 0.3 m from the axis of a wheel with \(\omega=4\u{rad/s}\) and \(\alpha=2\u{rad/s^2}\): \(v=0.3(4)=1.2\u{m/s}\); \(a_t=0.3(2)=0.6\u{m/s^2}\); \(a_n=0.3(4)^2=4.8\u{m/s^2}\) towards the centre; \(|\vb a|=\sqrt{0.6^2+4.8^2}=\boxed{4.84\u{m/s^2}}\).</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Relative velocity in a rigid body (slides 55–57)</h2>
+<p>Slide 55 follows Bedford &amp; Fowler, <i>Dynamics</i>, Sec. 17.3. Take two points \(A\) and \(B\) on one rigid body, and a fixed origin \(O\).</p>
+<div class="box def"><span class="tag">Definitions · relative position and relative velocity</span>
+<ul class="list">
+<li>\(\vb r_{B/A}=\overrightarrow{AB}\): the vector drawn from \(A\) to \(B\), the <b>position of \(B\) relative to \(A\)</b>.</li>
+<li>Positions add head to tail: \(\vb r_{B/O}=\vb r_{A/O}+\vb r_{B/A}\) (slide 55 writes \(\vb r_B=\vb r_A+\vb r_{B/A}\)).</li>
+<li>Differentiating: \(\vb v_B=\vb v_A+\vb v_{B/A}\), where \(\vb v_{B/A}=\mathrm d\vb r_{B/A}/\mathrm dt\) is the <b>velocity of \(B\) relative to \(A\)</b>: how \(B\) appears to move to an observer riding along with \(A\) (without turning).</li>
+</ul></div>
+<p>Because the body is rigid, the distance \(AB\) never changes. So, seen from \(A\), the point \(B\) can only move on a circle around \(A\). In the slide's words: <i>for a rigid body undergoing translation and rotation, the only possible relative velocity is rotation with respect to each other</i>. The relative velocity is perpendicular to \(AB\) with size</p>
+\[v_{B/A}=\frac{\mathrm dr_{B/A}}{\mathrm dt}\Big|_\perp=r_{B/A}\frac{\mathrm d\theta}{\mathrm dt}=r_{B/A}\,\omega.\]
+<div class="box thm"><span class="tag">Result · the relative velocity equation (slide 56)</span>
+\[\begin{aligned}\vb v_B&=\vb v_A+\vb v_{B/A},\\ \vb v_{B/A}&=\vb\omega\times\vb r_{B/A},\\ \Rightarrow\ \vb v_B&=\vb v_A+\vb\omega\times\vb r_{B/A}.\end{aligned}\]
+<p>and equally \(\vb v_A=\vb v_B+\vb\omega\times\vb r_{A/B}\).</p>
+<p class="word"><b>In words:</b> velocity of \(B\) = velocity of \(A\) + the extra velocity \(B\) gets by swinging around \(A\). The swing velocity is perpendicular to \(AB\), of size \(AB\times\omega\). Every point of a rigid body shares the <b>same</b> \(\omega\), so one \(\omega\) serves for any pair of points.</p></div>
+<div id="fig-s4-rel"></div>
+
+<h3>The cross product (slide 57)</h3>
+<p>For the right-handed unit vectors: \(\hat\imath\times\hat\jmath=\hat k\), \(\hat\jmath\times\hat k=\hat\imath\), \(\hat k\times\hat\imath=\hat\jmath\) (and reversing the order flips the sign, \(\hat\jmath\times\hat\imath=-\hat k\); any vector crossed with itself is zero). For \(\vb u=(u_1,u_2,u_3)\), \(\vb v=(v_1,v_2,v_3)\):</p>
+\[\begin{aligned}\vb u\times\vb v&=\begin{vmatrix}\hat\imath&\hat\jmath&\hat k\\u_1&u_2&u_3\\v_1&v_2&v_3\end{vmatrix}\\ &=(u_2v_3-u_3v_2)\,\hat\imath+(u_3v_1-u_1v_3)\,\hat\jmath\\ &\quad+(u_1v_2-u_2v_1)\,\hat k.\end{aligned}\]
+<p class="word"><b>In words:</b> \(\vb u\times\vb v\) is perpendicular to both, with size \(|\vb u||\vb v|\sin\theta\) (\(\theta\) the angle between them), direction by the right-hand rule (index finger along \(\vb u\), middle finger along \(\vb v\), thumb gives \(\vb u\times\vb v\)). Slide 57 also shows Sarrus's rule: copy the first two columns to the right of the determinant and add the "down-right" diagonal products minus the "up-right" ones.</p>
+<div class="box ready"><span class="tag">Ready form · plane motion (used everywhere below)</span>
+\[\omega\hat k\times(r_x\hat\imath+r_y\hat\jmath)=-\omega r_y\,\hat\imath+\omega r_x\,\hat\jmath.\]
+<p class="word"><b>In words:</b> to get \(\vb\omega\times\vb r\) in 2D, swap the components of \(\vb r\), put a minus on the new \(x\), and multiply by \(\omega\). It is \(\vb r\) turned 90° anticlockwise and scaled by \(\omega\).</p></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Instantaneous centre of zero velocity; rolling (slide 58)</h2>
+<p>If point \(B\) of the body is <b>stationary</b>, \(\vb v_B=\vb 0\), and the relative velocity equation reduces to \(\vb v_A=\vb\omega\times\vb r_{A/B}\): at that instant the body is <b>just rotating about \(B\)</b>.</p>
+<div class="box def"><span class="tag">Definition · instantaneous centre (IC) of zero velocity</span>
+<p>For a rigid body in plane motion (with \(\omega\ne0\)) there is always one point, possibly off the body, whose velocity is zero at that instant: the <b>instantaneous centre of zero velocity</b> (IC). At that instant every point moves as if the body were rotating about the IC:</p>
+\[\vb v=\vb\omega\times\vb r,\qquad v=\omega\,r,\]
+<p>where \(\vb r\) is measured from the IC. The \(\omega\) about the IC is the same as about the centre of mass: it is a property of the body, not of the reference point.</p>
+<p class="word"><b>In words:</b> freeze the motion for an instant; it is a pure rotation about one point. Each point's velocity is perpendicular to the line from the IC, and grows with the distance from it.</p></div>
+<p>Slide 58's picture is a wheel rolling on the ground: the contact point is the IC, the velocity arrows at points on the rim are perpendicular to the lines joining them to the contact point, and the top of the wheel moves fastest (twice the centre's speed).</p>
+<div id="fig-s5-ic"></div>
+<div class="box warn"><span class="tag">Watch</span><p>The IC has zero <b>velocity</b> but generally not zero <b>acceleration</b> (slide 58: "be careful since \(a_{IC}\) is not zero"). Use the IC only for velocities.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · rolling without slipping</span>
+<p>A wheel of radius \(r\) <b>rolls without slipping</b> if its contact point has the same velocity as the ground (zero on fixed ground). Then the contact point is the IC, and with \(\omega\) clockwise for rolling to the right,</p>
+\[v_G=\omega r,\qquad a_G=\alpha r.\]
+<p class="word"><b>In words:</b> each turn of the wheel lays down one circumference of track. If the wheel skids or spins (bowling ball, taster), the contact point is <b>not</b> at rest and \(v_G\ne\omega r\); use \(\vb v_A=\vb v_G+\vb\omega\times\vb r_{A/G}\) instead.</p></div>
+<p><b>Slide 58 exercise</b> ("apply the equation to explain the relative velocity of various points on the rotating rigid body"), answered for a wheel of radius \(r\) rolling to the right without slipping, \(\vb\omega=-\omega\hat k\):</p>
+<ul class="list">
+<li>Contact point \(C\): \(\vb v_C=\vb v_G+(-\omega\hat k)\times(-r\hat\jmath)=v_G\hat\imath-\omega r\hat\imath=\vb 0\).</li>
+<li>Top \(T\): \(\vb v_T=v_G\hat\imath+(-\omega\hat k)\times(r\hat\jmath)=(v_G+\omega r)\hat\imath=2v_G\hat\imath\).</li>
+<li>Front \(F\) (level with \(G\)): \(\vb v_F=v_G\hat\imath+(-\omega\hat k)\times(r\hat\imath)=v_G\hat\imath-v_G\hat\jmath\), size \(\sqrt2\,v_G\) at 45° down, perpendicular to \(CF\) ✓.</li>
+</ul>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Rotation of a rod in the 2D plane (slides 59–61)</h2>
+<p>Slide 59 gives the formal way: write \(\vb\omega\) and \(\vb r\) as 3-component vectors and expand the determinant. If all moving parts lie in the \(x\)–\(y\) plane, the rotation vector points along \(z\): \(\vb\omega=(0,0,\omega)\), \(\vb r=(r_x,r_y,0)\), and</p>
+\[\vb\omega\times\vb r=\begin{vmatrix}\e{x}&\e{y}&\e{z}\\0&0&\omega\\r_x&r_y&0\end{vmatrix}=-\omega r_y\,\e{x}+\omega r_x\,\e{y}.\]
+<p class="word"><b>In words:</b> the \(x\)-velocity involves \(r_y\), not \(r_x\), because the velocity is perpendicular to \(\vb r\); it is negative because a point above the hinge moves to the <b>left</b> when the rod turns anticlockwise. Slide 59: positive \(\omega\) is anticlockwise; stick to these signs in the formula and give negative values to variables when needed (a clockwise 10 rad/s is \(\omega=-10\u{rad/s}\)).</p>
+<p><b>A rod on a hinge (slide 60).</b> A rod is hinged at \(B\) (fixed, \(\vb v_B=\vb 0\)) and turns about it; its tip is \(A\) with \(\vb r_{A/B}=(r_x,r_y)\). Then</p>
+\[\begin{aligned}\vb v_A&=\vb v_B+\vb\omega\times\vb r_{A/B}=\vb\omega\times\vb r_{A/B}\\ &=-\omega r_y\,\hat\imath+\omega r_x\,\hat\jmath.\end{aligned}\]
+<div class="box eg"><span class="tag">Exercise · slide 61</span>
+<p>The rod is 0.5 m long and rotates <b>anticlockwise</b> about the hinge at a constant 5 rad/s. Find the velocity of point \(A\) when \(\theta=30^\circ\).</p>
+<div class="pair"><div><div id="fig-s6-sys"></div><p class="sub">Rod and the velocity of \(A\)</p></div><div><div id="fig-s6-vd"></div><p class="sub">Components of \(\vb v_A\)</p></div></div>
+<ol class="steps">
+<li>\(\vb r_{A/B}=0.5(\cos30^\circ,\sin30^\circ)=(0.4330,\ 0.25)\u{m}\); \(\omega=+5\u{rad/s}\).</li>
+<li>\(\vb v_A=-5(0.25)\,\hat\imath+5(0.4330)\,\hat\jmath\).</li>
+<li>Check: \(|\vb v_A|=\sqrt{1.25^2+2.165^2}=2.5\u{m/s}=r\omega\) ✓, and \(\vb v_A\cdot\vb r_{A/B}=-0.541+0.541=0\) (perpendicular) ✓.</li>
+</ol>
+<p>\(\boxed{\vb v_A=(-1.25\,\hat\imath+2.17\,\hat\jmath)\u{m/s},\ \ 2.5\u{m/s}\text{ at }120^\circ\text{ to }+x}\)</p></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Two connected links (slides 62–63)</h2>
+<p>Machines are chains of rigid links joined by pins. Slide 62 shows a two-link (2R) robot arm: link 1 (\(AB\)) turns about the fixed base \(A\) with \(\omega_{AB}\); link 2 (\(BC\)) is pinned to it at \(B\) and turns with its own \(\omega_{BC}\). Apply the relative velocity equation <b>link by link</b>, walking from the fixed point outwards:</p>
+\[\begin{aligned}\vb v_B&=\vb\omega_{AB}\times\vb r_{B/A}=-\omega_{AB}r_y\,\hat\imath+\omega_{AB}r_x\,\hat\jmath,\\ \vb v_C&=\vb v_B+\vb\omega_{BC}\times\vb r_{C/B}\\ &=-\left(\omega_{AB}r_y+\omega_{BC}r'_y\right)\hat\imath\\ &\quad+\left(\omega_{AB}r_x+\omega_{BC}r'_x\right)\hat\jmath.\end{aligned}\]
+<p class="flag">slide 62 writes the same symbols \(r_x, r_y\) for both links; they are different numbers: \((r_x,r_y)\) are the components of \(\vb r_{B/A}\) and \((r'_x,r'_y)\) those of \(\vb r_{C/B}\).</p>
+<p class="word"><b>In words:</b> the tip's velocity is the sum of what each joint's rotation contributes, each term perpendicular to its own link.</p>
+<div class="box warn"><span class="tag">Watch</span><p>\(\omega_{BC}\) in these slides is the <b>absolute</b> angular velocity of link \(BC\) (relative to the ground), which is what the relative velocity equation needs. A robot's joint motor sets the angle <b>between</b> the links, whose rate is \(\omega_{BC}-\omega_{AB}\).</p></div>
+<div class="box eg"><span class="tag">Exercise · slide 63 (Bedford &amp; Fowler Problem 17.54)</span>
+<p>Points \(B\) and \(C\) are in the \(x\)–\(y\) plane. The angular velocity vectors of arms \(AB\) and \(BC\) are \(\vb\omega_{AB}=(0,0,-0.2)\u{rad/s}\) and \(\vb\omega_{BC}=(0,0,0.4)\u{rad/s}\). What is the velocity of point \(C\)?</p>
+<div class="pair"><div><div id="fig-s7-sys"></div><p class="sub">The arm in its plane: \(AB=760\u{mm}\) at 40°, \(BC=920\u{mm}\) at 30° below horizontal</p></div><div><div id="fig-s7-vd"></div><p class="sub">Velocity diagram (scale 1 cm ≈ 0.05 m/s)</p></div></div>
+<p class="flag">read from the slide's figure: \(AB=760\u{mm}\) rising at 40° above the \(x\)-axis, \(BC=920\u{mm}\) pointing down-right at 30° below the horizontal. The slide's solution line is "add up relative velocity from \(A\) to \(B\) and to \(C\)".</p>
+<ol class="steps">
+<li>Geometry: \(\vb r_{B/A}=0.76(\cos40^\circ,\sin40^\circ)=(0.582,\ 0.489)\u{m}\); \(\vb r_{C/B}=0.92(\cos30^\circ,-\sin30^\circ)=(0.797,\ -0.460)\u{m}\).</li>
+<li>\(\vb v_B=\vb\omega_{AB}\times\vb r_{B/A}=-0.2(-0.489,\ 0.582)=(0.0977,\ -0.1164)\u{m/s}\) (\(AB\) turns clockwise, so \(B\) moves down-right, perpendicular to \(AB\)).</li>
+<li>\(\vb v_{C/B}=\vb\omega_{BC}\times\vb r_{C/B}=0.4(0.460,\ 0.797)=(0.184,\ 0.319)\u{m/s}\) (perpendicular to \(BC\)).</li>
+<li>\(\vb v_C=\vb v_B+\vb v_{C/B}=(0.282,\ 0.202)\u{m/s}\); \(|\vb v_C|=0.347\u{m/s}\).</li>
+</ol>
+<p>\(\boxed{\vb v_C=(0.282\,\hat\imath+0.202\,\hat\jmath)\u{m/s}}\)</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · drawing a velocity diagram</span>
+<p>The vector sum \(\vb v_C=\vb v_B+\vb v_{C/B}\) can be drawn to scale (as in May 2013 B1 and many textbooks): start from a pole \(o\) (zero velocity, i.e. every fixed point), draw \(ob=\vb v_B\) perpendicular to \(AB\); from \(b\) draw \(bc=\vb v_{C/B}\) perpendicular to \(BC\); then \(oc=\vb v_C\). When a velocity's <b>direction</b> is known but not its size (a slider in a guide), draw a line in that direction through \(o\): where it meets the line from \(b\) perpendicular to \(BC\) is \(c\). The diagram is a quick check on the algebra and shows at a glance which way everything moves.</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>The slider-crank mechanism (slides 64–65)</h2>
+<div class="box def"><span class="tag">Definition · slider-crank mechanism (SCM, slide 64)</span>
+<p>A <b>crank</b> (a short arm turning about a fixed axle \(O\)) is joined by a pin to a <b>connecting rod</b>, whose other end is pinned to a <b>slider</b> (a piston) that can only move along a straight guide (a cylinder). It converts rotation into straight-line back-and-forth motion (<b>reciprocation</b>), or the reverse. Uses: robotics, pumps, internal-combustion and steam engines, compressors. Slide 64 also shows a pendulum (oscillating-cylinder) engine, where the piston rod is fixed and the cylinder swings.</p></div>
+<div class="pair"><div><div id="fig-s8-geo"></div><p class="sub">Geometry: crank \(r\), rod \(l\), crank angle \(\alpha\), piston distance \(x\)</p></div><div><div id="fig-s8-vd"></div><p class="sub">Velocity diagram at \(\alpha=60^\circ\) (example below)</p></div></div>
+<p><b>Displacement (slide 65).</b> Let \(x\) be the distance from the crank axle to the piston pin, \(l\) the length of the connecting rod, \(r\) the crank length and \(\alpha\) the crank angle. The crank pin is at height \(r\sin\alpha\); the rod spans that height, so its horizontal reach is \(\sqrt{l^2-r^2\sin^2\alpha}\) (Pythagoras):</p>
+\[x=r\cos\alpha+\sqrt{l^2-r^2\sin^2\alpha}.\]
+<p class="word"><b>In words:</b> piston distance = horizontal reach of the crank + horizontal reach of the rod.</p>
+<p><b>Velocity (slide 65).</b> Differentiate with the chain rule, \(\dfrac{\mathrm dx}{\mathrm dt}=\dfrac{\mathrm dx}{\mathrm d\alpha}\dfrac{\mathrm d\alpha}{\mathrm dt}\), where \(\omega=\mathrm d\alpha/\mathrm dt\) is the crank's angular velocity:</p>
+<div class="box thm"><span class="tag">Result · piston velocity</span>
+\[\begin{aligned}\frac{\mathrm dx}{\mathrm dt}&=\left(-r\sin\alpha-\frac{r^2\sin\alpha\cos\alpha}{\sqrt{l^2-r^2\sin^2\alpha}}\right)\omega.\end{aligned}\]
+<p class="word"><b>In words:</b> the piston's velocity is the crank speed \(r\omega\) times a factor that depends on the crank angle. It is zero at \(\alpha=0^\circ\) and \(180^\circ\) (the <b>dead centres</b>, where the piston reverses), and largest a little before or after 90° (because the rod is tilted).</p></div>
+<div class="figure"><p class="ttl">Try it · slider-crank: drag the crank angle</p>
+<div id="fig-s8-live"></div>
+<canvas class="plot" id="cv-s8" style="height:200px"></canvas>
+<div class="ctrl"><label>crank angle \(\alpha\) (°) <input type="range" id="sc-a" min="0" max="360" step="1" value="60"></label>
+<label>rod length \(l\) (m) <input type="range" id="sc-l" min="0.15" max="0.6" step="0.01" value="0.3"></label>
+<label>\(\omega\) (rad/s, + anticlockwise) <input type="range" id="sc-w" min="-30" max="30" step="1" value="20"></label></div>
+<div class="readout" id="sc-out"></div>
+<p class="cap">Crank \(r=0.1\u{m}\). The curve is \(\mathrm dx/\mathrm dt\) over one revolution; the dot is the current angle. Make \(l\) long and the curve approaches a pure sine, \(-r\omega\sin\alpha\); make it short and the curve becomes lopsided. The piston is momentarily at rest at both dead centres.</p></div>
+<p class="flag">slide 65's graph (from alistairstutorials.co.uk) starts positive and dips to about \(-6\u{m/s}\) near 280°. With \(\omega\gt0\) and \(x\) as defined, \(\mathrm dx/\mathrm dt\) is negative for \(0\lt\alpha\lt180^\circ\), so that graph corresponds to a crank turning the other way (or to the velocity measured towards the crank). The shape is the same; only the sign differs. The handout gives no values of \(r\), \(l\), \(\omega\) for it.</p>
+<div class="box eg"><span class="tag">Worked example · written for these notes · two methods</span>
+<p>A slider-crank has \(r=0.1\u{m}\), \(l=0.3\u{m}\). The crank turns anticlockwise at \(\omega=20\u{rad/s}\). At \(\alpha=60^\circ\), find the piston velocity and the angular velocity of the rod.</p>
+<p><b>Method 1 · formula.</b> \(\sqrt{l^2-r^2\sin^2\alpha}=\sqrt{0.09-0.0075}=0.2872\u{m}\), so \(x=0.05+0.2872=0.337\u{m}\) and</p>
+\[\begin{aligned}\frac{\mathrm dx}{\mathrm dt}&=\left(-0.0866-\frac{0.01(0.866)(0.5)}{0.2872}\right)\\ &\quad\times(20)\\ &=(-0.0866-0.0151)(20)\\ &=-2.03\u{m/s}.\end{aligned}\]
+<p><b>Method 2 · relative velocity.</b> Origin at \(O\); \(B=(0.05,\ 0.0866)\), \(C=(0.337,\ 0)\), so \(\vb r_{C/B}=(0.287,\ -0.0866)\).</p>
+<ol class="steps">
+<li>\(\vb v_B=20\hat k\times(0.05\hat\imath+0.0866\hat\jmath)=(-1.732,\ 1.0)\u{m/s}\).</li>
+<li>\(\vb v_C=\vb v_B+\omega_{BC}\hat k\times\vb r_{C/B}=(-1.732+0.0866\,\omega_{BC},\ \ 1.0+0.287\,\omega_{BC})\).</li>
+<li>The piston moves only along \(x\): \(y\)-component \(=0\Rightarrow\omega_{BC}=-3.48\u{rad/s}\) (clockwise).</li>
+<li>\(x\)-component: \(v_C=-1.732+0.0866(-3.48)=-2.03\u{m/s}\) ✓ (same as method 1).</li>
+</ol>
+<p>\(\boxed{v_C=2.03\u{m/s}\text{ towards the crank},\ \ \omega_{BC}=3.48\u{rad/s}\text{ clockwise}}\)</p></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>Other mechanisms (slides 66–67)</h2>
+<div class="cases">
+<div><b>Rack and pinion (slide 66)</b>A small gear (pinion) meshes with a toothed bar (rack). Turning the pinion moves the rack in a straight line: \(v_{\text{rack}}=r\omega\) where they mesh. Uses: car steering (the steering wheel's rotation becomes the side-to-side motion that turns the front wheels), industrial machines (CNC cutting machines, sliding gates, lifting devices), rack railways that climb steep hills by gripping a central rack.</div>
+<div><b>Four-bar linkage (slides 66–67)</b>Four bars pinned in a loop, one of them fixed. Types: <i>crank-rocker</i> (one link turns fully, the other rocks; car hood hinges, pump jacks), <i>double-crank</i> (both side links turn fully), <i>rocker-rocker</i> (both swing back and forth), and bicycle rear suspensions. Robotic arms use four-bar linkages for precise motion.</div>
+</div>
+<p class="muted">Slide 67: the four-bar linkage's position equations (\(\theta_2\), \(\theta_3\), …) are shown for interest; "you won't be examined on these".</p>
+<p>Past papers do use the rack and pinion with the relative velocity equation (Dec 2017 B1(b): a pinion rolling between two moving racks). The method is the same as for a rolling wheel: each rack's velocity equals the velocity of the pinion's point touching it.</p>
+<div class="box"><span class="tag">Older syllabus · gear trains (type D2.4)</span>
+<p><span class="lowpri">low priority</span> May 2013 B1 asked about involute gear profiles (\(\omega_2/\omega_1=r_1/r_2\)) and an epicyclic (planetary) gear train. Neither is in the current handout. They are listed in the <a href="guide-D2.html#D2-4">exam guide</a> for completeness only.</p></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>Rotational kinetics: torque and \(M=I\alpha\) (slide 68)</h2>
+<p>Kinematics described rotation; kinetics explains it. Slide 68 sets Newton's second law beside its rotational version:</p>
+<div class="box thm"><span class="tag">Newton's second law, linear and rotational</span>
+\[F=ma\qquad\qquad \vb r\times\vb F=\vb T=I\vb\alpha\]
+<p>where \(\vb r\times\vb F\) is the <b>torque</b> \(T\) (the moment of the force about the axis, S1 Section 5), \(I=\int r^2\,\mathrm dm\) is the <b>moment of inertia</b> (Section 11), and \(\alpha=\mathrm d\omega/\mathrm dt\) the angular acceleration.</p>
+<p class="word"><b>In words:</b> net force = mass × linear acceleration; net torque = moment of inertia × angular acceleration. The torque plays the part of force, \(I\) the part of mass, \(\alpha\) the part of \(a\).</p></div>
+<div class="box def"><span class="tag">Definition · torque</span><p><b>Torque</b> is a moment that turns a body about an axis: force × perpendicular distance from the axis to the force's line of action, unit N·m. "Torque" and "moment" mean the same thing here.</p></div>
+<p><b>Where it comes from (slide 68's picture).</b> A small mass \(m\) slides on a frictionless tabletop, tied by a string to a pivot, moving on a circle of radius \(r\). A force \(F\) pushes it tangentially (\(\vb F\perp\vb r\)). Newton's law along the tangent: \(F=ma_t=m(r\alpha)\). Multiply by \(r\):</p>
+\[T=rF=(mr^2)\,\alpha.\]
+<p>For one particle \(I=mr^2\). A rigid body is many particles at different radii all sharing the same \(\alpha\); adding them gives \(\sum T=\left(\sum m_ir_i^2\right)\alpha=I\alpha\). Slide 68 also notes \(\alpha=\mathrm d(\vb r\times\vb v)/\mathrm dt\) per unit \(r^2\), i.e. the torque changes the angular momentum: in 2D, \(\sum M=\dfrac{\mathrm d}{\mathrm dt}(I\omega)=I\alpha\) (slide 78).</p>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Use \(\sum M=I\alpha\) about a <b>fixed axis</b> or about the <b>centre of mass \(G\)</b> (with \(I_G\)). For a body that both translates and rotates (a rolling disk), write <b>both</b> \(\sum\vb F=m\vb a_G\) and \(\sum M_G=I_G\alpha\), plus a kinematic link such as \(a_G=\alpha r\).</p></div>
+<div class="box eg"><span class="tag">Worked example · written for these notes · drum and hanging mass</span>
+<p>A uniform disk pulley (mass \(M=8\u{kg}\), radius \(R=0.2\u{m}\)) turns freely on a fixed horizontal axle. A light cord wound round it carries a block of \(m=3\u{kg}\). The block is released from rest. Find its acceleration, the cord tension and the pulley's angular acceleration.</p>
+<div class="pair"><div><div id="fig-s10-sys"></div><p class="sub">System</p></div><div><div id="fig-s10-fbd"></div><p class="sub">FBDs: pulley and block (taking down / clockwise positive)</p></div></div>
+<ol class="steps">
+<li><b>Pulley</b> (moments about the axle; the axle reaction and the pulley's weight pass through it): \(TR=I\alpha\), with \(I=\tfrac12MR^2=\tfrac12(8)(0.2)^2=0.16\u{kg\,m^2}\) (Section 12).</li>
+<li><b>Block</b> (down +): \(mg-T=ma\).</li>
+<li><b>Kinematics</b>: the cord does not slip, so \(a=\alpha R\).</li>
+<li>Combine: \(T=I\alpha/R=Ia/R^2=\tfrac12Ma\), so \(mg=\left(m+\tfrac12M\right)a\):
+\[a=\frac{3(9.81)}{3+4}=4.20\u{m/s^2}.\]</li>
+<li>\(T=m(g-a)=3(9.81-4.20)=16.8\u{N}\); \(\alpha=a/R=21.0\u{rad/s^2}\).</li>
+<li><b>Checks:</b> dimension \([I\alpha/R]=\mathrm{kg\,m^2\,s^{-2}/m}=\mathrm N\) ✓; if \(M\to0\), \(a\to g\) (free fall) ✓; \(T\lt mg\) ✓.</li>
+</ol>
+<p>\(\boxed{a=4.20\u{m/s^2},\ \ T=16.8\u{N},\ \ \alpha=21.0\u{rad/s^2}}\)</p></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Moment of inertia (slides 69–71)</h2>
+<div class="box def"><span class="tag">Definition · (mass) moment of inertia (slide 69)</span>
+<p>Split the body into tiny pieces of mass \(\mathrm dm\), each at perpendicular distance \(r\) from the rotation axis. Each contributes \(r^2\,\mathrm dm\):</p>
+\[I=\sum m_ir_i^2\qquad\text{or}\qquad I=\int r^2\,\mathrm dm.\]
+<p>Unit: kg·m². Slide 69 draws a blob split into pieces \(dm_1,dm_2,\dots\) at distances \(r_1,r_2,\dots\) from \(O\).</p>
+<p class="word"><b>In words:</b> the moment of inertia measures how hard it is to change the body's spin. Mass far from the axis counts much more than mass near it (distance <b>squared</b>).</p></div>
+<ul class="list">
+<li><b>Small \(I\)</b>: easier to rotate (less torque needed for the same \(\alpha\)).</li>
+<li>For the <b>same object</b>, \(I\) depends on <b>where the axis is</b>: how it is hinged.</li>
+</ul>
+<p><b>Slide 69 exercise</b> ("come up with some examples"): a door is easy to swing about its hinges but would be easier still about a vertical axis through its middle (\(\tfrac1{12}mL^2\) vs \(\tfrac13mL^2\), four times smaller); a pencil spins easily about its long axis but is harder to twirl end over end; a figure skater spins faster when she pulls her arms in (smaller \(I\), same angular momentum \(I\omega\)); a baseball bat is easier to swing when gripped further up ("choked").</p>
+
+<h3>Standard results (slide 70)</h3>
+<div class="box ready"><span class="tag">Ready table · moments of inertia (mass \(M\), radius \(R\), length \(L\))</span>
+<div class="scroll"><table>
+<tr><th>Body</th><th>Axis</th><th>\(I\)</th></tr>
+<tr><td>solid cylinder or disk</td><td>symmetry axis</td><td>\(\tfrac12MR^2\)</td></tr>
+<tr><td>solid cylinder, length \(L\)</td><td>central diameter</td><td>\(\tfrac14MR^2+\tfrac1{12}ML^2\)</td></tr>
+<tr><td>thin hoop (ring)</td><td>symmetry axis</td><td>\(MR^2\)</td></tr>
+<tr><td>thin hoop</td><td>a diameter</td><td>\(\tfrac12MR^2\)</td></tr>
+<tr><td>solid sphere</td><td>any diameter</td><td>\(\tfrac25MR^2\)</td></tr>
+<tr><td>thin spherical shell</td><td>any diameter</td><td>\(\tfrac23MR^2\)</td></tr>
+<tr><td>thin rod</td><td>through centre, ⟂ rod</td><td>\(\tfrac1{12}ML^2\)</td></tr>
+<tr><td>thin rod</td><td>through one end, ⟂ rod</td><td>\(\tfrac13ML^2\)</td></tr>
+</table></div>
+<p class="word"><b>In words:</b> hollow beats solid (a hoop has twice the \(I\) of a disk of the same mass and radius, a shell more than a solid sphere) because its mass sits further out. The exam formula sheet gives only \(I=\int r^2\,\mathrm dm\), not this table: you are usually asked to <b>derive</b> \(I\) by integration (Section 12).</p></div>
+
+<h3>Moment of inertia versus mass (slide 71)</h3>
+<div class="scroll"><table>
+<tr><th>Quantity</th><th>Linear</th><th>Angular</th></tr>
+<tr><td>Newton's second law</td><td>\(F=ma\)</td><td>\(\tau=I\alpha\)</td></tr>
+<tr><td>momentum</td><td>\(p=mv\)</td><td>\(L=I\omega\)</td></tr>
+<tr><td>kinetic energy</td><td>\(KE=\tfrac12mv^2\)</td><td>\(KE=\tfrac12I\omega^2\)</td></tr>
+<tr><td>work–energy</td><td>\(F_{\rm net}d=\Delta\left[\tfrac12mv^2\right]\)</td><td>\(\tau_{\rm net}\theta=\Delta\left[\tfrac12I\omega^2\right]\)</td></tr>
+</table></div>
+<p>(\(\tau\) is another symbol for torque.) Both \(m\) and \(I\) resist changes in motion: mass resists linear acceleration, moment of inertia resists angular acceleration. The main differences (slide 71):</p>
+<ul class="list">
+<li><b>Dependence on shape:</b> mass is one number for an object; \(I\) changes with the position of the axis.</li>
+<li><b>Mass distribution:</b> \(I=\sum mr^2\) depends on how far the mass is from the axis; mass depends only on how much matter there is.</li>
+</ul>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Finding \(I\) by integration (slides 72–73)</h2>
+<div class="box thm"><span class="tag">Recipe · the slides' three-step guide</span>
+<ol class="steps">
+<li>Express the tiny slice of mass \(\mathrm dm\) in terms of density and a length, area or volume (\(\mathrm dm=\rho_L\,\mathrm dx\), \(\rho_A\,\mathrm dA\) or \(\rho\,\mathrm dV\)), choosing the slice so that <b>every point in it is the same distance \(r\)</b> from the axis.</li>
+<li>Set up the integral \(I=\int r^2\,\mathrm dm\).</li>
+<li>Put in the limits (the boundary of the body) and integrate; replace the density by mass ÷ size.</li>
+</ol></div>
+<div class="box eg"><span class="tag">Derivation · slide 72 · uniform disk about its axis</span>
+<div class="pair"><div><div id="fig-s12-disk"></div><p class="sub">Thin ring of radius \(r\), width \(\mathrm dr\)</p></div><div><div id="fig-s12-ring"></div><p class="sub">Rimmed disk: mass between \(r_1\) and \(r_2\)</p></div></div>
+<p>Disk of radius \(R\) and mass \(m\). Area density (mass per area) \(\rho_a=m/(\pi R^2)\).</p>
+<ol class="steps">
+<li>Slice into thin rings of radius \(r\) and width \(\mathrm dr\). Unrolled, a ring is a strip of length \(2\pi r\) and width \(\mathrm dr\): \(\mathrm dA=2\pi r\,\mathrm dr\), so
+\[\mathrm dm=\rho_a\,\mathrm dA=\frac{m}{\pi R^2}\,2\pi r\,\mathrm dr.\]</li>
+<li>\(\displaystyle I=\int r^2\,\mathrm dm=\frac{2m}{R^2}\int_0^Rr^2\cdot r\,\mathrm dr\)</li>
+<li>\(\displaystyle\phantom{I}=\frac{2m}{R^2}\left[\frac{r^4}{4}\right]_0^R=\boxed{\tfrac12mR^2}\)</li>
+</ol>
+<p class="word"><b>In words:</b> a disk has half the moment of inertia of a ring of the same mass and radius, because much of its mass is near the centre.</p></div>
+<div class="box eg"><span class="tag">Derivation · slide 73 · rimmed disk (annulus)</span>
+<p>Mass spread uniformly between radii \(r_1\) and \(r_2\) (a disk with a hole, or a rimmed flywheel): \(m=\rho_a\pi(r_2^2-r_1^2)\).</p>
+\[\begin{aligned}I&=\int_{r_1}^{r_2}r^2\,\mathrm dm=\int_{r_1}^{r_2}r^2(\rho_a2\pi r\,\mathrm dr)\\ &=\rho_a\pi\frac{r_2^4-r_1^4}{2}=\boxed{\tfrac12m\left(r_2^2+r_1^2\right)}.\end{aligned}\]
+<p>(using \(r_2^4-r_1^4=(r_2^2-r_1^2)(r_2^2+r_1^2)\).) Checks: \(r_1=0\) gives the disk, \(\tfrac12mr_2^2\) ✓. If all the mass is at one radius \(r\) (\(r_1=r_2=r\)), \(I=mr^2\) (a thin hoop) ✓.</p></div>
+<p><b>Slide 73 exercises.</b></p>
+<ul class="list">
+<li><i>To design a disk with maximum \(I\)</i> for a given mass: put the mass as far from the axis as possible: a thin, heavy rim joined to the hub by light spokes or a thin web. In the limit \(I\to mR^2\), twice the solid disk's \(\tfrac12mR^2\).</li>
+<li><i>Why a flywheel needs large \(I\)</i>: it stores kinetic energy \(\tfrac12I\omega^2\) and resists changes of speed (Section 14).</li>
+</ul>
+<div class="beyond box"><span class="tag">Beyond the handouts · uniform bar (asked in Dec 2022, Dec 2021, Dec 2014)</span>
+<p>A thin uniform bar, mass \(m\), length \(L\): line density \(\rho_L=m/L\), slice \(\mathrm dm=(m/L)\,\mathrm dx\) at distance \(x\) from the axis.</p>
+\[\begin{aligned}I_{\rm centre}&=\int_{-L/2}^{L/2}x^2\frac mL\,\mathrm dx\\ &=\frac mL\left[\frac{x^3}{3}\right]_{-L/2}^{L/2}=\frac{mL^2}{12},\\ I_{\rm end}&=\int_0^Lx^2\frac mL\,\mathrm dx=\frac{mL^2}{3}.\end{aligned}\]
+<p class="word"><b>In words:</b> moving the axis from the middle to the end makes \(I\) four times larger, because half the bar is now twice as far away on average. (The parallel axis theorem, next, gives the same.)</p></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Parallel axis theorem (slide 74)</h2>
+<div class="box thm"><span class="tag">Theorem · parallel axis</span>
+\[I=I_{\rm cm}+md^2\]
+<ul class="list"><li>\(I\): moment of inertia about the parallel axis;</li><li>\(I_{\rm cm}\): moment of inertia about the axis through the centre of mass;</li><li>\(m\): total mass;</li><li>\(d\): perpendicular distance between the two parallel axes.</li></ul>
+<p class="word"><b>In words:</b> about any axis, \(I\) equals the value about a parallel axis through the centre of mass, plus "the whole mass at distance \(d\)". So \(I\) is <b>smallest</b> about the centre of mass.</p></div>
+<div id="fig-s13"></div>
+<p><b>Slide 74's example:</b> a rod about its centre has \(I=\tfrac1{12}ML^2\). Move the axis to the end, \(d=L/2\):</p>
+\[\begin{aligned}I_{\rm end}&=\tfrac1{12}ML^2+M\left(\tfrac L2\right)^2\\ &=\tfrac1{12}ML^2+\tfrac3{12}ML^2=\tfrac13ML^2\ ✓.\end{aligned}\]
+<p>The theorem lets you find \(I\) for complex shapes (add the parts, each shifted to the common axis) and for bodies pivoted off-centre.</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · why it works</span>
+<p>Measure \(\vb r\) from the centre of mass and let the new axis be at \(\vb d\). Then \(I=\int|\vb r-\vb d|^2\,\mathrm dm=\int r^2\,\mathrm dm-2\vb d\cdot\int\vb r\,\mathrm dm+d^2\int\mathrm dm\). The middle integral is zero by the definition of the centre of mass, leaving \(I_{\rm cm}+md^2\). The theorem therefore only works when one of the two axes passes through the <b>centre of mass</b>.</p></div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Flywheels and rotational kinetic energy (slides 75–77)</h2>
+<div class="box def"><span class="tag">Definition · flywheel (slide 75)</span>
+<p>A <b>flywheel</b> is a wheel with a large \(I\), achieved by a large mass and radius. It <b>stores kinetic energy of rotation</b>, so as to <b>stabilise the rotational speed</b> when either the load or the power source varies (e.g. a reciprocating engine, whose piston pushes only during part of each turn).</p></div>
+<div class="box thm"><span class="tag">Result · rotational kinetic energy</span>
+\[KE=\tfrac12I\omega^2\]
+<p class="word"><b>In words:</b> a spinning body stores energy "half × moment of inertia × angular speed squared", the rotational twin of \(\tfrac12mv^2\). It follows from adding \(\tfrac12(\mathrm dm)v^2\) with \(v=r\omega\): \(\tfrac12\omega^2\int r^2\,\mathrm dm\).</p></div>
+<p>Slide 75 shows a multi-cylinder engine with a flywheel and geared teeth (for the starter motor) on the crankshaft, and a single-cylinder steam/gas engine sketch: gas pressure pushes the piston, the connecting rod turns the crank, and "the flywheel minimises fluctuation in speed".</p>
+<p class="word"><b>Why it works:</b> an energy change \(\Delta E\) changes the speed by \(\Delta\omega\approx\Delta E/(I\omega)\) (from \(\mathrm d(\tfrac12I\omega^2)=I\omega\,\mathrm d\omega\)). Large \(I\) and large \(\omega\) make the speed ripple small: the flywheel soaks up energy during the power stroke and gives it back during the others.</p>
+<div class="figure"><p class="ttl">Try it · same mass, different flywheel</p>
+<div class="ctrl"><label>mass \(m\) (kg) <input type="range" id="fw-m" min="50" max="500" step="10" value="250"></label>
+<label>outer radius \(R\) (m) <input type="range" id="fw-R" min="0.2" max="1.0" step="0.05" value="0.75"></label>
+<label>inner radius / \(R\) <input type="range" id="fw-k" min="0" max="0.95" step="0.05" value="0"></label>
+<label>speed (rpm) <input type="range" id="fw-n" min="100" max="3000" step="50" value="1200"></label></div>
+<div id="fig-fw"></div>
+<div class="readout" id="fw-out"></div>
+<p class="cap">Inner radius 0 = uniform disk (slide 76's flywheel at the start values). Push the inner radius towards \(R\) to make a rimmed flywheel: with the mass unchanged, \(I\) and the stored energy rise up to twice the disk's.</p></div>
+<div class="box eg"><span class="tag">Exercise · slide 76 (solution slide 77 is blank: solved here)</span>
+<p>An industrial flywheel shaped like a uniform solid disk has a diameter of 1.5 m and a mass of 250 kg. It spins up from rest to a maximum angular velocity of 1200 rpm. (1) Find its moment of inertia. (2) Calculate the rotational kinetic energy stored at maximum speed. (3) If a constant braking torque of 50 N·m is applied, how many revolutions does it take to come to a stop? <i>Extension:</i> if the disk radius is reduced by 1.5 times, how much faster does the flywheel need to rotate to keep the same rotational kinetic energy?</p>
+<ol class="steps">
+<li>\(R=0.75\u{m}\): \(I=\tfrac12mR^2=\tfrac12(250)(0.75)^2=70.3\u{kg\,m^2}\).</li>
+<li>\(\omega=1200\times\dfrac{2\pi}{60}=125.7\u{rad/s}\); \(E_k=\tfrac12(70.3)(125.7)^2=5.55\times10^5\u{J}=555\u{kJ}\).</li>
+<li>Work–energy (slide 76's hint, \(\tau_{\rm net}\theta=\Delta[\tfrac12I\omega^2]\)): \(50\,\theta=555\,165\Rightarrow\theta=11\,103\u{rad}=\dfrac{11\,103}{2\pi}=1767\ \text{rev}\).</li>
+<li><i>Extension:</i> \(R'=R/1.5\Rightarrow I'=I/1.5^2=I/2.25\). Same energy: \(I'\omega'^2=I\omega^2\Rightarrow\omega'=1.5\,\omega=1800\ \text{rpm}\).</li>
+</ol>
+<p>\(\boxed{I=70.3\u{kg\,m^2},\ E_k=555\u{kJ},\ 1767\ \text{rev},\ 1.5\times\text{ faster }(1800\ \text{rpm})}\)</p>
+<p class="word"><b>Sense check:</b> \(I\propto R^2\) and \(E\propto I\omega^2\), so \(\omega\propto1/R\) for fixed mass and energy. Units: kg·m²·(rad/s)² = J ✓.</p></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Summary (slide 78)</h2>
+<p>Slide 78 sums the chapter up in four points: a net force gives the centre of mass a linear acceleration; a net torque changes the angular momentum and makes the body rotate (\(\sum M=\mathrm d(I\omega)/\mathrm dt=I\alpha\)); the relative velocity equation finds velocities in a rotating rigid body or a mechanism; combined rotation and reciprocation (slider-crank, four-bar linkage, rack and pinion) is everywhere in machines; and the moment of inertia measures how strongly a body resists angular acceleration.</p>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>Translation</td><td>\(\sum\vb F=m\vb a_G\)</td><td>a translating body is a particle at its centre of mass</td></tr>
+<tr><td>Fixed-axis rotation</td><td>\(\omega=\mathrm d\theta/\mathrm dt\), \(\alpha=\mathrm d\omega/\mathrm dt\); \(v=r\omega\), \(a_t=r\alpha\), \(a_n=r\omega^2\)</td><td>D1's straight-line formulas with \(\theta,\omega,\alpha\) in place of \(s,v,a\)</td></tr>
+<tr><td>Relative velocity</td><td>\(\vb v_B=\vb v_A+\vb\omega\times\vb r_{B/A}\)</td><td>the extra velocity is perpendicular to \(AB\), size \(AB\cdot\omega\)</td></tr>
+<tr><td>In 2D</td><td>\(\vb\omega\times\vb r=(-\omega r_y,\ \omega r_x)\)</td><td>anticlockwise \(\omega\) positive</td></tr>
+<tr><td>Instantaneous centre</td><td>\(v=\omega r\) from the IC</td><td>rolling wheel: contact point at rest, top at \(2v_G\)</td></tr>
+<tr><td>Slider-crank</td><td>\(x=r\cos\alpha+\sqrt{l^2-r^2\sin^2\alpha}\), \(\dot x=\dfrac{\mathrm dx}{\mathrm d\alpha}\,\omega\)</td><td>piston at rest at the dead centres</td></tr>
+<tr><td>Rotational kinetics</td><td>\(\sum M=I\alpha\)</td><td>torque = moment of inertia × angular acceleration</td></tr>
+<tr><td>Moment of inertia</td><td>\(I=\int r^2\,\mathrm dm\)</td><td>disk \(\tfrac12mR^2\), ring \(mR^2\), bar \(\tfrac1{12}mL^2\) (centre) or \(\tfrac13mL^2\) (end)</td></tr>
+<tr><td>Parallel axis</td><td>\(I=I_{\rm cm}+md^2\)</td><td>smallest about the centre of mass</td></tr>
+<tr><td>Rotational energy</td><td>\(E_k=\tfrac12I\omega^2\); \(\tau\theta=\Delta E_k\)</td><td>flywheels store energy and smooth the speed</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Putting a clockwise angular velocity into \(\vb\omega\times\vb r\) as a positive number.</span>
+<span class="ok">✓</span><span>Anticlockwise is \(+\hat k\): a clockwise 10 rad/s is \(\omega=-10\u{rad/s}\) (slide 59).</span>
+<span class="x">✗</span><span>Writing \(v_x=\omega r_x\).</span>
+<span class="ok">✓</span><span>\(\vb\omega\times\vb r=(-\omega r_y,\ \omega r_x)\): the \(x\)-velocity comes from the \(y\)-distance.</span>
+<span class="x">✗</span><span>Using a different \(\omega\) for different pairs of points on one link.</span>
+<span class="ok">✓</span><span>One rigid link has one \(\omega\); different links have different \(\omega\)s.</span>
+<span class="x">✗</span><span>Assuming the slider or piston velocity is \(r\omega\).</span>
+<span class="ok">✓</span><span>Only the crank pin moves at \(r\omega\); the slider's speed comes from the relative velocity equation with the constraint "slider moves along its guide".</span>
+<span class="x">✗</span><span>Using \(v_G=\omega r\) for a ball that skids or spins (bowling ball).</span>
+<span class="ok">✓</span><span>\(v_G=\omega r\) only when rolling without slipping. Otherwise use \(\vb v_A=\vb v_G+\vb\omega\times\vb r_{A/G}\).</span>
+<span class="x">✗</span><span>Treating the tension on both sides of a heavy pulley as equal.</span>
+<span class="ok">✓</span><span>If the pulley has inertia, \((T_1-T_2)R=I\alpha\), so the tensions differ.</span>
+<span class="x">✗</span><span>Taking \(I_{\rm end}=I_{\rm cm}-md^2\), or forgetting to square \(d\).</span>
+<span class="ok">✓</span><span>\(I=I_{\rm cm}+md^2\): moving the axis away from the centre of mass always <b>increases</b> \(I\).</span>
+<span class="x">✗</span><span>Putting rpm straight into \(\tfrac12I\omega^2\).</span>
+<span class="ok">✓</span><span>Convert: \(\omega=n\cdot2\pi/60\) rad/s.</span>
+</div>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17"><h2><span class="n">17</span>Find the mistake</h2>
+<div class="q"><p class="qh">1 · The rod of slide 61</p>
+<p>"\(\vb r_{A/B}=(0.433,\ 0.25)\u{m}\), \(\omega=5\u{rad/s}\), so \(\vb v_A=\omega\vb r=(2.165,\ 1.25)\u{m/s}\).</p>
+<details><summary>Hint</summary><div><p>Which way does the velocity of a point on a turning rod point compared with the rod?</p></div></details>
+<details><summary>Answer</summary><div><p>The velocity is <b>perpendicular</b> to \(\vb r\), not along it: \(\vb v_A=\vb\omega\times\vb r=(-5\times0.25,\ 5\times0.433)=(-1.25,\ 2.165)\u{m/s}\). The size, 2.5 m/s, happens to match; the direction was wrong.</p></div></details></div>
+<div class="q"><p class="qh">2 · The drum and hanging mass of Section 10</p>
+<p>"The block hangs from the cord, so \(T=mg=3(9.81)=29.4\u{N}\), and \(\alpha=TR/I=29.4(0.2)/0.16=36.8\u{rad/s^2}\)."</p>
+<details><summary>Hint</summary><div><p>Is the block in equilibrium?</p></div></details>
+<details><summary>Answer</summary><div><p>The block accelerates, so \(T\ne mg\): \(mg-T=ma\) with \(a=\alpha R\). Solving both equations together gives \(a=4.20\u{m/s^2}\), \(T=16.8\u{N}\), \(\alpha=21.0\u{rad/s^2}\).</p></div></details></div>
+<div class="q"><p class="qh">3 · A rimmed flywheel</p>
+<p>"A flywheel of mass 250 kg has all its mass in a thin rim of radius 0.75 m, so \(I=\tfrac12mR^2=70.3\u{kg\,m^2}\), the same as the solid disk."</p>
+<details><summary>Hint</summary><div><p>How far from the axis is each bit of mass in a thin rim?</p></div></details>
+<details><summary>Answer</summary><div><p>All the mass is at \(r=R\), so \(I=mR^2=140.6\u{kg\,m^2}\), twice the disk's. \(\tfrac12mR^2\) is only for a uniform solid disk.</p></div></details></div>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="s18"><h2><span class="n">18</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Translation or rotation?</p><p>The seat of a Ferris wheel stays level while the wheel turns. What type of motion does the seat have?</p>
+<details><summary>Answer</summary><div><p>Curvilinear translation: every line in the seat keeps its direction, but each point moves on a circle. All points of the seat have the same velocity.</p></div></details></div>
+<div class="q"><p class="qh">2 · Dead centres</p><p>At which crank angles is the piston of a slider-crank momentarily at rest, and why?</p>
+<details><summary>Answer</summary><div><p>At \(\alpha=0^\circ\) and \(180^\circ\), when crank and rod are in line. There the crank pin moves perpendicular to the guide, so the piston has no velocity along it; the formula gives \(\sin\alpha=0\Rightarrow\dot x=0\).</p></div></details></div>
+<div class="q"><p class="qh">3 · Same mass, different \(I\)</p><p>A solid disk and a ring have the same mass and radius and are given the same torque. Which spins up faster?</p>
+<details><summary>Answer</summary><div><p>The disk: \(I_{\rm disk}=\tfrac12mR^2\lt I_{\rm ring}=mR^2\), and \(\alpha=M/I\). The disk reaches twice the ring's angular acceleration.</p></div></details></div>
+<div class="q"><p class="qh">4 · Where is the IC?</p><p>A ladder slides with its top on a vertical wall and its foot on the floor. How would you locate its instantaneous centre?</p>
+<details><summary>Answer</summary><div><p>Draw a line through the top perpendicular to its velocity (i.e. horizontal) and a line through the foot perpendicular to its velocity (vertical). The IC is where they cross: the corner of the rectangle opposite the wall–floor corner.</p></div></details></div>
+<div class="q"><p class="qh">5 · Doubling the speed</p><p>A flywheel's speed is doubled. What happens to its stored energy?</p>
+<details><summary>Answer</summary><div><p>\(E_k=\tfrac12I\omega^2\) grows four times.</p></div></details></div>
+</section>
+
+<!-- ============ 19 ============ -->
+<section id="s19"><h2><span class="n">19</span>Exam taster</h2>
+<p>Real past-paper parts. From Dec 2021 to Dec 2024 one whole Section B question (20 marks) came from this chapter each year: a linkage or slider-crank, then the moment of inertia of a flywheel or bar. The formula sheet gives the relative velocity equation and \(I=\int r^2\,\mathrm dm\), but no standard values of \(I\): be ready to derive them. Full method and more questions: <a href="guide-D2.html">Exam guide · D2</a>.</p>
+
+<div class="q"><div class="src"><b>Dec 2024 B2</b><span>20 marks</span><a class="guide" href="guide-D2.html#D2-1">D2.1 relative velocity in mechanisms</a><a class="guide" href="guide-D2.html#D2-2">D2.2 moment of inertia, flywheel</a></div>
+<p>The figure below shows a crank and vertical slider mechanism. The crank is attached to a uniform disk with total mass of \(m=200\u{kg}\), which acts as a flywheel. It is driven by the crank \(AB\) with a clockwise angular velocity of 10 rad/s.</p>
+<div id="fig-t24"></div>
+<p>(a) Determine the velocity of point \(B\) at the instant shown. [4] (b) Determine the velocity of the slider at the instant shown. [4] (c) Draw a graph showing how the velocity of the slider changes when the crank rotates one cycle (i.e. crank angle sweeps from 0 to 360 degrees). [4] (d) Derive the moment of inertia for a uniform disk and determine the moment of inertia for the flywheel shown in the figure. [4] (e) Explain the role of the flywheel in this mechanism, and explain why a rimmed flywheel is preferred over a uniform flywheel. [4]</p>
+<p class="flag">the 45° is read as the crank's angle to the vertical (the printed \(\omega_{BC}=2.43\u{rad/s}\) and rod angle 13.6° confirm it). The flywheel radius is not printed. The figure is not to scale (the 0.75 m rod is drawn barely twice the 0.25 m crank), so scale the disk against the crank beside it: radius ≈ 0.88 × 0.25 ≈ 0.22 m.</p>
+<details><summary>Hint</summary><div><p>Origin at \(A\), \(\omega_{AB}=-10\hat k\). For (b), the slider only moves vertically: write \(\vb v_C=\vb v_B+\omega_{BC}\hat k\times\vb r_{C/B}\) and set the \(x\)-component to zero. For (c), the slider-crank formula of Section 8 works with the angle measured from the slider's line.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) \(\vb r_{B/A}=0.25(-\sin45^\circ,\ \cos45^\circ)=(-0.1768,\ 0.1768)\u{m}\).</p>
+\[\begin{aligned}\vb v_B&=(-10)\hat k\times\vb r_{B/A}\\ &=(10\times0.1768,\\ &\qquad -10\times(-0.1768))\\ &=(1.768,\ 1.768)\u{m/s}.\end{aligned}\]
+<p>\(\boxed{v_B=2.5\u{m/s},\ \text{up and to the right at }45^\circ}\) (perpendicular to \(AB\)).</p>
+<p>(b) \(C\) is above \(A\): \(y_C=0.1768+\sqrt{0.75^2-0.1768^2}=0.906\u{m}\), so \(\vb r_{C/B}=(0.1768,\ 0.7289)\u{m}\) (rod at 13.6° to the vertical).</p>
+\[\begin{aligned}\vb v_C&=\vb v_B+\omega_{BC}\hat k\times\vb r_{C/B}\\ &=(1.768-0.7289\,\omega_{BC},\\ &\qquad 1.768+0.1768\,\omega_{BC}).\end{aligned}\]
+<p>\(x\): \(0=1.768-0.7289\,\omega_{BC}\Rightarrow\omega_{BC}=2.43\u{rad/s}\) (anticlockwise). \(y\): \(v_C=1.768+0.1768(2.43)\).</p>
+<p>\(\boxed{v_C=2.20\u{m/s}\ \text{upward}}\)</p>
+<p>(c) With \(\theta\) the crank angle measured clockwise from top dead centre (the instant shown is \(\theta=315^\circ\)) and upward positive,</p>
+\[v_C=-r\omega\left(\sin\theta+\frac{r\sin\theta\cos\theta}{\sqrt{l^2-r^2\sin^2\theta}}\right)\]
+<p>with \(r=0.25\u{m}\), \(l=0.75\u{m}\), \(\omega=10\u{rad/s}\). Zero at \(0^\circ\) and \(180^\circ\) (dead centres); largest downward speed \(2.64\u{m/s}\) at \(\theta\approx73^\circ\); largest upward speed \(2.64\u{m/s}\) at \(\theta\approx287^\circ\). It is a distorted sine wave.</p>
+<div class="figure"><canvas class="plot" id="cv-t24" style="height:190px"></canvas><p class="cap">Slider velocity over one crank revolution. The dot marks the instant in the figure (315°, +2.20 m/s).</p></div>
+<p>(d) Rings of radius \(r\), width \(\mathrm dr\): \(\mathrm dm=\dfrac{m}{\pi R^2}2\pi r\,\mathrm dr\), so \(I=\displaystyle\int_0^R r^2\frac{2m}{R^2}r\,\mathrm dr=\tfrac12mR^2\) (Section 12). For this flywheel \(I=\tfrac12(200)R^2=100R^2\u{kg\,m^2}\); with \(R\approx0.22\u{m}\), \(\boxed{I\approx4.9\u{kg\,m^2}}\).</p>
+<p>(e) The flywheel stores rotational kinetic energy \(\tfrac12I\omega^2\). It absorbs energy when the driving torque exceeds the load and gives it back when it falls short, so the crank speed fluctuates less. A rimmed flywheel puts most of its mass far from the axis, so for the same mass it has a larger \(I\) (up to \(mR^2\), twice the uniform disk's): more energy stored and smaller speed ripple per kilogram.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2023 B2</b><span>20 marks</span><span>(a)+(b) also May 2019 B1(a)</span><a class="guide" href="guide-D2.html#D2-1">D2.1 relative velocity in mechanisms</a><a class="guide" href="guide-D2.html#D2-2">D2.2 moment of inertia, flywheel</a></div>
+<p>As shown in the schematic, two bars \(AB\) and \(BC\) are connected to a flywheel at point \(C\). The flywheel rotates around point \(D\). At this instant (\(\theta=60^\circ\)), the bar \(AB\) of the linkage has a clockwise angular velocity \(\omega_{AB}=30\u{rad/s}\).</p>
+<div id="fig-t23"></div>
+<p>(a) Determine the velocity of point \(C\) and angular velocity of link \(BC\) at this instant. [4] (b) Determine the angular velocity of the flywheel centred at \(D\) at this instant. [4] (c) Assuming that the flywheel has uniform weight distribution and total mass \(m\), show that the moment of inertia of the flywheel about its symmetry axis is \(I=\tfrac12mr_C^2\). Calculate the moment of inertia if \(m=10\u{kg}\). [4] (d) The flywheel is now detached from the bar \(BC\) and continues to rotate at the angular velocity determined in part (b); determine the rotational kinetic energy \(T\) of the flywheel. [4] (e) Explain how the rotational kinetic energy changes if the weight distribution of the flywheel is shifted towards the edge. [4]</p>
+<details><summary>Hint</summary><div><p>\(C\) is on the wheel directly below \(D\), so \(\vb v_C\) is horizontal. Use that to find \(\omega_{BC}\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) \(\vb r_{B/A}=0.2(\cos60^\circ,\sin60^\circ)=(0.1,\ 0.1732)\u{m}\), \(\omega_{AB}=-30\u{rad/s}\):</p>
+\[\begin{aligned}\vb v_B&=(-(-30)(0.1732),\ (-30)(0.1))\\ &=(5.196,\ -3.0)\u{m/s}.\end{aligned}\]
+<p>\(\vb r_{C/B}=(0.2,\ 0)\): \(\vb v_C=(5.196,\ -3.0+0.2\,\omega_{BC})\). \(\vb v_C\) is horizontal, so \(\omega_{BC}=15\u{rad/s}\).</p>
+<p>\(\boxed{\omega_{BC}=15\u{rad/s}\ \text{anticlockwise},\quad v_C=5.20\u{m/s}\rightarrow}\)</p>
+<p>(b) \(\vb r_{C/D}=(0,\ -0.1)\): \(\vb v_C=\omega_D\hat k\times\vb r_{C/D}=(0.1\,\omega_D,\ 0)\Rightarrow\omega_D=5.196/0.1\).</p>
+<p>\(\boxed{\omega_D=52.0\u{rad/s}\ \text{anticlockwise}}\)</p>
+<p>(c) Ring slices: \(\mathrm dm=\dfrac{m}{\pi r_C^2}2\pi r\,\mathrm dr\), \(I=\displaystyle\int_0^{r_C}\frac{2m}{r_C^2}r^3\,\mathrm dr=\tfrac12mr_C^2\). \(\boxed{I=\tfrac12(10)(0.1)^2=0.05\u{kg\,m^2}}\)</p>
+<p>(d) \(\boxed{T=\tfrac12I\omega_D^2=\tfrac12(0.05)(51.96)^2=67.5\u{J}}\)</p>
+<p>(e) Moving mass towards the rim increases \(I\) (up to \(mr_C^2=0.1\u{kg\,m^2}\) for a thin ring). At the same \(\omega\), \(T=\tfrac12I\omega^2\) increases in proportion, up to twice (135 J).</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2018 B1(b)</b><span>4 marks</span><a class="guide" href="guide-D2.html#D2-1">D2.1 relative velocity (rolling)</a></div>
+<p>A bowling ball is cast on the "alley" with a backspin of \(\omega=10\u{rad/s}\) while its center \(O\) has a forward velocity of \(v_O=8\u{m/s}\). Determine the velocity of the contact point \(A\) in contact with the alley.</p>
+<div id="fig-t18"></div>
+<details><summary>Hint</summary><div><p>The ball skids, so the contact point is not at rest. Backspin for a ball moving right is anticlockwise.</p></div></details>
+<details><summary>Answer</summary><div><p>\(\vb r_{A/O}=(0,\ -0.12)\u{m}\), \(\omega=+10\u{rad/s}\):</p>
+\[\begin{aligned}\vb v_A&=(8,\ 0)+(-(10)(-0.12),\ 0)\\ &=(9.2,\ 0)\u{m/s}.\end{aligned}\]
+<p>\(\boxed{v_A=9.2\u{m/s}\ \text{forward}}\): the bottom of the ball skids forward over the alley, faster than the centre.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2022 B2(b)</b><span>5 marks</span><span>also Dec 2021 B1(c)</span><a class="guide" href="guide-D2.html#D2-2">D2.2 moment of inertia by integration</a></div>
+<p>By starting from first principles and performing an integration, determine the mass moment of inertia of a uniform bar of mass \(m\) and length \(L\) about an axis through the center perpendicular to the length. Describe how the moment of inertia changes if the rotation axis is moved to the end of the bar.</p>
+<div id="fig-t22"></div>
+<details><summary>Hint</summary><div><p>\(\mathrm dm=(m/L)\,\mathrm dx\), integrate \(x^2\,\mathrm dm\) from \(-L/2\) to \(L/2\).</p></div></details>
+<details><summary>Answer</summary><div>
+\[\begin{aligned}I_{\rm cm}&=\int_{-L/2}^{L/2}x^2\frac mL\,\mathrm dx\\ &=\frac mL\left[\frac{x^3}3\right]_{-L/2}^{L/2}=\boxed{\tfrac1{12}mL^2}.\end{aligned}\]
+<p>About the end (integrate from 0 to \(L\), or parallel axis with \(d=L/2\)): \(I_{\rm end}=\tfrac1{12}mL^2+m(L/2)^2=\tfrac13mL^2\), <b>four times</b> larger, because more of the mass is far from the axis.</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2015 B1</b><span>20 marks</span><a class="guide" href="guide-D2.html#D2-3">D2.3 rigid-body kinetics</a><a class="guide" href="guide-D2.html#D2-2">D2.2</a></div>
+<p>As shown in Figure B1, a horizontally-directed force \(P\) is applied to a homogeneous disk of weight \(W\) and radius \(r\).</p>
+<div id="fig-t15"></div>
+<p>(a) Draw the free body diagram of the disk. [4] (b) Show that the moment of inertia \(I_G\) about point \(G\) of the disk is \(I_G=\tfrac12mr^2\), where \(m\) is the mass of the disk. [4] (c) Considering force equilibrium in \(x\)- and \(y\)-directions and also the moment equilibrium about point \(G\), derive the expressions of (i) angular acceleration \(\alpha\), (ii) friction \(F\), and (iii) normal force \(N\) between the plane and disk. Assume that the disk rolls without sliding on the ground. (Take acceleration of gravity as \(g\).) [8] (d) If the same disk is modified with a hollow, explain how the resultant angular acceleration would be affected. [4]</p>
+<details><summary>Hint</summary><div><p>Unknowns \(a_G\), \(\alpha\), \(F\), \(N\). Equations: \(\sum F_x=ma_G\), \(\sum F_y=0\), \(\sum M_G=I_G\alpha\), and rolling \(a_G=\alpha r\). Assume \(F\) acts backwards; let the sign decide.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) \(W=mg\) down at \(G\); \(N\) up at the contact point; friction \(F\) along the ground at the contact point (drawn to the left); \(P\) to the right at height \(y\) above \(G\). (Second panel of the figure.)</p>
+<p>(b) Ring slices as in Section 12: \(I_G=\int_0^r\rho\,2\pi s\,\mathrm ds\,s^2=\tfrac12mr^2\).</p>
+<p>(c) Clockwise \(\alpha\), right \(a_G\) positive:</p>
+\[\begin{aligned}\rightarrow:&\ P-F=ma_G,\\ \uparrow:&\ N-W=0,\\ \text{↻}G:&\ Py+Fr=\tfrac12mr^2\alpha,\\ &\ a_G=\alpha r.\end{aligned}\]
+<p>Eliminating \(F\) and \(a_G\): \(Py+(P-m\alpha r)r=\tfrac12mr^2\alpha\).</p>
+\[\boxed{\begin{aligned}\alpha&=\frac{2P(r+y)}{3mr^2},\\ F&=\frac{P(r-2y)}{3r},\quad N=W=mg.\end{aligned}}\]
+<p>(\(F\) acts backwards if \(y\lt r/2\), forwards if \(y\gt r/2\), and is zero at \(y=r/2\).)</p>
+<p>(d) With general \(I_G\), \(\alpha=\dfrac{P(r+y)}{I_G+mr^2}\). A hollow disk of the same mass and radius has its mass further out, so \(I_G\) is larger and \(\alpha\) is <b>smaller</b> (for a thin ring, \(I_G=mr^2\): \(\alpha=P(r+y)/(2mr^2)\), three quarters of the solid value).</p></div></details></div>
+</section>
+</main>
+</div>
+
+<script>
+/* MECH2413 shared helpers (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-D2 figures (page-level helpers only; lib.js is frozen) */
+const P=FBD.panels, D=FBD.draw;
+const T=(x,y,s,cls,dx,dy)=>typeof dx==='string'?{t:'text',x,y,s,cls:cls||'it',anchor:dx}:{t:'text',x,y,s,cls:cls||'it',dx,dy};
+const R2D=180/Math.PI;
+/* arrow from (x1,y1) to (x2,y2) in world units; px must match the diagram */
+function arr(x1,y1,x2,y2,px,k,lbl,dx,dy){const L=Math.hypot(x2-x1,y2-y1)*px;return {t:'force',x:x1,y:y1,at:'tail',ang:Math.atan2(y2-y1,x2-x1)*R2D,len:Math.max(L,12),k:k||'force',lbl,dx,dy};}
+function nstep(span,n=4){const r=span/n,p=Math.pow(10,Math.floor(Math.log10(r))),m=r/p;return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p;}
+/* circle outline as a polyline (for arcs and wheels drawn as lines) */
+const arcPts=(cx,cy,r,a0,a1,n=40)=>{const p=[];for(let i=0;i<=n;i++){const a=(a0+(a1-a0)*i/n)/R2D;p.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}return p;};
+
+/* ---------- Section 1: types of motion ---------- */
+(function(){
+  const o={x0:-0.4,x1:4.4,y0:-0.6,y1:2.8,px:34,pad:8};
+  P('fig-s1-types',[
+   {o,cap:'(1) rectilinear translation',items:[{t:'rect',x:0,y:0.6,w:1.2,h:0.8,cls:'member2'},{t:'rect',x:2.6,y:0.6,w:1.2,h:0.8,cls:'member2'},
+     {t:'line',p:[[0,1.4],[2.6,1.4]],cls:'faint'},{t:'line',p:[[0,0.6],[2.6,0.6]],cls:'faint'},arr(1.3,1.0,2.5,1.0,34,'good'),{t:'line',p:[[-0.3,0.55],[4.2,0.55]],cls:'ink'}]},
+   {o,cap:'(2) curvilinear translation: the plate stays level',items:[{t:'line',p:[[0.6,2.6],[2.6,2.6]],cls:'ink'},{t:'pin',x:0.8,y:2.6,rot:180},{t:'pin',x:2.4,y:2.6,rot:180},
+     {t:'member',p:[[0.8,2.6],[1.7,1.0]],w:4},{t:'member',p:[[2.4,2.6],[3.3,1.0]],w:4},{t:'rect',x:1.4,y:0.7,w:2.2,h:0.3,cls:'member2'},
+     {t:'line',p:arcPts(0.8,2.6,1.84,-90,-50),cls:'faint'},{t:'line',p:arcPts(2.4,2.6,1.84,-90,-50),cls:'faint'}]},
+   {o,cap:'(3) rotation about a fixed axis',items:[{t:'line',p:[[1.2,2.6],[2.8,2.6]],cls:'ink'},{t:'pin',x:2,y:2.6,rot:180},{t:'member',p:[[2,2.6],[2.9,0.9]],w:12},
+     {t:'line',p:arcPts(2,2.6,1.9,-118,-50),cls:'faint'},{t:'moment',x:2,y:2.6,r:22,sense:'ccw',start:200,k:'good',lbl:'ω',dx:-8}]},
+   {o,cap:'(1)+(2)+(3) general plane motion: connecting rod',items:[{t:'circle',x:0.8,y:1.2,r:0.7,cls:'member'},{t:'hinge',x:0.8,y:1.2},
+     {t:'member',p:[[0.8,1.2],[1.3,1.7]],w:5},{t:'member',p:[[1.3,1.7],[3.4,1.2]],w:7},{t:'rect',x:3.1,y:0.95,w:0.8,h:0.5,cls:'member2'},
+     {t:'hinge',x:1.3,y:1.7},{t:'hinge',x:3.4,y:1.2},{t:'line',p:[[2.8,0.9],[4.3,0.9]],cls:'ink'},{t:'line',p:[[2.8,1.5],[4.3,1.5]],cls:'ink'},T(2.3,1.85,'rod','lbl-good')]}
+  ]);
+})();
+
+/* ---------- Section 3: point on a rotating body ---------- */
+(function(){
+  const px=60,th=40/R2D,r=1.5,Px=r*Math.cos(th),Py=r*Math.sin(th);
+  const ux=-Math.sin(th),uy=Math.cos(th);
+  D('fig-s3-pt',{x0:-2.0,x1:2.6,y0:-1.8,y1:2.6,px,pad:8,maxw:330},[
+    {t:'line',p:arcPts(0,0,r,0,360,80),cls:'faint'},{t:'line',p:[[0,0],[Px,Py]],cls:'ink'},{t:'hinge',x:0,y:0},T(-0.2,-0.25,'O'),
+    {t:'dot',x:Px,y:Py,k:'force'},T(Px+0.15,Py-0.15,'P'),T(Px/2-0.15,Py/2+0.2,'r','it'),
+    arr(Px,Py,Px+0.9*ux,Py+0.9*uy,px,'force','v = rω',4,-4),
+    arr(Px+0.9*ux,Py+0.9*uy,Px+1.3*ux,Py+1.3*uy,px,'good','a_t = rα',6,4),
+    arr(Px,Py,Px-0.7*Math.cos(th),Py-0.7*Math.sin(th),px,'react','a_n = rω²',30,22),
+    {t:'moment',x:0,y:0,r:20,sense:'ccw',start:60,k:'good',lbl:'ω, α',dx:-14,dy:8}]);
+})();
+
+/* ---------- Section 4: relative velocity ---------- */
+(function(){
+  const px=60,A=[0,0],B=[2.2,1.0],vA=[1.0,0.3],w=0.55; // omega ccw
+  const rel=[-w*(B[1]-A[1]),w*(B[0]-A[0])],vB=[vA[0]+rel[0],vA[1]+rel[1]];
+  D('fig-s4-rel',{x0:-0.6,x1:4.2,y0:-0.8,y1:3.2,px,pad:8,maxw:380},[
+    {t:'poly',pts:[[-0.3,-0.4],[1.2,-0.5],[2.7,0.8],[2.4,1.4],[0.4,0.9]],cls:'member2'},{t:'line',p:[A,B],cls:'ink'},
+    {t:'dot',x:A[0],y:A[1],k:'force'},{t:'dot',x:B[0],y:B[1],k:'force'},T(-0.2,0.25,'A'),T(B[0]+0.05,B[1]-0.3,'B'),
+    arr(A[0],A[1],A[0]+vA[0],A[1]+vA[1],px,'react','v_A',2,14),
+    arr(B[0],B[1],B[0]+vA[0],B[1]+vA[1],px,'react','v_A',12,8),
+    arr(B[0]+vA[0],B[1]+vA[1],B[0]+vA[0]+rel[0],B[1]+vA[1]+rel[1],px,'good','ω × r_B/A',44,8),
+    arr(B[0],B[1],B[0]+vB[0],B[1]+vB[1],px,'force','v_B',-14,-2),
+    {t:'moment',x:1.0,y:0.3,r:16,sense:'ccw',start:-60,k:'good',lbl:'ω',dx:4}]);
+})();
+
+/* ---------- Section 5: rolling wheel ---------- */
+(function(){
+  const px=60,r=1,v=0.9,s=1;
+  const pts=[['top',0,1],['front',1,0],['G',0,0],['back',-1,0]];
+  const it=[{t:'line',p:[[-2,-r],[2.2,-r]],cls:'ground'},{t:'line',p:arcPts(0,0,r,0,360,80),cls:'ink'},{t:'hinge',x:0,y:0},
+    {t:'dot',x:0,y:-r,k:'react'},T(0.25,-r-0.25,'C = IC','lbl-react'),T(-0.3,0.25,'G')];
+  pts.forEach(([n,x,y])=>{const rx=x,ry=y+r; // from IC
+    const vx=v*ry,vy=-v*rx; it.push(arr(x,y,x+vx*s,y+vy*s,px,'force',n==='top'?'2v_G':n==='G'?'v_G':'',8,-6));
+    if(n!=='G')it.push({t:'line',p:[[0,-r],[x,y]],cls:'faint'});});
+  it.push({t:'moment',x:0,y:0,r:18,sense:'cw',start:200,k:'good',lbl:'ω',dx:-10,dy:-4});
+  D('fig-s5-ic',{x0:-2.0,x1:2.8,y0:-1.6,y1:1.9,px,pad:8,maxw:340},it);
+})();
+
+/* ---------- Section 6: rod on a hinge (slide 61) ---------- */
+(function(){
+  const px=150,th=30/R2D,L=0.5,A=[L*Math.cos(th),L*Math.sin(th)],vA=[-5*A[1],5*A[0]],s=0.12;
+  D('fig-s6-sys',{x0:-0.62,x1:0.75,y0:-0.15,y1:0.75,px,pad:8,maxw:300},[
+    {t:'member',p:[[0,0],A],w:7},{t:'pin',x:0,y:0},T(-0.08,0.06,'B'),T(A[0]+0.04,A[1]-0.05,'A'),
+    {t:'line',p:[[0,0],[0.3,0]],cls:'faint'},T(0.2,0.04,'30°','lbl-dim'),
+    {t:'moment',x:0,y:0,r:22,sense:'ccw',start:60,k:'good',lbl:'ω = 5 rad/s',dx:-30,dy:-8},
+    arr(A[0],A[1],A[0]+vA[0]*s,A[1]+vA[1]*s,px,'force','v_A',-8,-2)]);
+  const p2=50;
+  D('fig-s6-vd',{x0:-1.8,x1:0.8,y0:-0.4,y1:2.6,px:p2,pad:8,maxw:220},[
+    arr(0,0,vA[0],0,p2,'good','−1.25 î',0,16),arr(vA[0],0,vA[0],vA[1],p2,'good','2.165 ĵ',-30,0),
+    arr(0,0,vA[0],vA[1],p2,'force','v_A = 2.5 m/s',38,-10),{t:'dot',x:0,y:0,r:2.6,k:'dim'}]);
+})();
+
+/* ---------- Section 7: two-link arm (slide 63) ---------- */
+(function(){
+  const d=x=>x/R2D,A=[0,0],B=[0.76*Math.cos(d(40)),0.76*Math.sin(d(40))],C=[B[0]+0.92*Math.cos(d(-30)),B[1]+0.92*Math.sin(d(-30))];
+  const px=200;
+  D('fig-s7-sys',{x0:-0.15,x1:1.55,y0:-0.15,y1:0.75,px,pad:8,maxw:360},[
+    {t:'member',p:[A,B],w:7},{t:'member',p:[B,C],w:7},{t:'pin',x:0,y:0},{t:'hinge',x:B[0],y:B[1]},{t:'dot',x:C[0],y:C[1],k:'force'},
+    T(-0.09,-0.06,'A'),T(B[0],B[1]+0.08,'B'),T(C[0]+0.07,C[1],'C'),{t:'axes',x:0.95,y:0.45,len:24},
+    {t:'line',p:[[0,0],[0.3,0]],cls:'faint'},T(0.26,0.06,'40°','lbl-dim'),{t:'line',p:[B,[B[0]+0.3,B[1]]],cls:'faint'},T(B[0]+0.33,B[1]-0.07,'30°','lbl-dim'),
+    {t:'moment',x:0,y:0,r:16,sense:'cw',start:120,k:'good',lbl:'0.2',dx:-12},{t:'moment',x:B[0],y:B[1],r:16,sense:'ccw',start:-60,k:'good',lbl:'0.4',dx:-10,dy:-6}]);
+  const cr=(w,r)=>[-w*r[1],w*r[0]],vB=cr(-0.2,[B[0],B[1]]),vCB=cr(0.4,[C[0]-B[0],C[1]-B[1]]),vC=[vB[0]+vCB[0],vB[1]+vCB[1]];
+  const p2=500;
+  D('fig-s7-vd',{x0:-0.05,x1:0.36,y0:-0.15,y1:0.25,px:p2,pad:10,maxw:260},[{t:'dot',x:0,y:0,r:2.6,k:'dim'},T(-0.02,0.02,'o','lbl-dim'),
+    arr(0,0,vB[0],vB[1],p2,'react','v_B',8,6),arr(vB[0],vB[1],vC[0],vC[1],p2,'good','v_C/B',24,4),arr(0,0,vC[0],vC[1],p2,'force','v_C',-8,-6)]);
+})();
+
+/* ---------- Section 8: slider-crank ---------- */
+function scGeo(r,l,a){const B=[r*Math.cos(a),r*Math.sin(a)],x=r*Math.cos(a)+Math.sqrt(l*l-r*r*Math.sin(a)**2);return {B,C:[x,0],x};}
+function scVel(r,l,a,w){return (-r*Math.sin(a)-r*r*Math.sin(a)*Math.cos(a)/Math.sqrt(l*l-r*r*Math.sin(a)**2))*w;}
+function scItems(r,l,a,opt){const {B,C}=scGeo(r,l,a),pw=0.06,o=opt||{};
+  const it=[{t:'line',p:arcPts(0,0,r,0,360,60),cls:'faint'},{t:'line',p:[[C[0]-pw-0.06,pw],[l+r+0.08,pw]],cls:'ink'},{t:'line',p:[[C[0]-pw-0.06,-pw],[l+r+0.08,-pw]],cls:'ink'},
+    {t:'rect',x:C[0]-pw,y:-pw*0.85,w:2*pw,h:1.7*pw,cls:'member2'},{t:'member',p:[[0,0],B],w:6},{t:'member',p:[B,C],w:5},
+    {t:'pin',x:0,y:0},{t:'hinge',x:B[0],y:B[1]},{t:'hinge',x:C[0],y:C[1]},T(-0.03,0.05,'O'),T(B[0],B[1]+0.05,'B'),T(C[0],C[1]+0.11,'C')];
+  if(o.dims)it.push({t:'dim',x1:0,x2:C[0],y:-0.16,lbl:'x',below:true},T(B[0]/2-0.03,B[1]/2+0.03,'r'),T((B[0]+C[0])/2,(B[1]+C[1])/2+0.05,'l'),
+    {t:'line',p:arcPts(0,0,0.04,0,a*R2D,12),cls:'ink'},T(0.065,0.03,'α','lbl-dim'));
+  return it;}
+(function(){
+  const r=0.1,l=0.3,a=60/R2D,w=20,px=700;
+  D('fig-s8-geo',{x0:-0.12,x1:0.46,y0:-0.2,y1:0.14,px,pad:8,maxw:360},scItems(r,l,a,{dims:true}));
+  const {B,C}=scGeo(r,l,a),cr=(w,v)=>[-w*v[1],w*v[0]],vB=cr(w,B),wBC=-vB[1]/(C[0]-B[0]),vCB=cr(wBC,[C[0]-B[0],C[1]-B[1]]),vC=[vB[0]+vCB[0],vB[1]+vCB[1]];
+  const p2=60;
+  D('fig-s8-vd',{x0:-2.4,x1:0.5,y0:-0.4,y1:1.4,px:p2,pad:10,maxw:240},[{t:'dot',x:0,y:0,r:2.6,k:'dim'},
+    arr(0,0,vB[0],vB[1],p2,'react','v_B = rω',10,-10),arr(vB[0],vB[1],vC[0],vC[1],p2,'good',''),T((vB[0]+vC[0])/2+0.15,(vB[1]+vC[1])/2+0.1,'v_C/B ⟂ BC','lbl-good','start'),arr(0,0,vC[0],vC[1],p2,'force','v_C = −2.03 m/s',20,16)]);
+  function live(){const al=+$('sc-a').value/R2D,L=+$('sc-l').value,W=+$('sc-w').value,R=0.1;
+    D('fig-s8-live',{x0:-0.13,x1:0.75,y0:-0.15,y1:0.15,px:520,pad:6,maxw:460},scItems(R,L,al));
+    const v=scVel(R,L,al,W),g=scGeo(R,L,al);let lo=0,hi=0;
+    for(let i=0;i<=360;i++){const t=scVel(R,L,i/R2D,W);lo=Math.min(lo,t);hi=Math.max(hi,t);}
+    if(hi-lo<1e-6){lo=-1;hi=1;} const pad=(hi-lo)*0.12;
+    plot($('cv-s8'),{xmin:0,xmax:360,ymin:lo-pad,ymax:hi+pad,xstep:60,ystep:nstep(hi-lo),pl:40,xlabel:'α (°)',ylabel:'dx/dt (m/s)',
+      curves:[{f:t=>scVel(R,L,t/R2D,W),color:css('--accent')}],pts:[{x:al*R2D,y:v,color:css('--c2'),r:5}]});
+    $('sc-out').innerHTML=`x = <b>${fmt(g.x,3)} m</b> · dx/dt = <b>${fmt(v,3)} m/s</b> · crank pin speed rω = ${fmt(Math.abs(R*W),2)} m/s`;}
+  ['sc-a','sc-l','sc-w'].forEach(i=>$(i).addEventListener('input',live));redraws.push(live);live();
+})();
+
+/* ---------- Section 10: drum and hanging mass ---------- */
+(function(){
+  const px=110,R=0.6;
+  D('fig-s10-sys',{x0:-1.0,x1:1.4,y0:-2.4,y1:1.0,px:70,pad:8,maxw:220},[{t:'line',p:[[-0.7,0.9],[0.7,0.9]],cls:'ground'},{t:'line',p:[[0,0.9],[0,0]],cls:'ink'},
+    {t:'circle',x:0,y:0,r:R,cls:'member2'},{t:'hinge',x:0,y:0},{t:'line',p:[[R,0],[R,-1.6]],cls:'ink'},{t:'rect',x:R-0.25,y:-2.1,w:0.5,h:0.5,cls:'member'},
+    T(R,-1.85,'m','it'),T(-0.85,0.15,'M, R'),{t:'moment',x:0,y:0,r:22,sense:'cw',start:150,k:'good',lbl:'α',dx:-6}]);
+  const o={x0:-1.2,x1:1.4,y0:-1.6,y1:1.4,px:70,pad:8};
+  P('fig-s10-fbd',[
+   {o,cap:'pulley',items:[{t:'circle',x:0,y:0,r:R,cls:'member2'},{t:'hinge',x:0,y:0},{t:'force',x:R,y:0,ang:-90,len:50,at:'tail',lbl:'T',dx:12},
+     {t:'force',x:-0.05,y:-0.08,ang:-90,len:40,at:'tail',lbl:'Mg',dx:-18,dy:0},{t:'force',x:-0.05,y:0.05,ang:90,len:50,at:'tail',k:'react',lbl:'axle',dy:-8},
+     {t:'moment',x:0,y:0,r:20,sense:'cw',start:150,k:'good',lbl:'α',dx:-14}]},
+   {o:{x0:-1.0,x1:1.0,y0:-1.6,y1:1.4,px:70,pad:8},cap:'block',items:[{t:'rect',x:-0.3,y:-0.3,w:0.6,h:0.6,cls:'member'},{t:'force',x:0,y:0.3,ang:90,len:48,at:'tail',k:'react',lbl:'T'},
+     {t:'force',x:0,y:-0.3,ang:-90,len:48,at:'tail',lbl:'mg'},{t:'force',x:0.6,y:0.3,ang:-90,len:34,at:'tail',k:'good',lbl:'a',dx:12}]}
+  ]);
+})();
+
+/* ---------- Section 12: slices ---------- */
+(function(){
+  const px=70,o={x0:-1.4,x1:1.6,y0:-1.4,y1:1.4,px,pad:8,maxw:240};
+  const ring=(r1,r2,n=60)=>({t:'poly',pts:[...arcPts(0,0,r2,0,360,n),...arcPts(0,0,r1,360,0,n)],cls:'member2'});
+  D('fig-s12-disk',o,[{t:'line',p:arcPts(0,0,1.2,0,360,80),cls:'ink'},ring(0.7,0.82),{t:'hinge',x:0,y:0,r:3},
+    {t:'line',p:[[0,0],[0.7*Math.cos(0.5),0.7*Math.sin(0.5)]],cls:'ink'},T(0.25,0.32,'r'),T(0.98,-0.35,'dr','lbl-dim'),
+    {t:'line',p:[[0,0],[-1.2,0]],cls:'faint'},T(-0.6,-0.18,'R','it')]);
+  D('fig-s12-ring',o,[ring(0.6,1.2,80),{t:'line',p:arcPts(0,0,0.6,0,360,60),cls:'ink'},{t:'hinge',x:0,y:0,r:3},
+    {t:'line',p:[[0,0],[0.6,0]],cls:'ink'},T(0.3,0.15,'r_1'),{t:'line',p:[[0,0],[-1.2*Math.cos(0.6),-1.2*Math.sin(0.6)]],cls:'ink'},T(-0.4,-0.45,'r_2')]);
+})();
+
+/* ---------- Section 13: parallel axis ---------- */
+(function(){
+  const o={x0:-0.4,x1:4.4,y0:-1.1,y1:1.1,px:50,pad:8};
+  const bar={t:'beam',x1:0,x2:4,y:0,h:12,cls:'member2'};
+  P('fig-s13',[
+   {o,cap:'axis through the centre: \\(I=\\tfrac1{12}ML^2\\)',items:[bar,{t:'dot',x:2,y:0,r:4.5,k:'force'},{t:'line',p:[[2,-0.8],[2,0.8]],cls:'faint'},{t:'dim',x1:0,x2:4,y:-0.8,lbl:'L'}]},
+   {o,cap:'axis through the end: \\(I=\\tfrac1{12}ML^2+M(L/2)^2=\\tfrac13ML^2\\)',items:[bar,{t:'dot',x:0,y:0,r:4.5,k:'force'},{t:'cg',x:2,y:0},{t:'line',p:[[0,-0.8],[0,0.8]],cls:'faint'},{t:'dim',x1:0,x2:2,y:-0.8,lbl:'d = L/2'}]}
+  ]);
+})();
+
+/* ---------- Section 14: flywheel ---------- */
+(function(){
+  function live(){const m=+$('fw-m').value,R=+$('fw-R').value,k=+$('fw-k').value,n=+$('fw-n').value,r1=k*R;
+    const I=0.5*m*(R*R+r1*r1),Id=0.5*m*R*R,w=n*2*Math.PI/60,E=0.5*I*w*w;
+    const pts=(rr)=>arcPts(0,0,rr,0,360,80);
+    const it=[{t:'poly',pts:[...pts(R),...(r1>0?arcPts(0,0,r1,360,0,80):[[0,0]])],cls:'member2'},{t:'line',p:pts(R),cls:'ink'},{t:'hinge',x:0,y:0,r:3},
+      {t:'line',p:[[0,0],[R,0]],cls:'ink'},T(R/2,0.07,'R','it')];
+    if(r1>0)it.push({t:'line',p:pts(r1),cls:'ink'});
+    D('fig-fw',{x0:-1.05,x1:1.05,y0:-1.05,y1:1.05,px:100,pad:6,maxw:200},it);
+    $('fw-out').innerHTML=`I = ½m(R² + r₁²) = <b>${fmt(I,2)} kg·m²</b> (${fmt(I/Id,2)} × solid disk) · ω = ${fmt(w,1)} rad/s · E = ½Iω² = <b>${fmt(E/1000,1)} kJ</b>`;}
+  ['fw-m','fw-R','fw-k','fw-n'].forEach(i=>$(i).addEventListener('input',live));redraws.push(live);live();
+})();
+
+/* ---------- Exam taster ---------- */
+(function(){
+  // Dec 2024 B2: vertical slider above A, crank 0.25 m at 45 deg left of vertical, rod 0.75 m
+  const d=x=>x/R2D,r=0.25,l=0.75,B=[-r*Math.sin(d(45)),r*Math.cos(d(45))],yC=B[1]+Math.sqrt(l*l-B[0]*B[0]),px=260;
+  D('fig-t24',{x0:-0.5,x1:0.55,y0:-0.3,y1:1.1,px,pad:8,maxw:300},[{t:'circle',x:0,y:0,r:0.21,cls:'member2'},
+    {t:'line',p:[[-0.07,yC-0.1],[-0.07,1.08]],cls:'ink'},{t:'line',p:[[0.07,yC-0.1],[0.07,1.08]],cls:'ink'},{t:'rect',x:-0.065,y:yC-0.06,w:0.13,h:0.12,cls:'member'},
+    {t:'member',p:[[0,0],B],w:6},{t:'member',p:[B,[0,yC]],w:5},{t:'pin',x:0,y:0},{t:'hinge',x:B[0],y:B[1]},{t:'hinge',x:0,y:yC},
+    T(0.06,-0.05,'A'),T(B[0]-0.06,B[1],'B'),T(0.12,yC,'C'),{t:'line',p:[[0,0],[0,0.3]],cls:'faint'},T(-0.03,0.32,'45°','lbl-dim'),
+    T((B[0])/2-0.1,B[1]/2-0.03,'0.25 m','lbl-dim'),T(B[0]/2-0.12,(B[1]+yC)/2,'0.75 m','lbl-dim'),
+    {t:'moment',x:0,y:0,r:20,sense:'cw',start:150,k:'force',lbl:'10 rad/s',dx:46,dy:-4},T(-0.45,-0.27,'flywheel, m = 200 kg','lbl-dim','start')]);
+  const vs=th=>-(r*Math.sin(th)+r*r*Math.sin(th)*Math.cos(th)/Math.sqrt(l*l-r*r*Math.sin(th)**2))*10;
+  const g24=()=>plot($('cv-t24'),{xmin:0,xmax:360,ymin:-3,ymax:3,xstep:45,ystep:1,pl:36,xlabel:'θ (°, cw from top)',ylabel:'v_C (m/s, up +)',
+    curves:[{f:t=>vs(t/R2D),color:css('--accent')}],pts:[{x:315,y:vs(d(315)),color:css('--c2')},{x:73.2,y:vs(d(73.2)),color:css('--c4'),label:'−2.64'},{x:286.8,y:vs(d(286.8)),color:css('--c4'),label:'2.64',align:'right'}]});
+  // Dec 2023 B2
+  const B3=[0.2*Math.cos(d(60)),0.2*Math.sin(d(60))],C3=[B3[0]+0.2,B3[1]],D3=[C3[0],C3[1]+0.1],p3=900;
+  D('fig-t23',{x0:-0.08,x1:0.6,y0:-0.08,y1:0.42,px:600,pad:8,maxw:400},[{t:'circle',x:D3[0],y:D3[1],r:0.1,cls:'member2'},
+    {t:'member',p:[[0,0],B3],w:6},{t:'member',p:[B3,C3],w:6},{t:'pin',x:0,y:0},{t:'hinge',x:B3[0],y:B3[1]},{t:'hinge',x:C3[0],y:C3[1]},{t:'hinge',x:D3[0],y:D3[1],r:5},
+    T(-0.025,0.02,'A'),T(B3[0]-0.02,B3[1]+0.02,'B'),T(C3[0]+0.01,C3[1]-0.025,'C'),T(D3[0]+0.025,D3[1]+0.02,'D'),
+    {t:'line',p:[[0,0],[0.08,0]],cls:'faint'},T(0.07,0.018,'θ','lbl-dim'),T(0.02,0.11,'0.2 m','lbl-dim','end'),T(0.2,B3[1]+0.02,'0.2 m','lbl-dim'),
+    {t:'moment',x:0,y:0,r:18,sense:'cw',start:150,k:'force',lbl:'ω_AB',dx:-20},{t:'vdim',y1:C3[1],y2:D3[1],x:D3[0]+0.13,lbl:'r_C = 0.1 m'},{t:'axes',x:0.33,y:0.0,len:22}]);
+  // Dec 2018 B1(b)
+  D('fig-t18',{x0:-2.6,x1:2.6,y0:-1.4,y1:1.4,px:60,pad:8,maxw:300},[{t:'line',p:[[-1.4,-1],[2.4,-1]],cls:'ground'},{t:'circle',x:0,y:0,r:1,cls:'member2'},{t:'hinge',x:0,y:0},
+    {t:'force',x:0,y:0,ang:0,len:70,at:'tail',lbl:'v_O = 8 m/s',dy:-14,dx:10},{t:'moment',x:0,y:0,r:26,sense:'ccw',start:30,k:'good',lbl:'ω = 10 rad/s',dx:-40,dy:-6},
+    T(0.1,-1.25,'A'),T(-0.2,0.22,'O'),{t:'vdim',y1:-1,y2:0,x:-1.2,lbl:'120 mm',left:false}]);
+  // Dec 2022 B2(b)
+  D('fig-t22',{x0:-0.3,x1:4.3,y0:-1.0,y1:0.9,px:60,pad:8,maxw:360},[{t:'beam',x1:0,x2:4,y:0,h:12,cls:'member2'},{t:'line',p:[[2,-0.7],[2,0.7]],cls:'faint'},
+    {t:'rect',x:2.9,y:-0.1,w:0.15,h:0.2,cls:'member'},T(2.97,0.4,'dm = (m/L)dx','lbl-dim'),{t:'dim',x1:2,x2:2.9,y:-0.55,lbl:'x'},{t:'dim',x1:0,x2:4,y:-0.85,lbl:'L',below:true},T(2,0.85,'axis','lbl-dim')]);
+  // Dec 2015 B1
+  const o={x0:-1.6,x1:2.4,y0:-2.0,y1:1.5,px:56,pad:8};
+  P('fig-t15',[
+   {o,cap:'Figure B1',items:[{t:'line',p:[[-1.5,-1],[2.2,-1]],cls:'ground'},{t:'circle',x:0,y:0,r:1,cls:'member2'},{t:'hinge',x:0,y:0},T(-0.2,-0.2,'G'),
+     {t:'force',x:0,y:0.5,ang:0,len:60,at:'tail',lbl:'P',dx:4},{t:'vdim',y1:0,y2:0.5,x:-0.25,lbl:'y',left:true},{t:'line',p:[[0,0],[0,0.5]],cls:'faint'},{t:'line',p:[[0,0],[0.9,-0.44]],cls:'ink'},T(0.55,-0.08,'r')]},
+   {o,cap:'free-body diagram',items:[{t:'circle',x:0,y:0,r:1,cls:'member2'},{t:'cg',x:0,y:0},
+     {t:'force',x:0,y:0.5,ang:0,len:60,at:'tail',lbl:'P',dx:4},{t:'force',x:0,y:-0.15,ang:-90,len:40,at:'tail',lbl:'W = mg',dx:30},
+     {t:'force',x:0,y:-1,ang:90,len:40,at:'tip',k:'react',lbl:'N',dx:-14},{t:'force',x:0,y:-1,ang:180,len:44,at:'tail',k:'react',lbl:'F',dy:12},
+     {t:'moment',x:0,y:0,r:20,sense:'cw',start:150,k:'good',lbl:'α',dx:-6},{t:'force',x:1.2,y:0.9,ang:0,len:30,at:'tail',k:'good',lbl:'a_G',dy:-10}]}
+  ]);
+  document.querySelectorAll('details').forEach(dt=>dt.addEventListener('toggle',()=>{if(dt.open)g24();}));
+  redraws.push(g24);
+})();
+
+</script>
+</body></html>

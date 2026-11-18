@@ -1,0 +1,1162 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH1350 F1 · Introduction to fluid dynamics</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH1350 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --purple:#6d3fb2; --purple-soft:#efe8fa; --green:#1f7a4d; --green-soft:#e3f4ea;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a; --purple:#c4a3f5; --purple-soft:#2a2040; --green:#5fd39a; --green-soft:#16302a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+/* ---- MECH1350 additions ---- */
+.box.prev,.prev.box{background:var(--purple-soft);border-color:transparent;border-left:4px solid var(--purple)} .prev>.tag{color:var(--purple)}
+section.prev-sec{border-top:3px solid var(--purple)} section.prev-sec>h2 .n{color:var(--purple)}
+section.prev-sec>.prevbar{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin:-8px 0 8px}
+.beyond{border-left:4px solid var(--warm)}
+.banner{background:var(--warm-soft);border:1px solid var(--warm);border-radius:8px;padding:10px 14px;font-size:.95rem}
+.banner b{color:var(--warm)}
+.conv{background:var(--green-soft);border-color:transparent;border-left:4px solid var(--green)} .conv>.tag{color:var(--green)}
+details.calc{border-left:3px solid var(--accent)}
+details.calc>summary{color:var(--accent);font-weight:500}
+details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.calc .why{color:var(--muted);font-size:.9rem}
+table.tbl td,table.tbl th{padding:6px 8px}
+.circuit{width:100%;height:auto;display:block}
+.circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
+.circuit .r{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+.circuit .node{fill:var(--ink)}
+.circuit text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.circuit .q{stroke:var(--c2);fill:var(--c2)}
+
+/* ---- exam-guide classes (promoted from guide-T3 pilot, Gate D 2026-11-17) ---- */
+.mem{border:2px solid var(--c3);background:var(--card)} .mem>.tag{color:var(--c3)}
+.mem table td{padding:5px 8px;font-size:.92rem}
+.proc{border-left:4px solid var(--accent)} .proc>.tag{color:var(--accent)}
+.skel{border-left:4px solid var(--purple)} .skel>.tag{color:var(--purple)}
+.recap{font-size:.95rem;background:var(--accent-soft);border-radius:6px;padding:8px 12px;margin:8px 0 14px}
+.recap a{font-family:var(--mono);font-size:12px;white-space:nowrap}
+details.hint>summary{color:var(--muted)}
+details.hint>summary::before{content:"Hint · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+details.sol{border-left:3px solid var(--accent)}
+details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.mnote{font-size:.9rem;border-left:3px solid var(--warm);padding-left:10px;color:var(--muted)}
+.mnote b{color:var(--warm);font-weight:600}
+.q .part{font-weight:600;margin-top:14px}
+.q .opts{list-style:none;padding-left:.4rem;margin:6px 0}
+.q .opts li{margin:3px 0}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
+.stats span{font-size:.88rem;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted)}
+.stats b{color:var(--ink);font-family:var(--display)}
+.small{font-size:.88rem}
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/es5/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents"><p class="h">Fluid dynamics · F1</p><ol>
+  <li><a href="#s0">0 · Where this sits</a></li>
+  <li><a href="#s1">1 · What fluid mechanics does</a></li>
+  <li><a href="#s2">2 · Viscosity, Newtonian fluids</a></li>
+  <li><a href="#s3">3 · Steady &amp; unsteady</a></li>
+  <li><a href="#s4">4 · Uniform &amp; non-uniform</a></li>
+  <li><a href="#s5">5 · Viscous &amp; inviscid</a></li>
+  <li><a href="#s6">6 · Compressibility, Mach</a></li>
+  <li><a href="#s7">7 · The rocket nozzle</a></li>
+  <li><a href="#s8">8 · Laminar &amp; turbulent</a></li>
+  <li><a href="#s9">9 · Reynolds number</a></li>
+  <li><a href="#s10">10 · 1-, 2-, 3-D flow</a></li>
+  <li><a href="#s11">11 · Visualisation, textbook</a></li>
+  <li><a href="#s12">12 · Summary</a></li>
+  <li><a href="#s13">13 · Common mistakes</a></li>
+  <li><a href="#s14">14 · Find the mistake</a></li>
+  <li><a href="#s15">15 · Concept checks</a></li>
+  <li><a href="#s16">16 · Exam taster</a></li>
+</ol></nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-F1.html">Exam guide · F1</a><a href="note-H4.html">← H4</a><a href="note-F2.html">Next: F2 →</a></nav>
+  <span class="course">MECH1350 · Fluid dynamics · chapter 1</span>
+  <h1>Introduction to fluid dynamics</h1>
+  <p class="lede">What fluids in motion are made of: viscosity, the six ways engineers sort flows, and the Mach and Reynolds numbers that decide compressibility and turbulence. Every slide of the 27-slide lecture explained from scratch.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
+<p>H1–H4 studied fluids <b>at rest</b>; this chapter starts Section C, fluids <b>in motion</b>, with the vocabulary and the two dimensionless numbers the rest of the theme uses. F2 then adds conservation of mass (continuity), F3 the Bernoulli equation, and F4 the past-paper topics no 2026 handout covers.</p>
+<p><b>In the exam:</b> short, reliable marks: flow-type definitions, viscosity unit conversions, a Reynolds-number verdict and the Reynolds dye experiment in words. See the <a href="guide-F1.html">F1 exam guide</a>.</p>
+<p class="muted small">Source: "Introduction to Fluid Mechanics" (Dr Yan Wei), 27 slides; slide numbers = printed numbers = PDF pages. Slides 14, 17 (lower half), 19 and 25 are video stills: described, not reproduced.</p>
+
+<div class="box conv"><span class="tag">Sign and symbol conventions for this chapter</span>
+<ul class="list">
+<li><b>Coordinates.</b> \(x, y, z\) are Cartesian axes; the velocity components along them are \(u, v, w\), positive in the \(+x, +y, +z\) directions. Time is \(t\).</li>
+<li><b>Shear flows.</b> \(y\) is measured <b>from the wall</b> into the fluid, and \(u\) is the velocity parallel to the wall. A shear stress \(\tau\) is reported as a size (positive); its direction is found from the physics (the fluid drags a slower neighbour forwards and a faster neighbour backwards).</li>
+<li><b>Pipe flow.</b> \(V\) (the handout writes \(\bar V\)) is the <b>mean</b> velocity over the cross-section, \(V=Q/A\), and \(d\) or \(D\) is the <b>inner</b> diameter, the one the fluid actually fills.</li>
+<li><b>Units.</b> SI throughout: lengths in m (convert mm and cm first), flow rates in m³/s (1 L = 10⁻³ m³), viscosity in Pa·s. Dimensionless numbers (\(\mathrm{Re}\), \(M\)) have no unit, which is a useful check.</li>
+<li><b>Temperatures</b> inside a speed-of-sound formula must be absolute (kelvin).</li>
+</ul></div>
+
+<h3>Symbols used throughout</h3>
+<div class="scroll"><table class="tbl">
+<tr><th>Symbol</th><th>Meaning</th><th>Unit</th></tr>
+<tr><td>\(\rho\)</td><td>density (mass per unit volume)</td><td>kg/m³</td></tr>
+<tr><td>\(\mu\)</td><td>(dynamic) viscosity: how strongly a fluid resists being sheared</td><td>Pa·s = N·s/m² = kg/(m·s)</td></tr>
+<tr><td>\(\nu=\mu/\rho\)</td><td>kinematic viscosity</td><td>m²/s</td></tr>
+<tr><td>\(\tau\)</td><td>shear stress: tangential force per unit area</td><td>Pa = N/m²</td></tr>
+<tr><td>\(u, v, w\)</td><td>velocity components along \(x, y, z\)</td><td>m/s</td></tr>
+<tr><td>\(V\) (or \(\bar V\))</td><td>mean (section-average) velocity; also a gas speed</td><td>m/s</td></tr>
+<tr><td>\(Q\)</td><td>volume flow rate</td><td>m³/s</td></tr>
+<tr><td>\(d, D\)</td><td>inner pipe diameter</td><td>m</td></tr>
+<tr><td>\(c\)</td><td>speed of sound in the fluid</td><td>m/s</td></tr>
+<tr><td>\(M\) (also Ma)</td><td>Mach number \(V/c\)</td><td>none</td></tr>
+<tr><td>\(\mathrm{Re}\)</td><td>Reynolds number \(\rho\bar V d/\mu\)</td><td>none</td></tr>
+<tr><td>SG</td><td>specific gravity: density ÷ density of water (1000 kg/m³)</td><td>none</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span>What fluid mechanics studies (slides 3–6)</h2>
+<h3>Why do different fluids flow differently? (slide 3)</h3>
+<p>Slide 3 opens with three pictures: water running from a tap in a smooth glassy stream; a close-up of a water stream broken into a rough, bubbly column; and two hands squeezing a bottle of tomato ketchup. Water pours at once; ketchup sits in the bottle until you squeeze or shake it, then suddenly flows. The property behind the difference is <b>viscosity</b> (Section 2), and the change from a smooth to a rough stream is the change from <b>laminar</b> to <b>turbulent</b> flow (Section 8). The whole chapter answers the question on this slide.</p>
+<h3>How do ships move and aeroplanes fly? (slide 4)</h3>
+<p>Slide 4 shows a large cruise ship at sea and an airliner above the clouds. Both move by pushing on a fluid and being pushed back: the propeller throws water (or the jet engine throws air) backwards, and the reaction drives the vehicle forwards; the wings are shaped so that the air pushes them up (<b>lift</b>), while the water or air resists the motion (<b>drag</b>). Predicting these forces is a central job of fluid mechanics (lift and drag are treated in F3 and F4).</p>
+<div class="box def"><span class="tag">Definition · fluid mechanics (slide 5)</span>
+<p><b>Fluid mechanics</b> is the branch of physics that studies how <b>fluids</b> (liquids and gases) behave, at rest and in motion, and how they interact with forces and with other physical systems. A <b>fluid</b> is a substance that keeps deforming (flowing) for as long as a shear force acts on it, however small; a solid instead deforms a fixed amount and stops. <b>Fluid statics</b> (hydrostatics, Section B) studies fluids at rest; <b>fluid dynamics</b> (Section C) studies fluids in motion.</p></div>
+<p>Slide 5 sorts the quantities that describe a fluid into four groups:</p>
+<div class="scroll"><table class="tbl">
+<tr><th>Group</th><th>Question it answers</th><th>Quantities (slide 5)</th></tr>
+<tr><td>Primary physical quantities</td><td>What state is the fluid in?</td><td>density \(\rho\), pressure \(p\), temperature \(T\)</td></tr>
+<tr><td>Kinematic properties</td><td>How does the fluid move?</td><td>velocity, flow rate</td></tr>
+<tr><td>Dynamic properties</td><td>What forces act?</td><td>viscosity, shear stress, surface tension, drag and lift forces</td></tr>
+<tr><td>Energy and conservation quantities</td><td>How does energy change?</td><td>specific weight (\(\gamma=\rho g\), weight per unit volume), …</td></tr>
+</table></div>
+<p>("Kinematic" means describing motion without asking about its cause; "dynamic" means involving forces.) Fluid mechanics is built on principles you already know: <b>Newtonian mechanics</b> (\(F=ma\) applied to bits of fluid), <b>thermodynamics</b> (T1–T4) and three <b>conservation laws</b>: mass (F2's continuity equation), momentum (F4) and energy (F3's Bernoulli equation is an energy statement).</p>
+<h3>Engineering applications (slide 6)</h3>
+<p>Slide 6 is a gallery of eight application areas, each with a picture:</p>
+<ul class="list">
+<li><b>Vehicle aerodynamics</b>: a racing car with air streaming over it (shaping to cut drag and create downforce).</li>
+<li><b>Water supply and distribution systems</b>: a city with its network of underground pipes (pipe sizing, pumps, pressure losses).</li>
+<li><b>Aircraft design and propulsion</b>: a flying vehicle with rotors (lift, thrust, drag).</li>
+<li><b>Energy engineering</b>: wind turbines (extracting power from moving air; also hydro turbines and power-plant cooling).</li>
+<li><b>High-speed transportation</b>: a high-speed train (drag, pressure waves in tunnels).</li>
+<li><b>Electronics cooling and thermal management</b>: a circuit board with a copper heat sink and fans (forced convection, T3).</li>
+<li><b>Weather and environmental systems</b>: a satellite image of a hurricane (atmosphere and ocean flows, pollution spread).</li>
+<li><b>Biomedical devices</b>: the heart and blood vessels (blood flow, artificial valves, stents).</li>
+</ul>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span>Viscosity: Newtonian and non-Newtonian fluids (slide 7)</h2>
+<p>Put a thin layer of fluid between two flat plates. Hold the bottom plate still and pull the top plate sideways at a steady speed \(U\). The fluid touching each plate moves with that plate (it "sticks" to it: the <b>no-slip condition</b>, Section 5), so the fluid velocity \(u\) rises from 0 at the bottom to \(U\) at the top. Each layer slides over the one below it, like the cards in a deck pushed sideways. This sliding is called <b>shearing</b>, and the fluid resists it with a <b>shear stress</b> \(\tau\).</p>
+<div id="fig-shear"></div>
+<div class="box def"><span class="tag">Definitions · shear stress, rate of strain, viscosity</span>
+<ul class="list">
+<li><b>Shear stress</b> \(\tau\): the tangential (sliding) force per unit area between neighbouring layers of fluid, or between the fluid and a wall. Unit Pa = N/m².</li>
+<li><b>Rate of strain</b> (rate of shear deformation) \(\Delta\theta/\Delta t\): how fast a small fluid element is being distorted, measured by how fast its originally right angle closes up. Unit rad/s, i.e. 1/s.</li>
+<li><b>Viscosity</b> \(\mu\) (dynamic viscosity): the fluid's resistance to being sheared, "internal friction". Honey and engine oil have high viscosity; water and air low.</li>
+</ul></div>
+<div class="box thm"><span class="tag">Law · Newtonian fluid (slide 7)</span>
+\[\tau=\mu\frac{\Delta\theta}{\Delta t}=\mu\frac{\Delta u}{\Delta y}\]
+\[\mu\ne\text{function}\Big(\frac{\Delta\theta}{\Delta t}\Big)\]
+<p class="word"><b>In words:</b> shear stress = viscosity × rate of strain, and the rate of strain equals the velocity gradient (change in velocity per unit distance across the flow). For a <b>Newtonian fluid</b> the viscosity is a constant of the fluid (at a given temperature): it does not depend on how fast the fluid is sheared, so \(\tau\) is <b>directly proportional</b> to the rate of strain.</p></div>
+<details class="calc"><summary>why the rate of strain equals the velocity gradient \(\Delta u/\Delta y\)</summary><div>
+<p>1. Take a small rectangle of fluid of height \(\Delta y\). Its bottom edge moves at \(u\), its top edge at \(u+\Delta u\). <span class="why">The velocity changes across the layer.</span></p>
+<p>2. In a short time \(\Delta t\) the top edge moves \(\Delta u\,\Delta t\) further than the bottom edge, so the vertical sides tilt. <span class="why">Relative displacement = relative speed × time.</span></p>
+<p>3. The tilt angle is \(\Delta\theta\approx\tan\Delta\theta=\Delta u\,\Delta t/\Delta y\). <span class="why">For small angles (in radians) \(\tan\theta\approx\theta\).</span></p>
+<p>4. Divide by \(\Delta t\): \(\Delta\theta/\Delta t=\Delta u/\Delta y\). <span class="why">The rate at which the right angle closes equals the velocity gradient.</span></p>
+<p>5. In the limit of a very thin layer this is the derivative \(\mathrm du/\mathrm dy\); textbooks write Newton's law of viscosity as \(\tau=\mu\,\mathrm du/\mathrm dy\).</p>
+</div></details>
+<div class="box def"><span class="tag">Definition · Newtonian and non-Newtonian fluids (slide 7)</span>
+<p>A <b>Newtonian fluid</b> has shear stress directly proportional to rate of strain (straight line through the origin on a \(\tau\)–rate graph). Water, air, petrol, most oils and glycerin are Newtonian.</p>
+<p>A <b>non-Newtonian fluid</b> has shear stress that varies with rate of strain in a <b>non-linear</b> way. The handout still writes \(\tau=\mu\,\Delta\theta/\Delta t\), but now the "viscosity" depends on the rate of strain:</p>
+\[\mu=\text{function}\Big(\frac{\Delta\theta}{\Delta t}\Big)\]
+<p>(textbooks call this the <b>apparent viscosity</b>: the slope from the origin to a point on the curve).</p></div>
+<p>Slide 7's graph plots \(\tau\) (up) against \(\Delta\theta/\Delta t\) (across) for four fluid types:</p>
+<ul class="list">
+<li><b>Newtonian fluid</b>: a straight line through the origin; its slope is \(\mu\).</li>
+<li><b>Shear-thinning</b>: a curve through the origin that rises steeply at first and then flattens: the faster you shear it, the <b>thinner</b> (less viscous) it gets. Examples: ketchup, paint, blood, shampoo. Shaking or squeezing a ketchup bottle shears it, and it runs.</li>
+<li><b>Shear-thickening</b>: a curve through the origin that starts flat and bends upwards: the faster you shear it, the <b>thicker</b> it gets. Example: cornflour mixed with a little water ("oobleck"), which you can poke slowly but which goes hard if you punch it.</li>
+<li><b>Bingham plastic</b>: a straight line that does <b>not</b> start at the origin: it needs a minimum stress (the <b>yield stress</b>) before it flows at all, then behaves like a Newtonian fluid. Examples: toothpaste, mayonnaise, drilling mud. Toothpaste stays on the brush until you squeeze hard enough.</li>
+</ul>
+<div class="figure" id="fig-rheo"><p class="ttl">Try it · shear stress against rate of strain</p>
+<canvas class="plot" id="cv-rheo" style="height:270px"></canvas>
+<div class="ctrl">
+<label>consistency \(K\) <input type="range" id="rh-K" min="0.2" max="3" step="0.05" value="1"></label>
+<label>index \(n\) <input type="range" id="rh-n" min="0.3" max="2" step="0.05" value="1"></label>
+<label>yield stress \(\tau_y\) <input type="range" id="rh-ty" min="0" max="3" step="0.1" value="0"></label>
+</div>
+<div class="readout" id="out-rheo"></div>
+<p class="cap">The thick curve is \(\tau=\tau_y+K(\Delta\theta/\Delta t)^n\) (a model from textbooks, beyond the handout; arbitrary units); the grey curves are the four types of slide 7 for comparison. \(n=1\), \(\tau_y=0\): Newtonian. \(n\lt 1\): shear-thinning. \(n\gt 1\): shear-thickening. \(\tau_y\gt 0\), \(n=1\): Bingham plastic. The readout gives the apparent viscosity \(\tau/(\Delta\theta/\Delta t)\) at a rate of 2.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes · a plate dragged over oil</span>
+<p>A flat plate of area 0.5 m² slides at a steady 0.4 m/s over a 2 mm film of oil (\(\mu=0.25\u{Pa\,s}\), Newtonian) on a fixed table. Assume the velocity in the film rises in a straight line from 0 at the table to 0.4 m/s at the plate. Find the shear stress, the force needed to keep the plate moving and the power used.</p>
+<div id="fig-plate-fbd"></div>
+<p class="muted">Free-body diagram of the plate: pull \(F\) forwards, viscous drag \(\tau A\) backwards from the oil, weight \(W\) down and the oil's pressure force \(N\) up. Steady speed means no acceleration, so the forces balance.</p>
+<ol class="steps">
+<li>Velocity gradient: \(\Delta u/\Delta y=0.4/0.002=200\u{s^{-1}}\).</li>
+<li>Shear stress: \(\tau=\mu\,\Delta u/\Delta y=0.25(200)=50\u{Pa}\).</li>
+<li>Horizontal balance on the plate: \(F=\tau A=50(0.5)=\boxed{25\u{N}}\).</li>
+<li>Power = force × speed \(=25(0.4)=\boxed{10\u{W}}\), all turned into heat in the oil.</li>
+</ol></div>
+<h3>Units of viscosity and kinematic viscosity</h3>
+<p>From \(\tau=\mu\,\Delta u/\Delta y\), \(\mu=\tau\div(\Delta u/\Delta y)\), so its unit is Pa ÷ (1/s) = <b>Pa·s</b>. Viscosity and \(\nu=\mu/\rho\) are first met in H1 (Theme 2). Section C asks you to convert between their many units:</p>
+<div class="box thm"><span class="tag">Result · kinematic viscosity</span>
+\[\nu=\frac{\mu}{\rho}\qquad\Longleftrightarrow\qquad\mu=\rho\,\nu\]
+<p class="word"><b>In words:</b> kinematic viscosity = dynamic viscosity ÷ density. To go back, multiply by density, with \(\rho=\mathrm{SG}\times1000\u{kg/m^3}\).</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · viscosity unit conversions (exam type F1.2)</span>
+<div class="scroll"><table class="tbl">
+<tr><th>Quantity</th><th>SI unit and equivalents</th><th>Older (CGS) units</th></tr>
+<tr><td>dynamic viscosity \(\mu\)</td><td>Pa·s = N·s/m² = kg/(m·s)</td><td>poise: 1 P = 1 g/(cm·s) = 0.1 Pa·s; <b>1 cP = 1 mPa·s</b></td></tr>
+<tr><td>kinematic viscosity \(\nu\)</td><td>m²/s</td><td>stokes: 1 St = 1 cm²/s = 10⁻⁴ m²/s; <b>1 cSt = 1 mm²/s</b> = 10⁻⁶ m²/s</td></tr>
+</table></div>
+<p>Handy anchors: water at 20 °C has \(\mu\approx1.0\u{mPa\,s}=1\u{cP}\) and \(\nu\approx1.0\times10^{-6}\u{m^2/s}=1\u{cSt}\). Air at 20 °C has \(\mu\approx1.8\times10^{-5}\u{Pa\,s}\) and \(\nu\approx1.5\times10^{-5}\u{m^2/s}\): air's \(\mu\) is 55 times smaller than water's, but because air is so light its \(\nu\) is 15 times <b>larger</b>.</p>
+<p>To test whether a unit can be a viscosity, reduce it to kg, m and s: it must come out as kg/(m·s). For example N·m/s = (kg·m/s²)·m/s = kg·m²/s³, which is a <b>power</b> (watt), not a viscosity.</p></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Convert \(\nu\) given in mm²/s by multiplying by \(10^{-6}\) (1 mm² = 10⁻⁶ m²), not \(10^{-3}\). And go from \(\nu\) to \(\mu\) by <b>multiplying</b> by \(\rho\), never dividing by SG.</p></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span>Classifying flows; steady and unsteady flow (slides 8–9)</h2>
+<p>Real flows are complicated, so engineers first sort a flow into types; each type allows certain simplifications. Slide 8 lists six pairs, and each pair is one yes/no question about the flow:</p>
+<div class="scroll"><table class="tbl">
+<tr><th>Pair (slide 8)</th><th>The question</th><th>Section</th></tr>
+<tr><td>steady / unsteady</td><td>Do the properties at a fixed point change with <b>time</b>?</td><td>3</td></tr>
+<tr><td>uniform / non-uniform</td><td>Does the velocity change from <b>place to place</b> at one instant?</td><td>4</td></tr>
+<tr><td>laminar / turbulent</td><td>Do the fluid layers slide smoothly, or <b>mix</b> chaotically?</td><td>8–9</td></tr>
+<tr><td>viscous / inviscid ("inviscous")</td><td>Does <b>viscosity</b> matter for the flow?</td><td>5</td></tr>
+<tr><td>compressible / incompressible</td><td>Does the <b>density</b> change noticeably?</td><td>6</td></tr>
+<tr><td>one-, two-, three-dimensional</td><td>How many velocity <b>components</b> (and directions of variation) matter?</td><td>10</td></tr>
+</table></div>
+<p>The pairs are independent: one flow can be, for example, steady, non-uniform, turbulent, viscous and incompressible all at once (water in a tapering garden-hose nozzle). Exam answers should name the property each word is about.</p>
+<div class="box def"><span class="tag">Definition · steady and unsteady flow (slide 9)</span>
+<p><b>Steady flow:</b> the flow properties (velocity, pressure, density) <b>at a given point do not change with time</b>.</p>
+<p><b>Unsteady flow:</b> the flow properties at a given point <b>change with time</b>.</p></div>
+<p>The test is always "stand at one fixed point and watch": if the readings there stay the same, the flow is steady, even if they differ from those at another point. Slide 9's pictures:</p>
+<ul class="list">
+<li><b>Steady:</b> water pouring smoothly from a hose held still (top left); an aircraft cruising at constant speed (top right). Seen from the aircraft, the air flows past the wings in the same pattern every second.</li>
+<li><b>Unsteady:</b> water gushing and splashing from a drain outlet in a wall (bottom left), its flow surging; <b>wind gusts over vehicles</b> on a road (bottom right): the wind speed at a point rises and falls from moment to moment.</li>
+</ul>
+<div id="fig-steady"></div>
+<div class="box eg"><span class="tag">Examples · written for these notes</span>
+<ul class="list">
+<li>A tap left running at a fixed setting: steady. Opening or closing the tap: unsteady while the flow changes.</li>
+<li>A bath emptying through its plughole: unsteady, because the water level and so the outflow speed fall with time.</li>
+<li>Water in a pipe fed from a huge reservoir with a constant level: steady.</li>
+<li>Blood in an artery: unsteady (pulsing with every heartbeat).</li>
+</ul></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Turbulent flow is strictly unsteady: the velocity at a point flickers all the time (Section 8). Engineers still call a turbulent pipe flow "steady" when its <b>time-averaged</b> values do not change. In a definition question, say "at a fixed point" and "with time"; do not confuse steady (time) with uniform (position).</p></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span>Uniform and non-uniform flow (slide 10)</h2>
+<div class="box def"><span class="tag">Definition · uniform and non-uniform flow (slide 10)</span>
+<p><b>Uniform flow:</b> the flow velocity has the <b>same magnitude and direction at every point</b> in the flow; the flow conditions do <b>not change with position</b>.</p>
+<p><b>Non-uniform flow:</b> at a given instant, the velocity is <b>not the same at every point</b>.</p></div>
+<p>Slide 10 draws two channels with red velocity arrows. In a straight channel of constant width, every arrow is the same length and points the same way: uniform. In a channel that narrows from left to right (a converging duct), the arrows get longer towards the narrow end and tilt to follow the sloping walls: non-uniform. The same amount of fluid must squeeze through a smaller gap, so it speeds up (this is F2's continuity equation).</p>
+<div id="fig-uniform"></div>
+<div class="box ready"><span class="tag">Ready answer · the four combinations</span>
+<div class="scroll"><table class="tbl">
+<tr><th></th><th>Uniform (same everywhere)</th><th>Non-uniform (changes with position)</th></tr>
+<tr><td><b>Steady</b> (no change with time)</td><td>constant flow rate in a long straight pipe of constant diameter (velocity taken as the section mean)</td><td>constant flow rate through a tapering nozzle or a pipe bend</td></tr>
+<tr><td><b>Unsteady</b> (changes with time)</td><td>flow speeding up in a long straight pipe as a valve is opened</td><td>a flood wave travelling down a river; the flow in a nozzle while the pump starts</td></tr>
+</table></div></div>
+<div class="box warn"><span class="tag">Watch</span>
+<p>Strictly, real fluid flowing in a pipe is never perfectly uniform: it is zero at the wall (no slip, Section 5). "Uniform" in pipe problems means the <b>mean</b> velocity is the same along the pipe, which is the one-dimensional picture of Section 10.</p></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span>Viscous and inviscid flow (slides 11–12)</h2>
+<div class="box def"><span class="tag">Definition · inviscid and viscous flow (slide 11)</span>
+<p>An <b>inviscid flow</b> is one in which viscous effects do <b>not significantly influence</b> the flow, so they are neglected. If the shear stresses are small and act over such small areas that they do not noticeably change the flow field, the flow can be treated as inviscid.</p>
+<p>In a <b>viscous flow</b> the effects of viscosity are <b>important</b> and cannot be ignored.</p></div>
+<p>An inviscid fluid is an idealisation (every real fluid has some viscosity). Past papers also call it an <b>ideal flow</b> or a "frictionless" flow: a flow with no viscosity, hence no internal friction and no energy lost to friction (F3's Bernoulli equation assumes exactly this).</p>
+<h3>External flows and the boundary layer (slide 11)</h3>
+<p>Experiments show that the main class of flows that can be modelled as inviscid is <b>external flows</b>: flows of an unbounded fluid <b>outside</b> a body, such as air around a wing, a car or a building. Any viscous effects are confined to a <b>thin layer</b> next to the body's surface, called the <b>boundary layer</b>.</p>
+<div class="box def"><span class="tag">Definition · boundary layer</span>
+<p>The <b>boundary layer</b> is the thin layer of fluid next to a solid surface in which the velocity rises from zero at the surface (no slip) to almost the full outside velocity. Inside it, velocity gradients are large, so viscous shear stresses matter; outside it, the flow can be treated as inviscid.</p></div>
+<p>Slide 11's figure "External flow around an airfoil" shows streamlines curving smoothly around a wing section, labelled "inviscid flow" away from the wing. A thin "boundary layer" hugs the wing surface; a magnified circle at the rear shows the "edge of boundary layer" and small velocity arrows inside it growing from zero at the surface. Two more pictures show other external flows: red blood cells streaming around a body inside a blood vessel, and a paraglider in the open air.</p>
+<div id="fig-bl"></div>
+<h3>Internal flows are viscous (slide 12)</h3>
+<p><b>Viscous flows</b> include the broad class of <b>internal flows</b>, where the fluid is enclosed by walls: flows in pipes, hydraulic machines, conduits (closed ducts) and open channels (rivers, canals). In such flows viscous effects cause large <b>"losses"</b> (mechanical energy turned into heat by friction), which is why huge amounts of energy must be spent pumping oil and gas along pipelines. The losses come from the <b>no-slip condition</b> and the shear stresses it creates.</p>
+<div class="box def"><span class="tag">Definition · no-slip condition (slide 12)</span>
+<p>A real (viscous) fluid in contact with a solid surface moves <b>with</b> the surface: at a stationary wall its velocity is <b>zero</b>. The velocity therefore has to rise from zero at the wall to its larger value away from it, and this velocity gradient produces shear stresses \(\tau=\mu\,\Delta u/\Delta y\).</p></div>
+<p>Slide 12's figure, "Viscous internal flow: (a) in a pipe; (b) between two parallel plates", shows the velocity profiles: arrows that are zero at the walls and longest in the middle, forming a rounded (parabolic) profile \(u(r)\) across the pipe radius \(r\), and \(u(y)\) across the gap between plates.</p>
+<div id="fig-profiles"></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · the laminar pipe profile</span>
+<p>For laminar flow in a round pipe of radius \(R\) the profile is exactly a parabola, \(u=u_\text{max}(1-r^2/R^2)\), and the mean velocity is half the centre-line velocity: \(\bar V=u_\text{max}/2\). This is why the Reynolds number uses the section-<b>mean</b> velocity \(\bar V=Q/A\), not the maximum. A turbulent profile is much flatter in the middle and steeper at the wall.</p></div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span>Compressible and incompressible flow; the Mach number (slides 13–15)</h2>
+<div class="box def"><span class="tag">Definition · compressible and incompressible flow (slide 13)</span>
+<p>A flow is <b>incompressible</b> if the density of every bit of fluid stays (practically) constant. It is <b>compressible</b> if the density changes noticeably because of pressure changes in the flow.</p></div>
+<p>The points of slide 13:</p>
+<ul class="list">
+<li><b>All fluids are compressible</b>, even water: their density changes when the pressure changes.</li>
+<li>Under <b>steady conditions with small pressure changes</b>, the analysis can usually be simplified by treating the flow as incompressible, with constant density.</li>
+<li><b>Liquids</b> are hard to compress, so under most steady conditions they are treated as incompressible. But in some <b>unsteady</b> conditions very large pressure differences can occur, and compressibility must be included even for liquids. Example: <b>water hammer</b>.</li>
+<li><b>Gases</b> are very easy to compress; in <b>high-speed</b> flow they must be treated as compressible, taking the pressure-driven density changes into account.</li>
+</ul>
+<div class="box def"><span class="tag">Definition · water hammer</span>
+<p><b>Water hammer</b> is the pressure surge (and banging noise) when a liquid flowing in a pipe is stopped suddenly, for example by a quick-closing tap or valve. The moving column cannot stop all at once; a pressure wave travels back along the pipe at the speed of sound in the liquid, and the pipe briefly sees a very high pressure. Because the wave depends on the liquid being slightly compressible, this is a compressible, unsteady liquid flow.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · how big is water hammer?</span>
+<p>The textbook (Joukowsky) estimate is \(\Delta p=\rho c\,\Delta V\), with \(c\approx1480\u{m/s}\) for water. Stopping water flowing at 2 m/s instantly: \(\Delta p=1000(1480)(2)\approx2.96\u{MPa}\), the pressure at the bottom of a 300 m column of water. This is why long pipelines close their valves slowly.</p></div>
+<p>Slide 14 is a still from a video (link on the slide). <span class="muted">The video is not part of the handout; it illustrates compressible versus incompressible flow.</span></p>
+<h3>Low-speed gas flows and the Mach number (slide 15)</h3>
+<p>Low-speed gas flows, such as ordinary winds in the atmosphere, are also treated as incompressible. The test uses the Mach number.</p>
+<div class="box thm"><span class="tag">Definition · Mach number (slide 15)</span>
+\[M=\frac{V}{c}\]
+<p class="word"><b>In words:</b> Mach number = speed of the flow (or of the object through the fluid) ÷ speed of sound in that fluid. \(V\) is the gas speed and \(c\) is the speed of sound.</p></div>
+<div class="box ready"><span class="tag">Ready answer · when is a gas flow incompressible? (slide 15)</span>
+<ul class="list">
+<li>If \(M\lt 0.3\): density varies by at most about 3%, and the flow is <b>assumed incompressible</b>. For standard air this means speeds below about <b>100 m/s</b>.</li>
+<li>If \(M\gt 0.3\): the density variations affect the flow, and <b>compressibility effects must be accounted for</b>.</li>
+</ul>
+<p>Old-course answer (ENGG1205): "the <b>Mach number</b> \(Ma=V/c\), flow velocity divided by the speed of sound in the fluid, determines the significance of compressibility."</p></div>
+<p>The speed of sound is the speed at which a small pressure disturbance travels through the fluid. When \(M\) is small, pressure news travels far ahead of the flow, so the fluid "gets out of the way" smoothly without being squeezed. When \(M\) approaches 1, the fluid has no warning and is compressed.</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · speed of sound in a gas, and "about 100 m/s"</span>
+<p>For an ideal gas \(c=\sqrt{\gamma RT}\), with \(\gamma=1.4\) and \(R=287\u{J/(kg\,K)}\) for air, and \(T\) in kelvin. Standard air (15 °C = 288.15 K):</p>
+\[\begin{aligned}c&=\sqrt{1.4(287)(288.15)}\\&=340.3\u{m/s}\end{aligned}\]
+<p>so \(M=0.3\) is \(0.3(340.3)=102\u{m/s}\): the slide's "about 100 m/s". In water \(c\approx1480\u{m/s}\), so ordinary liquid flows have tiny Mach numbers.</p></div>
+<p class="flag">the slide's "at most 3%" is the handout's figure. The common textbook isentropic formula gives a density difference of about 4.4% between moving air at \(M=0.3\) and the same air brought to rest (see the slider below); books quote "a few per cent", 2–5%, depending on what they compare. For exams quote the handout: \(M\lt 0.3\) means incompressible.</p>
+<div class="box eg"><span class="tag">Examples · written for these notes · compressible or not?</span>
+<ol class="steps">
+<li>A car at 30 m/s in air at 15 °C: \(M=30/340.3=0.088\lt 0.3\): incompressible.</li>
+<li>An airliner cruising at 250 m/s at high altitude where the air is −50 °C (223.15 K): \(c=\sqrt{1.4(287)(223.15)}=299.5\u{m/s}\), so \(M=250/299.5=0.835\gt 0.3\): compressible.</li>
+<li>Water at 20 m/s in a pipe: \(M\approx20/1480=0.014\): incompressible (unless the flow is stopped suddenly: water hammer).</li>
+</ol></div>
+<div class="figure" id="fig-mach"><p class="ttl">Try it · Mach number and density change</p>
+<canvas class="plot" id="cv-mach" style="height:250px"></canvas>
+<div class="ctrl">
+<label>speed \(V\) (m/s) <input type="range" id="m-V" min="0" max="700" step="5" value="100"></label>
+<label>air temperature (°C) <input type="range" id="m-T" min="-60" max="60" step="1" value="15"></label>
+</div>
+<div class="readout" id="out-mach"></div>
+<p class="cap">Curve: percentage drop in density of moving air compared with the same air at rest, \(1-(1+0.2M^2)^{-2.5}\) (textbook isentropic formula, beyond the handout). The shaded band is \(M\lt 0.3\), where the handout treats the flow as incompressible. Cold air has a lower speed of sound, so the same speed gives a higher \(M\).</p></div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span>Why does a rocket nozzle first narrow and then expand? (slide 16)</h2>
+<p>Slide 16 shows a rocket nozzle: a <b>converging section</b> (getting narrower), a narrowest point called the <b>throat</b>, and a <b>diverging section</b> (getting wider), coloured green to red from top to bottom. Arrows show the gas flowing down through it. Beside it, three curves are plotted against position along the nozzle (position runs downwards):</p>
+<ul class="list">
+<li>the area ratio \(A/A^*\) (area ÷ throat area): falls to 1 at the throat, then rises;</li>
+<li>the Mach number \(M\): rises all the way, with \(M\lt 1\) above the throat and \(M\gt 1\) below it; it equals 1 exactly at the throat;</li>
+<li>the pressure ratio \(p/p_0\) (pressure ÷ pressure in the combustion chamber): falls all the way.</li>
+</ul>
+<div id="fig-nozzle"></div>
+<p>The slide contrasts two cases:</p>
+<div class="scroll"><table class="tbl">
+<tr><th>Incompressible flow (slide 16)</th><th>Supersonic compressible flow in an expanding nozzle</th></tr>
+<tr><td>\(\rho AV=\text{constant}\) with \(\rho\) fixed, so \(A\uparrow\ \Rightarrow\ V\downarrow\): a wider pipe means slower flow (the garden-hose rule).</td><td>\(A\uparrow,\ \rho\downarrow,\ V\uparrow\): in the widening part the gas expands so much that its density falls faster than the area grows, and it <b>speeds up</b>.</td></tr>
+</table></div>
+<div class="box thm"><span class="tag">Result · area–velocity relation (slide 16)</span>
+\[\frac{\mathrm dA}{A}=(M^2-1)\frac{\mathrm dV}{V}\]
+<p class="word"><b>In words:</b> the fractional change in area = \((M^2-1)\) × the fractional change in velocity. Below the speed of sound (\(M\lt 1\)) the bracket is negative, so to speed the gas up (\(\mathrm dV\gt 0\)) the area must <b>shrink</b>. Above it (\(M\gt 1\)) the bracket is positive, so to keep speeding up the area must <b>grow</b>. At \(M=1\) the bracket is zero: that can only happen where \(\mathrm dA=0\), at the throat.</p></div>
+<p>That is the answer to the slide's question: the gas leaves the combustion chamber slowly (subsonic), so the nozzle first <b>narrows</b> to accelerate it up to the speed of sound at the throat; after that it must <b>widen</b> to accelerate it further to supersonic exhaust speeds, which gives more thrust. (This converging–diverging shape is called a de Laval nozzle.) For \(M\) near 0 the relation becomes \(\mathrm dA/A=-\mathrm dV/V\), the incompressible rule.</p>
+<details class="calc"><summary>where \(\mathrm dA/A=(M^2-1)\,\mathrm dV/V\) comes from (beyond the handout)</summary><div>
+<p>1. Mass conservation: \(\rho AV=\) constant. Take logs and differentiate: \(\dfrac{\mathrm d\rho}{\rho}+\dfrac{\mathrm dA}{A}+\dfrac{\mathrm dV}{V}=0\). <span class="why">\(\ln\rho+\ln A+\ln V=\) constant.</span></p>
+<p>2. Momentum along the flow, friction neglected (Euler's equation): \(\mathrm dp=-\rho V\,\mathrm dV\). <span class="why">A pressure drop pushes the gas faster (the idea behind Bernoulli, F3).</span></p>
+<p>3. Speed of sound: \(\mathrm dp=c^2\,\mathrm d\rho\). <span class="why">This is the definition of \(c\) for a small, fast (isentropic) disturbance.</span></p>
+<p>4. Combine 2 and 3: \(\dfrac{\mathrm d\rho}{\rho}=-\dfrac{V\,\mathrm dV}{c^2}=-M^2\dfrac{\mathrm dV}{V}\). <span class="why">\(V^2/c^2=M^2\).</span></p>
+<p>5. Put into 1: \(\dfrac{\mathrm dA}{A}=-\dfrac{\mathrm d\rho}{\rho}-\dfrac{\mathrm dV}{V}=(M^2-1)\dfrac{\mathrm dV}{V}\).</p>
+<p>Numbers: at \(M=0.5\), \(\mathrm dA/A=-0.75\,\mathrm dV/V\) (a 1% speed-up needs 0.75% less area); at \(M=2\), \(\mathrm dA/A=+3\,\mathrm dV/V\) (a 1% speed-up needs 3% more area).</p>
+</div></details>
+<div class="beyond box"><span class="tag">Beyond the handouts · scope</span>
+<p>Slide 16 is a motivating example for "compressibility matters". No past MECH1350/ENGG1350 paper has asked for compressible-nozzle calculations; know the qualitative story above and the meaning of the relation.</p></div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span>Laminar and turbulent flow; Reynolds's experiment (slides 17–19)</h2>
+<div class="box def"><span class="tag">Definition · laminar and turbulent flow (slide 17)</span>
+<p><b>Laminar flow:</b> all fluid layers move <b>parallel</b> to each other and do <b>not cross</b> one another ("lamina" = a thin sheet).</p>
+<p><b>Turbulent flow:</b> fluid layers <b>cross</b> each other and do not move parallel; the fluid mixes in irregular swirls called <b>eddies</b>.</p></div>
+<p>Slide 17 draws two pipes. In the "Laminar Flow" pipe, straight parallel arrows run the length of the pipe. In the "Turbulent Flow" pipe, the inside is filled with tangled loops and curls. The photo below them is a still from a video (link on the slide) of a tap stream; <span class="muted">the standard demonstration: a gently opened tap gives a clear, glassy, smooth stream (laminar); opened wide, the stream becomes rough, cloudy and noisy (turbulent), the two streams of slide 3.</span></p>
+<h3>Reynolds's dye experiment (slide 18)</h3>
+<p>In 1883 Osborne Reynolds ran water from a tank through a glass pipe with a <b>smooth, well-rounded entrance</b> (so the entrance itself does not stir the water) and injected a thin streak of <b>dye</b> into the middle of the flow through a fine tube. The flow rate \(Q=VA\) is set by a valve. Slide 18 (a) shows the set-up: pipe of diameter \(D\), dye reservoir above, dye streak running along the pipe. Slide 18 (b) shows three dye pictures as the flow rate rises:</p>
+<div id="fig-reynolds"></div>
+<ul class="list">
+<li><b>Laminar</b> (top, low flow rate): the dye stays a thin, sharp, straight line all along the pipe.</li>
+<li><b>Transitional</b> (middle): the line starts to wobble and wave, with occasional bursts.</li>
+<li><b>Turbulent</b> (bottom, high flow rate): soon after the injection point the dye breaks up into irregular curls and spreads across the whole pipe, colouring the water.</li>
+</ul>
+<p>The handout's commentary (slide 18):</p>
+<ul class="list">
+<li>Laminar flow happens when the flow is sufficiently <b>slow</b>, turbulent when it is sufficiently <b>fast</b>.</li>
+<li>In laminar flow the fluid particles move in a very orderly way, all in straight lines <b>parallel to the pipe wall</b>; there is essentially <b>no mixing</b> of neighbouring particles. (The dye spreads only by slow molecular diffusion.)</li>
+<li>In turbulent flow <b>mixing is very significant</b>: fluid particles move haphazardly in all directions.</li>
+<li>So it is impossible to trace the motion of individual particles in turbulent flow.</li>
+</ul>
+<p>Slide 19 is a still from a video of the experiment (link on the slide).</p>
+<div class="box ready"><span class="tag">Ready answer · key differences between laminar and turbulent flow (exam type F1.4)</span>
+<div class="scroll"><table class="tbl">
+<tr><th></th><th>Laminar</th><th>Turbulent</th></tr>
+<tr><td>Particle paths</td><td>smooth, parallel to the wall, layers do not cross</td><td>irregular, haphazard in all directions; layers cross</td></tr>
+<tr><td>Mixing</td><td>essentially none (dye line stays thin)</td><td>strong (dye spreads across the pipe)</td></tr>
+<tr><td>Velocity at a point</td><td>steady</td><td>fluctuates with time; has 3-D components</td></tr>
+<tr><td>Reynolds number (pipe)</td><td>\(\mathrm{Re}\lt 2000\)</td><td>\(\mathrm{Re}\gt 4000\)</td></tr>
+<tr><td>When</td><td>slow, small pipe, viscous fluid</td><td>fast, large pipe, low-viscosity fluid</td></tr>
+<tr><td>Friction loss</td><td>lower</td><td>higher (energy lost in eddies)</td></tr>
+<tr><td>Velocity profile</td><td>parabolic, peaked</td><td>flatter in the middle, steep at the wall</td></tr>
+</table></div>
+<p>For "use flow visualisation in a pipe at different Reynolds numbers" (May 2023 Q1(a)): describe Reynolds's apparatus, sketch the three dye streaks (straight / wavy / broken up) and label them with \(\mathrm{Re}\lt 2000\), 2000–4000, \(\gt 4000\).</p></div>
+<div class="box ready"><span class="tag">Ready answer · sketching laminar and turbulent flow in a water channel</span>
+<p>Laminar: a channel with straight, parallel, evenly spaced streamlines (or a straight dye line), velocity arrows growing from zero at the bed. Turbulent: the same channel with swirling eddies of different sizes, crossing paths and a dye trace that spreads out; draw a flatter velocity profile. Label both.</p>
+<div id="fig-channel"></div></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span>The Reynolds number (slide 20)</h2>
+<p>Whether a flow is laminar or turbulent depends not on the speed alone but on one combination of speed, size and fluid properties, the <b>Reynolds number</b>.</p>
+<div class="box thm"><span class="tag">Definition · Reynolds number (slide 20)</span>
+\[\mathrm{Re}\equiv\frac{\rho\bar Vd}{\mu}=\frac{\bar Vd}{\nu}\]
+<p>\(\rho\) = density, \(\mu\) = viscosity, \(\bar V\) = <b>section-mean</b> velocity, \(d\) = (inner) diameter of the pipe; \(\nu=\mu/\rho\).</p>
+<p class="word"><b>In words:</b> Reynolds number = density × mean velocity × pipe diameter ÷ viscosity (or mean velocity × diameter ÷ kinematic viscosity). It has no units.</p></div>
+<div class="box ready"><span class="tag">Result · pipe-flow regimes, found by experiment (slide 20)</span>
+\[\mathrm{Re}\ \begin{cases}\lt 2000 & \text{laminar flow}\\ 2000\text{ to }4000 & \text{transitional flow}\\ \gt 4000 & \text{turbulent flow}\end{cases}\]</div>
+<h3>What the Reynolds number means</h3>
+<p>\(\mathrm{Re}\) compares two effects on a bit of fluid. <b>Inertia</b> (the fluid's tendency to keep moving, to overshoot and swirl) grows with \(\rho V^2\). <b>Viscosity</b> (internal friction that smooths out disturbances) gives stresses of size \(\mu V/d\). Their ratio:</p>
+\[\frac{\text{inertial}}{\text{viscous}}\sim\frac{\rho V^2}{\mu V/d}=\frac{\rho Vd}{\mu}=\mathrm{Re}\]
+<p class="word"><b>In words:</b> Re = inertial forces ÷ viscous forces. Small Re: viscosity wins, any wobble is damped out, the flow stays laminar. Large Re: inertia wins, small disturbances grow into eddies, the flow becomes turbulent.</p>
+<p>So the flow becomes turbulent more easily with a <b>faster</b> flow, a <b>bigger</b> pipe, a <b>denser</b> fluid, or a <b>less viscous</b> fluid. Honey in a straw is laminar; water in a water main is turbulent.</p>
+<details class="calc"><summary>checking that Re has no units</summary><div>
+<p>\(\rho\): kg/m³; \(V\): m/s; \(d\): m; \(\mu\): Pa·s = kg/(m·s).</p>
+<p>Numerator \(\rho Vd\): (kg/m³)(m/s)(m) = kg/(m·s). <span class="why">m·m/m³ = 1/m.</span></p>
+<p>Divide by \(\mu\) in kg/(m·s): the units cancel completely. <span class="why">If your Re ends up with a unit, a quantity was not in SI.</span></p>
+</div></details>
+<div class="box ready"><span class="tag">Ready answer · Reynolds-number questions (exam type F1.3)</span>
+<ol class="steps">
+<li>Convert everything to SI: mm → m, L/min → m³/s (÷ 1000 ÷ 60), mm²/s → m²/s (× 10⁻⁶), cP → Pa·s (× 10⁻³).</li>
+<li>Find the <b>inner</b> diameter: for a tube "OD × wall", \(d=\text{OD}-2\times\text{wall}\).</li>
+<li>If a flow rate is given, mean velocity \(\bar V=Q/A\) with \(A=\pi d^2/4\).</li>
+<li>\(\mathrm{Re}=\rho\bar Vd/\mu\), or \(\bar Vd/\nu\) if \(\nu\) is given.</li>
+<li>Compare with 2000 and 4000 and state the regime in words.</li>
+</ol>
+<p>Shortcut when \(Q\) is given: \(\mathrm{Re}=\dfrac{4\rho Q}{\pi\mu d}=\dfrac{4Q}{\pi\nu d}\).</p></div>
+<div class="box eg"><span class="tag">Worked example · Dec 2023 Q3 (= Dec 2022 Q3), 5 marks</span>
+<p>Determine whether the flow is laminar or turbulent if glycerin at 25 °C flows in a circular passage within a fabricated chemical processing device. The diameter of the passage is 150 mm. The average velocity of flow is 3.6 m/s. The density and viscosity of glycerin are 1258 kg/m³ and \(9.6\times10^{-1}\u{Pa\,s}\).</p>
+<p class="flag">the paper prints the density as "1258 kg/m⁻³" and the viscosity unit as "Pa·S"; read as 1258 kg/m³ and 0.96 Pa·s.</p>
+\[\begin{aligned}\mathrm{Re}&=\frac{\rho\bar Vd}{\mu}=\frac{1258(3.6)(0.150)}{0.96}\\&=707.6\end{aligned}\]
+<p>\(\mathrm{Re}=708\lt 2000\), so the flow is <b>laminar</b>. Glycerin is about a thousand times more viscous than water, which keeps even this fast, wide flow laminar.</p></div>
+<div class="box eg"><span class="tag">Example · written for these notes · a kitchen tap</span>
+<p>Water at 20 °C (\(\nu=1.0\times10^{-6}\u{m^2/s}\)) flows at 0.2 L/s through a pipe of inner diameter 25 mm. (a) Is the flow laminar or turbulent? (b) What is the largest flow rate for which it would surely be laminar?</p>
+<ol class="steps">
+<li>\(Q=0.2\times10^{-3}=2.0\times10^{-4}\u{m^3/s}\); \(A=\pi(0.025)^2/4=4.909\times10^{-4}\u{m^2}\).</li>
+<li>\(\bar V=Q/A=0.4074\u{m/s}\).</li>
+<li>\(\mathrm{Re}=\bar Vd/\nu\) \(=0.4074(0.025)/10^{-6}\) \(=10\,186\gt 4000\): <b>turbulent</b>.</li>
+<li>(b) Laminar needs \(\mathrm{Re}\lt 2000\): \(\bar V\lt 2000\nu/d\) \(=2000(10^{-6})/0.025\) \(=0.08\u{m/s}\), i.e. \(Q\lt 0.08A\) \(=3.93\times10^{-5}\u{m^3/s}\) \(\approx\boxed{0.039\u{L/s}}\), a thin trickle.</li>
+</ol>
+<p>Most everyday water flows in pipes are turbulent.</p></div>
+<h3>Reynolds's experiment with a different fluid</h3>
+<p>At the start of transition \(\mathrm{Re}\approx2000\), so the critical mean velocity is \(\bar V_\text{crit}=2000\,\nu/d\) and the critical flow rate is</p>
+\[Q_\text{crit}=\bar V_\text{crit}\frac{\pi d^2}{4}=\frac{2000\,\pi\nu d}{4}\]
+<p class="word"><b>In words:</b> in the same pipe, the flow rate at which turbulence starts is proportional to the kinematic viscosity.</p>
+<div class="box eg"><span class="tag">Example · May 2022 Q7(b)(c) reasoning · corn oil instead of water</span>
+<p>Corn oil is far more viscous than water: roughly \(\mu\approx0.05\u{Pa\,s}\), \(\rho\approx920\u{kg/m^3}\), so \(\nu\approx5.4\times10^{-5}\u{m^2/s}\), about 54 times water's. In a 20 mm pipe the onset of turbulence moves from \(Q_\text{crit}\approx0.031\u{L/s}\) (water) to about \(1.7\u{L/s}\) (corn oil). Turbulence therefore starts at a <b>higher</b> flow rate.</p>
+<p class="flag">the corn-oil properties are typical room-temperature values (not given in the paper); only the direction of the answer is needed.</p></div>
+<div class="figure" id="fig-re"><p class="ttl">Try it · Reynolds's experiment</p>
+<div id="fig-re-dye"></div>
+<div class="ctrl">
+<label>fluid <select id="re-fl"><option value="1.0e-6">water 20 °C</option><option value="1.5e-5">air 20 °C</option><option value="5.4e-5">corn oil (approx.)</option><option value="7.63e-4">glycerin 25 °C</option></select></label>
+<label>diameter \(d\) (mm) <input type="range" id="re-d" min="2" max="200" step="1" value="25"></label>
+<label>mean velocity (m/s) <input type="range" id="re-lv" min="-3" max="1.3" step="0.002" value="-0.398"></label>
+</div>
+<div class="readout" id="out-re"></div>
+<p class="cap">The dye streak is redrawn from the Reynolds number: straight below 2000, wavy between 2000 and 4000, broken into eddies above 4000. The velocity slider is logarithmic (0.001 to 20 m/s). It starts at water, 25 mm, 0.4 m/s (Re ≈ 10 000, the kitchen-tap example). Switch to glycerin: the same pipe and speed give a laminar flow.</p></div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span>One-, two- and three-dimensional flow (slides 21–24)</h2>
+<p>In general a fluid flow is <b>three-dimensional</b> and depends on position and time (slide 21). The velocity at position \(\vec r=(x,y,z)\) at time \(t\) is a vector with three components:</p>
+\[\vec V=\vec V(\vec r,t)\]
+\[\vec V=u(\vec r,t)\,\mathbf i+v(\vec r,t)\,\mathbf j+w(\vec r,t)\,\mathbf k\]
+<p class="word"><b>In words:</b> the velocity is made of a part \(u\) along \(x\), a part \(v\) along \(y\) and a part \(w\) along \(z\); each part may depend on where you are and when you look. \(\mathbf i\), \(\mathbf j\), \(\mathbf k\) are unit vectors (length-1 arrows) along the \(x\), \(y\), \(z\) axes.</p>
+<p>The earlier definitions in symbols (slide 21): the flow is <b>uniform</b> if \(u, v, w\) do not depend on the position \((x,y,z)\), and <b>steady</b> if they do not depend on the time \(t\).</p>
+<h3>Two-dimensional flow (slide 22)</h3>
+<p>In many engineering applications the flow can be treated as <b>two-dimensional</b>: one velocity component (say \(w\)) is zero or much smaller than the other two, and the flow varies essentially only in two directions (\(x\) and \(y\)). The velocity reduces to</p>
+\[\vec V=u\,\mathbf i+v\,\mathbf j\]
+<p>with \(u, v\) functions of \((x,y)\) (and possibly \(t\)). Example: air flowing over the middle part of a long wing, where every slice along the span looks the same.</p>
+<h3>One-dimensional flow (slides 22 and 24)</h3>
+<p>It is sometimes possible to simplify further by neglecting two of the velocity components, leaving a <b>one-dimensional flow</b> field:</p>
+\[\vec V=u\,\mathbf i\]
+<p>where \(u\) may still vary across the section of flow. Typical examples are <b>fully developed flows</b> (flows whose velocity profile no longer changes along the pipe) in long uniform pipes and open channels (slide 24). One-dimensional problems need only elementary analysis and can usually be solved by hand. In Section C this is the standard model: one mean velocity per cross-section, \(\bar V=Q/A\).</p>
+<p class="flag">on slide 22 the two velocity formulas are missing from the handout (blank gaps in the sentences "the velocity is reduced to … where … are functions of (x, y)" and "That is, … where the velocity u may vary"); the standard expressions \(\vec V=u\mathbf i+v\mathbf j\) with \(u(x,y)\), \(v(x,y)\), and \(\vec V=u\mathbf i\), are used here.</p>
+<p>Slide 24's figure shows a pipe that narrows partway along: the uniform velocity arrows \(V_1\) across the wide part become longer arrows \(V_2\) across the narrow part. Each section is described by a single velocity, so the flow is treated as one-dimensional (along the pipe), even though it is non-uniform (it changes from section 1 to section 2).</p>
+<div id="fig-1d"></div>
+<h3>Three-dimensional flow and particle paths (slide 23)</h3>
+<p>A flow is <b>three-dimensional</b> if all three velocity components are equally important. Such problems are the most complex and the hardest to solve. Slide 23's figure shows \(x, y, z\) axes and a curved blue line labelled <b>particle path</b>: a small fluid particle A is at position \(\vec r_A(t)\) at time \(t\) and has moved along the curve to \(\vec r_A(t+\delta t)\) at time \(t+\delta t\).</p>
+<div id="fig-path"></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · streamline, pathline, streakline (exam type F1.1)</span>
+<p>The handout uses "streamline" (F3) and draws a "particle path" (slide 23) without defining them. May 2019 Q1 asked for both.</p>
+<ul class="list">
+<li><b>Pathline</b>: the actual path traced out by one fluid particle over a period of time (slide 23's "particle path"). A long-exposure photo of one floating light.</li>
+<li><b>Streamline</b>: a line drawn in the flow at one instant that is everywhere <b>tangent to the velocity</b>. No fluid crosses a streamline; closely spaced streamlines mean fast flow.</li>
+<li><b>Streakline</b>: the line formed at one instant by all the particles that have passed through one fixed point, such as the dye line in Reynolds's experiment or smoke from a chimney.</li>
+</ul>
+<p>In <b>steady</b> flow the three coincide. In unsteady flow they differ.</p></div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span>Flow visualisation, the textbook and practice (slides 25–27)</h2>
+<p>Slide 25, "Flow Visualization", is a still from a video (link on the slide). <span class="muted">Flow visualisation means making an invisible flow visible: dye in water (as in Reynolds's experiment), smoke in a wind tunnel, small tufts of wool taped to a car, or tiny particles lit by a laser sheet. The patterns show streamlines and streaklines, boundary layers, laminar and turbulent regions and where the flow separates from a body.</span></p>
+<p>Slide 26 gives the <b>recommended textbook</b>: R. L. Mott and J. A. Untener, <i>Applied Fluid Mechanics</i>, 7th edition (Global Edition), Pearson, ISBN 9781292073125. A hard copy is on 1-day reserve in the HKU Main Library, and an online copy (limited users at a time, limited page downloads per day) is available through HKU Libraries' ebook service.</p>
+<p>Slide 27 is titled "Practice" but has no content in the handout; there are no class exercises, so this note has no group-work section. The concept checks and the exam taster below take its place.</p>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span>Summary</h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>Newtonian fluid</td><td>\(\tau=\mu\,\Delta u/\Delta y\), \(\mu\) constant</td><td>shear stress ∝ rate of strain</td></tr>
+<tr><td>Non-Newtonian</td><td>\(\mu=f(\Delta\theta/\Delta t)\)</td><td>shear-thinning, shear-thickening, Bingham plastic (yield stress)</td></tr>
+<tr><td>Kinematic viscosity</td><td>\(\nu=\mu/\rho\)</td><td>m²/s; 1 cP = 1 mPa·s, 1 cSt = 1 mm²/s</td></tr>
+<tr><td>Steady / unsteady</td><td>change with time at a fixed point?</td><td>no = steady</td></tr>
+<tr><td>Uniform / non-uniform</td><td>change with position at one instant?</td><td>no = uniform</td></tr>
+<tr><td>Viscous / inviscid</td><td>does viscosity matter?</td><td>internal flows viscous (no slip, losses); external flows inviscid outside a thin boundary layer</td></tr>
+<tr><td>Compressible?</td><td>\(M=V/c\)</td><td>\(M\lt 0.3\) (air below ~100 m/s): incompressible</td></tr>
+<tr><td>Nozzle</td><td>\(\mathrm dA/A=(M^2-1)\,\mathrm dV/V\)</td><td>subsonic: narrow to speed up; supersonic: widen</td></tr>
+<tr><td>Laminar / turbulent</td><td>parallel layers vs mixing eddies</td><td>dye line straight vs broken up</td></tr>
+<tr><td>Reynolds number</td><td>\(\mathrm{Re}=\rho\bar Vd/\mu=\bar Vd/\nu\)</td><td>inertia ÷ viscous; 2000 / 4000 limits</td></tr>
+<tr><td>Dimensions</td><td>\(\vec V=u\mathbf i+v\mathbf j+w\mathbf k\)</td><td>3-D general; 2-D drop \(w\); 1-D: one velocity per section</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span>Common mistakes</h2>
+<div class="mistake">
+<span class="x">✗</span><span>Using the outer diameter of a tube in \(A\) and \(\mathrm{Re}\).</span>
+<span class="ok">✓</span><span>\(d=\text{OD}-2\times\text{wall}\): the fluid fills only the inside.</span>
+<span class="x">✗</span><span>Using the radius instead of the diameter in \(\mathrm{Re}\).</span>
+<span class="ok">✓</span><span>The 2000/4000 limits are for \(\mathrm{Re}\) based on the <b>diameter</b>.</span>
+<span class="x">✗</span><span>Leaving L/min, mm or mm²/s in the formula.</span>
+<span class="ok">✓</span><span>L/min ÷ 60 000 → m³/s; mm × 10⁻³ → m; mm²/s × 10⁻⁶ → m²/s.</span>
+<span class="x">✗</span><span>Getting \(\mu\) from \(\nu\) by dividing by SG.</span>
+<span class="ok">✓</span><span>\(\mu=\rho\nu\) with \(\rho=\mathrm{SG}\times1000\u{kg/m^3}\).</span>
+<span class="x">✗</span><span>Defining "steady" as "constant velocity everywhere".</span>
+<span class="ok">✓</span><span>Steady = no change <b>with time</b> at a point; same everywhere = <b>uniform</b>.</span>
+<span class="x">✗</span><span>Saying turbulence is "fast flow".</span>
+<span class="ok">✓</span><span>Turbulence depends on \(\mathrm{Re}\), not speed alone: a viscous fluid can be laminar at high speed.</span>
+<span class="x">✗</span><span>"Liquids are incompressible, so water hammer cannot happen."</span>
+<span class="ok">✓</span><span>All fluids are compressible; sudden valve closure makes liquid compressibility matter.</span>
+<span class="x">✗</span><span>Calling every non-Newtonian fluid "thicker".</span>
+<span class="ok">✓</span><span>Shear-thinning fluids get <b>thinner</b> when sheared faster; Bingham plastics need a yield stress first.</span>
+</div>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span>Find the mistake</h2>
+<div class="q"><p class="qh">1 · A student's Dec 2023 Q4</p>
+<p>"Copper tube 32 mm OD × 2.0 mm wall, 285 L/min, \(\nu=4.11\times10^{-7}\u{m^2/s}\). \(A=\pi(0.032)^2/4\), \(V=0.00475/A=5.91\u{m/s}\), \(\mathrm{Re}=5.91(0.032)/4.11\times10^{-7}\) \(=4.6\times10^{5}\): turbulent."</p>
+<details><summary>Hint</summary><div><p>Which diameter does the water actually fill?</p></div></details>
+<details><summary>Answer</summary><div><p>The <b>inner</b> diameter \(32-2(2.0)=28\u{mm}\) must be used: \(V=7.71\u{m/s}\) and \(\mathrm{Re}=5.26\times10^{5}\). The verdict (turbulent) happens to be the same, but the working loses marks; with a thicker wall or a borderline \(\mathrm{Re}\) it could change the verdict.</p></div></details></div>
+<div class="q"><p class="qh">2 · A student's May 2025 Q4</p>
+<p>"Oil, \(\rho=900\), \(\mu=0.2\u{Pa\,s}\), 0.15 m pipe, 10 m/s. Radius \(=0.075\u{m}\), \(\mathrm{Re}=900(10)(0.075)/0.2=3375\): transitional."</p>
+<details><summary>Hint</summary><div><p>Look at the length in the formula on slide 20.</p></div></details>
+<details><summary>Answer</summary><div><p>\(d\) is the <b>diameter</b>: \(\mathrm{Re}=900(10)(0.15)/0.2\) \(=6750\gt 4000\), so the flow is <b>turbulent</b>. Using the radius halves \(\mathrm{Re}\) and gives the wrong regime.</p></div></details></div>
+<div class="q"><p class="qh">3 · A student's viscosity conversion</p>
+<p>"SG = 0.96, \(\nu=610\u{mm^2/s}\). \(\mu=\nu/\mathrm{SG}=610/0.96=635\), so \(\mu=635\u{cP}\)."</p>
+<details><summary>Hint</summary><div><p>What must \(\nu\) be multiplied by to get \(\mu\), and what are its units?</p></div></details>
+<details><summary>Answer</summary><div><p>\(\mu=\rho\nu\), with \(\rho=960\u{kg/m^3}\) and \(\nu=610\times10^{-6}\u{m^2/s}\): \(\mu=0.5856\u{Pa\,s}\) \(=586\u{mPa\,s}=586\u{cP}\). Dividing by SG is wrong both physically and in units (the answer would still be in mm²/s).</p></div></details></div>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span>Concept checks</h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Classify the flow</p><p>A large tank empties through a short tapered nozzle at its base. Is the flow in the nozzle steady or unsteady? Uniform or non-uniform?</p>
+<details><summary>Answer</summary><div><p><b>Unsteady</b>: the water level falls, so the outflow speed at a fixed point in the nozzle decreases with time. <b>Non-uniform</b>: the nozzle narrows, so the velocity changes from place to place. (If the tank is kept topped up, the flow becomes steady but stays non-uniform.)</p></div></details></div>
+<div class="q"><p class="qh">2 · Bigger pipe, same flow rate</p><p>Water flows at a fixed flow rate \(Q\). The pipe diameter is doubled. What happens to the mean velocity and to \(\mathrm{Re}\)?</p>
+<details><summary>Hint</summary><div><p>\(\mathrm{Re}=4Q/(\pi\nu d)\).</p></div></details>
+<details><summary>Answer</summary><div><p>The area is 4 times larger, so \(\bar V\) falls to a quarter. \(\mathrm{Re}=\bar Vd/\nu\) changes by \(\tfrac14\times2=\tfrac12\): it <b>halves</b>. At fixed \(Q\), a bigger pipe is <b>more</b> likely to be laminar.</p></div></details></div>
+<div class="q"><p class="qh">3 · Air versus water</p><p>Air and water flow through identical pipes at the same mean speed at 20 °C. Which has the larger Reynolds number?</p>
+<details><summary>Answer</summary><div><p>Water. \(\mathrm{Re}=\bar Vd/\nu\) and water's \(\nu\) (\(1.0\times10^{-6}\)) is 15 times smaller than air's (\(1.5\times10^{-5}\u{m^2/s}\)), so water's Re is 15 times larger, even though air's \(\mu\) is smaller. Compare \(\nu\), not \(\mu\).</p></div></details></div>
+<div class="q"><p class="qh">4 · A fan and a fighter jet</p><p>Can the air blown by a desk fan (5 m/s) be treated as incompressible? The air over a fighter jet at 600 m/s?</p>
+<details><summary>Answer</summary><div><p>Fan: \(M\approx5/340=0.015\lt 0.3\): incompressible. Jet: \(M\approx600/340=1.8\gt 0.3\) (supersonic): compressible.</p></div></details></div>
+<div class="q"><p class="qh">5 · Ketchup and toothpaste</p><p>Why does ketchup flow once the bottle is shaken, and why does toothpaste stay on the brush?</p>
+<details><summary>Answer</summary><div><p>Ketchup is <b>shear-thinning</b>: shaking shears it fast, its apparent viscosity drops and it runs. Toothpaste is (close to) a <b>Bingham plastic</b>: the small stress from its own weight on the brush is below its yield stress, so it does not flow at all.</p></div></details></div>
+<div class="q"><p class="qh">6 · Why inviscid outside the boundary layer?</p><p>Air is viscous. Why can the flow around a wing be treated as inviscid?</p>
+<details><summary>Answer</summary><div><p>Viscous stress is \(\mu\times\) velocity gradient. Away from the wing the velocity changes only gradually and air's \(\mu\) is tiny, so the shear stresses are negligible. Large gradients exist only in the thin boundary layer at the surface (no slip), so viscous effects are confined there.</p></div></details></div>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span>Exam taster</h2>
+<p>Real past-paper parts (ENGG1350, the predecessor of MECH1350; same Section C structure), about one per question type in this chapter. Full methods, every other sitting, and more practice: <a href="guide-F1.html">Exam guide · F1</a>.</p>
+
+<div class="q"><div class="src"><b>May 2025 Q4</b><span>4 marks</span><a class="guide" href="guide-F1.html#F1-3">F1.3 Reynolds number: compute &amp; classify</a></div>
+<p>Oil (\(\rho\): density 900 kg/m³; \(\mu\): viscosity 0.2 Pa·s) flows through a 0.15 m diameter pipe at 10 m/s. Calculate the Reynolds number \(\mathrm{Re}=\rho VD/\mu\) and classify the flow (Laminar/Turbulent/Transitional flow).</p>
+<details><summary>Hint</summary><div><p>All data are already in SI. Use the diameter, then compare with 2000 and 4000.</p></div></details>
+<details><summary>Answer</summary><div>
+\[\mathrm{Re}=\frac{\rho VD}{\mu}=\frac{900(10)(0.15)}{0.2}=6750\]
+<p>\(\boxed{\mathrm{Re}=6750\gt 4000:\ \text{turbulent}}\)</p></div></details></div>
+
+<div class="q"><div class="src"><b>Dec 2023 Q4</b><span>6 marks</span><span>same: Dec 2022 Q4</span><a class="guide" href="guide-F1.html#F1-3">F1.3 Reynolds number: compute &amp; classify</a></div>
+<p>Determine whether the flow is laminar or turbulent if water at 70 °C flows in a hydraulic copper tube with a 32 mm OD × 2.0 mm wall. The flow rate is 285 L/min. The kinematic viscosity of water is \(4.11\times10^{-7}\u{m^2/s}\).</p>
+<details><summary>Hint</summary><div><p>OD = outside diameter. Find the inner diameter, convert L/min to m³/s, get \(V=Q/A\), then \(\mathrm{Re}=Vd/\nu\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>1. Inner diameter \(d=32-2(2.0)=28\u{mm}=0.028\u{m}\).</p>
+<p>2. \(Q=285/(1000\times60)\) \(=4.75\times10^{-3}\u{m^3/s}\);</p><p>\(A=\pi(0.028)^2/4\) \(=6.158\times10^{-4}\u{m^2}\).</p>
+<p>3. \(V=Q/A=7.71\u{m/s}\).</p>
+\[\mathrm{Re}=\frac{Vd}{\nu}=\frac{7.714(0.028)}{4.11\times10^{-7}}\]
+<p>\(\boxed{\mathrm{Re}\approx5.26\times10^{5}\gt 4000:\ \text{turbulent}}\)</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2022 Q2</b><span>3 marks</span><span>also: May 2022 Q1 (units)</span><a class="guide" href="guide-F1.html#F1-2">F1.2 Viscosity units &amp; conversions</a></div>
+<p>What is the dynamic viscosity of a liquid C? Given the specific gravity of liquid C is 0.96 and kinematic viscosity of 610 mm²/s.</p>
+<p>(a) 586 mPa.s &nbsp; (b) 58.6 cP &nbsp; (c) 63500 μPa.s &nbsp; (d) 635 cP</p>
+<details><summary>Hint</summary><div><p>\(\mu=\rho\nu\); \(\rho=0.96\times1000\); 1 mm²/s = 10⁻⁶ m²/s; 1 cP = 1 mPa·s.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(\mu=960\times610\times10^{-6}\) \(=0.5856\u{Pa\,s}\) \(=586\u{mPa\,s}\).</p>
+<p>\(\boxed{\text{(a) }586\text{ mPa·s}}\)</p>
+<p>(b) 58.6 cP is ten times too small; (c) 63 500 μPa·s = 63.5 mPa·s is wrong; (d) 635 cP comes from wrongly dividing 610 by 0.96.</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2022 Q5</b><span>3 marks</span><a class="guide" href="guide-F1.html#F1-1">F1.1 Flow classification &amp; terminology</a></div>
+<p>Which of the following is true about turbulence?</p>
+<p>(a) Flow is static. (b) Velocity is not time dependent. (c) Velocity is uniform. (d) Flow contains three-dimensional velocity.</p>
+<details><summary>Hint</summary><div><p>Picture the dye in the turbulent pipe of Reynolds's experiment: how do the particles move?</p></div></details>
+<details><summary>Answer</summary><div>
+<p>\(\boxed{\text{(d)}}\) Turbulent particles move haphazardly in all directions, so the velocity has components in all three directions. (a) the fluid is moving; (b) the velocity at a point fluctuates with time; (c) it varies from point to point (eddies).</p></div></details></div>
+
+<div class="q"><div class="src"><b>May 2022 Q7(b)(c)</b><span>1 + 3 marks</span><a class="guide" href="guide-F1.html#F1-4">F1.4 Laminar vs turbulent: Reynolds-experiment reasoning</a></div>
+<p>(a) Make sketches of laminar and turbulent flows in a water channel. <span class="muted">(2 marks; see the ready answer in Section 8)</span></p>
+<p>(b) In Reynolds's experiment, if water is replaced by corn oil, will the onset of turbulence take place at a lower or higher flow rate?</p>
+<p>(c) Explain with your knowledge on fluid properties, dimensionless number and turbulent flow.</p>
+<details><summary>Hint</summary><div><p>Which property of corn oil is very different from water's? Where does it appear in \(\mathrm{Re}\)? Turbulence starts at a fixed \(\mathrm{Re}\).</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(b) At a <b>higher</b> flow rate.</p>
+<p>(c) Fluid property: corn oil's viscosity is much higher than water's (tens of times), so its kinematic viscosity \(\nu=\mu/\rho\) is much higher. Dimensionless number: \(\mathrm{Re}=\rho\bar Vd/\mu=\bar Vd/\nu\) measures inertial forces against viscous forces. Turbulent flow: transition begins at a fixed value, \(\mathrm{Re}\approx2000\), when inertia overcomes viscous damping of disturbances. In the same pipe this needs \(\bar V=2000\nu/d\), so a larger \(\nu\) needs a proportionally larger velocity and flow rate \(Q=\bar V\pi d^2/4\).</p></div></details></div>
+</section>
+</main></div>
+
+<script>
+/* MECH1350 shared helpers (from MECH2413) (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-F1 figures: shear sketch, plate FBD, rheology plot (interactive), steady/unsteady traces, uniform channels, airfoil boundary layer, viscous profiles,
+   Mach plot (interactive), rocket nozzle, Reynolds apparatus + dye streaks, channel sketches, Reynolds dye simulator (interactive), 1-D pipe, particle path.
+   Helpers E, T, tw, arrowHead, arrow, svgIn, wavy, reg, toggle hook, panels3 copied from note-T3.js (pilot). */
+const NS='http://www.w3.org/2000/svg';
+function E(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)if(a[k]!==undefined)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+const INK='stroke:var(--ink);fill:none;stroke-width:1.6';
+const FILLS=['var(--grid)','var(--accent-soft)','var(--warm-soft)','var(--green-soft)','var(--purple-soft)','var(--card)'];
+/* text with subscripts: "T_{∞,o} = 5 °C", "R_3a"; a single letter before _ is set in italics */
+function tw(s,fs=13){const c=s.replace(/_\{([^}]*)\}/g,(m,a)=>'\u0001'.repeat(a.length)).replace(/_([A-Za-z0-9,∞]+)/g,(m,a)=>'\u0001'.repeat(a.length));
+  let w=0;for(const ch of c)w+=(ch==='\u0001'?0.72:1)*(/[ .,:·()′]/.test(ch)?0.33:0.6);return w*fs;}
+function T(p,x,y,s,o={}){
+  const t=E('text',{x,y,'text-anchor':o.a||'middle','dominant-baseline':'middle',style:`font-size:${o.fs||13}px;fill:${o.col||'var(--ink)'};${o.bold?'font-weight:600;':''}`},p);
+  const re=/([^_]*?)(?:_(\{[^}]*\}|[A-Za-z0-9,∞]+))/y; let i=0, m, lastSub=false;
+  const add=(str,sub,ital)=>{if(!str)return;const sp=E('tspan',{},t);sp.textContent=str;
+    if(sub){sp.setAttribute('dy',4);sp.setAttribute('font-size',(o.fs||13)*0.74);lastSub=true;} else if(lastSub){sp.setAttribute('dy',-4);lastSub=false;}
+    if(ital)sp.setAttribute('font-style','italic');};
+  while((m=re.exec(s))){ let pre=m[1]; const mm=/^(.*?)([A-Za-zαλεσΔ])$/.exec(pre);
+    if(mm&&(mm[1]===''||/[\s(=+−\-\/]$/.test(mm[1]))){add(mm[1]);add(mm[2],false,true);} else add(pre);
+    add(m[2].replace(/[{}]/g,''),true); i=re.lastIndex; }
+  add(s.slice(i)); if(o.it&&!s.includes('_'))t.setAttribute('font-style','italic'); return t;}
+function arrowHead(p,x,y,ux,uy,col,L=9,W=7){const bx=x-ux*L,by=y-uy*L,nx=-uy,ny=ux;E('polygon',{points:`${x},${y} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,style:`fill:${col};stroke:none`},p);}
+function arrow(p,x1,y1,x2,y2,col='var(--c2)',w=2.2){const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;
+  E('line',{x1,y1,x2:x2-ux*7,y2:y2-uy*7,style:`stroke:${col};stroke-width:${w}`},p);arrowHead(p,x2,y2,ux,uy,col);}
+function svgIn(el,W,H,alt){if(typeof el==='string')el=document.getElementById(el);el.innerHTML='';
+  const s=E('svg',{viewBox:`0 0 ${W} ${H}`,class:'circuit',role:'img','aria-label':alt||'diagram'});s.style.maxWidth=W+'px';s.style.margin='0 auto';el.appendChild(s);return s;}
+function wavy(p,x1,y1,x2,y2,col,amp=4,per=12){const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy,ny=ux;let d='';
+  for(let s=0;s<=L-8;s+=1){const w=amp*Math.sin(2*Math.PI*s/per);d+=(s?'L':'M')+(x1+ux*s+nx*w).toFixed(1)+','+(y1+uy*s+ny*w).toFixed(1);}
+  E('path',{d,style:`stroke:${col};stroke-width:1.8;fill:none`},p);arrowHead(p,x2,y2,ux,uy,col);}
+const figs=[]; const reg=f=>{figs.push(f);redraws.push(f);f();};
+let togT=null;document.addEventListener('toggle',()=>{clearTimeout(togT);togT=setTimeout(()=>figs.forEach(f=>{try{f();}catch(e){console.error(e);}}),60);},true);
+function panels3(id,fns){const host=document.getElementById(id);host.innerHTML='';const w=document.createElement('div');w.className='pair';w.style.gridTemplateColumns='repeat(auto-fit,minmax(230px,1fr))';host.appendChild(w);
+  fns.forEach((f,i)=>{const d=document.createElement('div');d.id=id+'-'+i;w.appendChild(d);reg(()=>f(d.id));});}
+
+const LN=(g,x1,y1,x2,y2,st='stroke:var(--ink);stroke-width:1.6')=>E('line',{x1,y1,x2,y2,style:st},g);
+const PA=(g,d,st)=>E('path',{d,style:st||INK},g);
+const hatch=(g,x1,x2,y,dir=1)=>{LN(g,x1,y,x2,y,'stroke:var(--ink);stroke-width:2');for(let s=x1+3;s<x2;s+=8)LN(g,s,y,s-6,y+dir*7,'stroke:var(--axis);stroke-width:1');};
+
+/* ================= Section 2 ================= */
+reg(function(){const svg=svgIn('fig-shear',400,230,'fluid sheared between a fixed plate and a moving plate');const g=E('g',{},svg);
+  const y0=180,y1=60,x0=70;
+  E('rect',{x:40,y:y1+1,width:300,height:y0-y1-2,style:'fill:var(--accent-soft);opacity:.45'},g);
+  E('rect',{x:120,y:y1-12,width:200,height:12,style:'fill:var(--grid);stroke:var(--ink);stroke-width:1.4'},g);
+  arrow(g,330,y1-6,380,y1-6,'var(--c2)',2.4);T(g,356,y1-22,'U',{it:true,col:'var(--c2)',bold:true});T(g,220,y1-26,'moving plate',{fs:12});
+  hatch(g,30,350,y0,1);T(g,300,y0+20,'fixed plate',{fs:12});
+  for(let i=1;i<=5;i++){const y=y0-(y0-y1)*i/5.4,L=110*i/5.4;arrow(g,x0,y,x0+L,y,'var(--accent)',1.8);}
+  LN(g,x0,y0,x0,y1-4);PA(g,`M${x0},${y0} L${x0+110},${y1}`,'stroke:var(--accent);stroke-width:1.2;stroke-dasharray:4 3;fill:none');
+  arrow(g,x0-30,y0,x0-30,y1+6,'var(--muted)',1.3);T(g,x0-30,y1-6,'y',{it:true,col:'var(--muted)'});T(g,x0+70,y1+14,'u(y)',{fs:12,col:'var(--accent)'});
+  // element
+  const ex=230,ey=150,h=50,w=34,sh=16;
+  E('rect',{x:ex,y:ey-h,width:w,height:h,style:'fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3'},g);
+  E('polygon',{points:`${ex},${ey} ${ex+w},${ey} ${ex+w+sh},${ey-h} ${ex+sh},${ey-h}`,style:'fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.5'},g);
+  PA(g,`M${ex},${ey-22} A22,22 0 0 1 ${ex+7},${ey-21}`,'stroke:var(--ink);stroke-width:1.2;fill:none');T(g,ex+14,ey-34,'Δθ',{fs:12});
+  T(g,ex+w+40,ey-h-2,'u + Δu',{fs:11.5,a:'start'});T(g,ex+w+20,ey+10,'u',{fs:11.5,a:'start',it:true});
+  LN(g,ex-10,ey,ex-10,ey-h,'stroke:var(--muted);stroke-width:1');T(g,ex-22,ey-h/2,'Δy',{fs:11.5,col:'var(--muted)'});
+});
+reg(function(){const el=document.getElementById('fig-plate-fbd');if(!el)return;
+  FBD.draw(el,{x0:-1.2,x1:8.4,y0:0,y1:3.4,px:40,pad:22,alt:'free-body diagram of the plate'},[
+    {t:'rect',x:2,y:1.2,w:4,h:0.5},
+    {t:'force',x:6,y:1.45,ang:0,len:60,lbl:'F',at:'tail'},
+    {t:'force',x:2,y:1.2,ang:180,len:60,lbl:'τA = 25 N',k:'react',at:'tail',dy:-14},
+    {t:'force',x:4,y:1.7,ang:-90,len:44,lbl:'W',at:'tip',dx:14},
+    {t:'force',x:3.2,y:1.2,ang:90,len:40,lbl:'N',k:'react',at:'tip',dx:-14,dy:6},
+    {t:'line',p:[[0.4,1.2],[7.6,1.2]],cls:'faint'},
+    {t:'text',x:5.4,y:0.55,s:'oil film, μ = 0.25 Pa·s',cls:'lbl-dim'},
+    {t:'force',x:7.5,y:2.8,ang:0,len:36,lbl:'0.4 m/s',k:'good',at:'tip',dy:-12,dx:16}]);});
+reg(function(){const cv=document.getElementById('cv-rheo');if(!cv)return;
+  const K=+$('rh-K').value,n=+$('rh-n').value,ty=+$('rh-ty').value,f=x=>ty+K*Math.pow(Math.max(x,0),n),gr=css('--axis');
+  plot(cv,{xmin:0,xmax:4,ymin:0,ymax:10,xstep:1,ystep:2,pl:30,xlabel:'Δθ/Δt',ylabel:'τ',
+    curves:[{f:x=>x,color:gr,width:1.4,dash:[5,4]},{f:x=>2.2*Math.sqrt(x),color:gr,width:1.4,dash:[5,4]},{f:x=>0.35*Math.pow(x,1.8),color:gr,width:1.4,dash:[5,4]},{f:x=>2+1.2*x,color:gr,width:1.4,dash:[5,4]},{f,color:css('--accent'),width:3}],
+    pts:[{x:2,y:f(2),color:css('--c2'),label:'μ_app = '+fmt(f(2)/2,2)}]});
+  let kind=ty>0.05?(Math.abs(n-1)<0.03?'Bingham plastic':'yield stress + '+(n<1?'shear-thinning':'shear-thickening')):(Math.abs(n-1)<0.03?'Newtonian':n<1?'shear-thinning':'shear-thickening');
+  $('out-rheo').innerHTML=`τ = ${fmt(ty,1)} + ${fmt(K,2)}·(Δθ/Δt)<sup>${fmt(n,2)}</sup> → <b>${kind}</b><br>apparent viscosity at rate 1: <b>${fmt(f(1),2)}</b>, at rate 2: <b>${fmt(f(2)/2,2)}</b>, at rate 4: <b>${fmt(f(4)/4,2)}</b>`;});
+['rh-K','rh-n','rh-ty'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Section 3, 4 ================= */
+panels3('fig-steady',[id=>{const g=E('g',{},svgIn(id,240,150,'steady: velocity at a point constant in time'));
+  T(g,120,12,'steady: u at point P',{fs:12,bold:true});LN(g,30,125,225,125,'stroke:var(--axis);stroke-width:1.2');LN(g,30,125,30,25,'stroke:var(--axis);stroke-width:1.2');
+  T(g,222,138,'t',{it:true,fs:12});T(g,18,30,'u',{it:true,fs:12});PA(g,'M30,70 L220,70','stroke:var(--accent);stroke-width:2.4;fill:none');},
+ id=>{const g=E('g',{},svgIn(id,240,150,'unsteady: velocity at a point changing in time'));
+  T(g,120,12,'unsteady: wind gusts at P',{fs:12,bold:true});LN(g,30,125,225,125,'stroke:var(--axis);stroke-width:1.2');LN(g,30,125,30,25,'stroke:var(--axis);stroke-width:1.2');
+  T(g,222,138,'t',{it:true,fs:12});T(g,18,30,'u',{it:true,fs:12});let d='M30,80';for(let x=31;x<=220;x++){const t=(x-30)/190;d+=` L${x},${(80-28*Math.sin(t*9)-12*Math.sin(t*23+1)-8*Math.sin(t*41)).toFixed(1)}`;}
+  PA(g,d,'stroke:var(--c2);stroke-width:2;fill:none');}]);
+panels3('fig-uniform',[id=>{const g=E('g',{},svgIn(id,240,150,'uniform flow in a straight channel'));
+  T(g,120,12,'uniform',{fs:12,bold:true});[30,130].forEach((y,i)=>{E('rect',{x:20,y:y-(i?0:8),width:200,height:8,style:'fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2'},g);});
+  [44,62,80,98,116].forEach(y=>[40,100,160].forEach(x=>arrow(g,x,y,x+40,y,'var(--c2)',1.6)));},
+ id=>{const g=E('g',{},svgIn(id,240,150,'non-uniform flow in a converging channel'));
+  T(g,120,12,'non-uniform (converging)',{fs:12,bold:true});
+  E('polygon',{points:'20,22 220,58 220,66 20,30',style:'fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2'},g);
+  E('polygon',{points:'20,138 220,102 220,94 20,130',style:'fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2'},g);
+  [[45,22],[115,34],[185,52]].forEach(([x,L])=>{const top=30+(x-20)*0.18,bot=130-(x-20)*0.18;[0,0.25,0.5,0.75,1].forEach(f=>{const y=top+8+f*(bot-top-16),yc=80,sl=(y-yc)/(bot-yc)*0.18;arrow(g,x,y,x+L,y-sl*L,'var(--c2)',1.6);});});}]);
+
+/* ================= Section 5 ================= */
+reg(function(){const svg=svgIn('fig-bl',400,200,'external flow around an airfoil with a thin boundary layer');const g=E('g',{},svg);
+  const foil='M110,100 C120,74 200,70 300,96 C200,110 130,114 110,100 Z';
+  [40,60,80,120,140,160].forEach(y=>{const k=(y-100)/60,b=y<100?-24*(1-Math.abs(k))**1.5:10*(1-Math.abs(k))**1.5;PA(g,`M15,${y} C110,${y} 140,${y+b} 210,${y+b} S310,${y} 385,${y}`,'stroke:var(--accent);stroke-width:1.4;fill:none');arrowHead(g,385,y,1,0,'var(--accent)',7,6);});
+  PA(g,'M106,100 C116,66 205,60 318,96 C205,118 124,122 106,100 Z','fill:var(--warm-soft);stroke:var(--warm);stroke-width:1;stroke-dasharray:3 2;opacity:.9');
+  PA(g,foil,'fill:var(--grid);stroke:var(--ink);stroke-width:1.6');
+  T(g,62,28,'inviscid flow',{fs:12});T(g,240,180,'thin boundary layer (viscous)',{fs:12,col:'var(--warm)'});LN(g,240,170,262,108,'stroke:var(--warm);stroke-width:1');
+  T(g,205,92,'airfoil',{fs:11.5});});
+panels3('fig-profiles',[id=>{const g=E('g',{},svgIn(id,240,160,'parabolic velocity profile in a pipe'));
+  T(g,120,12,'(a) in a pipe: u(r)',{fs:12,bold:true});E('rect',{x:20,y:35,width:200,height:100,style:'fill:var(--accent-soft);opacity:.5'},g);hatch(g,20,220,35,-1);hatch(g,20,220,135,1);
+  const xc=80;for(let i=1;i<10;i++){const y=35+i*10,r=(y-85)/50,L=110*(1-r*r);arrow(g,xc,y,xc+L,y,'var(--c2)',1.5);}
+  let d='';for(let i=0;i<=40;i++){const y=35+i*2.5,r=(y-85)/50;d+=(i?'L':'M')+(xc+110*(1-r*r)).toFixed(1)+','+y;}PA(g,d,'stroke:var(--c2);stroke-width:1.2;fill:none');LN(g,xc,35,xc,135);
+  T(g,32,150,'u = 0 at the wall (no slip)',{fs:11,a:'start',col:'var(--muted)'});},
+ id=>{const g=E('g',{},svgIn(id,240,160,'velocity profile between parallel plates'));
+  T(g,120,12,'(b) between plates: u(y)',{fs:12,bold:true});E('rect',{x:20,y:45,width:200,height:80,style:'fill:var(--accent-soft);opacity:.5'},g);hatch(g,20,220,45,-1);hatch(g,20,220,125,1);
+  const xc=80;for(let i=1;i<8;i++){const y=45+i*10,r=(y-85)/40,L=100*(1-r*r);arrow(g,xc,y,xc+L,y,'var(--c2)',1.5);}LN(g,xc,45,xc,125);
+  arrow(g,40,125,40,60,'var(--muted)',1.2);T(g,32,56,'y',{it:true,fs:12,col:'var(--muted)'});}]);
+
+/* ================= Section 6 ================= */
+reg(function(){const cv=document.getElementById('cv-mach');if(!cv)return;
+  const V=+$('m-V').value,Tc=+$('m-T').value,c=Math.sqrt(1.4*287*(Tc+273.15)),M=V/c,drop=m=>100*(1-Math.pow(1+0.2*m*m,-2.5));
+  plot(cv,{xmin:0,xmax:2,ymin:0,ymax:80,xstep:0.25,ystep:10,pl:30,xlabel:'M',ylabel:'density drop (%)',
+    fills:[{from:0,to:0.3,f:()=>80,color:css('--green'),alpha:.15}],curves:[{f:drop,color:css('--accent')}],
+    pts:[{x:Math.min(M,2),y:drop(Math.min(M,2)),color:css('--c2'),label:'M = '+fmt(M,3),align:M>1.4?'right':'left'}]});
+  $('out-mach').innerHTML=`air at ${Tc} °C: c = √(1.4·287·${fmt(Tc+273.15,2)}) = <b>${fmt(c,1)}</b> m/s<br>M = ${V}/${fmt(c,1)} = <b>${fmt(M,3)}</b> → ${M<0.3?'<b>incompressible</b> (M &lt; 0.3)':'<b>compressible</b> (M &gt; 0.3)'}${M>1?', supersonic':''} · density drop ≈ <b>${fmt(drop(M),1)}%</b>`;});
+['m-V','m-T'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Section 7 ================= */
+reg(function(){const svg=svgIn('fig-nozzle',420,200,'converging-diverging rocket nozzle');const g=E('g',{},svg);
+  const xs=[],top=[];for(let i=0;i<=60;i++){const x=40+i*5.5;xs.push(x);const s=(x-170)/130;top.push(s<0?100-28-42*Math.pow(-s,1.3):100-28-40*Math.pow(s,1.1));}
+  let d='M'+xs[0]+','+top[0];xs.forEach((x,i)=>d+=` L${x},${top[i].toFixed(1)}`);xs.slice().reverse().forEach((x,j)=>{const i=xs.length-1-j;d+=` L${x},${(200-top[i]).toFixed(1)}`;});
+  PA(g,d+'Z','fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.6');
+  LN(g,170,20,170,180,'stroke:var(--muted);stroke-width:1;stroke-dasharray:4 3');T(g,176,12,'throat, M = 1',{fs:12,a:'start'});
+  arrow(g,60,100,140,100,'var(--c2)',2);arrow(g,200,100,350,100,'var(--c2)',2.6);
+  T(g,95,122,'converging',{fs:12});T(g,95,138,'M < 1',{fs:12});T(g,300,128,'diverging',{fs:12});T(g,300,144,'M > 1',{fs:12});
+  T(g,42,14,'from chamber →',{fs:11,a:'start'});T(g,90,86,'V ↑',{fs:12,col:'var(--c2)'});T(g,275,86,'V ↑, ρ ↓, p ↓',{fs:12,col:'var(--c2)'});});
+
+/* ================= Section 8 ================= */
+panels3('fig-reynolds',[id=>{const g=E('g',{},svgIn(id,260,170,'Reynolds apparatus'));
+  T(g,130,12,'(a) apparatus',{fs:12,bold:true});
+  PA(g,'M20,80 Q50,80 60,98 L240,98');PA(g,'M20,140 Q50,140 60,122 L240,122');E('ellipse',{cx:240,cy:110,rx:5,ry:12,style:INK},g);
+  E('rect',{x:95,y:30,width:28,height:26,style:'fill:var(--c4);opacity:.5;stroke:var(--ink);stroke-width:1.2'},g);PA(g,'M109,56 L109,110 L130,110','stroke:var(--ink);stroke-width:1.6;fill:none');
+  T(g,109,24,'dye',{fs:11.5});PA(g,'M130,110 L236,110','stroke:var(--c4);stroke-width:2.2;fill:none');
+  arrow(g,4,110,40,110,'var(--accent)',1.8);T(g,40,160,'smooth, rounded entrance',{fs:11,a:'start',col:'var(--muted)'});T(g,170,90,'Q = VA',{fs:11.5});
+  LN(g,225,95,225,125,'stroke:var(--muted);stroke-width:1');T(g,215,140,'D',{it:true,fs:12});},
+ id=>{const g=E('g',{},svgIn(id,260,170,'dye streaks: laminar, transitional, turbulent'));
+  T(g,130,12,'(b) dye streaks as Q rises',{fs:12,bold:true});
+  [['laminar',45,0],['transitional',90,1],['turbulent',135,2]].forEach(([lb,y,k])=>{E('rect',{x:10,y:y-14,width:170,height:28,rx:4,style:'fill:var(--accent-soft);opacity:.45;stroke:var(--ink);stroke-width:1.2'},g);
+    let d=`M22,${y}`;for(let x=22;x<=176;x+=2){const t=x-22;let yy=y;if(k===1)yy=y+(t>60?3.5*Math.sin(t/9)*Math.min(1,(t-60)/40):0);if(k===2)yy=y+(t>20?Math.min(10,0.14*t)*Math.sin(t/4.5)*Math.cos(t/13):0);d+=` L${x},${yy.toFixed(1)}`;}
+    PA(g,d,'stroke:var(--c4);stroke-width:2;fill:none');T(g,186,y,lb,{fs:12,a:'start'});});}]);
+panels3('fig-channel',[id=>{const g=E('g',{},svgIn(id,240,140,'laminar flow in a channel'));
+  T(g,120,12,'laminar',{fs:12,bold:true});hatch(g,15,225,120,1);E('rect',{x:15,y:30,width:210,height:90,style:'fill:var(--accent-soft);opacity:.45'},g);PA(g,'M15,30 L225,30','stroke:var(--accent);stroke-width:1.2;stroke-dasharray:6 3;fill:none');
+  [45,62,79,96,110].forEach(y=>{arrow(g,20,y,220,y,'var(--c2)',1.3);});},
+ id=>{const g=E('g',{},svgIn(id,240,140,'turbulent flow in a channel'));
+  T(g,120,12,'turbulent',{fs:12,bold:true});hatch(g,15,225,120,1);E('rect',{x:15,y:30,width:210,height:90,style:'fill:var(--accent-soft);opacity:.45'},g);PA(g,'M15,30 L225,30','stroke:var(--accent);stroke-width:1.2;stroke-dasharray:6 3;fill:none');
+  [[50,60,14],[100,90,10],[150,55,12],[195,95,9],[75,100,8],[175,72,7],[30,85,6]].forEach(([x,y,r],i)=>{PA(g,`M${x+r},${y} A${r},${r} 0 1 ${i%2} ${x},${y-r} A${r*0.6},${r*0.6} 0 0 ${i%2} ${x-r*0.5},${y+r*0.3}`,'stroke:var(--c2);stroke-width:1.5;fill:none');});
+  arrow(g,20,40,220,40,'var(--muted)',1.1);T(g,120,132,'eddies: paths cross and mix',{fs:11,col:'var(--muted)'});}]);
+
+/* ================= Section 9 interactive ================= */
+reg(function(){const host=document.getElementById('fig-re-dye');if(!host)return;
+  const nu=+$('re-fl').value,d=+$('re-d').value/1000,V=Math.pow(10,+$('re-lv').value),Re=V*d/nu;
+  const svg=svgIn(host,420,110,'dye streak in a pipe for the chosen Reynolds number');const g=E('g',{},svg);
+  E('rect',{x:20,y:25,width:380,height:60,rx:6,style:'fill:var(--accent-soft);opacity:.45;stroke:var(--ink);stroke-width:1.3'},g);
+  PA(g,'M50,8 L50,55','stroke:var(--ink);stroke-width:1.6;fill:none');
+  const k=Re<2000?0:Re<4000?1:2;let p='M50,55';
+  for(let x=50;x<=396;x+=1.5){const t=x-50;let y=55;if(k===1){const a=6*(Re-2000)/2000+2;y+=t>80?a*Math.sin(t/12)*Math.min(1,(t-80)/80):0;}
+    if(k===2){const a=Math.min(26,4+t*0.12*Math.min(3,Re/4000)**0.5);y+=t>25?a*Math.sin(t/(6+3*Math.sin(t/31)))*Math.cos(t/17):0;}p+=` L${x.toFixed(1)},${y.toFixed(1)}`;}
+  PA(g,p,`stroke:var(--c4);stroke-width:${k===2?1.6:2.2};fill:none`);
+  if(k===2)for(let i=0;i<14;i++){const x=130+i*19,y=55+18*Math.sin(i*2.3);E('circle',{cx:x,cy:y,r:5+3*Math.sin(i),style:'fill:var(--c4);opacity:.18'},g);}
+  arrow(g,4,98,60,98,'var(--accent)',1.6);T(g,64,100,'flow',{fs:11,a:'start',col:'var(--muted)'});
+  const lab=['laminar','transitional','turbulent'][k];T(g,400,100,lab,{fs:12.5,a:'end',bold:true,col:'var(--c2)'});
+  const fl=$('re-fl').selectedOptions[0].textContent;
+  $('out-re').innerHTML=`${fl}: ν = ${nu.toExponential(2)} m²/s, d = ${fmt(d*1000,0)} mm, V̄ = ${fmt(V,V<0.1?4:3)} m/s<br>Re = V̄d/ν = <b>${Re>=1e5?Re.toExponential(2):fmt(Re,0)}</b> → <b>${lab}</b> · flow rate Q = ${fmt(V*Math.PI*d*d/4*1000,4)} L/s`;});
+['re-fl','re-d','re-lv'].forEach(i=>$(i).addEventListener('input',()=>figs.forEach(f=>f())));
+
+/* ================= Section 10 ================= */
+reg(function(){const svg=svgIn('fig-1d',420,140,'one-dimensional flow in a pipe that narrows');const g=E('g',{},svg);
+  PA(g,'M20,30 L190,30 C230,30 230,50 270,50 L400,50','stroke:var(--ink);stroke-width:1.6;fill:none');
+  PA(g,'M20,110 L190,110 C230,110 230,90 270,90 L400,90','stroke:var(--ink);stroke-width:1.6;fill:none');
+  E('rect',{x:20,y:30,width:380,height:80,style:'fill:var(--accent-soft);opacity:.35'},g);
+  LN(g,70,24,70,116,'stroke:var(--muted);stroke-width:1');LN(g,320,44,320,96,'stroke:var(--muted);stroke-width:1');
+  [40,55,70,85,100].forEach(y=>arrow(g,70,y,105,y,'var(--c2)',1.5));[58,70,82].forEach(y=>arrow(g,320,y,385,y,'var(--c2)',1.5));
+  T(g,70,14,'V_1',{fs:13});T(g,320,34,'V_2',{fs:13});T(g,210,130,'one velocity per section: V_2 > V_1',{fs:12,col:'var(--muted)'});});
+reg(function(){const svg=svgIn('fig-path',400,230,'particle path in three dimensions');const g=E('g',{},svg);
+  const O=[170,150];arrow(g,O[0],O[1],O[0],20,'var(--muted)',1.3);arrow(g,O[0],O[1],390,O[1]-10,'var(--muted)',1.3);arrow(g,O[0],O[1],60,220,'var(--muted)',1.3);
+  T(g,O[0]-10,22,'z',{it:true});T(g,392,O[1]-24,'y',{it:true});T(g,52,212,'x',{it:true});
+  PA(g,'M20,110 C80,60 140,100 200,85 S320,40 370,30','stroke:var(--accent);stroke-width:2;fill:none');T(g,240,52,'particle path',{fs:12,col:'var(--accent)'});
+  const A=[80,82],B=[320,47];arrow(g,O[0],O[1],A[0]+4,A[1]+4,'var(--ink)',1.8);arrow(g,O[0],O[1],B[0]-4,B[1]+3,'var(--ink)',1.8);
+  [A,B].forEach(p=>E('circle',{cx:p[0],cy:p[1],r:6,style:'fill:var(--c2);stroke:var(--card);stroke-width:1.5'},g));
+  T(g,A[0]-6,A[1]-18,'A at time t',{fs:12,a:'end'});T(g,B[0]+10,B[1]+16,'A at t + δt',{fs:12,a:'start'});
+  T(g,108,128,'r_A(t)',{fs:12});T(g,262,112,'r_A(t + δt)',{fs:12});});
+
+</script>
+</body></html>
