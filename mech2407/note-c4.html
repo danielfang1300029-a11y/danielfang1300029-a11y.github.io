@@ -142,6 +142,11 @@ footer.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);fo
 .alsoset{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 6px}
 .glance{width:100%;border-collapse:collapse;font-size:.92rem}
 .glance td,.glance th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{
@@ -176,18 +181,20 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <header class="top">
   <span class="course">MECH2407 · Multivariable Calculus &amp; PDEs · Chapter 4</span>
   <h1>Fourier Series</h1>
-  <p class="lede">How to write a repeating signal (a square wave, a saw-tooth, a rectified voltage) as a sum of sines and cosines, explained from scratch in the order of the course: periodic functions, the Fourier coefficients and why the formulas work (orthogonality), what the series converges to (including at jumps, and how to use that to add up number series), the short cuts for even and odd functions, half-range sine and cosine series (the tool Chapter 5 needs for PDEs), and the best-approximation property, Parseval's theorem, other periods and the frequency spectrum. Every graph is interactive: drag the sliders to add terms and watch the partial sums converge. Every example is solved in full, and long integrations sit in "Show the calculation" tabs with a reason for each line. Material the exam uses but the course handouts leave out sits in orange "Beyond the handouts" boxes. The chapter ends with real past-paper questions, each linked to its exam-guide section.</p>
   <div class="crumbs"><a href="index.html">← Start Here</a><a href="note-C3c.html">← Previous: C3c Gauss and Stokes</a><a href="guide-C4.html">Exam guide for this chapter →</a><a href="note-C5.html">Next: C5 Partial Differential Equations →</a></div>
 </header>
 
 <section id="s0">
 <h2><span class="n">0</span>Where this chapter sits</h2>
-<p>Chapters 1–3 were about functions of several variables. This chapter goes back to functions of <b>one</b> variable \(t\) (think of \(t\) as time), but of a special kind: functions that <b>repeat</b>, such as an alternating voltage or the position of a piston. The big idea, due to Joseph Fourier (1807), is that almost any repeating function can be built by adding up simple waves:</p>
-\[\begin{aligned}f(t)=\ &\tfrac12a_0\\&+a_1\cos t+a_2\cos2t+\cdots\\&+b_1\sin t+b_2\sin2t+\cdots\end{aligned}\]
-<p class="word"><b>In words:</b> a repeating signal = a constant level + a mixture of cosine and sine waves whose frequencies are 1, 2, 3, … times the basic frequency. The numbers \(a_n,b_n\) (the <b>Fourier coefficients</b>) say how much of each wave is in the mixture.</p>
-<div class="box analogy"><span class="tag">Analogy · a chord on a piano</span>
-<p>A note played on a violin and the same note on a flute have the same pitch but sound different. The difference is the mix of <b>overtones</b>: pure tones at 2, 3, 4, … times the base frequency, in different amounts. A Fourier series is the "recipe" of a signal: which pure tones, and how loud each one is. Finding the Fourier series = reading off the recipe.</p>
-</div>
+<p>This chapter builds a repeating signal, such as a square wave or an alternating voltage, by adding up simple sine and cosine waves. It is like reading the recipe of overtones that makes a note sound the way it does.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span><ol>
+<li><a href="#s1">§1</a> <b>A periodic function repeats</b>; the period is the length of one repeat.</li>
+<li><a href="#s2">§2</a> <b>Fourier coefficients say how much of each wave is in the mix.</b> Orthogonality is why the formulas work.</li>
+<li><a href="#s3">§3</a> <b>At a jump the series lands halfway.</b> Plugging in a point adds up number series.</li>
+<li><a href="#s4">§4</a> <b>Even functions need only cosines, odd functions only sines.</b></li>
+<li><a href="#s5">§5</a> <b>Half-range series extend a function given on half a period</b> (the tool Chapter 5 needs).</li>
+<li><a href="#s6">§6</a> <b>Parseval: the signal’s energy = the sum of each wave’s energy.</b> Any period \(T\) works the same way.</li>
+</ol></div>
 <div class="figure">
   <p class="ttl">Building a square wave out of sine waves</p>
   <canvas class="plot" id="f-build" style="aspect-ratio:16/9" aria-label="Square wave with its first few sine-wave ingredients and their sum"></canvas>
@@ -195,30 +202,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
   <div class="readout" id="bd-out"></div>
   <p class="cap">The thin coloured curves are the ingredients \(\frac{2}{\pi}\sin t\), \(\frac{2}{3\pi}\sin3t\), \(\frac{2}{5\pi}\sin5t\), … (each lifted by \(\tfrac12\) so you can see them against the target). The thick curve is \(\tfrac12+\) their sum, and the dashed grey line is the square wave it is trying to copy (0 on \((-\pi,0)\), 1 on \((0,\pi)\), repeated). Add waves with the slider: the sum gets closer and closer to the square wave. This is Example 4.2.1, worked out in §2.</p>
 </div>
-<p>The plan of the chapter, following the course:</p>
-<ol class="steps">
-  <li><b>§1</b> Periodic functions, the period and fundamental period, harmonics; a sum of periodic functions need not be periodic (Examples 4.1.1–4.1.3).</li>
-  <li><b>§2</b> The Fourier series of a \(2\pi\)-periodic function; deriving the formulas for \(a_0,a_n,b_n\) from <b>orthogonality</b>; the square wave (Example 4.2.1) and \(e^t\) (Example 4.2.2).</li>
-  <li><b>§3</b> Convergence: piecewise continuous functions, one-sided limits and derivatives (Examples 4.3.1–4.3.2), the convergence theorem (the series gives the <b>average</b> at a jump), Examples 4.3.3–4.3.4, and summing number series such as \(1-\frac13+\frac15-\cdots=\frac\pi4\) (exam type C4.2). Beyond: the Gibbs overshoot.</li>
-  <li><b>§4</b> Even and odd functions; cosine series and sine series; the full-wave rectifier (Examples 4.4.1–4.4.3).</li>
-  <li><b>§5</b> Half-range series: even and odd periodic extensions of a function given on \([0,\pi]\) (Example 4.5.1).</li>
-  <li><b>§6</b> The best-approximation property, Bessel's inequality and <b>Parseval's theorem</b>; term-by-term differentiation and integration; <b>functions of any period \(T\)</b>; the frequency spectrum.</li>
-</ol>
-<p><b>What you are assumed to know:</b> integration by parts, \(\sin n\pi=0\), \(\cos n\pi=(-1)^n\), and the product-to-sum identities such as \(\cos A\cos B\) \(=\tfrac12[\cos(A+B)+\cos(A-B)]\) (all restated where used). Nothing from Chapters 1–3 is needed, except one partial derivative in §6 (<a href="note-C1.html#s2">Chapter 1 §2</a>). Chapter 5 (PDEs) uses half-range series (§5) all the time.</p>
+
 <div class="box warn"><span class="tag">Which \(a_0\)? The convention used in these notes</span>
-<p>These notes (like the course and the <b>December formula sheet</b>) write the constant term as \(\tfrac12a_0\), so that one formula serves all \(n=0,1,2,\dots\):</p>
-\[\begin{aligned}f(t)&=\frac{a_0}2+\sum_{n=1}^\infty\big(a_n\cos n\omega t+b_n\sin n\omega t\big),\\ a_n&=\frac2T\int_a^{a+T}f(t)\cos n\omega t\,dt,\quad\omega=\frac{2\pi}T.\end{aligned}\]
-<p class="word"><b>In words:</b> the constant term is <b>half</b> of \(a_0\), and \(\frac{a_0}{2}\) is the average value of \(f\) over one period.</p>
-<p>The <b>May 2015–2019 formula sheet</b> used a different but equivalent convention on \([-L,L]\) (period \(T=2L\)): \(f=A_0+\sum(A_n\cos\frac{n\pi t}L+B_n\sin\frac{n\pi t}L)\) with \(A_0=\frac1{2L}\int_{-L}^Lf\,dt\), \(A_n=\frac1L\int_{-L}^Lf\cos\frac{n\pi t}L\,dt\). To convert: \(\boxed{A_0=\tfrac12a_0}\), \(A_n=a_n\), \(B_n=b_n\). The <b>series itself is the same</b>; only the name of the constant differs. Either convention earns full marks if used consistently: the classic mistake is mixing them (using \(a_0=\frac1L\int f\) and then forgetting the \(\frac12\)). See §6 for the details.</p>
+<p>These notes and the <b>December formula sheet</b> write the constant term as \(\tfrac12a_0\), the average of \(f\) over one period. The <b>May 2015–2019 sheet</b> called the constant term \(A_0\), which equals \(\tfrac12a_0\) (with \(A_n=a_n\), \(B_n=b_n\)). Either earns full marks if used consistently; the classic mistake is mixing them. Details in §6.</p>
 </div>
-<p><b>How the exam uses this chapter.</b> Across the papers collected for this bundle, 39 question parts (about 270 marks) come from this chapter, in every December paper and most May papers. Four types recur:</p>
-<ul class="list">
-<li><b>C4.1 Fourier series of a given periodic function</b> (24 parts in 14 sittings, about 165 marks): sketch the function over several periods, compute \(a_0,a_n,b_n\), often "show that the series has the form \(A+B\sum\cdots\)", sometimes find the series of a shifted copy.</li>
-<li><b>C4.2 Sum a number series</b> by putting a special value of \(t\) into a Fourier series (7 parts, about 25 marks): §3.</li>
-<li><b>C4.3 Half-range sine or cosine series</b> of a function given on \([0,L]\) (6 parts, about 64 marks, May papers): §5.</li>
-<li><b>C4.4 Parseval's identity</b> to sum a series such as \(\sum\frac1{n^4}\) (2 parts, 16 marks, May papers): §6.</li>
-</ul>
-<p>The December formula sheet gives the Fourier series of a \(T\)-periodic function on \([a,a+T]\) (the box above) and reduction formulas for integrals such as \(\int x^n\sin\alpha x\,dx\), \(\int x^n\cos\alpha x\,dx\), \(\int e^{\beta x}\cos^n\alpha x\,dx\). It does <b>not</b> give the even/odd short cuts, half-range formulas, the convergence theorem or Parseval's theorem: learn those. May papers from 2021 on have no formula sheet. See the <a href="guide-C4.html">C4 exam guide</a>.</p>
+<p><b>You need:</b> integration by parts, \(\sin n\pi=0\) and \(\cos n\pi=(-1)^n\) (plus one partial derivative in §6, <a href="note-C1.html#s2">Chapter 1 §2</a>). <a href="note-C5.html">Chapter 5</a> uses §5 all the time. <b>In the exam:</b> in every December paper and most May papers: compute the series of a sketched function (most common), sum a number series, and in May papers half-range series and Parseval. The December formula sheet gives the series on \([a,a+T]\) and reduction formulas, but <b>not</b> the even/odd short cuts, half-range formulas, the convergence theorem or Parseval. See the <a href="guide-C4.html">C4 exam guide</a>.</p>
 </section>
 
 <section id="s1">
@@ -294,7 +282,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 
 <h3>Finding \(a_0\)</h3>
 <p>Integrate both sides of (4.1) over the interval \([-\pi,\pi]\). Assuming term-by-term integration is possible (integrating an infinite sum one term at a time; this is allowed for the functions in this course), we have</p>
-\[\begin{aligned}\int_{-\pi}^\pi f(t)\,dt=\ &\frac12a_0\int_{-\pi}^\pi1\,dt\\&+\sum_{n=1}^\infty\Big(a_n\int_{-\pi}^\pi\cos nt\,dt\\&\qquad+b_n\int_{-\pi}^\pi\sin nt\,dt\Big)\end{aligned}\]
+<span class="eqw" data-eq="3">\[\begin{aligned}\int_{-\pi}^\pi f(t)\,dt=\ &\frac12a_0\int_{-\pi}^\pi1\,dt +\sum_{n=1}^\infty\Big(a_n\int_{-\pi}^\pi\cos nt\,dt +b_n\int_{-\pi}^\pi\sin nt\,dt\Big)\end{aligned}\]</span><span class="eqn" data-eq="3">\[\begin{aligned}\int_{-\pi}^\pi f(t)\,dt=\ &\frac12a_0\int_{-\pi}^\pi1\,dt\\&+\sum_{n=1}^\infty\Big(a_n\int_{-\pi}^\pi\cos nt\,dt\\&\qquad+b_n\int_{-\pi}^\pi\sin nt\,dt\Big)\end{aligned}\]</span>
 <p>Now,</p>
 \[\begin{aligned}\int_{-\pi}^\pi dt&=2\pi,\\ \int_{-\pi}^\pi\cos nt\,dt&=\Big[\frac{\sin nt}n\Big]_{-\pi}^\pi=0,\\ \int_{-\pi}^\pi\sin nt\,dt&=\Big[\frac{-\cos nt}n\Big]_{-\pi}^\pi\\&=-\frac1n\big(\cos n\pi-\cos(-n\pi)\big)=0,\end{aligned}\]
 <p>(since \(\sin(\pm n\pi)=0\) and \(\cos(-n\pi)=\cos n\pi\)) giving \(\int_{-\pi}^\pi f\,dt=\frac12a_0\cdot2\pi=\pi a_0\), i.e.</p>
@@ -364,7 +352,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p>so that</p>
 \[b_n=\frac1{n\pi}\big[1-\cos n\pi\big]=\frac1{n\pi}\big[1-(-1)^n\big].\]
 <p>For even \(n\), \((-1)^n=1\) and \(b_n=0\); for odd \(n\), \((-1)^n=-1\) and \(b_n=\frac2{n\pi}\). That is,</p>
-\[\begin{aligned}&\therefore\ b_{2n}=0\ \text{ and }\\&\quad b_{2n+1}=\frac2{(2n+1)\pi},\quad n=0,1,2,\dots\\ &\therefore\ f(t)=\frac12+\frac2\pi\Big[\frac{\sin t}1+\frac{\sin3t}3\\&\qquad+\frac{\sin5t}5+\cdots\Big]\end{aligned}\]
+<span class="eqw" data-eq="5">\[\begin{aligned}&\therefore\ b_{2n}=0\ \text{ and } \quad b_{2n+1}=\frac2{(2n+1)\pi},\quad n=0,1,2,\dots\\ &\therefore\ f(t)=\frac12+\frac2\pi\Big[\frac{\sin t}1+\frac{\sin3t}3 +\frac{\sin5t}5+\cdots\Big]\end{aligned}\]</span><span class="eqn" data-eq="5">\[\begin{aligned}&\therefore\ b_{2n}=0\ \text{ and }\\&\quad b_{2n+1}=\frac2{(2n+1)\pi},\quad n=0,1,2,\dots\\ &\therefore\ f(t)=\frac12+\frac2\pi\Big[\frac{\sin t}1+\frac{\sin3t}3\\&\qquad+\frac{\sin5t}5+\cdots\Big]\end{aligned}\]</span>
 <p>or</p>
 \[f(t)=\frac12+\frac2\pi\sum_{n=0}^\infty\frac{\sin(2n+1)t}{2n+1}.\]
 <p class="word"><b>In words:</b> the square wave = its average height \(\frac12\) + odd sine harmonics with amplitudes \(\frac{2}{\pi},\frac{2}{3\pi},\frac{2}{5\pi},\dots\)</p>
@@ -396,7 +384,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p>and</p>
 \[\begin{aligned}b_n&=\frac1\pi\int_{-\pi}^\pi e^t\sin nt\,dt\\&=\frac1\pi\,\frac{(-1)^{n+1}n}{1+n^2}\big(e^\pi-e^{-\pi}\big)\\&=\frac2\pi\,\frac{(-1)^{n+1}n}{1+n^2}\sinh\pi.\end{aligned}\]
 <p>(Here \(\sinh\pi=\frac{e^\pi-e^{-\pi}}2\), the hyperbolic sine, so \(e^\pi-e^{-\pi}=2\sinh\pi\).) Putting \(n=0\) in the \(a_n\) formula gives \(a_0=\frac{2\sinh\pi}{\pi}\), so \(\frac12a_0=\frac{\sinh\pi}{\pi}\), and</p>
-\[\begin{aligned}\therefore\ f(t)=\ &\frac{\sinh\pi}\pi\\&+\frac{2\sinh\pi}\pi\sum_{n=1}^\infty\Big(\frac{(-1)^n}{1+n^2}\cos nt\\&+\frac{(-1)^{n+1}n}{1+n^2}\sin nt\Big).\end{aligned}\]
+<span class="eqw" data-eq="6">\[\begin{aligned}\therefore\ f(t)=\ &\frac{\sinh\pi}\pi +\frac{2\sinh\pi}\pi\sum_{n=1}^\infty\Big(\frac{(-1)^n}{1+n^2}\cos nt +\frac{(-1)^{n+1}n}{1+n^2}\sin nt\Big).\end{aligned}\]</span><span class="eqn" data-eq="6">\[\begin{aligned}\therefore\ f(t)=\ &\frac{\sinh\pi}\pi\\&+\frac{2\sinh\pi}\pi\sum_{n=1}^\infty\Big(\frac{(-1)^n}{1+n^2}\cos nt\\&+\frac{(-1)^{n+1}n}{1+n^2}\sin nt\Big).\end{aligned}\]</span>
 <details><summary>Show the calculation: the two integrals \(\int e^t\cos nt\,dt\) and \(\int e^t\sin nt\,dt\)</summary><div>
 <ol class="steps">
 <li>Let \(C=\int e^t\cos nt\,dt\) and \(S=\int e^t\sin nt\,dt\) (indefinite). Integrate \(C\) by parts with \(u=\cos nt\), \(dv=e^t\,dt\): \(C\) \(=e^t\cos nt+n\int e^t\sin nt\,dt\) \(=e^t\cos nt+nS\). <i>Why:</i> \(du=-n\sin nt\,dt\), and minus times minus gives plus.</li>
@@ -626,7 +614,7 @@ If \(f(t)\) is odd and \(g(t)\) is even, the product is odd, since
 <p><b>Solution.</b> \(E(t)\) is an even function, and so</p>
 \[E(t)=\frac12a_0+\sum_{n=1}^\infty a_n\cos nt\]
 <p>where</p>
-\[\begin{aligned}a_n&=\frac2\pi\int_0^\pi E(t)\cos nt\,dt\\&=\frac2\pi\int_0^\pi\sin t\cos nt\,dt\\&=\frac1\pi\int_0^\pi\big[\sin(1+n)t+\sin(1-n)t\big]dt\\&\qquad\text{(if }n=1\text{, the second}\\&\qquad\text{ term is absent)}\\&=\frac1\pi\Big[\frac{-\cos(1+n)t}{1+n}-\frac{\cos(1-n)t}{1-n}\Big]_0^\pi\\&\qquad\text{if }n\ne1\\&=\frac1\pi\Big[\frac{-\cos(1+n)\pi}{1+n}-\frac{\cos(1-n)\pi}{1-n}\\&\qquad+\frac1{1+n}+\frac1{1-n}\Big]\\&=\begin{cases}0&\text{if }n\text{ is odd}\\ \dfrac4\pi\,\dfrac1{1-n^2}&\text{if }n\text{ is even}\end{cases}\end{aligned}\]
+<span class="eqw" data-eq="7">\[\begin{aligned}a_n&=\frac2\pi\int_0^\pi E(t)\cos nt\,dt\\&=\frac2\pi\int_0^\pi\sin t\cos nt\,dt\\&=\frac1\pi\int_0^\pi\big[\sin(1+n)t+\sin(1-n)t\big]dt\\&\qquad\text{(if }n=1\text{, the second} \text{ term is absent)}\\&=\frac1\pi\Big[\frac{-\cos(1+n)t}{1+n}-\frac{\cos(1-n)t}{1-n}\Big]_0^\pi\\&\qquad\text{if }n\ne1\\&=\frac1\pi\Big[\frac{-\cos(1+n)\pi}{1+n}-\frac{\cos(1-n)\pi}{1-n} +\frac1{1+n}+\frac1{1-n}\Big]\\&=\begin{cases}0&\text{if }n\text{ is odd}\\ \dfrac4\pi\,\dfrac1{1-n^2}&\text{if }n\text{ is even}\end{cases}\end{aligned}\]</span><span class="eqn" data-eq="7">\[\begin{aligned}a_n&=\frac2\pi\int_0^\pi E(t)\cos nt\,dt\\&=\frac2\pi\int_0^\pi\sin t\cos nt\,dt\\&=\frac1\pi\int_0^\pi\big[\sin(1+n)t+\sin(1-n)t\big]dt\\&\qquad\text{(if }n=1\text{, the second}\\&\qquad\text{ term is absent)}\\&=\frac1\pi\Big[\frac{-\cos(1+n)t}{1+n}-\frac{\cos(1-n)t}{1-n}\Big]_0^\pi\\&\qquad\text{if }n\ne1\\&=\frac1\pi\Big[\frac{-\cos(1+n)\pi}{1+n}-\frac{\cos(1-n)\pi}{1-n}\\&\qquad+\frac1{1+n}+\frac1{1-n}\Big]\\&=\begin{cases}0&\text{if }n\text{ is odd}\\ \dfrac4\pi\,\dfrac1{1-n^2}&\text{if }n\text{ is even}\end{cases}\end{aligned}\]</span>
 <p>In particular, \(a_0=4/\pi\), and thus</p>
 \[E(t)=\frac2\pi+\frac4\pi\sum_{n=1}^\infty\frac{\cos2nt}{1-4n^2}.\]
 <p class="word"><b>In words:</b> the rectified voltage = a steady (DC) level \(\frac2\pi\approx0.64\) + even harmonics \(\cos2t,\cos4t,\dots\) with amplitudes falling like \(\frac1{n^2}\).</p>
@@ -698,7 +686,7 @@ If \(f(t)\) is odd and \(g(t)\) is even, the product is odd, since
 <li>\(=\frac{\cos n\pi-1}{n^2}=\frac{(-1)^n-1}{n^2}\). Times \(\frac2\pi\): \(a_n=\frac{2[(-1)^n-1]}{n^2\pi}\): \(-\frac{4}{n^2\pi}\) for odd \(n\), 0 for even \(n\).</li>
 </ol></div></details>
 <p>Therefore,</p>
-\[\begin{aligned}f(t)&=\frac\pi2-\frac2\pi\sum_{n=1}^\infty\frac{1-(-1)^n}{n^2}\cos nt\\&=\frac\pi2-\frac4\pi\Big(\cos t+\frac{\cos3t}9\\&\qquad+\frac{\cos5t}{25}+\cdots\Big).\end{aligned}\]
+<span class="eqw" data-eq="8">\[\begin{aligned}f(t)&=\frac\pi2-\frac2\pi\sum_{n=1}^\infty\frac{1-(-1)^n}{n^2}\cos nt\\&=\frac\pi2-\frac4\pi\Big(\cos t+\frac{\cos3t}9 +\frac{\cos5t}{25}+\cdots\Big).\end{aligned}\]</span><span class="eqn" data-eq="8">\[\begin{aligned}f(t)&=\frac\pi2-\frac2\pi\sum_{n=1}^\infty\frac{1-(-1)^n}{n^2}\cos nt\\&=\frac\pi2-\frac4\pi\Big(\cos t+\frac{\cos3t}9\\&\qquad+\frac{\cos5t}{25}+\cdots\Big).\end{aligned}\]</span>
 <p>Putting \(t=0\) in this series (the triangular wave is continuous there, with value 0) gives</p>
 \[\begin{aligned}0&=\frac\pi2-\frac4\pi\Big(1+\frac19+\frac1{25}+\cdots\Big)\\ \frac{\pi^2}8&=1+\frac19+\frac1{25}+\cdots=\sum_{n=1}^\infty\frac1{(2n-1)^2}.\end{aligned}\]
 <p class="word"><b>In words:</b> the sum of the reciprocals of the odd squares is \(\pi^2/8\), read off from the bottom corner of the triangular wave.</p>
@@ -741,9 +729,9 @@ If \(f(t)\) is odd and \(g(t)\) is even, the product is odd, since
 \[E=\int_{-\pi}^\pi\big[f(t)-S_N(t)\big]^2dt\]
 <p>is minimised.</p>
 <p class="word"><b>In words:</b> \(E\) adds up the squared gap between \(f\) and the approximation over a whole period; squaring stops positive and negative gaps from cancelling. We want the coefficients that make the total squared gap as small as possible ("least squares").</p>
-\[\begin{aligned}E=\ &\int_{-\pi}^\pi\Big[f(t)-\frac12\alpha_0\\&\quad-\sum_{n=1}^N(\alpha_n\cos nt+\beta_n\sin nt)\Big]^2dt\\=\ &\int_{-\pi}^\pi f^2\,dt+\frac14\alpha_0^2\int_{-\pi}^\pi1^2\,dt\\&+\sum_{n=1}^N\Big(\alpha_n^2\int_{-\pi}^\pi\cos^2nt\,dt\\&\qquad+\beta_n^2\int_{-\pi}^\pi\sin^2nt\,dt\Big)\\&-\alpha_0\int_{-\pi}^\pi f\,dt\\&-2\sum_{n=1}^N\Big(\alpha_n\int_{-\pi}^\pi f\cos nt\,dt\\&\qquad+\beta_n\int_{-\pi}^\pi f\sin nt\,dt\Big)\end{aligned}\]
+<span class="eqw" data-eq="9">\[\begin{aligned}E=\ &\int_{-\pi}^\pi\Big[f(t)-\frac12\alpha_0-\sum_{n=1}^N(\alpha_n\cos nt+\beta_n\sin nt)\Big]^2dt\\=\ &\int_{-\pi}^\pi f^2\,dt+\frac14\alpha_0^2\int_{-\pi}^\pi1^2\,dt+\sum_{n=1}^N\Big(\alpha_n^2\int_{-\pi}^\pi\cos^2nt\,dt+\beta_n^2\int_{-\pi}^\pi\sin^2nt\,dt\Big)\\&-\alpha_0\int_{-\pi}^\pi f\,dt-2\sum_{n=1}^N\Big(\alpha_n\int_{-\pi}^\pi f\cos nt\,dt+\beta_n\int_{-\pi}^\pi f\sin nt\,dt\Big)\end{aligned}\]</span><span class="eqn" data-eq="9">\[\begin{aligned}E=\ &\int_{-\pi}^\pi\left[\begin{aligned}&f(t)-\frac12\alpha_0\\&-\sum_{n=1}^N(\alpha_n\cos nt+\beta_n\sin nt)\end{aligned}\right]^2dt\\=\ &\int_{-\pi}^\pi f^2\,dt+\frac14\alpha_0^2\int_{-\pi}^\pi1^2\,dt\\&+\sum_{n=1}^N\left(\begin{aligned}&\alpha_n^2\int_{-\pi}^\pi\cos^2nt\,dt\\&+\beta_n^2\int_{-\pi}^\pi\sin^2nt\,dt\end{aligned}\right)\\&-\alpha_0\int_{-\pi}^\pi f\,dt\\&-2\sum_{n=1}^N\left(\begin{aligned}&\alpha_n\int_{-\pi}^\pi f\cos nt\,dt\\&+\beta_n\int_{-\pi}^\pi f\sin nt\,dt\end{aligned}\right)\end{aligned}\]</span>
 <p>(all other cross terms are zero due to the orthogonality of \(1,\cos nt,\sin nt\)). Using \(\int1\,dt=2\pi\), \(\int\cos^2nt=\int\sin^2nt=\pi\), and \(\int f\,dt=\pi a_0\), \(\int f\cos nt\,dt=\pi a_n\), \(\int f\sin nt\,dt=\pi b_n\) (the Fourier coefficients of §2),</p>
-\[\begin{aligned}E=\ &\int_{-\pi}^\pi f^2(t)\,dt+\frac\pi2\alpha_0^2\\&+\pi\sum_{n=1}^N\big(\alpha_n^2+\beta_n^2\big)\\&-\alpha_0\pi a_0-2\sum_{n=1}^N\big(\alpha_n\pi a_n+\beta_n\pi b_n\big).\end{aligned}\]
+<span class="eqw" data-eq="10">\[\begin{aligned}E=\ &\int_{-\pi}^\pi f^2(t)\,dt+\frac\pi2\alpha_0^2 +\pi\sum_{n=1}^N\big(\alpha_n^2+\beta_n^2\big) -\alpha_0\pi a_0-2\sum_{n=1}^N\big(\alpha_n\pi a_n+\beta_n\pi b_n\big).\end{aligned}\]</span><span class="eqn" data-eq="10">\[\begin{aligned}E=\ &\int_{-\pi}^\pi f^2(t)\,dt+\frac\pi2\alpha_0^2\\&+\pi\sum_{n=1}^N\big(\alpha_n^2+\beta_n^2\big)\\&-\alpha_0\pi a_0-2\sum_{n=1}^N\big(\alpha_n\pi a_n+\beta_n\pi b_n\big).\end{aligned}\]</span>
 <details><summary>Show the calculation: expanding the square</summary><div>
 <ol class="steps">
 <li>Write \(S_N=\frac12\alpha_0\cdot1+\sum(\alpha_n\cos nt+\beta_n\sin nt)\). Then \((f-S_N)^2=f^2-2fS_N+S_N^2\).</li>
@@ -773,7 +761,7 @@ If \(f(t)\) is odd and \(g(t)\) is even, the product is odd, since
 <p>As \(N\to\infty\), we have</p>
 \[\frac14a_0^2+\frac12\sum_{n=1}^\infty\big(a_n^2+b_n^2\big)\ \le\ \frac1{2\pi}\int_{-\pi}^\pi f^2(t)\,dt\]
 <p>but in fact the \(\le\) sign should be replaced by an \(=\) sign, since (squaring the whole Fourier series and integrating, using orthogonality)</p>
-\[\begin{aligned}\int_{-\pi}^\pi f^2(t)\,dt&=\int_{-\pi}^\pi\Big[\frac12a_0\\&\quad+\sum_{n=1}^\infty a_n\cos nt+b_n\sin nt\Big]^2dt\\&=\frac14a_0^2\cdot2\pi+\pi\sum_{n=1}^\infty\big(a_n^2+b_n^2\big).\end{aligned}\]
+<span class="eqw" data-eq="11">\[\begin{aligned}\int_{-\pi}^\pi f^2(t)\,dt&=\int_{-\pi}^\pi\Big[\frac12a_0 +\sum_{n=1}^\infty a_n\cos nt+b_n\sin nt\Big]^2dt\\&=\frac14a_0^2\cdot2\pi+\pi\sum_{n=1}^\infty\big(a_n^2+b_n^2\big).\end{aligned}\]</span><span class="eqn" data-eq="11">\[\begin{aligned}\int_{-\pi}^\pi f^2(t)\,dt&=\int_{-\pi}^\pi\Big[\frac12a_0\\&\quad+\sum_{n=1}^\infty a_n\cos nt+b_n\sin nt\Big]^2dt\\&=\frac14a_0^2\cdot2\pi+\pi\sum_{n=1}^\infty\big(a_n^2+b_n^2\big).\end{aligned}\]</span>
 <div class="box thm"><span class="tag">Parseval's theorem (4.3)</span>
 \[\begin{aligned}&\frac1{2\pi}\int_{-\pi}^\pi f^2(t)\,dt\\&=\frac14a_0^2+\frac12\sum_{n=1}^\infty\big(a_n^2+b_n^2\big)\end{aligned}\]
 <p class="word"><b>In words:</b> mean square of the signal over a period = (constant term)\(^2\) + half the sum of the squared amplitudes of all the waves. (A wave \(a\cos nt\) has mean square \(\frac12a^2\).)</p>

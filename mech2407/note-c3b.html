@@ -142,6 +142,11 @@ footer.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);fo
 .alsoset{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 6px}
 .glance{width:100%;border-collapse:collapse;font-size:.92rem}
 .glance td,.glance th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{
@@ -174,7 +179,6 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <header class="top">
   <span class="course">MECH2407 · Multivariable Calculus &amp; PDEs · Chapter 3b</span>
   <h1>Line Integrals</h1>
-  <p class="lede">The second part of Chapter 3 (Vector Analysis), explained from scratch in the order of the course: how to describe a curve by a parameter, how to add up a quantity along a curve (the mass of a wire, the length of a helix), how to add up the work a force field does on a particle moving along a path, and the Fundamental Theorem of Line Integrals, which says that for a gradient field the work depends only on where the path starts and ends. Every curve is drawn (3D curves can be rotated), the sums that define the integrals can be watched converging, and every example is solved in full; long calculations sit in "Show the calculation" tabs with a reason for each line. Material beyond the course handouts sits in orange "Beyond the handouts" boxes. The chapter ends with real past-paper questions, each linked to its exam-guide section.</p>
   <div class="crumbs"><a href="index.html">← Start Here</a><a href="note-C3a.html">← Previous: C3a Vector Differential Calculus</a><a href="guide-C3b.html">Exam guide for this chapter →</a><a href="note-C3c.html">Next: C3c Conservative Fields, Gauss and Stokes →</a></div>
 </header>
 <div class="box video" style="margin:18px 0 6px"><span class="tag">Video · Line integrals intro</span>
@@ -185,25 +189,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 
 <section id="s0">
 <h2><span class="n">0</span>Where this chapter sits</h2>
-<p>In first-year calculus, \(\displaystyle\int_a^b f(x)\,dx\) adds up the values of \(f\) along a straight piece of the \(x\)-axis, from \(x=a\) to \(x=b\). Chapter 2 of this course added up values over a <b>region</b> (double integrals) or a <b>solid</b> (triple integrals). This chapter adds up values along a <b>curve</b> in space. Such an integral is called a <b>line integral</b>, although "curve integral" would be a better name: the path can bend and twist.</p>
-<p>Two kinds of question lead to line integrals:</p>
-<ul class="list">
-<li><b>Adding a scalar along a curve.</b> A bent wire has a density (mass per unit length) that changes from point to point. What is its total mass? What is the length of one turn of a spring? This is the <b>scalar line integral</b> \(\int_C f\,ds\) of §2, where \(ds\) is a small piece of length along the curve.</li>
-<li><b>Adding up work along a path.</b> A particle moves along a path through a force field (gravity, an electric field, a fluid pushing on it). How much work does the force do? This is the <b>work integral</b> (vector line integral) \(\int_C\vb F\cdot d\vb r\) of §3. Only the part of the force <b>along</b> the path does work, so the direction of travel matters.</li>
-</ul>
-<p>The plan of the chapter:</p>
-<ol class="steps">
-  <li><b>§1</b> Curves: describing a curve by a parameter \(t\) (a <b>parametrisation</b> \(\vb r(t)\)); simple, closed and open curves; smooth and piecewise smooth curves; orientation (direction of travel). A ready-made list of standard parametrisations.</li>
-  <li><b>§2</b> The scalar line integral \(\int_C f\,ds\): definition as a limit of sums, the formula \(ds=|d\vb r/dt|\,dt\), curves made of several pieces, arc length; Examples 3.6.1–3.6.3.</li>
-  <li><b>§3</b> The work integral \(\int_C\vb F\cdot d\vb r\): from the work \(\vb F\cdot\overrightarrow{AB}\) of a constant force to a sum along a curve; the unit tangent; why reversing the path changes the sign; the forms \(\int\vb F\cdot\frac{d\vb r}{dt}dt\) and \(\int M\,dx+N\,dy+P\,dz\); Examples 3.6.4–3.6.6 (work can depend on the path).</li>
-  <li><b>§4</b> The Fundamental Theorem of Line Integrals, \(\int_C\nabla f\cdot d\vb r=f(\text{end})-f(\text{start})\), with proof; the gravitational potential (Example 3.6.7); scalar potentials, independence of path, and closed loops (the start of §3.7, continued in <a href="note-C3c.html#s1">Chapter 3c</a>).</li>
-</ol>
-<p><b>What you are assumed to know:</b> vectors with \(\ii,\jj,\kk\), the dot product, single-variable integration (substitution, \(\int\sin^2t\,dt\) etc.), and the chain rule. From earlier chapters of these notes: partial derivatives and the gradient (<a href="note-C1.html#s2">Chapter 1</a>), vector functions \(\vb r(t)\) with velocity \(d\vb r/dt\) tangent to the path (<a href="note-C3a.html#s1">Chapter 3a §1</a>), and vector fields and \(\nabla\) (<a href="note-C3a.html#s2">Chapter 3a §2–§3</a>).</p>
-<p><b>How the exam uses this chapter.</b> Across the papers collected for this bundle, 5 question parts (31 marks) are line integrals worked out by parametrising the path, in 5 different sittings (4 December, 1 May). They form one type:</p>
-<ul class="list">
-<li><b>C3b.1 Line (work) integral by parametrising the path</b>: a straight segment, a parabola \(y=x^2\), a semicircle, or the three edges of a triangle; usually 5–6 marks in December, after a part that asks for the curl of the same field, and often with the instruction "do NOT use the Fundamental Theorem" (so the parametrisation must be shown). May 2024 asked for 10 marks.</li>
-</ul>
-<p>Line integrals also appear inside many Chapter 3c questions (Stokes' theorem: compute \(\oint_C\vb F\cdot d\vb r\) round the boundary). The December formula sheet <b>gives</b> both line-integral formulas, \(\int_C g\,ds=\int g\,\sqrt{\dot x^2+\dot y^2+\dot z^2}\,dt\) and \(\int_C\vb F\cdot d\vb r=\int\vb F(t)\cdot\dot{\vb r}(t)\,dt\) (a dot over a letter means \(d/dt\)); the May papers since 2021 have no formula sheet. See the <a href="guide-C3b.html">C3b exam guide</a>.</p>
+<p>This chapter adds things up along a curve in space. Picture the mass of a bent wire, or the work a force does on a bead sliding along a twisted path.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span><ol>
+<li><a href="#s1">§1</a> <b>A parameter describes a curve</b>: a recipe for where you are at “time” \(t\), and which way you travel.</li>
+<li><a href="#s2">§2</a> <b>A scalar line integral adds up a quantity along a wire</b>, such as its mass or its length.</li>
+<li><a href="#s3">§3</a> <b>A work integral adds up a force’s push along a path.</b> Only the part along the path counts; going backwards flips the sign.</li>
+<li><a href="#s4">§4</a> <b>For a gradient field, work depends only on the start and end points.</b> (continued in <a href="note-C3c.html#s1">Chapter 3c</a>)</li>
+</ol></div>
+<p><b>You need:</b> the dot product, single-variable integration, the chain rule, the gradient (<a href="note-C1.html#s2">Chapter 1</a>), and vector functions and fields (<a href="note-C3a.html#s1">Chapter 3a §1</a>, <a href="note-C3a.html#s2">§2–§3</a>). <b>In the exam:</b> one type, 5–6 marks in December (10 in May 2024): a work integral along a segment, parabola, semicircle or triangle, often “do NOT use the Fundamental Theorem”. Line integrals also appear inside Stokes questions. The December formula sheet gives both line-integral formulas; May papers since 2021 have no sheet. See the <a href="guide-C3b.html">C3b exam guide</a>.</p>
 </section>
 
 <section id="s1">
@@ -304,7 +297,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </ol></div></details>
 <p>Thus,</p>
 <div class="box thm"><span class="tag">Formula (scalar line integral)</span>
-\[\begin{aligned}&\int_C f(x,y,z)\,ds\\&=\int_a^b f(x(t),y(t),z(t))\left|\frac{d\vb r}{dt}\right|dt\\&=\int_a^b f(x(t),y(t),z(t))\\&\qquad\times\sqrt{x'(t)^2+y'(t)^2+z'(t)^2}\;dt.\end{aligned}\]
+<span class="eqw" data-eq="1">\[\begin{aligned}&\int_C f(x,y,z)\,ds\\&=\int_a^b f(x(t),y(t),z(t))\left|\frac{d\vb r}{dt}\right|dt\\&=\int_a^b f(x(t),y(t),z(t)) \times\sqrt{x'(t)^2+y'(t)^2+z'(t)^2}\;dt.\end{aligned}\]</span><span class="eqn" data-eq="1">\[\begin{aligned}&\int_C f(x,y,z)\,ds\\&=\int_a^b f(x(t),y(t),z(t))\left|\frac{d\vb r}{dt}\right|dt\\&=\int_a^b f(x(t),y(t),z(t))\\&\qquad\times\sqrt{x'(t)^2+y'(t)^2+z'(t)^2}\;dt.\end{aligned}\]</span>
 <p class="word"><b>In words:</b> substitute the parametrisation into \(f\), multiply by the speed \(|\vb r'(t)|\), and integrate over the parameter interval from \(a\) to \(b\) (always smaller limit at the bottom).</p>
 </div>
 <p><b>Recipe.</b> (1) Parametrise \(C\) by \(\vb r(t)\), \(a\le t\le b\). (2) Compute \(\vb r'(t)\) and the speed \(|\vb r'(t)|\). (3) Write \(f\) in terms of \(t\). (4) Integrate \(f\,|\vb r'|\) from \(a\) to \(b\).</p>
@@ -506,7 +499,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p><b>\(C_2\): \(y^2=x\)</b>, \(x\) from 0 to 4 (\(y=\sqrt x\ge0\)). We have \(2y\dfrac{dy}{dx}=1\), i.e. \(dy=\dfrac{dx}{2y}\), and hence</p>
 \[\begin{aligned}&\int_{C_2}y^2\,dx+2xy\,dy\\&=\int_{x=0}^{4}x\,dx+2xy\cdot\frac1{2y}\,dx\\&=\int_{x=0}^{4}2x\,dx=16 .\end{aligned}\]
 <p><b>\(C_3\)</b>: first along the \(x\)-axis from \((0,0)\) to \((4,0)\) (\(y=0\), \(dy=0\)), then up the line \(x=4\) from \((4,0)\) to \((4,2)\) (\(dx=0\)):</p>
-\[\begin{aligned}&\int_{(0,0)}^{(4,2)}y^2\,dx+2xy\,dy\\&=\int_{x=0}^{4}0\,dx+2x\cdot0\cdot0\\&\quad+\int_{y=0}^{2}y^2\cdot0+2\cdot4y\,dy\\&=\int_{y=0}^{2}8y\,dy=16 .\end{aligned}\]
+<span class="eqw" data-eq="2">\[\begin{aligned}&\int_{(0,0)}^{(4,2)}y^2\,dx+2xy\,dy\\&=\int_{x=0}^{4}0\,dx+2x\cdot0\cdot0 +\int_{y=0}^{2}y^2\cdot0+2\cdot4y\,dy\\&=\int_{y=0}^{2}8y\,dy=16 .\end{aligned}\]</span><span class="eqn" data-eq="2">\[\begin{aligned}&\int_{(0,0)}^{(4,2)}y^2\,dx+2xy\,dy\\&=\int_{x=0}^{4}0\,dx+2x\cdot0\cdot0\\&\quad+\int_{y=0}^{2}y^2\cdot0+2\cdot4y\,dy\\&=\int_{y=0}^{2}8y\,dy=16 .\end{aligned}\]</span>
 <details><summary>Show the calculation: the three integrals of Example 3.6.6</summary><div>
 <ol class="steps">
 <li>\(C_1\): substitute \(y=x/2\), \(dy=dx/2\): \(y^2\,dx=\frac{x^2}4dx\) and \(2xy\,dy=2x\cdot\frac x2\cdot\frac12dx=\frac{x^2}2dx\). Sum \(\frac34x^2\,dx\); \(\int_0^4\frac34x^2\,dx=\frac14\big[x^3\big]_0^4=\frac{64}4=16\).</li>
@@ -547,7 +540,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li>\(\vb r(b)\) is the terminal point \((x_1,y_1,z_1)\) and \(\vb r(a)\) the initial point \((x_0,y_0,z_0)\).</li>
 </ol></div></details>
 <p>If the curve \(C\) is piecewise smooth and can be decomposed into, say, two smooth portions \(C_1\) and \(C_2\) joined at \((x',y',z')\), then we can apply the theorem above to each piece and obtain</p>
-\[\begin{aligned}\int_C\operatorname{grad}f\cdot d\vb r&=\int_{C_1}\operatorname{grad}f\cdot d\vb r+\int_{C_2}\operatorname{grad}f\cdot d\vb r\\&=[f(x',y',z')-f(x_0,y_0,z_0)]\\&\quad+[f(x_1,y_1,z_1)-f(x',y',z')]\\&=f(x_1,y_1,z_1)-f(x_0,y_0,z_0)\end{aligned}\]
+<span class="eqw" data-eq="3">\[\begin{aligned}\int_C\operatorname{grad}f\cdot d\vb r&=\int_{C_1}\operatorname{grad}f\cdot d\vb r+\int_{C_2}\operatorname{grad}f\cdot d\vb r\\&=[f(x',y',z')-f(x_0,y_0,z_0)] +[f(x_1,y_1,z_1)-f(x',y',z')]\\&=f(x_1,y_1,z_1)-f(x_0,y_0,z_0)\end{aligned}\]</span><span class="eqn" data-eq="3">\[\begin{aligned}\int_C\operatorname{grad}f\cdot d\vb r&=\int_{C_1}\operatorname{grad}f\cdot d\vb r+\int_{C_2}\operatorname{grad}f\cdot d\vb r\\&=[f(x',y',z')-f(x_0,y_0,z_0)]\\&\quad+[f(x_1,y_1,z_1)-f(x',y',z')]\\&=f(x_1,y_1,z_1)-f(x_0,y_0,z_0)\end{aligned}\]</span>
 <p>as before (the value at the joint cancels). The result is known as the <b>Fundamental Theorem of Line Integrals</b>, and it is reminiscent of the formula</p>
 \[\int_a^b f'(x)\,dx=f(b)-f(a)\]
 <p>for functions of one variable: in both, integrating a derivative gives the change in the function between the end points. The gradient plays the role of the derivative.</p>

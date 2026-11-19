@@ -142,6 +142,11 @@ footer.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);fo
 .alsoset{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 6px}
 .glance{width:100%;border-collapse:collapse;font-size:.92rem}
 .glance td,.glance th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{
@@ -178,39 +183,23 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <header class="top">
   <span class="course">MECH2407 · Multivariable Calculus &amp; PDEs · Chapter 3c</span>
   <h1>Conservative Fields, Surface Integrals, Gauss and Stokes</h1>
-  <p class="lede">The last part of Chapter 3 (Vector Analysis), explained from scratch in the order of the course: conservative fields and how to find their potentials, the curl test and why it needs a region without holes, integrals over curved surfaces, the flux of a field through a surface, and the two great theorems of vector calculus: Gauss' divergence theorem (outflow through a closed surface = total divergence inside) and Stokes' theorem (circulation round a loop = flux of curl through any surface spanning it). Every surface is a rotatable 3D picture with its normals drawn, every example is solved in full, and long calculations sit in "Show the calculation" tabs with a reason for each line. Material the exam uses but the course handouts leave out (finding potentials in 3D, ready-made \(dS\) on spheres and cylinders, the flux formula of the formula sheet, Green's theorem) sits in orange "Beyond the handouts" boxes. The chapter ends with real past-paper questions, each linked to its exam-guide section.</p>
   <div class="crumbs"><a href="index.html">← Start Here</a><a href="note-C3b.html">← Previous: C3b Line Integrals</a><a href="guide-C3c.html">Exam guide for this chapter →</a><a href="note-C4.html">Next: C4 Fourier Series →</a></div>
 </header>
 
 <section id="s0">
 <h2><span class="n">0</span>Where this chapter sits</h2>
-<p>Chapter 3a introduced vector fields and their derivatives (divergence and curl); Chapter 3b integrated a field <b>along a curve</b> (line integrals, work). This chapter finishes the story in two directions:</p>
-<ul class="list">
-<li><b>Which fields make line integrals easy?</b> For a <b>conservative</b> field the work along a path depends only on its two end points, and equals the change in a <b>scalar potential</b> \(\phi\). We learn a quick test (\(\operatorname{curl}\vb F=\vb 0\)), when that test can be trusted (on <b>simply connected</b> regions, i.e. regions without holes), and how to find \(\phi\).</li>
-<li><b>Integrating over surfaces.</b> A <b>surface integral</b> adds up a quantity over a curved surface (the 2D cousin of the line integral). Its most important form, the <b>flux integral</b> \(\iint\vb F\cdot\vb n\,dS\), measures how much of a flow crosses the surface. Two theorems then turn surface integrals into easier ones: <b>Gauss</b> (closed surface ↔ volume) and <b>Stokes</b> (open surface ↔ boundary curve).</li>
-</ul>
-<p>The plan of the chapter:</p>
-<ol class="steps">
-  <li><b>§1</b> Conservative fields, scalar potentials, Example 3.7.1; the necessary condition \(\operatorname{curl}\vb F=\vb 0\). Beyond: finding a potential in 3D.</li>
-  <li><b>§2</b> Connected and simply connected regions; the curl test; Example 3.7.2; the component form of the test; what goes wrong for a field with a hole at the origin.</li>
-  <li><b>§3</b> Surface integrals \(\iint_\Sigma g\,dS\), the area element \(dS\) for a surface \(z=f(x,y)\) or \(h(x,y,z)=0\), Example 3.8.1 (a cone). Beyond: \(dS\) on spheres and cylinders.</li>
-  <li><b>§4</b> Orientable surfaces, the Möbius strip, the orientation of a boundary curve, flux integrals, Example 3.8.2 (fluid through a paraboloid), physical meaning.</li>
-  <li><b>§5</b> Gauss' divergence theorem, Examples 3.9.1 (cylinder) and 3.9.2 (spherical shell), why it is true.</li>
-  <li><b>§6</b> Stokes' theorem, Example 3.10.1 (paraboloid cut by a plane).</li>
-  <li><b>§7</b> Application: Ampère's law and one of Maxwell's equations.</li>
-  <li><b>§8</b> <span class="pill prev">Out of 2026 syllabus</span> Green's theorem in the plane: previous content, asked in May papers.</li>
-</ol>
-<p><b>What you are assumed to know:</b> from <a href="note-C1.html#s2">Chapter 1</a> partial derivatives and the gradient; from <a href="note-C2.html#s1">Chapter 2</a> double and triple integrals, with <a href="note-C2.html#s2">polar</a> and <a href="note-C2.html#s4">cylindrical/spherical</a> coordinates; from <a href="note-C3a.html#s4">Chapter 3a</a> div, curl and the identity \(\operatorname{curl}(\nabla f)=\vb 0\) (<a href="note-C3a.html#s6">§6</a>); from <a href="note-C3b.html#s3">Chapter 3b</a> work integrals \(\int_C\vb F\cdot d\vb r\) and the <a href="note-C3b.html#s4">fundamental theorem of line integrals</a>.</p>
-<p><b>How the exam uses this chapter.</b> This is the heaviest chapter of the course: across the 21 papers collected for this bundle, 64 question parts (about 475 marks) come from it. Six types recur:</p>
-<ul class="list">
-<li><b>C3c.1 Conservative fields</b>: test \(\operatorname{curl}\vb F=\vb 0\), find constants that make a field conservative, find a potential, and use it for the work (22 parts in 18 sittings, about 144 marks; in almost every paper, December and May).</li>
-<li><b>C3c.2 Fields with a hole at the origin</b> such as \(\dfrac{y\ii-x\jj}{x^2+y^2}\): find potentials and where they are defined, compute the circulation round the origin, explain why Stokes' theorem is not contradicted (9 parts, December 2014, 2018, 2022, 2023).</li>
-<li><b>C3c.3 Surface and flux integrals done directly</b> (2 parts).</li>
-<li><b>C3c.4 Gauss' theorem</b>: "verify" (compute both sides) on a sphere, hemisphere or cylinder, or use it to find an outward flux (12 parts, about 119 marks).</li>
-<li><b>C3c.5 Stokes' theorem</b>: verify it, or use it to swap a circulation for a curl flux or vice versa (13 parts, about 116 marks).</li>
-<li><b>C3c.6 Green's theorem</b> (May papers only; out of 2026 syllabus; §8).</li>
-</ul>
-<p>The December formula sheet gives: the surface integral for \(z=f(x,y)\); the line-integral formulas; the flux formula \(\iint\vb F\cdot\vb n\,dS=\iint_R[-Mf_x-Nf_y+P]\,dx\,dy\) for \(z=f(x,y)\) with upward normal; and the statements of Gauss' and Stokes' theorems. It does <b>not</b> give the curl formula, how to find a potential, or \(dS\) on a sphere or cylinder. See the <a href="guide-C3c.html">C3c exam guide</a>.</p>
+<p>This chapter finishes vector calculus: fields where work is easy, adding things up over curved surfaces, and two theorems that swap a hard integral for an easier one.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span><ol>
+<li><a href="#s1">§1</a> <b>A conservative field is the slope of a hidden potential</b>, so work = change in potential.</li>
+<li><a href="#s2">§2</a> <b>The curl test (curl = 0) only works on regions without holes.</b></li>
+<li><a href="#s3">§3</a> <b>A surface integral adds up a quantity over a curved sheet.</b></li>
+<li><a href="#s4">§4</a> <b>Flux measures how much flow passes through a surface.</b></li>
+<li><a href="#s5">§5</a> <b>Gauss: what flows out of a closed surface = total spreading out inside.</b></li>
+<li><a href="#s6">§6</a> <b>Stokes: circulation round a loop = swirl through any surface it bounds.</b></li>
+<li><a href="#s7">§7</a> <b>Application:</b> Ampère’s law, one of Maxwell’s equations.</li>
+<li><a href="#s8">§8</a> Green’s theorem in the plane. <span class="pill prev">Out of 2026 syllabus</span> <span class="pill skip">Optional on first read</span></li>
+</ol></div>
+<p><b>You need:</b> the gradient (<a href="note-C1.html#s2">Chapter 1</a>); double and triple integrals (<a href="note-C2.html#s1">Chapter 2</a>) in <a href="note-C2.html#s2">polar</a> and <a href="note-C2.html#s4">cylindrical/spherical</a> coordinates; div and curl (<a href="note-C3a.html#s4">Chapter 3a</a>, <a href="note-C3a.html#s6">§6</a>); work integrals and the <a href="note-C3b.html#s4">fundamental theorem</a> (<a href="note-C3b.html#s3">Chapter 3b</a>). <b>In the exam:</b> the heaviest chapter (about 475 marks across the papers). Conservative fields are in almost every paper; Gauss and Stokes come as “verify” or “use” questions, plus fields with a hole at the origin. The December formula sheet gives the surface and flux integrals for \(z=f(x,y)\) and the statements of Gauss and Stokes, but <b>not</b> curl, how to find a potential, or \(dS\) on a sphere or cylinder. See the <a href="guide-C3c.html">C3c exam guide</a>.</p>
 </section>
 
 <section id="s1">
@@ -331,7 +320,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 
 <h3>The test written out in components</h3>
 <p>The test \(\operatorname{curl}\vb F=\vb 0\) can be rewritten in a differential form. Suppose \(\vb F=M\ii+N\jj+P\kk\); then</p>
-\[\begin{aligned}\operatorname{curl}\vb F=&\Big(\pd Py-\pd Nz\Big)\ii-\Big(\pd Px-\pd Mz\Big)\jj\\&+\Big(\pd Nx-\pd My\Big)\kk=\vb 0\end{aligned}\]
+<span class="eqw" data-eq="1">\[\begin{aligned}\operatorname{curl}\vb F=&\Big(\pd Py-\pd Nz\Big)\ii-\Big(\pd Px-\pd Mz\Big)\jj +\Big(\pd Nx-\pd My\Big)\kk=\vb 0\end{aligned}\]</span><span class="eqn" data-eq="1">\[\begin{aligned}\operatorname{curl}\vb F=&\Big(\pd Py-\pd Nz\Big)\ii-\Big(\pd Px-\pd Mz\Big)\jj\\&+\Big(\pd Nx-\pd My\Big)\kk=\vb 0\end{aligned}\]</span>
 <p>if and only if</p>
 \[\pd Py=\pd Nz,\qquad\pd Px=\pd Mz,\qquad\pd Nx=\pd My.\]
 <p class="word"><b>In words:</b> the "cross" derivatives must match in pairs. For a 2D field \(M\ii+N\jj\) only the last one matters: \(\partial N/\partial x=\partial M/\partial y\). (These are the conditions you solve when a question asks for the constants that make a field conservative.)</p>
@@ -636,10 +625,10 @@ gives the total charge \(q\) within \(\Sigma\), where \(\epsilon_0\) is the perm
 
 <div class="box eg"><span class="tag">Example 3.9.1</span>
 <p><b>Let \(\mathcal D\) be the solid cylinder bounded by \(x^2+y^2=4\), \(z=0\) and \(z=3\). If</b></p>
-\[\begin{aligned}\vb F=\ &(x^3+\tan yz)\,\ii+(y^3-e^{xz})\,\jj\\&+(3z+x^3)\,\kk,\end{aligned}\]
+<span class="eqw" data-eq="2">\[\begin{aligned}\vb F=\ &(x^3+\tan yz)\,\ii+(y^3-e^{xz})\,\jj +(3z+x^3)\,\kk,\end{aligned}\]</span><span class="eqn" data-eq="2">\[\begin{aligned}\vb F=\ &(x^3+\tan yz)\,\ii+(y^3-e^{xz})\,\jj\\&+(3z+x^3)\,\kk,\end{aligned}\]</span>
 <p><b>find the flux across the boundary surface \(\Sigma\).</b></p>
 <p>The boundary has three parts: the top disc \(\Sigma_1\) (\(z=3\), \(\vb n_1=\kk\)), the bottom disc \(\Sigma_2\) (\(z=0\), \(\vb n_2=-\kk\)) and the curved side \(\Sigma_3\) (\(\vb n_3=\dfrac{x\ii+y\jj}{\sqrt{x^2+y^2}}\), pointing straight out from the axis). The total flux is given by</p>
-\[\begin{aligned}\iint_\Sigma\vb F\cdot\vb n\,dS=&\iint_{\Sigma_1}(3z+x^3)\,dS\\&-\iint_{\Sigma_2}(3z+x^3)\,dS\\&+\iint_{\Sigma_3}\vb F\cdot\frac{x\ii+y\jj}{\sqrt{x^2+y^2}}\,dS.\end{aligned}\]
+<span class="eqw" data-eq="3">\[\begin{aligned}\iint_\Sigma\vb F\cdot\vb n\,dS=&\iint_{\Sigma_1}(3z+x^3)\,dS -\iint_{\Sigma_2}(3z+x^3)\,dS +\iint_{\Sigma_3}\vb F\cdot\frac{x\ii+y\jj}{\sqrt{x^2+y^2}}\,dS.\end{aligned}\]</span><span class="eqn" data-eq="3">\[\begin{aligned}\iint_\Sigma\vb F\cdot\vb n\,dS=&\iint_{\Sigma_1}(3z+x^3)\,dS\\&-\iint_{\Sigma_2}(3z+x^3)\,dS\\&+\iint_{\Sigma_3}\vb F\cdot\frac{x\ii+y\jj}{\sqrt{x^2+y^2}}\,dS.\end{aligned}\]</span>
 <p>The flux integral is rather complicated. We use Gauss' Theorem instead:</p>
 \[\begin{aligned}\iint_\Sigma\vb F\cdot\vb n\,dS&=\iiint_{\mathcal D}\operatorname{div}\vb F\,dV\\&=\iiint_{\mathcal D}3(x^2+y^2+1)\,dV.\end{aligned}\]
 <p>In cylindrical polar coordinates (<a href="note-C2.html#s4">Chapter 2 §4</a>), we have</p>
@@ -1027,7 +1016,7 @@ gives the total charge \(q\) within \(\Sigma\), where \(\epsilon_0\) is the perm
 <details><summary>Hint</summary><div><p>Volume side in cylindrical coordinates: the \(x\) and \(y\) parts integrate to 0 over a full turn. Surface side: three pieces (top, bottom, curved side with \(dS=R\,d\theta\,dz\)).</p></div></details>
 <details><summary>Answer</summary><div><p>(i) \(\operatorname{div}\vb F=2x+2y+2z\). (ii) Both sides equal \(\boxed{\pi R^2H^2}\).</p>
 <details><summary>Show the calculation: outline</summary><div><ol class="steps">
-<li>Volume: \[\begin{aligned}&\int_0^{2\pi}\!\!\int_0^R\!\!\int_0^H2(r\cos\theta+r\sin\theta+z)\\&\qquad\times r\,dz\,dr\,d\theta.\end{aligned}\]The \(\cos\theta,\sin\theta\) terms vanish over \(0\) to \(2\pi\); the \(z\) term gives \(2\cdot\tfrac{H^2}2\cdot\tfrac{R^2}2\cdot2\pi=\pi R^2H^2\).</li>
+<li>Volume: <span class="eqw" data-eq="4">\[\begin{aligned}&\int_0^{2\pi}\!\!\int_0^R\!\!\int_0^H2(r\cos\theta+r\sin\theta+z) \times r\,dz\,dr\,d\theta.\end{aligned}\]</span><span class="eqn" data-eq="4">\[\begin{aligned}&\int_0^{2\pi}\!\!\int_0^R\!\!\int_0^H2(r\cos\theta+r\sin\theta+z)\\&\qquad\times r\,dz\,dr\,d\theta.\end{aligned}\]</span>The \(\cos\theta,\sin\theta\) terms vanish over \(0\) to \(2\pi\); the \(z\) term gives \(2\cdot\tfrac{H^2}2\cdot\tfrac{R^2}2\cdot2\pi=\pi R^2H^2\).</li>
 <li>Top \(z=H\), \(\vb n=\kk\): \(\vb F\cdot\vb n=H^2\), flux \(H^2\cdot\pi R^2\).</li>
 <li>Bottom \(z=0\), \(\vb n=-\kk\): \(\vb F\cdot\vb n=-z^2=0\), flux 0.</li>
 <li>Side: \(\vb F\cdot\vb n\) \(=\dfrac{x^3+y^3}{R}\) \(=R^2(\cos^3\theta+\sin^3\theta)\), \(dS=R\,d\theta\,dz\); \(\int_0^{2\pi}\cos^3\theta\,d\theta=\int_0^{2\pi}\sin^3\theta\,d\theta=0\), flux 0.</li>
