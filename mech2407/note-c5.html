@@ -147,6 +147,31 @@ footer.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);fo
 .eqw,.eqn{display:block}
 @media (max-width:759px){.eqw{display:none}}
 @media (min-width:760px){.eqn{display:none}}
+
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+ol.steps.proc{border:0;border-radius:0;background:none;padding:0 0 0 1.3rem;margin:8px 0}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{
@@ -219,8 +244,9 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </section>
 
 <section id="s1">
-<h2><span class="n">1</span>Review of ODEs (ordinary differential equations) <span class="muted small">(handout §1, p. 3)</span></h2>
-<p>An <b>ordinary differential equation</b> (ODE) is an equation for an unknown function of <b>one</b> variable, involving its derivatives, for example \(\dfrac{dy}{dt}=3y\). The variable \(t\) is called the <b>independent variable</b>; \(y\) is the <b>dependent variable</b>. The <b>general solution</b> contains arbitrary constants (one for a first-order ODE, two for a second-order ODE), which are fixed later by extra conditions.</p>
+<h2><span class="n">1</span>Review of ODEs (ordinary differential equations) <span class="muted small">(handout §1, p. 3)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>An ODE is a rule that links a quantity to how fast it changes, when only <b>one</b> thing is varying (say time). In this chapter the temperature of a rod, or the height of a guitar string, will be split into a <b>shape</b> along the rod and a <b>size</b> that changes in time. Each of those two pieces depends on just one variable, so each obeys an ODE, and only two kinds of ODE ever appear. This section is your toolkit for them.</p></div></details>
+<p>An <b>ordinary differential equation</b> (ODE) is an equation for an unknown function of <b>one</b> variable, involving its derivatives, for example \(\dfrac{dy}{dt}=3y\). The variable \(t\) is called the <b>independent variable</b> (the one you choose freely, here time); \(y\) is the <b>dependent variable</b> (the quantity that responds). The <b>general solution</b> contains arbitrary constants (one for a first-order ODE, two for a second-order ODE), which are fixed later by extra conditions.</p>
 <p>Separation of variables turns every PDE of this chapter into ODEs of just two kinds. Their solutions are collected in the table below, where \(k,p,A,B,C\) are constants (\(p\gt0\)).</p>
 <div class="box thm"><span class="tag">ODE table</span>
 <div class="scroll"><table>
@@ -232,6 +258,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </table></div>
 <p class="word"><b>In words:</b> "rate of change proportional to the amount" gives an exponential (growth if \(k\gt0\), decay if \(k\lt0\)). "Second derivative proportional to the function" gives a straight line (\(k=0\)), exponentials (\(k\gt0\): the function is pushed further away from 0) or oscillations (\(k\lt0\): the function is pulled back towards 0, like a spring).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\dfrac{dy}{dt}=ky\)</dt><dd>"the more you have, the faster it changes": money earning interest (\(k\gt0\)) or a hot cup cooling towards room temperature (\(k\lt0\)). In this chapter \(k\lt0\): how fast a temperature shape fades.</dd>
+<dt>\(\dfrac{d^2y}{dt^2}\)</dt><dd>the bend of the graph (curving up or curving down).</dd>
+<dt>\(k\lt0\) in \(y''=ky\)</dt><dd>when \(y\) is above 0 the graph bends down, when below it bends up: always pulled back towards 0, so it swings to and fro like a mass on a spring. Only this case can leave 0 and come back to 0, which is what a string tied at both ends needs.</dd>
+<dt>\(k\gt0\) in \(y''=ky\)</dt><dd>above 0 it bends further up: pushed away from 0, so it runs off exponentially and never returns.</dd>
+<dt>\(p=\sqrt{|k|}\)</dt><dd>how strong the pull or push is: for \(k\lt0\), the angular frequency of the swing (period \(2\pi/p\)).</dd>
+</dl></div>
+<ol class="steps proc">
+<li><b>Do:</b> rearrange the ODE into the form \(y'=ky\) or \(y''=ky\) and read off the number \(k\). <span class="why">This is "how does the quantity, or its bend, respond to its own size?".</span></li>
+<li><b>Do:</b> for \(y'=ky\) write \(Ce^{kt}\). For \(y''=ky\) look at the <b>sign</b> of \(k\): zero, positive or negative. <span class="why">The sign decides straight line, run-away or swing (see the reading box above).</span></li>
+<li><b>Do:</b> set \(p=\sqrt{|k|}\) and copy the matching row of the table. <span class="why">\(p\) sets how fast the exponential grows or how fast the swing repeats.</span></li>
+<li><b>Do:</b> fix the constants \(A,B\) (or \(C\)) from the extra conditions given. <span class="why">The table gives every possible curve; the conditions pick the one that starts or ends where it should.</span></li>
+</ol>
 <details><summary>Show the calculation: where the four solutions come from</summary><div>
 <ol class="steps">
 <li><b>Case 1.</b> Divide by \(y\): \(\dfrac{1}{y}\dfrac{dy}{dt}=k\). Integrate in \(t\): \(\ln|y|=kt+c_0\). <i>Why:</i> the left side is \(\dfrac{d}{dt}\ln|y|\) (chain rule). So \(|y|=e^{c_0}e^{kt}\), i.e. \(y=Ce^{kt}\) with \(C=\pm e^{c_0}\) (and \(C=0\) covers \(y\equiv0\)).</li>
@@ -250,10 +289,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <div class="box beyond"><span class="tag">Beyond the handouts · the same answer with cosh and sinh</span>
 <p>For \(k=p^2\gt0\) the solution can also be written \(y=A\cosh pt+B\sinh pt\), where \(\cosh s=\tfrac12(e^s+e^{-s})\) and \(\sinh s=\tfrac12(e^s-e^{-s})\) (the hyperbolic cosine and sine). Both forms are equally correct (the constants are just recombined). The \(\cosh/\sinh\) form is handier when a condition is given at 0, since \(\cosh0=1\), \(\sinh0=0\); it is used in §10.</p>
 </div>
+<p class="cannow"><b>You can now:</b> solve \(y'=ky\) and \(y''=ky\) for any constant \(k\) by reading the sign of \(k\); explain why only \(k\lt0\) gives a curve that can return to 0 (swing) while \(k\gt0\) runs away.</p>
 </section>
-
 <section id="s2">
-<h2><span class="n">2</span>Where the heat and wave equations come from <span class="muted small">(handout §2.1–§2.2, p. 3)</span></h2>
+<h2><span class="n">2</span>Where the heat and wave equations come from <span class="muted small">(handout §2.1–§2.2, p. 3)</span> <span class="mins">~10 min</span></h2>
 <div class="figure">
   <p class="ttl">The two physical set-ups</p>
   <div class="pair">
@@ -263,18 +302,31 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
   <p class="cap">Left: a thin rod along the \(x\)-axis from \(x=0\) to \(x=L\); its colour shows the temperature \(u(x,t)\) at one moment (warm colours hotter). Right: a stretched string with ends at \(x=0\) and \(x=L\), pulled into a wavy shape; the dot is the point above position \(x\), at height \(u(x,t)\) at time \(t\).</p>
 </div>
 <h3>2.1 The heat equation</h3>
+<details class="idea"><summary>What is this? (heat equation)</summary><div><p>Heat a metal rod unevenly and leave it alone: hot spots cool, cold spots warm, and the temperature evens out along the rod. Each little piece of rod only "talks" to the pieces right next to it: if its neighbours are hotter on average, heat flows in and it warms up; if they are colder, it cools. The heat equation is that one rule, written for every point of the rod at once.</p></div></details>
 <p>The temperature of a rod depends on the position \(x\) along the rod and on the time \(t\). So the temperature is a function of two variables, \(u(x,t)\), and it satisfies the <b>governing equation</b> (the equation the physics imposes)</p>
 \[\pd ut=c^2\,\pd{^2u}{x^2}.\]
 <p class="word"><b>In words:</b> the rate at which the temperature at a point changes = \(c^2\) × the curvature (bending) of the temperature profile there.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\pd ut\)</dt><dd>stand at one spot of the rod and watch a thermometer: how fast its reading rises (positive) or falls (negative).</dd>
+<dt>\(\pd{^2u}{x^2}\)</dt><dd>freeze time and look along the rod: how the temperature graph bends at that spot. Curved upwards (a valley) means the neighbours on both sides are hotter on average. (Beyond the handouts: for neighbours a small distance \(h\) away, \(u_{xx}\approx\frac{2}{h^2}\big(\text{neighbours' average}-u\big)\).)</dd>
+<dt>\(=\)</dt><dd>temperature rises where the profile is curved upward, i.e. where the neighbours are hotter on average, and falls where it is curved downward.</dd>
+<dt>\(c^2\)</dt><dd>how readily the material passes heat along: a large \(c^2\) evens things out quickly.</dd>
+</dl></div>
 <p>Here \(c^2\) is the <b>coefficient of heat conduction</b> (also called thermal diffusivity), a positive constant depending on the material of the rod: large for copper, small for wood. Exam papers also write it \(k\), \(c^2\) or \(a^2\).</p>
 <p><b>Why curvature?</b> Where the profile is curved upwards (\(u_{xx}\gt0\), a "valley"), the point is colder than the average of its neighbours, so heat flows in and it warms up (\(u_t\gt0\)). Where it is curved downwards (a "hill"), it is hotter than its neighbours and cools down. On a straight-line profile every point is exactly the average of its neighbours and nothing changes. Try it in the figure below.</p>
 <div class="box analogy"><span class="tag">Analogy</span>
 <p>A row of people each holding some money, who every minute even out a little with their two neighbours. A person poorer than the average of the two neighbours gains; a richer one loses; someone exactly in between stays put. Bumps flatten out, sharp bumps fastest. That is the heat equation.</p>
 </div>
 <h3>2.2 The wave equation</h3>
+<details class="idea"><summary>What is this? (wave equation)</summary><div><p>Pluck a guitar string. Wherever the string is bent, the tension pulls that bit back towards straight. But the string has mass, so it does not just settle: it speeds up, shoots past straight and bends the other way, again and again. The wave equation says the same "bend causes change" rule as heat, except the bend now causes an <b>acceleration</b>, so the string vibrates instead of quietly flattening.</p></div></details>
 <p>The sideways displacement (deformation) of a string also depends on position and time, \(u(x,t)\), and it satisfies</p>
 \[\pd{^2u}{t^2}=c^2\,\pd{^2u}{x^2}.\]
 <p class="word"><b>In words:</b> the vertical acceleration of a point of the string = \(c^2\) × the curvature of the string there.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\pd{^2u}{t^2}\)</dt><dd>follow one bead on the string: how quickly its up-and-down speed is changing (its acceleration).</dd>
+<dt>\(\pd{^2u}{x^2}\)</dt><dd>how sharply the string is bent at that bead. Bent down (a crest) means the tension pulls it down; bent up (a trough) pulls it up.</dd>
+<dt>\(c^2\)</dt><dd>tight, light strings snap back hard: a large \(c^2\) means fast waves and a high note.</dd>
+</dl></div>
 <p>Here \(c^2\) is called the <b>rigidity</b> of the string; it depends on its material and how tightly it is stretched (physically \(c^2=\) tension ÷ mass per unit length, and \(c\) is the speed at which waves travel along the string). May papers say e.g. "a string with rigidity 900": that means \(c^2=900\), \(c=30\).</p>
 <p>The difference from the heat equation is the <b>second</b> time derivative: curvature produces an <b>acceleration</b>, not a velocity. A bent string is pulled straight but overshoots (it has momentum), so it oscillates instead of just flattening.</p>
 <div class="figure">
@@ -285,7 +337,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
   <div class="readout" id="cv-out"></div>
   <p class="cap">The curve is \(u(x)\) at one instant (\(c^2=1\)). Arrows show \(u_{xx}\), the curvature: red where the curve bends down (arrow down), teal where it bends up (arrow up). For the heat equation the arrows are the <b>velocity</b> \(u_t\) of the temperature; for the wave equation they are the <b>acceleration</b> \(u_{tt}\) of the string. On the straight line all arrows vanish: a linear temperature profile is a steady state (used in §5).</p>
 </div>
-<p>For both equations the unknown \(u\) depends on <b>two</b> independent variables, \(x\) (position) and \(t\) (time). A differential equation with more than one independent variable is called a <b>partial differential equation</b> (PDE); its derivatives are partial derivatives.</p>
+<details class="idea"><summary>What is this? (PDE, boundary and initial conditions)</summary><div><p>To predict what a rod or string will do you need three things, like the three things you need to replay a game of snooker: the <b>rules</b> of motion (the PDE), what happens at the <b>cushions</b> (the ends of the rod: the boundary conditions) and where the balls <b>start</b> (the initial conditions). Give all three and the future is fixed; leave one out and many futures are possible.</p></div></details>
+<p>For both equations the unknown \(u\) depends on <b>two</b> independent variables, \(x\) (position) and \(t\) (time). A differential equation with more than one independent variable is called a <b>partial differential equation</b> (PDE); its derivatives are partial derivatives (the rate of change in one variable with the other held fixed).</p>
 <div class="box def"><span class="tag">Definitions used from now on</span>
 <ul class="list">
 <li><b>Boundary conditions (BC)</b>: what happens at the two <b>ends</b> \(x=0\) and \(x=L\), for all times \(t\gt0\). Example: \(u(0,t)=0\) (left end held at temperature 0, or string tied down).</li>
@@ -301,13 +354,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </ol>
 <p>The wave equation comes the same way from Newton's second law: the net vertical force from the tension \(\tau\) on a short piece is \(\approx\tau u_{xx}\Delta x\), its mass is \(\mu\Delta x\), so \(\mu u_{tt}=\tau u_{xx}\) and \(c^2=\tau/\mu\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> explain the heat equation as "temperature rises where neighbours are hotter on average" and the wave equation as "bend causes acceleration"; say what \(c^2\) means for each; write down a boundary value problem (PDE, BCs, ICs) from a word description.</p>
 </section>
-
 <section id="s3">
-<h2><span class="n">3</span>Separation of variables <span class="muted small">(handout §2.3, p. 4)</span></h2>
+<h2><span class="n">3</span>Separation of variables <span class="muted small">(handout §2.3, p. 4)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Some special starting shapes behave very simply: a guitar string plucked into exactly one smooth arch keeps that arch and just swings up and down; a rod warmed into exactly one sine-shaped hump keeps that hump and just fades. Each such <b>pure shape</b> decays or vibrates on its own, like a single pure note. Separation of variables is the hunt for these pure shapes; once you have them, any starting state is built as a mix of them, like a chord made of notes (Chapter 4).</p></div></details>
 <p>To solve the PDEs we apply the method called <b>separation of variables</b>. It means we look for solutions that split into the product of two functions, each of only one independent variable:</p>
 \[u(x,t)=F(x)\,G(t).\]
 <p class="word"><b>In words:</b> a fixed shape \(F(x)\) along the rod or string, whose size is scaled up and down in time by \(G(t)\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(F(x)\)</dt><dd>the shape drawn along the rod: it never changes.</dd>
+<dt>\(G(t)\)</dt><dd>a volume knob turned in time: it only makes the whole shape bigger, smaller or upside down.</dd>
+<dt>\(F(x)\,G(t)\)</dt><dd>every snapshot of the rod is the same shape, just rescaled (see the 3D figure below).</dd>
+</dl></div>
 <p>\(F(x)\) depends only on \(x\), and \(G(t)\) depends only on \(t\). Then the partial derivatives become ordinary derivatives of the single factors:</p>
 \[\begin{gathered}u_t=F(x)G'(t),\quad u_{tt}=F(x)G''(t),\\ u_x=F'(x)G(t),\quad u_{xx}=F''(x)G(t).\end{gathered}\]
 <p class="word"><b>In words:</b> differentiating in \(t\) only touches \(G\); differentiating in \(x\) only touches \(F\).</p>
@@ -316,6 +375,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p>The left side involves only \(x\), the right side only \(t\). They can be equal for <b>all</b> \(x\) and <b>all</b> \(t\) only if both are the same constant, call it \(k\) (the <b>separation constant</b>):</p>
 \[\frac{F''(x)}{F(x)}=\frac{G'(t)}{c^2G(t)}=k.\]
 <p class="word"><b>In words:</b> one PDE has become two ODEs: \(F''=kF\) (Case 2 of the ODE table) and \(G'=kc^2G\) (Case 1).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\dfrac{F''}{F}\)</dt><dd>how strongly the shape bends compared with its own height. For a pure shape this ratio is the same at every point of the rod.</dd>
+<dt>\(\dfrac{G'}{c^2G}\)</dt><dd>how fast the size grows or shrinks compared with the size itself (divided by \(c^2\)).</dd>
+<dt>\(k\)</dt><dd>the one number that ties the two together: "bend relative to height" sets "fade relative to size". A shape that bends back towards zero (\(k\lt0\)) is a shape that fades (\(G'\lt0\) when \(G\gt0\)).</dd>
+</dl></div>
 <details><summary>Show the calculation: why "a function of \(x\) = a function of \(t\)" forces a constant</summary><div>
 <ol class="steps">
 <li>Suppose \(P(x)=Q(t)\) for every \(x\) in \([0,L]\) and every \(t\gt0\).</li>
@@ -330,20 +394,42 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
   <label>\(n\) <input type="range" id="sep-n" min="1" max="3" step="1" value="1"></label></div>
   <p class="cap">Drag to rotate. The surface is \(u(x,t)=F(x)G(t)\) over \(0\le x\le1\) (along the rod) and \(0\le t\le T\) (time runs towards the back). The coloured lines are snapshots \(u(x,t_0)\) at several times: every snapshot is the <b>same shape</b> \(F(x)=\sin n\pi x\), only scaled by \(G(t_0)\). For the heat equation the scale decays (\(G=e^{-n^2\pi^2t}\)); for the wave equation it oscillates (\(G=\cos n\pi t\)) and the shape flips over and back.</p>
 </div>
+<h3>The recipe</h3>
+<ol class="steps proc">
+<li><b>Do:</b> assume \(u(x,t)=F(x)G(t)\). <span class="why">You are looking for a pure shape that only changes size.</span></li>
+<li><b>Do:</b> substitute into the PDE, using \(u_t=FG'\), \(u_{xx}=F''G\) (and \(u_{tt}=FG''\) for waves). <span class="why">Watching in time only sees the size change; looking along the rod only sees the shape.</span></li>
+<li><b>Do:</b> divide by \(c^2FG\) so that everything with \(x\) is on one side and everything with \(t\) on the other. <span class="why">This sorts the "shape" facts from the "size" facts.</span></li>
+<li><b>Do:</b> set both sides equal to a constant \(k\) and write the two ODEs, one for \(F\), one for \(G\). <span class="why">A fact about the shape alone can equal a fact about time alone only if both are one fixed number.</span></li>
+<li><b>Do:</b> turn each boundary condition into a condition on \(F\) (e.g. \(u(0,t)=0\) for all \(t\) gives \(F(0)=0\)). <span class="why">An end held at 0 for all time means the shape itself must be 0 there, since the size \(G\) is not always 0.</span></li>
+<li><b>Do:</b> solve the \(F\) equation first, trying \(k=0\), \(k\gt0\), \(k\lt0\) with the ODE table (§1), and keep the cases that are not identically zero; then solve the \(G\) equation with the allowed \(k\). <span class="why">The ends decide which shapes fit; each allowed shape then fixes its own fade (or vibration) rate.</span></li>
+<li><b>Do:</b> add up all the pure solutions and choose their sizes to match the initial condition (worked out in full in §4). <span class="why">A general start is a mix of pure shapes, and each part then evolves on its own.</span></li>
+</ol>
+<details class="idea"><summary>What is this? (superposition)</summary><div><p>Two people playing different notes on two guitars produce a sound that is just the two notes together; neither disturbs the other. In the same way, two temperature patterns on a rod with ice at both ends evolve side by side without interfering, so the total temperature is the sum of the separate ones. This "adding solutions gives a solution" is what lets a mix of pure shapes describe any start.</p></div></details>
 <p><b>But one product is rarely enough.</b> A starting temperature like \(f(x)=x(1-x)\) is not one shape scaled. The way out (§4, Step 5): the heat and wave equations are <b>linear</b> and <b>homogeneous</b> (every term contains \(u\) exactly once, to the first power), so a sum of solutions is again a solution. This is the <b>principle of superposition</b>. We add up infinitely many separated solutions and choose their sizes to match the starting state, using a Fourier series.</p>
 <div class="box warn"><span class="tag">Careful</span>
 <p>Superposition works only if the boundary conditions are also homogeneous (zero), e.g. \(u(0,t)=0\): then a sum of functions that are 0 at the end is still 0 there. A condition like \(u(0,t)=10\) is not preserved by adding (\(10+10=20\)). This is why ends held at non-zero temperatures need the extra trick of §5 (Example 3.3).</p>
 </div>
+<p class="cannow"><b>You can now:</b> turn the heat or wave equation into two ODEs by assuming \(u=F(x)G(t)\) and explain why both sides equal a constant; turn zero-end conditions into \(F(0)=F(L)=0\); say when superposition is allowed and when it fails.</p>
 </section>
-
 <section id="s4">
-<h2><span class="n">4</span>Heat equation with both ends held at zero <span class="muted small">(handout §3–§3.1, pp. 4–8)</span></h2>
+<h2><span class="n">4</span>Heat equation with both ends held at zero <span class="muted small">(handout §3–§3.1, pp. 4–8)</span> <span class="mins">~13 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Take a warm metal rod and press each end against a big block of ice. Heat drains out through both ends until the whole rod is at 0. The surprise is how it drains: any starting temperature can be split into sine-shaped humps (one hump, two humps, three…), each of which keeps its shape and simply fades, and the wigglier humps fade much faster. So the rod first loses its sharp details and soon looks like one smooth arch shrinking away.</p></div></details>
 <p>Consider a one-dimensional (thin) rod of length \(L\) whose side surface is <b>insulated</b> (wrapped, so no heat escapes through the sides; heat can only flow along the rod and in or out at the ends). Given the <b>initial temperature distribution</b> along the rod and the conditions at its ends, we want to find how the temperature varies with position and with time. The heat equation models the flow of heat in the rod, and its solution \(u(x,t)\) is the temperature at position \(x\) and time \(t\). The set-up is always the same:</p>
 <ul class="list">
 <li>a rod from \(x=0\) to \(x=L\) (as in the left picture of §2);</li>
 <li>governing equation \(\pd ut=c^2\pd{^2u}{x^2}\), with \(c^2\) the coefficient of heat conduction of the material.</li>
 </ul>
 <p>The simplest case: both ends are kept at a fixed temperature of zero (for example, each end pressed against a large block of ice at 0 °C).</p>
+<h3>The method in one list</h3>
+<ol class="steps proc">
+<li><b>Do:</b> write the boundary value problem: PDE \(u_t=c^2u_{xx}\), BCs \(u(0,t)=u(L,t)=0\), IC \(u(x,0)=f(x)\). <span class="why">The rule for heat, the two ice blocks, and the starting temperature: the three things that fix the future (§2).</span></li>
+<li><b>Do:</b> separate: put \(u=F(x)G(t)\) to get \(F''=kF\) and \(G'=kc^2G\); turn the BCs into \(F(0)=F(L)=0\). <span class="why">You are hunting for pure shapes that only fade; such a shape must itself be 0 at both icy ends.</span></li>
+<li><b>Do:</b> choose the sign of the constant: try \(k=0\) and \(k\gt0\), show each forces \(F\equiv0\), and keep \(k=-p^2\lt0\). <span class="why">A straight line or an exponential cannot leave 0 and come back to 0; only a swinging (sine) shape can fit between two zeros (§1 figure).</span></li>
+<li><b>Do:</b> apply the BC at \(x=L\): \(\sin pL=0\), so \(p=\frac{n\pi}{L}\) and \(F_n=\sin\frac{n\pi x}{L}\), \(n=1,2,3,\dots\) <span class="why">Only a whole number of half-waves fits exactly between the two ice blocks.</span></li>
+<li><b>Do:</b> solve the time equation, \(G_n=e^{-(nc\pi/L)^2t}\), and multiply: \(u_n=F_nG_n\). <span class="why">Each hump fades on its own; a wigglier hump differs more from its neighbours' average, so it fades faster (rate grows like \(n^2\)).</span></li>
+<li><b>Do:</b> superpose: \(u=\sum_n B_n^*\sin\frac{n\pi x}{L}e^{-(nc\pi/L)^2t}\). <span class="why">Every hump is 0 at the ends, so the sum still is: the mix obeys the same rule and the same ice blocks (§3).</span></li>
+<li><b>Do:</b> match the IC with the half-range sine series: \(B_n^*=\frac2L\int_0^Lf(x)\sin\frac{n\pi x}{L}dx\). <span class="why">At \(t=0\) nothing has faded yet, so the mix must equal the starting temperature; \(B_n^*\) is how much of hump \(n\) it contains.</span></li>
+</ol>
 <div class="box eg"><span class="tag">Example 3.1</span>
 <p><b>A rod of length \(L\) has its surface insulated. Both ends are kept at zero temperature. The initial temperature distribution is \(f(x)\). Define the related boundary value problem with the necessary initial and boundary conditions. Hence determine the temperature distribution \(u(x,t)\) of this rod.</b></p>
 <p><b>The settings.</b></p>
@@ -352,11 +438,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 
 <p><b>Step 1: separate the variables.</b> Assume \(u(x,t)=F(x)G(t)\). Then \(u_t=c^2u_{xx}\) becomes</p>
 \[\begin{gathered}F(x)G'(t)=c^2F''(x)G(t)\\ \Rightarrow\ \frac{F''(x)}{F(x)}=\frac{G'(t)}{c^2G(t)}=k,\end{gathered}\]
-<p>with \(k\) a constant (§3).</p>
+<p>with \(k\) a constant (§3).<span class="why">We look for one pure shape \(F\) whose size \(G\) changes in time.</span></p>
 
 <p><b>Step 2: solve \(F''=kF\) with the boundary conditions.</b> The BCs say \(F(0)G(t)=0\) and \(F(L)G(t)=0\) for all \(t\). We want \(G\not\equiv0\) (otherwise \(u\equiv0\)), so</p>
 \[F(0)=0,\qquad F(L)=0.\]
-<p>The ODE table gives three cases.</p>
+<p>The ODE table gives three cases.<span class="why">The question is: which shapes can sit between two blocks of ice, i.e. are 0 at both ends without being 0 everywhere?</span></p>
 <div class="cases">
 <div><b>Case (1): \(k=0\)</b>\(F''=0\Rightarrow F=Ax+B\). \(F(0)=0\Rightarrow B=0\); \(F(L)\) \(=0\) \(\Rightarrow AL\) \(=0\) \(\Rightarrow A\) \(=0\). So \(F\equiv0\): the <b>trivial solution</b>, no physical meaning.</div>
 <div><b>Case (2): \(k=p^2\gt0\)</b>\(F=Ae^{px}+Be^{-px}\). \(F(0)=0\Rightarrow A+B=0\); \(F(L)\) \(=0\) \(\Rightarrow Ae^{pL}+Be^{-pL}\) \(=0\). Only solution \(A=B=0\): trivial again.</div>
@@ -370,25 +456,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li>Hence \(A=0\), and then \(B=-A=0\).</li>
 </ol>
 <p>Physically: an exponential shape cannot come back to 0 after leaving it, so it cannot be 0 at both ends.</p></div></details>
-<p>In Case (3), \(\sin pL=0\) means \(pL\) is a multiple of \(\pi\):</p>
+<p>In Case (3), \(\sin pL=0\) means \(pL\) is a multiple of \(\pi\):<span class="why">The sine starts at 0 at the left end and must land back on 0 exactly at the right end, after a whole number of half-waves.</span></p>
 \[pL=n\pi\ \Rightarrow\ p=\frac{n\pi}{L},\quad n=1,2,3,\dots\]
 \[F_n(x)=B_n\sin\frac{n\pi x}{L}.\]
 <p class="word"><b>In words:</b> only whole numbers of half-waves fit between two ends held at zero: one half-wave (\(n=1\)), two (\(n=2\)), …</p>
 <p>(\(n=0\) gives \(F\equiv0\), and negative \(n\) give the same shapes with a sign change, so \(n=1,2,3,\dots\) is enough.) In the language of linear algebra, the allowed values \(k=-\big(\frac{n\pi}L\big)^2\) are called <b>eigenvalues</b> and the shapes \(F_n\) <b>eigenfunctions</b> (Beyond the handouts: just names).</p>
 
-<p><b>Step 3: solve the time equation.</b> With \(k=-p^2\), \(p=\dfrac{n\pi}L\):</p>
+<p><b>Step 3: solve the time equation.</b> With \(k=-p^2\), \(p=\dfrac{n\pi}L\):<span class="why">Now the size of each allowed shape: since the shape bends back towards 0, the heat equation makes it fade.</span></p>
 \[\begin{aligned}\frac{G'(t)}{c^2G(t)}&=-p^2\\ \Rightarrow\ G_n'(t)&=-\Big(\frac{nc\pi}{L}\Big)^2G_n(t)\\ \Rightarrow\ G_n(t)&=C_ne^{-\left(\frac{nc\pi}{L}\right)^2t}.\end{aligned}\]
 <p class="word"><b>In words:</b> Case 1 of the ODE table with a negative rate: mode \(n\) decays exponentially, and the decay rate grows like \(n^2\).</p>
 
 <p><b>Step 4: combine \(F\) and \(G\).</b></p>
 \[\begin{aligned}u_n(x,t)&=F_n(x)G_n(t)\\&=B_n^*\sin\frac{n\pi x}{L}\,e^{-\left(\frac{nc\pi}{L}\right)^2t},\end{aligned}\]
-<p>where the two constants are merged into one, \(B_n^*=B_n\cdot C_n\). Each \(u_n\) satisfies the PDE and both BCs.</p>
+<p>where the two constants are merged into one, \(B_n^*=B_n\cdot C_n\). Each \(u_n\) satisfies the PDE and both BCs.<span class="why">This is one pure solution of §3: a fixed sine hump times its own fading factor.</span></p>
 
 <p><b>Step 5: superposition, then the initial condition.</b> By the principle of superposition (§3), if each \(u_n(x,t)\) is a solution then so is their sum:</p>
 \[\begin{aligned}u(x,t)&=\sum_{n=1}^{\infty}u_n(x,t)\\&=\sum_{n=1}^{\infty}B_n^*\sin\frac{n\pi x}{L}\,e^{-\left(\frac{nc\pi}{L}\right)^2t}.\end{aligned}\]
-<p>Now impose the IC \(u(x,0)=f(x)\). At \(t=0\) every exponential equals 1:</p>
+<p>Now impose the IC \(u(x,0)=f(x)\). At \(t=0\) every exponential equals 1:<span class="why">At the start no hump has faded yet, so the mix of humps must reproduce the starting temperature exactly.</span></p>
 \[u(x,0)=\sum_{n=1}^{\infty}B_n^*\sin\frac{n\pi x}{L}=f(x).\]
 <p class="word"><b>In words:</b> the starting temperature must be written as a sum of the allowed sine shapes: a <b>Fourier sine series</b> on \(0\le x\le L\) (the half-range sine series of <a href="note-C4.html#s5">Chapter 4 §5</a>), with Fourier coefficients \(B_n^*\).</p>
+<details class="idea"><summary>What is this? (orthogonality)</summary><div><p>To find how far east a point lies, you take its position and "measure along east"; north does not get in the way, because north and east are perpendicular. The sine humps behave the same way: measuring a temperature profile "along" hump 3 ignores humps 1, 2, 4… completely. That is what lets us pull out the amount of each hump one at a time, like picking out one note from a chord by listening for exactly that note (Chapter 4).</p></div></details>
 <p>To find \(B_n^*\) we use that the sine functions are <b>orthogonal</b> (the integral of the product of two different ones is zero, the function version of perpendicular vectors):</p>
 \[\int_0^L\sin\frac{n\pi x}{L}\sin\frac{m\pi x}{L}dx=\begin{cases}0,&m\ne n\\ \dfrac L2,&m=n.\end{cases}\]
 <p class="word"><b>In words:</b> two different sine shapes cancel out on average over the rod; a sine shape times itself averages to \(\tfrac12\), so integrating over length \(L\) gives \(\tfrac L2\).</p>
@@ -408,13 +495,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 <p>Multiply both sides of \(f(x)=\sum_nB_n^*\sin\frac{n\pi x}L\) by \(\sin\frac{m\pi x}{L}\) and integrate from 0 to \(L\):</p>
 \[\begin{aligned}&\int_0^Lf(x)\sin\frac{m\pi x}{L}dx\\&=\sum_{n=1}^\infty B_n^*\int_0^L\sin\frac{n\pi x}{L}\sin\frac{m\pi x}{L}dx.\end{aligned}\]
-<p>By orthogonality only the term with \(n=m\) survives, and it equals \(B_m^*\cdot\frac L2\). Renaming \(m\) as \(n\):</p>
+<p><span class="why">Multiplying by hump \(m\) and integrating "listens" for hump \(m\): every other hump has zero overlap with it and drops out.</span> By orthogonality only the term with \(n=m\) survives, and it equals \(B_m^*\cdot\frac L2\). Renaming \(m\) as \(n\):</p>
 \[B_n^*=\frac2L\int_0^Lf(x)\sin\frac{n\pi x}{L}dx.\]
 <p class="word"><b>In words:</b> the amount of shape \(n\) in the starting temperature = \(\frac2L\) × the overlap integral of \(f\) with that shape.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\sin\frac{n\pi x}{L}\) inside the integral</dt><dd>the "test hump" you listen with: shape \(n\).</dd>
+<dt>\(\int_0^Lf(x)\sin\frac{n\pi x}{L}dx\)</dt><dd>the overlap of the starting temperature with hump \(n\) along the whole rod: large when \(f\) looks like that hump, zero when it contains none of it.</dd>
+<dt>\(\frac2L\)</dt><dd>divides by \(\frac L2\), the overlap of hump \(n\) with itself, so that a start that is exactly \(\sin\frac{n\pi x}{L}\) gives \(B_n^*=1\).</dd>
+</dl></div>
 
 <p><b>Step 6: the solution.</b></p>
 <div class="boxed">\[\begin{aligned}u(x,t)&=\sum_{n=1}^{\infty}B_n^*\sin\frac{n\pi x}{L}e^{-\left(\frac{nc\pi}{L}\right)^2t},\\ B_n^*&=\frac2L\int_0^Lf(x)\sin\frac{n\pi x}{L}dx.\end{aligned}\]</div>
 <p class="word"><b>In words:</b> split the starting temperature into sine shapes; each shape keeps its form and fades away at its own rate \(e^{-(nc\pi/L)^2t}\). As \(t\to\infty\) everything tends to 0, the temperature of the ends.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(B_n^*\)</dt><dd>how much of hump \(n\) the starting temperature contains.</dd>
+<dt>\(\sin\frac{n\pi x}{L}\)</dt><dd>hump \(n\): \(n\) half-waves along the rod, 0 at both icy ends.</dd>
+<dt>\(e^{-\left(\frac{nc\pi}{L}\right)^2t}\)</dt><dd>how much of hump \(n\) is left at time \(t\). Its rate is \(n^2\) times that of hump 1: hump 3 fades 9 times as fast, hump 10 a hundred times as fast. A better conductor (larger \(c\)) or a shorter rod (smaller \(L\)) fades every hump faster.</dd>
+<dt>\(\sum_{n=1}^\infty\)</dt><dd>the rod's temperature is all the humps added up, each fading on its own clock.</dd>
+</dl></div>
 </div>
 <div class="figure">
   <p class="ttl">Watch the rod cool: \(u(x,t)\) for ends held at 0</p>
@@ -429,14 +527,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 
 <div class="box eg"><span class="tag">Worked example A (written for these notes): the start is already a sum of modes</span>
 <p><b>Solve \(u_t=u_{xx}\), \(0\lt x\lt\pi\), with \(u(0,t)=u(\pi,t)=0\) and \(u(x,0)=3\sin x-\sin4x\).</b></p>
-<p>Here \(L=\pi\), \(c=1\), so the allowed shapes are \(\sin\big(\frac{n\pi}{\pi}x\big)=\sin nx\) with time factors \(e^{-n^2t}\). The IC is already a sine series with \(B_1^*=3\), \(B_4^*=-1\) and all other \(B_n^*=0\) (by orthogonality the integrals would give exactly this, no integration needed). So</p>
+<p>Here \(L=\pi\), \(c=1\), so the allowed shapes are \(\sin\big(\frac{n\pi}{\pi}x\big)=\sin nx\) with time factors \(e^{-n^2t}\).<span class="why">Rod length \(\pi\) means hump \(n\) is simply \(\sin nx\), and its fade rate is \((nc\pi/L)^2=n^2\).</span> The IC is already a sine series with \(B_1^*=3\), \(B_4^*=-1\) and all other \(B_n^*=0\) (by orthogonality the integrals would give exactly this, no integration needed).<span class="why">The start is already a mix of humps 1 and 4; each one then just fades on its own clock, hump 4 sixteen times as fast.</span> So</p>
 <p class="boxed">\(u(x,t)=3e^{-t}\sin x-e^{-16t}\sin4x\).</p>
 <p class="word"><b>In words:</b> when \(f\) is a combination of the allowed shapes, just read off the coefficients and attach each shape's own decay factor. Exam type C5.1 often looks like this.</p>
 </div>
 <div class="box eg"><span class="tag">Worked example B (written for these notes): a triangular start</span>
 <p><b>Solve \(u_t=u_{xx}\), \(0\lt x\lt\pi\), \(u(0,t)=u(\pi,t)=0\), with \(u(x,0)=x\) for \(0\le x\le\frac\pi2\) and \(u(x,0)=\pi-x\) for \(\frac\pi2\le x\le\pi\).</b></p>
-<p>\(L=\pi\): \(B_n^*\) \(=\dfrac2\pi\Big[\displaystyle\int_0^{\pi/2}x\sin nx\,dx\) \(+\:\displaystyle\int_{\pi/2}^\pi(\pi-x)\sin nx\,dx\Big]\) \(=\dfrac{4\sin(n\pi/2)}{\pi n^2}\).</p>
-<p>\(\sin\frac{n\pi}2\) is \(1,0,-1,0,1,\dots\) for \(n=1,2,3,4,5,\dots\), so only odd \(n\) appear, with alternating signs:</p>
+<p>\(L=\pi\): \(B_n^*\) \(=\dfrac2\pi\Big[\displaystyle\int_0^{\pi/2}x\sin nx\,dx\) \(+\:\displaystyle\int_{\pi/2}^\pi(\pi-x)\sin nx\,dx\Big]\) \(=\dfrac{4\sin(n\pi/2)}{\pi n^2}\).<span class="why">The triangle has a corner, so it is not one hump: we must "listen" for each hump with the coefficient formula. The integral splits at \(\frac\pi2\) because \(f\) has two pieces.</span></p>
+<p>\(\sin\frac{n\pi}2\) is \(1,0,-1,0,1,\dots\) for \(n=1,2,3,4,5,\dots\), so only odd \(n\) appear, with alternating signs:<span class="why">The \(1/n^2\) sizes and \(e^{-n^2t}\) fades mean the corner (made of the high humps) rounds off almost at once; by \(t=0.5\) the \(n=3\) term is already about 0.2% of the \(n=1\) term.</span></p>
 <p class="boxed">\(u(x,t)\) \(=\dfrac4\pi\Big(e^{-t}\sin x\) \(-\:\dfrac{e^{-9t}\sin3x}{9}\) \(+\:\dfrac{e^{-25t}\sin5x}{25}-\cdots\Big)\)</p>
 <details><summary>Show the calculation: the two integrals</summary><div>
 <ol class="steps">
@@ -453,34 +551,50 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 \[\begin{aligned}u&=\sum_{n\ge1}B_n\sin\frac{n\pi x}{L}\,e^{-(nc\pi/L)^2t},\\ B_n&=\frac2L\int_0^Lf(x)\sin\frac{n\pi x}{L}\,dx.\end{aligned}\]
 <p>Useful sine coefficients on \([0,L]\): \(f=1\): \(\dfrac{2(1-(-1)^n)}{n\pi}\) (\(\tfrac{4}{n\pi}\), odd \(n\)); \(f=x\): \(\dfrac{2L(-1)^{n+1}}{n\pi}\); \(f=x(L-x)\): \(\dfrac{4L^2(1-(-1)^n)}{n^3\pi^3}\) (\(\tfrac{8L^2}{n^3\pi^3}\), odd \(n\)). In the exam you must still show the separation and the three cases: the formula sheet does not give these results.</p>
 </div>
+<p class="cannow"><b>You can now:</b> solve the heat equation for a rod with both ends at zero (separate, rule out \(k\ge0\), find \(p=n\pi/L\), solve for \(G\), superpose, match the start with a half-range sine series); read off the answer directly when the start is already a sum of sines; explain why the wiggly humps die out first.</p>
 </section>
 
 <section id="s5">
-<h2><span class="n">5</span>Heat equation: other end conditions <span class="muted small">(handout §3.2, pp. 8–14)</span></h2>
-<p>The ends of a rod can be treated in different ways, and each gives a different boundary condition. The interior always obeys the same heat equation; only Steps 2 and 5 of §4 change.</p>
+<h2><span class="n">5</span>Heat equation: other end conditions <span class="muted small">(handout §3.2, pp. 8–14)</span> <span class="mins">~22 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Same metal rod as §4: inside it, hot bumps flatten and cold dips fill in. What changes is what the <b>ends</b> touch (ice, a heater, or a cap that lets no heat through). Each choice gives a different rule at the end, and that rule decides which pure shapes are allowed.</p></div></details>
+<p>So the interior always obeys the same heat equation; only Steps 2 and 5 of §4 (the allowed shapes, and how the start is built from them) change.</p>
 <div class="figure">
   <p class="ttl">Four kinds of rod ends</p>
   <canvas class="plot" id="f-rods" style="aspect-ratio:16/10" aria-label="Four rods: both ends at zero; left end at zero and right end insulated; ends at fixed temperatures u1 and u2; both ends insulated"></canvas>
   <p class="cap">Each rod runs from \(x=0\) (left) to \(x=L\) (right), with its side surface insulated (hatched). An end held at a fixed temperature touches a reservoir (ice at 0 °C, or a heat source); its condition is on \(u\) itself. An insulated end is capped (no heat can pass); its condition is on the slope \(u_x\). Each end condition is written under its end.</p>
 </div>
+<details class="idea"><summary>What is this? (insulated end)</summary><div><p>Put a thick cap on one end of the rod, like the lid on a vacuum flask. Heat only flows from hot to cold, so for no heat to cross the cap, the temperature just inside must equal the temperature at the end: the graph arrives there <b>flat</b>. The cap fixes the slope, not how hot the end is.</p></div></details>
 <div class="box def"><span class="tag">Insulated end</span>
 <p>An end is <b>insulated</b> when no heat can flow through it. By Fourier's law (§2 Beyond box) the heat flow is proportional to the temperature slope \(u_x\), so an insulated end at \(x=L\) means</p>
 \[u_x(L,t)=0,\quad\text{namely}\quad\pd ux\Big|_{x=L}=0.\]
 <p class="word"><b>In words:</b> at an insulated end the heat flux is zero, so the temperature profile arrives there flat (horizontal tangent).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(u_x(L,t)\)</dt><dd>the slope of the temperature graph at the right end, at time \(t\): how fast the temperature changes as you step along the rod there.</dd>
+<dt>\(=0\)</dt><dd>the graph is level at the end at every moment (its height there may still change), so no heat crosses the cap.</dd>
+</dl></div>
 
 <h3>One end at zero, the other insulated</h3>
+<details class="idea"><summary>What is this?</summary><div><p>The left end sits in ice, the right end is capped. Heat can only leave through the ice, so the whole rod slowly drains out of its left end. The pure shapes that fit are the ones that are <b>zero at the left</b> and <b>flat at the right</b>: a quarter of a sine wave, three quarters, five quarters, and so on. Each such shape fades on its own, exactly as in §4.</p></div></details>
+<p>The method is the §4 recipe with one change: each end condition is turned into a condition on the shape \(F\). Here is the recipe for any mix of zero and insulated ends.</p>
+<ol class="steps proc">
+<li><b>Do:</b> write the PDE, one BC per end and the IC; separate \(u=F(x)G(t)\), so \(\dfrac{F''}{F}=\dfrac{G'}{c^2G}=k\). <span class="why">We look for pure shapes \(F\) that keep their form and only shrink over time \(G\).</span></li>
+<li><b>Do:</b> turn each BC into a condition on \(F\): an end held at 0 gives \(F=0\) there; an insulated end gives \(F'=0\) there. <span class="why">\(G(t)\) is not zero, so the shape itself must be zero (iced end) or flat (capped end) at that end.</span></li>
+<li><b>Do:</b> try \(k=0\), \(k=p^2\gt0\) and \(k=-p^2\lt0\); keep only cases with a non-zero \(F\), and read off the allowed \(p\). <span class="why">Only shapes that fit both ends survive; a flat line survives only when both ends are capped.</span></li>
+<li><b>Do:</b> solve for \(G\), multiply, add up all modes and match the starting graph using orthogonality. <span class="why">The starting temperature is built out of allowed shapes; each shape then fades at its own rate.</span></li>
+</ol>
+<div class="box beyond"><span class="tag">Beyond the handouts · shape lookup</span><p>Ends (left, right) → allowed shapes: (0, 0) → \(\sin\frac{n\pi x}L\), \(n\ge1\); (0, insulated) → \(\sin\frac{(2n+1)\pi x}{2L}\), \(n\ge0\); (insulated, insulated) → \(\cos\frac{n\pi x}L\), \(n\ge0\); (insulated, 0) → \(\cos\frac{(2n+1)\pi x}{2L}\), \(n\ge0\). Still derive them with the three cases in an exam.</p></div>
 <div class="box eg"><span class="tag">Example 3.2</span>
 <p><b>A rod of length \(L\) has its surface insulated. One end is kept at zero temperature, whereas the other end is insulated. The initial temperature distribution is \(f(x)\). Define the related boundary value problem with the necessary initial and boundary conditions. Hence determine the temperature distribution \(u(x,t)\) of this rod.</b></p>
 \[\begin{aligned}&\text{PDE:}&&u_t=c^2u_{xx}\\&\text{BC:}&&u(0,t)=0,\quad u_x(L,t)=0\\&\text{IC:}&&u(x,0)=f(x)\end{aligned}\]
 <p><b>Step 1.</b> Exactly as in §4: \(u=F(x)G(t)\) gives \(\dfrac{F''}{F}=\dfrac{G'}{c^2G}=k\).</p>
-<p><b>Step 2.</b> The BCs become \(F(0)=0\) and \(F'(L)=0\) (since \(u_x=F'(x)G(t)\)).</p>
+<p><b>Step 2.</b> The BCs become \(F(0)=0\) and \(F'(L)=0\) (since \(u_x=F'(x)G(t)\)). <span class="why">Iced left end: shape is zero there. Capped right end: shape is flat there.</span></p>
 <div class="cases">
 <div><b>Case (1): \(k=0\)</b>\(F=Ax+B\). \(F(0)=0\Rightarrow B=0\); \(F'(L)=A=0\). Trivial.</div>
 <div><b>Case (2): \(k=p^2\gt0\)</b>\(F=Ae^{px}+Be^{-px}\). \(F(0)=0\Rightarrow A+B=0\); \(F'(L)\) \(=Ape^{pL}-Bpe^{-pL}\) \(=0\). Then \(Ap(e^{pL}+e^{-pL})=0\), so \(A=B=0\). Trivial.</div>
 <div><b>Case (3): \(k=-p^2\lt0\)</b>\(F=A\cos px+B\sin px\). \(F(0)=0\Rightarrow A=0\); \(F'(L)\) \(=-pA\sin pL\) \(+\:pB\cos pL\) \(=pB\cos pL\) \(=0\).</div>
 </div>
-<p>A non-trivial solution needs \(\cos pL=0\), so \(pL\) is an <b>odd</b> multiple of \(\frac\pi2\):</p>
+<p>A non-trivial solution needs \(\cos pL=0\), so \(pL\) is an <b>odd</b> multiple of \(\frac\pi2\): <span class="why">the sine must reach a peak or trough (where it is flat) exactly at the capped end.</span></p>
 \[\begin{gathered}pL=\frac{2n+1}{2}\pi\ \Rightarrow\\ F_n(x)=B_n\sin\frac{(2n+1)\pi x}{2L},\quad n=0,1,2,\dots\end{gathered}\]
 <p class="word"><b>In words:</b> the shape must be 0 at the left end and flat at the right end: a quarter-wave, three quarter-waves, five quarter-waves, … (note \(n\) starts at 0 here).</p>
 <p><b>Step 3.</b> \(\dfrac{G'}{c^2G}=-p^2\) with \(p=\dfrac{2n+1}{2L}\pi\): \(G_n(t)=C_n\,e^{-\left(\frac{2n+1}{2L}c\pi\right)^2t}\).</p>
@@ -493,11 +607,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li>\(m\ne n\): \((\alpha-\beta)L=(n-m)\pi\) and \((\alpha+\beta)L=(n+m+1)\pi\), both whole multiples of \(\pi\), so \(\int_0^L\cos(\alpha\mp\beta)x\,dx\) \(=\dfrac{\sin((\alpha\mp\beta)L)}{\alpha\mp\beta}\) \(=0\).</li>
 <li>\(m=n\): \(\tfrac12\int_0^L(1-\cos2\alpha x)\,dx\) \(=\tfrac12\Big(L-\dfrac{\sin((2n+1)\pi)}{2\alpha}\Big)\) \(=\dfrac L2\).</li>
 </ol></div></details>
-<p>Multiplying by \(\sin\big(\frac{2m+1}{2L}\pi x\big)\), integrating over \([0,L]\) and keeping only \(m=n\):</p>
+<p>Multiplying by \(\sin\big(\frac{2m+1}{2L}\pi x\big)\), integrating over \([0,L]\) and keeping only \(m=n\): <span class="why">"listening" to \(f\) with one matching shape picks out how much of that shape it contains (Chapter 4).</span></p>
 \[B_n^*=\frac2L\int_0^Lf(x)\sin\frac{(2n+1)\pi x}{2L}dx.\]
 <p><b>Step 6.</b></p>
 <div class="boxed">\[\begin{aligned}u(x,t)&=\sum_{n=0}^{\infty}B_n^*\sin\frac{(2n+1)\pi x}{2L}e^{-\left(\frac{2n+1}{2L}c\pi\right)^2t},\\ B_n^*&=\frac2L\int_0^Lf(x)\sin\frac{(2n+1)\pi x}{2L}dx.\end{aligned}\]</div>
 <p class="word"><b>In words:</b> the same story as §4, with quarter-wave shapes instead of half-wave shapes. All heat eventually leaves through the cold end; the temperature tends to 0.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\sin\frac{(2n+1)\pi x}{2L}\)</dt><dd>an odd number of quarter-waves: zero at the iced end, flat at the capped end.</dd>
+<dt>\(B_n^*\)</dt><dd>how much of that shape the starting temperature contains.</dd>
+<dt>\(\left(\frac{(2n+1)c\pi}{2L}\right)^2\)</dt><dd>the fading rate: wigglier shapes (bigger \(n\)) fade much faster. The slowest shape (\(n=0\)) fades 4 times more slowly than the slowest shape of a rod iced at both ends, since heat has only one exit.</dd>
+</dl></div>
 </div>
 <div class="figure">
   <p class="ttl">Example 3.2: cold left end, insulated right end</p>
@@ -510,6 +629,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 
 <h3>Ends held at non-zero temperatures: steady state + transient</h3>
+<details class="idea"><summary>What is this?</summary><div><p>Now the ends are held at fixed non-zero temperatures (a heater, a cooler bath). Wait long enough and the graph becomes the <b>straight line</b> joining the two end temperatures (no bend, so nothing changes any more). The difference between the start and that line is zero at both ends and fades away exactly like a §4 zero-ended rod. So the answer is <b>straight line + fading zero-ended part</b>.</p></div></details>
 <div class="box eg"><span class="tag">Example 3.3</span>
 <p><b>A rod of length \(L\) has its surface insulated. Both ends are kept at constant non-zero temperatures \(u_1\) and \(u_2\) respectively. The initial temperature distribution is \(f(x)\). Define the related boundary value problem with the necessary initial and boundary conditions. Hence determine the temperature distribution \(u(x,t)\) of this rod.</b></p>
 \[\begin{aligned}&\text{PDE:}&&u_t=c^2u_{xx}\\&\text{BC:}&&u(0,t)=u_1,\quad u(L,t)=u_2\\&\text{IC:}&&u(x,0)=f(x)\end{aligned}\]
@@ -520,30 +640,48 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li>\(\hat u(x,t)\), the <b>transient state</b> of the rod: depends on position and time.</li>
 <li>\(u_E(x)\), the <b>steady state</b> (equilibrium) of the rod: depends only on position, not on time.</li>
 </ul>
-<p><b>The steady state.</b> At steady state the ends still have their fixed temperatures, so \(u_E(0)=u_1\), \(u_E(L)=u_2\). Since \(u_E\) does not depend on \(t\), the heat equation gives \(0=\pd{u_E}t=c^2\dfrac{d^2u_E}{dx^2}\), so \(u_E''=0\), whose solution is the straight line \(u_E=Ax+B\) (ODE table, Case 2 with \(k=0\)). The end values give</p>
+<p><b>The steady state.</b> At steady state the ends still have their fixed temperatures, so \(u_E(0)=u_1\), \(u_E(L)=u_2\). Since \(u_E\) does not depend on \(t\), the heat equation gives \(0=\pd{u_E}t=c^2\dfrac{d^2u_E}{dx^2}\), so \(u_E''=0\), whose solution is the straight line \(u_E=Ax+B\) (ODE table, Case 2 with \(k=0\)). The end values give <span class="why">"Not changing" means zero bend, and zero bend means a straight line.</span></p>
 \[\begin{aligned}u_E(0)=u_1&\Rightarrow B=u_1,\\ u_E(L)=u_2&\Rightarrow AL+B=u_2\Rightarrow A=\frac{u_2-u_1}{L},\end{aligned}\]
 \[\begin{aligned}u_E(x)&=\frac xL(u_2-u_1)+u_1\\&=\Big(1-\frac xL\Big)u_1+\frac xLu_2.\end{aligned}\]
 <p class="word"><b>In words:</b> the steady temperature is the straight line joining the two end temperatures (a straight profile has no curvature, so nothing changes, §2).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\frac xL\)</dt><dd>how far along the rod you are, as a fraction (0 at the left end, 1 at the right end).</dd>
+<dt>\(\big(1-\frac xL\big)u_1\)</dt><dd>the left end's influence: full at the left end, fading to nothing at the right end.</dd>
+<dt>\(\frac xL\,u_2\)</dt><dd>the right end's influence, growing from nothing to full as you walk right.</dd>
+</dl></div>
 <p><b>The transient.</b> Substitute \(u=\hat u+u_E\) into the heat equation:</p>
 \[\pd{\hat u}t+\pd{u_E}t=c^2\Big(\pd{^2\hat u}{x^2}+\pd{^2u_E}{x^2}\Big).\]
-<p>Since \(\pd{u_E}t=0\) and \(\pd{^2u_E}{x^2}=0\), we get \(\pd{\hat u}t=c^2\pd{^2\hat u}{x^2}\). The boundary conditions update to</p>
+<p>Since \(\pd{u_E}t=0\) and \(\pd{^2u_E}{x^2}=0\), we get \(\pd{\hat u}t=c^2\pd{^2\hat u}{x^2}\). The boundary conditions update to <span class="why">the line neither changes nor bends, so it drops out and the leftover part obeys the same heat equation.</span></p>
 \[\begin{aligned}u(0,t)&=\hat u(0,t)+u_E(0)=u_1\ \Rightarrow\ \hat u(0,t)=0,\\ u(L,t)&=\hat u(L,t)+u_E(L)=u_2\ \Rightarrow\ \hat u(L,t)=0.\end{aligned}\]
-<p>and the initial condition \(u(x,0)=\hat u(x,0)+u_E(x)=f(x)\) gives</p>
+<p>and the initial condition \(u(x,0)=\hat u(x,0)+u_E(x)=f(x)\) gives <span class="why">the line already supplies the end temperatures, so the leftover part is zero at both ends: a §4 problem.</span></p>
 \[\hat u(x,0)=f(x)-\Big(1-\frac xL\Big)u_1-\frac xLu_2.\]
 <p><b>Summary.</b> With \(u(x,t)=\hat u(x,t)+\big(1-\frac xL\big)u_1+\frac xLu_2\), the transient solves</p>
 \[\begin{aligned}&\pd{\hat u}t=c^2\pd{^2\hat u}{x^2},\quad \hat u(0,t)=0,\quad \hat u(L,t)=0,\\&\hat u(x,0)=f(x)-u_E(x),\end{aligned}\]
 <p>which is exactly the zero-ends problem of Example 3.1 with starting temperature \(f-u_E\). So</p>
 <div class="boxed"><span class="eqw" data-eq="1">\[\begin{aligned}u(x,t)&=\Big(1-\frac xL\Big)u_1+\frac xLu_2 +\sum_{n=1}^\infty b_n\sin\frac{n\pi x}{L}e^{-\left(\frac{nc\pi}{L}\right)^2t},\\ b_n&=\frac2L\int_0^L\big[f(x)-u_E(x)\big]\sin\frac{n\pi x}{L}\,dx.\end{aligned}\]</span><span class="eqn" data-eq="1">\[\begin{aligned}u(x,t)&=\Big(1-\frac xL\Big)u_1+\frac xLu_2\\&\quad+\sum_{n=1}^\infty b_n\sin\frac{n\pi x}{L}e^{-\left(\frac{nc\pi}{L}\right)^2t},\\ b_n&=\frac2L\int_0^L\big[f(x)-u_E(x)\big]\sin\frac{n\pi x}{L}\,dx.\end{aligned}\]</span></div>
 <p class="word"><b>In words:</b> subtract the straight line through the end temperatures, solve the zero-ends problem for what is left, add the line back.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\big(1-\frac xL\big)u_1+\frac xLu_2\)</dt><dd>the straight line the rod settles onto; it never changes.</dd>
+<dt>\(\sum b_n\sin\frac{n\pi x}L e^{-(\cdots)t}\)</dt><dd>the transient: zero-ended shapes that fade, so this whole part goes to 0 as \(t\to\infty\).</dd>
+<dt>\(f(x)-u_E(x)\)</dt><dd>the extra (or missing) heat above (or below) the final line at the start; only this is broken into shapes, never \(f\) by itself.</dd>
+</dl></div>
 </div>
+<p><b>The method, step by step</b> (fixed non-zero end temperatures):</p>
+<ol class="steps proc">
+<li><b>Do:</b> find the steady state \(u_E(x)=\big(1-\frac xL\big)u_1+\frac xLu_2\). <span class="why">This is the straight line the rod finally rests on, joining the two end temperatures.</span></li>
+<li><b>Do:</b> subtract it: the transient starts at \(\hat u(x,0)=f(x)-u_E(x)\). <span class="why">This is how far the starting graph sits above or below the final line: the part that must die away.</span></li>
+<li><b>Do:</b> check that \(\hat u\) is zero at both ends. <span class="why">The line already carries the end temperatures, so the leftover part carries none: a zero-ended rod.</span></li>
+<li><b>Do:</b> solve the zero-ended problem: \(b_n=\frac2L\int_0^L(f-u_E)\sin\frac{n\pi x}L\,dx\). <span class="why">Break the leftover (not \(f\) itself, or at \(t=0\) you get \(u_E+f\)) into pure shapes; each fades on its own.</span></li>
+<li><b>Do:</b> add the line back: \(u=u_E+\sum b_n\sin\frac{n\pi x}L e^{-(nc\pi/L)^2t}\), and check \(u\to u_E\) as \(t\to\infty\). <span class="why">Final picture: a fixed straight line plus fading wiggles on top.</span></li>
+</ol>
 
 <div class="box eg"><span class="tag">Example 3.4</span>
 <p><b>In an experiment, the mid-point of a rod was connected to a bucket of ice (temperature 0 °C) while one end was connected to a heat source (temperature 25 °C). Measurement of the rod starts from \(x=0\) in the middle and \(x=5\) at the end point where the temperature reads 25 °C. The whole rod was given an initial temperature of \(10x\) and then the surface was wrapped and insulated. Determine the temperature distribution \(u(x,t)\) of this rod.</b></p>
 <p><b>Set-up.</b> The ice holds the midpoint \(x=0\) at 0 °C, so the half of the rod between the ice and the heat source, \(0\le x\le5\), is a rod of length \(L=5\) with</p>
 \[\begin{aligned}&u_t=c^2u_{xx},\quad 0\lt x\lt5,\\&u(0,t)=0,\quad u(5,t)=25,\quad u(x,0)=10x.\end{aligned}\]
 <p>(The midpoint, held at 0 °C by the ice, cuts this half off from the other half, so we can solve it on its own; the coefficient \(c^2\) is not given, so it stays in the answer.)</p>
-<p><b>Steady state:</b> \(u_E(x)=\Big(1-\frac x5\Big)\cdot0+\frac x5\cdot25=5x\).</p>
-<p><b>Transient:</b> \(\hat u(x,0)=10x-5x=5x\), with \(\hat u(0,t)=\hat u(5,t)=0\). Then</p>
+<p><b>Steady state:</b> \(u_E(x)=\Big(1-\frac x5\Big)\cdot0+\frac x5\cdot25=5x\). <span class="why">The final straight line from 0 °C at the ice to 25 °C at the source.</span></p>
+<p><b>Transient:</b> \(\hat u(x,0)=10x-5x=5x\), with \(\hat u(0,t)=\hat u(5,t)=0\). Then <span class="why">The rod starts with \(5x\) more than its final line; that extra must fade.</span></p>
 \[b_n=\frac25\int_0^55x\sin\frac{n\pi x}{5}\,dx=\frac{50(-1)^{n+1}}{n\pi}.\]
 <details><summary>Show the calculation: \(b_n\) for Example 3.4</summary><div>
 <ol class="steps">
@@ -580,17 +718,20 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p class="flag">Flag: the question does not restate the ends; "variation of the above" is read here as the same rod, ice and heat source as Example 3.4 (\(L=5\)). Note that \(\sin\frac{\pi x}{2L}\) is exactly the first quarter-wave shape of Example 3.2 (0 at \(x=0\), flat at \(x=L\)): if instead the far end were <b>insulated</b> (as in Example 3.2), the answer would be the single term \(u=\sin\frac{\pi x}{2L}\,e^{-(c\pi/2L)^2t}\).</p>
 </div>
 
+<h3>Back to zero ends: a uniformly warm rod</h3>
+<p>A handout example on the §4 zero-ended rod with the simplest start of all.</p>
 <div class="box eg"><span class="tag">Example 3.6(a)</span>
 <p><b>A rod of length \(L\) has its surface insulated and both ends kept at zero temperature. The initial temperature distribution is \(f(x)=1\). Determine the temperature distribution \(u(x,t)\) of this rod.</b></p>
-<p>This is Example 3.1 with \(f=1\):</p>
+<p>This is Example 3.1 with \(f=1\): <span class="why">same ends, so the same half-wave shapes; we only need how much of each is in a flat start.</span></p>
 \[\begin{aligned}B_n^*&=\frac2L\int_0^L\sin\frac{n\pi x}{L}dx\\&=\frac2L\cdot\frac{L}{n\pi}\Big[-\cos\frac{n\pi x}{L}\Big]_0^L=\frac{2\big(1-(-1)^n\big)}{n\pi}.\end{aligned}\]
-<p>That is \(\frac4{n\pi}\) for odd \(n\) and 0 for even \(n\):</p>
+<p>That is \(\frac4{n\pi}\) for odd \(n\) and 0 for even \(n\): <span class="why">even shapes are as much above as below the axis, so they cannot help build a flat start that is symmetric about the middle.</span></p>
 <div class="boxed"><span class="eqw" data-eq="4">\[\begin{aligned}u(x,t)&=\frac4\pi\sum_{n\text{ odd}}\frac1n\sin\frac{n\pi x}{L}\,e^{-\left(\frac{nc\pi}{L}\right)^2t}\\&=\frac4\pi\sum_{m=1}^\infty\frac{1}{2m-1}\sin\frac{(2m-1)\pi x}{L} \times e^{-\left(\frac{(2m-1)c\pi}{L}\right)^2t}\end{aligned}\]</span><span class="eqn" data-eq="4">\[\begin{aligned}u(x,t)&=\frac4\pi\sum_{n\text{ odd}}\frac1n\sin\frac{n\pi x}{L}\,e^{-\left(\frac{nc\pi}{L}\right)^2t}\\&=\frac4\pi\sum_{m=1}^\infty\frac{1}{2m-1}\sin\frac{(2m-1)\pi x}{L}\\&\qquad\times e^{-\left(\frac{(2m-1)c\pi}{L}\right)^2t}\end{aligned}\]</span></div>
 <p class="word"><b>In words:</b> a uniformly warm rod suddenly has its ends iced; it cools from the ends inwards (choose "constant 1" in the §4 figure). The jump between \(f=1\) and the end value 0 makes the series converge slowly at \(t=0\), but for any \(t\gt0\) the exponentials kill the high modes fast.</p>
 </div>
 <p class="flag">Flag: two different examples are both numbered "Example 3.6" in the course notes; they are called 3.6(a) and 3.6(b) here.</p>
 
 <h3>Both ends insulated</h3>
+<details class="idea"><summary>What is this?</summary><div><p>Cap both ends: the rod is now a sealed flask. The <b>total heat never changes</b>; it spreads out until the rod is at its starting average everywhere (like hot and cold water mixing in a sealed bottle). Shapes must be flat at both ends, so cosines, and now the constant shape is allowed too: it is the final even temperature and never fades.</p></div></details>
 <div class="box eg"><span class="tag">Example 3.6(b)</span>
 <p><b>A rod of length \(L\) has its surface and both ends insulated. The initial temperature distribution is \(f(x)\). Determine the temperature distribution \(u(x,t)\) of this rod.</b></p>
 \[\begin{aligned}&\text{PDE:}&&u_t=c^2u_{xx}\\&\text{BC:}&&u_x(0,t)=0,\quad u_x(L,t)=0\\&\text{IC:}&&u(x,0)=f(x)\end{aligned}\]
@@ -606,12 +747,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p>At \(t=0\): \(f(x)=a_0+\sum a_n\cos\frac{n\pi x}L\), a <b>Fourier cosine series</b> (half-range cosine series, <a href="note-C4.html#s5">Chapter 4 §5</a>). Orthogonality of cosines on \([0,L]\): \(\int_0^L\cos\frac{n\pi x}L\cos\frac{m\pi x}Ldx=0\) for \(m\ne n\), \(=\frac L2\) for \(m=n\ge1\), and \(=L\) for \(m=n=0\). Multiplying by \(\cos\frac{m\pi x}{L}\) and integrating:</p>
 <div class="boxed">\[\begin{aligned}u(x,t)&=a_0+\sum_{n=1}^{\infty}a_n\cos\frac{n\pi x}{L}e^{-\left(\frac{nc\pi}{L}\right)^2t},\\ a_0&=\frac1L\int_0^Lf(x)\,dx,\\ a_n&=\frac2L\int_0^Lf(x)\cos\frac{n\pi x}{L}\,dx.\end{aligned}\]</div>
 <p class="word"><b>In words:</b> \(a_0\) is the average starting temperature. All the other modes decay, so the rod ends up at its average temperature: the heat is trapped and just spreads out evenly.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(a_0=\frac1L\int_0^Lf\,dx\)</dt><dd>total starting heat divided by length: the average temperature, which is where the sealed rod ends up.</dd>
+<dt>\(e^{-(nc\pi/L)^2t}\)</dt><dd>each uneven shape fades; the \(n=0\) shape has rate 0, so the average never fades.</dd>
+<dt>\(\int_0^L\cos\frac{n\pi x}L\,dx=0\) (\(n\ge1\))</dt><dd>every fading shape has as much above the axis as below, so fading moves heat around but never changes the total.</dd>
+</dl></div>
 <details><summary>Show the calculation: why \(a_0\) has \(\frac1L\) but \(a_n\) has \(\frac2L\)</summary><div>
 <ol class="steps">
 <li>Integrate \(f=a_0+\sum a_n\cos\frac{n\pi x}L\) over \([0,L]\): each cosine integrates to \(\frac{L}{n\pi}\sin n\pi=0\), so \(\int_0^Lf\,dx=a_0L\). Hence \(a_0=\frac1L\int_0^Lf\).</li>
 <li>Multiply by \(\cos\frac{m\pi x}L\) (\(m\ge1\)) and integrate: the \(a_0\) term gives 0; the term \(n=m\) gives \(a_m\cdot\frac L2\) (since \(\cos^2=\frac12(1+\cos2\theta)\)); all others give 0 (product-to-sum, as for sines). So \(a_m=\frac2L\int_0^Lf\cos\frac{m\pi x}L\).</li>
 <li>Exam papers often write the constant term as \(\frac{a_0}2\) with \(a_0=\frac2L\int_0^Lf\), as on the December formula sheet: same number, different bookkeeping.</li>
 </ol></div></details>
+<p><b>The method, step by step</b> (both ends insulated):</p>
+<ol class="steps proc">
+<li><b>Do:</b> write the shapes \(\cos\frac{n\pi x}L\) for \(n=0,1,2,\dots\), keeping the constant (\(n=0\)). <span class="why">Capped ends need flat-ended shapes; the constant is the final even temperature, so dropping it loses the answer the rod settles to.</span></li>
+<li><b>Do:</b> find \(a_0=\frac1L\int_0^Lf\,dx\). <span class="why">The trapped heat spreads evenly, so the final temperature is the starting average.</span></li>
+<li><b>Do:</b> find \(a_n=\frac2L\int_0^Lf\cos\frac{n\pi x}L\,dx\) for \(n\ge1\) (usually by parts). <span class="why">How much of each uneven shape the start contains.</span></li>
+<li><b>Do:</b> assemble \(u=a_0+\sum a_n\cos\frac{n\pi x}L e^{-(nc\pi/L)^2t}\) and check \(u\to a_0\) as \(t\to\infty\). <span class="why">Every uneven shape fades, leaving the flat average.</span></li>
+</ol>
 <p><b>A concrete case</b> (written for these notes): \(f(x)=x\). Then \(a_0=\frac L2\) and \(a_n=\frac2L\int_0^Lx\cos\frac{n\pi x}L\,dx=\dfrac{2L\big((-1)^n-1\big)}{n^2\pi^2}\), i.e. \(-\dfrac{4L}{n^2\pi^2}\) for odd \(n\), 0 for even \(n\):</p>
 <div class="boxed"><span class="eqw" data-eq="5">\[\begin{aligned}f=x:\ u(x,t)=\frac L2&-\frac{4L}{\pi^2}\sum_{n\text{ odd}}\frac1{n^2} \times\cos\frac{n\pi x}{L}\,e^{-\left(\frac{nc\pi}{L}\right)^2t}\end{aligned}\]</span><span class="eqn" data-eq="5">\[\begin{aligned}f=x:\ u(x,t)=\frac L2&-\frac{4L}{\pi^2}\sum_{n\text{ odd}}\frac1{n^2}\\&\times\cos\frac{n\pi x}{L}\,e^{-\left(\frac{nc\pi}{L}\right)^2t}\end{aligned}\]</span></div>
 </div>
@@ -631,36 +784,64 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li>\(u(0)=u_1\), \(u(L)=u_2\): \(u=u_E+\hat u\), \(u_E=u_1+(u_2-u_1)\frac xL\); solve the zero-ends problem for \(\hat u\) with start \(f-u_E\).</li>
 <li>Useful cosine coefficients on \([0,L]\): \(f=x\): \(a_n=\frac{2L((-1)^n-1)}{n^2\pi^2}\); \(f=x^2\): \(a_0=\frac{L^2}3\), \(a_n=\frac{4L^2(-1)^n}{n^2\pi^2}\).</li>
 </ul></div>
+<p class="cannow"><b>You can now:</b> turn any end (iced, heated or capped) into a condition on the shape and find the allowed shapes; solve a rod with fixed non-zero end temperatures by subtracting the straight-line steady state, solving the zero-ended leftover and adding the line back; solve a fully insulated rod with a cosine series and explain why it settles at its average temperature.</p>
 </section>
-
 <section id="s6">
-<h2><span class="n">6</span>Wave equation with both ends fixed <span class="muted small">(handout §4–§4.2, pp. 15–23)</span></h2>
+<h2><span class="n">6</span>Wave equation with both ends fixed <span class="muted small">(handout §4–§4.2, pp. 15–23)</span> <span class="mins">~12 min</span></h2>
+<details class="idea"><summary>What is this? (the wave equation)</summary><div><p>Pluck a guitar string and let go. Wherever the string is bent into a hump, the tension pulls that bit back towards the straight line; the sharper the bend, the harder the pull. The bit overshoots, gets pulled back the other way, and so the string vibrates. The wave equation is exactly this rule written down: how fast each bit of string speeds up depends on how sharply the string is bent there.</p></div></details>
 <p>Consider a string of length \(L\) with its ends at fixed positions. Given the initial shape of the string and its initial velocity, we want to find how the string vibrates, i.e. the vertical displacement of each point at each time. The wave equation models the vibration, and its solution \(u(x,t)\) is the vertical displacement (deformation) of the string at position \(x\) and time \(t\) (right-hand picture in §2):</p>
 \[\pd{^2u}{t^2}=c^2\pd{^2u}{x^2},\]
 <p>where \(c^2\) is the <b>rigidity</b> of the string, which depends on its material (and tension).</p>
 <p class="word"><b>In words:</b> acceleration of each bit of string = rigidity × curvature of the string there.</p>
-<p>The simplest case: both ends of the string are tied at fixed points, so they never move: \(u(0,t)=0\), \(u(L,t)=0\). Because the equation has a <b>second</b> time derivative, we need <b>two</b> initial conditions: the initial shape \(u(x,0)\) and the initial velocity \(u_t(x,0)\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\pd{^2u}{t^2}\)</dt><dd>the up-or-down acceleration of one bit of string (the second rate of change in time, with the position frozen).</dd>
+<dt>\(\pd{^2u}{x^2}\)</dt><dd>how sharply the string bends at that bit, at one frozen moment. A hump (bending down on both sides) gives a negative value, a dip a positive one.</dd>
+<dt>equal signs on both sides</dt><dd>a hump is accelerated downwards and a dip upwards: the string is always pulled back towards straight.</dd>
+<dt>\(c^2\)</dt><dd>how strongly the string responds to a bend: a tighter or lighter string reacts faster and sounds higher.</dd>
+</dl></div>
+<p>The simplest case: both ends of the string are tied at fixed points, so they never move: \(u(0,t)=0\), \(u(L,t)=0\).</p>
+<details class="idea"><summary>What is this? (two initial conditions)</summary><div><p>For heat, knowing the starting temperature was enough. A string is different: to predict its motion you need to know where it starts (its shape) <b>and</b> how fast each bit is already moving (its velocity). A string pulled aside and held still behaves quite differently from a straight string struck by a hammer, even though one of them starts flat. That is why there are two starting conditions here, against one for heat.</p></div></details>
+<p>In symbols: because the equation has a <b>second</b> time derivative, we need <b>two</b> initial conditions: the initial shape \(u(x,0)\) and the initial velocity \(u_t(x,0)\) (the rate of change of the displacement in time, at the start).</p>
+<details class="idea"><summary>What is this? (normal modes)</summary><div><p>A string tied at both ends can only hold shapes that return to zero at each end: one arch, two arches, three arches, and so on. Each of these pure shapes vibrates on its own, keeping its shape and just swinging up and down, and each has its own pitch: more arches means a faster swing and a higher note. Any motion of the string is a mixture of these pure shapes, each swinging at its own pitch, just as a guitar note is a mixture of a fundamental and its harmonics.</p></div></details>
+<p>The method below finds the pure shapes, their pitches, and how much of each the starting conditions contain.</p>
+<ol class="steps proc">
+<li><b>Do:</b> write down the PDE, the two boundary conditions and the two initial conditions. <span class="why">Ends (what the pins do) decide which shapes are allowed; the starting shape and velocity decide how much of each shape there is.</span></li>
+<li><b>Do:</b> separate: put \(u=F(x)G(t)\) and rearrange to \(\dfrac{F''}{F}=\dfrac{G''}{c^2G}=k\). <span class="why">This looks for pure modes: a fixed shape \(F\) whose size \(G\) changes in time without the shape changing.</span></li>
+<li><b>Do:</b> solve the shape equation \(F''=kF\) with the end conditions in all three cases of \(k\); keep the non-zero solutions. <span class="why">The pins at the ends rule out every shape except whole numbers of arches, \(\sin\frac{n\pi x}{L}\).</span></li>
+<li><b>Do:</b> solve the time equation \(G''=-\big(\frac{nc\pi}{L}\big)^2G\): \(G_n=C_n\cos\frac{nc\pi t}{L}+D_n\sin\frac{nc\pi t}{L}\). <span class="why">Each pure shape swings back and forth (cos and sin) at its own pitch, faster for more arches.</span></li>
+<li><b>Do:</b> if one initial condition is zero, use it now to remove the cos or the sin. Then add all the modes (superposition). <span class="why">Starting at rest kills the sine-in-time part; starting flat kills the cosine-in-time part. The full motion is the mixture of all modes.</span></li>
+<li><b>Do:</b> match the remaining initial condition with a Fourier sine series and find the coefficients by orthogonality. <span class="why">This "listens" to the starting shape (or velocity) with each pure shape in turn, to find how much of that shape is present.</span></li>
+</ol>
 
 <div class="box eg"><span class="tag">Example 4.1</span>
 <p><b>A string is initially lying horizontally, fastened at the end points \((0,0)\) and \((L,0)\), with an initial velocity \(f(x)\). Determine the vertical displacement of the string with respect to time \(t\) and position \(x\).</b></p>
 <p>(Think of a piano string struck by a hammer: it starts straight but moving.)</p>
 \[\begin{aligned}&\text{PDE:}&&u_{tt}=c^2u_{xx}\\&\text{BC:}&&u(0,t)=0,\quad u(L,t)=0\\&\text{IC:}&&u(x,0)=0,\quad u_t(x,0)=f(x)\end{aligned}\]
-<p><b>Step 1.</b> \(u=F(x)G(t)\): \(F(x)G''(t)=c^2F''(x)G(t)\), so \(\dfrac{F''(x)}{F(x)}=\dfrac{G''(t)}{c^2G(t)}=k\).</p>
+<p><b>Step 1.</b> \(u=F(x)G(t)\): \(F(x)G''(t)=c^2F''(x)G(t)\), so \(\dfrac{F''(x)}{F(x)}=\dfrac{G''(t)}{c^2G(t)}=k\).<span class="why">The left side depends only on position, the right only on time; they can only be equal for all \(x\) and \(t\) if both are the same constant.</span></p>
 <p><b>Step 2.</b> \(F''=kF\) with \(F(0)=F(L)=0\): word for word the same as §4. Cases \(k=0\) and \(k=p^2\gt0\) give only \(F\equiv0\); \(k=-p^2\lt0\) gives \(F=A\cos px+B\sin px\), \(A=0\), \(B\sin pL=0\), so</p>
 \[\begin{gathered}p=\frac{n\pi}{L},\\ F_n(x)=B_n\sin\frac{n\pi x}{L},\quad n=1,2,3,\dots\end{gathered}\]
+<p><span class="why">The ends are pinned exactly like a rod with both ends at zero, so the allowed shapes are the same whole numbers of arches.</span></p>
 <p><b>Step 3.</b> Now the time equation is of <b>second</b> order:</p>
 \[\begin{aligned}\frac{G''(t)}{c^2G(t)}&=-p^2\\ \Rightarrow\ G_n''(t)&=-\Big(\frac{nc\pi}{L}\Big)^2G_n(t)\\ \Rightarrow\ G_n(t)&=C_n\cos\frac{nc\pi t}{L}+D_n\sin\frac{nc\pi t}{L}.\end{aligned}\]
 <p class="word"><b>In words:</b> ODE table Case 2 with \(k\lt0\): each shape oscillates in time instead of decaying.</p>
 <p>One initial condition can be used at once: \(u(x,0)=F(x)G(0)=0\) for all \(x\) requires \(G(0)=0\):</p>
 \[G_n(0)=C_n\cos0+D_n\sin0=C_n=0.\]
+<p><span class="why">The string starts flat, so every mode must start at size zero: only the sine in time, which starts at 0, survives.</span></p>
 <p><b>Step 4.</b> \(u_n(x,t)\) \(=F_nG_n\) \(=D_n^*\sin\Big(\dfrac{n\pi}{L}x\Big)\sin\Big(\dfrac{nc\pi}{L}t\Big)\), with \(D_n^*=B_nD_n\).</p>
 <p><b>Step 5.</b> Superposition: \(u(x,t)=\displaystyle\sum_{n=1}^\infty D_n^*\sin\frac{n\pi x}{L}\sin\frac{nc\pi t}{L}\). Differentiate in \(t\) term by term to use the remaining IC:</p>
 \[\begin{aligned}u_t(x,t)&=\sum_{n=1}^\infty D_n^*\sin\frac{n\pi x}{L}\Big(\frac{nc\pi}{L}\Big)\cos\frac{nc\pi t}{L},\\ u_t(x,0)&=\sum_{n=1}^\infty D_n^*\Big(\frac{nc\pi}{L}\Big)\sin\frac{n\pi x}{L}=f(x).\end{aligned}\]
+<p><span class="why">The hammer gives a starting velocity, so we compare the velocity of the mixture at \(t=0\) with \(f\).</span></p>
 <p>So \(f\) is written as a Fourier sine series whose coefficients are \(D_n^*\frac{nc\pi}{L}\). Multiply by \(\sin\frac{m\pi x}{L}\), integrate over \([0,L]\), and use orthogonality (§4): only \(n=m\) survives,</p>
 \[\begin{gathered}\int_0^Lf(x)\sin\frac{n\pi x}{L}dx=D_n^*\Big(\frac{nc\pi}{L}\Big)\frac L2\\ \Rightarrow\ D_n^*=\frac{2}{nc\pi}\int_0^Lf(x)\sin\frac{n\pi x}{L}dx.\end{gathered}\]
 <p><b>Step 6.</b></p>
 <div class="boxed">\[\begin{aligned}u(x,t)&=\sum_{n=1}^{\infty}D_n^*\sin\frac{n\pi x}{L}\sin\frac{nc\pi t}{L},\\ D_n^*&=\frac{2}{nc\pi}\int_0^Lf(x)\sin\frac{n\pi x}{L}dx.\end{aligned}\]</div>
 <p class="word"><b>In words:</b> split the initial velocity into sine shapes; each shape then swings with its own frequency. The extra factor \(\frac{L}{nc\pi}\) compared with §4 comes from differentiating \(\sin\frac{nc\pi t}{L}\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\sin\frac{n\pi x}{L}\)</dt><dd>the \(n\)th pure shape: \(n\) arches between the pins.</dd>
+<dt>\(\sin\frac{nc\pi t}{L}\)</dt><dd>that shape swinging in time, starting from zero size (the string starts flat), at angular speed \(\frac{nc\pi}{L}\): \(n\) times the lowest pitch.</dd>
+<dt>\(\int_0^Lf\sin\frac{n\pi x}{L}dx\)</dt><dd>how much of shape \(n\) is in the hammer's velocity pattern.</dd>
+<dt>\(\frac{2}{nc\pi}\)</dt><dd>turns "starting speed" into "size of swing": a high mode swings fast, so the same starting speed carries it only a short way.</dd>
+</dl></div>
 </div>
 
 <div class="box eg"><span class="tag">Example 4.2</span>
@@ -670,11 +851,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p><b>Steps 1–2.</b> As in Example 4.1 with \(L=1\): the end conditions \(F(0)=F(1)=0\) give \(\sin p=0\), \(p=n\pi\), \(F_n(x)=B_n\sin(n\pi x)\), \(n=1,2,\dots\)</p>
 <p><b>Step 3.</b> \(G_n''\) \(=-(nc\pi)^2G_n\) \(\Rightarrow G_n\) \(=C_n\cos(nc\pi t)+D_n\sin(nc\pi t)\). "At rest" means \(u_t(x,0)=F(x)G'(0)=0\), so \(G'(0)=0\):</p>
 \[\begin{aligned}G_n'(0)&=-nc\pi C_n\sin0+nc\pi D_n\cos0\\&=nc\pi D_n=0\ \Rightarrow\ D_n=0.\end{aligned}\]
+<p><span class="why">Let go from rest: every mode starts at the top of its swing, which is what \(\cos\) in time does.</span></p>
 <p><b>Step 4.</b> \(u_n\) \(=B_n\sin(n\pi x)\,C_n\cos(nc\pi t)\) \(=B_n^*\sin(n\pi x)\cos(nc\pi t)\), with \(B_n^*=B_nC_n\).</p>
 <p><b>Step 5.</b> \(u=\sum_{n\ge1}B_n^*\sin(n\pi x)\cos(nc\pi t)\). At \(t=0\), \(\cos0=1\):</p>
 \[u(x,0)=\sum_{n=1}^\infty B_n^*\sin(n\pi x)=x(1-x).\]
 <p>So \(x(1-x)\) is written as a Fourier sine series on \(0\le x\le1\). With \(\int_0^1\sin(n\pi x)\sin(m\pi x)dx=0\) (\(m\ne n\)) or \(\frac12\) (\(m=n\)), multiplying by \(\sin m\pi x\) and integrating over \([0,1]\):</p>
 \[\begin{aligned}B_n^*&=2\int_0^1x(1-x)\sin(n\pi x)\,dx\\&=\frac{4\big(1-(-1)^n\big)}{n^3\pi^3}.\end{aligned}\]
+<p><span class="why">This measures how much of each pure shape is in the plucked parabola.</span></p>
 <details><summary>Show the calculation: \(\int_0^1x(1-x)\sin(n\pi x)\,dx\)</summary><div>
 <ol class="steps">
 <li>Parts with \(u=x-x^2\), \(dv=\sin n\pi x\,dx\), \(v=-\frac{\cos n\pi x}{n\pi}\): \(\Big[-(x-x^2)\frac{\cos n\pi x}{n\pi}\Big]_0^1\) \(+\:\frac1{n\pi}\int_0^1(1-2x)\cos n\pi x\,dx\). The bracket is 0 because \(x-x^2=0\) at both ends.</li>
@@ -682,7 +865,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li>\(\frac2{n\pi}\int_0^1\sin n\pi x\,dx\) \(=\frac2{n\pi}\cdot\frac{1-\cos n\pi}{n\pi}\) \(=\frac{2(1-(-1)^n)}{n^2\pi^2}\).</li>
 <li>Collect: \(\int_0^1x(1-x)\sin n\pi x\,dx\) \(=\frac1{n\pi}\cdot\frac{2(1-(-1)^n)}{n^2\pi^2}\) \(=\frac{2(1-(-1)^n)}{n^3\pi^3}\). Times 2: \(B_n^*=\frac{4(1-(-1)^n)}{n^3\pi^3}\).</li>
 </ol></div></details>
-<p>That is \(\frac{8}{n^3\pi^3}\) for odd \(n\), 0 for even \(n\). <b>Step 6:</b></p>
+<p>That is \(\frac{8}{n^3\pi^3}\) for odd \(n\), 0 for even \(n\). <span class="why">The parabola is symmetric about the middle; the even shapes are lopsided (up on one half, down on the other), so none of them is present.</span> <b>Step 6:</b></p>
 <div class="boxed"><span class="eqw" data-eq="6">\[\begin{aligned}u(x,t)&=\sum_{n=1}^{\infty}\Big[2\int_0^1x(1-x)\sin(n\pi x)\,dx\Big] \times\sin(n\pi x)\cos(nc\pi t)\\&=\frac{8}{\pi^3}\sum_{n\text{ odd}}\frac{1}{n^3}\sin(n\pi x)\cos(nc\pi t).\end{aligned}\]</span><span class="eqn" data-eq="6">\[\begin{aligned}u(x,t)&=\sum_{n=1}^{\infty}\Big[2\int_0^1x(1-x)\sin(n\pi x)\,dx\Big]\\&\qquad\times\sin(n\pi x)\cos(nc\pi t)\\&=\frac{8}{\pi^3}\sum_{n\text{ odd}}\frac{1}{n^3}\sin(n\pi x)\cos(nc\pi t).\end{aligned}\]</span></div>
 <p class="word"><b>In words:</b> the parabola is almost exactly the first mode (\(\frac8{\pi^3}\approx0.258\), against a height of 0.25 at the middle); the \(n=3\) mode has only \(\frac{1}{27}\) of that size. So the string swings nearly like a single arch.</p>
 </div>
@@ -709,16 +892,28 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <span class="eqw" data-eq="7">\[\begin{aligned}u&=\sum_{n\ge1}\Big(B_n\cos\frac{nc\pi t}{L}+D_n\sin\frac{nc\pi t}{L}\Big) \times\sin\frac{n\pi x}{L},\\ B_n&=\frac2L\int_0^Lf\sin\frac{n\pi x}L\,dx,\\ D_n&=\frac{2}{nc\pi}\int_0^Lg\sin\frac{n\pi x}L\,dx.\end{aligned}\]</span><span class="eqn" data-eq="7">\[\begin{aligned}u&=\sum_{n\ge1}\Big(B_n\cos\frac{nc\pi t}{L}+D_n\sin\frac{nc\pi t}{L}\Big)\\&\qquad\times\sin\frac{n\pi x}{L},\\ B_n&=\frac2L\int_0^Lf\sin\frac{n\pi x}L\,dx,\\ D_n&=\frac{2}{nc\pi}\int_0^Lg\sin\frac{n\pi x}L\,dx.\end{aligned}\]</span>
 <p>At rest (\(g=0\)): only cosines in time. Starting flat (\(f=0\)): only sines in time. If the paper writes \(u_{tt}=ku_{xx}\) or \(a^2u_{xx}\), replace \(c\) by \(\sqrt k\) or \(a\).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(B_n\)</dt><dd>how much of shape \(n\) is in the starting <b>shape</b>; it rides on \(\cos\), which starts at its full size.</dd>
+<dt>\(D_n\)</dt><dd>how much of shape \(n\) is in the starting <b>velocity</b>; it rides on \(\sin\), which starts at zero but moving.</dd>
+<dt>\(\frac{nc\pi}{L}\)</dt><dd>the pitch of mode \(n\): \(n\) times the lowest pitch, so the modes are the harmonics of the note.</dd>
+<dt>\(\sin\frac{n\pi x}{L}\)</dt><dd>the pure shapes allowed by two pinned ends.</dd>
+</dl></div>
 <p class="flag">Flag: in the course notes Example 4.2 is printed under the heading "4.2 The special cases: when the ends have non-zero boundary conditions", although both its ends are fixed; it is grouped with Example 4.1 here. The special cases (free ends) follow in §7.</p>
+<p class="cannow"><b>You can now:</b> explain the wave equation as "acceleration = rigidity × bend" and why it needs both a starting shape and a starting velocity; solve it for a string with both ends fixed by separating, finding the arch shapes and their pitches, and matching both initial conditions; and say which time factor (cos or sin) goes with which initial condition.</p>
 </section>
-
 <section id="s7">
-<h2><span class="n">7</span>Free ends and the thin ring <span class="muted small">(handout §4.2, pp. 23–27)</span></h2>
+<h2><span class="n">7</span>Free ends and the thin ring <span class="muted small">(handout §4.2, pp. 23–27)</span> <span class="mins">~16 min</span></h2>
 <p>The special cases for the wave equation are strings whose ends are not both tied down. The last example returns to the heat equation, on a ring.</p>
+<details class="idea"><summary>What is this? (free end)</summary><div><p>Imagine the end of the guitar string tied to a small ring that slides up and down a smooth vertical rod. The end can move, so its height is not fixed. But nothing pushes the ring up or down, so the string cannot arrive at the rod at a tilt: a tilted string would pull the ring along the rod with nothing to balance it. So the string always meets the rod <b>flat</b>. "Free end" means "flat slope at the end", just as an insulated end of a rod meant "no temperature slope at the end".</p></div></details>
 <div class="box def"><span class="tag">Free end</span>
 <p>For a vibrating string, a <b>free end</b> can move freely in the vertical direction but not horizontally, for example a small ring at the end of the string sliding without friction along a vertical rod (a groove). Nothing pulls the end up or down, so the string must meet the rod horizontally: for a free end at \(x=L\),</p>
 \[u_x(L,t)=0.\]
 <p class="word"><b>In words:</b> a free end can go up and down, but the string arrives there flat (zero slope), exactly like an insulated end for the heat equation.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(u_x(L,t)\)</dt><dd>the slope of the string at the end \(x=L\), at time \(t\).</dd>
+<dt>\(=0\)</dt><dd>the string meets the rod flat.</dd>
+<dt>for every \(t\)</dt><dd>flat at every moment, while the height \(u(L,t)\) itself is allowed to change.</dd>
+</dl></div>
 <p>"Fastened at one end only" in a question means: one end fixed (\(u=0\)) and the other free (\(u_x=0\)).</p>
 </div>
 <div class="figure">
@@ -731,12 +926,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
   <p class="cap">\(0\le x\le2\pi\). A fixed end is drawn as a pin; a free end as a small ring sliding on a vertical rod. Dashed: the starting shape; solid: the string at the chosen \(ct\) (all answers depend on \(c\) and \(t\) only through \(ct\)). At a free end the string always arrives flat, while the end itself moves up and down.</p>
 </div>
 
+<p>The method is the one of §6; only the step that finds the shapes changes.</p>
+<ol class="steps proc">
+<li><b>Do:</b> turn each end into a condition on the shape \(F\): a fixed end gives \(F=0\) there, a free end gives \(F'=0\) there. <span class="why">Pinned means zero height at that end; free means flat at that end.</span></li>
+<li><b>Do:</b> run the three cases \(k=0\), \(k=p^2\gt0\), \(k=-p^2\lt0\) with these conditions; keep every non-zero shape, <b>including a constant</b> if both ends are free. <span class="why">Different ends let different shapes fit: with two free ends, a straight level string (all of it lifted up) is allowed.</span></li>
+<li><b>Do:</b> solve the time equation for each shape (cos and sin at its own pitch; \(C+Dt\) for the constant shape). <span class="why">Each pure shape still vibrates at its own pitch; the constant shape has no restoring pull, so it can only stay put or drift.</span></li>
+<li><b>Do:</b> use the two initial conditions (shape and velocity) to fix the coefficients, with the orthogonality of the new shapes. <span class="why">The starting shape and velocity decide how much of each pure shape is present, exactly as in §6.</span></li>
+</ol>
 <h3>One end fixed, one end free</h3>
 <div class="box eg"><span class="tag">Example 4.3</span>
 <p><b>A string of length \(2\pi\) is fastened at one end only. Initially the string is at rest with a vertical displacement of the shape \(-5\sin\frac x4\). Determine the vertical displacement of the string with respect to time and position.</b></p>
 \[\begin{aligned}&\text{PDE:}&&u_{tt}=c^2u_{xx}\\&\text{BC:}&&u(0,t)=0,\quad u_x(2\pi,t)=0\\&\text{IC:}&&u(x,0)=-5\sin\tfrac x4,\quad u_t(x,0)=0\end{aligned}\]
 <p><b>Step 1.</b> \(u=FG\): \(\dfrac{F''}{F}=\dfrac{G''}{c^2G}=k\).</p>
-<p><b>Step 2.</b> BCs: \(F(0)=0\), \(F'(2\pi)=0\).</p>
+<p><b>Step 2.</b> BCs: \(F(0)=0\), \(F'(2\pi)=0\).<span class="why">Pinned at the left (height zero), flat at the right (the free ring).</span></p>
 <div class="cases">
 <div><b>Case (1): \(k=0\)</b>\(F=Ax+B\): \(F(0)=B=0\), \(F'(2\pi)=A=0\). Trivial.</div>
 <div><b>Case (2): \(k=p^2\gt0\)</b>\(A+B=0\) and \(Ape^{2\pi p}-Bpe^{-2\pi p}=0\), so \(Ap(e^{2\pi p}+e^{-2\pi p})=0\), \(A=B=0\). Trivial.</div>
@@ -745,15 +947,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p>Non-trivial: \(\cos2\pi p=0\), so \(2\pi p=\frac{(2n-1)\pi}{2}\):</p>
 \[\begin{gathered}p=\frac{2n-1}{4},\\ F_n(x)=B_n\sin\frac{(2n-1)x}{4},\quad n=1,2,3,\dots\end{gathered}\]
 <p class="word"><b>In words:</b> quarter-wave shapes again (as in Example 3.2), now on a length \(2\pi\): \(\sin\frac x4\), \(\sin\frac{3x}4\), \(\sin\frac{5x}4\), …</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\sin\)</dt><dd>starts at height zero: the pinned end at \(x=0\).</dd>
+<dt>\(\cos2\pi p=0\)</dt><dd>the shape is flat (at a crest or trough) at \(x=2\pi\): the free end.</dd>
+<dt>\(\frac{2n-1}{4}\)</dt><dd>from a zero to the next crest is a quarter of a wave, so only an odd number of quarter-waves (1, 3, 5, …) fits between a pinned end and a free end.</dd>
+</dl></div>
 <p><b>Step 3.</b> \(G_n''\) \(=-\Big(\dfrac{2n-1}{4}c\Big)^2G_n\) \(\Rightarrow G_n\) \(=C_n\cos\Big(\dfrac{2n-1}{4}ct\Big)+D_n\sin\Big(\dfrac{2n-1}{4}ct\Big)\). At rest: \(u_t(x,0)=0\Rightarrow G'(0)=0\):</p>
 \[\begin{aligned}G_n'(0)&=-C_n\tfrac{2n-1}4c\sin0+D_n\tfrac{2n-1}4c\cos0\\&=0\ \Rightarrow\ D_n=0.\end{aligned}\]
+<p><span class="why">Let go from rest, so every mode starts at the top of its swing: only cos in time.</span></p>
 <p><b>Step 4.</b> \(u_n=D_n^*\sin\Big(\dfrac{2n-1}{4}x\Big)\cos\Big(\dfrac{2n-1}{4}ct\Big)\), with \(D_n^*=B_nC_n\).</p>
 <p><b>Step 5.</b> \(u=\sum_{n\ge1}u_n\); at \(t=0\): \(\displaystyle\sum_{n=1}^\infty D_n^*\sin\frac{(2n-1)x}{4}=-5\sin\frac x4\) on \(0\le x\le2\pi\). Orthogonality on \([0,2\pi]\):</p>
 \[\begin{gathered}\int_0^{2\pi}\sin\frac{(2n-1)x}{4}\sin\frac{(2m-1)x}{4}dx\\=\begin{cases}0,&m\ne n\\ \pi,&m=n.\end{cases}\end{gathered}\]
 <p class="word"><b>In words:</b> as before, with "half the length" now \(\frac{2\pi}2=\pi\).</p>
 <p>Multiplying by \(\sin\frac{2m-1}4x\) and integrating over \((0,2\pi)\):</p>
 \[D_n^*=\frac1\pi\int_0^{2\pi}-5\sin\Big(\frac x4\Big)\sin\frac{(2n-1)x}{4}dx.\]
-<p>But \(-5\sin\frac x4\) <b>is</b> the \(n=1\) shape (\(\frac{2\cdot1-1}{4}=\frac14\)) times \(-5\). By orthogonality the integral is \(-5\pi\) for \(n=1\) and 0 for \(n\ge2\): \(D_1^*=-5\), \(D_n^*=0\) for \(n\ge2\).</p>
+<p><span class="why">Multiplying by one pure shape and integrating "listens" for that shape in the start.</span> But \(-5\sin\frac x4\) <b>is</b> the \(n=1\) shape (\(\frac{2\cdot1-1}{4}=\frac14\)) times \(-5\). By orthogonality the integral is \(-5\pi\) for \(n=1\) and 0 for \(n\ge2\): \(D_1^*=-5\), \(D_n^*=0\) for \(n\ge2\).</p>
 <p><b>Step 6.</b></p>
 <div class="boxed"><span class="eqw" data-eq="8">\[\begin{aligned}u(x,t)&=\sum_{n=1}^\infty\Big[\frac1\pi\int_0^{2\pi}\Big(-5\sin\frac x4\Big) \times\sin\frac{(2n-1)x}4dx\Big]\\&\qquad\times\sin\frac{(2n-1)x}4\cos\frac{(2n-1)ct}4\\&=-5\sin\Big(\frac x4\Big)\cos\Big(\frac{ct}{4}\Big).\end{aligned}\]</span><span class="eqn" data-eq="8">\[\begin{aligned}u(x,t)&=\sum_{n=1}^\infty\Big[\frac1\pi\int_0^{2\pi}\Big(-5\sin\frac x4\Big)\\&\qquad\qquad\times\sin\frac{(2n-1)x}4dx\Big]\\&\qquad\times\sin\frac{(2n-1)x}4\cos\frac{(2n-1)ct}4\\&=-5\sin\Big(\frac x4\Big)\cos\Big(\frac{ct}{4}\Big).\end{aligned}\]</span></div>
 <p class="word"><b>In words:</b> the string was started in exactly one natural shape, so it simply swings in that shape, with period \(\frac{8\pi}c\). Always check whether the start is already one of the allowed shapes before integrating.</p>
@@ -765,16 +973,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 \[f(x)=\begin{cases}1-\dfrac x\pi,&0\le x\le\pi\\[4pt] \dfrac x\pi-1,&\pi\lt x\lt2\pi.\end{cases}\]
 <p>(A V shape: height 1 at both ends, 0 in the middle; in one formula \(f(x)=\frac{|x-\pi|}{\pi}\).)</p>
 \[\begin{aligned}&\text{PDE:}&&u_{tt}=c^2u_{xx}\\&\text{BC:}&&u_x(0,t)=0,\quad u_x(2\pi,t)=0\\&\text{IC:}&&u(x,0)=f(x),\quad u_t(x,0)=0\end{aligned}\]
-<p><b>Step 2.</b> BCs \(F'(0)=F'(2\pi)=0\) (compare Example 3.6(b)):</p>
+<p><b>Step 2.</b> BCs \(F'(0)=F'(2\pi)=0\) (compare Example 3.6(b)).<span class="why">Both ends slide on rods, so the string is flat at both ends.</span></p>
 <div class="cases">
-<div><b>Case (1): \(k=0\)</b>\(F=Ax+B\); \(F'=A=0\). So \(F=B\), a constant: <b>not trivial</b>. Then \(G''=0\), \(G=C+Dt\); at rest \(G'(0)=D=0\). This mode is \(u_0=a_0\), the string shifted up or down as a whole.</div>
+<div><b>Case (1): \(k=0\)</b>\(F=Ax+B\); \(F'=A=0\). So \(F=B\), a constant: <b>not trivial</b>. Then \(G''=0\), \(G=C+Dt\); at rest \(G'(0)=D=0\). This mode is \(u_0=a_0\), the string shifted up or down as a whole.<span class="why">With both ends free nothing holds the string at a set height, so a level string at any height is allowed.</span></div>
 <div><b>Case (2): \(k=p^2\gt0\)</b>\(F'(0)\) \(=p(A-B)\) \(=0\) \(\Rightarrow A\) \(=B\); \(F'(2\pi)\) \(=pA(e^{2\pi p}-e^{-2\pi p})\) \(=0\) \(\Rightarrow A\) \(=0\). Trivial.</div>
 <div><b>Case (3): \(k=-p^2\lt0\)</b>\(F'(0)\) \(=pB\) \(=0\) \(\Rightarrow B\) \(=0\); \(F'(2\pi)\) \(=-pA\sin2\pi p\) \(=0\) \(\Rightarrow2\pi p\) \(=n\pi\), \(p=\frac n2\). \(F_n=A_n\cos\frac{nx}2\).</div>
 </div>
 <p><b>Steps 3–4.</b> \(G_n=C_n\cos\frac{nct}2+D_n\sin\frac{nct}2\); at rest gives \(D_n=0\). So \(u_n=a_n\cos\frac{nx}2\cos\frac{nct}2\).</p>
 <p><b>Step 5.</b> \(u=a_0+\sum_{n\ge1}a_n\cos\frac{nx}2\cos\frac{nct}2\), and at \(t=0\), \(f=a_0+\sum a_n\cos\frac{nx}2\): a cosine series on \([0,2\pi]\). With \(\int_0^{2\pi}\cos^2\frac{nx}2dx=\pi\) and \(\int_0^{2\pi}1\,dx=2\pi\):</p>
 \[\begin{gathered}a_0=\frac1{2\pi}\int_0^{2\pi}f\,dx=\frac12,\\ a_n=\frac1\pi\int_0^{2\pi}f(x)\cos\frac{nx}{2}\,dx.\end{gathered}\]
-<p>The V shape is symmetric about \(x=\pi\), while \(\cos\frac{nx}2\) is symmetric about \(\pi\) for even \(n\) and antisymmetric for odd \(n\). So \(a_n=0\) for odd \(n\). For even \(n=2m\):</p>
+<p><span class="why">\(a_0\) is the average height of the V: the level the string swings about.</span> The V shape is symmetric about \(x=\pi\), while \(\cos\frac{nx}2\) is symmetric about \(\pi\) for even \(n\) and antisymmetric for odd \(n\). So \(a_n=0\) for odd \(n\). For even \(n=2m\):</p>
 \[\begin{aligned}a_{2m}&=\frac2\pi\int_0^\pi\Big(1-\frac x\pi\Big)\cos mx\,dx\\&=\frac{2\big(1-(-1)^m\big)}{\pi^2m^2},\end{aligned}\]
 <p>which is \(\frac{4}{\pi^2m^2}\) for odd \(m\) and 0 for even \(m\).</p>
 <details><summary>Show the calculation: the coefficients of Example 4.4</summary><div>
@@ -788,12 +996,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p><b>Step 6.</b> With \(n=2m\), \(\cos\frac{nx}{2}=\cos mx\) and \(\cos\frac{nct}2=\cos mct\):</p>
 <div class="boxed"><span class="eqw" data-eq="9">\[\begin{aligned}u(x,t)&=\frac12+\frac4{\pi^2}\sum_{m\text{ odd}}\frac{\cos(mx)\cos(mct)}{m^2}\\&=\frac12+\frac4{\pi^2}\Big(\cos x\cos ct +\frac{\cos3x\cos3ct}{9}+\cdots\Big).\end{aligned}\]</span><span class="eqn" data-eq="9">\[\begin{aligned}u(x,t)&=\frac12+\frac4{\pi^2}\sum_{m\text{ odd}}\frac{\cos(mx)\cos(mct)}{m^2}\\&=\frac12+\frac4{\pi^2}\Big(\cos x\cos ct\\&\qquad+\frac{\cos3x\cos3ct}{9}+\cdots\Big).\end{aligned}\]</span></div>
 <p class="word"><b>In words:</b> the string oscillates about the level \(\frac12\) (the average height); the V flips into an upside-down V and back with period \(\frac{2\pi}{c}\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\frac12\)</dt><dd>the constant mode: the average height, which never changes (the string was at rest).</dd>
+<dt>\(\cos mx\)</dt><dd>shapes that are flat at both free ends.</dd>
+<dt>\(\cos mct\)</dt><dd>each shape swinging at its own pitch, starting at the top of its swing (at rest).</dd>
+<dt>\(\frac{1}{m^2}\)</dt><dd>the higher shapes are present only in small amounts: the V is mostly the single shape \(\cos x\).</dd>
+</dl></div>
 <div class="box warn"><span class="tag">Careful with an initial velocity (both ends free)</span>
 <p>In Case (1), \(G=C+Dt\). If the string is given an initial velocity \(g(x)\) whose average is not zero, then \(D\ne0\): the whole string drifts up or down at that average speed (the term \(\big(\frac1{L}\int_0^Lg\big)\,t\)). Forgetting the \(Dt\) term is a classic slip (May 2021 asked such a question; its velocity \(5\cos x\) happens to have average 0).</p>
 </div>
 </div>
 
 <h3>Heat in a thin ring</h3>
+<details class="idea"><summary>What is this? (a thin ring)</summary><div><p>Bend a thin metal rod into a circle and join the ends, then let heat spread round it. Now there are no ends at all: walk all the way round and you are back where you started, so the temperature must join up with itself, and so must its slope (heat flowing out of one "end" flows straight into the other). So the period of the temperature pattern is the circumference: any pattern that repeats once round the ring is allowed, which is exactly what a full Fourier series describes.</p></div></details>
 <div class="box eg"><span class="tag">Example 4.5</span>
 <p><b>Consider the temperature distribution in a thin circular ring. Assume the external surfaces are perfectly insulated, and the ring is thin enough that the temperature does not vary with distance from the centre of the ring. Let \(x\) be the arc length of the ring measured from the lowest point, so that \(x=0\) is the lowest point and \(x=-1\), \(x=1\) are the same point at the top. The initial temperature distribution of the ring is \(f(x)\). Considering \(x=-1\) and \(x=1\) as the same point on the ring, solve this using the 1D heat equation.</b></p>
 <div class="figure">
@@ -807,7 +1022,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 <p><b>Settings.</b> Unroll the ring onto \(-1\le x\le1\) (circumference 2). Since \(x=\pm1\) is the same point, the temperature and the heat flux there must agree from both sides: the <b>periodic boundary conditions</b></p>
 \[\begin{aligned}&\text{PDE:}&&u_t=c^2u_{xx},\quad -1\lt x\lt1\\&\text{BC:}&&u(-1,t)=u(1,t),\\&&&u_x(-1,t)=u_x(1,t)\\&\text{IC:}&&u(x,0)=f(x)\end{aligned}\]
-<p><b>Step 2.</b> With \(u=FG\): \(F(-1)=F(1)\), \(F'(-1)=F'(1)\).</p>
+<p><b>Step 2.</b> With \(u=FG\): \(F(-1)=F(1)\), \(F'(-1)=F'(1)\).<span class="why">The shape must join up with itself at the top of the ring, in height and in slope.</span></p>
 <div class="cases">
 <div><b>Case (1): \(k=0\)</b>\(F=Ax+B\): \(F(-1)\) \(=F(1)\) \(\Rightarrow-A+B\) \(=A+B\) \(\Rightarrow A\) \(=0\). \(F=B\): a constant, <b>not trivial</b> (\(G\) constant too).</div>
 <div><b>Case (2): \(k=p^2\gt0\)</b>\(Ae^{-p}+Be^{p}\) \(=Ae^p+Be^{-p}\) and \(p(Ae^{-p}-Be^p)\) \(=p(Ae^p-Be^{-p})\). Adding and subtracting gives \(B=A\) and \(B=-A\) (as \(e^p\ne e^{-p}\)), so \(A=B=0\). Trivial.</div>
@@ -820,8 +1035,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li>If \(\sin p\ne0\) then \(A=B=0\) (trivial). So \(\sin p=0\): \(p=n\pi\), \(n=1,2,\dots\), and then both conditions hold for <b>any</b> \(A,B\).</li>
 </ol></div></details>
 <p>So each frequency \(n\) allows two shapes, \(\cos n\pi x\) and \(\sin n\pi x\) (the ring has no special point, so a shape may sit anywhere round it). <b>Steps 3–5:</b> \(G_n=C_ne^{-(nc\pi)^2t}\), and superposition with the IC gives a <b>full Fourier series</b> on \([-1,1]\) (period 2, <a href="note-C4.html#s2">Chapter 4 §2</a>):</p>
+<p><span class="why">Each shape decays on its own, as for the rod; the coefficients "listen" for each shape in the starting temperature.</span></p>
 <div class="boxed"><span class="eqw" data-eq="10">\[\begin{aligned}u(x,t)&=a_0+\sum_{n=1}^{\infty}\big(a_n\cos n\pi x+b_n\sin n\pi x\big) \times e^{-(nc\pi)^2t},\\ a_0&=\frac12\int_{-1}^1f\,dx,\\ a_n&=\int_{-1}^1f\cos n\pi x\,dx,\\ b_n&=\int_{-1}^1f\sin n\pi x\,dx.\end{aligned}\]</span><span class="eqn" data-eq="10">\[\begin{aligned}u(x,t)&=a_0+\sum_{n=1}^{\infty}\big(a_n\cos n\pi x+b_n\sin n\pi x\big)\\&\qquad\times e^{-(nc\pi)^2t},\\ a_0&=\frac12\int_{-1}^1f\,dx,\\ a_n&=\int_{-1}^1f\cos n\pi x\,dx,\\ b_n&=\int_{-1}^1f\sin n\pi x\,dx.\end{aligned}\]</span></div>
 <p class="word"><b>In words:</b> expand the starting temperature in the full Fourier series round the ring; the constant (average) stays, every other term fades at rate \(e^{-(nc\pi)^2t}\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(a_0\)</dt><dd>the average temperature round the ring; the ring is insulated, so no heat is lost and this stays for ever.</dd>
+<dt>\(\cos n\pi x,\ \sin n\pi x\)</dt><dd>patterns that repeat \(n\) times round the circumference 2; both kinds are needed because a pattern may sit anywhere round the ring.</dd>
+<dt>\(e^{-(nc\pi)^2t}\)</dt><dd>each pattern fades on its own; patterns with more ups and downs fade much faster (rate grows like \(n^2\)).</dd>
+<dt>\(\int_{-1}^1\)</dt><dd>"listen" all the way round the ring, once.</dd>
+</dl></div>
 <p>(The coefficients follow from orthogonality on \([-1,1]\): \(\int_{-1}^1\cos^2n\pi x\,dx=\int_{-1}^1\sin^2n\pi x\,dx=1\), all cross products integrate to 0. For a ring of circumference \(2L\), replace \(n\pi x\) by \(\frac{n\pi x}L\) and \(\int_{-1}^1\) by \(\frac1L\int_{-L}^L\) (\(\frac1{2L}\) for \(a_0\)).)</p>
 <p><b>A concrete case</b> (written for these notes): \(f(x)=x^2\). Then \(a_0=\frac13\), \(b_n=0\) (\(x^2\) is even), \(a_n=\int_{-1}^1x^2\cos n\pi x\,dx=\dfrac{4(-1)^n}{n^2\pi^2}\):</p>
 <div class="boxed"><span class="eqw" data-eq="11">\[\begin{aligned}u(x,t)=\frac13&+\frac{4}{\pi^2}\sum_{n=1}^\infty\frac{(-1)^n}{n^2} \times\cos(n\pi x)\,e^{-(nc\pi)^2t}.\end{aligned}\]</span><span class="eqn" data-eq="11">\[\begin{aligned}u(x,t)=\frac13&+\frac{4}{\pi^2}\sum_{n=1}^\infty\frac{(-1)^n}{n^2}\\&\times\cos(n\pi x)\,e^{-(nc\pi)^2t}.\end{aligned}\]</span></div>
@@ -833,47 +1055,74 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li>Ring of circumference \(2L\): full Fourier series on \([-L,L]\) with factors \(e^{-(nc\pi/L)^2t}\).</li>
 <li>Many exam starts are already single allowed shapes (e.g. \(200\cos4\pi x\) on a ring of circumference 2: \(u=200\cos(4\pi x)e^{-16c^2\pi^2t}\)): read the answer off.</li>
 </ul></div>
+<p class="cannow"><b>You can now:</b> turn a free end into a zero-slope condition and a ring into "joins up with itself" (periodic) conditions; find the allowed shapes for fixed–free, free–free and ring problems, including the constant mode; and solve these problems with both initial conditions, spotting when the start is already a single allowed shape.</p>
 </section>
 
 <section id="s8">
-<h2><span class="n">8</span><span>Previous content (out of 2026 syllabus): PDEs solved by direct integration <span class="pill prev">Out of 2026 syllabus</span></span></h2>
+<h2><span class="n">8</span><span>Previous content (out of 2026 syllabus): PDEs solved by direct integration <span class="pill prev">Out of 2026 syllabus</span> <span class="pill skip">Optional on first read</span></span> <span class="mins">~10 min</span></h2>
 <div class="box prev"><span class="tag">Previous content · out of 2026 syllabus</span>
 <p>Solving PDEs such as \(\dfrac{\partial^2u}{\partial x\partial y}=a\dfrac{\partial u}{\partial x}+bx\) by integrating directly is not in the 2026 course materials, but it was December Question 5(a), 10 marks of the compulsory question, in <b>six</b> papers: Dec 2014, 2015, 2016, 2017, 2018 and 2023 (type C5.7). The method needs only integration and first-order ODEs, so it is taught in full here. All six questions are collected with full solutions on the <a href="guide-prev.html#C5-7">out-of-syllabus questions page</a> of the exam guide.</p>
 </div>
+<details class="idea"><summary>What is this?</summary><div><p>Picture \(u\) as a temperature map over a flat metal plate, with one value at every point \((x,y)\). Suppose someone tells you only the slope in the \(x\)-direction everywhere and asks for the map. Along each east–west line you can rebuild the profile by adding up the slopes, exactly as in single-variable calculus, but each line can still be lifted up or down by its own amount: the slopes along that line do not notice. Since every line has its own \(y\), the "lift" is free to be different for each \(y\). That is the whole idea of this section: undoing a partial derivative leaves behind not a constant but a <b>whole unknown function of the other variable</b>.</p></div></details>
 <p><b>The key fact.</b> When you integrate a partial derivative with respect to \(x\), anything that does not depend on \(x\) behaves like a constant. So the "constant of integration" is an <b>arbitrary function of the other variable</b>:</p>
 \[\pd ux=g(x,y)\ \Rightarrow\ u=\int g(x,y)\,dx+G(y).\]
 <p class="word"><b>In words:</b> integrating in \(x\) can only recover \(u\) up to something whose \(x\)-derivative is 0, and that is any function of \(y\) alone.</p>
-<p>Example: \(u_x=2xy\) gives \(u=x^2y+G(y)\). Check: \(\pd{}{x}\big(x^2y+G(y)\big)=2xy\) for <b>every</b> function \(G\). The boundary conditions then pin down these arbitrary functions, just as initial conditions pin down constants in an ODE.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\pd ux=g(x,y)\)</dt><dd>you are told the slope in the \(x\)-direction at every point of the plate</dd>
+<dt>\(\int g(x,y)\,dx\)</dt><dd>walk along one east–west line (fixed \(y\)) adding up the slopes; \(y\) is frozen, so it is treated as a number</dd>
+<dt>\(G(y)\)</dt><dd>the separate up-or-down lift of each east–west line; one free height per line, so a free function of \(y\)</dd>
+</dl></div>
+<p>Example: \(u_x=2xy\) gives \(u=x^2y+G(y)\). Check: \(\pd{}{x}\big(x^2y+G(y)\big)=2xy\) for <b>every</b> function \(G\). The boundary conditions then pin down these arbitrary functions, just as initial conditions pin down constants in an ODE: a condition along an edge of the plate tells you the height of every line where it meets that edge.</p>
 <p>Recall from <a href="note-C1.html#s2">Chapter 1 §2</a> that \(\dfrac{\partial^2u}{\partial x\partial y}=\pd{}{x}\Big(\pd uy\Big)\) and, for smooth functions, the order does not matter: \(u_{xy}=u_{yx}\). So \(\dfrac{\partial^2u}{\partial x\partial y}\) can be integrated in \(x\) first or in \(y\) first; choose whichever makes the equation simplest.</p>
 
 <h3>The simplest case: \(u_{xy}=h(x,y)\)</h3>
+<details class="idea"><summary>What is this? (two integrations)</summary><div><p>A mixed second derivative has been taken twice, once in each direction, so you undo it twice. Each undoing leaves its own free piece: integrating in \(y\) leaves a free function of \(x\) (one per north–south line), and integrating in \(x\) leaves a free function of \(y\) (one per east–west line). Two edges of the plate with given values are then exactly enough to fix the two free functions.</p></div></details>
 <p>Integrate in \(y\) (adding \(F_1(x)\)), then in \(x\) (adding \(G(y)\)). For \(u_{xy}=0\): \(u_x=F_1(x)\), then \(u=\int F_1(x)dx+G(y)=F(x)+G(y)\). So the general solution of \(u_{xy}=0\) is <b>any function of \(x\) plus any function of \(y\)</b>.</p>
+<ol class="steps proc">
+<li><b>Do:</b> integrate \(h\) in \(y\), treating \(x\) as a number, and add \(F_1(x)\). <span class="why">This undoes the \(y\)-derivative along each north–south line; each such line may carry its own free amount, hence a function of \(x\).</span></li>
+<li><b>Do:</b> integrate the result in \(x\), treating \(y\) as a number, and add \(G(y)\); rename \(\int F_1\,dx\) as \(F(x)\). <span class="why">This undoes the \(x\)-derivative along each east–west line, which brings its own free lift per line.</span></li>
+<li><b>Do:</b> put the condition on the edge \(y=0\) (a function of \(x\)) into the answer to find \(F(x)\), and the condition on \(x=0\) to find \(G(y)\). <span class="why">Each edge fixes the free function that varies along that edge.</span></li>
+<li><b>Do:</b> fix any leftover numbers such as \(F(0)+G(0)\) by evaluating at the corner \((0,0)\). <span class="why">The corner lies on both edges, so it links the two free functions; the overlap is counted once.</span></li>
+<li><b>Do:</b> differentiate your answer back and test both edges. <span class="why">Integrating loses information silently; checking is the only proof nothing was lost.</span></li>
+</ol>
 <div class="box eg"><span class="tag">Worked example 1 (written for these notes)</span>
 <p><b>Solve \(\dfrac{\partial^2u}{\partial x\partial y}=6x^2y\) with \(u(x,0)=x\) and \(u(0,y)=y^2\).</b></p>
 <ol class="steps">
-<li>Integrate in \(y\) (treating \(x\) as a constant): \(u_x=3x^2y^2+F_1(x)\).</li>
+<li>Integrate in \(y\) (treating \(x\) as a constant): \(u_x=3x^2y^2+F_1(x)\). <span class="why">One free function of \(x\), one per north–south line.</span></li>
 <li>Integrate in \(x\): \(u=x^3y^2+F(x)+G(y)\), where \(F=\int F_1\).</li>
-<li>\(u(x,0)=x\): \(F(x)+G(0)=x\Rightarrow F(x)=x-G(0)\).</li>
+<li>\(u(x,0)=x\): \(F(x)+G(0)=x\Rightarrow F(x)=x-G(0)\). <span class="why">The bottom edge fixes the function that varies along it, \(F(x)\).</span></li>
 <li>\(u(0,y)=y^2\): \(F(0)+G(y)=y^2\Rightarrow G(y)=y^2-F(0)\).</li>
-<li>So \(u=x^3y^2+x+y^2-\big[G(0)+F(0)\big]\). Put \(x=y=0\) in \(u=x^3y^2+F(x)+G(y)\): \(F(0)+G(0)=u(0,0)=0\) (from either condition). So the bracket is 0.</li>
+<li>So \(u=x^3y^2+x+y^2-\big[G(0)+F(0)\big]\). Put \(x=y=0\) in \(u=x^3y^2+F(x)+G(y)\): \(F(0)+G(0)=u(0,0)=0\) (from either condition). So the bracket is 0. <span class="why">The corner value is counted in both edges; this stops it being counted twice.</span></li>
 </ol>
 <p class="boxed">\(u(x,y)=x^3y^2+x+y^2\)</p>
 <p class="word"><b>In words:</b> integrate twice, collecting one arbitrary function of each variable, then let the two boundary conditions decide them. Check: \(u_x=3x^2y^2+1\), \(u_{xy}=6x^2y\) ✓; \(u(x,0)=x\) ✓; \(u(0,y)=y^2\) ✓.</p>
 </div>
 
 <h3>The exam pattern: a first-order ODE inside the PDE</h3>
-<p>The past papers add a lower-order term, e.g. \(u_{xy}=a\,u_x+(\text{something})\). Put \(w=u_x\). Then \(u_{xy}=\pd{w}{y}\), and the PDE becomes</p>
+<details class="idea"><summary>What is this? (an ODE hidden inside)</summary><div><p>The past papers add a lower-order term, so you cannot just integrate twice. The trick is to give the slope in the \(x\)-direction its own name, \(w\). Along each north–south line (fixed \(x\)) the equation then only talks about how \(w\) changes with \(y\): it is an ordinary first-order ODE, one for each line. Solve that ODE as in first year; its constant may differ from line to line, so it is a function of \(x\). Then undo the slope as in the first part.</p></div></details>
+<p>A typical form is \(u_{xy}=a\,u_x+(\text{something})\). Put \(w=u_x\). Then \(u_{xy}=\pd{w}{y}\), and the PDE becomes</p>
 \[\pd wy-a\,w=h(x,y),\]
 <p class="word"><b>In words:</b> for each fixed \(x\), a first-order linear ODE in \(y\) for \(w\), solved with an integrating factor; the constant of integration becomes a function of \(x\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(w=u_x\)</dt><dd>the slope of the map in the \(x\)-direction, now treated as the unknown</dd>
+<dt>\(\pd wy\)</dt><dd>how that slope changes as you move north along one line of fixed \(x\)</dd>
+<dt>\(-a\,w\)</dt><dd>the lower-order term; it makes this a linear ODE rather than a plain integral</dd>
+<dt>\(h(x,y)\)</dt><dd>the given forcing; \(x\) inside it is just a fixed number on that line</dd>
+</dl></div>
 <p><b>Integrating factor reminder.</b> \(w_y-aw=h\): multiply by \(e^{-ay}\); the left side becomes \(\pd{}{y}\big(e^{-ay}w\big)\). Integrate in \(y\): \(e^{-ay}w=\int e^{-ay}h\,dy+F(x)\).</p>
+<ol class="steps proc">
+<li><b>Do:</b> name the derivative that sits "inside", \(w=u_x\) (or \(w=u_y-au\), see the ready routine), and solve the first-order linear ODE for \(w\) with an integrating factor, writing its constant as a function of the frozen variable. <span class="why">Each line of fixed \(x\) has its own ODE, so each may have its own constant.</span></li>
+<li><b>Do:</b> integrate \(w\) to get \(u\), adding a free function of the other variable. <span class="why">This undoes the slope along each east–west line, with its own lift \(G(y)\).</span></li>
+<li><b>Do:</b> use each edge condition once to fix the function varying along that edge, then cancel unknown numbers like \(G(0)\) and substitute back. <span class="why">The final map cannot depend on bookkeeping numbers; if they do not cancel, an algebra slip is hiding.</span></li>
+</ol>
 <div class="box eg"><span class="tag">Worked example 2 (written for these notes, in the style of the December questions)</span>
 <p><b>Solve \(\dfrac{\partial^2u}{\partial x\partial y}=2\dfrac{\partial u}{\partial x}+2x\) with the boundary conditions \(u(x,0)=0\) and \(\dfrac{\partial u}{\partial y}(0,y)=e^{2y}\).</b></p>
 <ol class="steps">
-<li>\(w=u_x\): \(w_y-2w=2x\). Integrating factor \(e^{-2y}\): \(\pd{}{y}\big(e^{-2y}w\big)=2xe^{-2y}\).</li>
+<li>\(w=u_x\): \(w_y-2w=2x\). Integrating factor \(e^{-2y}\): \(\pd{}{y}\big(e^{-2y}w\big)=2xe^{-2y}\). <span class="why">On each line of fixed \(x\), \(2x\) is just a constant forcing.</span></li>
 <li>Integrate in \(y\): \(e^{-2y}w=-xe^{-2y}+F(x)\), so \(u_x=w=-x+F(x)e^{2y}\).</li>
-<li>Integrate in \(x\): \(u=-\dfrac{x^2}2+H(x)e^{2y}+G(y)\), where \(H=\int F\,dx\) is another arbitrary function.</li>
+<li>Integrate in \(x\): \(u=-\dfrac{x^2}2+H(x)e^{2y}+G(y)\), where \(H=\int F\,dx\) is another arbitrary function. <span class="why">\(e^{2y}\) is a constant for the \(x\)-integration; the new free piece is a lift per east–west line.</span></li>
 <li>\(u(x,0)=0\): \(-\dfrac{x^2}2+H(x)+G(0)=0\), so \(H(x)=\dfrac{x^2}2-G(0)\).</li>
-<li>\(u_y=2H(x)e^{2y}+G'(y)\). At \(x=0\): \(2H(0)e^{2y}+G'(y)=e^{2y}\), and \(H(0)=-G(0)\), so \(G'(y)=\big(1+2G(0)\big)e^{2y}\), \(G(y)=\tfrac12\big(1+2G(0)\big)e^{2y}+C\).</li>
+<li>\(u_y=2H(x)e^{2y}+G'(y)\). At \(x=0\): \(2H(0)e^{2y}+G'(y)=e^{2y}\), and \(H(0)=-G(0)\), so \(G'(y)=\big(1+2G(0)\big)e^{2y}\), \(G(y)=\tfrac12\big(1+2G(0)\big)e^{2y}+C\). <span class="why">The second condition gives a slope on the edge \(x=0\), so it fixes \(G\) only through \(G'\), hence the extra constant \(C\).</span></li>
 <li>Put \(y=0\): \(G(0)=\tfrac12+G(0)+C\), so \(C=-\tfrac12\).</li>
 <li>Assemble: \(u\) \(=-\frac{x^2}2\) \(+\:\Big(\frac{x^2}2-G(0)\Big)e^{2y}\) \(+\:\Big(\frac12+G(0)\Big)e^{2y}\) \(-\:\frac12\). The \(G(0)\) terms cancel.</li>
 </ol>
@@ -901,18 +1150,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li>Use the boundary condition on a line \(y=0\) (or \(y=a\)) to find the function of \(x\), the one on \(x=0\) to find the function of \(y\); fix leftover numbers by evaluating at the corner.</li>
 <li>Check by substituting back (2 minutes, and it catches sign slips).</li>
 </ol></div>
+<p class="cannow"><b>You can now:</b> integrate a PDE in one variable while writing the "constant" as a free function of the other; solve \(u_{xy}=h\) and the December pattern \(u_{xy}=au_x+h\) by naming \(w=u_x\); fix the free functions from two edge conditions and check the answer.</p>
 </section>
-
 <section id="s9">
-<h2><span class="n">9</span><span>Previous content (out of 2026 syllabus): the heat equation with a decay term \(-ku\) <span class="pill prev">Out of 2026 syllabus</span></span></h2>
+<h2><span class="n">9</span><span>Previous content (out of 2026 syllabus): the heat equation with a decay term \(-ku\) <span class="pill prev">Out of 2026 syllabus</span> <span class="pill skip">Optional on first read</span></span> <span class="mins">~8 min</span></h2>
 <div class="box prev"><span class="tag">Previous content · out of 2026 syllabus</span>
 <p>The heat equation with an extra term proportional to \(u\), such as \(\pd ut=a^2\pd{^2u}{x^2}-ku\), is not in the 2026 course materials, but past papers asked it (type C5.6): Dec 2021 Q5(a) (15 marks), Dec 2016 Q5(b) (15 marks) and May 2016 Q5 (6 + 14 marks). It needs only one small change to the method of §4–§5, taught here. All these questions are collected with full solutions on the <a href="guide-prev.html#C5-6">out-of-syllabus questions page</a> of the exam guide.</p>
 </div>
+<details class="idea"><summary>What is this?</summary><div><p>Take the familiar metal rod, but now strip off the insulation round its side and stand it in a room at temperature 0. Heat still spreads along the rod as before, smoothing out bumps, but every bit of the rod also leaks heat sideways into the room, and hotter bits leak faster. It is like a bath with a slow leak: the water still sloshes level along the tub, while the whole level drops steadily. The leak does not care about the shape, so it simply shrinks every temperature by the same factor as time goes on.</p></div></details>
 <p><b>Where the term comes from.</b> If the side surface of the rod is <b>not</b> insulated and the surroundings are at temperature 0, the rod also loses heat sideways at a rate proportional to its temperature (Newton's law of cooling). That adds a loss term:</p>
 \[\pd ut=a^2\pd{^2u}{x^2}-ku,\qquad k\gt0.\]
 <p class="word"><b>In words:</b> temperature changes because of conduction along the rod (curvature term) and because of leakage through the sides (the \(-ku\) term, a uniform exponential cooling).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\pd ut\)</dt><dd>how fast the temperature at one spot of the rod is changing</dd>
+<dt>\(a^2\pd{^2u}{x^2}\)</dt><dd>spreading along the rod: a cold dip (curving up) warms, a hot bump (curving down) cools</dd>
+<dt>\(-ku\)</dt><dd>the side leak: the hotter the spot, the faster it loses heat to the room at 0</dd>
+<dt>\(k\)</dt><dd>how leaky the side is; \(k=0\) gives back the insulated rod of §4–§5</dd>
+</dl></div>
 
 <h3>Method 1: separate directly</h3>
+<details class="idea"><summary>What is this? (separating with a leak)</summary><div><p>Separation still works because each pure sine or cosine shape of the rod still keeps its shape and only shrinks. Spreading shrinks it at its usual rate (faster for wigglier shapes), and the leak adds the same extra rate \(k\) to every shape. So the shapes are exactly the old ones; only their time factors decay faster.</p></div></details>
 <p>Put \(u=X(x)T(t)\): \(XT'=a^2X''T-kXT\). Divide by \(a^2XT\) and move the \(k\) term to the time side:</p>
 \[\frac{X''}{X}=\frac{T'+kT}{a^2T}=c\ \ (\text{a constant}),\]
 \[X''-cX=0,\qquad T'+(k-ca^2)T=0.\]
@@ -920,17 +1177,40 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p>(This is precisely what May 2016 Q5(i) asks you to show.) The BCs give the usual allowed values, e.g. \(c=-\big(\frac{n\pi}{L}\big)^2\) for zero or insulated ends, and then</p>
 \[T_n(t)=C_n\,e^{-\left(k+a^2\frac{n^2\pi^2}{L^2}\right)t}.\]
 <p class="word"><b>In words:</b> every mode decays at its old rate plus the extra rate \(k\). For insulated ends the \(n=0\) mode (the average) now decays too, like \(e^{-kt}\): heat leaks out of the sides even though the ends are sealed.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(a^2\frac{n^2\pi^2}{L^2}\)</dt><dd>the old decay rate of shape \(n\) from spreading along the rod; wigglier shapes (larger \(n\)) smooth out faster</dd>
+<dt>\(k\)</dt><dd>the leak's extra decay rate, the same for every shape</dd>
+<dt>\(C_n\)</dt><dd>how much of shape \(n\) the starting temperature contains (from the Fourier series of the initial condition)</dd>
+</dl></div>
+<ol class="steps proc">
+<li><b>Do:</b> put \(u=X(x)T(t)\), divide by \(a^2XT\), and keep the \(k\) term with \(T\). <span class="why">The leak acts on time only; keeping it on the time side leaves the space equation, and so the shapes, unchanged.</span></li>
+<li><b>Do:</b> solve \(X''-cX=0\) with the boundary conditions, checking \(c=0\), \(c\gt0\), \(c\lt0\). <span class="why">The ends of the rod decide which shapes fit, exactly as in §4–§5.</span></li>
+<li><b>Do:</b> solve the time equation for each allowed \(c\), giving decay rate \(k+a^2\frac{n^2\pi^2}{L^2}\). <span class="why">Each shape shrinks by its own spreading rate plus the common leak rate.</span></li>
+<li><b>Do:</b> superpose and match the initial temperature by a Fourier series. <span class="why">The starting profile is built from the pure shapes; each then decays on its own.</span></li>
+</ol>
 
 <h3>Method 2: factor out the decay</h3>
+<details class="idea"><summary>What is this? (factoring out the leak)</summary><div><p>Since the leak shrinks every temperature by the same factor \(e^{-kt}\), you can take that factor out first and look at what is left. What is left behaves like a rod with no leak at all, which you already know how to solve. Then put the shrink factor back. It is like watching the bath water slosh while ignoring the steadily dropping level, then remembering to lower everything at the end.</p></div></details>
 <p>Substitute \(u(x,t)=e^{-kt}v(x,t)\). Then \(u_t=e^{-kt}(v_t-kv)\) and \(u_{xx}=e^{-kt}v_{xx}\), so</p>
 \[\begin{gathered}e^{-kt}(v_t-kv)=a^2e^{-kt}v_{xx}-ke^{-kt}v\\ \Rightarrow\ v_t=a^2v_{xx}.\end{gathered}\]
 <p class="word"><b>In words:</b> the \(-kv\) terms cancel: \(v\) solves the ordinary heat equation. The BCs (zero or insulated) and the IC \(v(x,0)=u(x,0)\) are unchanged (as \(e^0=1\)).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(e^{-kt}\)</dt><dd>the uniform shrink caused by the side leak alone</dd>
+<dt>\(v\)</dt><dd>the temperature as it would be with insulated sides: spreading only</dd>
+<dt>\(-kv\) terms cancel</dt><dd>differentiating the shrink factor produces exactly the leak term, so the leak is fully absorbed by \(e^{-kt}\)</dd>
+</dl></div>
 <div class="box thm"><span class="tag">Result</span>
 <p>Solve the ordinary heat equation \(v_t=a^2v_{xx}\) with the same boundary and initial conditions (§4–§5); then \(u=e^{-kt}v\).</p>
 </div>
+<ol class="steps proc">
+<li><b>Do:</b> rewrite the equation as \(u_t=a^2u_{xx}+\beta u\) and read off \(\beta\) (here \(\beta=-k\)). <span class="why">\(\beta\) is the uniform leak (negative) or gain (positive) rate; papers disguise it by rearranging.</span></li>
+<li><b>Do:</b> substitute \(u=e^{\beta t}v\) and check that \(v_t=a^2v_{xx}\). <span class="why">Taking out the uniform shrink leaves pure spreading.</span></li>
+<li><b>Do:</b> carry over the boundary and initial conditions to \(v\) unchanged. <span class="why">Zero or insulated ends stay zero or insulated after multiplying by \(e^{\beta t}\), and at \(t=0\) the factor is 1.</span></li>
+<li><b>Do:</b> solve for \(v\) by §4–§5, then multiply by \(e^{\beta t}\). <span class="why">Put the shrink back so the answer includes the leak.</span></li>
+</ol>
 <div class="box eg"><span class="tag">Worked example (written for these notes)</span>
 <p><b>Solve \(u_t=u_{xx}-2u\), \(0\lt x\lt\pi\), with \(u(0,t)=u(\pi,t)=0\) and \(u(x,0)=\sin x+3\sin2x\).</b></p>
-<p>\(v_t=v_{xx}\) with zero ends and \(v(x,0)=\sin x+3\sin2x\): by §4 (worked example A), \(v=e^{-t}\sin x+3e^{-4t}\sin2x\). Multiply by \(e^{-2t}\):</p>
+<p>\(v_t=v_{xx}\) with zero ends and \(v(x,0)=\sin x+3\sin2x\): by §4 (worked example A), \(v=e^{-t}\sin x+3e^{-4t}\sin2x\). <span class="why">With the leak taken out, this is the plain rod problem already solved.</span> Multiply by \(e^{-2t}\): <span class="why">put the uniform shrink back.</span></p>
 <p class="boxed">\(u(x,t)=e^{-3t}\sin x+3e^{-6t}\sin2x\)</p>
 <p class="word"><b>In words:</b> each mode's decay rate gains \(+2\) (from \(1\) to \(3\), from \(4\) to \(6\)). Check: for the first term \(u_t=-3u\) and \(u_{xx}-2u=-u-2u=-3u\) ✓.</p>
 </div>
@@ -949,32 +1229,44 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
   <div class="readout" id="dc-out"></div>
   <p class="cap">Rod \(0\le x\le1\), both ends insulated, \(a=1\), start \(f(x)=x\) (dashed). Grey: the solution without side losses (\(k=0\)), which flattens to the average \(\frac12\) and stays there. Teal: with side losses, \(u=e^{-kt}v\): the same shape, uniformly scaled down by \(e^{-kt}\), so it flattens <b>and</b> sinks towards 0.</p>
 </div>
+<p class="cannow"><b>You can now:</b> explain the \(-ku\) term as a side leak that shrinks every shape at the same extra rate; solve the leaky rod either by separating (time rates gain \(+k\)) or by writing \(u=e^{\beta t}v\); spot a disguised growth term such as Dec 2016's and handle its sign.</p>
 </section>
-
 <section id="s10">
-<h2><span class="n">10</span><span>Previous content (out of 2026 syllabus): Laplace's equation on a rectangle <span class="pill prev">Out of 2026 syllabus</span></span></h2>
+<h2><span class="n">10</span><span>Previous content (out of 2026 syllabus): Laplace's equation on a rectangle <span class="pill prev">Out of 2026 syllabus</span> <span class="pill skip">Optional on first read</span></span> <span class="mins">~8 min</span></h2>
 <div class="box prev"><span class="tag">Previous content · out of 2026 syllabus</span>
 <p>Laplace's equation is not in the 2026 course materials, but May papers asked it (type C5.8): May 2015 Q5 (14 + 6 marks), May 2018 Q5 (17 + 3 marks) and May 2019 Q5 (17 + 3 marks), always on a rectangle and always solved by separation of variables. It uses everything in §3–§5, with one new twist (exponentials instead of decay in time), taught here. All these questions are collected with full solutions on the <a href="guide-prev.html#C5-8">out-of-syllabus questions page</a> of the exam guide.</p>
 </div>
+<details class="idea"><summary>What is this?</summary><div><p>Widen the metal rod into a flat metal plate, and hold its four edges at fixed temperatures (say one edge touching a hot pipe, the others in ice). Wait long enough and the temperature inside stops changing: heat still flows from the hot edge to the cold ones, but every point receives exactly as much as it passes on. In that settled state each point is at the average temperature of its neighbours, like a stretched rubber sheet clamped at a bent frame, which sags into the smoothest shape that fits the frame. There is no "start" any more: the edges alone decide everything.</p></div></details>
 <p><b>Where it comes from.</b> In a thin flat plate (insulated on its faces) the temperature \(u(x,y,t)\) obeys the 2D heat equation \(u_t=c^2(u_{xx}+u_{yy})\). Once the plate has settled (steady state, \(u_t=0\)):</p>
 \[\pd{^2u}{x^2}+\pd{^2u}{y^2}=0.\]
 <p class="word"><b>In words:</b> the curvature in the \(x\)-direction exactly cancels the curvature in the \(y\)-direction at every point: each point is at the average temperature of its surroundings, so nothing changes.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\pd{^2u}{x^2}\)</dt><dd>how the temperature bends along the east–west line through the point (positive: the point is colder than its east and west neighbours)</dd>
+<dt>\(\pd{^2u}{y^2}\)</dt><dd>the same bend along the north–south line</dd>
+<dt>sum \(=0\)</dt><dd>whatever the point gains from one direction it loses in the other, so its temperature never changes</dd>
+</dl></div>
 <p>This is <b>Laplace's equation</b>; its solutions are called <b>harmonic functions</b>. Both variables are now positions, and the problem is fixed by the values (or slopes) of \(u\) on all four edges of the region: there are no initial conditions. (It is the 2D version of the straight-line steady state \(u_E''=0\) of Example 3.3.)</p>
 <h3>The standard problem: one hot edge</h3>
+<details class="idea"><summary>What is this? (one hot edge)</summary><div><p>Three edges of the plate are in ice and the top edge is held at some temperature profile. Between the two side edges, which are both at 0, the temperature across the plate can only take the same sine shapes as a rod with both ends at 0. Going up from the cold bottom edge towards the hot top edge, each shape grows; with no time any more, it grows with height like \(\sinh\) instead of decaying like \(e^{-t}\). So the side with the non-zero condition is the direction that gets the \(\sinh\)/\(\cosh\).</p></div></details>
 <p>Rectangle \(0\le x\le a\), \(0\le y\le b\); three edges held at 0 and the top edge at a given temperature \(f(x)\):</p>
 \[\begin{aligned}&u_{xx}+u_{yy}=0,\\&u(0,y)=0,\quad u(a,y)=0,\\&u(x,0)=0,\quad u(x,b)=f(x).\end{aligned}\]
-<ol class="steps">
-<li><b>Separate.</b> \(u=X(x)Y(y)\): \(X''Y+XY''=0\Rightarrow\dfrac{X''}{X}=-\dfrac{Y''}{Y}=k\).</li>
-<li><b>Use the pair of zero edges facing each other</b> (\(x=0\) and \(x=a\)): \(X(0)=X(a)=0\). Exactly as in §4, only \(k=-p^2\lt0\) works: \(p=\frac{n\pi}a\), \(X_n=\sin\frac{n\pi x}a\), \(n=1,2,\dots\)</li>
-<li><b>The other variable.</b> \(-\dfrac{Y''}{Y}=-p^2\Rightarrow Y''=p^2Y\): now the <b>positive</b> case of the ODE table: \(Y=A\cosh\frac{n\pi y}{a}+B\sinh\frac{n\pi y}{a}\) (§1 Beyond box).</li>
-<li><b>The third zero edge</b> \(y=0\): \(Y(0)=A=0\). So \(u_n=b_n\sinh\frac{n\pi y}a\sin\frac{n\pi x}a\).</li>
-<li><b>Superpose and match the hot edge</b> \(y=b\): \(f(x)=\sum_nb_n\sinh\frac{n\pi b}a\sin\frac{n\pi x}a\), a sine series on \([0,a]\), so \(b_n\sinh\frac{n\pi b}{a}=\frac2a\int_0^af\sin\frac{n\pi x}a\,dx\).</li>
+<ol class="steps proc">
+<li><b>Do: separate.</b> \(u=X(x)Y(y)\): \(X''Y+XY''=0\Rightarrow\dfrac{X''}{X}=-\dfrac{Y''}{Y}=k\). <span class="why">Look for pure patterns: a fixed shape across the plate whose size changes only with height.</span></li>
+<li><b>Do: use the pair of zero edges facing each other</b> (\(x=0\) and \(x=a\)): \(X(0)=X(a)=0\). Exactly as in §4, only \(k=-p^2\lt0\) works: \(p=\frac{n\pi}a\), \(X_n=\sin\frac{n\pi x}a\), \(n=1,2,\dots\) <span class="why">Two cold side edges act like the two cold ends of a rod, so the shapes across are the rod's sine shapes.</span></li>
+<li><b>Do: solve for the other variable.</b> \(-\dfrac{Y''}{Y}=-p^2\Rightarrow Y''=p^2Y\): now the <b>positive</b> case of the ODE table: \(Y=A\cosh\frac{n\pi y}{a}+B\sinh\frac{n\pi y}{a}\) (§1 Beyond box). <span class="why">The minus sign in Laplace's equation flips the sign of the constant, so the direction towards the hot edge gets growing \(\cosh\)/\(\sinh\) instead of oscillating sines.</span></li>
+<li><b>Do: use the third zero edge</b> \(y=0\): \(Y(0)=A=0\). So \(u_n=b_n\sinh\frac{n\pi y}a\sin\frac{n\pi x}a\). <span class="why">\(\sinh\) is the one that starts at 0, matching the cold bottom edge.</span></li>
+<li><b>Do: superpose and match the hot edge</b> \(y=b\): \(f(x)=\sum_nb_n\sinh\frac{n\pi b}a\sin\frac{n\pi x}a\), a sine series on \([0,a]\), so \(b_n\sinh\frac{n\pi b}{a}=\frac2a\int_0^af\sin\frac{n\pi x}a\,dx\). <span class="why">The hot edge is the only non-zero condition left; split its profile into the sine shapes (C4) and give each shape the right size there.</span></li>
 </ol>
 <div class="boxed">\[\begin{aligned}u(x,y)&=\sum_{n=1}^\infty B_n\,\frac{\sinh(n\pi y/a)}{\sinh(n\pi b/a)}\,\sin\frac{n\pi x}{a},\\ B_n&=\frac2a\int_0^af(x)\sin\frac{n\pi x}{a}\,dx.\end{aligned}\]</div>
 <p class="word"><b>In words:</b> write the hot edge's temperature as a sine series; each sine shape fades away from the hot edge into the plate like \(\frac{\sinh(n\pi y/a)}{\sinh(n\pi b/a)}\), which equals 1 on the hot edge and 0 on the opposite edge. Wiggly shapes (large \(n\)) fade fastest.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(B_n\)</dt><dd>how much of sine shape \(n\) the hot edge's profile contains (its Fourier sine coefficient)</dd>
+<dt>\(\sin\frac{n\pi x}{a}\)</dt><dd>the shape across the plate, zero at both cold side edges</dd>
+<dt>\(\dfrac{\sinh(n\pi y/a)}{\sinh(n\pi b/a)}\)</dt><dd>the fade factor: 0 on the cold bottom edge, 1 on the hot top edge; on the unit square at mid-height it is about 0.20 for \(n=1\), 0.009 for \(n=3\), 0.0004 for \(n=5\)</dd>
+</dl></div>
 <div class="box eg"><span class="tag">Worked example (written for these notes)</span>
 <p><b>A square plate \(0\le x\le1\), \(0\le y\le1\) has three edges at 0 and the top edge at \(u(x,1)=\sin\pi x\). Find \(u\) and the temperature at the centre.</b></p>
-<p>\(f\) is already the \(n=1\) shape, so \(B_1=1\), all other \(B_n=0\):</p>
+<p>\(f\) is already the \(n=1\) shape, so \(B_1=1\), all other \(B_n=0\): <span class="why">the hot edge contains only one pure shape, so only that shape appears inside.</span></p>
 <p class="boxed">\(u(x,y)\) \(=\dfrac{\sinh\pi y}{\sinh\pi}\sin\pi x,\)&emsp;&emsp;\(u\big(\tfrac12,\tfrac12\big)\) \(=\dfrac{\sinh(\pi/2)}{\sinh\pi}\) \(\approx0.199.\)</p>
 <p>With the whole top edge at 1 instead (\(f=1\)): \(B_n=\frac{2(1-(-1)^n)}{n\pi}\), and the centre value turns out to be exactly \(\frac14\). <i>Why:</i> by symmetry, each of the four edges held at 1 (with the others at 0) gives the centre the same temperature; adding the four problems gives the plate with all edges at 1, whose solution is \(u\equiv1\); so each contributes \(\frac14\).</p>
 </div>
@@ -993,8 +1285,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li>Match the remaining edge(s) by Fourier series. If two non-opposite edges are non-zero, solve one problem per edge and add (superposition).</li>
 <li>If a hot edge's function is already one of the shapes (\(\sin\frac{\pi y}b\), \(\cos x\), \(\cos^2x=\frac12+\frac12\cos2x\)), read the coefficients off.</li>
 </ol></div>
+<p class="cannow"><b>You can now:</b> explain Laplace's equation as the settled temperature of a plate; solve the one-hot-edge rectangle by giving the cold opposite pair the sines and the hot direction the \(\sinh\); handle two hot edges by adding one problem per edge.</p>
 </section>
-
 <section id="summary">
 <h2><span class="n">◆</span>Summary</h2>
 <div class="scroll"><table>
@@ -1199,6 +1491,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li>\(n=2\): \(Y''=4Y\), \(Y_2(0)=0\), \(Y_2(1)=\frac{a^2}2\Rightarrow Y_2=\frac{a^2}2\frac{\sinh2y}{\sinh2}\). All other \(n\): zero.</li>
 <li>(ii) At \((0,1)\): \(\frac12+0+\frac12=1\), times \(a^2=9\). Consistent with the top edge: \(9\cos^20=9\). May 2018 and May 2015 are in the guide.</li></ol></div></details></div></details></div>
 </section>
+
 
 <footer class="foot">MECH2407 Revision Bundle · written for students revising on their own. Material in orange "Beyond the handouts" boxes is not in the course handouts. <a href="index.html">Start Here</a></footer>
 </main>
@@ -1591,6 +1884,14 @@ function drawQlap(cv){const F=(x,y)=>y/2+shr(1,1-y,1)*Math.cos(x)+shr(2,y,1)/2*M
 if($('f-qlap'))mount('f-qlap',drawQlap);
 })();
 
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </body>
 </html>

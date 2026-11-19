@@ -147,6 +147,31 @@ footer.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);fo
 .eqw,.eqn{display:block}
 @media (max-width:759px){.eqw{display:none}}
 @media (min-width:760px){.eqn{display:none}}
+
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+ol.steps.proc{border:0;border-radius:0;background:none;padding:0 0 0 1.3rem;margin:8px 0}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macros:{
@@ -195,14 +220,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </section>
 
 <section id="s1">
-<h2><span class="n">1</span>Double integrals <span class="muted small">(handout §2.1, pp. 1–7)</span></h2>
+<h2><span class="n">1</span>Double integrals <span class="muted small">(handout §2.1, pp. 1–7)</span> <span class="mins">~22 min</span></h2>
 <h3>Starting point: the definite integral as a Riemann sum</h3>
+<details class="idea"><summary>What is this? (the integral as a sum)</summary><div><p>Before going to two variables, recall what an ordinary integral really does. To find the area under a curve, cut it into thin vertical strips, pretend each strip is a rectangle (its height read off the curve at one point), and add up the rectangles. The thinner the strips, the less the curve can change across one strip, so the error shrinks to nothing. Everything in this chapter is this same idea: <b>chop into tiny pieces, measure each piece roughly, add, and let the pieces shrink</b>.</p></div></details>
 <p>For a function \(f(x)\) of one variable, chop the interval \([a,b]\) into \(n\) pieces at points</p>
 \[a=x_0\lt x_1\lt x_2\lt\dots\lt x_n=b.\]
 <p>In each piece \([x_{k-1},x_k]\) pick any sample point \(c_k\). Build a rectangle on that piece with height \(f(c_k)\) and width \(x_k-x_{k-1}\). The <b>definite integral</b> of \(f\) from \(a\) to \(b\) is the limit of the total of these rectangles:</p>
 \[\int_a^b f(x)\,dx=\lim_{n\to\infty}\sum_{k=1}^{n}f(c_k)\,(x_k-x_{k-1}),\]
 <p>taken so that \(\max\{x_k-x_{k-1}\}\to0\) as \(n\to\infty\) (every piece shrinks, not just most of them).</p>
 <p class="word"><b>In words:</b> integral = limit of the sum of (height × width) over thinner and thinner strips.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(f(c_k)\)</dt><dd>the height of the \(k\)-th strip, read off the curve at one sample point inside it.</dd>
+<dt>\(x_k-x_{k-1}\)</dt><dd>the width of that strip.</dd>
+<dt>\(\displaystyle\sum_{k=1}^{n}\)</dt><dd>add the rectangles from the left end to the right end.</dd>
+<dt>\(\displaystyle\lim_{n\to\infty}\), widths \(\to0\)</dt><dd>make every strip thinner, so the curve is almost flat across each one and the rectangles fit it exactly in the limit. This is why it does not matter which sample point you pick.</dd>
+</dl></div>
 <div class="box def"><span class="tag">Definitions</span>
 <ul class="list">
 <li>The sum \(\sum f(c_k)(x_k-x_{k-1})\) is called a <b>Riemann sum</b>, and an integral defined as its limit is a <b>Riemann integral</b>.</li>
@@ -218,7 +250,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 
 <h3>From area under a curve to volume under a surface</h3>
-<p>A function \(f(x,y)\) of two variables defines a surface \(z=f(x,y)\) (see <a href="note-C1.html#s1">Chapter 1 §1</a>). Take a region \(R\) of the \(xy\)-plane (the "floor") and stand a vertical wall on its boundary, like a cookie cutter pushed straight up. The surface, the wall and the floor enclose a solid. We want its volume.</p>
+<details class="idea"><summary>What is this? (double integral)</summary><div><p>Picture a field \(R\) covered in snow whose depth changes from place to place. To find the total amount of snow, divide the field into small square tiles. On each tile the depth is nearly constant, so the snow on it is about (depth × tile area). Add up every tile, then use smaller and smaller tiles: the total you approach is the <b>double integral</b> of the depth over the field. It is the one-variable strip idea again, with tiles of a field instead of strips of a line.</p></div></details>
+<p>A function \(f(x,y)\) of two variables defines a surface \(z=f(x,y)\) (see <a href="note-C1.html#s1">Chapter 1 §1</a>); in the picture, \(f(x,y)\) is the snow depth at the point \((x,y)\). Take a region \(R\) of the \(xy\)-plane (the "floor", our field) and stand a vertical wall on its boundary, like a cookie cutter pushed straight up. The surface, the wall and the floor enclose a solid. We want its volume.</p>
 <p>Divide \(R\) into \(n\) small rectangles. The \(k\)-th one has sides \(\Delta x_k\), \(\Delta y_k\), area \(\Delta A_k=\Delta x_k\,\Delta y_k\), and contains a chosen point \((x_k,y_k)\). A column standing on it with height \(f(x_k,y_k)\) has volume \(f(x_k,y_k)\,\Delta A_k\). Add up all the columns and let them shrink:</p>
 <div class="box def"><span class="tag">Definition (double integral)</span>
 \[\begin{aligned}\iint_R f(x,y)\,dR&=\iint_R f(x,y)\,dx\,dy\\&=\lim_{n\to\infty}\sum_{k=1}^{n}f(x_k,y_k)\,\Delta A_k,\end{aligned}\]
@@ -226,6 +259,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p class="word"><b>In words:</b> double integral = limit of the sum of (height of surface × area of little floor tile) over all tiles; for \(f\ge0\) it is the volume of the solid between the floor region \(R\) and the surface.</p>
 <p>The little-area symbol is written in several ways that all mean the same: \(dR\), \(dA\), \(dS\), \(dx\,dy\). Such an integral is sometimes called an <b>iterated</b> or <b>repeated integral</b>, because (as we shall see) it is evaluated as two ordinary definite integrals, one inside the other.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(f(x_k,y_k)\)</dt><dd>the snow depth (surface height) at a sample point of the \(k\)-th tile.</dd>
+<dt>\(\Delta A_k\)</dt><dd>the floor area of that tile; depth × area is the snow on the tile (the volume of one column).</dd>
+<dt>\(\displaystyle\sum_{k=1}^{n}\)</dt><dd>add the columns over every tile of the field \(R\).</dd>
+<dt>\(\max\{\Delta A_k\}\to0\)</dt><dd>shrink every tile in both directions, so the depth cannot vary across any one tile and the columns fit the surface exactly. In the limit, \(dA=dx\,dy\) is "one tiny tile".</dd>
+</dl></div>
 <div class="figure">
   <p class="ttl">Columns under a surface: the double Riemann sum</p>
   <canvas class="plot" id="f-r2d" style="aspect-ratio:16/11" aria-label="Rectangular columns standing under a surface over a rectangle"></canvas>
@@ -245,10 +284,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <div class="box eg"><span class="tag">Example 2.1.1</span>
 <p>With \(f(x,y)\equiv1\) (the constant function 1),</p>
 \[\iint_S dS=\text{area of the region }S.\]
-<p class="word"><b>In words:</b> a solid of height 1 standing on \(S\) has volume = area of \(S\) × 1, so integrating 1 gives the area. This is how exam questions ask you to "find the area of the region using double integration".</p>
+<p class="word"><b>In words:</b> a solid of height 1 standing on \(S\) has volume = area of \(S\) × 1, so integrating 1 gives the area. This is how exam questions ask you to "find the area of the region using double integration".<span class="why">In the snow picture: if the snow is 1 unit deep everywhere, the amount of snow is just the size of the field, because each tile contributes 1 × its own area.</span></p>
 </div>
 
 <h3>Rectangular regions: slicing into slabs (Fubini's theorem)</h3>
+<details class="idea"><summary>What is this? (slicing, Fubini's theorem)</summary><div><p>Adding millions of tiny columns one by one is hopeless by hand. Instead, cut the solid like a loaf of bread into thin slices. Each slice is flat, so its face area is an ordinary one-variable integral (the area under one curve). Slice volume = face area × thickness, and adding the slices is a second ordinary integral. You may slice the loaf front-to-back or left-to-right: it is the same loaf, so you get the same total. That is <b>Fubini's theorem</b>.</p></div></details>
 <p>Let \(S\) be the rectangle \(a\le x\le b,\ c\le y\le d\). The region can be cut into thin strips in two ways:</p>
 <ul class="list">
 <li><b>horizontal strips</b>: \(y\) is fixed along the strip, \(x\) runs from \(a\) to \(b\); the strip has width \(\Delta y\);</li>
@@ -261,7 +301,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
   <label>position <input type="range" id="st-p" min="0.05" max="0.95" step="0.01" value="0.45"></label></div>
   <p class="cap">The rectangle \(a\le x\le b,\ c\le y\le d\). A horizontal strip at height \(y\) has thickness \(\Delta y\) and runs from \(x=a\) to \(x=b\). A vertical strip at position \(x\) has thickness \(\Delta x\) and runs from \(y=c\) to \(y=d\). The green dot is a typical point \((x,y)\) of the strip.</p>
 </div>
-<p>Each strip carries a thin <b>slab</b> of the solid under \(z=f(x,y)\). If the strip is horizontal (aligned with the \(x\)-direction, at height \(y\)), the face of the slab is the region under the curve \(z=f(x,y)\) with \(y\) frozen, and its area is</p>
+<p>Each strip carries a thin <b>slab</b> (one slice of the loaf) of the solid under \(z=f(x,y)\). If the strip is horizontal (aligned with the \(x\)-direction, at height \(y\)), the face of the slab is the region under the curve \(z=f(x,y)\) with \(y\) frozen, and its area is</p>
 \[A(y)=\int_{x=a}^{b}f(x,y)\,dx.\]
 <p class="word"><b>In words:</b> cross-sectional area of the slab = ordinary integral along the strip, treating \(y\) as a constant.</p>
 <p>The slab has thickness \(\Delta y\), so its volume is about \(A(y)\,\Delta y\). Summing over slabs of infinitesimal width:</p>
@@ -269,6 +309,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <span class="eqw" data-eq="1">\[\begin{aligned}\iint_S f\,dx\,dy&=\int_{y=c}^{d}\left[\int_{x=a}^{b}f(x,y)\,dx\right]dy \qquad(x\text{-direction first})\\&=\int_{x=a}^{b}\left[\int_{y=c}^{d}f(x,y)\,dy\right]dx \qquad(y\text{-direction first})\end{aligned}\]</span><span class="eqn" data-eq="1">\[\begin{aligned}\iint_S f\,dx\,dy&=\int_{y=c}^{d}\left[\int_{x=a}^{b}f(x,y)\,dx\right]dy\\&\qquad(x\text{-direction first})\\&=\int_{x=a}^{b}\left[\int_{y=c}^{d}f(x,y)\,dy\right]dx\\&\qquad(y\text{-direction first})\end{aligned}\]</span>
 <p class="word"><b>In words:</b> do the inner integral (with the other variable held constant), then integrate the answer over the outer variable. For a rectangle, either order gives the same answer, and the limits are just constants.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\displaystyle\int_{x=a}^{b}f(x,y)\,dx\)</dt><dd>the face area \(A(y)\) of the slice at position \(y\): you walk along the slice, so \(y\) does not change and is treated as a constant.</dd>
+<dt>\(dy\)</dt><dd>the thickness of that slice; \(A(y)\,dy\) is the slice's volume.</dd>
+<dt>\(\displaystyle\int_{y=c}^{d}\)</dt><dd>add the slices from the first (\(y=c\)) to the last (\(y=d\)).</dd>
+<dt>the second line</dt><dd>the same loaf sliced the other way: face area \(A(x)\), thickness \(dx\). Same solid, same total.</dd>
+</dl></div>
 <div class="figure">
   <p class="ttl">A slab and its cross-section area (Example 2.1.2)</p>
   <canvas class="plot" id="f-slab" style="aspect-ratio:16/11" aria-label="Slab under the surface z=2xy+y^2"></canvas>
@@ -279,15 +325,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 <div class="box eg"><span class="tag">Example 2.1.2</span>
 <p><b>Evaluate \(\displaystyle\iint_S(2xy+y^2)\,dS\) where \(S\) is the rectangle \(1\le x\le2,\ 0\le y\le1\).</b></p>
-<p><b>Integrating in \(x\) first</b> (\(y\) held constant inside):</p>
+<p><b>Integrating in \(x\) first</b> (\(y\) held constant inside):<span class="why">The inner integral is the face area of the slice at height \(y\); the result \(3y+y^2\) is the \(A(y)\) shown on the orange panel above. The outer integral then adds the slices from \(y=0\) to \(y=1\).</span></p>
 \[\begin{aligned}&\int_{y=0}^{1}\left[\int_{x=1}^{2}(2xy+y^2)\,dx\right]dy\\&=\int_{y=0}^{1}\Big[x^2y+xy^2\Big]_{x=1}^{2}dy\\&=\int_{0}^{1}(4y+2y^2-y-y^2)\,dy\\&=\int_0^1(3y+y^2)\,dy\\&=\left[\frac{3y^2}{2}+\frac{y^3}{3}\right]_0^1=\frac{11}{6}.\end{aligned}\]
-<p><b>Or integrating in \(y\) first</b> (\(x\) held constant inside):</p>
+<p><b>Or integrating in \(y\) first</b> (\(x\) held constant inside):<span class="why">Now the loaf is sliced the other way: each slice has face area \(A(x)=x+\tfrac13\), and the slices are added from \(x=1\) to \(x=2\).</span></p>
 \[\begin{aligned}&\int_{x=1}^{2}\left[\int_{y=0}^{1}(2xy+y^2)\,dy\right]dx\\&=\int_{x=1}^{2}\left[xy^2+\frac{y^3}{3}\right]_{y=0}^{1}dx\\&=\int_{1}^{2}\left(x+\frac13\right)dx\\&=\left[\frac{x^2}{2}+\frac x3\right]_1^2=\frac{11}{6}.\end{aligned}\]
-<p>Both orders give \(11/6\), as Fubini's theorem promises.</p>
+<p>Both orders give \(11/6\), as Fubini's theorem promises: the same volume as the columns in the first 3D figure approach.</p>
 </div>
 
 <h3>Non-rectangular regions</h3>
-<p>Most regions are not rectangles, so the inner limits are no longer constants: they become functions of the outer variable.</p>
+<details class="idea"><summary>What is this? (slicing a curved region)</summary><div><p>Now the field has a curved edge. Slice it as before, but each slice is a different length: a slice near the middle of a round field is long, one near the edge is short. So where a slice <b>starts and stops</b> depends on where the slice is, and the inner limits become functions of the outer variable. The method still works as long as every slice is one unbroken piece (it enters the field once and leaves once); a region where this is true is called <b>simple</b> in that direction.</p></div></details>
 <div class="box def"><span class="tag">Definition (y-simple region)</span>
 <p>A region \(R\) is <b>\(y\)-simple</b> if every line in the \(y\)-direction (vertical line) meets \(R\) in a single interval (or a single point, or not at all). Such a region can be described by</p>
 \[a\le x\le b,\qquad g_1(x)\le y\le g_2(x).\]
@@ -295,6 +341,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p>In this case the vertical slab at \(x\) has cross-section area \(A(x)=\int_{g_1(x)}^{g_2(x)}f\,dy\), and</p>
 \[\begin{aligned}\iint_R f(x,y)\,dR&=\int_{x=a}^{b}A(x)\,dx\\&=\int_{x=a}^{b}\left[\int_{y=g_1(x)}^{g_2(x)}f(x,y)\,dy\right]dx.\end{aligned}\]
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(g_1(x)\)</dt><dd>where the vertical slice at position \(x\) enters the field (the bottom curve).</dd>
+<dt>\(g_2(x)\)</dt><dd>where that slice leaves the field (the top curve). Both depend on \(x\) because slices at different places have different lengths.</dd>
+<dt>\(\displaystyle\int_{g_1(x)}^{g_2(x)}f\,dy\)</dt><dd>the face area \(A(x)\) of that slice, adding the depth along the slice only where it is inside the field.</dd>
+<dt>\(a,\ b\)</dt><dd>the positions of the first and last slice: always constants, because the outer integral sweeps the slice across the whole field once.</dd>
+</dl></div>
 <div class="box def"><span class="tag">Definition (x-simple region)</span>
 <p>A region \(S\) is <b>\(x\)-simple</b> if every line in the \(x\)-direction (horizontal line) meets \(S\) in a single interval (or point, or not at all). Such a region can be described by</p>
 \[c\le y\le d,\qquad h_1(y)\le x\le h_2(y),\]
@@ -313,12 +365,20 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
   <label>slice position <input type="range" id="sp-p" min="0.03" max="0.97" step="0.01" value="0.45"></label></div>
   <p class="cap">Left: the floor region \(R\) (shaded) between its boundary curves, with the strip at the chosen position. Right: the solid between \(R\) and a surface \(z=f(x,y)\) (drag to rotate); the orange panel is the slab face of area \(A(x)\) (vertical strip) or \(A(y)\) (horizontal strip). For the ellipse both strip directions work: the menu option draws a vertical strip, but a horizontal one would also meet the region in one interval.</p>
 </div>
+<p><b>How to set up the limits of a double integral over a region</b>:</p>
+<ol class="steps proc">
+<li><b>Do:</b> sketch the region on the \(xy\)-plane, labelling every boundary curve and every corner point (solve pairs of boundary equations to find the corners). <span class="why">All the limits are read off this picture of the field; you do not need to picture the surface above it.</span></li>
+<li><b>Do:</b> choose a strip direction: vertical (\(y\) inside, \(dy\,dx\)) or horizontal (\(x\) inside, \(dx\,dy\)). Prefer the direction in which every strip enters through the same curve and leaves through the same curve, or the one that makes the inner integral possible. <span class="why">If the entry or exit curve changes partway across, one formula cannot describe all the slices, and you must split the field (see the Beyond box below).</span></li>
+<li><b>Do:</b> draw one typical strip. Its inner limits are the curves where it enters and leaves the region, written in terms of the outer variable (solve each boundary equation for the inner variable). <span class="why">These are where the slice starts and stops, and they move as the slice moves.</span></li>
+<li><b>Do:</b> the outer limits are the constant positions of the first and last strip. <span class="why">Sweeping the strip between them covers the whole field exactly once.</span></li>
+<li><b>Do:</b> integrate the inner integral with the outer variable held constant, then integrate the result over the outer variable. <span class="why">First the face area of one slice, then add up the slices.</span></li>
+</ol>
 <div class="box eg"><span class="tag">Example 2.1.3</span>
 <p><b>Evaluate \(\displaystyle\iint_S xy^2\,dS\) where \(S\) is the region bounded by \(y=0\), \(y=x^2\) and \(x=1\).</b></p>
 <p>A sketch of the region \(S\) is important, but it is not necessary to be able to visualise the surface \(z=f(x,y)\). The three curves enclose the curved triangle with corners \((0,0)\), \((1,0)\) and \((1,1)\): the \(x\)-axis along the bottom, the line \(x=1\) on the right, and the parabola \(y=x^2\) on the upper left. Two integration orders can be chosen, corresponding to slicing in the \(y\)- or \(x\)-direction (see the figure below).</p>
-<p><b>Vertical strips (integrate along the \(y\)-direction first).</b> At a fixed \(x\) between 0 and 1, the strip runs from the bottom \(y=0\) up to the parabola \(y=x^2\):</p>
+<p><b>Vertical strips (integrate along the \(y\)-direction first).</b> At a fixed \(x\) between 0 and 1, the strip runs from the bottom \(y=0\) up to the parabola \(y=x^2\):<span class="why">Every vertical strip enters through the \(x\)-axis and leaves through the parabola, so one pair of inner limits works; the outer limits 0 and 1 are the first and last strip.</span></p>
 \[\begin{aligned}\iint_S xy^2\,dS&=\int_{x=0}^{1}\int_{y=0}^{x^2}xy^2\,dy\,dx\\&=\int_{x=0}^{1}\left[\frac{xy^3}{3}\right]_{0}^{x^2}dx\\&=\int_{x=0}^{1}\frac{x^7}{3}\,dx\\&=\left[\frac{x^8}{24}\right]_0^1=\frac1{24}.\end{aligned}\]
-<p><b>Horizontal strips (integrate along the \(x\)-direction first).</b> At a fixed \(y\) between 0 and 1, the strip runs from the parabola on the left (solve \(y=x^2\) for \(x\): \(x=\sqrt y\)) to the line \(x=1\) on the right:</p>
+<p><b>Horizontal strips (integrate along the \(x\)-direction first).</b> At a fixed \(y\) between 0 and 1, the strip runs from the parabola on the left (solve \(y=x^2\) for \(x\): \(x=\sqrt y\)) to the line \(x=1\) on the right:<span class="why">A horizontal strip's ends are \(x\)-values, so the parabola must be rewritten as "\(x=\) something in \(y\)" before it can serve as a limit.</span></p>
 \[\begin{aligned}\iint_S xy^2\,dS&=\int_{y=0}^{1}\int_{x=\sqrt y}^{1}xy^2\,dx\,dy\\&=\int_{y=0}^{1}\left[\frac{x^2y^2}{2}\right]_{\sqrt y}^{1}dy\\&=\int_{y=0}^{1}\left(\frac{y^2}{2}-\frac{y^3}{2}\right)dy\\&=\left[\frac{y^3}{6}-\frac{y^4}{8}\right]_0^1\\&=\frac16-\frac18=\frac1{24}.\end{aligned}\]
 </div>
 <div class="figure">
@@ -331,18 +391,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 
 <div class="box beyond"><span class="tag">Beyond the handouts · reversing the order of integration</span>
-<p>Exam questions often give an iterated integral that cannot be done in the given order (the inner integral has no elementary antiderivative, like \(\int e^{y^3}dy\)) and ask you to <b>change the order</b>. The recipe:</p>
-<ol class="steps">
-<li>Read the region off the given limits: the outer limits give the range of the outer variable; the inner limits give the two boundary curves.</li>
-<li><b>Sketch the region</b>, labelling every boundary curve and every corner point.</li>
-<li>Draw a strip in the <i>other</i> direction. Read off its new inner limits (where it enters and leaves) and the new constant outer limits (the extreme values of the new outer variable).</li>
-<li>If the new strips enter or leave through different curves in different parts of the region, <b>split the region</b> into pieces and add the integrals.</li>
+<p>Exam questions often give an iterated integral that cannot be done in the given order (the inner integral has no elementary antiderivative, like \(\int e^{y^3}dy\)) and ask you to <b>change the order</b>. In the loaf picture: the given order slices the solid one way and the slices are impossible to measure, so slice it the other way. The volume is the same; only the description of the field changes. The recipe:</p>
+<ol class="steps proc">
+<li><b>Do:</b> read the region off the given limits: the outer limits give the range of the outer variable; the inner limits give the two boundary curves. <span class="why">The limits are a coded description of the field; decode it before re-slicing.</span></li>
+<li><b>Do:</b> <b>sketch the region</b>, labelling every boundary curve and every corner point. <span class="why">The new limits can only be read from the picture, not from the old limits by algebra alone.</span></li>
+<li><b>Do:</b> draw a strip in the <i>other</i> direction. Read off its new inner limits (where it enters and leaves) and the new constant outer limits (the extreme values of the new outer variable). <span class="why">This is the field sliced the other way: new slice ends, new first and last slice.</span></li>
+<li><b>Do:</b> if the new strips enter or leave through different curves in different parts of the region, <b>split the region</b> into pieces and add the integrals. <span class="why">Each piece is a part of the field where one formula describes every slice.</span></li>
 </ol>
-<p><b>Worked example (written for these notes).</b> \(\displaystyle\int_{x=0}^{4}\int_{y=\sqrt x}^{2}e^{y^3}\,dy\,dx\). The inner integral is impossible as it stands. The region is \(0\le x\le4,\ \sqrt x\le y\le2\): above the curve \(y=\sqrt x\) (that is, \(x=y^2\)) and below \(y=2\), with corners \((0,0),(0,2),(4,2)\). A horizontal strip at height \(y\) runs from \(x=0\) to \(x=y^2\), for \(0\le y\le2\). So</p>
+<p><b>Worked example (written for these notes).</b> \(\displaystyle\int_{x=0}^{4}\int_{y=\sqrt x}^{2}e^{y^3}\,dy\,dx\). The inner integral is impossible as it stands. The region is \(0\le x\le4,\ \sqrt x\le y\le2\): above the curve \(y=\sqrt x\) (that is, \(x=y^2\)) and below \(y=2\), with corners \((0,0),(0,2),(4,2)\). A horizontal strip at height \(y\) runs from \(x=0\) to \(x=y^2\), for \(0\le y\le2\).<span class="why">With horizontal slices the inner integral is in \(x\), and \(e^{y^3}\) is a constant for it; the slice length \(y^2\) then supplies exactly the factor needed to integrate \(e^{y^3}\).</span></p>
 \[\begin{aligned}\int_{0}^{4}\!\int_{\sqrt x}^{2}e^{y^3}dy\,dx&=\int_{0}^{2}\!\int_{0}^{y^2}e^{y^3}dx\,dy\\&=\int_0^2y^2e^{y^3}dy\\&=\left[\tfrac13e^{y^3}\right]_0^2=\frac{e^8-1}{3}.\end{aligned}\]
 <p><b>When a split is needed.</b> The region bounded by \(y=\sqrt x\), \(y=2-x\) and \(y=0\) has corners \((0,0),(2,0),(1,1)\). Horizontal strips (from \(x=y^2\) to \(x=2-y\), for \(0\le y\le1\)) need one integral:</p>
 \[\text{Area}=\int_{0}^{1}\big(2-y-y^2\big)\,dy=\frac76.\]
-<p>Vertical strips have a top curve that changes at \(x=1\) (the strip meets \(y=\sqrt x\) for \(x\lt1\) but \(y=2-x\) for \(x\gt1\)), so that order needs two pieces:</p>
+<p>Vertical strips have a top curve that changes at \(x=1\) (the strip meets \(y=\sqrt x\) for \(x\lt1\) but \(y=2-x\) for \(x\gt1\)), so that order needs two pieces:<span class="why">The two pieces are the parts of the field left and right of the corner \((1,1)\); in each, every slice leaves through the same curve.</span></p>
 \[\int_0^1\!\!\int_0^{\sqrt x}dy\,dx+\int_1^2\!\!\int_0^{2-x}dy\,dx=\frac23+\frac12=\frac76.\]
 </div>
 <div class="figure">
@@ -354,11 +414,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
   <div class="readout" id="sl-out"></div>
   <p class="cap">The readout gives the strip's limits. In the second region, move a vertical strip past \(x=1\) (dashed line) and watch its top boundary change from \(y=\sqrt x\) to \(y=2-x\): that is why the \(dy\,dx\) order needs two integrals.</p>
 </div>
+<p class="cannow"><b>You can now:</b> explain a double integral as adding (height × tile area) over a region; set up and evaluate it as two ordinary integrals by slicing, with the limits read off a sketch; reverse the order of integration, splitting the region when the slice ends change.</p>
 </section>
-
 <section id="s2">
-<h2><span class="n">2</span>Change of variables in double integrals <span class="muted small">(handout §2.2, pp. 7–9)</span></h2>
-<p>In first-year calculus, a substitution \(x=g(u)\) turns \(\int f(x)\,dx\) into \(\int f(g(u))\,g'(u)\,du\): the factor \(g'(u)\) says how much a small step \(du\) is stretched into a step \(dx\). Double integrals have the same idea. A clever choice of new variables can turn an awkward region (a slanted parallelogram, a disc) into a rectangle, or an awkward integrand into a simple one. The price is a stretching factor called the <b>Jacobian</b>.</p>
+<h2><span class="n">2</span>Change of variables in double integrals <span class="muted small">(handout §2.2, pp. 7–9)</span> <span class="mins">~17 min</span></h2>
+<details class="idea"><summary>What is this? (change of variables)</summary><div><p>Some fields are awkward to tile with ordinary squares: a slanted parallelogram, a round pond. The fix is to draw a <b>new grid</b> that fits the shape: lines parallel to the parallelogram's sides, or circles and rays for a disc. Think of a square grid printed on a rubber sheet, then stretched and laid over the field so that its lines follow the edges. On the rubber sheet the region is a plain rectangle with easy limits. The price: stretching changes the size of each tile, so every tile must be multiplied by how much it was stretched. That stretch factor is the <b>Jacobian</b>.</p></div></details>
+<p>In first-year calculus, a substitution \(x=g(u)\) turns \(\int f(x)\,dx\) into \(\int f(g(u))\,g'(u)\,du\): the factor \(g'(u)\) says how much a small step \(du\) is stretched into a step \(dx\). Double integrals have the same idea. A clever choice of new variables can turn an awkward region (a slanted parallelogram, a disc) into a rectangle, or an awkward integrand into a simple one; the Jacobian plays the part of \(g'(u)\), stretching areas instead of lengths.</p>
 <p>Start from the double integral</p>
 \[I=\iint_S f(x,y)\,dx\,dy.\]
 <div class="box thm"><span class="tag">Change of variables formula</span>
@@ -369,9 +430,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p>is called the <b>Jacobian</b> of the transformation. \(S^*\) is the region in the \(uv\)-plane that corresponds to the region \(S\) in the \(xy\)-plane (every point of \(S^*\) is sent by the formulas to a point of \(S\), and every point of \(S\) comes from exactly one point of \(S^*\)). The Jacobian is assumed to be nonzero except at isolated points, and the partial derivatives are assumed continuous.</p>
 <p class="word"><b>In words:</b> to change variables, (1) rewrite the integrand in \(u,v\); (2) replace the region \(S\) by its image \(S^*\); (3) replace \(dx\,dy\) by \(|J|\,du\,dv\), where \(|J|\) = (area of a little piece in the \(xy\)-plane) ÷ (area of the matching piece in the \(uv\)-plane). Note the <b>absolute value</b>: areas are never negative.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(f\big(x(u,v),y(u,v)\big)\)</dt><dd>the height (snow depth) at the point of the field that the new grid labels \((u,v)\): the same function, just addressed by new grid labels.</dd>
+<dt>\(S^*\)</dt><dd>the region drawn on the unstretched rubber sheet; with a good choice it is a rectangle, so the limits are constants.</dd>
+<dt>\(du\,dv\)</dt><dd>the area of one tiny tile on the unstretched sheet.</dd>
+<dt>\(\left|\dfrac{\partial(x,y)}{\partial(u,v)}\right|\)</dt><dd>how many times bigger that tile becomes once stretched onto the field. So \(|J|\,du\,dv\) is the true area of the tile, and the sum is still (height × true tile area), as in §1.</dd>
+</dl></div>
 <p>The determinant \(\det\begin{pmatrix}p&q\\r&s\end{pmatrix}=ps-qr\), so written out,</p>
 \[J=\pd xu\pd yv-\pd xv\pd yu.\]
 <p class="word"><b>In words:</b> Jacobian = (top-left × bottom-right) − (top-right × bottom-left) of the table of first partial derivatives; the rows are \(x\) and \(y\), the columns are \(u\) and \(v\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\left(\pd xu,\ \pd yu\right)\)</dt><dd>the first column: where on the field a tiny step in the \(u\)-direction of the sheet takes you. It is one side of the stretched tile.</dd>
+<dt>\(\left(\pd xv,\ \pd yv\right)\)</dt><dd>the second column: the other side of the stretched tile, from a tiny step in \(v\).</dd>
+<dt>\(\pd xu\pd yv-\pd xv\pd yu\)</dt><dd>the area of the parallelogram with those two sides (per unit of \(du\,dv\)), as in the Beyond box below.</dd>
+<dt>sign of \(J\)</dt><dd>negative if the sheet was flipped over (mirror image); the absolute value throws the flip away, since an area cannot be negative.</dd>
+</dl></div>
 <div class="figure">
   <p class="ttl">A transformation carries the region \(S^*\) (in the \(uv\)-plane) onto \(S\) (in the \(xy\)-plane)</p>
   <div class="pair">
@@ -389,12 +462,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 \[\begin{aligned}\Delta A&\approx\left|\pd xu\pd yv-\pd xv\pd yu\right|\Delta u\,\Delta v\\&=|J|\,\Delta u\,\Delta v.\end{aligned}\]
 <p class="word"><b>In words:</b> the Jacobian is the area magnification factor of the map at that point.</p>
 </div>
+<p><b>How to change variables in a double integral</b>:</p>
+<ol class="steps proc">
+<li><b>Do:</b> choose \(u\) and \(v\) from the shape of the region (or the integrand): if the boundary is two pairs of lines like \(x-2y=0,4\) and \(x+y=1,4\), take \(u=x-2y\), \(v=x+y\); for circles, take polar coordinates. <span class="why">You are choosing the new grid: its lines should run along the edges of the field, so that the field becomes a rectangle on the sheet.</span></li>
+<li><b>Do:</b> map every boundary curve of \(S\) into the \(uv\)-plane to find \(S^*\) and its limits. <span class="why">This is the region drawn on the unstretched sheet.</span></li>
+<li><b>Do:</b> find the Jacobian \(\dfrac{\partial(x,y)}{\partial(u,v)}\) (directly, or with the reciprocal rule in the next box) and take its absolute value. <span class="why">This is the stretch factor that turns a sheet tile \(du\,dv\) into its true area on the field.</span></li>
+<li><b>Do:</b> rewrite the integrand in \(u,v\), multiply by \(|J|\), and integrate over \(S^*\). <span class="why">Height × true tile area, added over the field, exactly as in §1.</span></li>
+</ol>
 
 <div class="box beyond"><span class="tag">Beyond the handouts · the exam routine for a u, v substitution</span>
 <p>In the exam the substitution is usually given the "wrong way round", as \(u=u(x,y),\ v=v(x,y)\), and the boundaries of \(S\) are lines like \(x+y=1\). Two facts make this quick:</p>
-<ol class="steps">
-<li><b>Reciprocal rule.</b> \(\dfrac{\partial(x,y)}{\partial(u,v)}=1\Big/\dfrac{\partial(u,v)}{\partial(x,y)}\). So you may compute the easy Jacobian of \(u,v\) with respect to \(x,y\) and flip it, without solving for \(x\) and \(y\). (It works because the two maps undo each other, and the determinant of a product of matrices is the product of the determinants.)</li>
-<li><b>Mapping the region.</b> Map every <b>boundary curve</b>, not just the corners: a boundary like \(x+y=1\) becomes \(v=1\) if \(v=x+y\). For a linear map, straight edges stay straight, so mapping the corners is enough; for a non-linear map, edges can bend, so map each edge (for example, \(y=0\) under \(u=2xy,\ v=x^2-y^2\) becomes \(u=0,\ v\ge0\)).</li>
+<ol class="steps proc">
+<li><b>Do:</b> use the <b>reciprocal rule</b>: \(\dfrac{\partial(x,y)}{\partial(u,v)}=1\Big/\dfrac{\partial(u,v)}{\partial(x,y)}\). So you may compute the easy Jacobian of \(u,v\) with respect to \(x,y\) and flip it, without solving for \(x\) and \(y\). (It works because the two maps undo each other, and the determinant of a product of matrices is the product of the determinants.) <span class="why">If going from sheet to field enlarges tiles 3 times, going back from field to sheet must shrink them to one third.</span></li>
+<li><b>Do:</b> <b>map the region</b>: map every <b>boundary curve</b>, not just the corners: a boundary like \(x+y=1\) becomes \(v=1\) if \(v=x+y\). For a linear map, straight edges stay straight, so mapping the corners is enough; for a non-linear map, edges can bend, so map each edge (for example, \(y=0\) under \(u=2xy,\ v=x^2-y^2\) becomes \(u=0,\ v\ge0\)). <span class="why">The edge of the field must become the edge of the region on the sheet; a curved grid can bend a straight edge, so corners alone do not show its shape.</span></li>
 </ol>
 <p>Non-linear example (the type in Dec 2018 and Dec 2023): for \(u=2xy,\ v=x^2-y^2\),</p>
 \[\begin{aligned}\frac{\partial(u,v)}{\partial(x,y)}&=\det\begin{pmatrix}2y&2x\\2x&-2y\end{pmatrix}\\&=-4(x^2+y^2),\end{aligned}\]
@@ -412,9 +492,9 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 <div class="box eg"><span class="tag">Worked example (written for these notes)</span>
 <p><b>Evaluate \(\displaystyle\iint_S(x-2y)(x+y)\,dx\,dy\) where \(S\) is the parallelogram bounded by \(x-2y=0\), \(x-2y=4\), \(x+y=1\), \(x+y=4\).</b></p>
-<p>The boundary lines suggest \(u=x-2y,\ v=x+y\). Then \(S^*\) is the rectangle \(0\le u\le4,\ 1\le v\le4\) (each boundary line becomes one side). Solving: \(x=\tfrac13(u+2v),\ y=\tfrac13(v-u)\), the first transformation in the figure above. By the reciprocal rule,</p>
+<p>The boundary lines suggest \(u=x-2y,\ v=x+y\). Then \(S^*\) is the rectangle \(0\le u\le4,\ 1\le v\le4\) (each boundary line becomes one side). Solving: \(x=\tfrac13(u+2v),\ y=\tfrac13(v-u)\), the first transformation in the figure above. By the reciprocal rule,<span class="why">Each pair of parallel edges becomes "\(u\) = constant" or "\(v\) = constant": the new grid lines run along the parallelogram's sides, so the slanted field becomes a rectangle on the sheet.</span></p>
 \[\begin{aligned}\frac{\partial(u,v)}{\partial(x,y)}&=\det\begin{pmatrix}1&-2\\1&1\end{pmatrix}=3,\\ J=\frac{\partial(x,y)}{\partial(u,v)}&=\frac13.\end{aligned}\]
-<p>So</p>
+<p>So<span class="why">\(J=\tfrac13\): every sheet tile shrinks to a third of its area on the field. Check: the sheet rectangle has area \(4\times3=12\), so the parallelogram has area \(12\times\tfrac13=4\), which matches its corners \(\left(\tfrac23,\tfrac13\right),(2,-1),(4,0),\left(\tfrac83,\tfrac43\right)\).</span></p>
 \[\begin{aligned}&\iint_S(x-2y)(x+y)\,dx\,dy\\&=\int_{v=1}^{4}\!\int_{u=0}^{4}uv\cdot\frac13\,du\,dv\\&=\frac13\cdot\frac{4^2}{2}\cdot\frac{4^2-1}{2}=20.\end{aligned}\]
 <details><summary>Show the calculation: solving for \(x,y\), the direct Jacobian, and the integral</summary><div>
 <ol class="steps">
@@ -428,16 +508,22 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 
 <h3>Polar coordinates</h3>
+<details class="idea"><summary>What is this? (polar coordinates)</summary><div><p>For round fields, use a dartboard grid: circles around the centre and rays out from it. A point is then given by its distance \(r\) from the centre and its angle \(\theta\). The dartboard's tiles are not all the same size: between the same two rays, a tile far out is wider than one near the bullseye, because the arc between two rays grows with distance. A tile at distance \(r\) is \(r\) times as wide along the arc, so its area carries an extra factor \(r\): that is the polar Jacobian.</p></div></details>
 <div class="box eg"><span class="tag">Example 2.2.1</span>
 <p><b>Find the moment of inertia of a hollow circular cylinder of inner radius \(a\), outer radius \(b\), height \(h\) and constant density \(\rho\) about the axis of the cylinder.</b></p>
-<p>The <b>moment of inertia</b> about an axis measures how hard it is to spin a body about that axis: each bit of mass \(\Delta m\) at distance \(d\) from the axis contributes \(d^2\,\Delta m\), so mass far from the axis counts more. The cross-section of the cylinder (cut perpendicular to its axis) is an annulus, a ring between the circles of radius \(a\) and \(b\) centred on the axis (figure below).</p>
+<p>The <b>moment of inertia</b> about an axis measures how hard it is to spin a body about that axis: each bit of mass \(\Delta m\) at distance \(d\) from the axis contributes \(d^2\,\Delta m\), so mass far from the axis counts more. The cross-section of the cylinder (cut perpendicular to its axis) is an annulus, a ring between the circles of radius \(a\) and \(b\) centred on the axis (figure below).<span class="why">A ring is awkward in \(x,y\) (it is not simple in either direction) but on a dartboard grid it is just "\(r\) from \(a\) to \(b\), any angle": a rectangle with constant limits.</span></p>
 <p>Change to <b>polar coordinates</b>, where \(r\) is the distance from the origin and \(\theta\) the angle measured anticlockwise from the positive \(x\)-axis:</p>
 \[x=r\cos\theta,\qquad y=r\sin\theta.\]
 <p>The Jacobian is</p>
 \[\begin{aligned}J=\frac{\partial(x,y)}{\partial(r,\theta)}&=\det\begin{pmatrix}\pd xr&\pd x\theta\\[4pt]\pd yr&\pd y\theta\end{pmatrix}\\&=\det\begin{pmatrix}\cos\theta&-r\sin\theta\\ \sin\theta&r\cos\theta\end{pmatrix}\\&=r\cos^2\theta+r\sin^2\theta=r.\end{aligned}\]
 <p>In other words, \(dx\,dy\to r\,dr\,d\theta\). This corresponds to the elemental area in the \(r\theta\)-plane: a small Cartesian element is a rectangle with area \(\delta S=\delta x\,\delta y\), while a small polar element is a piece of a ring with sides \(\delta r\) (along the radius) and \(r\,\delta\theta\) (along the arc), so \(\delta S\approx r\,\delta r\,\delta\theta\).</p>
 <p class="word"><b>In words:</b> polar area element = (radial width) × (arc length) = \(\delta r\times r\,\delta\theta\). The factor \(r\) appears because arcs are longer further from the origin.</p>
-<p>The region of integration is now a rectangle (simple) in the \(r\theta\)-plane: \(0\le\theta\lt2\pi,\ a\le r\le b\). Each element of the cross-section, extended along the full height \(h\) of the cylinder, is a thin rod of mass \(\rho h\,r\,dr\,d\theta\) at distance \(r\) from the axis, contributing \(r^2\times\rho h\,r\,dr\,d\theta\). Thus the moment of inertia is</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\delta r\)</dt><dd>the thickness of the dartboard ring the tile sits in.</dd>
+<dt>\(r\,\delta\theta\)</dt><dd>the length of arc between two neighbouring rays at distance \(r\): an angle in radians times the radius.</dd>
+<dt>\(r\) (the Jacobian)</dt><dd>the stretch factor: with the same \(\delta r\) and \(\delta\theta\), a tile at \(r=2\) has twice the area of a tile at \(r=1\), and a tile at the centre has almost none.</dd>
+</dl></div>
+<p>The region of integration is now a rectangle (simple) in the \(r\theta\)-plane: \(0\le\theta\lt2\pi,\ a\le r\le b\). Each element of the cross-section, extended along the full height \(h\) of the cylinder, is a thin rod of mass \(\rho h\,r\,dr\,d\theta\) at distance \(r\) from the axis, contributing \(r^2\times\rho h\,r\,dr\,d\theta\). Thus the moment of inertia is<span class="why">Here the "height" being added over the ring is \(\rho h r^2\) (mass per unit floor area × distance²); the extra \(r\) is the tile-size factor, not part of the physics.</span></p>
 \[\begin{aligned}I&=\int_{r=a}^{b}\int_{\theta=0}^{2\pi}\rho h r^2\,r\,dr\,d\theta\\&=\rho h\big[\theta\big]_0^{2\pi}\left[\frac{r^4}{4}\right]_a^b\\&=\rho h\,2\pi\,\frac{b^4-a^4}{4}\\&=\frac M2\,(a^2+b^2),\end{aligned}\]
 <p>where the mass \(M\) is equal to \(\pi\rho h(b^2-a^2)\) (density × volume of the hollow cylinder). The last step uses \(b^4-a^4=(b^2-a^2)(b^2+a^2)\).</p>
 <p class="word"><b>In words:</b> moment of inertia of a pipe = half its mass × (inner radius² + outer radius²). Check: a solid cylinder (\(a=0\)) gives the familiar \(\tfrac12Mb^2\).</p>
@@ -457,9 +543,9 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 <div class="box eg"><span class="tag">Example 2.2.2</span>
 <p><b>Evaluate \(\displaystyle I=\int_0^\infty e^{-x^2}\,dx\).</b></p>
-<p>The function \(e^{-x^2}\) has no elementary antiderivative, so no first-year method works. The trick is to square \(I\) and turn it into a double integral. Since the name of the integration variable does not matter, \(I=\int_0^\infty e^{-y^2}dy\) as well, and</p>
+<p>The function \(e^{-x^2}\) has no elementary antiderivative, so no first-year method works. The trick is to square \(I\) and turn it into a double integral. Since the name of the integration variable does not matter, \(I=\int_0^\infty e^{-y^2}dy\) as well, and<span class="why">Squaring turns a one-variable problem into the volume under a round bell over a quarter of the plane, and a round shape is exactly what the dartboard grid handles well.</span></p>
 \[\begin{aligned}I^2&=\int_0^\infty e^{-x^2}dx\int_0^\infty e^{-y^2}dy\\&=\iint e^{-(x^2+y^2)}\,dx\,dy,\end{aligned}\]
-<p>where the region of integration is the whole first quadrant \(x\ge0,\ y\ge0\). In polar coordinates the first quadrant is \(0\le r\lt\infty,\ 0\le\theta\le\pi/2\), and \(x^2+y^2=r^2\), so</p>
+<p>where the region of integration is the whole first quadrant \(x\ge0,\ y\ge0\). In polar coordinates the first quadrant is \(0\le r\lt\infty,\ 0\le\theta\le\pi/2\), and \(x^2+y^2=r^2\), so<span class="why">The tile-size factor \(r\) is what rescues the calculation: \(r\) is (half) the derivative of \(r^2\), so \(re^{-r^2}\) has a simple antiderivative.</span></p>
 \[\begin{aligned}I^2&=\iint e^{-r^2}\,r\,dr\,d\theta\\&=\frac\pi2\left[-\frac{e^{-r^2}}{2}\right]_0^\infty=\frac\pi4.\end{aligned}\]
 <p>Hence \(I=\sqrt\pi/2\) (positive, since the integrand is positive).</p>
 <details><summary>Show the calculation: each step explained</summary><div>
@@ -482,7 +568,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
   <p class="cap">The region of integration is the whole first quadrant (the floor, shaded). The volume under the bell over the quarter disc \(r\le R\) (bright part) is \(\frac\pi4\big(1-e^{-R^2}\big)\), which tends to \(\frac\pi4\) as \(R\to\infty\). That volume is \(I^2\).</p>
 </div>
 <div class="box beyond"><span class="tag">Beyond the handouts · describing regions in polar coordinates</span>
-<p>To set up \(\iint f\,r\,dr\,d\theta\), sweep a ray out from the origin at angle \(\theta\): the inner limits are where the ray enters and leaves the region (as functions of \(\theta\)); the outer limits are the extreme angles. Useful facts:</p>
+<p>To set up \(\iint f\,r\,dr\,d\theta\), sweep a ray out from the origin at angle \(\theta\), like the hand of a clock:</p>
+<ol class="steps proc">
+<li><b>Do:</b> sketch the region and mark the origin. <span class="why">Every ray starts at the centre of the dartboard, so you need to see where the region sits relative to it.</span></li>
+<li><b>Do:</b> draw one ray at a typical angle \(\theta\). Its inner limits are where it enters and leaves the region, written as \(r=\) (function of \(\theta\)), using the facts below. <span class="why">This is the polar version of a strip: the ray is the slice, and its ends move as the angle changes.</span></li>
+<li><b>Do:</b> the outer limits are the extreme angles: the first and last rays that meet the region. <span class="why">Turning the ray between them sweeps over the whole region once.</span></li>
+<li><b>Do:</b> write the integrand with \(x=r\cos\theta,\ y=r\sin\theta\) and include the extra \(r\). <span class="why">Height at the point, times the true tile area \(r\,dr\,d\theta\).</span></li>
+</ol>
+<p>Useful facts:</p>
 <ul class="list">
 <li>\(x^2+y^2=a^2\) is \(r=a\); the line \(y=x\) (first quadrant) is \(\theta=\pi/4\); the vertical line \(x=a\) is \(r\cos\theta=a\), i.e. \(r=a\sec\theta\); the horizontal line \(y=a\) is \(r=a\csc\theta\).</li>
 <li>A circle through the origin, centre \((a,0)\), radius \(a\): \((x-a)^2+y^2\) \(=a^2\) \(\iff x^2+y^2\) \(=2ax\) \(\iff r\) \(=2a\cos\theta\), for \(-\pi/2\le\theta\le\pi/2\). Similarly centre \((0,a)\): \(r=2a\sin\theta\), \(0\le\theta\le\pi\). Check: \(\int_{-\pi/2}^{\pi/2}\int_0^{2a\cos\theta}r\,dr\,d\theta=\pi a^2\).</li>
@@ -495,16 +588,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
   <div class="readout" id="oc-out"></div>
   <p class="cap">The disc \((x-1)^2+y^2\le1\) (here \(a=1\)). Every ray from the origin at angle \(\theta\) between \(-\pi/2\) and \(\pi/2\) enters the disc at \(r=0\) and leaves at \(r=2\cos\theta\) (red segment).</p>
 </div>
+<p class="cannow"><b>You can now:</b> explain the Jacobian as the stretch factor of tiny tiles and compute it (directly or by the reciprocal rule); change variables to turn a slanted region into a rectangle; set up and evaluate integrals in polar coordinates with \(dx\,dy=r\,dr\,d\theta\).</p>
 </section>
-
 <section id="s3">
-<h2><span class="n">3</span>Triple integrals <span class="muted small">(handout §2.3, pp. 10–13)</span></h2>
+<h2><span class="n">3</span>Triple integrals <span class="muted small">(handout §2.3, pp. 10–13)</span> <span class="mins">~13 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A double integral added up tiny floor tiles. A triple integral adds up tiny <b>boxes</b> that fill a solid. Picture a fruit loaf with raisins packed more tightly in some places: cut it into tiny cubes, find the raisins in each cube (raisins per cubic centimetre × size of the cube) and add up all the cubes to get the raisins in the whole loaf. A triple integral turns a density ("amount per unit volume") into a total.</p></div></details>
 <p>Suppose that a <b>scalar field</b> \(f(x,y,z)\) (a rule giving one number at every point, such as temperature or density) is defined at all points within a region \(D\) of three-dimensional space. Divide \(D\) into \(n\) small subregions; the \(k\)-th has volume \(\Delta V_k\) and contains a point \((x_k,y_k,z_k)\). Multiply the value of \(f\) there by the little volume, add up, and let the pieces shrink:</p>
 <div class="box def"><span class="tag">Definition (triple integral)</span>
 \[\begin{aligned}\iiint_D f(x,y,z)\,dV&=\iiint_D f(x,y,z)\,dx\,dy\,dz\\&=\lim_{n\to\infty}\sum_{k=1}^{n}f(x_k,y_k,z_k)\,\Delta V_k,\end{aligned}\]
 <p>provided that \(\max\{\Delta V_k\}\to0\) as \(n\to\infty\). Such an integral is often called a <b>volume integral</b>.</p>
 <p class="word"><b>In words:</b> triple integral = limit of the sum of (value of \(f\) at a point × volume of the little box around it) over all the boxes filling \(D\). There is no "height" picture any more (that would need 4 dimensions); think of \(f\) as a density and the integral as the total amount.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(f(x_k,y_k,z_k)\)</dt><dd>the density measured at one point inside the \(k\)-th little box (raisins per cubic centimetre there)</dd>
+<dt>\(\Delta V_k\)</dt><dd>the size (volume) of that little box</dd>
+<dt>\(f(x_k,y_k,z_k)\,\Delta V_k\)</dt><dd>the amount inside that one box: density × volume</dd>
+<dt>\(\sum_{k=1}^{n}\)</dt><dd>add the amounts of all the boxes that fill the solid</dd>
+<dt>\(\lim\), \(\max\{\Delta V_k\}\to0\)</dt><dd>cut ever smaller boxes, so the density hardly changes inside any one box and "density × volume" becomes exact</dd>
+</dl></div>
 <div class="figure">
   <p class="ttl">One small box \(\Delta V_k=\Delta x_k\,\Delta y_k\,\Delta z_k\) inside a solid region \(D\)</p>
   <canvas class="plot" id="f-dv" style="aspect-ratio:16/11" aria-label="Rotatable solid region with a small box inside"></canvas>
@@ -521,12 +622,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 
 <h3>Rectangular regions</h3>
+<details class="idea"><summary>What is this?</summary><div><p>For a brick-shaped loaf, add in an orderly way: push a skewer straight down and add up everything along that thin <b>column</b>; line the columns up into a <b>slice</b>; stack the slices into the whole loaf. Each stage is an ordinary one-variable integral.</p></div></details>
 <p>For a box \(x_1\le x\le x_2,\ y_1\le y\le y_2,\ z_1\le z\le z_2\), all six limits are constants, and the triple integral is three ordinary integrals done one inside the other (in any order), each time holding the other variables constant.</p>
+<ol class="steps proc">
+<li><b>Do:</b> read the ranges from the six faces, then integrate the innermost variable (say \(z\)), treating \(x\) and \(y\) as constants. <span class="why">This adds up the density along one vertical column standing at the fixed floor point \((x,y)\).</span></li>
+<li><b>Do:</b> integrate the result over the middle variable (\(y\)), treating \(x\) as a constant. <span class="why">This lines up all the columns along one row to make a slice at fixed \(x\).</span></li>
+<li><b>Do:</b> integrate over the outer variable (\(x\)). <span class="why">This stacks the slices from one end of the box to the other: the whole solid.</span></li>
+</ol>
 <div class="box eg"><span class="tag">Example 2.3.2 (rectangular region)</span>
 <p><b>The density of a rectangular block bounded by the planes \(x=1\), \(x=2\), \(y=0\), \(y=3\), \(z=-1\) and \(z=0\) is given by the scalar function \(\rho(x,y,z)=x(y+1)-z\). Find the mass of the block.</b></p>
 <p>The block is \(1\le x\le2,\ 0\le y\le3,\ -1\le z\le0\): length 1 in \(x\), 3 in \(y\), and it hangs 1 unit below the \(xy\)-plane (figure below). The total mass is</p>
 \[\begin{aligned}M&=\iiint\big(x(y+1)-z\big)\,dz\,dy\,dx\\&=\int_{x=1}^{2}\!\left[\int_{y=0}^{3}\!\left[\int_{z=-1}^{0}\big(x(y+1)-z\big)dz\right]dy\right]dx\\&=\int_{1}^{2}\!\left[\int_{0}^{3}\left[x(y+1)z-\frac{z^2}{2}\right]_{-1}^{0}dy\right]dx\\&=\int_{1}^{2}\!\left[\int_{0}^{3}\left(x(y+1)+\frac12\right)dy\right]dx\\&=\int_{1}^{2}\left[\frac{xy^2}{2}+xy+\frac y2\right]_0^3dx\\&=\int_{1}^{2}\left(\frac92x+3x+\frac32\right)dx\\&=\left[\frac{15}{4}x^2+\frac32x\right]_1^2=\frac{51}{4}.\end{aligned}\]
 <p>(In the third line: at \(z=0\) the bracket is 0; at \(z=-1\) it is \(-x(y+1)-\tfrac12\); subtracting gives \(x(y+1)+\tfrac12\).)</p>
+<ol class="steps">
+<li>Lines 3–4, the \(z\)-integral: \(x(y+1)+\tfrac12\) is the mass of the column of height 1 at \((x,y)\). <span class="why">One skewer pushed down through the block, from \(z=-1\) up to \(z=0\).</span></li>
+<li>Lines 5–6, the \(y\)-integral: \(\tfrac{15}{2}x+\tfrac32\) is the mass of the slice at \(x\). <span class="why">All the columns along the row \(0\le y\le3\) added together.</span></li>
+<li>Line 7, the \(x\)-integral: \(\tfrac{51}{4}\). <span class="why">The slices from \(x=1\) to \(x=2\) stacked into the whole block.</span></li>
+</ol>
+<p><b>Sense check.</b> Volume 3, so the average density is \(\tfrac{51}{4}\div3=4.25\), which (the density being linear in each variable) equals the density at the centre \((1.5,1.5,-0.5)\). ✓</p>
 </div>
 <div class="figure">
   <p class="ttl">Example 2.3.2: the block \(1\le x\le2,\ 0\le y\le3,\ -1\le z\le0\)</p>
@@ -538,12 +651,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 
 <h3>Non-rectangular regions</h3>
+<details class="idea"><summary>What is this?</summary><div><p>Most solids are not boxes: think of a loaf with a curved, risen top and a dented bottom. The skewer idea still works, but each column now starts at the bottom crust and stops at the top crust, so its length depends on where you push it in. Shine a torch straight down and the loaf casts a <b>shadow</b> on the table: the columns stand on that shadow, so the shadow tells you where the columns are, exactly like the floor region of a double integral.</p></div></details>
 <div class="box eg"><span class="tag">Example 2.3.3 (non-rectangular regions)</span>
 <p>Suppose \(D\) is bounded above by the surface \(z=\Psi_2(x,y)\) and below by \(z=\Psi_1(x,y)\), and its <b>projection</b> onto the \(xy\)-plane (its "shadow" when lit from straight above) is described by</p>
 \[a_1\le x\le a_2,\qquad\varphi_1(x)\le y\le\varphi_2(x).\]
 <p>Then,</p>
 \[\begin{aligned}\iiint_D f\,dV=\int_{x=a_1}^{a_2}&\int_{y=\varphi_1(x)}^{\varphi_2(x)}\int_{z=\Psi_1(x,y)}^{\Psi_2(x,y)}\\&f(x,y,z)\,dz\,dy\,dx.\end{aligned}\]
 <p class="word"><b>In words:</b> innermost, run up a vertical column from the bottom surface to the top surface; then sweep the column across a strip of the shadow; then sweep the strip across the whole shadow. Limits get "more constant" as you move outward: the \(z\)-limits may depend on \(x\) and \(y\), the \(y\)-limits only on \(x\), the \(x\)-limits are numbers.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(z\) from \(\Psi_1(x,y)\) to \(\Psi_2(x,y)\)</dt><dd>one column: from the bottom crust to the top crust directly above the floor point \((x,y)\); its ends move as \((x,y)\) moves, so they are functions of \(x\) and \(y\)</dd>
+<dt>\(y\) from \(\varphi_1(x)\) to \(\varphi_2(x)\)</dt><dd>one strip of the shadow at a fixed \(x\): where the shadow starts and stops along that line</dd>
+<dt>\(x\) from \(a_1\) to \(a_2\)</dt><dd>the two far ends of the whole shadow: plain numbers, because nothing is left to depend on</dd>
+<dt>\(dz\,dy\,dx\) (inside to outside)</dt><dd>the order of the adding: column, then strip, then whole shadow</dd>
+</dl></div>
 <p>The solid region depicted below is <b>\(z\)-simple</b> (every vertical line meets it in one interval) with its projected region \(y\)-simple (as defined in §1). Notice that in practice, it may be more convenient to project \(D\) onto the \(xz\)- or \(yz\)-planes instead.</p>
 </div>
 <div class="figure">
@@ -560,14 +680,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p><b>Evaluate \(\displaystyle\iiint_D\frac{1}{(x+y+2z+1)^3}\,dV\) where \(D\) is the region enclosed by the planes \(x=0\), \(y=0\), \(z=0\) and \(x+y+z=1\).</b></p>
 <p>\(D\) is a <b>tetrahedron</b> (a solid with four triangular faces) with corners \((0,0,0)\), \((1,0,0)\), \((0,1,0)\), \((0,0,1)\). Its top face is the slanted plane \(z=1-x-y\); its shadow on the \(xy\)-plane is the triangle under the line \(y=1-x\) (where the slanted plane meets \(z=0\)). So</p>
 \[\begin{gathered}0\le x\le1,\quad0\le y\le1-x,\\0\le z\le1-x-y.\end{gathered}\]
+<p>In the picture: each column stands on the floor and stops at the slanted roof; each strip crosses the triangular shadow up to the edge where the roof meets the floor.</p>
 <p>We have</p>
 \[\begin{aligned}&\int_{x=0}^{1}\!\int_{y=0}^{1-x}\!\int_{z=0}^{1-x-y}\frac{dz\,dy\,dx}{(x+y+2z+1)^3}\\&=\frac14(\ln3-1)\approx0.0247.\end{aligned}\]
 <details><summary>Show the calculation: the three integrations, each step explained</summary><div>
-<p><b>Step 1: the \(z\)-integral</b> (\(x\) and \(y\) are constants). Let \(w=x+y+2z+1\), so \(dw=2\,dz\). Then</p>
+<p><b>Step 1: the \(z\)-integral</b> (\(x\) and \(y\) are constants). <span class="why">This adds the integrand up one column, from the floor to the slanted roof.</span> Let \(w=x+y+2z+1\), so \(dw=2\,dz\). Then</p>
 \[\int\frac{dz}{w^3}=\frac12\int w^{-3}\,dw=\frac12\cdot\frac{w^{-2}}{-2}=-\frac{1}{4w^2}.\]
 <p>Limits: at \(z=0\), \(w=x+y+1\); at \(z=1-x-y\), \(w\) \(=x+y+2(1-x-y)+1\) \(=3-x-y\). So</p>
 <span class="eqw" data-eq="3">\[\begin{aligned}\Big[-\frac{1}{4w^2}\Big]_{z=0}^{1-x-y}&=\frac{1}{4(x+y+1)^2} -\frac{1}{4(3-x-y)^2}.\end{aligned}\]</span><span class="eqn" data-eq="3">\[\begin{aligned}\Big[-\frac{1}{4w^2}\Big]_{z=0}^{1-x-y}&=\frac{1}{4(x+y+1)^2}\\&\quad-\frac{1}{4(3-x-y)^2}.\end{aligned}\]</span>
-<p><b>Step 2: the \(y\)-integral</b> (\(x\) is a constant). Both terms are of the form \(1/(\text{linear in }y)^2\):</p>
+<p><b>Step 2: the \(y\)-integral</b> (\(x\) is a constant). <span class="why">This adds the column totals along one strip of the triangular shadow.</span> Both terms are of the form \(1/(\text{linear in }y)^2\):</p>
 <ul class="list">
 <li>\(\int\frac{dy}{(x+y+1)^2}=-\frac{1}{x+y+1}\) (power rule; the inside has derivative \(+1\)).</li>
 <li>\(\int\frac{dy}{(3-x-y)^2}=+\frac{1}{3-x-y}\) (the inside has derivative \(-1\), which flips the sign).</li>
@@ -575,7 +696,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 \[\begin{aligned}&\int_0^{1-x}\Big(\frac{1}{4(x+y+1)^2}-\frac{1}{4(3-x-y)^2}\Big)dy\\&=\Big[-\frac{1}{4(x+y+1)}-\frac{1}{4(3-x-y)}\Big]_{y=0}^{1-x}.\end{aligned}\]
 <p>At \(y=1-x\): \(x+y+1=2\) and \(3-x-y=2\), giving \(-\frac18-\frac18=-\frac14\). At \(y=0\): \(-\frac{1}{4(x+1)}-\frac{1}{4(3-x)}\). Top minus bottom:</p>
 \[-\frac14+\frac{1}{4(x+1)}+\frac{1}{4(3-x)}.\]
-<p><b>Step 3: the \(x\)-integral.</b> \(\int\frac{dx}{x+1}=\ln(x+1)\) and \(\int\frac{dx}{3-x}=-\ln(3-x)\) (again the inside has derivative \(-1\)):</p>
+<p><b>Step 3: the \(x\)-integral.</b> <span class="why">This adds the strips across the whole shadow, from \(x=0\) to \(x=1\).</span> \(\int\frac{dx}{x+1}=\ln(x+1)\) and \(\int\frac{dx}{3-x}=-\ln(3-x)\) (again the inside has derivative \(-1\)):</p>
 <span class="eqw" data-eq="4">\[\begin{aligned}&\Big[-\frac x4+\frac14\ln(x+1)-\frac14\ln(3-x)\Big]_0^1\\&=\Big(-\frac14+\frac14\ln2-\frac14\ln2\Big) -\Big(0+0-\frac14\ln3\Big)=\frac14(\ln3-1).\end{aligned}\]</span><span class="eqn" data-eq="4">\[\begin{aligned}&\Big[-\frac x4+\frac14\ln(x+1)-\frac14\ln(3-x)\Big]_0^1\\&=\Big(-\frac14+\frac14\ln2-\frac14\ln2\Big)\\&\quad-\Big(0+0-\frac14\ln3\Big)=\frac14(\ln3-1).\end{aligned}\]</span>
 <p>(\(\ln\) is the natural logarithm, written \(\log\) in some books.)</p>
 </div></details>
@@ -590,19 +711,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 <div class="box beyond"><span class="tag">Beyond the handouts · setting limits for any solid, and changing the order</span>
 <p>The May papers ask you to "sketch the region and evaluate" (May 2015, 2016, 2017, 2022, 2024, 2025) and once to rewrite a triple integral in a different order (May 2021). The routine:</p>
-<ol class="steps">
-<li><b>Find the corners.</b> For planes, set two of \(x,y,z\) to zero in each equation to find where it meets the axes (\(x+2y+z=1\) meets them at \(x=1\), \(y=\tfrac12\), \(z=1\)).</li>
-<li><b>Choose the innermost variable</b> whose bottom and top surfaces are easy (usually \(z\)). Write them as \(z=\Psi_1(x,y)\) and \(z=\Psi_2(x,y)\).</li>
-<li><b>Find the shadow</b> on the plane of the other two variables: set \(\Psi_1=\Psi_2\) (where the top meets the bottom) to get its boundary. Sketch it.</li>
-<li>Set the shadow's limits exactly as for a double integral (§1).</li>
-<li><b>To change the order</b>, project onto a different coordinate plane and repeat. Example: \(\int_0^1\!\int_0^{1-x}\!\int_0^{2-2z}f\,dy\,dz\,dx\) describes \(0\) \(\le x\) \(\le1,\ 0\) \(\le z\) \(\le1-x,\ 0\) \(\le y\) \(\le2-2z\). The solid is bounded by \(x+z=1\), \(y+2z=2\) and the coordinate planes. With \(z\) innermost: \(z\) runs from 0 to the lower of the two planes, \(\min\!\big(1-x,\ 1-\tfrac y2\big)\), so the \(xy\)-shadow (the rectangle \(0\le x\le1,\ 0\le y\le2\)) must be split along \(y=2x\) where the two planes cross.</li>
+<ol class="steps proc">
+<li><b>Do:</b> <b>find the corners.</b> For planes, set two of \(x,y,z\) to zero in each equation to find where it meets the axes (\(x+2y+z=1\) meets them at \(x=1\), \(y=\tfrac12\), \(z=1\)). <span class="why">The corners let you sketch the loaf, so you can see its crusts and its shadow.</span></li>
+<li><b>Do:</b> <b>choose the innermost variable</b> whose bottom and top surfaces are easy (usually \(z\)). Write them as \(z=\Psi_1(x,y)\) and \(z=\Psi_2(x,y)\). <span class="why">This picks the direction of the skewer: each column must enter through one surface and leave through one other.</span></li>
+<li><b>Do:</b> <b>find the shadow</b> on the plane of the other two variables: set \(\Psi_1=\Psi_2\) (where the top meets the bottom) to get its boundary. Sketch it. <span class="why">Where the top and bottom crusts meet, the column has shrunk to zero length: that is the edge of the shadow.</span></li>
+<li><b>Do:</b> set the shadow's limits exactly as for a double integral (§1). <span class="why">The columns stand on the shadow, so placing them is a 2D problem you have already solved.</span></li>
+<li><b>Do:</b> <b>to change the order</b>, project onto a different coordinate plane and repeat. <span class="why">Pushing the skewer in from a different side gives different columns and a different shadow, but the same loaf.</span></li>
 </ol>
-<p>Symmetry shortcut: if the region is symmetric under \(x\to-x\) and the integrand is odd in \(x\) (changes sign), the integral is zero, as in May 2025 Q3 (see the exam taster).</p>
+<p><b>Example of a change of order.</b> \(\int_0^1\!\int_0^{1-x}\!\int_0^{2-2z}f\,dy\,dz\,dx\) describes \(0\) \(\le x\) \(\le1,\ 0\) \(\le z\) \(\le1-x,\ 0\) \(\le y\) \(\le2-2z\). The solid is bounded by \(x+z=1\), \(y+2z=2\) and the coordinate planes. With \(z\) innermost: \(z\) runs from 0 to the lower of the two planes, \(\min\!\big(1-x,\ 1-\tfrac y2\big)\), so the \(xy\)-shadow (the rectangle \(0\le x\le1,\ 0\le y\le2\)) must be split along \(y=2x\) where the two planes cross.</p>
+<p>Symmetry shortcut: if the region is symmetric under \(x\to-x\) and the integrand is odd in \(x\) (changes sign), the integral is zero, as in May 2025 Q3 (see the exam taster). In the picture, every box on one side has a partner box on the other side with the opposite amount, so the pairs cancel.</p>
 </div>
+<p class="cannow"><b>You can now:</b> explain a triple integral as density × little volume added over a solid; set up the limits of a triple integral as column, strip and shadow, and evaluate it one integral at a time; rewrite a triple integral in a different order by projecting onto a different coordinate plane.</p>
 </section>
-
 <section id="s4">
-<h2><span class="n">4</span>Change of variables in triple integrals: cylindrical and spherical coordinates <span class="muted small">(handout §2.4, pp. 13–17)</span></h2>
+<h2><span class="n">4</span>Change of variables in triple integrals: cylindrical and spherical coordinates <span class="muted small">(handout §2.4, pp. 13–17)</span> <span class="mins">~18 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>So far we cut the solid into little rectangular boxes. For a round cake or a ball that is clumsy, because the edges are curved. Instead, cut along a curved grid that fits the shape (rings, wedges and layers for a cake; shells and cones for a ball). Each little piece of the new grid is a curved brick, and its volume is not simply "step × step × step": the <b>Jacobian</b> is the factor that says how much the coordinate grid stretches a tiny box into that brick.</p></div></details>
 <p>Everything in §2 carries over to three dimensions, with a \(3\times3\) Jacobian. If</p>
 \[I=\iiint_D f(x,y,z)\,dx\,dy\,dz,\]
 <p>then the change of variables \(x=x(u,v,w),\ y=y(u,v,w),\ z=z(u,v,w)\) gives</p>
@@ -613,14 +736,33 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p>is the Jacobian of the transformation. \(D^*\) is the region in \(uvw\)-space corresponding to the region \(D\) in \(xyz\)-space. The Jacobian is assumed nonzero except at isolated points, and the partial derivatives are continuous.</p>
 <p class="word"><b>In words:</b> as in 2D, rewrite the integrand, replace the region by its image, and replace \(dx\,dy\,dz\) by \(|J|\,du\,dv\,dw\); now \(|J|\) is the <b>volume</b> magnification factor.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(f\big(x(u,v,w),\dots\big)\)</dt><dd>the density, looked up at the real point that the new labels \((u,v,w)\) stand for</dd>
+<dt>\(du\,dv\,dw\)</dt><dd>a tiny box in the world of the new labels</dd>
+<dt>\(\left|\frac{\partial(x,y,z)}{\partial(u,v,w)}\right|\)</dt><dd>how many times bigger that tiny box is once it is placed in real space as a curved brick (volume stretch)</dd>
+<dt>\(D^*\)</dt><dd>the same solid described in the new labels; a good choice makes it a plain box with constant limits</dd>
+</dl></div>
+<ol class="steps proc">
+<li><b>Do:</b> choose new coordinates that match the shape (cylindrical for things round about an axis, spherical for balls and cones from the origin). <span class="why">You want the curved grid whose bricks fit the solid, so the limits become constants.</span></li>
+<li><b>Do:</b> write \(x\), \(y\), \(z\) in terms of the new variables and rewrite the integrand. <span class="why">The density must be looked up at the same real point, just under its new name.</span></li>
+<li><b>Do:</b> describe the region by the new variables to get the limits of \(D^*\). <span class="why">This lists which bricks of the new grid make up the solid.</span></li>
+<li><b>Do:</b> replace \(dx\,dy\,dz\) by \(|J|\,du\,dv\,dw\) (\(r\) for cylindrical, \(\rho^2\sin\phi\) for spherical). <span class="why">Each brick's true volume is the tiny box times the stretch factor; leaving it out counts every brick as the same size.</span></li>
+<li><b>Do:</b> integrate one variable at a time, as in §3. <span class="why">The adding itself is unchanged: column, then strip, then the whole solid.</span></li>
+</ol>
 
 <h3>Cylindrical polar coordinates</h3>
+<details class="idea"><summary>What is this? (cylindrical coordinates)</summary><div><p>Think of a round cake on a turntable with a skewer through its centre (the \(z\)-axis). To say where a raisin is, give how far it is from the skewer, which way it lies (a compass direction around the skewer), and how high it is. That is polar coordinates on the floor plus the ordinary height. Cutting the cake along these coordinates gives rings, wedges and layers, which fit a round cake perfectly.</p></div></details>
 <p>Cylindrical coordinates are polar coordinates in the \(xy\)-plane plus the ordinary height \(z\). A point \(P\) is located by: \(r\), its distance from the \(z\)-axis; \(\theta\), the angle from the positive \(x\)-axis to the vertical plane through \(P\) and the \(z\)-axis (measured anticlockwise seen from above); and \(z\), its height above the \(xy\)-plane. Drop a perpendicular from \(P\) to the point \((x,y,0)\) on the floor: that floor point has polar coordinates \((r,\theta)\).</p>
 <p>The transformation between rectangular coordinates and cylindrical polar coordinates is given by</p>
 \[x=r\cos\theta,\quad y=r\sin\theta,\quad z=z,\]
 <p>with</p>
 \[r\ge0,\quad0\le\theta\lt2\pi,\quad-\infty\lt z\lt\infty.\]
 <p class="word"><b>In words:</b> \(r\) = distance from the \(z\)-axis, \(\theta\) = compass direction around the axis, \(z\) = height. Note \(r=\sqrt{x^2+y^2}\), so \(x^2+y^2\) becomes \(r^2\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(r\cos\theta,\ r\sin\theta\)</dt><dd>walk a distance \(r\) out from the skewer in direction \(\theta\); these are the east and north parts of that walk</dd>
+<dt>\(z=z\)</dt><dd>the height is not changed at all</dd>
+<dt>\(0\le\theta\lt2\pi\)</dt><dd>one full turn round the skewer covers every direction once</dd>
+</dl></div>
 <p>The following are a few special cases (the "coordinate surfaces", obtained by fixing one coordinate and letting the other two vary):</p>
 <div class="scroll"><table>
 <tr><th>Fix</th><th>Surface</th><th>Description</th></tr>
@@ -643,13 +785,29 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p>(expanding along the last row leaves exactly the \(2\times2\) polar Jacobian of §2). Thus we have</p>
 \[dV=dx\,dy\,dz\;\to\;r\,dr\,d\theta\,dz.\]
 <p class="word"><b>In words:</b> a cylindrical volume element = polar area element \(r\,dr\,d\theta\) × height \(dz\): a small curved brick with sides \(dr\), \(r\,d\theta\) and \(dz\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(r\,d\theta\)</dt><dd>the length of its curved side: an arc of angle \(d\theta\) on a circle of radius \(r\); the same wedge angle gives a wider brick further out, which is why \(r\) appears</dd>
+<dt>\(r\,dr\,d\theta\,dz\)</dt><dd>thickness × curved width × height of one brick</dd>
+</dl></div>
+<p><b>Setting up a cylindrical integral.</b></p>
+<ol class="steps proc">
+<li><b>Do:</b> replace every \(x^2+y^2\) by \(r^2\) (and \(x\), \(y\) by \(r\cos\theta\), \(r\sin\theta\)). <span class="why">Distance from the skewer is what round shapes care about.</span></li>
+<li><b>Do:</b> \(z\)-limits: bottom surface to top surface, written in \(r\) and \(\theta\). <span class="why">This is the column of §3, from the bottom crust to the top crust.</span></li>
+<li><b>Do:</b> \(r\) and \(\theta\) limits: describe the shadow on the floor in polar form (a disc is \(0\le r\le a\), \(0\le\theta\le2\pi\)). <span class="why">The columns stand on the shadow, and polar coordinates make a round shadow a rectangle.</span></li>
+<li><b>Do:</b> multiply the integrand by \(r\), then integrate. <span class="why">The outer bricks are bigger than the inner ones, and \(r\) accounts for that.</span></li>
+</ol>
 <div class="box eg"><span class="tag">Example 2.4.1</span>
 <p><b>Find the volume between the surface \(x^2+y^2=2\), \(z=x^2+y^2+2\) and the \(z=0\) plane.</b></p>
 <p>\(x^2+y^2=2\) is a vertical cylinder of radius \(\sqrt2\) about the \(z\)-axis; \(z=x^2+y^2+2\) is a bowl (paraboloid) whose lowest point is at height 2. The solid is the inside of the cylinder, from the floor \(z=0\) up to the bowl (figure below).</p>
 <p>In Cartesian coordinates we have (the shadow is the disc \(x^2+y^2\le2\))</p>
 \[\begin{aligned}\iiint_V1\,dV=\int_{x=-\sqrt2}^{\sqrt2}&\int_{y=-\sqrt{2-x^2}}^{\sqrt{2-x^2}}\\&\int_{z=0}^{x^2+y^2+2}1\,dz\,dy\,dx,\end{aligned}\]
-<p>which is unpleasant because of the square-root limits. In cylindrical polar coordinates the disc is simply \(0\le r\le\sqrt2,\ 0\le\theta\le2\pi\), and the top is \(z=r^2+2\):</p>
+<p>which is unpleasant because of the square-root limits (the shadow is round, but the strips are straight). In cylindrical polar coordinates the disc is simply \(0\le r\le\sqrt2,\ 0\le\theta\le2\pi\), and the top is \(z=r^2+2\):</p>
 \[\begin{aligned}\text{Volume}&=\int_{r=0}^{\sqrt2}\int_{\theta=0}^{2\pi}\int_{z=0}^{r^2+2}r\,dz\,d\theta\,dr\\&=\int_{r=0}^{\sqrt2}\int_{\theta=0}^{2\pi}(r^3+2r)\,d\theta\,dr\\&=2\pi\left[\frac{r^4}{4}+r^2\right]_0^{\sqrt2}=2\pi(1+2)\\&=6\pi.\end{aligned}\]
+<ol class="steps">
+<li>The \(z\)-integral of \(r\) from 0 to \(r^2+2\) gives \(r^3+2r\). <span class="why">One column of height \(r^2+2\), standing on a floor piece whose size carries the factor \(r\).</span></li>
+<li>The \(\theta\)-integral just multiplies by \(2\pi\). <span class="why">The solid looks the same in every direction, so a full turn round the axis collects the same amount from every wedge.</span></li>
+<li>The \(r\)-integral from 0 to \(\sqrt2\). <span class="why">This adds the rings from the axis out to the cylinder wall.</span></li>
+</ol>
 </div>
 <div class="figure">
   <p class="ttl">Example 2.4.1: inside the cylinder \(x^2+y^2=2\), between \(z=0\) and \(z=x^2+y^2+2\)</p>
@@ -660,12 +818,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </div>
 
 <h3>Spherical polar coordinates</h3>
+<details class="idea"><summary>What is this? (spherical coordinates)</summary><div><p>Think of a globe with its centre at the origin. To say where a point is, give how far it is from the centre, how far down it is from the North Pole (an angle), and its longitude (the angle round the axis). Cutting along these coordinates gives onion-like shells, cones and wedges, which fit balls and cones perfectly, just as rings and wedges fit a round cake.</p></div></details>
 <p>Spherical coordinates suit balls, spherical shells and cones with their tip at the origin. A point \(P\) is located by: \(\rho\) (Greek "rho"), its distance from the origin \(O\); \(\phi\) ("phi"), the angle between the positive \(z\)-axis and the line \(OP\) (like latitude, but measured down from the North Pole); and \(\theta\), the same angle as in cylindrical coordinates (like longitude). Dropping a perpendicular from \(P\) to the floor gives the foot at horizontal distance \(r=\rho\sin\phi\) from the origin; the height of \(P\) is \(z=\rho\cos\phi\).</p>
 <p>The transformation between rectangular coordinates and spherical polar coordinates is given by</p>
 \[\begin{gathered}x=\rho\sin\phi\cos\theta,\quad y=\rho\sin\phi\sin\theta,\\ z=\rho\cos\phi,\end{gathered}\]
 <p>with</p>
 \[\rho\ge0,\quad0\le\phi\le\pi,\quad0\le\theta\lt2\pi.\]
 <p class="word"><b>In words:</b> first go up the \(z\)-axis a distance \(\rho\), tip down by angle \(\phi\), then swing round by angle \(\theta\). Note \(\phi\) only runs from 0 (straight up) to \(\pi\) (straight down), not to \(2\pi\); and \(x^2+y^2+z^2=\rho^2\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\rho\sin\phi\)</dt><dd>how far the point is from the \(z\)-axis (the floor distance \(r\) of cylindrical coordinates)</dd>
+<dt>\(\rho\sin\phi\cos\theta,\ \rho\sin\phi\sin\theta\)</dt><dd>that floor distance split into east and north parts, exactly as in cylindrical coordinates</dd>
+<dt>\(\rho\cos\phi\)</dt><dd>the height: a point tipped by \(\phi\) from the pole rises \(\rho\cos\phi\)</dd>
+</dl></div>
 <p>The following are a few special cases:</p>
 <div class="scroll"><table>
 <tr><th>Fix</th><th>Surface</th><th>Description</th></tr>
@@ -696,6 +860,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <p>Thus we have</p>
 \[dV=dx\,dy\,dz\;\to\;\rho^2\sin\phi\,d\rho\,d\phi\,d\theta.\]
 <p class="word"><b>In words:</b> a spherical volume element is a small curved brick with sides \(d\rho\) (outward), \(\rho\,d\phi\) (along a line of longitude) and \(\rho\sin\phi\,d\theta\) (along a circle of latitude, whose radius is \(\rho\sin\phi\)); multiply the three. Since \(0\le\phi\le\pi\), \(\sin\phi\ge0\) and no absolute value is needed.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\rho\sin\phi\,d\theta\)</dt><dd>the east–west side: an arc of angle \(d\theta\) on a circle of latitude, whose radius \(\rho\sin\phi\) shrinks to 0 at the poles</dd>
+<dt>\(\rho^2\sin\phi\)</dt><dd>the two stretched sides multiplied: bricks far out and near the equator are big, bricks near the centre or a pole are small</dd>
+</dl></div>
+<p><b>Quick check.</b> For a ball of radius \(a\): the \(\rho\)-integral \(\int_0^a\rho^2\,d\rho=\frac{a^3}{3}\), the \(\phi\)-integral \(\int_0^\pi\sin\phi\,d\phi=2\) and the \(\theta\)-integral \(2\pi\) multiply to \(\frac43\pi a^3\), the familiar volume. ✓</p>
+<p><b>Setting up a spherical integral.</b></p>
+<ol class="steps proc">
+<li><b>Do:</b> replace \(x^2+y^2+z^2\) by \(\rho^2\), and \(z\) by \(\rho\cos\phi\). <span class="why">Distance from the centre is what balls care about.</span></li>
+<li><b>Do:</b> \(\rho\)-limits: from the inner surface to the outer one (0 to \(a\) for a solid ball). <span class="why">This is the "column" now: a ray from the centre outwards through the shells.</span></li>
+<li><b>Do:</b> \(\phi\)-limits: 0 to the edge angle (\(\pi/2\) for the upper half, \(\phi_0\) inside the cone \(\phi=\phi_0\), \(\pi\) for all). <span class="why">This chooses how far down from the North Pole the rays sweep.</span></li>
+<li><b>Do:</b> \(\theta\)-limits: 0 to \(2\pi\) for a full turn, less for a wedge. <span class="why">This swings the fan of rays round the axis.</span></li>
+<li><b>Do:</b> multiply the integrand by \(\rho^2\sin\phi\), then integrate. <span class="why">The bricks have different sizes; this is their volume factor.</span></li>
+</ol>
 <div class="figure">
   <p class="ttl">The spherical volume element (Beyond the handouts: where \(\rho^2\sin\phi\) comes from)</p>
   <canvas class="plot" id="f-sphel" style="aspect-ratio:16/11" aria-label="Rotatable small spherical brick"></canvas>
@@ -726,6 +903,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 </ol>
 <p><b>Combine.</b> \(q\) \(=-\frac{Q}{\pi a^3}\cdot\frac{a^3}{4}\cdot2\cdot2\pi\) \(=-\frac{Q}{\pi a^3}\cdot\pi a^3\) \(=-Q\).</p>
 </div></details>
+<ol class="steps">
+<li>The \(\rho\)-integral \(\int_0^\infty\rho^2e^{-2\rho/a}d\rho=\frac{a^3}{4}\). <span class="why">This adds the shells from the centre outwards; the \(\rho^2\) is there because outer shells hold more volume.</span></li>
+<li>The angle integrals give \(2\cdot2\pi=4\pi\). <span class="why">The density is the same in every direction, so the angles only count the full surface of each shell (\(4\pi\rho^2\) for radius \(\rho\)).</span></li>
+</ol>
 <p class="word"><b>In words:</b> the electron cloud carries total charge \(-Q\), exactly cancelling the nucleus: the atom is neutral, as it should be.</p>
 </div>
 <div class="figure">
@@ -744,8 +925,9 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <li><b>Ellipsoids</b> \(\frac{x^2}{a^2}+\frac{y^2}{b^2}+\frac{z^2}{c^2}\le1\) (Dec 2014): stretch first with \(x=au,\ y=bv,\ z=cw\). The Jacobian is \(\det\operatorname{diag}(a,b,c)=abc\), and the ellipsoid becomes the unit ball \(u^2+v^2+w^2\le1\), of volume \(\frac43\pi\). So</li>
 </ul>
 \[\text{Volume of ellipsoid}=abc\cdot\frac43\pi=\frac43\pi abc.\]
-<p class="word"><b>In words:</b> stretching by \(a\), \(b\), \(c\) in the three directions multiplies every volume by \(abc\).</p>
+<p class="word"><b>In words:</b> stretching by \(a\), \(b\), \(c\) in the three directions multiplies every volume by \(abc\). In the picture: every tiny box of the unit ball is stretched into a box \(a\) times longer, \(b\) times wider and \(c\) times taller.</p>
 </div>
+<p class="cannow"><b>You can now:</b> change variables in a triple integral using the \(3\times3\) Jacobian as a volume stretch factor; set up and evaluate integrals in cylindrical coordinates (factor \(r\)) and spherical coordinates (factor \(\rho^2\sin\phi\)), choosing the system that turns the solid into a box; explain where \(r\) and \(\rho^2\sin\phi\) come from in terms of the sides of a small curved brick.</p>
 </section>
 
 <section id="summary">
@@ -905,6 +1087,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],macr
 <details><summary>Answer</summary><div><p>(ii) \(\displaystyle \int_0^{\pi/2}\!\int_0^{\sin x}e^{\cos x}\,dy\,dx\) \(\displaystyle =\int_0^{\pi/2}e^{\cos x}\sin x\,dx\) \(\displaystyle =\boxed{e-1}\) \(\displaystyle \approx1.718\).</p><p>(iii) No: the area is \(\int_0^{\pi/2}\sin x\,dx=1\). The integral equals the area only when the integrand is 1; here it is \(e^{\cos x}\ne1\).</p></div></details></div>
 <p class="muted small">Other sittings of these types (Dec 2024 ellipse, Dec 2023 and Dec 2018 \(u=2xy,\ v=x^2-y^2\), Dec 2022, Dec 2021, Dec 2016, Dec 2015, Dec 2014, Dec 2014 ellipsoid volume, and the May papers) are solved in the <a href="guide-C2.html">C2 exam guide</a>.</p>
 </section>
+
 
 <footer class="foot">MECH2407 Revision Bundle · written for students revising on their own. Material in orange "Beyond the handouts" boxes is not in the course handouts. <a href="index.html">Start Here</a></footer>
 </main>
@@ -1407,6 +1590,14 @@ mount('f-pp5',cv=>{const top=ps((r,t)=>[r*Math.cos(t),r*Math.sin(t),4-r*r],[0,1]
 
 })();
 
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </body>
 </html>
