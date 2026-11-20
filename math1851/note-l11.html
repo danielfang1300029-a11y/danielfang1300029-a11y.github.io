@@ -106,6 +106,33 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -138,18 +165,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · Calculus · Lecture 11</span>
   <h1>Antiderivatives and Area</h1>
-  <p class="lede">Every slide of Lecture 11 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. No past paper question has this lecture as its home; the last section says where Lecture 11's ideas are examined.</p>
 </header>
 
 <!-- ============ 0 ============ -->
 <section id="s0">
-<h2><span class="n">0</span>Where this lecture sits</h2>
-<p>Lectures 5 to 10 were about <b>derivatives</b>: given a function, find its slope, and use slopes to find extreme values (Lecture 8), sketch curves (Lecture 9) and evaluate limits (Lecture 10). Lecture 11 starts the second half of calculus, <b>integration</b>, with two questions that look unrelated:</p>
-<ul class="list">
-  <li><b>Undoing a derivative.</b> If you know the slope function \(f\), which functions \(F\) have \(F'=f\)? These are <b>antiderivatives</b>, and the collection of all of them is written \(\int f(x)\,dx\) (the <b>indefinite integral</b>).</li>
-  <li><b>Area under a curve.</b> How do you find the area of a region whose top edge is curved? Answer: cut it into thin rectangles, add up their areas, and let the number of rectangles grow without bound. This needs a compact way to write long sums: <b>sigma notation</b>.</li>
-</ul>
-<p>Lecture 12 (the Fundamental Theorem of Calculus) shows that these two questions are really the same question: areas can be computed with antiderivatives.</p>
+<h2><span class="n">0</span><span class="h2t">Where this lecture sits</span></h2>
+<p>Lecture 11 starts integration with two questions. The speedometer question: if you know how fast something changes at every moment, can you rebuild the thing itself? The area question: how big is a region with a curved top? The answer to the second is to fill the region with thin strips and add them up. Lecture 12 shows that the two questions are really the same.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>An antiderivative rebuilds the odometer from the speedometer.</b> It is fixed only up to the starting reading, the \(+C\).</li>
+<li><a href="#s2">§2</a> <b>Read every derivative rule backwards.</b> Power rule: raise the power by one, divide by the new power (not for \(\frac1x\)).</li>
+<li><a href="#s3">§3</a> <b>\(\int f(x)\,dx\) is a name for the whole family \(F(x)+C\).</b></li>
+<li><a href="#s4">§4</a> <b>Straight-edged shapes are rectangles and triangles.</b> A curved top needs a new method.</li>
+<li><a href="#s5">§5</a> <b>Fill the region with thin rectangles and add them up.</b> On a rising curve, left sums fall short and right sums stick out.</li>
+<li><a href="#s6">§6</a> <b>Sigma notation writes a long sum in one line</b>, and it splits like antiderivatives do.</li>
+<li><a href="#s7">§7</a> <b>Squeeze the true area between the short strips and the tall strips.</b> For \(x^2\) on \([0,1]\) both close in on \(\frac13\).</li>
+<li><a href="#s8">§8</a> <b>Area is the limit of the strip sums</b>, for a continuous \(f\ge0\). The four-step recipe.</li>
+</ol>
+</div>
+<p><b>You need:</b> the derivative rules of Lectures 6 and 7 (read backwards here), limits of rational functions as \(n\to\infty\) (Lecture 3) and the Sandwich Theorem idea (Lecture 2). <b>In the exam:</b> no past-paper questions have this lecture as their home; Riemann-sum questions on the papers need Lecture 12 (see <a href="#pastpaper">§14</a> and the <a href="guide-L12.html">L12 exam guide</a>).</p>
 <p><b>Recall (slide 2).</b> The lecture opens by restating Lecture 10. An <b>indeterminate form</b> is a limit that the Limit Laws alone cannot decide, written symbolically as \(\frac00,\ \frac\infty\infty,\ \infty-\infty,\ 0\cdot\infty,\ \infty^0,\ 1^\infty,\ 0^0\). <b>L'Hôpital's Rule:</b> if \(f\) and \(g\) are differentiable and \(\lim\frac{f(x)}{g(x)}\) is of the form \(\frac00\) or \(\frac\infty\infty\), then</p>
 \[ \lim\frac{f(x)}{g(x)}=\lim\frac{f'(x)}{g'(x)}, \]
 <p>provided the right-hand limit exists (or is \(\pm\infty\)). "\(\lim\)" may mean \(x\to a\), \(x\to a^\pm\) or \(x\to\pm\infty\), and differences, products and powers are first rewritten as a quotient. (The slide also lists the condition \(g'(a)\ne0\); see Lecture 10 for the precise conditions.) You will use L'Hôpital again in this lecture only implicitly; the limits here are simple rational limits.</p>
@@ -158,7 +192,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 1 ============ -->
 <section id="s1">
-<h2><span class="n">1</span>Antiderivatives</h2>
+<h2><span class="n">1</span><span class="h2t">Antiderivatives</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture a car trip. The speedometer shows how fast you are going at each moment; the odometer shows the total distance on the clock. Speed is the rate at which the odometer reading changes, so the speedometer record is the derivative of the odometer record. An antiderivative goes the other way: from the whole speedometer record, rebuild the odometer record. You can rebuild how far you went, but not the reading the odometer showed when you set off. That starting reading is the \(+C\). (If the car can reverse, use its position along the road instead of the odometer; the idea is the same.)</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 7)</span>
 <p>A function \(F\) is an <b>antiderivative</b> of \(f\) on an interval \(I\) if</p>
 \[ F'(x)=f(x)\quad\text{for all } x \text{ in } I. \]
@@ -168,12 +203,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p style="text-align:center"><i>If \(F\) is an antiderivative of \(f\), then so is \(F(x)+C\) for any constant \(C\).</i></p>
 <p><b>Analogy.</b> Your car's speedometer records your speed at every moment (that is \(f\), the derivative). From the speed record alone you can reconstruct how far you travelled, but not <i>where you started</i>. Every starting point gives a different position record \(F\), and all of them have the same speed record. The unknown starting point is the constant \(C\).</p>
 
+<details class="idea"><summary>What is this? (the most general antiderivative)</summary><div><p>Two cars drive side by side with identical speedometer records for the whole trip. Their odometers may show different numbers, but the difference between them never changes, because both readings go up at the same rate. So once you know one possible odometer record, every other one is the same record plus a fixed amount. This needs one unbroken trip: if the record has a gap in the middle (the domain is not an interval), the odometer could be reset during the gap, and each part can get its own constant.</p></div></details>
 <div class="box thm"><span class="tag">Theorem: the most general antiderivative (slide 7)</span>
 <p>If \(F\) is an antiderivative of \(f\) on an interval \(I\), then the <b>most general antiderivative</b> of \(f\) on \(I\) is</p>
 \[ F(x)+C, \]
 <p>where \(C\) is an arbitrary constant.</p>
 <p class="word"><b>In words:</b> once you have found one antiderivative, you have found them all: every other one is the same function shifted up or down by a constant.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(F(x)\)</dt><dd>one odometer record that matches the speedometer: the one you found.</dd>
+<dt>\(C\)</dt><dd>the starting reading. It can be any real number.</dd>
+<dt>\(F(x)+C\)</dt><dd>every odometer record that matches the speedometer, one for each starting reading. On an interval nothing else matches.</dd>
+</dl></div>
 <p>The theorem says two things. Every \(F+C\) works (shown above). And <b>nothing else</b> works: if \(G\) is any antiderivative, then \(G=F+C\) for some constant. The second part comes from the Mean Value Theorem (Lecture 8): \((G-F)'=f-f=0\) on the interval, and a function with zero derivative on an interval is constant. This is why the word <b>interval</b> matters: on a domain with a gap, the constant can be different on each piece (Concept check C2).</p>
 <p><b>How to check an answer (slide 7):</b> differentiate it. If \(F'(x)=f(x)\), your antiderivative is right. This check is quick and catches almost every error, so do it every time.</p>
 
@@ -187,11 +228,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <div class="readout" id="fam-out"></div>
   <p class="cap">Slide 8 shows \(F_C(x)=\frac{x^3}{3}+C\) for \(C=2,1,0,-1,-2\): a "subset of the family" (the full family has one curve for every real \(C\)). Each curve is the previous one shifted vertically, so at any chosen \(x\) all the tangent lines are parallel: they all have slope \(x^2\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> check whether a function is an antiderivative by differentiating it; explain why adding any constant gives another antiderivative; and say why the theorem needs an interval.</p>
 </section>
 
 <!-- ============ 2 ============ -->
 <section id="s2">
-<h2><span class="n">2</span>Table of general antiderivatives</h2>
+<h2><span class="n">2</span><span class="h2t">Table of general antiderivatives</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Every row of the table is a derivative rule read backwards. On the left is a speedometer pattern; in the middle is the odometer pattern that produces it. To find an antiderivative you look for a function whose derivative you already know is the given one. The last column is the check: differentiate the middle column and you get back the left one.</p></div></details>
 <p>Every derivative rule from Lectures 6 and 7, read backwards, gives an antiderivative rule. Slide 9 lists them. The last column (added for these notes) shows the derivative fact behind each row, which is also how you check it.</p>
 <div class="scroll"><table>
 <tr><th>Function \(f(x)\)</th><th>General antiderivative</th><th>Because</th></tr>
@@ -208,10 +251,17 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <tr><td>\(\dfrac{1}{1+x^2}\)</td><td>\(\tan^{-1}x+C\)</td><td>Lecture 7</td></tr>
 </table></div>
 <p class="word"><b>Power rule in words:</b> antiderivative of \(x^n\) = raise the power by one, then divide by the new power. It works for every real \(n\) (negative, fractional) except \(n=-1\), where the new power would be \(0\) and you would divide by zero.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(x^{n+1}\)</dt><dd>raise the power by one: differentiating brings it back down to \(x^n\).</dd>
+<dt>\(\dfrac{1}{n+1}\)</dt><dd>differentiating \(x^{n+1}\) also brings a factor \(n+1\) out in front; dividing by \(n+1\) cancels it.</dd>
+<dt>\(n\ne-1\)</dt><dd>for \(n=-1\) that factor would be \(0\), and you cannot divide by zero. \(\frac1x\) needs \(\ln|x|\) instead.</dd>
+<dt>\(+C\)</dt><dd>the unknown starting reading, as in section 1.</dd>
+</dl></div>
 <p><b>Why \(n=-1\) is special, and why \(|x|\).</b> \(x^{-1}=\frac1x\) is the one power that the power rule cannot reach; its antiderivative is a logarithm instead. The absolute value is there because \(\frac1x\) is defined for negative \(x\) too, while \(\ln x\) is not. For \(x\gt0\), \(\frac{d}{dx}\ln x=\frac1x\). For \(x\lt0\), by the chain rule \(\frac{d}{dx}\ln(-x)=\frac{-1}{-x}=\frac1x\). The single formula \(\ln|x|\) covers both sides.</p>
 <p>Notation reminders: \(\sec x=\frac1{\cos x}\), \(\csc x=\frac1{\sin x}\), \(\cot x=\frac{\cos x}{\sin x}\); \(\sin^{-1}x\) and \(\tan^{-1}x\) are the inverse trig functions (also written \(\arcsin x\), \(\arctan x\)), not reciprocals (Lecture 7).</p>
 
 <h3>Rules for combining (slide 9)</h3>
+<details class="idea"><summary>What is this? (linearity)</summary><div><p>Walk forwards along a moving train. Your speed over the ground is the train's speed plus your walking speed, and the ground you cover is the train's distance plus your walking distance: add the speeds and you add the distances. In the same way, going twice as fast at every moment covers twice the distance. Those two facts are all that linearity says.</p></div></details>
 <p>Suppose \(F\) is an antiderivative of \(f\), \(G\) is an antiderivative of \(g\), and \(k,\ell\) are constants.</p>
 <div class="scroll"><table>
 <tr><th>Rule</th><th>Function</th><th>General antiderivative</th></tr>
@@ -239,7 +289,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>Solution.</b> Use linearity and treat each term separately.</p>
 <ul class="list">
   <li>\(x^3\): power rule with \(n=3\) gives \(\frac{x^4}{4}\).</li>
-  <li>\(\sin 3x\): \(-\frac13\cos3x\) (box above).</li>
+  <li>\(\sin 3x\): \(-\frac13\cos3x\) (box above). <span class="why">differentiating \(\cos3x\) brings out a factor \(3\) (chain rule), so the \(\frac13\) is there to cancel it.</span></li>
   <li>\(-1=-x^0\): power rule with \(n=0\) gives \(-x\).</li>
 </ul>
 \[ F(x)=\frac{x^4}{4}-\frac13\cos3x-x+C. \]
@@ -251,11 +301,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box beyond"><span class="tag">Beyond Lecture 11: fixing \(C\) with one known value</span>
 <p>If you are also told one value of \(F\), the constant is no longer arbitrary. Example: \(F'(x)=x^2\) and \(F(0)=1\). Then \(F(x)=\frac{x^3}3+C\) and \(F(0)=C=1\), so \(F(x)=\frac{x^3}{3}+1\). In the figure in section 1, the extra condition picks out exactly one curve of the family (the one through \((0,1)\)). Such "initial value problems" return in the ODE part of the course.</p>
 </div>
+<p class="cannow"><b>You can now:</b> write down antiderivatives of powers, \(e^x\), \(\frac1x\), and the trig and inverse-trig functions in the table; split a sum term by term and take constants out; handle a linear inside such as \(\sin3x\) by dividing by the \(3\); and check every answer by differentiating.</p>
 </section>
 
 <!-- ============ 3 ============ -->
 <section id="s3">
-<h2><span class="n">3</span>The indefinite integral</h2>
+<h2><span class="n">3</span><span class="h2t">The indefinite integral</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>\(\int f(x)\,dx\) is a short way of asking the speedometer question: which odometer records give this speed record? The answer is not one function but the whole family \(F(x)+C\), one member for each starting reading. The word <i>indefinite</i> is a reminder of that: no starting reading has been fixed, so the answer is a family of functions, not a number.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 11)</span>
 <p>The collection of all antiderivatives of \(f\) is called the <b>indefinite integral</b> of \(f\) with respect to \(x\), and is denoted</p>
 \[ \int f(x)\,dx. \]
@@ -264,6 +316,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>the most general antiderivative.</p>
 <p class="word"><b>In words:</b> "\(\int f(x)\,dx\)" is a name for the question "which functions have derivative \(f(x)\)?", and "\(F(x)+C\)" is its answer.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\int\)</dt><dd>"find every function whose derivative is ...". It is a stretched S, for sum; sections 5 to 8 show where a sum comes in.</dd>
+<dt>\(f(x)\)</dt><dd>the integrand: the speed record you are given.</dd>
+<dt>\(dx\)</dt><dd>\(x\) is the variable that moves; any other letter is a constant.</dd>
+<dt>\(F(x)+C\)</dt><dd>the answer: one antiderivative plus the unknown starting reading.</dd>
+</dl></div>
 <p>About the pieces of the notation:</p>
 <ul class="list">
   <li>The \(\int\) sign is a stretched letter S, for "sum". Sections 5 to 8 explain why a sum is involved; Lecture 12 makes the link precise.</li>
@@ -278,11 +336,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ \begin{aligned} &\int\big(x^3+\sin3x-1\big)\,dx\\ &\quad=\frac{x^4}{4}-\frac13\cos3x-x+C. \end{aligned} \]
 <p class="word"><b>Lesson:</b> "find the most general antiderivative of \(f\)" and "evaluate \(\int f(x)\,dx\)" are the same task. The answer must include \(+C\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> read and write the \(\int f(x)\,dx\) notation; name the integrand and the variable of integration; and evaluate simple indefinite integrals with the table and linearity, always ending with \(+C\).</p>
 </section>
 
 <!-- ============ 4 ============ -->
 <section id="s4">
-<h2><span class="n">4</span>Area: shapes with straight edges</h2>
+<h2><span class="n">4</span><span class="h2t">Area: shapes with straight edges</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>To find the area of a floor with straight edges, you cut it into rectangles and triangles and add the pieces. Every formula in the table below comes from that idea. A region with a curved top cannot be cut exactly into a few such pieces, so the rest of the lecture fills it with thinner and thinner rectangles instead.</p></div></details>
 <p>The second half of the lecture asks for areas. Slide 13 collects the formulas you already know for shapes with straight edges (and the circle):</p>
 <div class="scroll"><table>
 <tr><th>Shape</th><th>Labels</th><th>Area</th></tr>
@@ -315,11 +375,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <h3>What about curved edges? (slide 15)</h3>
 <p>Slide 15 shows the region under a wavy curve \(y=f(x)\) between \(x=a\) and \(x=b\): bounded by the curve on top, the \(x\)-axis below, and the vertical lines \(x=a\), \(x=b\) at the sides. No formula from the table fits. The rest of the lecture builds a method that works for any such region.</p>
+<p class="cannow"><b>You can now:</b> find the area of a region bounded by straight lines (as in Example 3) from its base and height; spot a quarter circle or a pair of triangles hidden in a formula; and say why a curved top needs a new method.</p>
 </section>
 
 <!-- ============ 5 ============ -->
 <section id="s5">
-<h2><span class="n">5</span>Approximating area with rectangles</h2>
+<h2><span class="n">5</span><span class="h2t">Approximating area with rectangles</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Imagine filling the region under a curve with thin upright strips of card, side by side, each one a rectangle. Each strip is cut to the height of the curve at one point of its base, so its top is flat while the curve is not: a little bit sticks out above the curve, or falls short below it. Add up the strip areas to estimate the area. For a continuous curve, thinner strips leave smaller errors.</p></div></details>
 <p><b>The idea (slide 16).</b> Slice the region into thin vertical strips. Each strip is almost a rectangle, and rectangles are easy. Add up the rectangle areas to get an approximation; use more, thinner strips to get a better one. Slide 16 shows this for the wavy region with 8 rectangles, together with a portrait of <b>Bernhard Riemann</b> (Georg Friedrich Bernhard Riemann, 1826–1866), the German mathematician after whom such sums are named.</p>
 <p><b>Analogy.</b> A city skyline drawn in pixels. With large pixels the outline is blocky; with smaller pixels it looks smooth. The area of the pixel picture approaches the true area as the pixels shrink.</p>
 
@@ -331,6 +393,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </ul>
 
 <h3>Left and right sums with \(n=4\): \(L_4\le A\le R_4\) (slide 19)</h3>
+<details class="idea"><summary>What is this? (left and right sums)</summary><div><p>A left sum cuts each strip to the curve's height at the strip's left edge; a right sum uses the right edge. On a rising curve the left edge is the lowest point of each strip, so every left strip stays under the curve, and every right strip pokes above it. The true area is caught between the two totals.</p></div></details>
 <p>\(L_n\) means "the sum of \(n\) rectangles with heights taken at left endpoints", and \(R_n\) the same with right endpoints.</p>
 <div class="cases">
 <div><b>Left endpoints, \(L_4\)</b>
@@ -399,17 +462,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <div class="legend"><span style="--k:var(--c2)">Lₙ</span><span style="--k:var(--c3)">Rₙ</span><span style="--k:var(--c4)">Mₙ</span><span style="--k:var(--muted)">exact area</span></div>
   <p class="cap">Try: x² with n = 4 and n = 8 (the slide tables), then n = 30 and 50 (slide 21). Switch between left and right to see one sum under and one over the curve. For −x³ (a decreasing function) the roles swap. The midpoint sum is usually much closer than either; for the straight line 2 − x it is exact for every n. With random sample points the sum still approaches the same area (slide 28).</p>
 </div>
+<p class="cannow"><b>You can now:</b> compute \(L_n\) and \(R_n\) by hand for small \(n\) with a width, height and area table; say which is the underestimate and which the overestimate for an increasing or a decreasing function; and explain why more strips give a better estimate.</p>
 </section>
 
 <!-- ============ 6 ============ -->
 <section id="s6">
-<h2><span class="n">6</span>Sigma notation</h2>
+<h2><span class="n">6</span><span class="h2t">Sigma notation</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Adding fifty strip areas one by one is like writing out a till receipt line by line. Sigma notation is the one-line total: it says which strips to count (from the bottom number to the top number) and gives the area formula for strip number \(i\). Nothing new is calculated; it is shorthand for a long addition.</p></div></details>
 <p>Writing out \(R_{50}\) term by term would take 50 terms. Sigma notation writes such sums in one line.</p>
 <div class="box def"><span class="tag">Definition: sigma notation (slide 22)</span>
 \[ \sum_{i=1}^{n}a_i=a_1+a_2+a_3+\cdots+a_n. \]
 <p>The Greek capital letter \(\Sigma\) (sigma, an S for "sum") means "add up". The <b>index of summation</b> \(i\) tells us where the sum begins (below the \(\Sigma\): \(i=1\)) and where it ends (above: \(n\)). \(a_i\) is the formula for the \(i\)th term.</p>
 <p class="word"><b>In words:</b> "\(\sum_{i=1}^n a_i\)" = "put \(i=1,2,3,\ldots,n\) into the formula \(a_i\) in turn, and add all the results".</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\Sigma\)</dt><dd>"add up".</dd>
+<dt>\(i=1\) (below)</dt><dd>the first strip counted.</dd>
+<dt>\(n\) (above)</dt><dd>the last strip counted.</dd>
+<dt>\(a_i\)</dt><dd>the formula for strip number \(i\): put in \(i=1,2,\ldots,n\) in turn.</dd>
+</dl></div>
 <p>Examples: \(\displaystyle\sum_{i=1}^{4}i^2=1+4+9+16=30\). \(\displaystyle\sum_{i=0}^{3}2^i=1+2+4+8=15\). \(\displaystyle\sum_{k=1}^{3}\frac1k=1+\frac12+\frac13\).</p>
 <ul class="list">
   <li>The index letter does not matter (\(\sum_{i=1}^n i^2=\sum_{k=1}^n k^2\)); it is a placeholder, like the \(x\) in \(f(x)=x^2\).</li>
@@ -421,6 +492,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>A <b>Riemann sum</b> of \(f\) over \([a,b]\) is a method to approximate the area of the region between the graph of \(y=f(x)\) and the \(x\)-axis by partitioning (cutting up) the region into shapes, here rectangles, and adding their areas. \(L_n\), \(R_n\) and the midpoint sum \(M_n\) are all Riemann sums.</p>
 </div>
 
+<details class="idea"><summary>What is this? (rules for sums)</summary><div><p>Stack two strips on top of each other in every slot, and the total area is the sum of the two separate totals (rule 1). Make every strip three times taller, and the total triples (rule 3). These are the same splitting rules as for antiderivatives. Rules 5 to 7 are ready-made totals for \(1+2+\cdots+n\) and for the squares and cubes, which you need whenever the strip heights are powers of \(i\).</p></div></details>
 <div class="box thm"><span class="tag">Theorem: properties of finite sums (slide 23)</span>
 <div class="scroll"><table>
 <tr><th>Rule</th><th>Formula</th></tr>
@@ -444,21 +516,30 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box warn"><span class="tag">Trap: no product rule for sums</span>
 <p>\(\sum a_ib_i\ne\big(\sum a_i\big)\big(\sum b_i\big)\) and \(\sum a_i^2\ne\big(\sum a_i\big)^2\). Rules 1 to 4 are the only ways to split a sum; everything else must be expanded first.</p>
 </div>
+<p class="cannow"><b>You can now:</b> expand and evaluate a short sigma sum; count its terms as top − bottom + 1; split a sum with rules 1 to 4; and use rules 5 to 7 for \(\sum i\), \(\sum i^2\) and \(\sum i^3\).</p>
 </section>
 
 <!-- ============ 7 ============ -->
 <section id="s7">
-<h2><span class="n">7</span>The exact area under \(y=x^2\) on \([0,1]\)</h2>
+<h2><span class="n">7</span><span class="h2t">The exact area under \(y=x^2\) on \([0,1]\)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Here the strip picture gives an exact answer. For \(y=x^2\) on \([0,1]\) the left strips always stay below the curve and the right strips always reach above it, so the true area is squeezed between the two totals. Sigma notation turns each total into a formula in \(n\). As the strips get thinner, both formulas close in on the same number, and the area, trapped between them, must equal it.</p></div></details>
 <h3>A formula for \(R_n\) (slide 24)</h3>
 <p>Let \(\Delta x\) ("delta \(x\)", a single symbol meaning a small change in \(x\)) be the width of each rectangle. With \(n\) equal strips on \([0,1]\), \(\Delta x=\frac1n\), and the right endpoints are \(x_i=\frac in\) for \(i=1,\ldots,n\). Then</p>
 \[ \begin{aligned} R_n&=\sum_{i=1}^nf(x_i)\,\Delta x\\ &=f(x_1)\Delta x+f(x_2)\Delta x+\cdots+f(x_n)\Delta x\\ &=\left(\frac1n\right)^2\frac1n+\left(\frac2n\right)^2\frac1n\\ &\quad+\left(\frac3n\right)^2\frac1n+\cdots+\left(\frac nn\right)^2\frac1n\\ &=\frac1{n^3}\big(1^2+2^2+3^2+\cdots+n^2\big)\\ &=\frac1{n^3}\cdot\frac{n(n+1)(2n+1)}6\\ &=\frac{(n+1)(2n+1)}{6n^2}, \end{aligned} \]
 <p>by the sum-of-squares formula (rule 6).</p>
 <p class="word"><b>In words:</b> right sum = (height at each right endpoint × width), added over all strips. Each term has a common factor \(\frac1{n^3}\); what remains is \(1^2+\cdots+n^2\), which has a closed formula.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(x_i=\frac in\)</dt><dd>the right edge of strip \(i\).</dd>
+<dt>\(f(x_i)=\left(\frac in\right)^2\)</dt><dd>the height of strip \(i\): the curve's height at its right edge.</dd>
+<dt>\(\Delta x=\frac1n\)</dt><dd>the width of every strip.</dd>
+<dt>\(\sum_{i=1}^n\)</dt><dd>add up the \(n\) strip areas.</dd>
+<dt>\(\frac{(n+1)(2n+1)}{6n^2}\)</dt><dd>the total area of all \(n\) right strips, as one formula in \(n\).</dd>
+</dl></div>
 <p>Check: \(n=4\) gives \(\frac{5\cdot9}{96}=0.46875=R_4\) and \(n=8\) gives \(\frac{9\cdot17}{384}=0.3984375=R_8\), matching the tables.</p>
 
 <div class="box eg"><span class="tag">Example 4 (slide 25)</span>
 <p>Find a formula for \(L_n\) for \(y=x^2\) from \(x=0\) to \(x=1\).</p>
-<p><b>Solution.</b> Again \(\Delta x=\frac1n\), but now the heights come from the <b>left</b> endpoints \(x_{i-1}=\frac{i-1}n\), \(i=1,\ldots,n\), i.e. \(0,\frac1n,\ldots,\frac{n-1}n\). Write the sum with the index running from \(0\) to \(n-1\):</p>
+<p><b>Solution.</b> Again \(\Delta x=\frac1n\), but now the heights come from the <b>left</b> endpoints \(x_{i-1}=\frac{i-1}n\), \(i=1,\ldots,n\), i.e. \(0,\frac1n,\ldots,\frac{n-1}n\). Write the sum with the index running from \(0\) to \(n-1\): <span class="why">the left edges are \(0,\frac1n,\ldots,\frac{n-1}n\), so counting from \(i=0\) makes the \(i\)th left edge simply \(\frac in\).</span></p>
 \[ \begin{aligned} L_n&=\sum_{i=0}^{n-1}\left(\frac in\right)^2\frac1n\\ &=\frac1{n^3}\big(0^2+1^2+2^2+\cdots+(n-1)^2\big)\\ &=\frac1{n^3}\cdot\frac{(n-1)n(2n-1)}{6}\\ &=\frac{(n-1)(2n-1)}{6n^2}. \end{aligned} \]
 <p>Here rule 6 is used with \(n-1\) in place of \(n\), and the \(i=0\) term is \(0\):</p>
 \[ \begin{aligned} &\sum_{i=1}^{n-1}i^2\\ &=\frac{(n-1)\big((n-1)+1\big)\big(2(n-1)+1\big)}6\\ &=\frac{(n-1)n(2n-1)}{6}. \end{aligned} \]
@@ -470,15 +551,17 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Since \(f(x)=x^2\) is increasing on \(I=[0,1]\), \(L_n\le A\le R_n\) for every \(n\). Now take limits (dividing top and bottom by \(n^2\), as in Lecture 3):</p>
 \[ \begin{aligned} \lim_{n\to\infty}R_n&=\lim_{n\to\infty}\frac{(n+1)(2n+1)}{6n^2}\\ &=\lim_{n\to\infty}\frac{2n^2+3n+1}{6n^2}\\ &=\lim_{n\to\infty}\frac{2+\frac3n+\frac1{n^2}}{6}=\frac13, \end{aligned} \]
 \[ \lim_{n\to\infty}L_n=\lim_{n\to\infty}\frac{2n^2-3n+1}{6n^2}=\frac13. \]
-<p>Then \(\lim_{n\to\infty}L_n\le A\le\lim_{n\to\infty}R_n\) gives \(\frac13\le A\le\frac13\), so</p>
+<p>Then \(\lim_{n\to\infty}L_n\le A\le\lim_{n\to\infty}R_n\) gives \(\frac13\le A\le\frac13\), so <span class="why">\(A\) does not depend on \(n\), so the inequalities survive the limit, and a number squeezed between two limits that are equal must equal them.</span></p>
 \[ A=\frac13. \]
 <p class="word"><b>In words:</b> the underestimates and overestimates both close in on \(\frac13\), and the true area is trapped between them, so it must be \(\frac13\). This is the Sandwich Theorem idea from Lecture 2.</p>
 <p>Notice \(\frac13=\frac{1^3}{3}-\frac{0^3}{3}\), and \(\frac{x^3}3\) is an antiderivative of \(x^2\). That is no coincidence: it is the Fundamental Theorem of Calculus (Lecture 12).</p>
+<p class="cannow"><b>You can now:</b> derive the formulas for \(R_n\) and \(L_n\) for \(x^2\) on \([0,1]\) with the sum-of-squares formula; check them against the \(n=4\) and \(n=8\) tables; and let \(n\to\infty\) to show that the area is \(\frac13\).</p>
 </section>
 
 <!-- ============ 8 ============ -->
 <section id="s8">
-<h2><span class="n">8</span>Area is the limit of a finite sum</h2>
+<h2><span class="n">8</span><span class="h2t">Area is the limit of a finite sum</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>This is the strip picture in full generality. The strips may have different widths, and in each strip you may read the curve's height at any point of its base (the sample point). For a continuous curve, every such way of filling the region gives totals that settle on the same number as the strips get thinner. That number is what we mean by the area. The curve must also stay on or above the axis (\(f\ge0\)), so that each strip's height really is a height.</p></div></details>
 <p>Now the general version, for any continuous \(f\ge0\) on any interval \([a,b]\).</p>
 <p><b>Partition.</b> Cut \([a,b]\) at points \(a=x_0\lt x_1\lt x_2\lt\cdots\lt x_{n-1}\lt x_n=b\). This gives \(n\) subintervals; the \(i\)th one is \([x_{i-1},x_i]\), with width \(\Delta x_i=x_i-x_{i-1}\).</p>
 <div class="figure">
@@ -511,6 +594,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ \begin{aligned} A&=\lim_{n\to\infty}\big[f(x_1^*)\Delta x+f(x_2^*)\Delta x\\ &\qquad+\cdots+f(x_n^*)\Delta x\big]\\ &=\lim_{n\to\infty}\sum_{i=1}^nf(x_i^*)\,\Delta x. \end{aligned} \]
 <p class="word"><b>In words:</b> area = the number that (height × width), added over all \(n\) strips, approaches as the number of strips grows without bound.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(x_i^*\)</dt><dd>the point of strip \(i\) where you read the curve's height.</dd>
+<dt>\(f(x_i^*)\)</dt><dd>the height of strip \(i\).</dd>
+<dt>\(\Delta x\)</dt><dd>its width.</dd>
+<dt>\(f(x_i^*)\,\Delta x\)</dt><dd>the area of strip \(i\).</dd>
+<dt>\(\sum_{i=1}^n\)</dt><dd>the total area of all \(n\) strips.</dd>
+<dt>\(\lim_{n\to\infty}\)</dt><dd>make the strips thinner and more numerous; the total settles on the true area.</dd>
+</dl></div>
 <p>Up to now "area" of a curved region was an intuitive idea. This definition makes it precise: area <i>is</i> this limit. For a continuous function, the limit is the same whichever sample points you choose (summary slide 28), which is why the definition can say "any number in the \(i\)th subinterval".</p>
 
 <h3>The standard choice (slide 27)</h3>
@@ -524,22 +615,23 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <tr><td>Midpoint</td><td>\(a+(i-\tfrac12)\Delta x\)</td><td>\(\displaystyle M_n=\sum_{i=1}^{n}f\big(a+(i-\tfrac12)\Delta x\big)\,\Delta x\)</td></tr>
 </table></div>
 <div class="box thm"><span class="tag">Recipe: exact area as a limit of a sum (used in Group work 4 and 5)</span>
-<ol class="steps">
-  <li>Find \(\Delta x=\frac{b-a}n\) and the sample points, e.g. \(x_i=a+\frac{(b-a)i}{n}\).</li>
-  <li>Substitute into \(f\) and expand \(f(x_i)\) into powers of \(i\): a constant, a multiple of \(i\), a multiple of \(i^2\), ...</li>
-  <li>Multiply by \(\Delta x\), sum, and split with rules 1 to 4; replace \(\sum1,\sum i,\sum i^2,\sum i^3\) by rules 4 to 7.</li>
-  <li>Simplify to a formula in \(n\) only (no \(i\) left), then let \(n\to\infty\).</li>
+<ol class="steps proc">
+  <li><b>Do:</b> Find \(\Delta x=\frac{b-a}n\) and the sample points, e.g. \(x_i=a+\frac{(b-a)i}{n}\). <span class="why">this fixes how wide each strip is and where its top is read, counting from \(a\), not from \(0\).</span></li>
+  <li><b>Do:</b> Substitute into \(f\) and expand \(f(x_i)\) into powers of \(i\): a constant, a multiple of \(i\), a multiple of \(i^2\), ... <span class="why">the strip heights become a few simple patterns in \(i\), and each pattern has a ready-made total.</span></li>
+  <li><b>Do:</b> Multiply by \(\Delta x\), sum, and split with rules 1 to 4; replace \(\sum1,\sum i,\sum i^2,\sum i^3\) by rules 4 to 7. <span class="why">this adds up all \(n\) strip areas at once, using the formulas of section 6 instead of adding term by term.</span></li>
+  <li><b>Do:</b> Simplify to a formula in \(n\) only (no \(i\) left), then let \(n\to\infty\). <span class="why">the formula is the total area of \(n\) strips; letting the strips become infinitely thin removes the bits that stick out or fall short.</span></li>
 </ol>
 </div>
 <div class="box warn"><span class="tag">Trap: \(\Delta x\) and the starting point</span>
 <p>On \([1,4]\), \(\Delta x=\frac{4-1}{n}=\frac3n\), not \(\frac4n\), and \(x_i=1+\frac{3i}{n}\), not \(\frac{3i}n\). Every sample point starts from \(a\), not from \(0\).</p>
 </div>
 <p style="font-size:.92rem;color:var(--muted)">This definition is for \(f\ge0\), so that "height" makes sense. Lecture 12 drops that condition: the same limit is then called the definite integral \(\int_a^bf(x)\,dx\), and strips below the \(x\)-axis count as negative.</p>
+<p class="cannow"><b>You can now:</b> find \(\Delta x=\frac{b-a}{n}\) and the left, right or midpoint sample points on any \([a,b]\); write the area as \(\lim_{n\to\infty}\sum f(x_i^*)\,\Delta x\); and follow the four-step recipe to find an exact area, as in Group work 4 and 5.</p>
 </section>
 
 <!-- ============ 9 ============ -->
 <section id="s9">
-<h2><span class="n">9</span>Summary (slide 28)</h2>
+<h2><span class="n">9</span><span class="h2t">Summary (slide 28)</span></h2>
 <ul class="list">
   <li><b>Indefinite integrals</b> are the most general antiderivatives: \(\int f(x)\,dx=F(x)+C\).</li>
   <li>Antiderivatives are <b>not unique</b>; on an interval they differ by a constant.</li>
@@ -553,7 +645,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 10 ============ -->
 <section id="s10">
-<h2><span class="n">10</span>Common mistakes (slide 30)</h2>
+<h2><span class="n">10</span><span class="h2t">Common mistakes (slide 30)</span></h2>
 <div class="box">
 <div class="mistake">
 <span class="x">✗</span><span><b>Omitting the \(+C\):</b> \(\int3x^2\,dx=x^3\). <b>Why wrong:</b> an indefinite integral is the whole family; \(x^3+5\) also has derivative \(3x^2\). <span class="ok">✓</span> \(\int3x^2\,dx=x^3+C\).</span>
@@ -571,7 +663,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 11 ============ -->
 <section id="s11">
-<h2><span class="n">11</span>Find the mistake (slide 29)</h2>
+<h2><span class="n">11</span><span class="h2t">Find the mistake (slide 29)</span></h2>
 <p>Slide 29 is headed "Find the Mistake" but is blank in the handout (the student work was shown in class). The two exercises below are <span class="pill">Written for these notes</span> and use the mistakes listed on slide 30.</p>
 <div class="q">
 <p class="qh">A. Evaluate \(\displaystyle\int\Big(4x^3-\frac2x+\cos2x\Big)\,dx\).</p>
@@ -608,7 +700,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 12 ============ -->
 <section id="s12">
-<h2><span class="n">12</span>Group work (slide 31)</h2>
+<h2><span class="n">12</span><span class="h2t">Group work (slide 31)</span></h2>
 <div class="q"><p class="qh">1. Find the general antiderivative of the given function.</p>
 <p>(a) \(g(x)=e^{2x}+\dfrac1x\) &nbsp;&nbsp; (b) \(f(u)=\dfrac{u^4+3\sqrt u}{u^2}\)</p>
 <details><summary>Hints</summary><div>
@@ -682,7 +774,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 13 ============ -->
 <section id="s13">
-<h2><span class="n">13</span>Concept checks</h2>
+<h2><span class="n">13</span><span class="h2t">Concept checks</span></h2>
 <p>Short questions to test understanding, not computation. <span class="pill">Written for these notes</span></p>
 <div class="q"><p class="qh">C1. One student says \(\int2\sin x\cos x\,dx=\sin^2x+C\); another says \(-\cos^2x+C\). Who is right?</p>
 <details><summary>Answer</summary><div><p>Both. Each differentiates to \(2\sin x\cos x\), and the two differ by a constant: \(\sin^2x-(-\cos^2x)\) \(=\sin^2x+\cos^2x=1\). Antiderivatives are not unique, so different-looking answers can both be correct; the constant \(C\) absorbs the difference.</p></div></details></div>
@@ -704,7 +796,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 14 ============ -->
 <section id="pastpaper">
-<h2><span class="n">14</span>Past paper questions</h2>
+<h2><span class="n">14</span><span class="h2t">Past paper questions</span></h2>
 <p>No past-paper question has Lecture 11 as its latest topic, so none is housed here: Riemann-sum questions on the papers always ask you to turn a limit of a sum into a definite integral, which needs Lecture 12. Practise them in the L12 note (Riemann sum limits, type <a class="guide" data-guide="L12.3">Guide · L12.3 Riemann sum limits</a>) and in the L13 note, where the resulting integral also needs an integration technique.</p>
 </section>
 </main>
@@ -900,5 +992,13 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </body></html>

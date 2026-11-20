@@ -106,6 +106,35 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+ol.steps.proc{border-left:0}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -137,36 +166,44 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · ODE · Part O4</span>
   <h1>Non-Homogeneous Linear ODEs</h1>
-  <p class="lede">Every slide of ODE Part O4 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The closing section turns the slides' "insights on solving ODEs" into a "which method?" guide for the whole ODE part. The exam taster at the end shows how the exam asks about this part.</p>
 </header>
 
-<section id="s0"><h2><span class="n">0</span>Where this part sits</h2>
-<p>This is the last part of the ODE (ordinary differential equation) half of the course. A quick reminder of what came before:</p>
-<ul class="list">
-<li><b>Part O1</b>: first-order equations solved directly: separable equations, linear equations with an integrating factor, exact equations. Also the ideas of <b>order</b> (the highest derivative that appears) and <b>linear</b> (no \(y^2\), \(\sin y\), \(e^{y}\), \(y\,y'\) and so on: \(y\) and its derivatives appear only to the first power, multiplied by functions of \(x\)).</li>
-<li><b>Part O2</b>: first-order equations solved by a substitution (homogeneous \(y=vx\), Bernoulli, Riccati), and reduction of order.</li>
-<li><b>Part O3</b>: linear equations whose right-hand side is <b>zero</b>. With constant coefficients we try \(y=e^{mx}\) and solve the <b>characteristic equation</b> (distinct real roots, repeated roots, complex roots \(a\pm bi\) giving \(e^{ax}\cos bx,\ e^{ax}\sin bx\)). For <b>Cauchy–Euler</b> equations \(x^2y''+bxy'+cy=0\) we try \(y=x^m\). Also linear independence and the <b>Wronskian</b> \(W=y_1y_2'-y_2y_1'\), and the mass–spring oscillator.</li>
-</ul>
-<p><b>What this part adds:</b> linear equations whose right-hand side is <b>not</b> zero, such as \(y''+y=\cos x\). These model a system being pushed by an outside force (a spring shaken by a motor, a circuit driven by a power supply). You will learn:</p>
-<ol class="steps">
-<li>why every solution is "the Part O3 answer + one extra solution" (section 1);</li>
-<li>three ways to find that one extra solution: <b>undetermined coefficients</b> (guess its shape, sections 2–3), the <b>D-operator method</b> (a systematic way to make the guess, section 5), and <b>variation of parameters</b> (a formula that always works, sections 6–7);</li>
-<li>what <b>resonance</b> is and why it forces you to change your guess (section 3);</li>
-<li>how to fit initial conditions (section 4);</li>
-<li>how to choose a method for any ODE in the course (section 8).</li>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this part sits</span></h2>
+<p>This is the last part of the ODE half of the course. Part O3 was a spring left alone: it bobs and settles in its own way. Now an outside hand keeps pushing it. The push is the right-hand side \(f(x)\), and this part finds the motion that results.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>Every motion = the spring's own free motion + one response to the push.</b> In symbols, \(y=y_c+y_p\).</li>
+<li><a href="#s2">§2</a> <b>Undetermined coefficients: guess a response shaped like the push.</b> <span class="pill">On almost every paper</span></li>
+<li><a href="#s3">§3</a> <b>Push in time with the spring's own rhythm and the swings keep growing.</b> That is resonance: the guess gets an extra factor \(x\).</li>
+<li><a href="#s4">§4</a> <b>How the spring was started is fixed last,</b> on the whole motion, not on the free part.</li>
+<li><a href="#s5">§5</a> <b>The D-operator silences the push,</b> then reads the right guess off a bigger unforced equation.</li>
+<li><a href="#s6">§6</a> <b>Variation of parameters lets the free-motion constants vary.</b> No guessing, works for any push.</li>
+<li><a href="#s7">§7</a> <b>The same for Cauchy–Euler equations: divide by \(x^2\) first.</b></li>
+<li><a href="#s8">§8</a> <b>Which method for which ODE,</b> for the whole ODE part.</li>
+<li><a href="#s9">§9–§14</a> Summary, common mistakes, practice and the exam taster.</li>
 </ol>
+</div>
+<p><b>You need:</b> Part O3 (the characteristic equation, Cauchy–Euler equations and the Wronskian), the product rule and integration by parts. <b>In the exam:</b> a typical recent paper has three parts here, about 5% each: undetermined coefficients with no clash, one with a clash, and variation of parameters (usually a Cauchy–Euler equation). See the <a href="guide-O4.html">O4 exam guide</a>.</p>
 <p style="font-size:.92rem;color:var(--muted)">Slide numbers below refer to the 20 slides of this part. This part has no admin, summary, common-mistakes, find-the-mistake or group-work slides; those sections at the end were written for these notes.</p>
 </section>
 
-<section id="s1"><h2><span class="n">1</span>Non-homogeneous equations: complementary function + particular solution</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Non-homogeneous equations: complementary function + particular solution</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture a mass hanging on a spring. Left alone, it bobs at its own rhythm and, if there is friction, slowly settles. Now an outside hand pushes it, following a fixed schedule over time. The equation says: the spring's own forces (inertia, friction, stiffness) on the left balance the push on the right. A non-homogeneous equation is simply a spring with a hand on it.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 1)</span>
 <p>An <b>inhomogeneous</b> (also called <b>non-homogeneous</b>) second-order linear equation with constant coefficients is</p>
 \[ y''+a_1y'+a_2y=f(x),\qquad f(x)\ne0. \]
 <p class="word"><b>In words:</b> second derivative + (constant) × first derivative + (constant) × function = a given function of \(x\) that is not zero.</p>
 <p>Here \(a_1,a_2\) are constants, and \(f(x)\) is called the <b>forcing term</b> or <b>inhomogeneous term</b>: it is the part of the equation that does not contain \(y\). "Homogeneous" in Parts O3–O4 simply means \(f(x)=0\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(y''\)</dt><dd>the acceleration term: the mass resisting a change of speed (inertia).</dd>
+<dt>\(a_1y'\)</dt><dd>friction: a force proportional to the speed.</dd>
+<dt>\(a_2y\)</dt><dd>the spring pulling back, in proportion to how far it is stretched.</dd>
+<dt>\(f(x)\)</dt><dd>the outside hand: the push at time \(x\). It does not depend on \(y\); the hand follows its own schedule whatever the spring does.</dd>
+</dl></div>
 
 <div class="box warn"><span class="tag">Two meanings of "homogeneous"</span><p>In Part O2, a "homogeneous equation" was a first-order equation \(y'=g(x,y)\) where \(g\) depends only on \(y/x\) (solved with \(y=vx\)). Here "homogeneous" means "right-hand side zero". The words are the same; the ideas are unrelated. The Part O2 slides themselves warned about this.</p></div>
 
+<details class="idea"><summary>What is this? (CF and PI)</summary><div><p>The complementary function is everything the spring can do with no hand on it: all its free motions, one for each way of starting it. The particular solution is one single motion that copes with the push. Neither is the full answer on its own; section 1's key result says how they combine.</p></div></details>
 <div class="box def"><span class="tag">Definitions (slide 1)</span>
 <ul class="list">
 <li>The <b>complementary function</b> (CF), written \(y_c\), is the general solution of the equation with \(f(x)\) replaced by 0, i.e. of \(y''+a_1y'+a_2y=0\). You already know how to find it (Part O3). It contains the arbitrary constants \(C_1,C_2\).</li>
@@ -175,6 +212,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </ul></div>
 
 <h3>Why the general solution is CF + PI (slides 2–4)</h3>
+<details class="idea"><summary>What is this? (CF + PI)</summary><div><p>Take two motions of the same pushed spring, started in different ways. Both feel exactly the same push, so the push cancels out of their difference. What is left is a motion the spring could make with no hand at all. So every pushed motion is one chosen pushed motion plus some free motion.</p></div></details>
 <p>The slides prove this for \(y''+k^2y=f(x)\) (\(k\) a constant). Suppose \(y_1\) and \(y_2\) are <em>any</em> two solutions:</p>
 \[ y_1''+k^2y_1=f(x),\qquad y_2''+k^2y_2=f(x). \]
 <p>Subtract the first from the second. Since \((y_2-y_1)''=y_2''-y_1''\), we get, with \(Y=y_2-y_1\),</p>
@@ -184,6 +222,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box thm"><span class="tag">Key result (slide 4)</span>
 \[ y=y_c+y_p \]
 <p class="word"><b>In words:</b> general solution = complementary function (general solution of the homogeneous equation, with the arbitrary constants) + particular solution (any one solution of the full equation).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(y\)</dt><dd>the whole motion of the pushed spring.</dd>
+<dt>\(y_c\)</dt><dd>its free motion. The constants \(C_1,C_2\) record how it was started, and with friction this part dies away (the transient).</dd>
+<dt>\(y_p\)</dt><dd>one response to the push, with no constants: what the hand forces on the spring.</dd>
+<dt>\(+\)</dt><dd>for a linear equation the two parts just add, without disturbing each other.</dd>
+</dl></div>
 <p><b>Analogy.</b> Think of all solutions as all the points on a straight line in the plane. To describe the line you need one point on it (the particular solution) plus "all multiples of the direction" (the complementary function). Which point you pick does not matter: a different particular solution just moves the starting point along the same line. That is why two correct methods can give particular solutions that look different but differ only by CF terms (see sections 4 and 6).</p>
 
 <div class="box eg"><span class="tag">Example 1 <span class="pill">Written for these notes</span></span>
@@ -192,7 +236,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ y_c=C_1e^{-x}+C_2e^{-2x}. \]
 <p><b>PI.</b> (The method is explained in section 2.) Try \(y_p=A\cos x+B\sin x\). Then \(y_p'=-A\sin x+B\cos x\), \(y_p''=-A\cos x-B\sin x\), and</p>
 \[ \begin{aligned} &y_p''+3y_p'+2y_p\\ &=(A+3B)\cos x+(B-3A)\sin x. \end{aligned} \]
-<p>Matching with \(10\cos x+0\sin x\): \(A+3B=10\) and \(B-3A=0\). So \(B=3A\), \(10A=10\), \(A=1\), \(B=3\).</p>
+<p>Matching with \(10\cos x+0\sin x\): \(A+3B=10\) and \(B-3A=0\).<span class="why">The two sides must agree at every \(x\), and a cosine can never be made out of a sine, so the cosine parts and the sine parts must match separately.</span> So \(B=3A\), \(10A=10\), \(A=1\), \(B=3\).</p>
 \[ y=C_1e^{-x}+C_2e^{-2x}+\cos x+3\sin x. \]
 <p>Play with \(C_1,C_2\) in the first graph below: whatever you choose, the solution settles onto the particular solution, because the CF terms die away.</p></div>
 
@@ -204,13 +248,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="readout" id="cf-out"></div>
 <p class="cap">Equation \(y''+3y'+2y=10\cos x\). The sliders change only the complementary function. Every choice gives a genuine solution (a different starting value \(y(0)\) and slope \(y'(0)\)); after about \(x=4\) they all sit on the particular solution. In engineering language the CF is the <b>transient</b> and the PI is the <b>steady state</b> <span class="pill">Beyond the slides</span>.</p></div>
 
+<details class="idea"><summary>What is this? (splitting the push)</summary><div><p>Two hands pushing the spring at once: the motion they cause together is the motion caused by the first hand plus the motion caused by the second. This is true because the spring's equation is linear.</p></div></details>
 <div class="box thm"><span class="tag">Splitting the forcing term <span class="pill">Beyond the slides, used in slide 6</span></span>
 <p>If \(y_{p1}\) solves the equation with right-hand side \(f_1\), and \(y_{p2}\) solves it with \(f_2\), then \(y_{p1}+y_{p2}\) solves it with \(f_1+f_2\).</p>
 <p class="word"><b>In words:</b> for a linear equation, the response to a sum of forces is the sum of the responses. You may find a particular solution for each piece of \(f(x)\) separately and add them.</p>
 <p>Reason: the left-hand side of a linear equation is a sum of derivatives times constants, and the derivative of a sum is the sum of the derivatives (Lecture 6). This is the superposition principle of Part O1 applied to the forcing.</p></div>
+<p class="cannow"><b>You can now:</b> say what the forcing term, the complementary function and the particular solution are; explain why every solution is \(y_c+y_p\); and split a forcing term into pieces and add their particular solutions.</p>
 </section>
 
-<section id="s2"><h2><span class="n">2</span>Undetermined coefficients</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Undetermined coefficients</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Undetermined coefficients means guessing a response shaped like the push. If the hand pushes back and forth like a cosine, the spring ends up moving back and forth at the same rhythm, perhaps with a different size and a delay. A delayed cosine is a mix of a cosine and a sine, which is why the guess always needs both. You write the shape with unknown sizes in front, and the equation tells you the sizes.</p></div></details>
 <p><b>Idea (slide 5).</b> For some simple, standard right-hand sides, the particular solution has the same <em>shape</em> as \(f(x)\). You write down that shape with unknown constants (the "undetermined coefficients"), substitute it into the equation, and choose the constants so that both sides match. This works because differentiating an exponential, a sine/cosine or a polynomial gives back a function of the same family.</p>
 <div class="box thm"><span class="tag">Working rules (slide 5)</span>
 <ul class="list">
@@ -234,6 +281,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <tr><td>sum \(f_1+f_2\)</td><td>sum of the two trials (one group per term)</td><td>test each group separately</td></tr>
 </table></div>
 
+<details class="idea"><summary>What is this? (the clash rule)</summary><div><p>Sometimes the guessed shape is one of the spring's own free motions. Then the spring's own forces cancel it completely: put it into the left-hand side and you get zero, so it can never balance the push. This is resonance (section 3): the push matches a rhythm the spring already has. The cure is to multiply by \(x\), a response that keeps growing with time.</p></div></details>
 <div class="box thm"><span class="tag">The clash rule (multiply by \(x\) or \(x^2\))</span>
 <p>Before substituting, compare each trial group with the complementary function. If the number \(r\) in the last column is a root of the characteristic equation, the trial "clashes" with the CF: it would make the left-hand side zero, so it can never produce \(f(x)\). Then multiply <b>that group</b> by \(x^s\), where \(s\) is how many times \(r\) is a root:</p>
 <ul class="list">
@@ -243,6 +291,20 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </ul>
 <p class="word"><b>In words:</b> if your guess is already a solution of the unforced equation, it is useless; multiply it by \(x\), and again by \(x\) if it is still useless.</p>
 <p>Only the clashing group is multiplied. For \(f=12(e^{2x}-x)\) with roots \(2,-1\), the trial is \(Axe^{2x}+Bx+C\), not \(x(Ae^{2x}+Bx+C)\). Section 3 explains the physical meaning (resonance) and section 5 explains why multiplying by \(x\) is exactly right.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(r\)</dt><dd>the push's own "rhythm number": \(0\) for a polynomial, \(a\) for \(e^{ax}\), \(\pm bi\) for \(\cos bx\) and \(\sin bx\).</dd>
+<dt>\(r\) a root</dt><dd>the spring can already move like the push with no hand on it.</dd>
+<dt>\(s\)</dt><dd>how many of the spring's free motions share that rhythm (0, 1 or 2).</dd>
+<dt>\(x^s\times\)(trial)</dt><dd>a response that grows with time instead of staying the same size, which the spring's own forces cannot cancel.</dd>
+</dl></div>
+<p>The method in steps:</p>
+<ol class="steps proc">
+<li><b>Do:</b> Find the CF \(y_c\) first (Part O3). <span class="why">You need the spring's free motions before you can spot a clash.</span></li>
+<li><b>Do:</b> Write the trial from the table, one group per piece of \(f(x)\), with unknown constants. <span class="why">The response has the shape of the push, and each hand gets its own response (splitting the forcing term, section 1).</span></li>
+<li><b>Do:</b> Compare each group's number \(r\) with the characteristic roots, and multiply a clashing group by \(x^s\). <span class="why">A guess that is already a free motion gives zero on the left, so it could never balance the push.</span></li>
+<li><b>Do:</b> Substitute, then match the coefficients of each kind of term. <span class="why">The equation must hold at every \(x\), and different kinds of term (\(\cos\), \(\sin\), \(x^2\), \(x\), constants) cannot stand in for each other.</span></li>
+<li><b>Do:</b> Write \(y=y_c+y_p\). <span class="why">The full motion is the free motion plus the one response.</span></li>
+</ol>
 
 <div class="box eg"><span class="tag">Example 2: one equation, four right-hand sides <span class="pill">Written for these notes</span></span>
 <p>Equation: \(y''-y'-2y=f(x)\). Characteristic equation \(m^2-m-2=(m-2)(m+1)=0\), roots \(2,-1\), so \(y_c=C_1e^{2x}+C_2e^{-x}\). None of the trials below clashes.</p>
@@ -269,9 +331,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Match with \(3x^2-\sin2x\): \(x^2\): \(-12A=3\), \(A=-\tfrac14\). \(x\): \(B=0\). Constant: \(24A-2C=0\), \(C=12A=-3\). \(\cos2x\): \(D=0\). \(\sin2x\): \(20E=-1\), \(E=-\tfrac1{20}\).</p>
 \[ \begin{aligned} y&=C_1+C_2x+C_3e^{x}+C_4e^{-x}\\ &\quad-\frac{x^4}{4}-3x^2-\frac{1}{20}\sin2x. \end{aligned} \]
 <p class="word"><b>In words:</b> general solution = four-constant CF + polynomial response to \(3x^2\) (raised by \(x^2\) because of the double root 0) + sine response to \(-\sin2x\).</p></div>
+<p class="cannow"><b>You can now:</b> write the trial for a constant, polynomial, exponential or trigonometric right-hand side, or a sum of them; spot a clash and multiply only that group by \(x\) or \(x^2\); and find the constants by matching coefficients.</p>
 </section>
 
-<section id="s3"><h2><span class="n">3</span>Resonance and clashes</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Resonance and clashes</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Push the spring at exactly its own rhythm, each push arriving just when it helps the motion, and every push adds energy. If there is no friction to take energy away, the swings get bigger and bigger without limit. In the equation this is the clash of section 2: the push has the shape of a free motion, and the response needs an extra factor of time, \(x\).</p></div></details>
 <div class="box def"><span class="tag">Resonance (slide 7)</span>
 <p>When a system is forced at one of its <b>natural frequencies</b>, a large amplitude results from the synchronised ("in-phase") energy input to the oscillator.</p>
 <p>Mathematically: when the inhomogeneous term satisfies the homogeneous equation, the trial function must be chosen carefully.</p></div>
@@ -292,6 +356,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ y_p=\frac{x\sin x}{2}, \]
 \[ y=C_1\cos x+C_2\sin x+\frac{x\sin x}{2}. \]
 <p class="word"><b>In words:</b> the response to forcing at the natural frequency is a sine wave whose amplitude grows in proportion to \(x\) (time).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\sin x\)</dt><dd>the spring's own rhythm (natural frequency 1). The push is a cosine and the response a sine: the spring's velocity, a cosine, keeps in step with the push, so every push adds energy.</dd>
+<dt>\(x\)</dt><dd>time. The size of the swing grows steadily, with no ceiling, because nothing takes energy out.</dd>
+<dt>\(\tfrac12\)</dt><dd>how fast the swing grows, set by the push's strength (1 here) and the natural frequency: in general the growth rate is \(\frac{1}{2\omega_0}\) per unit push.</dd>
+</dl></div>
 
 <div class="figure"><p class="ttl">Particular solution in the case of resonance (slide 10, redrawn)</p>
 <canvas class="plot" id="r10" style="aspect-ratio:16/9" aria-label="Graph of y_p = t sin t / 2 between the dashed lines y = t/2 and y = -t/2"></canvas>
@@ -309,17 +378,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box beyond"><span class="tag">Beyond the handouts</span>
 <p>For \(\omega\ne\omega_0\), the trial \(A\cos\omega t+B\sin\omega t\) gives \(y_p=\dfrac{\cos\omega t}{\omega_0^2-\omega^2}\) (check: \(y_p''=-\omega^2y_p\)). Fitting \(y(0)=y'(0)=0\):</p>
 \[ y=\frac{\cos\omega t-\cos\omega_0t}{\omega_0^2-\omega^2}. \]
-<p>As \(\omega\to\omega_0\) the denominator goes to 0, which is why the amplitude blows up near resonance. Treating \(\omega\) as the variable and using L'Hôpital's Rule (Lecture 10) on this \(\frac00\) form gives the limit \(\dfrac{t\sin\omega_0t}{2\omega_0}\): the resonant solution with the extra factor \(t\).</p></div>
+<p>As \(\omega\to\omega_0\) the denominator goes to 0, which is why the amplitude blows up near resonance. Treating \(\omega\) as the variable and using L'Hôpital's Rule (Lecture 10) on this \(\frac00\) form gives the limit \(\dfrac{t\sin\omega_0t}{2\omega_0}\): the resonant solution with the extra factor \(t\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\cos\omega t\)</dt><dd>the forced part, moving at the push's rhythm.</dd>
+<dt>\(-\cos\omega_0t\)</dt><dd>a free motion at the spring's own rhythm, needed so the spring starts at rest. The two rhythms drift in and out of step: the beats in the graph.</dd>
+<dt>\(\omega_0^2-\omega^2\)</dt><dd>the gap between the two rhythms. A small gap means a big response; no gap is resonance.</dd>
+</dl></div>
+</div>
+<p class="cannow"><b>You can now:</b> say what resonance is; recognise it from the CF (the forcing is one of the free motions); find the growing particular solution such as \(\tfrac12x\sin x\); and explain why the amplitude grows near and at the natural frequency.</p>
 </section>
 
-<section id="s4"><h2><span class="n">4</span>Initial conditions <span class="pill">Written for these notes</span></h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Initial conditions <span class="pill">Written for these notes</span></span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The initial conditions say how the spring was started: where it was and how fast it was moving when the hand began. They pick one motion out of the whole family. The push moves the spring from the very first moment too, so the starting values belong to the whole motion, the free part plus the response.</p></div></details>
 <p>The slides do not have a separate initial-condition slide, but exams often ask for it. <b>Initial conditions</b> are given values such as \(y(0)\) and \(y'(0)\) that pick out one solution from the general solution. A second-order equation needs two of them (one per arbitrary constant).</p>
 <div class="box thm"><span class="tag">Order of work</span>
-<ol class="steps">
-<li>Find the CF \(y_c\) (with \(C_1,C_2\)).</li>
-<li>Find a particular solution \(y_p\).</li>
-<li>Write \(y=y_c+y_p\) and differentiate it.</li>
-<li><b>Only now</b> substitute the initial conditions and solve for \(C_1,C_2\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> Find the CF \(y_c\) (with \(C_1,C_2\)). <span class="why">The free motion carries the two dials \(C_1,C_2\) that the starting values will set.</span></li>
+<li><b>Do:</b> Find a particular solution \(y_p\). <span class="why">This is the response to the push. It has no dials to set.</span></li>
+<li><b>Do:</b> Write \(y=y_c+y_p\) and differentiate it. <span class="why">The conditions give a starting position and a starting speed, so you need both \(y\) and \(y'\).</span></li>
+<li><b>Do:</b> <b>Only now</b> substitute the initial conditions and solve for \(C_1,C_2\). <span class="why">\(y_p\) has its own starting position and speed (in Example 3, \(\cos x+3\sin x\) starts at 1 with slope 3), and the dials must make up for them.</span></li>
 </ol>
 <p class="word"><b>In words:</b> constants last. The initial conditions belong to the whole solution, not to the CF.</p></div>
 
@@ -338,9 +415,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <div class="box"><span class="tag">Two methods, one answer</span>
 <p>Different methods can give particular solutions that differ by CF terms (for example \(\frac x2e^{x}\) and \(\frac x2e^{x}-\frac14e^{x}\) both solve \(y''-y=e^{x}\); see Group work 3). After you fit the initial conditions, the constants adjust and the final answers are identical. If an exam asks you to "solve two ways and compare", this is the comparison to make.</p></div>
+<p class="cannow"><b>You can now:</b> fit \(y(0)\) and \(y'(0)\) to the full \(y_c+y_p\); and explain why two methods that give different particular solutions still give the same final answer.</p>
 </section>
 
-<section id="s5"><h2><span class="n">5</span>The D-operator method</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">The D-operator method</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>\(D\) is short for "take the rate of change". An annihilator is a filter that turns the push into silence: for \(\cos x\), "differentiate twice and add the original" gives zero. Apply that filter to both sides and the pushed spring becomes a bigger spring with no hand on it, which Part O3 can solve. The free motions of the bigger problem that the original spring did not have are exactly the shape of the response.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 11)</span>
 <p>Write \(D=\dfrac{d}{dx}\), so \(Dy=y'\), \(D^2y=D(Dy)=y''\), and so on. An <b>operator</b> is a rule that takes a function and gives back a function, the way a function takes a number and gives a number. Polynomials in \(D\) act term by term, e.g. \((D^2+1)y=y''+y\). So</p>
 \[ \begin{aligned} &y''+y=\cos x\quad\text{becomes}\\ &(D^2+1)y=\cos x. \end{aligned} \]
@@ -357,6 +436,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>Pick the new ones.</b> \(\cos x,\ \sin x\) are already the CF of the original equation. The NEW solutions \(x\cos x,\ x\sin x\) are the correct choice for the particular solution: try \(y_p=x(A\cos x+B\sin x)\). Substituting (as in section 3) gives \(A=0\), \(B=\tfrac12\), \(y_p=\tfrac12x\sin x\).</p>
 <p class="word"><b>In words:</b> kill the right-hand side with an extra operator, solve the bigger homogeneous equation, and the solutions that are not already in the CF are the shape of the particular solution.</p></div>
 <p>This is why the clash rule works: the annihilator adds roots \(r\). If \(r\) is new, the trial is the ordinary table trial; if \(r\) was already a root, it becomes a repeated root, and repeated roots bring an extra factor \(x\).</p>
+<p>The method in steps:</p>
+<ol class="steps proc">
+<li><b>Do:</b> Write the equation as \(L(D)y=f(x)\), with \(L\) a polynomial in \(D\). <span class="why">The spring's own forces become a polynomial in \(D\), which factorises like an ordinary polynomial.</span></li>
+<li><b>Do:</b> Find an annihilator \(A(D)\) of \(f\) and apply it to both sides: \(A(D)L(D)y=0\). <span class="why">The push is silenced, leaving a homogeneous equation that Part O3 can solve.</span></li>
+<li><b>Do:</b> Solve its characteristic equation and list the solutions. <span class="why">Every solution of the original equation also solves the bigger one, so the particular solution is among these.</span></li>
+<li><b>Do:</b> Cross out the ones already in the CF; the rest, with unknown constants, is the trial. <span class="why">The crossed-out ones are free motions and give zero on the left; only the new ones can answer the push.</span></li>
+<li><b>Do:</b> Substitute the trial to find the constants. <span class="why">The bigger equation gives the shape of the response, not its size.</span></li>
+</ol>
 
 <div class="box eg"><span class="tag">Example 5 <span class="pill">Written for these notes</span></span>
 <p>Solve \(y''-4y=8e^{2x}\) by the D-operator method.</p>
@@ -378,21 +465,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <tr><td>\(e^{ax}\cos bx\), \(e^{ax}\sin bx\)</td><td>\((D-a)^2+b^2\)</td></tr>
 </table></div>
 <p>For a sum, multiply the annihilators of the pieces, e.g. \(5-xe^{3x}\) is annihilated by \(D(D-3)^2\).</p></div>
+<p class="cannow"><b>You can now:</b> write an equation in \(D\) notation; find the annihilator of a simple forcing term; and use it to produce the correct trial, clashes included.</p>
 </section>
 
-<section id="s6"><h2><span class="n">6</span>Variation of parameters</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Variation of parameters</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>In the free motion, the constants \(C_1,C_2\) are two dials set once at the start. Variation of parameters lets the dials keep turning as time goes on: at each moment the spring moves like a free motion, but with dial settings that drift. The push decides how fast each dial must turn. There is no guessing, so it works for any push, but it does need the spring's two independent free motions.</p></div></details>
 <p><b>When (slide 14).</b> For more complicated inhomogeneous terms (e.g. \(\sec x\), \(\ln x\), \(\frac1x\), which are not in the trial table), or when you simply cannot see the right form of the particular solution, use <b>variation of parameters</b> (VoP). It also works when the coefficients are functions of \(x\):</p>
 \[ y''+p(x)y'+q(x)y=f(x). \]
 <p><b>Setup (slide 14).</b> Suppose the homogeneous equation has two independent solutions \(y_1(x)\), \(y_2(x)\), so its general solution is \(C_1y_1+C_2y_2\). "Vary the parameters": replace the constants by unknown functions,</p>
 \[ y_p(x)=u_1(x)y_1(x)+u_2(x)y_2(x). \]
 <p class="word"><b>In words:</b> particular solution = (unknown function) × first CF solution + (unknown function) × second CF solution.</p>
 
+<details class="idea"><summary>What is this? (the extra condition)</summary><div><p>Two drifting dials describe one motion, so there is one spare choice. We use it to demand that the turning of the dials does not change the velocity: the velocity is just the free-motion velocity with the dials at their current settings. Then only the acceleration feels the turning dials, and that is where the push acts.</p></div></details>
 <p><b>One free choice (slide 15).</b> We are using two unknown functions \(u_1,u_2\) to describe one unknown function \(y_p\): two degrees of freedom for a one-degree-of-freedom problem. A <b>degree of freedom</b> is a quantity you are free to choose. Analogy: if all you need is \(a+b=10\), you may also demand anything reasonable you like (say \(a=3\)) and still succeed. So we may impose one extra condition of our choosing, picked to make the algebra easy.</p>
 
 <h3>Derivation (slides 16–17)</h3>
 <p>Differentiate \(y_p\) with the product rule:</p>
 \[ \begin{aligned} y_p'&=u_1y_1'+u_2y_2'\\ &\quad+\big(u_1'y_1+u_2'y_2\big). \end{aligned} \]
-<p>To stop second derivatives of \(u\) from appearing later, choose the extra condition</p>
+<p>To stop second derivatives of \(u\) from appearing later, choose the extra condition<span class="why">This is the spare choice: the velocity of \(y_p\) is then the free-motion velocity with the dials at their current settings.</span></p>
 \[ u_1'y_1+u_2'y_2=0. \tag{1} \]
 <p>Then \(y_p'=u_1y_1'+u_2y_2'\), and differentiating again,</p>
 \[ y_p''=u_1y_1''+u_2y_2''+u_1'y_1'+u_2'y_2'. \]
@@ -409,10 +499,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ W=y_1y_2'-y_2y_1'. \]
 <p class="word"><b>In words:</b> \(W\) is the Wronskian of the two CF solutions (Part O3); it is never zero because they are independent. \(u_1'\) = minus (other solution × right side) ÷ \(W\); \(u_2'\) = (first solution × right side) ÷ \(W\).</p>
 <p>(To get \(u_1'\): multiply (1) by \(y_2'\) and (2) by \(y_2\), subtract: \(u_1'(y_1y_2'-y_2y_1')=-y_2f\). Similarly for \(u_2'\).)</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(u_1',\ u_2'\)</dt><dd>how fast each dial is turning.</dd>
+<dt>first equation \(=0\)</dt><dd>the turning of the dials adds nothing to the velocity: the spare choice.</dd>
+<dt>second equation \(=f(x)\)</dt><dd>turning the dials changes the velocity at exactly the rate the push demands.</dd>
+<dt>\(W\)</dt><dd>how different the two free motions are. It is never zero because they are independent, so we may divide by it.</dd>
+</dl></div>
 
 <div class="box warn"><span class="tag">Be careful (slide 18)</span>
 <p>The coefficient of \(y''\) must be ONE (unity). The derivation substituted into \(y''+py'+qy=f\). If the equation is \(a(x)y''+\dots=g(x)\), first divide everything by \(a(x)\); the \(f\) in the formulas is \(g(x)/a(x)\). Forgetting this is the most common VoP error, especially for Cauchy–Euler equations (section 7).</p></div>
 <p>Constants of integration in \(u_1,u_2\) may be dropped: adding a constant to \(u_1\) just adds a multiple of \(y_1\) (a CF term) to \(y_p\).</p>
+<p>The method in steps:</p>
+<ol class="steps proc">
+<li><b>Do:</b> Make the coefficient of \(y''\) equal to 1 and read off \(f(x)\). <span class="why">Equation (2) was derived from \(y''+py'+qy=f\); otherwise the push is measured wrongly.</span></li>
+<li><b>Do:</b> Find \(y_1,y_2\) from the CF and compute \(W=y_1y_2'-y_2y_1'\). <span class="why">These are the two free motions whose dials will drift; \(W\ne0\) lets you solve for the dial speeds.</span></li>
+<li><b>Do:</b> \(u_1'=-\dfrac{y_2f}{W}\), \(u_2'=\dfrac{y_1f}{W}\). <span class="why">These are the dial speeds the push demands.</span></li>
+<li><b>Do:</b> Integrate to get \(u_1,u_2\); drop the constants of integration. <span class="why">A constant in \(u_1\) or \(u_2\) is a fixed dial setting, a free motion that the CF already contains.</span></li>
+<li><b>Do:</b> \(y_p=u_1y_1+u_2y_2\), and \(y=C_1y_1+C_2y_2+y_p\). <span class="why">The response is the free motions with the dials at their drifting settings.</span></li>
+</ol>
 
 <div class="box eg"><span class="tag">Example 6: a right-hand side the table cannot handle <span class="pill">Written for these notes</span></span>
 <p>Find the general solution of \(y''+y=\sec x\) on \(-\frac\pi2\lt x\lt\frac\pi2\).</p>
@@ -429,20 +533,22 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ W=e^{2x}(-2e^{-2x})-e^{-2x}(2e^{2x})=-4. \]
 \[ u_1'=-\frac{e^{-2x}\cdot8e^{2x}}{-4}=2, \]
 \[ u_2'=\frac{e^{2x}\cdot8e^{2x}}{-4}=-2e^{4x}. \]
-<p>So \(u_1=2x\), \(u_2=-\tfrac12e^{4x}\), and</p>
+<p>So \(u_1=2x\), \(u_2=-\tfrac12e^{4x}\), and<span class="why">The dial on \(e^{2x}\) turns at a steady rate 2, so it grows like \(2x\): that is the extra factor \(x\) of the clash, found without any rule.</span></p>
 \[ y_p=2xe^{2x}-\tfrac12e^{2x}. \]
 <p>The term \(-\frac12e^{2x}\) is a CF term, so it can be absorbed into \(C_1e^{2x}\): the general solution is the same as in Example 5. VoP needs no clash rule: it finds the factor \(x\) by itself.</p></div>
+<p class="cannow"><b>You can now:</b> set up \(y_p=u_1y_1+u_2y_2\) and the two VoP equations; compute \(W\), \(u_1'\), \(u_2'\) and integrate; and handle right-hand sides such as \(\sec x\) that the trial table cannot.</p>
 </section>
 
-<section id="s7"><h2><span class="n">7</span>Variation of parameters for Cauchy–Euler equations <span class="pill">Written for these notes</span></h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Variation of parameters for Cauchy–Euler equations <span class="pill">Written for these notes</span></span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A Cauchy–Euler equation is a spring whose friction and stiffness change with \(x\). Its free motions are powers of \(x\) instead of exponentials, but the drifting-dial method of section 6 works the same. The one trap is the push: \(y''\) carries a factor \(x^2\), so the push felt per unit of \(y''\) is the right-hand side divided by \(x^2\).</p></div></details>
 <p>This combines Part O3 (Cauchy–Euler CF) with slide 18's warning. Exams set it often, and usually remind you that "the coefficient of the second derivative term is not unity".</p>
 <p><b>Recap (Part O3).</b> A second-order <b>Cauchy–Euler</b> equation has the form \(x^2y''+bxy'+cy=g(x)\) (\(b,c\) constants; the power of \(x\) matches the order of the derivative). For the CF, try \(y=x^m\): \(m(m-1)+bm+c=0\). Distinct real roots give \(x^{m_1},x^{m_2}\); a double root \(m\) gives \(x^m,\ x^m\ln x\); complex roots \(a\pm bi\) give \(x^a\cos(b\ln x),\ x^a\sin(b\ln x)\). Take \(x\gt0\).</p>
 <div class="box thm"><span class="tag">Method</span>
-<ol class="steps">
-<li>Find \(y_1,y_2\) from \(m(m-1)+bm+c=0\).</li>
-<li><b>Divide the whole equation by \(x^2\)</b>, so that the coefficient of \(y''\) is 1. Then \(f(x)=\dfrac{g(x)}{x^2}\).</li>
-<li>\(W=y_1y_2'-y_2y_1'\); \(u_1'=-\dfrac{y_2f}{W}\), \(u_2'=\dfrac{y_1f}{W}\); integrate.</li>
-<li>\(y=C_1y_1+C_2y_2+u_1y_1+u_2y_2\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> Find \(y_1,y_2\) from \(m(m-1)+bm+c=0\). <span class="why">These are the free motions. \(x^m\) works because each derivative lowers the power by one and the matching power of \(x\) in front puts it back.</span></li>
+<li><b>Do:</b> <b>Divide the whole equation by \(x^2\)</b>, so that the coefficient of \(y''\) is 1. Then \(f(x)=\dfrac{g(x)}{x^2}\). <span class="why">The VoP formulas come from \(y''+py'+qy=f\) (slide 18); skipping this overstates the push by a factor \(x^2\).</span></li>
+<li><b>Do:</b> \(W=y_1y_2'-y_2y_1'\); \(u_1'=-\dfrac{y_2f}{W}\), \(u_2'=\dfrac{y_1f}{W}\); integrate. <span class="why">These are the dial speeds of section 6, unchanged.</span></li>
+<li><b>Do:</b> \(y=C_1y_1+C_2y_2+u_1y_1+u_2y_2\). <span class="why">Free motion plus the response, as always.</span></li>
 </ol>
 <p class="word"><b>In words:</b> the right-hand side used in VoP is the original right-hand side divided by \(x^2\).</p></div>
 
@@ -460,9 +566,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <div class="box"><span class="tag">Shortcut when \(g(x)=kx^n\)</span>
 <p>For a pure power on the right, you may also try \(y_p=Ax^n\): then \(x^2y_p''+bxy_p'+cy_p=A\big[n(n-1)+bn+c\big]x^n\), so \(A=\dfrac{k}{n(n-1)+bn+c}\), provided \(n\) is not a root of the characteristic equation. If the question says "use variation of parameters", you must use VoP, but this is a quick check of your answer.</p></div>
+<p class="cannow"><b>You can now:</b> find the CF of a Cauchy–Euler equation; divide by \(x^2\) and apply variation of parameters; and check a power right-hand side with the \(Ax^n\) shortcut.</p>
 </section>
 
-<section id="s8"><h2><span class="n">8</span>Which method? Insights on solving ODEs (slides 19–20)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Which method? Insights on solving ODEs (slides 19–20)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>This section is a sorting chart for every ODE in the course. Two questions do most of the work. Is the equation linear, so that two pushes together give the sum of the two responses? And are the coefficients constant, like a spring whose stiffness and friction never change? Linear with constant coefficients can always be solved; nonlinear and higher order usually cannot.</p></div></details>
 <p>The last two slides summarise the whole ODE part as five situations. Here they are, with the method for each and where it was taught.</p>
 <div class="cases">
 <div><b>(1) First order, linear</b>\(y'+p(x)y=q(x)\). Can <em>always</em> be solved exactly by an integrating factor \(e^{\int p\,dx}\) (Part O1). Make the coefficient of \(y'\) equal to 1 first.</div>
@@ -474,15 +582,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box beyond"><span class="tag">Beyond the handouts: Frobenius series</span><p>A <b>Frobenius series</b> writes the solution as an infinite sum \(y=x^r(a_0+a_1x+a_2x^2+\dots)\) and finds the numbers \(a_0,a_1,\dots\) one after another by substituting into the equation. It is how equations like Bessel's equation are solved in later courses. It is named on slide 20 only to say that it exists; it is not examined in this course. Similarly, "hopeless" in (5) means no general method exists: such equations are usually solved numerically by computer.</p></div>
 
 <h3>A decision path for exam questions</h3>
-<ol class="steps">
-<li><b>Order?</b> First order: go to step 2. Second or higher: go to step 3.</li>
-<li><b>First order.</b> Can you put all \(y\) on one side and all \(x\) on the other? Separable (O1.1). Is it \(y'+p(x)y=q(x)\)? Integrating factor (O1.2). Is it \(M\,dx+N\,dy=0\) with \(\partial M/\partial y=\partial N/\partial x\)? Exact (O1.3). Does it depend only on \(y/x\)? \(y=vx\) (O2.1). Is there a \(y^n\) term on the right of a linear equation? Bernoulli, \(u=y^{1-n}\) (O2.2). A \(y^2\) term and a given solution? Riccati (O2.3).</li>
-<li><b>Linear, second or higher order.</b> Constant coefficients? Characteristic equation (O3.1–O3.2). Coefficients \(x^2,\ x,\ 1\) in front of \(y'',y',y\)? Cauchy–Euler (O3.3). One solution given? Reduction of order (O2.5).</li>
-<li><b>Right-hand side not zero.</b> Find the CF first. Then:
+<ol class="steps proc">
+<li><b>Do:</b> <b>Order?</b> First order: go to step 2. Second or higher: go to step 3. <span class="why">The order sets how many constants you need and which toolbox applies (Parts O1–O2 or O3–O4).</span></li>
+<li><b>Do:</b> <b>First order.</b> Can you put all \(y\) on one side and all \(x\) on the other? Separable (O1.1). Is it \(y'+p(x)y=q(x)\)? Integrating factor (O1.2). Is it \(M\,dx+N\,dy=0\) with \(\partial M/\partial y=\partial N/\partial x\)? Exact (O1.3). Does it depend only on \(y/x\)? \(y=vx\) (O2.1). Is there a \(y^n\) term on the right of a linear equation? Bernoulli, \(u=y^{1-n}\) (O2.2). A \(y^2\) term and a given solution? Riccati (O2.3). <span class="why">Each first-order method works for one form only, so recognising the form is the whole job.</span></li>
+<li><b>Do:</b> <b>Linear, second or higher order.</b> Constant coefficients? Characteristic equation (O3.1–O3.2). Coefficients \(x^2,\ x,\ 1\) in front of \(y'',y',y\)? Cauchy–Euler (O3.3). One solution given? Reduction of order (O2.5). <span class="why">The shape of the coefficients decides the free motions: constants give \(e^{mx}\), Cauchy–Euler gives \(x^m\).</span></li>
+<li><b>Do:</b> <b>Right-hand side not zero.</b> Find the CF first. Then:
 <ul class="list"><li>constant coefficients and \(f\) in the trial table: undetermined coefficients; check for a clash (O4.1, O4.2);</li>
 <li>the question says "D operator": annihilate, solve, take the new solutions (O4.6);</li>
-<li>\(f\) not in the table (\(\sec x\), \(\ln x\), \(1/x\), …), variable coefficients, or the question says "variation of parameters": divide by the \(y''\) coefficient, then VoP (O4.4, O4.5).</li></ul></li>
-<li><b>Initial conditions?</b> Fit them last, to the full \(y_c+y_p\) (O4.3).</li>
+<li>\(f\) not in the table (\(\sec x\), \(\ln x\), \(1/x\), …), variable coefficients, or the question says "variation of parameters": divide by the \(y''\) coefficient, then VoP (O4.4, O4.5).</li></ul><span class="why">The CF is needed either way: for the clash check, or as \(y_1,y_2\) in VoP.</span></li>
+<li><b>Do:</b> <b>Initial conditions?</b> Fit them last, to the full \(y_c+y_p\) (O4.3). <span class="why">The starting values belong to the whole motion, response included (section 4).</span></li>
 </ol>
 <div class="scroll"><table>
 <tr><th>Method</th><th>Works for</th><th>Strength</th><th>Weakness</th></tr>
@@ -490,9 +598,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <tr><td>D-operator</td><td>same as above</td><td>produces the right guess, clashes automatic</td><td>still needs the substitution step</td></tr>
 <tr><td>Variation of parameters</td><td>any linear 2nd-order equation with known \(y_1,y_2\)</td><td>always works, no guessing</td><td>integrals can be hard; must divide by the \(y''\) coefficient</td></tr>
 </table></div>
+<p class="cannow"><b>You can now:</b> place any ODE of the course in one of the five classes; choose the method for a non-homogeneous equation from its right-hand side and the question's instruction; and weigh undetermined coefficients against variation of parameters.</p>
 </section>
 
-<section id="s9"><h2><span class="n">9</span>Summary <span class="pill">Written for these notes</span></h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Summary <span class="pill">Written for these notes</span></span></h2>
 <ul class="list">
 <li>Non-homogeneous linear equation: \(y''+a_1y'+a_2y=f(x)\) with \(f\ne0\). General solution = complementary function (solution with \(f=0\), contains the constants) + particular solution (any one solution).</li>
 <li>Undetermined coefficients: trial of the same shape as \(f\): constant → constant; polynomial → full polynomial of the same degree; \(e^{ax}\) → \(Ae^{ax}\); \(\cos bx\) or \(\sin bx\) → \(A\cos bx+B\sin bx\); sums → sums.</li>
@@ -505,7 +614,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </ul>
 </section>
 
-<section id="s10"><h2><span class="n">10</span>Common mistakes <span class="pill">Written for these notes</span></h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Common mistakes <span class="pill">Written for these notes</span></span></h2>
 <div class="box"><div class="mistake">
 <span class="x">✗</span><span>Fitting the initial conditions to the CF and then adding \(y_p\). <span class="ok">✓</span> Form \(y=y_c+y_p\) first; the particular solution changes \(y(0)\) and \(y'(0)\) too.</span>
 <span class="x">✗</span><span>Skipping the clash check: trying \(Ae^{2x}\) when 2 is a characteristic root leads to "\(0=12\)". <span class="ok">✓</span> List the CF first; compare every trial group with it.</span>
@@ -520,7 +629,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </div></div>
 </section>
 
-<section id="s11"><h2><span class="n">11</span>Find the mistake <span class="pill">Written for these notes</span></h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Find the mistake <span class="pill">Written for these notes</span></span></h2>
 <div class="q"><p class="qh">1. A student solves \(x^2y''-2xy'+2y=x^3e^{x}\) (\(x\gt0\)) by variation of parameters:</p>
 <div class="handwork">
 <p>\(y_1=x,\ y_2=x^2,\ W=x^2,\ f=x^3e^x\)</p>
@@ -540,7 +649,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <details><summary>Answer</summary><div><p>\(y(0)=1\ne0\) and \(y'(0)=3\ne0\). The initial conditions were applied to the CF alone. Apply them to \(y=C_1e^{-x}+C_2e^{-2x}+\cos x+3\sin x\): \(C_1+C_2+1=0\), \(-C_1-2C_2+3=0\), so \(C_1=-5\), \(C_2=4\), and \(y=-5e^{-x}+4e^{-2x}+\cos x+3\sin x\).</p></div></details></div>
 </section>
 
-<section id="s12"><h2><span class="n">12</span>Group work <span class="pill">Written for these notes</span></h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Group work <span class="pill">Written for these notes</span></span></h2>
 <div class="q"><p class="qh">1. Solve \(y''+4y=8\sin2x\), \(y(0)=0\), \(y'(0)=0\). Describe the motion for large \(x\).</p>
 <details><summary>Hint 1</summary><div><p>CF: \(m=\pm2i\), so \(\cos2x,\ \sin2x\). The forcing \(\sin2x\) is in the CF: resonance.</p></div></details>
 <details><summary>Hint 2</summary><div><p>Try \(y_p=x(A\cos2x+B\sin2x)\). A useful fact: for this trial, \(y_p''+4y_p=4(-A\sin2x+B\cos2x)\).</p></div></details>
@@ -562,7 +671,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ y=\tfrac12xe^{x}-\tfrac14e^{x}+\tfrac14e^{-x}. \]</div></details></div>
 </section>
 
-<section id="s13"><h2><span class="n">13</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Concept checks <span class="pill">Written for these notes</span></span></h2>
 <div class="q"><p class="qh">1. What trial would you use for \(y''-4y'+4y=e^{2x}\)? Find \(y_p\).</p>
 <details><summary>Answer</summary><div><p>\((m-2)^2=0\): 2 is a double root, so \(Ax^2e^{2x}\). Substituting gives \(2A=1\): \(y_p=\frac12x^2e^{2x}\).</p></div></details></div>
 <div class="q"><p class="qh">2. \(y_a\) and \(y_b\) both solve \(y''+y=x\). Which equations do \(y_a-y_b\), \(y_a+y_b\) and \(2y_a-y_b\) solve?</p>
@@ -577,7 +686,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <details><summary>Answer</summary><div><p>(a) Variation of parameters (\(\tan x\) is not in the table). (b) Undetermined coefficients: \(Ax^2+Bx+C+Ee^{-x}\), no clash (roots \(\pm i\)). (c) Cauchy–Euler CF (\(x,\ x^{-1}\)), then variation of parameters after dividing by \(x^2\).</p></div></details></div>
 </section>
 
-<section id="pastpaper"><h2><span class="n">14</span>Exam taster</h2>
+<section id="pastpaper"><h2><span class="n">14</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this part, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Part O4's question types appear 75 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide.</p>
 
@@ -774,4 +883,12 @@ function go(){
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
 </script>
-</html>
+</html><script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
+</script>
+

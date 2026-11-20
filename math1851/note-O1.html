@@ -106,6 +106,35 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
+ol.steps.proc{border-left:0}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -137,27 +166,32 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · ODE · Part O1</span>
   <h1>First-Order ODEs: Separable, Linear, Exact</h1>
-  <p class="lede">Every slide of this part of the ODE handout explained from scratch, with interactive graphs. The handout has no worked examples of its own, so every method is shown on fully solved examples written for these notes. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this part.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this part sits</h2>
-<p>MATH1851 has two halves. The calculus half (Lectures 1 to 17) built up limits, derivatives and integrals. The second half is about <b>ordinary differential equations</b> (ODEs): equations that connect an unknown function with its own derivatives. Solving them uses everything from the calculus half, especially integration (Lectures 11 to 14).</p>
-<p>The ODE handout is by Professor K. W. Chow (Mechanical Engineering, HKU) (slide 1). These notes split it into parts:</p>
-<div class="scroll"><table>
-<tr><th>Part</th><th>Topic</th></tr>
-<tr><td><b>O1 (this note)</b></td><td>What an ODE is; order; linear vs nonlinear; three direct methods for first-order equations: <b>integrating factor</b>, <b>separable</b>, <b>exact</b></td></tr>
-<tr><td>O2</td><td>Substitutions that turn harder first-order equations into O1 ones (Bernoulli, Riccati, homogeneous), and reduction of order</td></tr>
-<tr><td>O3</td><td>Homogeneous linear equations of higher order (constant coefficients)</td></tr>
-<tr><td>O4</td><td>Non-homogeneous linear equations</td></tr>
-<tr><td>Laplace</td><td>The Laplace transform, another way to solve linear ODEs</td></tr>
-</table></div>
-<p>What you need from earlier: the chain rule and product rule (Lecture 6), derivatives of \(e^x\), \(\ln x\) and inverse trig functions (Lecture 7), antiderivatives (Lecture 11), substitution and integration by parts (Lecture 13), and partial fractions and trig integrals (Lecture 14). One genuinely new tool appears here: <b>partial derivatives</b> (section 7), explained from scratch.</p>
-<p>By the end you should be able to: tell the order of an ODE and whether it is linear; recognise which of the three methods applies to a first-order ODE; and carry the method through to a general solution, then fix the constant from an initial condition.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this part sits</span></h2>
+<p>A first-order ODE is a rule that tells you how steep the unknown curve must be at every point of the plane. Drawn as short marks, the rule looks like the current on a river, and a solution is the path a leaf takes when you drop it in. This part gives three ways to write that path as a formula.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>An ODE is a rule for the slope at every point; a solution is a curve that follows it.</b> One initial condition picks one curve.</li>
+<li><a href="#s2">§2</a> <b>Order is the highest derivative in the equation</b>, not the highest power.</li>
+<li><a href="#s3">§3</a> <b>Linear means \(y\) and its derivatives appear plainly, multiplied only by functions of \(x\).</b> Sums of solutions are solutions only when the right side is 0.</li>
+<li><a href="#s4">§4</a> <b>Few ODEs have formula solutions; first-order linear ones always do.</b></li>
+<li><a href="#s5">§5</a> <b>Integrating factor: multiply so the left side becomes one product-rule derivative \((\mu y)'\).</b> <span class="pill">In almost every paper</span></li>
+<li><a href="#s6">§6</a> <b>Separable: sort the \(x\)-stuff and the \(y\)-stuff to opposite sides, then integrate each.</b> Check for lost constant solutions.</li>
+<li><a href="#s7">§7</a> <b>Partial derivatives: the slope of a hill walking due east or due north.</b> The one new tool, needed for §8.</li>
+<li><a href="#s8">§8</a> <b>Exact: the equation is the total change of a hidden function \(F\), so solutions are its contour lines \(F=C\).</b> <span class="pill">In most recent papers</span></li>
+<li><a href="#s9">§9</a> <b>Not exact? Multiply by a factor that makes it exact.</b></li>
+<li><a href="#s10">§10</a> <b>Summary and how to choose the method</b>, then mistakes, practice, concept checks and the exam taster.</li>
+</ol>
+</div>
+<p><b>You need:</b> the chain and product rules (Lecture 6), derivatives of \(e^x\), \(\ln x\) and inverse trig functions (Lecture 7), antiderivatives (Lecture 11), substitution and integration by parts (Lecture 13), and partial fractions and trig integrals (Lecture 14); partial derivatives are new and explained in §7. <b>In the exam:</b> this part's question types appear 38 times in 23 past papers; the linear (integrating factor) equation is the most common ODE question of all, usually paired with an exact one. See the <a href="guide-O1.html">O1 exam guide</a>.</p>
+<p style="font-size:.92rem;color:var(--muted)">MATH1851 has two halves: the calculus half (Lectures 1 to 17) and <b>ordinary differential equations</b> (ODEs), which use the calculus throughout, especially integration (Lectures 11 to 14). The ODE handout is by Professor K. W. Chow (Mechanical Engineering, HKU) (slide 1). It has no worked examples of its own, so every example here is written for these notes. The notes split it into O1 (this part); O2 (substitutions that turn harder first-order equations into O1 ones: Bernoulli, Riccati, homogeneous; and reduction of order); O3 (homogeneous linear equations of higher order, constant coefficients); O4 (non-homogeneous linear equations); and Laplace (the Laplace transform, another way to solve linear ODEs).</p>
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>What a differential equation is</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">What a differential equation is</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A first-order ODE is a rule that tells you, at every point of the plane, how steep the unknown curve must be there. Draw that steepness as a short mark at many points and the plane looks like a river with its current drawn in. Drop a leaf anywhere and it drifts along, always lined up with the current: its path is a solution. Drop it somewhere else and you get a different path, so one ODE has a whole family of solutions.</p></div></details>
 <h3>Why we need them (slide 2)</h3>
 <p>In science and engineering we often know a rule for how fast something changes, rather than a formula for the thing itself. The handout gives three situations:</p>
 <ul class="list">
@@ -174,6 +208,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>Notation.</b> We write \(y'=\dfrac{dy}{dx}\), \(y''=\dfrac{d^2y}{dx^2}\), and so on (slide 6 says: \('=\dfrac{d}{dx}\)).</p>
 
 <h3>What "solving" means (slide 3)</h3>
+<details class="idea"><summary>What is this? (general solution)</summary><div><p>Solving means writing the leaf's path as a formula instead of tracing it by hand. Because the leaf could have been dropped anywhere, the formula carries one free number \(C\): that is the general solution. Saying where the leaf is dropped (an initial condition) fixes \(C\) and picks one path.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 3)</span>
 <p><b>Solving</b> a differential equation means finding an <b>analytical expression</b> (a formula) for the dependent variable(s) in terms of the independent variable(s). In applications the dependent variable is usually a displacement, concentration, temperature, current, voltage or other physical quantity, and the independent variables are space and time.</p>
 <p>In more difficult situations a <b>numerical approximation</b> (a table of approximate values computed step by step, usually by computer) is acceptable instead of a formula.</p></div>
@@ -182,7 +217,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box eg"><span class="tag">Worked example 1.1 <span class="pill">Written for these notes</span></span>
 <p>Check that \(y=\sin x+C\) solves \(y'=\cos x\) for every constant \(C\), and find the solution with \(y(0)=2\).</p>
 <p>Differentiate: \(y'=\cos x+0=\cos x\). ✓ The equation holds whatever \(C\) is.</p>
-<p>Condition \(y(0)=2\): \(\sin 0+C=2\), so \(C=2\) and \(y=\sin x+2\).</p></div>
+<p>Condition \(y(0)=2\): \(\sin 0+C=2\), so \(C=2\) and \(y=\sin x+2\). <span class="why">This is where the leaf is dropped: at \(x=0\) the curve must be at height 2, and only one member of the family passes there.</span></p></div>
 
 <div class="box def"><span class="tag">Definitions: general solution, initial condition</span>
 <p>A first-order ODE usually has a whole <b>family</b> of solutions containing one <b>arbitrary constant</b> \(C\) (because solving it involves one integration). The formula with \(C\) left in is the <b>general solution</b>.</p>
@@ -198,10 +233,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <div class="box beyond"><span class="tag">Beyond the handouts</span>
 <p>The picture of little slope marks is called a <b>slope field</b> (or direction field). It is a way to "see" an ODE \(y'=f(x,y)\) without solving it, and it is the idea behind numerical methods: start at the initial point and keep stepping in the direction the marks point.</p></div>
+<p class="cannow"><b>You can now:</b> say what an ODE, its dependent and independent variables and a solution are; check a proposed solution by substituting it in; and use an initial condition to pick the particular solution out of the general solution.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>Order of an ODE (slide 4)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Order of an ODE (slide 4)</span> <span class="mins">~1 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The order says how deep the rule reaches. A first-order rule gives the slope directly, like the current telling a leaf which way to go. A second-order rule only says how the slope must change, like a steering rule for a car: to know its path you also need where the car starts and which way it is pointing. That is why a higher order usually means more arbitrary constants.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 4)</span>
 <p>The <b>order</b> of an ODE is the order of the highest derivative that occurs in it. If the highest derivative is the second derivative, it is a second-order equation.</p>
 <p class="word"><b>In words:</b> order = how many times the unknown is differentiated, at most.</p></div>
@@ -212,16 +249,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div><b>\((y')^2+y=x\)</b>first order: the <i>power</i> 2 is not the order</div>
 </div>
 <p>The order roughly tells you how many arbitrary constants the general solution has (one integration per order). This whole note is about <b>first-order</b> equations.</p>
+<p class="cannow"><b>You can now:</b> state the order of an ODE from its highest derivative, without confusing it with a power such as \((y')^2\).</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Linear versus nonlinear ODEs (slides 5–6)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Linear versus nonlinear ODEs (slides 5–6)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Think of a sound system. Each term with \(y\) in it is the signal \(y\) (or one of its derivatives) passed through a volume knob whose setting may depend on \(x\). Turn the signal up by any factor and every such term goes up by the same factor: that is a linear equation. A term like \(y^2\) or \(\sin y\) distorts the signal instead of just scaling it, and the equation is nonlinear.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 5, intuitive)</span>
 <p>An ODE is <b>linear</b> if no nonlinear function of the dependent variable \(y=y(x)\) (or its derivatives) occurs: no \(y^2\), \(\sin y\), \(\cos y\), \(e^y\), no products like \(y\,y'\), and so on. Otherwise it is <b>nonlinear</b>.</p>
 <p>Functions of the <b>independent</b> variable \(x\) are allowed anywhere (\(\sin x\), \(x^2\), \(e^x\) are fine).</p></div>
 <p>Put precisely, a linear ODE of order \(n\) can be written as</p>
 \[ a_n(x)\,y^{(n)}+\dots+a_1(x)\,y'+a_0(x)\,y=g(x). \]
 <p class="word"><b>In words:</b> each derivative of \(y\) appears on its own (power 1, not inside another function), multiplied only by a function of \(x\); the leftover term \(g(x)\) contains no \(y\) at all.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(y,\ y',\ \dots,\ y^{(n)}\)</dt><dd>the signal and its derivatives, each to power 1 and never inside another function.</dd>
+<dt>\(a_k(x)\)</dt><dd>the volume knob on each one; it may be turned by \(x\), but never by \(y\).</dd>
+<dt>\(g(x)\)</dt><dd>an outside input that contains no \(y\). If it is 0, the equation is <b>homogeneous</b>.</dd>
+<dt>\(n\)</dt><dd>the order: the highest derivative present.</dd>
+</dl></div>
 <p>The multipliers \(a_k(x)\) are the <b>coefficients</b>. If they are all constants, the equation has <b>constant coefficients</b>; if some depend on \(x\), it has <b>variable coefficients</b>.</p>
 
 <h3>The examples on slide 6</h3>
@@ -235,6 +280,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p style="font-size:.92rem;color:var(--muted)">Slide 6 prints (b) as "y'' + y' + y = 0)" with a stray closing bracket; it is a typo and the equation is \(y''+y'+y=0\).</p>
 
 <h3>Superposition principle (slide 5)</h3>
+<details class="idea"><summary>What is this? (superposition)</summary><div><p>In the sound-system picture, when there is no outside input (right side 0), two solutions can be played together and their sum still balances to 0. When there is an outside input \(g(x)\), each solution already accounts for one copy of it, so the sum produces two copies and no longer fits the equation. The box below works this out.</p></div></details>
 <div class="box thm"><span class="tag">Superposition (slide 5)</span>
 <p>For a linear ODE, if \(y_1\) and \(y_2\) are solutions, then their sum \(y_1+y_2\) is still a solution. The slide uses this as a test: if the sum of two solutions is still a solution, the ODE is linear.</p>
 <p class="word"><b>In words:</b> add two answers and you get another answer.</p></div>
@@ -243,10 +289,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Example (b): if \(y_1''+y_1'+y_1=0\) and \(y_2''+y_2'+y_2=0\), adding gives \((y_1+y_2)''+(y_1+y_2)'+(y_1+y_2)=0+0=0\). ✓</p>
 <p>Example (a) is linear but has \(g(x)=\sin x\ne0\). In section 5 we find that \(y_1=\tfrac12(\sin x-\cos x)\) and \(y_2=\tfrac12(\sin x-\cos x)+e^{-x}\) both solve it. Their sum \(\sin x-\cos x+e^{-x}\) gives \(y'+y=2\sin x\), not \(\sin x\). So for (a) the sum of two solutions is <i>not</i> a solution. What stays true for any linear equation is: the left-hand side of the sum is the sum of the left-hand sides. Superposition in the full sense (sum of two solutions is a solution) is for homogeneous equations; this is developed in parts O3 and O4.</p>
 <p>For a nonlinear equation such as (c), even this fails: \(\sin(y_1+y_2)\ne\sin y_1+\sin y_2\).</p></div>
+<p class="cannow"><b>You can now:</b> tell linear from nonlinear by looking only at how \(y\) and its derivatives appear; say whether the coefficients are constant or variable; and say when the sum of two solutions is again a solution (homogeneous linear equations only).</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Which ODEs can we actually solve? (slides 7–8)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Which ODEs can we actually solve? (slides 7–8)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>You can always trace a leaf through a slope field step by step, but only a few kinds of rule give a path you can write as a formula. The first-order linear kind always does, because it can be rearranged so the left side is the derivative of one single quantity. Undoing one derivative is one integration, just as you get distance travelled from a speed that depends only on time.</p></div></details>
 <p>As you would expect, the higher the order, the harder it is to find an <b>exact solution</b> (a formula, as opposed to a numerical approximation). Nonlinear equations are usually difficult or impossible to solve exactly. Only certain classes of first-order ODEs, and some very special families of second- and higher-order ODEs, can be solved analytically (slide 7). This course studies those classes.</p>
 <div class="box thm"><span class="tag">Key fact (slide 8)</span>
 <p>A <b>first-order linear</b> ODE can <b>always</b> be solved, by means of an <b>integrating factor</b>.</p>
@@ -255,16 +303,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>and then integrate both sides.</p>
 <p class="word"><b>In words:</b> make the left side a single derivative, so that one integration undoes it.</p></div>
 <p>"Always solvable" means a formula for the solution always exists, written with integrals. Whether you can evaluate those integrals in closed form depends on the functions involved.</p>
+<p class="cannow"><b>You can now:</b> explain why a first-order linear ODE is always solvable (one derivative on the left, integrate once), and why "solvable" can still leave an integral with no closed form.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>First-order linear ODEs: the integrating factor (slides 8–10)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">First-order linear ODEs: the integrating factor (slides 8–10)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The left side \(y'+p\,y\) is almost the derivative of a product, but not quite. The product rule says \((\mu y)'=\mu y'+\mu' y\). Multiply the whole equation by a well-chosen \(\mu\) and the left side becomes \(\mu y'+\mu p\,y\), which is exactly \((\mu y)'\) as long as \(\mu'=p\,\mu\). So the integrating factor is the multiplier that turns the left side into one tidy product-rule derivative, and one integration then finishes the job.</p></div></details>
 <div class="box def"><span class="tag">Standard form (slide 9)</span>
 \[ \frac{dy}{dx}+p(x)\,y=q(x) \]
 <p class="word"><b>In words:</b> rate of change of \(y\) + (function of \(x\)) × \(y\) = (function of \(x\)).</p>
 <p><b>Important</b> (slide 9), before you do anything else:</p>
-<ol class="steps"><li>the coefficient of the \(\dfrac{dy}{dx}\) term must be \(1\) (divide through if it is not);</li>
-<li>the \(\dfrac{dy}{dx}\) and \(y\) terms must be on the <b>same side</b> of the equation.</li></ol>
+<ol class="steps proc"><li><b>Do:</b> the coefficient of the \(\dfrac{dy}{dx}\) term must be \(1\) (divide through if it is not); <span class="why">in \((\mu y)'=\mu y'+\mu'y\) the \(y'\) carries exactly the multiplier \(\mu\), so you must start from a plain \(y'\).</span></li>
+<li><b>Do:</b> the \(\dfrac{dy}{dx}\) and \(y\) terms must be on the <b>same side</b> of the equation. <span class="why">\(p\) is the partner of \(y\) in the missing product-rule piece; moving \(y\) across the equals sign flips its sign, and a wrong sign gives the wrong \(\mu\).</span></li></ol>
 <p>Only then can you read off \(p(x)\), including its sign.</p></div>
 <div class="box thm"><span class="tag">Integrating factor (slide 10)</span>
 \[ \mu(x)=\exp\!\left[\int p(x)\,dx\right]=e^{\int p(x)\,dx} \]
@@ -273,12 +323,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ \frac{d}{dx}\big(\mu y\big)=\mu\, q \]
 \[ y=\frac{1}{\mu(x)}\left[\int \mu(x)\,q(x)\,dx+C\right] \]
 <p class="word"><b>In words:</b> (integrating factor × \(y\))′ = integrating factor × right-hand side; integrate, then divide by the integrating factor.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\mu=e^{\int p\,dx}\)</dt><dd>the multiplier that completes the product rule: differentiating it brings down \(p\), so \(\mu'=p\,\mu\).</dd>
+<dt>\(\dfrac{d}{dx}(\mu y)=\mu q\)</dt><dd>the whole left side is now one derivative, and the right side is a function of \(x\) alone.</dd>
+<dt>\(\int\mu q\,dx\)</dt><dd>one integration undoes that one derivative.</dd>
+<dt>\(+C\)</dt><dd>which curve of the family you are on; it goes in before dividing, so it ends up as \(C/\mu\).</dd>
+<dt>\(\dfrac{1}{\mu(x)}\)</dt><dd>unwraps \(\mu y\) to give \(y\) itself.</dd>
+</dl></div>
 <h3>Why it works</h3>
 <p>By the chain rule (Lecture 6), \(\mu'=\dfrac{d}{dx}e^{\int p\,dx}=p\,e^{\int p\,dx}=p\,\mu\). By the product rule,</p>
 \[ \frac{d}{dx}(\mu y)=\mu y'+\mu' y=\mu y'+p\mu y=\mu\,(y'+py). \]
 <p>So \(\mu\times(\text{left side})\) is exactly \((\mu y)'\). This is the form promised on slide 8: \((\mu y)'\) is "d(some expression of \(x,y\))/dx", and \(\mu q\) is a function of \(x\) alone. The name: \(\mu\) is a <b>factor</b> that makes the equation directly <b>integrable</b>.</p>
 <p><b>No \(+C\) inside \(\mu\).</b> Using \(\int p\,dx+K\) instead would multiply \(\mu\) by the constant \(e^K\), which cancels from both sides. So take the simplest antiderivative. Likewise, if \(\int p\,dx=\ln|x|\) you may use \(\mu=x\) on an interval where \(x\gt0\) (or \(\mu=-x\), equally good, where \(x\lt0\)).</p>
-<p>Recipe: (1) standard form; (2) \(\mu=e^{\int p\,dx}\); (3) write \((\mu y)'=\mu q\); (4) integrate both sides, with \(+C\); (5) divide by \(\mu\); (6) use any initial condition.</p>
+<p>Recipe:</p>
+<ol class="steps proc">
+<li><b>Do:</b> (1) standard form; <span class="why">the trick only works from a plain \(y'+p\,y\), with \(p\) read off with its sign.</span></li>
+<li><b>Do:</b> (2) \(\mu=e^{\int p\,dx}\); <span class="why">this is the multiplier with \(\mu'=p\,\mu\), the missing piece of the product rule (no \(+C\) needed).</span></li>
+<li><b>Do:</b> (3) write \((\mu y)'=\mu q\); <span class="why">multiplying both sides by \(\mu\) collapses the left side into one derivative.</span></li>
+<li><b>Do:</b> (4) integrate both sides, with \(+C\); <span class="why">one integration undoes the one derivative, and \(C\) records where the leaf was dropped.</span></li>
+<li><b>Do:</b> (5) divide by \(\mu\); <span class="why">you have found \(\mu y\), but the question asks for \(y\).</span></li>
+<li><b>Do:</b> (6) use any initial condition. <span class="why">It fixes \(C\) and so picks one curve of the family.</span></li>
+</ol>
 
 <div class="box eg"><span class="tag">Worked example 5.1: slide 6 (a) <span class="pill">Written for these notes</span></span>
 <p>Solve \(y'+y=\sin x\), then find the solution with \(y(0)=0\).</p>
@@ -299,13 +364,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Solve \(x\,y'-y=x^2\sin x\) for \(x\gt0\).</p>
 <p>The coefficient of \(y'\) is \(x\), not 1. Divide by \(x\) first:</p>
 \[ y'-\frac1x\,y=x\sin x. \]
-<p>Now \(p=-\dfrac1x\) (note the minus sign). \(\int p\,dx=-\ln x\), so \(\mu=e^{-\ln x}=\dfrac1x\).</p>
+<p>Now \(p=-\dfrac1x\) (note the minus sign). \(\int p\,dx=-\ln x\), so \(\mu=e^{-\ln x}=\dfrac1x\). <span class="why">Check: \(\left(\dfrac yx\right)'=\dfrac{y'}{x}-\dfrac{y}{x^2}=\dfrac1x\left(y'-\dfrac1x\,y\right)\), exactly \(\mu\) times the left side.</span></p>
 \[ \frac{d}{dx}\!\left(\frac{y}{x}\right)=\frac1x\cdot x\sin x=\sin x \]
 \[ \frac{y}{x}=-\cos x+C\quad\Rightarrow\quad y=x\,(C-\cos x). \]</div>
 
 <div class="box eg"><span class="tag">Worked example 5.4: using rule (2) <span class="pill">Written for these notes</span></span>
 <p>Solve \(\dfrac{dy}{dx}=x-y\).</p>
-<p>Move the \(y\) term to the same side: \(y'+y=x\). So \(p=+1\) (reading \(p=-1\) from the original would be wrong). \(\mu=e^x\), \((e^xy)'=xe^x\), and \(\int xe^x\,dx=xe^x-e^x+C\). Hence \(y=x-1+Ce^{-x}\).</p></div>
+<p>Move the \(y\) term to the same side: \(y'+y=x\). So \(p=+1\) (reading \(p=-1\) from the original would be wrong). <span class="why">\(p\) is defined by the form \(y'+p\,y\), with both terms on the left; in the original, \(y\) sits on the other side with the opposite sign.</span> \(\mu=e^x\), \((e^xy)'=xe^x\), and \(\int xe^x\,dx=xe^x-e^x+C\). Hence \(y=x-1+Ce^{-x}\).</p></div>
 
 <div class="figure"><p class="ttl">What the integrating factor does: \(y'+y=\sin x\)</p>
 <canvas class="plot" id="ifig" style="aspect-ratio:16/10" aria-label="Solution curves of y'+y=sin x, or of mu times y, for several C"></canvas>
@@ -314,21 +379,34 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">chosen solution</span><span style="--k:var(--muted)">other C</span><span style="--k:var(--c4)">C = 0</span></div>
 <div class="readout" id="ifig-out"></div>
 <p class="cap">In the \(y\) view the curves for different \(C\) are not simple shifts of each other (the term \(Ce^{-x}\) has a different size at each \(x\)), and all of them settle onto the orange curve \(\tfrac12(\sin x-\cos x)\) as \(x\) grows. Switch to the \(\mu y\) view: now every curve has the same slope \(e^x\sin x\) at each \(x\), so they are vertical shifts of one another, just like the \(y=\sin x+C\) family in section 1. That is the point of the integrating factor: it turns the ODE into "derivative = function of \(x\)", which one integration solves.</p></div>
+<p class="cannow"><b>You can now:</b> put a linear ODE in standard form and read off \(p\) with its sign; find \(\mu=e^{\int p\,dx}\) without a \(+C\); and solve \((\mu y)'=\mu q\), adding \(C\) before dividing by \(\mu\), then fix \(C\) from an initial condition.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Separable equations (slide 11)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Separable equations (slide 11)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>In a separable equation the slope is (something about \(x\)) times (something about \(y\)). That lets you sort the equation like laundry: every \(y\)-thing, including \(dy\), goes to one side, and every \(x\)-thing, including \(dx\), goes to the other. Each side then involves only one letter, so each can be integrated on its own. One warning from the river picture: wherever the \(y\)-part is zero the current is flat, so a leaf dropped at that height drifts straight along it for ever. Sorting divides by that zero, so these flat-line solutions must be checked separately.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 11)</span>
 <p>A first-order ODE is <b>separable</b> if it has the format</p>
 \[ \frac{dy}{dx}=X(x)\,Y(y), \]
 <p>where \(X(x)\) is a function of \(x\) only and \(Y(y)\) is a function of \(y\) only.</p>
 <p class="word"><b>In words:</b> the rate of change is (a function of \(x\)) times (a function of \(y\)).</p></div>
 <div class="box thm"><span class="tag">Method (slide 11)</span>
-<p>By observation, move everything with \(x\) to one side and everything with \(y\) to the other:</p>
+<ol class="steps proc">
+<li><b>Do:</b> By observation, move everything with \(x\) to one side and everything with \(y\) to the other:
 \[ \frac{1}{Y(y)}\,dy=X(x)\,dx, \]
-<p>then integrate both sides (simple integration):</p>
+<span class="why">after sorting, each side mentions only one letter, so neither integral needs the other.</span></li>
+<li><b>Do:</b> then integrate both sides (simple integration):
 \[ \int\frac{1}{Y(y)}\,dy=\int X(x)\,dx+C. \]
+<span class="why">Each side is a one-letter integral; one \(+C\) is enough because the constants from the two sides combine into one.</span></li>
+<li><b>Do:</b> check where \(Y(y)=0\) (see the trap below). <span class="why">At such a height the current is flat, so that horizontal line is a solution, and the division in the first step threw it away.</span></li>
+</ol>
 <p class="word"><b>In words:</b> all the \(y\) with \(dy\), all the \(x\) with \(dx\), integrate each side, one \(+C\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\int\frac{1}{Y(y)}\,dy\)</dt><dd>the \(y\)-pile: integrated as if \(x\) did not exist.</dd>
+<dt>\(\int X(x)\,dx\)</dt><dd>the \(x\)-pile: an ordinary integral in \(x\).</dd>
+<dt>\(+C\)</dt><dd>one constant for the whole family of paths; different \(C\), different leaf.</dd>
+<dt>\(=\)</dt><dd>an equation linking \(x\) and \(y\); solve it for \(y\) if you can, otherwise leave it implicit (example 6.5).</dd>
+</dl></div>
 <h3>Why moving "dy" and "dx" around is allowed</h3>
 <p>\(\frac{dy}{dx}\) is not really a fraction, but the step is shorthand for something legitimate. Divide the ODE by \(Y(y)\): \(\dfrac{1}{Y(y)}\dfrac{dy}{dx}=X(x)\). Let \(G\) be an antiderivative of \(\frac1Y\). By the chain rule, \(\dfrac{d}{dx}G(y)=G'(y)\dfrac{dy}{dx}=\dfrac{1}{Y(y)}\dfrac{dy}{dx}\). So the ODE says \(\dfrac{d}{dx}G(y)=X(x)\), and integrating with respect to \(x\) gives \(G(y)=\int X\,dx+C\). This is the same idea as substitution in Lecture 13.</p>
 <div class="box warn"><span class="tag">Trap: dividing by Y(y)</span>
@@ -336,7 +414,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <div class="box eg"><span class="tag">Worked example 6.1: population growth (slide 2 (a)) <span class="pill">Written for these notes</span></span>
 <p>Solve \(\dfrac{dP}{dt}=kP\) with \(P(0)=P_0\).</p>
-<p>Separate (for \(P\ne0\)): \(\dfrac{dP}{P}=k\,dt\). Integrate: \(\ln|P|=kt+C\), so \(|P|=e^{C}e^{kt}\) and \(P=Ae^{kt}\) with \(A=\pm e^{C}\). The constant solution \(P=0\) is the case \(A=0\), so \(A\) can be any real number. With \(P(0)=P_0\): \(A=P_0\).</p>
+<p>Separate (for \(P\ne0\)): \(\dfrac{dP}{P}=k\,dt\). Integrate: \(\ln|P|=kt+C\), so \(|P|=e^{C}e^{kt}\) and \(P=Ae^{kt}\) with \(A=\pm e^{C}\). <span class="why">\(e^{C}\) is always positive; the \(\pm\) covers negative \(P\), and \(A=0\) below brings back the flat solution, so one letter \(A\) covers every case.</span> The constant solution \(P=0\) is the case \(A=0\), so \(A\) can be any real number. With \(P(0)=P_0\): \(A=P_0\).</p>
 \[ P=P_0\,e^{kt} \]
 <p class="word"><b>In words:</b> population = starting population × \(e^{(\text{growth rate})\times\text{time}}\), i.e. exponential growth.</p></div>
 
@@ -361,16 +439,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <div class="box eg"><span class="tag">Worked example 6.4: with an initial condition <span class="pill">Written for these notes</span></span>
 <p>Solve \(\dfrac{dy}{dx}=2x(1+y^2)\), \(y(0)=0\).</p>
-<p>\(\dfrac{dy}{1+y^2}=2x\,dx\Rightarrow\tan^{-1}y=x^2+C\) (Lecture 7: \(\int\frac{dy}{1+y^2}=\tan^{-1}y\)). \(1+y^2\) is never 0, so no solution is lost. \(y(0)=0\) gives \(C=0\), so \(y=\tan(x^2)\) (valid while \(x^2\lt\frac\pi2\)).</p></div>
+<p>\(\dfrac{dy}{1+y^2}=2x\,dx\Rightarrow\tan^{-1}y=x^2+C\) (Lecture 7: \(\int\frac{dy}{1+y^2}=\tan^{-1}y\)). \(1+y^2\) is never 0, so no solution is lost. \(y(0)=0\) gives \(C=0\), so \(y=\tan(x^2)\) (valid while \(x^2\lt\frac\pi2\)). <span class="why">\(\tan\) blows up at \(\frac\pi2\): the path shoots off to infinity there, so this solution only exists on that interval.</span></p></div>
 
 <div class="box eg"><span class="tag">Worked example 6.5: implicit answer <span class="pill">Written for these notes</span></span>
 <p>Solve \(\dfrac{dy}{dx}=\dfrac{x^2}{1+y^2}\).</p>
 <p>\((1+y^2)\,dy=x^2\,dx\Rightarrow y+\dfrac{y^3}{3}=\dfrac{x^3}{3}+C\).</p>
 <p>This cannot be rearranged nicely into "\(y=\dots\)". Leaving it as an equation linking \(x\) and \(y\) is acceptable: it defines \(y\) <b>implicitly</b> (as in implicit differentiation, Lecture 6). Such an answer is called an <b>implicit solution</b>.</p></div>
+<p class="cannow"><b>You can now:</b> recognise \(y'=X(x)\,Y(y)\); separate, integrate with one \(+C\) and tidy \(\ln|y|\) into \(y=Ae^{\dots}\); recover constant solutions lost by dividing by \(Y(y)\); and leave an implicit answer when \(y\) cannot be isolated.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Partial derivatives (slides 12–14)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Partial derivatives (slides 12–14)</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture a hill drawn on a map: you give your position (how far east, how far north) and the function gives the height of the ground there. A partial derivative is the steepness you feel walking due east only, or due north only, with the other direction frozen. This section is the toolkit for §8, where the unknown is exactly such a hill and the solution curves are its contour lines.</p></div></details>
 <p>Exact equations (section 8) need one new tool. Everything so far used functions of one variable, like \(f(x)=x^2\). Now we need functions of <b>two</b> variables.</p>
 <div class="box def"><span class="tag">Function of two variables</span>
 <p>A function \(F(x,y)\) takes two input numbers and gives one output. Example: \(F(x,y)=x^2y\) gives \(F(3,2)=9\times2=18\).</p>
@@ -398,10 +478,17 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="cap">Freezing one variable turns \(F\) into an ordinary one-variable function, and the partial derivative is just its slope. With \(y\) frozen at \(y_0\), the slice is the parabola \(y_0x^2\), slope \(2xy_0\) at the dot (\(x=1\)). With \(x\) frozen at \(x_0\), the slice is the straight line \(x_0^2\,y\), slope \(x_0^2\) everywhere.</p></div>
 
 <h3>Total differential (slide 13)</h3>
+<details class="idea"><summary>What is this? (total differential)</summary><div><p>Take one small step that is partly east and partly north. Your height changes for two reasons: the east part of the step times the east steepness, plus the north part times the north steepness. Over a tiny step the hill looks like a flat tilted board, so the two parts simply add.</p></div></details>
 <div class="box def"><span class="tag">Total differential (slide 13)</span>
 \[ dF=\frac{\partial F}{\partial x}\,dx+\frac{\partial F}{\partial y}\,dy \]
 <p class="word"><b>In words:</b> small change in \(F\) ≈ (rate in \(x\) direction × small step in \(x\)) + (rate in \(y\) direction × small step in \(y\)).</p>
 <p>Here \(dx\), \(dy\) stand for small changes in \(x\) and \(y\), and \(dF\) for the resulting change in \(F\). On the landscape: if you step a little east and a little north, the change in height is (east-steepness × east step) + (north-steepness × north step).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(dF\)</dt><dd>how much your height changes during one small step.</dd>
+<dt>\(\frac{\partial F}{\partial x}\,dx\)</dt><dd>east steepness × the east part of the step.</dd>
+<dt>\(\frac{\partial F}{\partial y}\,dy\)</dt><dd>north steepness × the north part of the step.</dd>
+<dt>\(+\)</dt><dd>over a tiny step the hill is a flat tilted board, so the two effects add.</dd>
+</dl></div>
 <div class="box beyond"><span class="tag">Beyond the handouts: chain rule for F(x, y(x))</span>
 <p>If \(y\) is itself a function of \(x\), then \(F(x,y(x))\) is a function of \(x\) alone, and "dividing the total differential by \(dx\)" gives the two-variable chain rule:</p>
 \[ \frac{d}{dx}F\big(x,y(x)\big)=\frac{\partial F}{\partial x}+\frac{\partial F}{\partial y}\,\frac{dy}{dx}. \]
@@ -409,6 +496,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>This is what makes exact equations work (section 8). It is the same rule you used in implicit differentiation (Lecture 6): differentiating \(x^2y\) with \(y=y(x)\) gave \(2xy+x^2y'\).</p></div>
 
 <h3>Mixed partial derivatives (slide 14)</h3>
+<details class="idea"><summary>What is this? (mixed partial derivatives)</summary><div><p>The east steepness is not the same everywhere on the hill. Ask how it changes as you step north; or ask how the north steepness changes as you step east. On a smooth hill (every function in this course is smooth enough) both questions measure the same twist of the ground, so they give the same answer. This is the fact behind the exactness test in §8.</p></div></details>
 <p>Partial derivatives are functions of \(x\) and \(y\) too, so they can be differentiated again. Differentiating \(\frac{\partial F}{\partial x}\) with respect to \(y\) gives a <b>mixed partial derivative</b>, written</p>
 \[ \frac{\partial^2F}{\partial y\,\partial x}=\frac{\partial}{\partial y}\!\left(\frac{\partial F}{\partial x}\right). \]
 <div class="box thm"><span class="tag">Mixed partials are equal (slide 14)</span>
@@ -420,10 +508,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>\(F=e^{xy}\): \(\frac{\partial}{\partial y}(ye^{xy})=e^{xy}+xye^{xy}\) and \(\frac{\partial}{\partial x}(xe^{xy})=e^{xy}+xye^{xy}\). Equal.</p></div>
 <div class="box beyond"><span class="tag">Beyond the handouts</span>
 <p>This fact is called Clairaut's (or Schwarz's) theorem. It needs the second partial derivatives to be continuous, which is true for every function in this course.</p></div>
+<p class="cannow"><b>You can now:</b> compute \(\partial F/\partial x\) and \(\partial F/\partial y\) by freezing the other variable; write the total differential \(dF=F_x\,dx+F_y\,dy\); and check that the two mixed partial derivatives agree.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Exact equations (slides 13, 15–18)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Exact equations (slides 13, 15–18)</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Imagine the hill from §7 is hidden: you cannot see it, but the equation hands you its east steepness \(M\) and its north steepness \(N\). Then the left side \(M\,dx+N\,dy\) is the change in height for a small step, and the equation says that change is zero. A walker who never goes up or down is walking along a contour line. So, when such a hill really exists (the equation is <b>exact</b>), the solutions are its contour lines, and the job is to rebuild the hidden hill from its two steepnesses.</p></div></details>
 <h3>The "differential" form of an ODE</h3>
 <p>Exact equations are written as</p>
 \[ M(x,y)\,dx+N(x,y)\,dy=0. \]
@@ -438,10 +528,17 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>Why \(F=C\) solves the ODE</b> (using the chain rule above): if \(y(x)\) satisfies \(F(x,y(x))=C\), differentiating gives \(\frac{\partial F}{\partial x}+\frac{\partial F}{\partial y}y'=0\), i.e. \(M+Ny'=0\). That is the ODE.</p>
 
 <h3>The test for exactness (slide 13)</h3>
+<details class="idea"><summary>What is this? (the exactness test)</summary><div><p>Not every pair \(M\), \(N\) comes from a real hill. On a real smooth hill the two mixed slopes agree (§7): the rate at which the east steepness changes going north equals the rate at which the north steepness changes going east. So if \(M\) and \(N\) fail this check, no hill has them as its steepnesses, and the equation is not exact.</p></div></details>
 <div class="box thm"><span class="tag">Test (slide 13)</span>
 <p>\(M\,dx+N\,dy=0\) is exact if</p>
 \[ \frac{\partial M}{\partial y}=\frac{\partial N}{\partial x}. \]
 <p class="word"><b>In words:</b> (\(y\)-derivative of the \(dx\)-coefficient) = (\(x\)-derivative of the \(dy\)-coefficient).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\frac{\partial M}{\partial y}\)</dt><dd>how the east steepness changes as you step north.</dd>
+<dt>\(\frac{\partial N}{\partial x}\)</dt><dd>how the north steepness changes as you step east.</dd>
+<dt>\(=\)</dt><dd>both are the same twist of the hidden hill, \(\frac{\partial^2F}{\partial y\,\partial x}=\frac{\partial^2F}{\partial x\,\partial y}\), so on a real hill they must agree.</dd>
+<dt>the crossed pairing</dt><dd>\(M\) belongs to \(dx\) but is differentiated in \(y\); \(N\) belongs to \(dy\) but is differentiated in \(x\).</dd>
+</dl></div>
 <p><b>Why:</b> if \(M=\frac{\partial F}{\partial x}\) and \(N=\frac{\partial F}{\partial y}\), then \(\frac{\partial M}{\partial y}=\frac{\partial^2F}{\partial y\,\partial x}\) and \(\frac{\partial N}{\partial x}=\frac{\partial^2F}{\partial x\,\partial y}\), and these are equal by slide 14. So an exact equation must pass the test. Watch the pairing: \(M\) goes with \(y\), \(N\) goes with \(x\) (cross over).</p>
 <div class="box beyond"><span class="tag">Beyond the handouts</span>
 <p>The converse is also true on any rectangle (or any region without holes) where \(M,N\) and their partial derivatives are continuous: if the test passes, such an \(F\) exists. So the test is the standard way to decide exactness.</p></div>
@@ -462,10 +559,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </table></div>
 <p>For example, \(y\,dx+x\,dy=0\) is \(d(xy)=0\), so \(xy=C\); and \(x\,dx+y\,dy=0\) gives \(x^2+y^2=C\) (circles).</p>
 <div class="box thm"><span class="tag">Method (slide 18)</span>
-<ol class="steps">
-<li>From \(\frac{\partial F}{\partial x}=M\): \(F=\displaystyle\int M\,dx+g(y)\). (Integrate with respect to \(x\), treating \(y\) as a constant. The "constant" of integration can be any function of \(y\) only, because its \(x\)-derivative is 0.)</li>
-<li>From \(\frac{\partial F}{\partial y}=N\): \(F=\displaystyle\int N\,dy+h(x)\). (Integrate with respect to \(y\); the "constant" is any function of \(x\) only.)</li>
-<li><b>Compare</b> the two expressions and choose \(g(y)\) and \(h(x)\) so that they agree. Write the solution \(F(x,y)=C\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> From \(\frac{\partial F}{\partial x}=M\): \(F=\displaystyle\int M\,dx+g(y)\). (Integrate with respect to \(x\), treating \(y\) as a constant. The "constant" of integration can be any function of \(y\) only, because its \(x\)-derivative is 0.) <span class="why">Integrating the east steepness rebuilds the hill along each east–west line, but not how high each line starts; that unknown starting height can differ from line to line, so it is a function of \(y\).</span></li>
+<li><b>Do:</b> From \(\frac{\partial F}{\partial y}=N\): \(F=\displaystyle\int N\,dy+h(x)\). (Integrate with respect to \(y\); the "constant" is any function of \(x\) only.) <span class="why">The same hill rebuilt along north–south lines, with the unknown now depending on \(x\).</span></li>
+<li><b>Do:</b> <b>Compare</b> the two expressions and choose \(g(y)\) and \(h(x)\) so that they agree. Write the solution \(F(x,y)=C\). <span class="why">Both are the same hidden hill; each version shows the terms the other one's unknown function was hiding. The solutions are its contour lines.</span></li>
 </ol>
 <p class="word"><b>In words:</b> integrate \(M\) in \(x\), integrate \(N\) in \(y\), and combine: every term that appears in either answer appears once in \(F\).</p></div>
 
@@ -474,7 +571,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>Test.</b> \(M=2xy+1\), \(N=x^2+2y\). \(\frac{\partial M}{\partial y}=2x\), \(\frac{\partial N}{\partial x}=2x\). Equal, so exact.</p>
 <p><b>Integrate.</b></p>
 \[ \begin{aligned}\int M\,dx&=x^2y+x+g(y)\\ \int N\,dy&=x^2y+y^2+h(x)\end{aligned} \]
-<p><b>Compare.</b> Both must be the same \(F\). Choose \(g(y)=y^2\) and \(h(x)=x\):</p>
+<p><b>Compare.</b> Both must be the same \(F\). Choose \(g(y)=y^2\) and \(h(x)=x\): <span class="why">\(y^2\) appears in the \(N\) result but not in the \(M\) one, so it is what \(g(y)\) was hiding; likewise \(x\) is \(h(x)\). The shared term \(x^2y\) is kept once.</span></p>
 \[ F=x^2y+x+y^2. \]
 <p><b>Check:</b> \(\frac{\partial F}{\partial x}=2xy+1=M\) ✓, \(\frac{\partial F}{\partial y}=x^2+2y=N\) ✓.</p>
 <p><b>Solution:</b> \(x^2y+x+y^2=C\) (implicit).</p></div>
@@ -487,10 +584,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--axis)">slope marks −M/N</span><span style="--k:var(--muted)">level curves C = −3,…,3</span><span style="--k:var(--accent)">chosen level curve</span></div>
 <div class="readout" id="lev-out"></div>
 <p class="cap">The faint curves are contour lines of the landscape \(F(x,y)=x^2y+x+y^2\), like height contours on a map. Each one is a solution of \((2xy+1)\,dx+(x^2+2y)\,dy=0\): it follows the slope marks \(\frac{dy}{dx}=-\frac{M}{N}\) everywhere. The readout checks this at one point. Some level curves have two separate pieces; \(y\) is only an implicit function of \(x\), and different pieces can be different solutions.</p></div>
+<p class="cannow"><b>You can now:</b> write an ODE as \(M\,dx+N\,dy=0\); test exactness with \(M_y=N_x\) (crossed pairing); rebuild \(F\) by integrating and comparing, or by differentiate-and-match; and write the solution as \(F(x,y)=C\), using an initial condition to find \(C\).</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Making an equation exact (slide 19)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Making an equation exact (slide 19)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Sometimes the slope marks are right but no hill fits: \(M\) and \(N\) give the correct slope \(-M/N\), yet fail the test. Multiplying both by the same factor \(\sigma\) (defined and non-zero where you work) leaves the ratio \(-M/N\) unchanged, so the slope field and every solution curve stay exactly the same. What changes is that, for a good choice of \(\sigma\), the rescaled pair are now the steepnesses of a real hill, and §8 applies. The integrating factor of §5 is one such multiplier.</p></div></details>
 <div class="box def"><span class="tag">Integrating factor for M dx + N dy = 0 (slide 19)</span>
 <p>Sometimes \(M\,dx+N\,dy=0\) is not exact, but there is a multiplying factor \(\sigma(x,y)\) such that</p>
 \[ \sigma M\,dx+\sigma N\,dy=0 \]
@@ -499,7 +598,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box eg"><span class="tag">Worked example 9.1 <span class="pill">Written for these notes</span></span>
 <p>Solve \(y\,dx-x\,dy=0\).</p>
 <p>\(M=y\), \(N=-x\): \(\frac{\partial M}{\partial y}=1\ne-1=\frac{\partial N}{\partial x}\). Not exact.</p>
-<p>Multiply by \(\sigma=\dfrac1{y^2}\): \(\dfrac{y\,dx-x\,dy}{y^2}=0\). From the table in section 8 this is \(d\!\left(\dfrac xy\right)=0\). Check: \(M=\frac1y\), \(N=-\frac{x}{y^2}\), \(\frac{\partial M}{\partial y}=-\frac1{y^2}=\frac{\partial N}{\partial x}\) ✓. So \(\dfrac xy=C\), i.e. straight lines through the origin.</p>
+<p>Multiply by \(\sigma=\dfrac1{y^2}\): \(\dfrac{y\,dx-x\,dy}{y^2}=0\). <span class="why">This \(\sigma\) turns \(y\,dx-x\,dy\) into the quotient-rule pattern \(d(x/y)\) from the table in section 8.</span> From the table in section 8 this is \(d\!\left(\dfrac xy\right)=0\). Check: \(M=\frac1y\), \(N=-\frac{x}{y^2}\), \(\frac{\partial M}{\partial y}=-\frac1{y^2}=\frac{\partial N}{\partial x}\) ✓. So \(\dfrac xy=C\), i.e. straight lines through the origin.</p>
 <p>(Multiplying by \(-\frac1{x^2}\) instead gives \(d\!\left(\frac yx\right)=0\), the same lines. Integrating factors are not unique.)</p></div>
 <div class="box thm"><span class="tag">Link with section 5 <span class="pill">Written for these notes</span></span>
 <p>The linear equation \(y'+p(x)y=q(x)\) in differential form is \(\big(p(x)\,y-q(x)\big)\,dx+dy=0\). Here \(\frac{\partial M}{\partial y}=p\) but \(\frac{\partial N}{\partial x}=0\), so it is usually not exact. Multiplying by \(\sigma=e^{\int p\,dx}\) gives \(\frac{\partial}{\partial y}(\sigma(py-q))=\sigma p\) and \(\frac{\partial}{\partial x}\sigma=\sigma p\): exact. So the integrating factor of slide 10 is a special case of slide 19.</p>
@@ -509,10 +608,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>If \(\dfrac{M_y-N_x}{N}\) depends on \(x\) only:</p>\[ \sigma=e^{\int\frac{M_y-N_x}{N}\,dx}. \]
 <p>If \(\dfrac{N_x-M_y}{M}\) depends on \(y\) only:</p>\[ \sigma=e^{\int\frac{N_x-M_y}{M}\,dy}. \]
 <p>Example 9.1: \(\frac{N_x-M_y}{M}=\frac{-2}{y}\) depends on \(y\) only, so \(\sigma=e^{-2\ln|y|}=\frac1{y^2}\). Exam questions usually tell you the form of \(\sigma\) if one is needed.</p></div>
+<p class="cannow"><b>You can now:</b> show that an equation is not exact, multiply by a given factor \(\sigma\), test again and solve; see the linear integrating factor as a special \(\sigma\); and, beyond the handout, find a \(\sigma\) that depends on \(x\) or \(y\) alone.</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Summary <span class="pill">Written for these notes</span></h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Summary <span class="pill">Written for these notes</span></span></h2>
 <ul class="list">
 <li>An <b>ODE</b> links an unknown function of one variable with its derivatives. Its <b>order</b> is the highest derivative. It is <b>linear</b> if \(y\) and its derivatives appear only to the first power, multiplied by functions of \(x\).</li>
 <li>Superposition (sum of solutions is a solution) holds for homogeneous linear ODEs.</li>
@@ -527,10 +627,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </table></div>
 <p>Partial derivative \(\frac{\partial F}{\partial x}\): differentiate in \(x\) with \(y\) frozen. Total differential \(dF=F_x\,dx+F_y\,dy\). Mixed partials are equal.</p>
 <p>If none of these fits, part O2 has substitutions that turn the equation into one that does.</p>
+<p><b>Which method? Go through these in order:</b></p>
+<ol class="steps proc">
+<li><b>Do:</b> write the equation as \(y'=\dots\). If the right side is (function of \(x\)) × (function of \(y\)), separate (§6). <span class="why">When the \(x\)-stuff and \(y\)-stuff are multiplied (not added), sorting them to opposite sides is the quickest route.</span></li>
+<li><b>Do:</b> otherwise, if \(y\) and \(y'\) appear only to the first power, put it in standard form \(y'+p\,y=q\) and use \(\mu=e^{\int p\,dx}\) (§5). <span class="why">A linear rule can always be turned into one product-rule derivative, so this never fails; only the last integral can be hard.</span></li>
+<li><b>Do:</b> if it is given as \(M\,dx+N\,dy=0\), or fits neither of the above, test \(M_y=N_x\); if they are equal, find \(F\) and write \(F(x,y)=C\) (§8). <span class="why">Passing the test means a hidden hill exists, and the solutions are its contour lines.</span></li>
+<li><b>Do:</b> if the test fails, multiply by the factor \(\sigma\) the question gives (or one found as in §9) and test again; also check whether it separates. <span class="why">Rescaling keeps the slope field the same but can make a hill fit; and an equation that fails the test may still factor into \(X(x)\,Y(y)\).</span></li>
+<li><b>Do:</b> if nothing fits, try a substitution from part O2. <span class="why">Those substitutions turn harder equations into one of these shapes.</span></li>
+</ol>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Common mistakes <span class="pill">Written for these notes</span></h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Common mistakes <span class="pill">Written for these notes</span></span></h2>
 <div class="box"><div class="mistake">
 <span class="x">✗</span><span>Reading \(p(x)\) before putting the equation in standard form. From \(xy'-y=x^2\sin x\), taking \(p=-1\). <span class="ok">✓</span> Divide by \(x\) first: \(p=-\frac1x\).</span>
 <span class="x">✗</span><span>From \(y'=x-y\), taking \(p=-1\). <span class="ok">✓</span> Move \(y\) to the left first: \(y'+y=x\), so \(p=+1\).</span>
@@ -546,7 +654,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Practice questions <span class="pill">Written for these notes</span></h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Practice questions <span class="pill">Written for these notes</span></span></h2>
 <div class="q"><p class="qh">1. State the order of each ODE and whether it is linear or nonlinear.</p>
 <p>(a) \(y'''+x^2y=e^x\) &nbsp; (b) \((y')^2+y=x\) &nbsp; (c) \(y\,y''=1\) &nbsp; (d) \(x^2y''-3xy'+y=\ln x\) &nbsp; (e) \(y'=y\sin x\)</p>
 <details><summary>Hint</summary><div><p>Order: highest derivative. Linear: look for powers, products or functions of \(y\), \(y'\), \(y''\). Functions of \(x\) do not matter.</p></div></details>
@@ -588,7 +696,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Concept checks <span class="pill">Written for these notes</span></span></h2>
 <div class="q"><p class="qh">1. Is \(y=x^2\) a solution of \(x\,y'=2y\)? Is it the only one?</p>
 <details><summary>Answer</summary><div><p>Yes: \(x\cdot2x=2x^2=2y\). Not the only one: the general solution is \(y=Cx^2\) (separable), and \(y=x^2\) is the case \(C=1\).</p></div></details></div>
 <div class="q"><p class="qh">2. Why is no \(+C\) needed when computing the integrating factor \(e^{\int p\,dx}\)?</p>
@@ -604,7 +712,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="pastpaper"><h2><span class="n">14</span>Exam taster</h2>
+<section id="pastpaper"><h2><span class="n">14</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this part, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">ODE Part O1's question types appear 38 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide. Type O1.2 (integrating factor) is the most common ODE question of all: it appears in almost every paper.</p>
 
@@ -860,5 +968,14 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
+
 </script>
 </html>

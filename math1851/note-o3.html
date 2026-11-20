@@ -106,6 +106,34 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -139,25 +167,33 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · ODE · Part O3</span>
   <h1>Homogeneous Linear ODEs</h1>
-  <p class="lede">Every slide of ODE Part O3 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this part.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this part sits</h2>
-<p>An <b>ordinary differential equation</b> (ODE) is an equation linking an unknown function \(y(x)\) with its derivatives \(y'\), \(y''\), …; <b>solving</b> it means finding every function \(y(x)\) that makes the equation true. Part O1 set up the basic language (order, linear, homogeneous, general solution, initial conditions) and solved first-order equations; Part O2 added substitutions and the method of <b>reduction of order</b> (finding a second solution of the form \(y=u(x)\,y_1(x)\) from a known solution \(y_1\)).</p>
-<p>This part solves a big, very useful family of <b>second- and higher-order</b> equations exactly:</p>
-<ul class="list">
-  <li><b>linear, homogeneous equations with constant coefficients</b>, such as \(y''-y'-6y=0\), by turning the ODE into an ordinary polynomial equation (the <b>characteristic equation</b>); the roots may be real and different, repeated, or complex;</li>
-  <li>their main application, the <b>mass–spring oscillator</b> (over-, critically and under-damped motion), plus a gallery of other places ODEs appear;</li>
-  <li><b>Cauchy–Euler equations</b>, such as \(x^2y''-2y=0\), where the coefficients are powers of \(x\) and the trial solution is \(y=x^m\).</li>
-</ul>
-<p>Two tools are needed first: <b>hyperbolic functions</b> (handy names for combinations of \(e^x\) and \(e^{-x}\)) and <b>linear independence</b> (how to tell when two solutions are "genuinely different"). Complex numbers, which HKDSE Core does not cover, are explained from scratch in section 5.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this part sits</span></h2>
+<p>This part solves linear ODEs with 0 on the right-hand side: the equations of a mass on a spring left to move on its own. Guess a solution that keeps its shape when differentiated, and the calculus problem becomes a quadratic. The kind of roots then decides whether the spring creeps back, settles just in time, or wobbles while dying down.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>cosh and sinh are the average and the half-difference of \(e^x\) and \(e^{-x}\).</b> Trig-like names for exponential mixes.</li>
+<li><a href="#s2">§2</a> <b>You need as many genuinely different building blocks as the order of the equation.</b> The Wronskian tests "genuinely different".</li>
+<li><a href="#s3">§3</a> <b>Try \(e^{\lambda x}\): it keeps its shape when differentiated, so the ODE becomes a quadratic in \(\lambda\).</b></li>
+<li><a href="#s4">§4</a> <b>Two real roots give two exponentials; a double root needs an extra factor \(x\).</b></li>
+<li><a href="#s5">§5</a> <b>\(e^{i\theta}\) runs round the unit circle, so imaginary exponents mean oscillation.</b> Complex numbers from scratch.</li>
+<li><a href="#s6">§6</a> <b>Complex roots \(a\pm bi\): \(e^{ax}\) sets the growth or decay, \(b\) sets the wobble.</b></li>
+<li><a href="#s7">§7</a> <b>Higher order: factorise, one building block per root, an extra \(x\) for each repeat.</b></li>
+<li><a href="#s8">§8</a> Where ODEs appear: a gallery of models.</li>
+<li><a href="#s9">§9</a> <b>The damped spring: under-, critically and overdamped are the three root cases.</b></li>
+<li><a href="#s10">§10</a> <b>Cauchy–Euler: powers of \(x\) in front, so try \(x^m\); \(\ln x\) takes the place of \(x\).</b> <span class="pill">Half of the exam parts</span></li>
+</ol>
+</div>
+<p><b>You need:</b> an <b>ordinary differential equation</b> (ODE) links an unknown function \(y(x)\) with its derivatives \(y'\), \(y''\), …, and <b>solving</b> it means finding every function \(y(x)\) that makes it true. From Parts O1–O2: order, linear, homogeneous, general solution, initial conditions, and <b>reduction of order</b> (a second solution \(y=u(x)\,y_1(x)\) from a known solution \(y_1\)). Also \(\dfrac{d}{dx}e^{kx}=ke^{kx}\) and \(\dfrac{d}{dx}\ln x=\dfrac1x\) (Lecture 7), and the product and quotient rules (Lecture 6). In this part "\(\log x\)" always means the natural logarithm \(\ln x\). Complex numbers are not in HKDSE Core, so section 5 explains them from scratch. <b>In the exam:</b> this part's types appear 12 times in the 23 past papers, as part (a) or (b) of an ODE question, and every non-homogeneous question (Part O4) starts with this step. See the <a href="guide-O3.html">O3 exam guide</a>.</p>
 <p style="font-size:.92rem;color:var(--muted)">Slide numbers in this note, e.g. "(slide 9)", count the pages of this part's handout (38 slides). The handout is the middle portion of the course's ODE deck and has no title, admin, summary or group-work slides; the Summary, Common mistakes, Find the mistake and Group work sections below were written for these notes.</p>
-<p>Reminders used throughout: \(\dfrac{d}{dx}e^{kx}=ke^{kx}\) and \(\dfrac{d}{dx}\ln x=\dfrac1x\) (Lecture 7); the product and quotient rules (Lecture 6). In this part "\(\log x\)" always means the natural logarithm \(\ln x\).</p>
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Hyperbolic functions (slides 1–2)</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Hyperbolic functions (slides 1–2)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Take a quantity that grows steadily in proportion to itself, \(e^x\), and its mirror image \(e^{-x}\), which dies away at the same rate. Their average is cosh: a U shape, exactly the shape of a chain or cable hanging between two posts. Half their difference is sinh: an S shape through the origin. They are named after cos and sin because they obey almost the same rules, with a few signs flipped. In this part they are a tidy way to write the two building blocks \(e^x\) and \(e^{-x}\).</p></div></details>
+
 <p>The deck opens by introducing six functions built from \(e^x\) and \(e^{-x}\). They turn up naturally in this part: section 4 shows that \(\cosh x\) and \(\sinh x\) are exactly the solutions of \(y''-y=0\). They are called <b>hyperbolic</b> because the point \((\cosh t,\sinh t)\) moves along the hyperbola \(X^2-Y^2=1\), in the same way that \((\cos t,\sin t)\) moves along the circle \(X^2+Y^2=1\). Names are usually read "cosh", "shine" or "sinch", "tanh" ("than"), "sech", "cosech" (also written csch) and "coth".</p>
 <div class="box def"><span class="tag">Definition (slide 1)</span>
 \[ \cosh x=\frac{e^{x}+e^{-x}}{2},\qquad \sinh x=\frac{e^{x}-e^{-x}}{2} \]
@@ -201,10 +237,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>coth</b> by the quotient rule:</p>
 \[ \begin{aligned}\frac{d}{dx}\frac{\cosh x}{\sinh x}&=\frac{\sinh^2x-\cosh^2x}{\sinh^2x}\\&=\frac{-1}{\sinh^2x}=-\operatorname{cosech}^2x.\end{aligned} \]
 </div>
+<p class="cannow"><b>You can now:</b> write cosh, sinh, tanh, sech, cosech and coth in terms of \(e^x\) and \(e^{-x}\); prove \(\cosh^2x-\sinh^2x=1\) and the derivative table from the definitions; and remember that cosh differentiates to <i>plus</i> sinh.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>Linear independence and the Wronskian (slides 3–7)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Linear independence and the Wronskian (slides 3–7)</span> <span class="mins">~9 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture the spring again. To describe every way it can move, you want a small kit of basic motions that you can scale and add together. A motion and the same motion twice as big are not two different items in the kit: the second adds nothing new. <b>Linearly independent</b> means genuinely different: no mix of the functions, with amounts that are not all zero, cancels out to nothing at every point.</p></div></details>
+
 <p>A second-order equation such as \(y''-y=0\) has infinitely many solutions: \(e^x\), \(2e^x\), \(-7e^x\), \(e^{-x}\), \(3e^x-e^{-x}\), … To write down <i>all</i> of them we need a small set of "building blocks" that are genuinely different from each other. "Genuinely different" is made precise by linear independence.</p>
 <div class="box def"><span class="tag">Definition (slide 3)</span>
 <p>A finite set of functions \(\{u_1,\dots,u_n\}\) is <b>linearly dependent</b> on an interval \(I\) if and only if there exist constants \(\alpha_1,\dots,\alpha_n\) (numbers, called <b>scalars</b>), <b>not all zero</b>, such that</p>
@@ -219,10 +258,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>\(e^x\) and \(2e^x\) are linearly DEPENDENT:</b> take \(\alpha=2\), \(\beta=-1\); then \(2\cdot e^x+(-1)\cdot2e^x=0\) for all \(x\), and the weights are not both zero.</p>
 <p><b>\(e^x\) and \(e^{-x}\) are linearly INDEPENDENT:</b> we cannot find constants \(\alpha,\beta\), not both zero, with</p>
 \[ \alpha e^{x}+\beta e^{-x}=0\quad\text{for ALL }x. \]
-<p>Proof: put \(x=0\): \(\alpha+\beta=0\). Differentiate the identity (allowed, since it holds for all \(x\)) and put \(x=0\): \(\alpha-\beta=0\). Together \(\alpha=\beta=0\). So the only possibility for the equation to hold for all \(x\) is \(\alpha=\beta=0\).</p>
+<p>Proof: put \(x=0\): \(\alpha+\beta=0\). Differentiate the identity (allowed, since it holds for all \(x\)) and put \(x=0\): \(\alpha-\beta=0\). Together \(\alpha=\beta=0\). So the only possibility for the equation to hold for all \(x\) is \(\alpha=\beta=0\).<span class="why">One value of \(x\) gives only one equation for two unknowns; an identity that holds for every \(x\) stays true when differentiated, which gives the second equation.</span></p>
 <p>Both are solutions of \(y''-y=0\): \((e^x)''=e^x\) and \((e^{-x})''=e^{-x}\), so \(y''-y=0\) in each case.</p>
 </div>
 
+<details class="idea"><summary>What is this? (the Wronskian)</summary><div><p>The Wronskian is a quick test of whether one graph is just a stretched copy of the other. If \(v\) is always the same multiple of \(u\), their ratio \(v/u\) never changes. Apart from a factor \(u^2\), the Wronskian is exactly the rate at which that ratio changes. So "zero everywhere" points to a stretched copy, and "not zero everywhere" means genuinely different. The Beyond box below says when the "zero everywhere" direction is safe: always, for two solutions of the same equation.</p></div></details>
 <div class="box def"><span class="tag">The Wronskian (slides 6–7)</span>
 <p>For two functions \(u(x)\), \(v(x)\), the <b>Wronskian</b> is</p>
 \[ W(u,v)(x)=u(x)\,v'(x)-v(x)\,u'(x). \]
@@ -254,16 +294,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Example: \(W(1,e^x,e^{-x})=1\cdot(e^x e^{-x}-(-e^{-x})e^x)-0+0=2\ne0\), so \(1,e^x,e^{-x}\) are independent.</p>
 <p><b>A caution about the "identically zero ⇒ dependent" direction.</b> For arbitrary functions it can fail: \(u=x^2\) and \(v=x|x|\) have \(W=0\) for every \(x\), yet on \(-1\lt x\lt 1\) neither is a constant multiple of the other. The rule is completely safe when \(u,v\) are both <b>solutions of the same linear second-order ODE</b> (with continuous coefficients, leading coefficient 1): then \(W\) is either zero at every point or zero at no point (Abel's theorem), and \(W\equiv0\) exactly when they are dependent. That is the only situation this course uses it in.</p>
 </div>
+<details class="idea"><summary>What is this? (the general solution)</summary><div><p>A spring's motion is fixed by two pieces of starting information: where you let go, and how fast it is moving then. With two genuinely different basic motions, choosing their two amounts lets you match any such start. With two copies of the same motion you would really have only one amount to choose, and most starts could not be matched.</p></div></details>
 <div class="box thm"><span class="tag">Why we care: the general solution</span>
 <p>For a linear homogeneous ODE of order \(n\), if \(y_1,\dots,y_n\) are \(n\) linearly independent solutions, the <b>general solution</b> (the formula containing every solution) is</p>
 \[ y=C_1y_1+C_2y_2+\dots+C_ny_n . \]
 <p class="word"><b>In words:</b> every solution = a mixture of \(n\) genuinely different building-block solutions, one arbitrary constant per block; the order of the equation tells you how many blocks you need.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(y_1,\dots,y_n\)</dt><dd>the building blocks: \(n\) genuinely different solutions.</dd>
+<dt>\(C_1,\dots,C_n\)</dt><dd>how much of each block you use: one free amount per block.</dd>
+<dt>\(n\)</dt><dd>the order. An \(n\)-th order equation needs \(n\) starting values (\(y\), \(y'\), …, \(y^{(n-1)}\) at the start), so it needs \(n\) amounts to choose.</dd>
+<dt>the sum</dt><dd>mixing solutions gives a solution (superposition, section 3), and every solution is such a mix.</dd>
+</dl></div>
+
 <p style="font-size:.92rem;color:var(--muted)">The slides use this fact throughout without stating it as a theorem; its proof is <span class="pill">Beyond the handouts</span>. The easy half, that a mixture of solutions is again a solution (the <b>principle of superposition</b>), is shown in section 3.</p>
 </div>
+<p class="cannow"><b>You can now:</b> test two functions for linear dependence from the definition or with the Wronskian \(W=uv'-vu'\); explain why a single zero of \(W\) proves nothing; and say how many independent solutions an \(n\)-th order linear homogeneous equation needs.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Constant coefficients: the characteristic equation (slides 8–9)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Constant coefficients: the characteristic equation (slides 8–9)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Look for a function whose derivatives are just scaled copies of itself. An exponential is exactly that: differentiate \(e^{\lambda x}\) and you get the same curve stretched by \(\lambda\); differentiate again and it is stretched by \(\lambda\) once more. Put such a guess into the equation and every term is the same curve times a number, so the curve cancels and only the numbers remain: an ordinary quadratic. For the spring, it is like asking for a motion whose speed and acceleration are always in fixed proportion to the displacement itself.</p></div></details>
+
 <div class="box def"><span class="tag">The equation (slide 8)</span>
 <p>A <b>homogeneous second-order linear equation with constant coefficients</b> has the form</p>
 \[ y''+a_1y'+a_2y=0,\qquad a_1,a_2\ \text{constants}. \]
@@ -275,6 +326,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <li><b>Homogeneous:</b> the right-hand side, i.e. every term other than those containing \(y''\), \(y'\), \(y\), must be zero. (An equation like \(y''+y=\cos x\) is <i>non-homogeneous</i>; that is Part O4.)</li>
 <li><b>Constant coefficients:</b> the numbers multiplying \(y'\) and \(y\) do not depend on \(x\). (If the given equation is \(ay''+by'+cy=0\) with \(a\ne0\), divide by \(a\) first, or simply use \(a\lambda^2+b\lambda+c=0\) below: the roots are the same.)</li>
 </ul>
+<details class="idea"><summary>What is this? (superposition)</summary><div><p>Two motions of the spring that each obey the law can be added, and the sum obeys the law too. This works because every term of the equation is a plain multiple of \(y\) or one of its derivatives: doubling the motion doubles every term, adding two motions adds the terms, and zero plus zero is still zero. It fails as soon as there is a \(y^2\) term or a non-zero right-hand side.</p></div></details>
 <p><b>Superposition.</b> If \(y_1\) and \(y_2\) are solutions, so is \(y=C_1y_1+C_2y_2\), because derivatives respect sums and constant multiples:</p>
 \[ \begin{aligned} y''+a_1y'+a_2y&amp;=C_1(y_1''+a_1y_1'+a_2y_1)\\&amp;\quad+C_2(y_2''+a_1y_2'+a_2y_2)\\&amp;=C_1\cdot0+C_2\cdot0=0. \end{aligned} \]
 <p class="word"><b>In words:</b> mixing solutions of a linear homogeneous equation gives another solution. This only works because the equation is linear and the right side is 0.</p>
@@ -287,12 +339,31 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ \lambda^2+a_1\lambda+a_2=0. \]
 <p class="word"><b>In words:</b> replace \(y''\) by \(\lambda^2\), \(y'\) by \(\lambda\), \(y\) by 1; the ODE turns into an <b>algebraic</b> equation (an ordinary quadratic) for \(\lambda\). Each root \(\lambda\) gives a solution \(e^{\lambda x}\).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(e^{\lambda x}\)</dt><dd>the shape-keeping guess. It is never zero, so it can be cancelled.</dd>
+<dt>\(\lambda^2\)</dt><dd>what two differentiations do to the guess: stretch it by \(\lambda\) twice.</dd>
+<dt>\(a_1\lambda\)</dt><dd>one differentiation, times the coefficient of \(y'\).</dd>
+<dt>\(a_2\)</dt><dd>the \(y\) term itself, not differentiated at all.</dd>
+<dt>bracket \(=0\)</dt><dd>the guess works for exactly those \(\lambda\) that make the bracket vanish: the roots.</dd>
+</dl></div>
+
 <p>"As the equation is linear, no need to have a constant in front of exp" (slide 9): trying \(y=Ce^{\lambda x}\) gives \(Ce^{\lambda x}(\lambda^2+a_1\lambda+a_2)=0\) and the \(C\) cancels too; constants are put back at the end by superposition. The slide's exclamation, "ODE is turned into an algebraic equation!!", is the whole point: a calculus problem becomes a quadratic you solved in HKDSE.</p>
+<p><b>The method</b> for \(y''+a_1y'+a_2y=0\):</p>
+<ol class="steps proc">
+<li><b>Do:</b> Write the characteristic equation: replace \(y''\) by \(\lambda^2\), \(y'\) by \(\lambda\), \(y\) by 1 (for \(ay''+by'+cy=0\), use \(a\lambda^2+b\lambda+c=0\)). <span class="why">This is what the shape-keeping guess turns each term into, once the common factor \(e^{\lambda x}\) is cancelled.</span></li>
+<li><b>Do:</b> Solve the quadratic, looking at its discriminant. <span class="why">Each root is a stretch factor for which the guess really is a solution; the discriminant says what kind of roots there are.</span></li>
+<li><b>Do:</b> Write the general solution from the matching case: distinct real or repeated roots (section 4), complex roots (section 6). <span class="why">A second-order equation needs two genuinely different building blocks (section 2), and how to get them depends on the case.</span></li>
+<li><b>Do:</b> If initial conditions are given, use them last to find the constants. <span class="why">By superposition the constants can be chosen freely, so they can be fitted to the starting value and slope.</span></li>
+</ol>
+
 <p>A quadratic \(\lambda^2+a_1\lambda+a_2=0\) has discriminant \(\Delta=a_1^2-4a_2\), giving <b>three possibilities</b> (slide 10): \(\Delta\gt0\) two distinct real roots; \(\Delta=0\) a repeated real root; \(\Delta\lt0\) two complex roots (section 6).</p>
+<p class="cannow"><b>You can now:</b> recognise a second-order linear homogeneous equation with constant coefficients; explain why the trial \(e^{\lambda x}\) turns it into a quadratic; write down its characteristic equation; and say which of the three cases the discriminant gives.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Distinct and repeated real roots (slides 10–11)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Distinct and repeated real roots (slides 10–11)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Real roots mean the guess works with a real stretch factor, so the building blocks are plain exponentials: each one steadily grows (positive root) or dies away (negative root), with no wobble. For a spring with heavy damping both roots are negative, and the mass creeps back to rest without swinging: one part fades quickly, the other slowly. A repeated root is the borderline case, where the two decay rates have merged into one.</p></div></details>
+
 <div class="box thm"><span class="tag">Case (1): distinct real roots \(m\ne n\) (slide 10)</span>
 \[ y=C_1e^{mx}+C_2e^{nx} \]
 <p class="word"><b>In words:</b> two different roots give two different exponentials; the general solution is any mixture of them.</p>
@@ -312,16 +383,23 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ y=3\cosh2x+2\sinh2x=\tfrac52e^{2x}+\tfrac12e^{-2x}. \]
 </div>
 
+<details class="idea"><summary>What is this? (repeated root)</summary><div><p>When the two roots merge there is only one exponential, but a second-order equation still needs two genuinely different blocks. The missing one is the same exponential multiplied by \(x\): the same fading curve with a factor that grows slowly in a straight line. For the spring this is critical damping, where the mass gets back to rest as quickly as it can without overshooting.</p></div></details>
 <div class="box thm"><span class="tag">Case (2): repeated root \(m,m\) (slide 11)</span>
 \[ y=C_1e^{mx}+C_2\,x\,e^{mx}=(C_1+C_2x)e^{mx} \]
 <p class="word"><b>In words:</b> a double root gives only one exponential, so the second building block is the same exponential multiplied by \(x\).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(e^{mx}\)</dt><dd>the one exponential that the double root gives.</dd>
+<dt>\(C_1\)</dt><dd>how much of it you use; it is the starting value, \(y(0)=C_1\).</dd>
+<dt>\(C_2x\)</dt><dd>the second block: the same exponential with a slowly growing factor \(x\). It lets you match the starting slope as well, \(y'(0)=mC_1+C_2\).</dd>
+</dl></div>
+
 <p><b>Why the extra \(x\)? Proof by reduction of order (Part O2), as the slide says: put \(y=u\,e^{mx}\).</b> By the product rule</p>
 \[ y'=(u'+mu)e^{mx}, \]
 \[ y''=(u''+2mu'+m^2u)e^{mx}. \]
 <p>Substituting into \(y''+a_1y'+a_2y=0\) and dividing by \(e^{mx}\):</p>
 \[ u''+(2m+a_1)u'+(m^2+a_1m+a_2)u=0. \]
-<p>Because \(m\) is a root, \(m^2+a_1m+a_2=0\). Because it is a <i>double</i> root, the sum of the two roots, \(m+m\), equals \(-a_1\) (sum of roots of \(\lambda^2+a_1\lambda+a_2\) is \(-a_1\), HKDSE Core), so \(2m+a_1=0\). What is left is \(u''=0\), so \(u=C_1+C_2x\) and \(y=(C_1+C_2x)e^{mx}\).</p>
+<p>Because \(m\) is a root, \(m^2+a_1m+a_2=0\). Because it is a <i>double</i> root, the sum of the two roots, \(m+m\), equals \(-a_1\) (sum of roots of \(\lambda^2+a_1\lambda+a_2\) is \(-a_1\), HKDSE Core), so \(2m+a_1=0\). What is left is \(u''=0\), so \(u=C_1+C_2x\) and \(y=(C_1+C_2x)e^{mx}\).<span class="why">A double root is a root that sits exactly at the vertex of the parabola \(\lambda^2+a_1\lambda+a_2\), which is at \(\lambda=-a_1/2\). Being a root removes the \(u\) term; being at the vertex removes the \(u'\) term.</span></p>
 <div class="box eg"><span class="tag">Example (slide 11)</span>
 <p>Solve \(y''-2y'+y=0\).</p>
 <p>\(\lambda^2-2\lambda+1=(\lambda-1)^2=0\), roots \(\lambda=1,1\). General solution</p>
@@ -331,10 +409,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box warn"><span class="tag">Trap</span>
 <p>Writing \(y=C_1e^{x}+C_2e^{x}\) for a repeated root is wrong: that is just \((C_1+C_2)e^x\), really one constant, so it cannot match two initial conditions. You need the factor \(x\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> solve \(y''+a_1y'+a_2y=0\) when the roots are real and distinct or repeated; rewrite \(C_1e^{kx}+C_2e^{-kx}\) as \(A\cosh kx+B\sinh kx\) and use it with conditions at 0; and explain where the extra factor \(x\) comes from.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Complex numbers and Euler's formula (background for slides 12–15)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Complex numbers and Euler's formula (background for slides 12–15)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A complex number is a point on a flat map: the real part says how far east, the imaginary part how far north. Ordinary real numbers live on the east–west line. Multiplying by \(i\) turns any point a quarter turn anticlockwise about the origin, so multiplying by \(i\) twice turns it half way round, from 1 to \(-1\): that is why \(i^2=-1\).</p></div></details>
+
 <p>When the discriminant is negative, as in \(\lambda^2-4\lambda+5=0\) (\(\Delta=16-20=-4\)), HKDSE Core says "no real roots". To keep going we need <b>complex numbers</b>. This background is not in HKDSE Core, so here it is from scratch.</p>
 <div class="box def"><span class="tag">Definition: complex numbers</span>
 <p>Introduce a new number \(i\) with \(i^2=-1\) (the <b>imaginary unit</b>). A <b>complex number</b> is \(z=a+bi\) with \(a,b\) real; \(a\) is its <b>real part</b> and \(b\) its <b>imaginary part</b>. Complex numbers are added and multiplied like ordinary algebra, replacing \(i^2\) by \(-1\) whenever it appears:</p>
@@ -350,6 +431,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </div>
 <p>Notice the two roots are <b>conjugates</b> of each other. That always happens when the quadratic has real coefficients (slide 12): the \(\pm\) in front of \(\sqrt{\Delta}=\sqrt{|\Delta|}\,i\) produces \(a+bi\) and \(a-bi\).</p>
 
+<details class="idea"><summary>What is this? (Euler's formula)</summary><div><p>Imagine a point that moves so that its velocity is always its own position arrow turned a quarter turn. It never moves towards or away from the centre, so it goes round a circle at a steady speed. "The derivative of \(e^{i\theta}\) is \(i\) times itself" says exactly this, so \(e^{i\theta}\) runs round the circle of radius 1, with cosine as its east coordinate and sine as its north coordinate. This is where the oscillations in the spring's motion come from.</p></div></details>
 <div class="box thm"><span class="tag">Euler's formula (slide 13)</span>
 \[ e^{i\theta}=\cos\theta+i\sin\theta \qquad(\theta\ \text{in radians}) \]
 <p class="word"><b>In words:</b> the exponential of "\(i\) times an angle" is the point on the unit circle at that angle: its real part is the cosine and its imaginary part is the sine.</p>
@@ -367,10 +449,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Combining with the ordinary rule \(e^{u+v}=e^ue^v\):</p>
 \[ e^{(a+bi)x}=e^{ax}e^{ibx}=e^{ax}\big(\cos bx+i\sin bx\big). \]
 <p class="word"><b>In words:</b> the real part \(a\) of the exponent controls growth or decay (\(e^{ax}\)); the imaginary part \(b\) controls how fast it oscillates (\(\cos bx\), \(\sin bx\)).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(e^{ax}\)</dt><dd>from the real part of the exponent: the size grows (\(a\gt0\)) or shrinks (\(a\lt0\)), with no turning.</dd>
+<dt>\(\cos bx+i\sin bx\)</dt><dd>from the imaginary part: a point going round the unit circle, turning \(b\) radians per unit of \(x\).</dd>
+<dt>the product</dt><dd>a point going round while its distance from the centre grows or shrinks: a spiral. Its east coordinate, \(e^{ax}\cos bx\), is a wobble inside a growing or shrinking envelope.</dd>
+</dl></div>
+
+<p class="cannow"><b>You can now:</b> add and multiply complex numbers using \(i^2=-1\); solve a quadratic with negative discriminant to get a conjugate pair \(a\pm bi\); quote Euler's formula; and split \(e^{(a+bi)x}\) into \(e^{ax}\) times a cosine and a sine.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Case (3): complex roots (slides 12–15)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Case (3): complex roots (slides 12–15)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>This is the spring with light damping: the mass swings through the rest position, and each swing is smaller than the one before. The two numbers in the roots share the job. The real part \(a\) sets how fast the swings die down (for a spring it is negative); the imaginary part \(b\) sets how fast it wobbles. The cosine and sine are the same wobble a quarter cycle apart, so between them they can match any starting position and starting speed.</p></div></details>
+
 <p>"99.99% or more of the time" (slide 12) the characteristic equation has <b>real coefficients</b> (\(a_1,a_2\) are real numbers), so complex roots come in a conjugate pair \(a+bi\) and \(a-bi\) (\(b\ne0\)).</p>
 <div class="box thm"><span class="tag">Case (3): complex roots \(a\pm bi\) (slide 12)</span>
 \[ y=C_1e^{(a+bi)x}+C_2e^{(a-bi)x} \]
@@ -378,13 +469,20 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ y=e^{ax}\big[A\cos(bx)+B\sin(bx)\big]. \]
 <p class="word"><b>In words:</b> real part \(a\) of the roots → the factor \(e^{ax}\) (growth or decay); imaginary part \(b\) → the angular frequency of the \(\cos\) and \(\sin\). Use \(b\), not \(\pm b\): both signs are already covered.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(e^{ax}\)</dt><dd>the envelope: the size of the swings, shrinking if \(a\lt0\), growing if \(a\gt0\), steady if \(a=0\).</dd>
+<dt>\(\cos bx,\ \sin bx\)</dt><dd>the wobble: \(b\) radians per unit of \(x\), so one full swing every \(2\pi/b\).</dd>
+<dt>\(A\)</dt><dd>the starting value, \(y(0)=A\).</dd>
+<dt>\(B\)</dt><dd>together with \(A\), the starting slope: \(y'(0)=aA+bB\).</dd>
+</dl></div>
+
 <p><b>From one form to the other (slides 13–14).</b> "To simplify algebra" we use Euler's formula on each term, with \(\cos(-bx)=\cos bx\) and \(\sin(-bx)=-\sin bx\):</p>
 \[ \begin{aligned} y&amp;=C_1e^{(a+bi)x}+C_2e^{(a-bi)x}\\ &amp;=e^{ax}\big[C_1(\cos bx+i\sin bx)\\&amp;\qquad+C_2(\cos bx-i\sin bx)\big]\\ &amp;=e^{ax}\big[(C_1+C_2)\cos bx\\&amp;\qquad+i(C_1-C_2)\sin bx\big]. \end{aligned} \]
 <p>"Relate \(A\), \(B\) in terms of COMPLEX \(C_1\), \(C_2\)": setting</p>
 \[ A=C_1+C_2,\qquad B=i(C_1-C_2) \]
 <p>gives \(y=e^{ax}[A\cos bx+B\sin bx]\).</p>
 <p class="word"><b>In words:</b> the two forms are the same family of functions, just with the constants renamed.</p>
-<p>The constants \(C_1,C_2\) are allowed to be complex (slide 14). For a <b>real</b> solution (the only kind that describes a real spring or circuit) we choose \(C_2\) to be the conjugate of \(C_1\); then \(A\) and \(B\) come out as real numbers. In practice you skip \(C_1,C_2\) altogether and write the real form directly, with \(A,B\) real.</p>
+<p>The constants \(C_1,C_2\) are allowed to be complex (slide 14). For a <b>real</b> solution (the only kind that describes a real spring or circuit) we choose \(C_2\) to be the conjugate of \(C_1\); then \(A\) and \(B\) come out as real numbers.<span class="why">If \(C_1=p+qi\) and \(C_2=p-qi\), then \(A=C_1+C_2=2p\) and \(B=i(C_1-C_2)=i\cdot2qi=-2q\), both real.</span> In practice you skip \(C_1,C_2\) altogether and write the real form directly, with \(A,B\) real.</p>
 
 <div class="box eg"><span class="tag">Example (slide 15)</span>
 <p>Solve \(y''-4y'+5y=0\).</p>
@@ -398,16 +496,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <div class="legend"><span style="--k:var(--accent)">e^(ax) cos(bx)</span><span style="--k:var(--muted)">envelope ±e^(ax)</span></div>
   <div class="readout" id="fcx-out"></div>
   <p class="cap">\(a\lt0\): oscillations die away; \(a=0\): steady oscillation; \(a\gt0\): oscillations grow. \(b\) sets how many wiggles fit in a given length (period \(2\pi/b\)).</p></div>
+<p class="cannow"><b>You can now:</b> write the real general solution \(e^{ax}(A\cos bx+B\sin bx)\) for complex roots \(a\pm bi\); explain how it comes from the complex form with Euler's formula; and say what \(a\) and \(b\) do to the graph.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Higher-order equations (slides 16–18)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Higher-order equations (slides 16–18)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A higher-order equation needs more starting information (starting value, starting slope, and more), so it needs more building blocks: one for each root of the characteristic polynomial. Nothing else is new. Each real root still gives an exponential, each complex pair still gives a growing or dying wobble, and each extra copy of a repeated root still earns one more factor \(x\).</p></div></details>
+
 <p>"Extension to higher order equations is conceptually straightforward" (slide 16). For</p>
 \[ y^{(n)}+a_1y^{(n-1)}+\dots+a_{n-1}y'+a_ny=0 \]
 <p>(\(y^{(n)}\) means the \(n\)-th derivative), trying \(y=e^{\lambda x}\) gives the characteristic equation</p>
 \[ \lambda^n+a_1\lambda^{n-1}+\dots+a_{n-1}\lambda+a_n=0. \]
 <p class="word"><b>In words:</b> each \(k\)-th derivative becomes \(\lambda^k\); an \(n\)-th order ODE gives a degree-\(n\) polynomial, whose \(n\) roots (counted with repeats, complex allowed) give the \(n\) building blocks.</p>
-<p>Factorise the polynomial using HKDSE tools (taking out common factors, the factor theorem: if \(p(r)=0\) then \(\lambda-r\) is a factor, then long division) and translate each root:</p>
+<p>The method:</p>
+<ol class="steps proc">
+<li><b>Do:</b> Write the characteristic polynomial: each \(y^{(k)}\) becomes \(\lambda^k\). <span class="why">The shape-keeping guess turns every derivative into a power of its stretch factor.</span></li>
+<li><b>Do:</b> Factorise the polynomial using HKDSE tools (taking out common factors, the factor theorem: if \(p(r)=0\) then \(\lambda-r\) is a factor, then long division) and translate each root with the table below. <span class="why">Each factor gives a root, and each root is a stretch factor for which the guess works.</span></li>
+<li><b>Do:</b> List every root with its repeats before writing the answer. <span class="why">A repeated root gives fewer different exponentials, so the extra factors \(x\) supply the missing blocks.</span></li>
+<li><b>Do:</b> Check that the number of constants equals the order. <span class="why">An \(n\)-th order equation needs \(n\) genuinely different blocks (section 2); a missing constant usually means a forgotten root 0 or a forgotten repeat.</span></li>
+</ol>
+
 <div class="scroll"><table>
 <tr><th>Root(s) of the characteristic polynomial</th><th>Building blocks in \(y\)</th></tr>
 <tr><td>a single real root \(m\)</td><td>\(e^{mx}\)</td></tr>
@@ -437,10 +545,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> exactly like a repeated real root: the second copy of the pair gets an extra factor \(x\).</p>
 <p style="font-size:.92rem;color:var(--muted)">Slide 18 prints the roots as "2+I, 2+I, 2-I, 2-I"; the capital I is the imaginary unit \(i\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> factorise a cubic or quartic characteristic polynomial; translate each root, including 0 and repeated or complex roots, into building blocks; and check that there is one constant per order.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Where ODEs appear (slides 19–22)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Where ODEs appear (slides 19–22)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>An ODE is a rule that says how something changes from moment to moment: how fast a tank drains given its water level, how hard a spring pulls given its stretch. Solving it turns the rule into the whole story over time. The gallery shows how many real situations lead to such rules; only some of them are linear with constant coefficients, the kind this part solves.</p></div></details>
+
 <p>Slide 19: ordinary differential equations describe the "motion and vibration of particles, loading of beams, electrical circuits and even mathematical biology". Slides 20–22 are a picture gallery of nine models (each labelled with a textbook section number such as "Sec. 2.8"). The pictures are described below with their equations. A <b>model</b> here means an equation that describes how a real quantity changes.</p>
 <div class="scroll"><table>
 <tr><th>Picture</th><th>What is shown</th><th>Equation</th><th>Type</th></tr>
@@ -456,10 +567,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </table></div>
 <p style="font-size:.92rem;color:var(--muted)">In the beam equation \(E\) is the stiffness of the material and \(I\) a number describing the shape of the beam's cross-section; \(f(x)\) is the load. In the Lotka–Volterra model \(a,b,k,l\) are positive constants: rabbits grow at rate \(a\) and are eaten at a rate proportional to encounters \(y_1y_2\); foxes grow from encounters and die at rate \(l\).</p>
 <p>The rest of the deck concentrates on the spring (and its electrical twin, the RLC circuit), because its equation is exactly of the constant-coefficient type solved above.</p>
+<p class="cannow"><b>You can now:</b> name the order of each model in the gallery and say whether it is linear; and pick out the ones that this part's methods solve.</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>The mass–spring oscillator (slides 23–32)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">The mass–spring oscillator (slides 23–32)</span> <span class="mins">~12 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Hang a mass on a spring, pull it down and let go. The spring pulls it back, its momentum carries it past the rest position, and friction (air, oil, a shock absorber) takes away some energy on every swing. How much friction there is decides the story. A little, and it wobbles while dying down. A lot, and it creeps back slowly without ever passing the rest position. Exactly the critical amount, and it gets back as fast as it can without overshooting. These are the three root cases of sections 4 and 6.</p></div></details>
+
 <h3>The set-up (slides 23–24)</h3>
 <p>Slide 23: a particle attached to a spring is "stretched beyond the equilibrium position, and released". Slide 24's picture (redrawn below) shows three stages.</p>
 <div class="figure"><p class="ttl">Mechanical mass–spring system (slide 24, redrawn)</p><canvas class="plot" id="fspring" style="aspect-ratio:16/10" aria-label="Unstretched spring, spring at static equilibrium with mass, and spring in motion"></canvas>
@@ -471,18 +585,32 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </ul>
 
 <h3>Free oscillation with damping (slides 25–27)</h3>
+<details class="idea"><summary>What is this? (damping)</summary><div><p>Damping is a brake that pushes against the motion, harder the faster the mass moves, like a car's shock absorber: a piston forced through oil. It always takes energy out and never puts any in, so the motion can only die down.</p></div></details>
 <p>Slide 25: a particle of mass \(m\) is attached to a spring with constant \(k\). <b>Damping</b> (a force that resists motion, e.g. friction or air or oil resistance) is proportional to the speed, and there is no external <b>forcing</b> (no outside push), so the oscillation is called <b>free</b>. Writing the displacement as \(x(t)\), Newton's law of motion becomes</p>
 <div class="box thm"><span class="tag">Damped free oscillator (slide 25)</span>
 \[ mx''+cx'+kx=0 \]
 <p class="word"><b>In words:</b> mass × acceleration + damping constant × velocity + spring constant × displacement = 0, i.e. the spring force \(-kx\) and the damping force \(-cx'\) together produce the acceleration.</p>
 <p>Here \(m\gt0\), \(k\gt0\), and the <b>damping constant</b> \(c\ge0\).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(mx''\)</dt><dd>mass × acceleration: the mass's reluctance to change speed.</dd>
+<dt>\(cx'\)</dt><dd>the brake: proportional to the speed, and pushing against it.</dd>
+<dt>\(kx\)</dt><dd>the spring's pull back towards rest, proportional to the stretch.</dd>
+<dt>\(=0\)</dt><dd>no outside push: the motion is free, driven only by the starting stretch and speed.</dd>
+</dl></div>
+
 <p>This is a constant-coefficient equation in the variable \(t\). Characteristic equation \(m\lambda^2+c\lambda+k=0\), with roots (slide 26)</p>
 \[ \lambda=\frac{-c\pm\sqrt{c^2-4mk}}{2m}, \]
 <p>"and the character of the motion depends on the nature of the roots". Slide 27 rewrites this with the <b>critical damping</b> constant \(c_{cr}\):</p>
 <div class="box thm"><span class="tag">Three kinds of damping (slide 27)</span>
 \[ \lambda=\frac{-c\pm\sqrt{c^2-c_{cr}^2}}{2m},\qquad c_{cr}^2=4mk \]
 <p class="word"><b>In words:</b> critical damping \(c_{cr}=2\sqrt{mk}\) is the amount of damping that makes the discriminant exactly zero.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(-\dfrac{c}{2m}\)</dt><dd>the part both roots share: how fast the motion dies down, as long as the square root is imaginary or zero.</dd>
+<dt>\(c^2-c_{cr}^2\)</dt><dd>the brake compared with the critical brake. Negative: the square root is imaginary and the mass wobbles. Positive: two real decay rates, no wobble.</dd>
+<dt>\(c_{cr}=2\sqrt{mk}\)</dt><dd>the brake at which the wobble just disappears; a stiffer spring or a heavier mass needs a stronger brake.</dd>
+</dl></div>
+
 <ol class="steps">
 <li><b>Underdamped</b> vibration: \(c\lt c_{cr}\). Negative discriminant: complex roots \(-\dfrac{c}{2m}\pm i\,\dfrac{\sqrt{c_{cr}^2-c^2}}{2m}\).</li>
 <li><b>Critically damped</b> vibration: \(c=c_{cr}\). Repeated real root \(\lambda=-\dfrac{c}{2m}\).</li>
@@ -498,12 +626,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <tr><td>Underdamped \(c\lt c_{cr}\)</td><td>\(-\gamma\pm i\omega_d\)</td><td>\(e^{-\gamma t}(A\cos\omega_dt+B\sin\omega_dt)\)</td><td>swings, with shrinking amplitude</td></tr>
 <tr><td>Undamped \(c=0\)</td><td>\(\pm i\sqrt{k/m}\)</td><td>\(A\cos\omega t+B\sin\omega t\)</td><td>swings forever (simple harmonic motion)</td></tr>
 </table></div>
+<p><b>How to classify</b> a damped oscillator:</p>
+<ol class="steps proc">
+<li><b>Do:</b> Compute \(c_{cr}=2\sqrt{mk}\) (or compare \(c^2\) with \(4mk\)). <span class="why">This is the brake strength at which the discriminant of \(m\lambda^2+c\lambda+k=0\) is exactly zero.</span></li>
+<li><b>Do:</b> Compare: \(c\lt c_{cr}\) underdamped, \(c=c_{cr}\) critically damped, \(c\gt c_{cr}\) overdamped. <span class="why">A weak brake lets the wobble survive (complex roots); a strong one kills it (real roots).</span></li>
+<li><b>Do:</b> Write \(x(t)\) from the matching row of the table, then fit \(x(0)\) and \(x'(0)\). <span class="why">The starting stretch and speed fix the two constants.</span></li>
+</ol>
+
 
 <h3>The explorer</h3>
 <p>Dividing \(mx''+cx'+kx=0\) by \(m\) and writing \(\omega=\sqrt{k/m}\) (the <b>natural frequency</b>: how fast it swings with no damping) and \(\zeta=c/c_{cr}\) (the <b>damping ratio</b>, Greek "zeta") gives the standard form used in engineering <span class="pill">Beyond the handouts</span>:</p>
 \[ y''+2\zeta\omega\,y'+\omega^2y=0, \]
 \[ \lambda=-\zeta\omega\pm\omega\sqrt{\zeta^2-1}. \]
 <p class="word"><b>In words:</b> damping ratio below 1 → complex roots (underdamped); exactly 1 → repeated root (critical); above 1 → distinct real roots (overdamped).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\omega\)</dt><dd>how fast the mass would swing with no brake at all.</dd>
+<dt>\(\zeta\)</dt><dd>the brake as a fraction of the critical brake: 1 means critical.</dd>
+<dt>\(2\zeta\omega\)</dt><dd>the damping term after dividing by \(m\): it equals \(c/m\).</dd>
+<dt>\(\omega^2\)</dt><dd>the stiffness per unit mass, \(k/m\).</dd>
+</dl></div>
+
 <p>(Check: \(2\zeta\omega=\dfrac{c}{2\sqrt{mk}}\cdot2\sqrt{\dfrac km}=\dfrac cm\) and \(\omega^2=\dfrac km\), as required.) The explorer releases the mass from \(y(0)=1\) at rest, \(y'(0)=0\). The solutions plotted are, with \(\omega_d=\omega\sqrt{1-\zeta^2}\) and \(r_{1,2}=-\zeta\omega\pm\omega\sqrt{\zeta^2-1}\):</p>
 \[ \zeta\lt1:\ y=e^{-\zeta\omega t}\Big(\cos\omega_dt+\tfrac{\zeta\omega}{\omega_d}\sin\omega_dt\Big) \]
 \[ \zeta=1:\ y=(1+\omega t)e^{-\omega t} \]
@@ -517,6 +659,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <p class="cap">Slide ζ from 0 to 2.5. While ζ is below 1 the two roots sit on the dashed curve \(|\lambda|=\omega\) (a circle of radius 1 in units of ω, drawn squashed because the two axes use different scales) as a conjugate pair; at ζ = 1 they meet at \(-\omega\); above 1 they split along the real axis, one towards 0 (slow decay) and one far to the left. That is why heavy overdamping returns <i>more slowly</i> than critical damping.</p></div>
 
 <h3>Dashpots and RLC circuits (slides 30–31)</h3>
+<details class="idea"><summary>What is this? (RLC circuits)</summary><div><p>An electric circuit with a coil, a resistor and a capacitor behaves like the spring. The coil resists changes in current, as a mass resists changes in speed; the resistor turns energy into heat, like the brake; the capacitor stores charge and pushes back, like the spring. So the same kind of equation, and the same three cases, describe the circuit.</p></div></details>
 <p>Slide 30 lists other examples. In mechanical engineering, damping is provided by a <b>dashpot</b>: a piston moving in a cylinder of oil, which resists with a force proportional to speed (the \(cx'\) term). In electrical engineering, <b>RLC circuits</b> contain an \(R\) = resistor, \(L\) = inductor (a coil) and \(C\) = capacitor. Slide 31's picture is redrawn here.</p>
 <div class="figure"><p class="ttl">Mass–spring–dashpot system and RLC circuit (slide 31, redrawn)</p><canvas class="plot" id="fdash" style="aspect-ratio:16/9" aria-label="Spring, mass and dashpot; and an RLC circuit"></canvas>
   <p class="cap">Left: spring (constant \(k\)) holding a mass \(m\), with a dashpot (damping constant \(c\)) underneath. Right: a loop containing a capacitor \(C\), resistor \(R\), inductor \(L\) and a voltage source \(E(t)\).</p></div>
@@ -531,10 +674,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box beyond"><span class="tag">Beyond the handouts: small swings</span>
 <p>For small angles (in radians) \(\sin\theta\approx\theta\) (Lecture 2: \(\frac{\sin\theta}{\theta}\to1\)), giving the linear equation \(\theta''+\frac gL\theta=0\). Its roots are \(\pm i\sqrt{g/L}\), so \(\theta=A\cos\big(\sqrt{g/L}\,t\big)+B\sin\big(\sqrt{g/L}\,t\big)\): simple harmonic motion with period \(2\pi\sqrt{L/g}\), independent of the size of the swing.</p>
 </div>
+<p class="cannow"><b>You can now:</b> derive \(my''+ky=0\) from Hooke's law and Newton's second law; find \(c_{cr}=2\sqrt{mk}\) and classify a damped oscillator; write its motion in each case; and carry the same results over to an RLC circuit.</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Cauchy–Euler equations (slides 33–38)</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Cauchy–Euler equations (slides 33–38)</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Here each derivative is multiplied by the matching power of \(x\). Such an equation looks exactly the same if you change the unit you measure \(x\) in, say centimetres instead of metres: it has no built-in length scale. Powers of \(x\) share that property, since zooming \(x^m\) by any factor only multiplies it by a constant. So the shape-keeping guess is now \(x^m\) instead of \(e^{\lambda x}\): each derivative knocks one power off, and the \(x\) in front puts it back.</p></div></details>
+
 <p>So far the coefficients were constants. With <b>variable coefficients</b> (coefficients that depend on \(x\)) there is usually no exact formula, but one special class can be solved exactly (slide 33).</p>
 <div class="box def"><span class="tag">Definition (slide 33)</span>
 \[ \begin{aligned}x^ny^{(n)}&amp;+c_1x^{n-1}y^{(n-1)}+\dots\\&amp;+c_{n-1}xy'+c_ny=0\end{aligned} \]
@@ -555,9 +701,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ m^2+(c_1-1)m+c_2=0. \]
 <p class="word"><b>In words:</b> replace \(x^2y''\) by \(m(m-1)\), \(xy'\) by \(m\), \(y\) by 1. It is a quadratic again ("Characteristic equation – Quadratic", slide 35), often called the <i>indicial equation</i>.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(m(m-1)\)</dt><dd>from \(x^2y''\): two differentiations bring down \(m\), then \(m-1\), and the \(x^2\) restores the power.</dd>
+<dt>\(c_1m\)</dt><dd>from \(c_1xy'\): one differentiation brings down \(m\), and the \(x\) restores the power.</dd>
+<dt>\(c_2\)</dt><dd>from \(c_2y\), not differentiated at all.</dd>
+<dt>\(x\gt0\)</dt><dd>needed so that \(x^m\ne0\) can be cancelled, and so that \(\ln x\) exists.</dd>
+</dl></div>
 <div class="box warn"><span class="tag">Trap</span>
 <p>\(x^2y''\) becomes \(m(m-1)\), <b>not</b> \(m^2\). Using \(m^2+c_1m+c_2=0\) (the constant-coefficient habit) gives wrong roots.</p>
 </div>
+<p><b>The method</b> for \(x^2y''+c_1xy'+c_2y=0\):</p>
+<ol class="steps proc">
+<li><b>Do:</b> Check the form: the power of \(x\) in front of each derivative equals its order. If \(x^2y''\) has a number in front, divide through by it. <span class="why">Only then does every term become a number times the same \(x^m\).</span></li>
+<li><b>Do:</b> Write the indicial equation \(m(m-1)+c_1m+c_2=0\), not \(m^2+c_1m+c_2=0\). <span class="why">Two differentiations of \(x^m\) bring down \(m\) and then \(m-1\), not \(m\) twice.</span></li>
+<li><b>Do:</b> Solve it and read the answer from the three cases below, for \(x\gt0\). <span class="why">The root cases are the same as before, with \(\ln x\) playing the part that \(x\) played for exponentials.</span></li>
+</ol>
 <p>As before there are three cases (slides 35–37):</p>
 <div class="box thm"><span class="tag">Solutions of \(x^2y''+c_1xy'+c_2y=0\), \(x\gt0\)</span>
 <ol class="steps">
@@ -593,10 +751,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>Why \(x\gt0\)?</b> \(\ln x\) and powers like \(x^{\sqrt2}\) are only defined for \(x\gt0\); also the equation's leading coefficient \(x^2\) is zero at \(x=0\), where solutions can blow up (e.g. \(1/x\)). For \(x\lt0\), replace \(x\) by \(|x|\) in the formulas.</p>
 <p><b>Link to constant coefficients.</b> The substitution \(x=e^t\) turns \(x^2y''+c_1xy'+c_2y=0\) into the constant-coefficient equation \(\ddot y+(c_1-1)\dot y+c_2y=0\) in \(t\) (dots = \(d/dt\)), with the same characteristic equation. Since \(t=\ln x\), \(e^{mt}=x^m\), \(te^{mt}=x^m\ln x\) and \(\cos bt=\cos(b\ln x)\): this explains every formula above.</p>
 </div>
+<p class="cannow"><b>You can now:</b> recognise a Cauchy–Euler equation; write its indicial equation with \(m(m-1)\); write the general solution for distinct, repeated and complex roots using \(x^m\), \(\ln x\) and \(\cos(b\ln x)\); and explain the \(\ln x\) with reduction of order.</p>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Summary <span class="pill">Written for these notes</span></h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Summary <span class="pill">Written for these notes</span></span></h2>
 <div class="scroll"><table>
 <tr><th>Equation</th><th>Try</th><th>Characteristic equation</th></tr>
 <tr><td>\(y''+a_1y'+a_2y=0\)</td><td>\(y=e^{\lambda x}\)</td><td>\(\lambda^2+a_1\lambda+a_2=0\)</td></tr>
@@ -619,7 +778,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Common mistakes <span class="pill">Written for these notes</span></h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Common mistakes <span class="pill">Written for these notes</span></span></h2>
 <div class="box"><div class="mistake">
 <span class="x">✗</span><span>Repeated root \(\lambda=3,3\) written as \(C_1e^{3x}+C_2e^{3x}\). <span class="ok">✓</span> \((C_1+C_2x)e^{3x}\). The first is really only one constant.</span>
 <span class="x">✗</span><span>Roots \(-1\pm2i\) written as \(e^{2x}(A\cos x+B\sin x)\) (real and imaginary parts swapped). <span class="ok">✓</span> \(e^{-x}(A\cos2x+B\sin2x)\): the <i>real</i> part goes in the exponential, the <i>imaginary</i> part inside cos and sin.</span>
@@ -635,7 +794,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Find the mistake <span class="pill">Written for these notes</span></h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Find the mistake <span class="pill">Written for these notes</span></span></h2>
 <p>Each attempt below contains one error. Find it before opening the answer.</p>
 <div class="q"><p class="qh">A. Solve \(y''+4y=0\).</p>
 <div class="handwork">
@@ -671,7 +830,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="s14"><h2><span class="n">14</span>Group work <span class="pill">Written for these notes</span></h2>
+<section id="s14"><h2><span class="n">14</span><span class="h2t">Group work <span class="pill">Written for these notes</span></span></h2>
 <div class="q"><p class="qh">1. Solve the initial-value problem \(y''+2y'+10y=0\), \(y(0)=1\), \(y'(0)=2\).</p>
 <details><summary>Hint 1</summary><div><p>The characteristic equation \(\lambda^2+2\lambda+10=0\) has discriminant \(4-40=-36\).</p></div></details>
 <details><summary>Hint 2</summary><div><p>Roots \(-1\pm3i\), so \(y=e^{-x}(A\cos3x+B\sin3x)\). Then \(y(0)=A\) and \(y'(0)=-A+3B\).</p></div></details>
@@ -696,7 +855,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 15 ============ -->
-<section id="s15"><h2><span class="n">15</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<section id="s15"><h2><span class="n">15</span><span class="h2t">Concept checks <span class="pill">Written for these notes</span></span></h2>
 <div class="q"><p class="qh">1. Are \(\sin x\) and \(\cos x\) linearly independent? Use the Wronskian.</p>
 <details><summary>Answer</summary><div><p>\(W(\sin x,\cos x)=\sin x(-\sin x)-\cos x\cos x=-1\ne0\). Independent (they are the two building blocks for \(y''+y=0\)).</p></div></details></div>
 <div class="q"><p class="qh">2. If one root of a characteristic equation with real coefficients is \(1+2i\), what must another root be? What two solutions do they give?</p>
@@ -714,7 +873,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ exam ============ -->
-<section id="pastpaper"><h2><span class="n">16</span>Exam taster</h2>
+<section id="pastpaper"><h2><span class="n">16</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this part, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Part O3's question types appear 12 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide.</p>
 
@@ -1070,5 +1229,13 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </html>

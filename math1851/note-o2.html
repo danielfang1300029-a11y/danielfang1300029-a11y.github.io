@@ -106,6 +106,33 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -137,11 +164,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · ODE · Part O2</span>
   <h1>ODEs by Substitution</h1>
-  <p class="lede">Every slide of this part of the ODE handout explained from scratch, with interactive graphs. The worked examples are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this part.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this part sits</h2>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this part sits</span></h2>
+<p>Think of an ODE as a scene filmed by a camera. From the usual angle (the unknown \(y\) against \(x\)) most equations in this part look nonlinear or too hard, and most nonlinear ODEs cannot be solved exactly. A <b>substitution</b> (a change of unknown, like \(u=y^{-1}\) or \(y=vx\)) changes the camera angle: the same solution curves, described by a new unknown, until the equation looks like a type from Part O1 (linear or separable). Solve it in that view, then switch back to \(y\). It is the same idea as integration by substitution (Lecture 13).</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>Bernoulli: a power change of the unknown straightens the extra power of \(y\), and the equation becomes linear.</b> <span class="pill">Asked most often</span></li>
+<li><a href="#s2">§2</a> <b>Riccati: ride along one known solution and watch 1 ÷ the gap; that view is linear.</b> You must be given (or guess) that solution.</li>
+<li><a href="#s3">§3</a> <b>Separable is the view the next substitutions aim for.</b> <span class="pill skip">Reminder from Part O1</span></li>
+<li><a href="#s4">§4</a> <b>Degree 0 means only the direction from the origin matters, that is, only \(\frac yx\).</b></li>
+<li><a href="#s5">§5</a> <b>Homogeneous: describe each point by the slope \(\frac yx\) of its line from the origin, and the equation separates.</b></li>
+<li><a href="#s6">§6</a> <b>Shift: name the repeated combination, or move the origin to where two lines cross.</b> <span class="pill">Beyond the handouts</span></li>
+<li><a href="#s7">§7</a> <b>Reduction of order: measure the unknown solution in units of a known one, and one derivative drops out.</b></li>
+</ol>
+</div>
+<p><b>You need:</b> Part O1 (separable equations and the integrating factor), the chain and product rules (Lecture 6), and integration by substitution and partial fractions (Lectures 13–14). <b>In the exam:</b> almost every recent paper has one 5-mark "Solve the differential equation" part that needs Bernoulli, homogeneous, Riccati or a shift, and recent papers no longer print the substitution; reduction of order was last asked in May 2017. See the <a href="guide-O2.html">O2 exam guide</a>.</p>
+<h3>Reminders from Part O1</h3>
 <p>A <b>differential equation</b> is an equation that links an unknown function \(y(x)\) with its derivatives, for example \(\frac{dy}{dx}=y-y^2\). It is an <b>ordinary differential equation (ODE)</b> when there is only one independent variable (here \(x\)). <b>Solving</b> it means finding the function \(y(x)\) itself. A <b>general solution</b> contains arbitrary constants (\(C\), \(c_1\), \(c_2\), …) and describes every solution at once, a whole <b>family</b> of curves.</p>
 
 <p><b>Part O1</b> (the first part of the ODE handout) set up the language and three direct methods. One-line reminders:</p>
@@ -155,7 +195,6 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <li><b>Exact</b>: \(M\,dx+N\,dy=0\) with \(\frac{\partial M}{\partial y}=\frac{\partial N}{\partial x}\); the solution is \(F(x,y)=\text{constant}\).</li>
 </ul>
 
-<p><b>What this part adds.</b> Most nonlinear ODEs cannot be solved exactly. This part collects the special nonlinear (and second-order) equations that <b>can</b> be solved, because a clever <b>substitution</b> (a change of unknown, like \(u=y^{-1}\) or \(y=vx\)) turns them into a type from Part O1. It is the same idea as integration by substitution (Lecture 13): swap the variable for one that makes the problem familiar.</p>
 <div class="scroll"><table>
 <tr><th>Equation type</th><th>Shape</th><th>Substitution</th><th>Becomes</th></tr>
 <tr><td>Bernoulli (§1)</td><td>\(y'+p(x)y=q(x)y^n\)</td><td>\(u=y^{1-n}\)</td><td>linear (integrating factor)</td></tr>
@@ -169,7 +208,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 1 Bernoulli ============ -->
-<section id="s1"><h2><span class="n">1</span>Bernoulli's equation (slides 1–2)</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Bernoulli's equation (slides 1–2)</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A Bernoulli equation is a linear equation with one extra power of the unknown on the right. Seen from the usual angle, that power bends the picture: the equation is nonlinear, and the integrating factor cannot grip it. The fix is to change the ruler on the vertical axis. Keep the same solution curves, but measure their height with a power of \(y\) instead of \(y\) itself, much as log graph paper makes an exponential curve look straight. With the right power, the bend disappears and a linear equation appears.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 1)</span>
 <p>A <b>Bernoulli equation</b> is a first-order ODE of the form</p>
 \[ \frac{dy}{dx}+p(x)\,y=q(x)\,y^n , \]
@@ -178,6 +218,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </div>
 <p>It looks exactly like the linear equation of Part O1, except for the extra power \(y^n\) on the right. For \(n\ne0,1\) that power makes the equation <b>nonlinear</b>, so the integrating factor cannot be used directly. Slide 1 calls it "a special case of a nonlinear first order ODE which can be solved exactly": <b>exactly</b> means we get a formula for \(y\), not just a numerical approximation.</p>
 
+<details class="idea"><summary>What is this? (the power change)</summary><div><p>The right power is \(1-n\): one minus the power on the right. Dividing by \(y^n\) moves all of the bend onto the left side, and the new ruler \(u\) is chosen so that the chain rule turns that left side into a plain rate of change of \(u\). The new view only exists where we did not divide by zero, so the curve \(y=0\) has to be checked by hand.</p></div></details>
 <div class="box thm"><span class="tag">Method (slide 2)</span>
 <p>To solve \(\frac{dy}{dx}+p(x)\,y=q(x)\,y^n\) (with \(n\ne1\)), use the substitution</p>
 \[ u=y^{1-n}. \]
@@ -186,18 +227,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ \frac{du}{dx}+(1-n)\,p(x)\,u=(1-n)\,q(x). \]
 <p class="word"><b>In words:</b> rate of change of \(u\) + (1 − n) × p × \(u\) = (1 − n) × q. Both p and q get multiplied by the same factor (1 − n).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(u=y^{1-n}\)</dt><dd>the new ruler: the height of the same curve, read on a power scale.</dd>
+<dt>\(\frac{du}{dx}\)</dt><dd>how fast the curve climbs, measured on the new ruler.</dd>
+<dt>\((1-n)\)</dt><dd>the conversion factor the chain rule brings in when you change ruler; it multiplies both \(p\) and \(q\).</dd>
+<dt>\((1-n)\,q(x)\)</dt><dd>the right side no longer contains the unknown: this is why the new view is linear.</dd>
+</dl></div>
 
 <h3>Why the substitution works</h3>
-<ol class="steps">
-<li><b>Divide the whole equation by \(y^n\)</b> (assume \(y\ne0\) for now):
+<ol class="steps proc">
+<li><b>Do:</b> divide the whole equation by \(y^n\) (assume \(y\ne0\) for now):
 \[ y^{-n}\frac{dy}{dx}+p(x)\,y^{1-n}=q(x). \]
-Now the right side has no \(y\) at all, and \(y^{1-n}\) appears in the middle term. That suggests calling \(u=y^{1-n}\).</li>
-<li><b>Differentiate \(u\)</b> with the chain rule (Lecture 6), remembering \(y\) is a function of \(x\):
+Now the right side has no \(y\) at all, and \(y^{1-n}\) appears in the middle term. That suggests calling \(u=y^{1-n}\). <span class="why">The bend now sits only on the left, and the right side is a function of \(x\) alone, as a linear equation needs.</span></li>
+<li><b>Do:</b> differentiate \(u\) with the chain rule (Lecture 6), remembering \(y\) is a function of \(x\):
 \[ \frac{du}{dx}=(1-n)\,y^{-n}\,\frac{dy}{dx}. \]
-So the first term \(y^{-n}\frac{dy}{dx}\) is exactly \(\frac{1}{1-n}\frac{du}{dx}\).</li>
-<li><b>Substitute:</b>
+So the first term \(y^{-n}\frac{dy}{dx}\) is exactly \(\frac{1}{1-n}\frac{du}{dx}\). <span class="why">This tells us how the awkward first term looks on the new ruler: it is just a rate of change of \(u\).</span></li>
+<li><b>Do:</b> substitute:
 \[ \frac{1}{1-n}\frac{du}{dx}+p(x)\,u=q(x). \]
-Multiply by \((1-n)\) to get the linear equation in the box. Solve it with the integrating factor \(e^{\int(1-n)p\,dx}\) (Part O1), then return to \(y\) using \(y=u^{1/(1-n)}\).</li>
+Multiply by \((1-n)\) to get the linear equation in the box. Solve it with the integrating factor \(e^{\int(1-n)p\,dx}\) (Part O1), then return to \(y\) using \(y=u^{1/(1-n)}\). <span class="why">Every \(y\) has been replaced by \(u\) to the first power, so Part O1 can finish the job; the last move switches the camera back.</span></li>
 </ol>
 
 <div class="box warn"><span class="tag">Special values of n and a lost solution</span>
@@ -211,7 +258,7 @@ Multiply by \((1-n)\) to get the linear equation in the box. Solve it with the i
 <div class="box eg"><span class="tag">Example 1 (written for these notes)</span>
 <p>Solve \(\dfrac{dy}{dx}+y=y^2\).</p>
 <p><b>Spot the type.</b> \(p(x)=1\), \(q(x)=1\), \(n=2\). So \(u=y^{1-2}=y^{-1}=\frac1y\).</p>
-<p><b>Transform.</b> Divide by \(y^2\): \(y^{-2}y'+y^{-1}=1\). Since \(u'=-y^{-2}y'\), the first term is \(-u'\):</p>
+<p><b>Transform.</b> Divide by \(y^2\): \(y^{-2}y'+y^{-1}=1\). Since \(u'=-y^{-2}y'\), the first term is \(-u'\): <span class="why">the chain rule brings in the factor \(1-n=-1\); this minus sign is the one students drop.</span></p>
 \[ -u'+u=1\quad\Longrightarrow\quad u'-u=-1. \]
 <p>(Check against the box: \((1-n)p=-1\), \((1-n)q=-1\). ✓)</p>
 <p><b>Integrating factor</b> \(e^{\int(-1)dx}=e^{-x}\):</p>
@@ -241,10 +288,12 @@ Multiply by \((1-n)\) to get the linear equation in the box. Solve it with the i
 <p>valid where \(\frac{x^2}{5}+\frac{C}{\sqrt x}\ge0\) (because \(u=\sqrt y\) cannot be negative).</p>
 <p class="word"><b>In words:</b> y = (x²/5 + constant/√x)², as long as the bracket is not negative.</p>
 </div>
+<p class="cannow"><b>You can now:</b> recognise a Bernoulli equation and read off \(p\), \(q\) and \(n\) after tidying it; turn it into a linear equation with \(u=y^{1-n}\) and solve it with an integrating factor; switch back to \(y\), state where the answer is valid, and list \(y=0\) when \(n\gt0\).</p>
 </section>
 
 <!-- ============ 2 Riccati ============ -->
-<section id="s2"><h2><span class="n">2</span>Riccati's equation (slide 3)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Riccati's equation (slide 3)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A Riccati equation has a \(y^2\) term plus a term with no \(y\) at all, so no change of ruler on its own straightens it. But if you already know one solution curve \(Y\), you can put the camera on it, like filming from a car driving along a known road, and watch only the gap \(y-Y\) between your curve and the known one. Turning that gap upside down (the new unknown is 1 ÷ the gap) gives a linear equation. Without a known solution there is nothing to ride on, which is why the method needs \(Y\) first.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 3)</span>
 <p>A <b>Riccati equation</b> is a first-order ODE of the form</p>
 \[ \frac{dy}{dx}=p(x)\,y^2+q(x)\,y+r(x). \]
@@ -260,13 +309,24 @@ Multiply by \((1-n)\) to get the linear equation in the box. Solve it with the i
 \[ \frac{du}{dx}+\big(2p(x)Y(x)+q(x)\big)\,u=-p(x). \]
 <p class="word"><b>In words:</b> rate of change of u + (2 × p × known solution + q) × u = −p.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(Y(x)\)</dt><dd>the known solution: the road the camera rides on.</dd>
+<dt>\(u\)</dt><dd>1 ÷ the gap between the unknown solution and the known one; a large \(u\) means the two curves are close.</dd>
+<dt>\(2p(x)Y(x)+q(x)\)</dt><dd>how strongly the equation pushes nearby curves towards or away from the known one (it is the derivative of the right side with respect to \(y\), taken at \(y=Y\)).</dd>
+<dt>\(-p(x)\)</dt><dd>what is left of the \(y^2\) term once the known solution has absorbed the rest.</dd>
+</dl></div>
 
 <h3>Why it works</h3>
-<p>Differentiate \(y=Y+u^{-1}\): \(y'=Y'-\dfrac{u'}{u^2}\). Expand the right side:</p>
+<ol class="steps proc">
+<li><b>Do:</b> differentiate \(y=Y+u^{-1}\): \(y'=Y'-\dfrac{u'}{u^2}\). <span class="why">This is the slope of the unknown curve as seen from the camera riding on \(Y\): the known slope plus the change in the gap.</span></li>
+<li><b>Do:</b> expand the right side:
 \[ \begin{aligned} &p\Big(Y+\frac1u\Big)^2+q\Big(Y+\frac1u\Big)+r\\ &=\underbrace{pY^2+qY+r}_{=\,Y'}+\frac{2pY+q}{u}+\frac{p}{u^2}. \end{aligned} \]
-<p>The underbraced part equals \(Y'\) because \(Y\) is a solution. So \(Y'\) cancels from both sides:</p>
+The underbraced part equals \(Y'\) because \(Y\) is a solution. <span class="why">Grouping by powers of \(\frac1u\) separates what the known road does on its own from what the gap does.</span></li>
+<li><b>Do:</b> so \(Y'\) cancels from both sides:
 \[ -\frac{u'}{u^2}=\frac{2pY+q}{u}+\frac{p}{u^2}. \]
-<p>Multiply by \(-u^2\): \(u'=-(2pY+q)u-p\), which is the boxed linear equation. The nasty \(y^2\) disappeared because the known solution already "uses up" the quadratic part.</p>
+<span class="why">Only the behaviour of the gap is left in the picture.</span></li>
+<li><b>Do:</b> multiply by \(-u^2\): \(u'=-(2pY+q)u-p\), which is the boxed linear equation. The nasty \(y^2\) disappeared because the known solution already "uses up" the quadratic part. <span class="why">Clearing the fractions leaves \(u\) and \(u'\) only to the first power, so the new view is linear and Part O1 can finish it.</span></li>
+</ol>
 
 <div class="box beyond"><span class="tag">Beyond the handouts</span>
 <ul class="list">
@@ -284,12 +344,15 @@ Multiply by \((1-n)\) to get the linear equation in the box. Solve it with the i
 \[ \begin{aligned} (xu)'&=-x\\ xu&=-\frac{x^2}{2}+C\\ u&=\frac{2C-x^2}{2x}. \end{aligned} \]
 <p><b>Back to y</b> (write \(K=2C\)):</p>
 \[ y=\frac1x+\frac{2x}{K-x^2},\qquad\text{and also } y=\frac1x. \]
+<p><span class="why">the known solution itself is the case "gap = 0", that is \(u=\infty\), so the formula cannot produce it and it is listed separately.</span></p>
 <p class="word"><b>In words:</b> y = the known solution 1/x + a correction 2x/(K − x²) that contains the arbitrary constant.</p>
 </div>
+<p class="cannow"><b>You can now:</b> recognise a Riccati equation and read off \(p\), \(q\), \(r\); check a given particular solution \(Y\) by substituting it; use \(y=Y+\frac1u\) to get a linear equation in \(u\), solve it and switch back; and list \(Y\) itself as an extra solution.</p>
 </section>
 
 <!-- ============ 3 Separable ============ -->
-<section id="s3"><h2><span class="n">3</span>Separable equations: a reminder (slide 4)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Separable equations: a reminder (slide 4)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Separable is the camera angle that §5 and §6 are trying to reach. The slope is a product of two pieces, one that only knows where you are left to right and one that only knows your height. So the \(x\)-information and the \(y\)-information can be sorted into two piles, one on each side, and each pile integrated on its own.</p></div></details>
 <p>Slide 4 repeats the separable equation from Part O1, because two of the substitutions in this part (homogeneous §5 and shift §6) end in a separable equation.</p>
 <div class="box def"><span class="tag">Definition (slide 4, from Part O1)</span>
 <p>A <b>separable</b> equation is a first-order equation of the form</p>
@@ -300,15 +363,22 @@ Multiply by \((1-n)\) to get the linear equation in the box. Solve it with the i
 <p class="word"><b>In words:</b> derivative = (function of x only) × (function of y only); divide by the y-part, then integrate each side with respect to its own variable.</p>
 </div>
 <p>Here \(X\) and \(Y\) are just names for "a function of \(x\) only" and "a function of \(y\) only" (this \(Y\) has nothing to do with the particular solution \(Y\) of §2). If \(Y(y_0)=0\) for some number \(y_0\), the constant \(y=y_0\) is also a solution that dividing by \(Y(y)\) loses. Full treatment and examples: Part O1.</p>
+<p class="cannow"><b>You can now:</b> recognise a separable equation; separate and integrate it; and spot the constant solutions \(y=y_0\) lost when dividing by \(Y(y)\).</p>
 </section>
 
 <!-- ============ 4 Homogeneous functions ============ -->
-<section id="s4"><h2><span class="n">4</span>Homogeneous functions (slide 5)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Homogeneous functions (slide 5)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture enlarging a photo about the origin: every point moves the same number of times further out along its own line from the origin. A homogeneous function of degree \(N\) responds to every such enlargement in the same simple way, like a length, an area, or (for degree 0) an angle, which does not change at all. A degree-0 function therefore only sees which direction a point lies in from the origin. That direction is the slope \(\frac yx\) of the line from the origin to the point, and it is the camera angle §5 uses.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 5)</span>
 <p>A function \(g(x,y)\) of two variables is <b>homogeneous of degree \(N\)</b> if, for every scale factor \(k\),</p>
 \[ g(kx,ky)=k^N\,g(x,y). \]
 <p class="word"><b>In words:</b> stretch both inputs by the same factor k, and the output gets multiplied by k to the power N.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\((kx,ky)\)</dt><dd>the same point after the enlargement: \(k\) times as far from the origin, on the same line through the origin.</dd>
+<dt>\(k^N\)</dt><dd>how the value grows: like a length for \(N=1\), like an area for \(N=2\), not at all for \(N=0\).</dd>
+<dt>\(N\)</dt><dd>the degree: for a polynomial, the total power of \(x\) and \(y\) shared by every term.</dd>
+</dl></div>
 <p>Analogy: in a photo enlarged \(k\) times, every <b>length</b> grows by \(k\) (degree 1), every <b>area</b> by \(k^2\) (degree 2), and every <b>angle</b> stays the same (degree 0). Each term of a homogeneous polynomial has the same total power of \(x\) and \(y\) (the powers in each term add up to the same number \(N\)).</p>
 <p>The slide's three examples, checked by replacing \(x\to kx\), \(y\to ky\):</p>
 <div class="cases">
@@ -322,10 +392,12 @@ Multiply by \((1-n)\) to get the linear equation in the box. Solve it with the i
 <p class="word"><b>In words:</b> a degree-0 function does not care about size, only about the ratio y/x (the slope of the line from the origin to the point).</p>
 <p>A quotient of two homogeneous functions of the <b>same</b> degree is homogeneous of degree 0, e.g. \(\frac{x^2+3xy+y^2}{x^2}=1+3\frac yx+\big(\frac yx\big)^2\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> test whether a function is homogeneous by replacing \(x\to kx\), \(y\to ky\), and give its degree; spot that a quotient of two homogeneous functions of the same degree has degree 0; and rewrite such a quotient as a function of \(\frac yx\).</p>
 </section>
 
 <!-- ============ 5 Homogeneous equations ============ -->
-<section id="s5"><h2><span class="n">5</span>Homogeneous equations: the substitution y = vx (slide 6)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Homogeneous equations: the substitution y = vx (slide 6)</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Stand at the origin and look out along one line through it. Every point on that line has the same slope \(\frac yx\), and for a homogeneous equation every point on it also has the same slope mark (the figure below shows this). So describe a point not by its height \(y\) but by which line it is on, \(w=\frac yx\), and how far along it is, \(x\). In that view the \(w\)-part and the \(x\)-part separate. The method needs \(g\) of degree 0, and \(x\ne0\): points on the vertical axis have no slope \(\frac yx\).</p></div></details>
 <div class="box thm"><span class="tag">Method (slide 6)</span>
 <p>The equation \(\dfrac{dy}{dx}=g(x,y)\), where \(g\) is homogeneous (of degree 0), can be solved by the substitution</p>
 \[ w=\frac yx,\qquad\text{i.e. } y=wx . \]
@@ -335,18 +407,24 @@ Multiply by \((1-n)\) to get the linear equation in the box. Solve it with the i
 <p style="font-size:.92rem;color:var(--muted)">Note on slide 6: it says only "g is homogeneous". For the method to work, \(g\) must be homogeneous of <b>degree 0</b> (as in §4's key fact). Equivalently, if the equation is written as \(M(x,y)\,dx+N(x,y)\,dy=0\), then \(M\) and \(N\) must be homogeneous of the <b>same</b> degree. This note uses that reading.</p>
 
 <h3>Why it works</h3>
-<ol class="steps">
-<li>Degree 0 means \(g(x,y)=G(w)\) with \(w=\frac yx\) (§4).</li>
-<li>From \(y=wx\), the product rule (Lecture 6) gives
+<ol class="steps proc">
+<li><b>Do:</b> degree 0 means \(g(x,y)=G(w)\) with \(w=\frac yx\) (§4). <span class="why">In the new view the right side only asks which line through the origin you are on.</span></li>
+<li><b>Do:</b> from \(y=wx\), the product rule (Lecture 6) gives
 \[ \frac{dy}{dx}=w+x\frac{dw}{dx}. \]
-<p class="word"><b>In words:</b> derivative of y = w + x × (derivative of w). The "+ w" is the part students forget.</p></li>
-<li>So the equation becomes
+<p class="word"><b>In words:</b> derivative of y = w + x × (derivative of w). The "+ w" is the part students forget.</p><span class="why">Moving along a solution changes both the line you are on (\(w\)) and the distance along it (\(x\)), so the slope has two parts.</span></li>
+<li><b>Do:</b> so the equation becomes
 \[ w+x\frac{dw}{dx}=G(w)\quad\Longrightarrow\quad x\frac{dw}{dx}=G(w)-w, \]
 which is <b>separable</b> (§3):
-\[ \int\frac{dw}{G(w)-w}=\int\frac{dx}{x}=\ln|x|+C. \]</li>
-<li>Finally replace \(w\) by \(\frac yx\). If \(G(w_0)=w_0\) for some number \(w_0\), the straight line \(y=w_0x\) is an extra solution lost by dividing.</li>
+\[ \int\frac{dw}{G(w)-w}=\int\frac{dx}{x}=\ln|x|+C. \]<span class="why">The \(w\)-pieces and the \(x\)-pieces now sit in separate factors: the camera has reached the separable view of §3.</span></li>
+<li><b>Do:</b> finally replace \(w\) by \(\frac yx\). If \(G(w_0)=w_0\) for some number \(w_0\), the straight line \(y=w_0x\) is an extra solution lost by dividing. <span class="why">Where \(G(w_0)=w_0\) the slope mark points straight along the line itself, so a solution can run along that line without turning.</span></li>
 </ol>
 
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(w\)</dt><dd>the slope of the line from the origin to the point: which line the camera is looking along.</dd>
+<dt>\(G(w)\)</dt><dd>the slope of the solution as it crosses that line (the same at every point of the line).</dd>
+<dt>\(G(w)-w\)</dt><dd>how much the solution's direction differs from the line's; where it is 0, the line itself is a solution.</dd>
+<dt>\(x\dfrac{dw}{dx}\)</dt><dd>how quickly the solution swings onto a new line as it moves along.</dd>
+</dl></div>
 <div class="figure"><p class="ttl">Why only y/x matters: the slope field is constant along every ray</p>
 <canvas class="plot" id="fray" style="aspect-ratio:16/10" aria-label="Slope field of a homogeneous equation with a highlighted line through the origin along which all slope marks are parallel"></canvas>
 <div class="ctrl"><label for="fray-s">Equation <select id="fray-s"><option value="a">Example 4: x²y′ = x² + 3xy + y²</option><option value="b">Example 5: y′ = (x + y)/(x − y)</option><option value="n">Not homogeneous: y′ = x² + y³</option></select></label>
@@ -367,7 +445,7 @@ which is <b>separable</b> (§3):
 \[ \begin{aligned} \int(w+1)^{-2}\,dw&=\int\frac{dx}{x}\\ -\frac{1}{w+1}&=\ln|x|+C\\ w&=-1-\frac{1}{\ln|x|+C}. \end{aligned} \]
 <p><b>Back to y</b> (\(y=wx\)):</p>
 \[ y=-x-\frac{x}{\ln|x|+C},\qquad\text{and also } y=-x \]
-<p>(the line from \(w=-1\), where \(G(w)-w=0\); check: \(x^2(-1)=x^2-3x^2+x^2\) ✓).</p>
+<p><span class="why">at \(w=-1\) the slope mark points along the line \(y=-x\) itself, so that line is a solution the division by \((w+1)^2\) threw away.</span>(the line from \(w=-1\), where \(G(w)-w=0\); check: \(x^2(-1)=x^2-3x^2+x^2\) ✓).</p>
 </div>
 
 <div class="box eg"><span class="tag">Example 5: spiral solutions (written for these notes)</span>
@@ -402,27 +480,38 @@ which is <b>separable</b> (§3):
 <li><b>Later (Part O3):</b> a <b>linear</b> equation whose right side is zero, e.g. \(y''-2y'+y=0\) (no term without \(y\)). Solve with a characteristic equation.</li>
 </ul>
 <p>Decide which meaning from the shape of the equation, not from the word.</p></div>
+<p class="cannow"><b>You can now:</b> recognise a homogeneous first-order equation, including one written as \(M\,dx+N\,dy=0\); substitute \(y=vx\) with \(\frac{dy}{dx}=v+x\frac{dv}{dx}\); separate, integrate and switch back to \(x\) and \(y\); and list the straight-line solutions where \(G(w)=w\).</p>
 </section>
 
 <!-- ============ 6 Shift ============ -->
-<section id="s6"><h2><span class="n">6</span>Shift substitutions</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Shift substitutions</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Two more camera moves. If the right side only ever sees one combination, such as \(x+y\), give that combination its own name and watch it instead of \(y\). If the right side is a fraction of two straight-line expressions, slide the camera so that the origin sits where the two lines cross; sliding does not change any slope, and from the new origin the equation looks homogeneous. (If the two lines are parallel they never cross, but then top and bottom share one combination \(ax+by\), and the first move works.)</p></div></details>
 <div class="box beyond"><span class="tag">Beyond the handouts</span>
 <p>This section is not on the slides, but this type of question appears in recent exams (May 2025, for example). It uses only the ideas above.</p>
 <h3 style="margin-top:8px">Type A: the right side depends only on one combination \(ax+by+c\)</h3>
-<p>If the equation is \(\dfrac{dy}{dx}=f(ax+by+c)\), put</p>
+<ol class="steps proc">
+<li><b>Do:</b> if the equation is \(\dfrac{dy}{dx}=f(ax+by+c)\), put
 \[ u=ax+by+c, \]
+<span class="why">The right side then depends on one unknown, \(u\), instead of on \(x\) and \(y\) together.</span></li>
+<li><b>Do:</b> differentiate:
 \[ \begin{aligned}\frac{du}{dx}&=a+b\,\frac{dy}{dx}\\ &=a+b\,f(u). \end{aligned} \]
+<span class="why">The right side is a function of \(u\) alone, so the equation is separable (§3); solve it and put \(u\) back.</span></li>
+</ol>
 <p class="word"><b>In words:</b> name the repeated combination u; its derivative is a + b × (the right side), which is separable.</p>
 <p><b>Recognition cue:</b> after expanding, the right side contains a perfect square like \(y^2-2xy+x^2=(y-x)^2\) or \((x+y)^2\), or a function such as \(\sin(x-y)\). Try \(u=y-x\), \(u=x+y\), … Watch the extra constant: for \(u=y-x\), \(u'=y'-1\), not \(u'=y'\).</p>
 <div class="box eg"><span class="tag">Example 6</span>
 <p>Solve \(\dfrac{dy}{dx}=(x+y)^2\).</p>
-<p>Put \(u=x+y\), so \(u'=1+y'=1+u^2\). Separate:</p>
+<p>Put \(u=x+y\), so \(u'=1+y'=1+u^2\). Separate: <span class="why">the derivative of \(x\) is 1, which gives the extra 1; without it the equation would not match.</span></p>
 \[ \begin{aligned} \int\frac{du}{1+u^2}&=\int dx\\ \tan^{-1}u&=x+C\\ u&=\tan(x+C). \end{aligned} \]
 <p>Back to \(y=u-x\):</p>
 \[ y=\tan(x+C)-x. \]
 </div>
 <h3>Type B: shifting the origin</h3>
-<p>For \(\dfrac{dy}{dx}=\dfrac{a_1x+b_1y+c_1}{a_2x+b_2y+c_2}\), where the two lines \(a_1x+b_1y+c_1=0\) and \(a_2x+b_2y+c_2=0\) meet at a point \((h,k)\), put \(x=X+h\), \(y=Y+k\). The constants disappear and the new equation in \(X,Y\) is homogeneous (§5).</p>
+<ol class="steps proc">
+<li><b>Do:</b> for \(\dfrac{dy}{dx}=\dfrac{a_1x+b_1y+c_1}{a_2x+b_2y+c_2}\), find the point \((h,k)\) where the two lines \(a_1x+b_1y+c_1=0\) and \(a_2x+b_2y+c_2=0\) meet. <span class="why">That crossing is where top and bottom are both zero: the natural centre of the picture.</span></li>
+<li><b>Do:</b> put \(x=X+h\), \(y=Y+k\). The constants disappear and the new equation in \(X,Y\) is homogeneous (§5). <span class="why">Sliding the camera does not change slopes (\(\frac{dY}{dX}=\frac{dy}{dx}\)); it only removes the constants that spoilt the degree.</span></li>
+<li><b>Do:</b> solve with \(Y=vX\), then put \(X=x-h\), \(Y=y-k\) back. <span class="why">This slides the camera back to the original origin.</span></li>
+</ol>
 <div class="box eg"><span class="tag">Example 7</span>
 <p>Solve \(\dfrac{dy}{dx}=\dfrac{x+y-2}{x-y}\).</p>
 <p>The lines \(x+y=2\) and \(x=y\) meet at \((1,1)\). With \(X=x-1\), \(Y=y-1\) (so \(\frac{dY}{dX}=\frac{dy}{dx}\)):</p>
@@ -439,10 +528,12 @@ which is <b>separable</b> (§3):
 <div class="legend"><span style="--k:var(--accent)">y = tan(x + C) − x</span><span style="--k:var(--muted)">other members</span></div>
 <div class="readout" id="fshift-out"></div>
 <p class="cap">Every solution is increasing (\(y'=(x+y)^2\ge0\)) and has vertical asymptotes where \(x+C=\frac\pi2+n\pi\): each solution only lives on an interval of length \(\pi\). Changing \(C\) slides the tangent pattern sideways.</p></div>
+<p class="cannow"><b>You can now:</b> spot a right side that depends only on one combination such as \(x+y\) or \(y-x\) (often a perfect square), substitute it with the correct \(u'\), and separate; and move the origin to where two lines meet to make a linear-over-linear equation homogeneous.</p>
 </section>
 
 <!-- ============ 7 Reduction of order ============ -->
-<section id="s7"><h2><span class="n">7</span>Reduction of order (slides 7–9)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Reduction of order (slides 7–9)</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>If you already know one solution \(y_1\) of a linear equation, use it as a measuring stick: describe any other solution as \(y_1\) times a new unknown \(u\), the way you would measure a length in multiples of a stick. A constant \(u\) just gives a multiple of \(y_1\), which is already a solution, so it costs nothing; only how \(u\) changes is left to find. Watching \(u'\) instead of \(u\) drops the order by one. This needs the equation to be linear, so that multiples of a solution are solutions.</p></div></details>
 <h3>Background from Part O3, in brief</h3>
 <p>Reduction of order is about <b>second-order linear</b> equations. Here is the minimum you need (Part O3 covers it properly):</p>
 <ul class="list">
@@ -470,21 +561,31 @@ is the <b>general solution</b>: two arbitrary constants for a second-order equat
 </div>
 
 <h3>Why it works (written for these notes)</h3>
-<p>Differentiate \(y=y_1u\) twice with the product rule:</p>
+<ol class="steps proc">
+<li><b>Do:</b> differentiate \(y=y_1u\) twice with the product rule:
 \[ \begin{aligned} y'&=y_1'u+y_1u'\\ y''&=y_1''u+2y_1'u'+y_1u''. \end{aligned} \]
-<p>Substitute into \(y''+Py'+Qy=0\) and group by \(u\), \(u'\), \(u''\):</p>
+<span class="why">Each derivative splits into a part where the measuring stick \(y_1\) changes and a part where the count \(u\) changes.</span></li>
+<li><b>Do:</b> substitute into \(y''+Py'+Qy=0\) and group by \(u\), \(u'\), \(u''\):
 \[ \begin{aligned} &y_1u''+\big(2y_1'+Py_1\big)u'\\ &\quad+\underbrace{\big(y_1''+Py_1'+Qy_1\big)}_{=\,0\text{ since }y_1\text{ is a solution}}u=0. \end{aligned} \]
-<p>The \(u\) term always vanishes. Only \(u''\) and \(u'\) remain, so put \(w=u'\):</p>
+The \(u\) term always vanishes. <span class="why">The bracket in front of \(u\) is the equation applied to the stick \(y_1\) itself, which is zero because \(y_1\) is a solution.</span></li>
+<li><b>Do:</b> only \(u''\) and \(u'\) remain, so put \(w=u'\):
 \[ y_1\,w'+\big(2y_1'+Py_1\big)\,w=0, \]
 <p class="word"><b>In words:</b> known solution × (derivative of w) + (2 × derivative of known solution + P × known solution) × w = 0.</p>
-<p>This is a <b>first-order</b> linear (and separable) equation for \(w\): solve it (Part O1), integrate once more to get \(u\), and multiply by \(y_1\). The same works for higher orders: a third-order linear equation becomes second order in \(w\), and so on.</p>
+<span class="why">With no \(u\) left, the equation only sees \(u'\); naming it \(w\) makes the order one lower.</span></li>
+<li><b>Do:</b> this is a <b>first-order</b> linear (and separable) equation for \(w\): solve it (Part O1), integrate once more to get \(u\), and multiply by \(y_1\). The same works for higher orders: a third-order linear equation becomes second order in \(w\), and so on. <span class="why">Integrating \(w\) brings in the second constant, and multiplying by \(y_1\) turns the count back into a solution \(y\).</span></li>
+</ol>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(u\)</dt><dd>how many "sticks" \(y_1\) the unknown solution is worth at each \(x\).</dd>
+<dt>\(w=u'\)</dt><dd>how fast that count changes; \(w=0\) just gives a constant multiple of \(y_1\).</dd>
+<dt>\(2y_1'+Py_1\)</dt><dd>the only coefficient left once the \(u\) term has gone (in Example 8 it is 0 as well).</dd>
+</dl></div>
 
 <div class="box eg"><span class="tag">Example 8 (slide 9)</span>
 <p>For \(y''-2y'+y=0\) with \(y=y_1u\), where \(y_1=e^x\), the resulting equation for \(u\) has only \(u''\) and \(u'\) terms and <b>no \(u\)</b> term. Defining \(w=u'\) gives a first-order ODE in \(w\): reduction of order from second to first.</p>
 <p><b>Check \(y_1\).</b> \(e^x-2e^x+e^x=0\) ✓.</p>
 <p><b>Differentiate</b> \(y=e^xu\):</p>
 \[ \begin{aligned} y'&=e^x(u+u')\\ y''&=e^x(u+2u'+u''). \end{aligned} \]
-<p><b>Substitute</b> and divide by \(e^x\neq0\):</p>
+<p><b>Substitute</b> and divide by \(e^x\neq0\): <span class="why">\(e^x\) is never zero, so dividing by it loses no solutions.</span></p>
 \[ \begin{aligned} (u+2u'+u'')-2(u+u')+u&=0\\ u''&=0. \end{aligned} \]
 <p>In this example even the \(u'\) term cancels (\(2y_1'+Py_1=2e^x-2e^x=0\)), so the equation is as simple as possible. In general a \(u'\) term remains.</p>
 <p><b>Reduce:</b> \(w=u'\) gives \(w'=0\), so \(w=c_2\). Then \(u=c_2x+c_1\), and</p>
@@ -515,10 +616,11 @@ is the <b>general solution</b>: two arbitrary constants for a second-order equat
 \[ w=u'=\frac{e^{-\int P\,dx}}{y_1^{\,2}}, \]
 \[ y_2=y_1\int\frac{e^{-\int P\,dx}}{y_1^{\,2}}\,dx, \]
 <p>where \(P\) is read from the <b>standard form</b> \(y''+Py'+Qy=0\) (coefficient of \(y''\) equal to 1). In Example 9, \(P=-\frac3x\): \(e^{-\int P}=x^3\), \(w=\frac{x^3}{x^4}=\frac1x\), \(y_2=x^2\ln x\) ✓. Exams expect the substitution working, so show the steps rather than quoting this.</p></div>
+<p class="cannow"><b>You can now:</b> substitute \(y=y_1u\) into a second-order linear equation and check that the \(u\) term vanishes; reduce with \(w=u'\), solve for \(w\), integrate to get \(u\); and write the general solution \(y=c_1y_1+c_2y_2\) with two constants.</p>
 </section>
 
 <!-- ============ 8 Summary ============ -->
-<section id="s8"><h2><span class="n">8</span>Summary <span class="pill">Written for these notes</span></h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Summary <span class="pill">Written for these notes</span></span></h2>
 <ul class="list">
 <li><b>Bernoulli</b> \(y'+py=qy^n\) (\(n\) any real, \(n\ne0,1\)): \(u=y^{1-n}\) gives the linear equation \(u'+(1-n)pu=(1-n)q\). For \(n\gt0\), \(y=0\) is an extra solution.</li>
 <li><b>Riccati</b> \(y'=py^2+qy+r\): needs one particular solution \(Y\); \(y=Y+\frac1u\) gives the linear equation \(u'+(2pY+q)u=-p\).</li>
@@ -531,7 +633,7 @@ is the <b>general solution</b>: two arbitrary constants for a second-order equat
 </section>
 
 <!-- ============ 9 Common mistakes ============ -->
-<section id="s9"><h2><span class="n">9</span>Common mistakes <span class="pill">Written for these notes</span></h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Common mistakes <span class="pill">Written for these notes</span></span></h2>
 <div class="box"><div class="mistake">
 <span class="x">✗</span><span>Bernoulli: writing \(u'=y^{-n}y'\) and forgetting the factor \((1-n)\). <span class="ok">✓</span> \(u'=(1-n)y^{-n}y'\); e.g. for \(u=y^{-1}\), \(u'=-y^{-2}y'\) (minus sign). Both \(p\) and \(q\) get multiplied by \((1-n)\).</span>
 <span class="x">✗</span><span>Bernoulli: reading \(p\), \(q\), \(n\) before tidying the equation. <span class="ok">✓</span> First make the coefficient of \(y'\) equal to 1 and put the \(y\) term on the left, as for the integrating factor.</span>
@@ -548,7 +650,7 @@ is the <b>general solution</b>: two arbitrary constants for a second-order equat
 </section>
 
 <!-- ============ 10 Find the mistake ============ -->
-<section id="s10"><h2><span class="n">10</span>Find the mistake <span class="pill">Written for these notes</span></h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Find the mistake <span class="pill">Written for these notes</span></span></h2>
 <p>Each piece of student work below contains one error. Find it before opening the answer.</p>
 
 <div class="q"><p class="qh">A. Solve \(\dfrac{dy}{dx}+2y=e^xy^2\).</p>
@@ -577,7 +679,7 @@ is the <b>general solution</b>: two arbitrary constants for a second-order equat
 </section>
 
 <!-- ============ 11 Group work ============ -->
-<section id="s11"><h2><span class="n">11</span>Group work <span class="pill">Written for these notes</span></h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Group work <span class="pill">Written for these notes</span></span></h2>
 <p>Practice questions, one per method. Try each before opening the hints.</p>
 
 <div class="q"><p class="qh">1. Solve \(x\dfrac{dy}{dx}+y=x^2y^2\) for \(x\gt0\).</p>
@@ -606,7 +708,7 @@ is the <b>general solution</b>: two arbitrary constants for a second-order equat
 </section>
 
 <!-- ============ 12 Concept checks ============ -->
-<section id="s12"><h2><span class="n">12</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Concept checks <span class="pill">Written for these notes</span></span></h2>
 
 <div class="q"><p class="qh">1. Is \(\dfrac{dy}{dx}=\dfrac{x^3+y^3}{xy^2}\) a homogeneous equation? If so, what is \(G(w)\)?</p>
 <details><summary>Answer</summary><div><p>Yes: top and bottom are both degree 3, so the quotient is degree 0. Dividing top and bottom by \(x^3\): \(G(w)=\dfrac{1+w^3}{w^2}\).</p></div></details></div>
@@ -628,7 +730,7 @@ is the <b>general solution</b>: two arbitrary constants for a second-order equat
 </section>
 
 <!-- ============ Exam taster ============ -->
-<section id="pastpaper"><h2><span class="n">13</span>Exam taster</h2>
+<section id="pastpaper"><h2><span class="n">13</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this part, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Part O2's question types appear 19 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide.</p>
 
@@ -881,5 +983,13 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </html>

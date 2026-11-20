@@ -106,6 +106,33 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -137,17 +164,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · Calculus · Lecture 15</span>
   <h1>Parameterization: Parametric and Polar Curves</h1>
-  <p class="lede">Every slide of Lecture 15 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this lecture.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this lecture sits</h2>
-<p>Lectures 11 to 14 were about integration. Until now, every curve has been the graph of a function \(y=f(x)\): one \(y\) for each \(x\). Many important curves (circles, loops, figure-eights, spirals, the path of a moving object) are not like that. This lecture gives two new ways to describe curves:</p>
-<ul class="list">
-<li><b>Parametric curves</b>: both \(x\) and \(y\) are given in terms of a third variable \(t\) (think "time").</li>
-<li><b>Polar curves</b>: a point is located by its distance \(r\) from a centre point and its angle \(\theta\), and the curve is given as \(r=f(\theta)\).</li>
-</ul>
-<p>Then it applies calculus to these curves: slopes of tangent lines and areas. Lecture 16 (area and volume) and Lecture 17 (arc length and surface area) use these ideas again.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this lecture sits</span></h2>
+<p>Until now every curve was a graph \(y=f(x)\), with one \(y\) for each \(x\). Loops, circles and spirals are not like that. This lecture describes them in two new ways: as the trail of a bug walking on paper while a clock ticks (parametric curves), and as a marker on a lighthouse beam, given by the beam's angle and the distance along it (polar curves). Then it finds slopes and areas for both.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>A parametric curve is the trail of a bug: the clock \(t\) says where it is.</b> Lines and circles have standard forms.</li>
+<li><a href="#s2">§2</a> <b>Eliminating the parameter throws away the clock and keeps the trail.</b> Say which part of the Cartesian graph the bug really visits.</li>
+<li><a href="#s3">§3</a> <b>Slope = vertical speed ÷ horizontal speed.</b> Zero horizontal speed means a vertical tangent.</li>
+<li><a href="#s4">§4</a> <b>Area = add up height × sideways step as the bug walks.</b> Walking right to left gives a minus sign.</li>
+<li><a href="#s5">§5</a> <b>A polar point is a beam angle and a distance along the beam.</b> Negative distance means behind the lighthouse.</li>
+<li><a href="#s6">§6</a> <b>Fixed angle gives a line through the pole; fixed distance gives a circle about it.</b></li>
+<li><a href="#s7">§7</a> <b>Sweep the beam and follow the marker to sketch \(r=f(\theta)\).</b> <span class="pill">Most common L15 exam type</span></li>
+<li><a href="#s8">§8</a> <b>A polar curve is a parametric curve with the beam angle as the clock.</b> The slope is not \(\frac{dr}{d\theta}\).</li>
+<li><a href="#s9">§9</a> <b>Polar area adds up thin pizza slices: \(\frac12r^2\,d\theta\) each.</b></li>
+</ol>
+</div>
+<p><b>You need:</b> integration so far (Lectures 11 to 14), the Chain and Product Rules (Lecture 6), and radians and right-angled-triangle trigonometry. <b>In the exam:</b> 15 appearances in 23 past papers: slope, speed or tangent of a parametric curve; sketching a polar curve and its symmetry (the most common); and slopes or horizontal and vertical tangents of polar curves. Lecture 16 (area and volume) and Lecture 17 (arc length and surface area) use these ideas again. See the <a href="guide-L15.html">L15 exam guide</a>.</p>
 
 <h3>Recall slide (slide 2): integration so far</h3>
 <p>The techniques of integration met so far are: the Substitution Rule (Lecture 13), Integration by Parts (Lecture 13), trigonometric identities, trigonometric substitution and partial fraction decomposition (Lecture 14). The slide's advice:</p>
@@ -174,7 +209,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Parametric curves (slides 7 to 10)</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Parametric curves (slides 7 to 10)</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A bug walks across a sheet of paper while a clock ticks. At each clock reading \(t\) the bug is at one spot \((x,y)\), and its footprints form the curve. The bug may cross the same vertical line many times, or walk over its own trail, which a graph \(y=F(x)\) can never do. The clock reading is the parameter.</p></div></details>
 <h3>Why parameters? (slide 7)</h3>
 <p>A <b>function</b> \(y=F(x)\) gives exactly one \(y\) for each \(x\). On a graph, this means every vertical line meets the graph at most once (the <b>vertical line test</b>). The slide's picture shows a wiggly path of a moving particle that loops back on itself: some vertical lines cut it three times, so it is <b>not</b> the graph of any function \(y=F(x)\). (The first figure below redraws a curve of this kind.)</p>
 <p>The fix: instead of making \(y\) depend on \(x\), let <b>both</b> \(x\) and \(y\) depend on a third variable \(t\), called the <b>parameter</b>:</p>
@@ -214,6 +250,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </table></div>
 <p>Each step of \(t\) moves the point 2 right and 1 down, so the points lie on a straight line of slope \(-\frac12\). The curve is the <b>line segment</b> from the initial point \((-3,4)\) to the terminal point \((5,0)\), traced from upper left to lower right. (Check by removing \(t\): \(t=\frac{x-1}{2}\), so \(y=2-\frac{x-1}{2}=\frac{5-x}{2}\), for \(-3\le x\le 5\).)</p></div>
 
+<details class="idea"><summary>What is this? (parametric line)</summary><div><p>The bug walks in a straight line at a steady pace. Every tick of the clock it takes the same step: 1 to the right and \(m\) up. It is at the point \((a,b)\) when the clock reads 0.</p></div></details>
 <div class="box def"><span class="tag">Definition · parametric line (slide 9)</span>
 <p>The line with slope \(m\) through the point \((a,b)\) has parametric equations</p>
 \[x=a+t,\qquad y=b+mt.\]
@@ -224,26 +261,37 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Plot the curve \(x=\cos t,\ y=\sin t,\ 0\le t\le 2\pi\).</p>
 <p><b>Solution.</b> For every \(t\), \(x^2+y^2=\cos^2t+\sin^2t=1\), so every point lies on the circle of radius 1 centred at the origin (the <b>unit circle</b>). At \(t=0\) the point is \((1,0)\); at \(t=\frac{\pi}{2}\) it is \((0,1)\); at \(t=\pi\), \((-1,0)\); at \(t=\frac{3\pi}{2}\), \((0,-1)\); at \(t=2\pi\), back to \((1,0)\). So the curve is the whole unit circle, traced <b>once, anticlockwise</b>, starting and ending at \((1,0)\). Here \(t\) is exactly the angle from the positive \(x\)-axis to the point.</p></div>
 
+<details class="idea"><summary>What is this? (parametric circle)</summary><div><p>Now the bug runs round a circular track of radius \(r\) with centre \((h,k)\), anticlockwise. The clock reading \(t\) is the angle it has turned through so far, measured from the rightmost point of the track. One lap takes \(t\) from 0 to \(2\pi\).</p></div></details>
 <div class="box def"><span class="tag">Definition · parametric circle (slide 10)</span>
 <p>A circle with radius \(r\) and centre \((h,k)\) has parametric equations</p>
 \[x=h+r\cos t,\qquad y=k+r\sin t.\]
 <p class="word"><b>In words:</b> start at the centre, then go \(r\cos t\) across and \(r\sin t\) up: a point at distance \(r\) from the centre in the direction of angle \(t\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\((h,k)\)</dt><dd>the centre of the track.</dd>
+<dt>\(r\)</dt><dd>the radius: the bug is always this far from the centre.</dd>
+<dt>\(r\cos t\)</dt><dd>how far right of the centre the bug is at angle \(t\) (negative means left).</dd>
+<dt>\(r\sin t\)</dt><dd>how far above the centre it is (negative means below).</dd>
+<dt>\(0\le t\le 2\pi\)</dt><dd>one full lap, anticlockwise, starting and ending at the rightmost point \((h+r,k)\).</dd>
+</dl></div>
 <p>Check: \((x-h)^2+(y-k)^2=r^2\cos^2t+r^2\sin^2t=r^2\), the usual Cartesian equation of that circle (HKDSE Core). Over \(0\le t\le 2\pi\) it is traced once anticlockwise.</p></div>
+<p class="cannow"><b>You can now:</b> say why a looping path is not the graph of a function \(y=F(x)\); trace a parametric curve from a table of \(t\)-values, with its initial point, terminal point and orientation; write parametric equations for a line of slope \(m\) through \((a,b)\) and for a circle of radius \(r\) and centre \((h,k)\).</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>Eliminating the parameter; Lissajous curve and "helix" (slides 11 to 14)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Eliminating the parameter; Lissajous curve and "helix" (slides 11 to 14)</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Eliminating the parameter means throwing away the clock and keeping only the trail. You get the shape of the path as one equation in \(x\) and \(y\), but you lose when, and in which direction, the bug walked. The Cartesian graph can also be longer than the trail: the bug may only ever visit part of it, so you must say which part.</p></div></details>
 <p>A <b>Cartesian equation</b> is an ordinary equation in \(x\) and \(y\) only (like \(x^2+y^2=1\)). Turning parametric equations into one is called <b>eliminating the parameter</b> (slide 11):</p>
-<ol class="steps">
-<li>Start with the two parametric equations.</li>
-<li>Solve one of them for the parameter \(t\).</li>
-<li>Substitute that expression for \(t\) into the other equation.</li>
-<li>The result is one Cartesian equation. <b>Restrict the domain as needed</b>: the parametric curve may only be part of the Cartesian graph.</li>
+<ol class="steps proc">
+<li><b>Do:</b> Start with the two parametric equations. <span class="why">They say where the bug is at each clock reading.</span></li>
+<li><b>Do:</b> Solve one of them for the parameter \(t\). <span class="why">This reads the clock off the bug's position, so the time can be written in terms of where the bug is.</span></li>
+<li><b>Do:</b> Substitute that expression for \(t\) into the other equation. <span class="why">Now the other coordinate is linked straight to the first one, with no clock left.</span></li>
+<li><b>Do:</b> The result is one Cartesian equation. <b>Restrict the domain as needed</b>: the parametric curve may only be part of the Cartesian graph. <span class="why">The Cartesian graph contains every point that fits the equation, but the bug only reaches the values its \(x(t)\) and \(y(t)\) can take (for example \(x=t^2\) is never negative).</span></li>
 </ol>
 <p>The slide marks this with an asterisk: it is <b>not always possible</b> to solve for \(t\) neatly. Sometimes a trick works instead (e.g. \(\cos^2t+\sin^2t=1\) in Example 2); sometimes nothing works and the curve can only be studied in parametric form.</p>
 <div class="box eg"><span class="tag">Example · why restrict the domain</span>
 <p>\(x=t^2,\ y=t^4\). Solve the first: \(t^2=x\). Substitute: \(y=(t^2)^2=x^2\). But \(x=t^2\) is never negative, so the curve is only the <b>right half</b> of the parabola \(y=x^2\), i.e. \(y=x^2\) with \(x\ge 0\). Forgetting this is one of the slide's common mistakes (section 11).</p></div>
 
+<details class="idea"><summary>What is this? (Lissajous curve)</summary><div><p>Imagine the bug being pushed by two swings at once: a left-right swing, and an up-down swing that goes twice as fast. Each swing on its own just moves the bug back and forth along a segment. Together they draw a closed loop; here, a figure-eight.</p></div></details>
 <div class="box eg"><span class="tag">Example 3 · Lissajous curve (slides 12 and 13)</span>
 <p>Plot the curve \(x=\sin t,\ y=\sin 2t\).</p>
 <p>A <b>Lissajous curve</b> is a curve of the form \(x=\sin(at+c),\ y=\sin(bt)\): two oscillations at different rates, one across and one up and down. (They appear on oscilloscopes when two signals are compared.)</p>
@@ -311,15 +359,23 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">traced for 0 ≤ t ≤ (slider)</span><span style="--k:var(--muted)">table points / rest of curve</span><span style="--k:var(--c4)">helix: sliding circle</span></div>
 <div class="readout" id="tr2-out"></div>
 <p class="cap">Dots mark the table values. For the helix, the orange circle of radius 1 is centred at \((t,t)\) on the dashed line \(y=x\); the particle is on that circle at angle \(t\). The faint curve shows \(-2\pi\le t\le 4\pi\).</p></div>
+<p class="cannow"><b>You can now:</b> eliminate the parameter by solving for \(t\) or with an identity such as \(\cos^2t+\sin^2t=1\); state the part of the Cartesian graph the curve really covers; plot a curve such as a Lissajous figure from a table of values and describe how it is traced.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Tangents to parametric curves (slides 15 and 16)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Tangents to parametric curves (slides 15 and 16)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Freeze the bug at one instant. It has a horizontal speed (how fast \(x\) changes) and a vertical speed (how fast \(y\) changes), each with a sign: negative when it moves left or down. The steepness of its trail is rise per run, which is vertical speed divided by horizontal speed: the clock cancels out. This needs the bug to be moving sideways at that instant. If its horizontal speed is zero but it is still moving up or down, the trail is vertical there.</p></div></details>
 <p>A <b>tangent line</b> touches a curve at a point and has the same direction as the curve there (Lecture 6). Its slope is \(\frac{dy}{dx}\). For a parametric curve, \(y\) is not given as a function of \(x\), but we can still find \(\frac{dy}{dx}\) from the rates \(\frac{dx}{dt}\) and \(\frac{dy}{dt}\).</p>
 <div class="box thm"><span class="tag">Slope of a parametric curve (slide 15)</span>
 <p>Suppose \(f\) and \(g\) are differentiable (Lecture 5: they have derivatives). At a point of the curve \(x=f(t),\ y=g(t)\) where \(y\) is also a differentiable function of \(x\), the slope of the tangent line is</p>
 \[\frac{dy}{dx}=\frac{dy/dt}{dx/dt}\qquad\text{if }\frac{dx}{dt}\ne 0.\]
 <p class="word"><b>In words:</b> slope = (how fast the height changes in time) ÷ (how fast the across-position changes in time) = rise per second ÷ run per second = rise per run.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\frac{dy}{dt}\)</dt><dd>the bug's vertical speed: rise per tick of the clock.</dd>
+<dt>\(\frac{dx}{dt}\)</dt><dd>its horizontal speed: run per tick.</dd>
+<dt>the quotient</dt><dd>rise per run, the slope of the trail; the ticks cancel.</dd>
+<dt>\(\frac{dx}{dt}\ne 0\)</dt><dd>the bug must be moving sideways. If it is not, the tangent is vertical, or, if both speeds are 0, the bug has stopped and the point needs a closer look.</dd>
+</dl></div>
 <p><b>Why.</b> By the Chain Rule (Lecture 6), \(\frac{dy}{dt}=\frac{dy}{dx}\cdot\frac{dx}{dt}\). Divide both sides by \(\frac{dx}{dt}\), which is allowed because it is not zero. Analogy: if a car climbs 3 m per second while moving 6 m per second horizontally, the road rises \(\frac{3}{6}=\frac12\) m per metre.</p>
 <p><b>Second derivative.</b> If \(f\) and \(g\) are <b>twice-differentiable</b> (their derivatives are themselves differentiable) and \(\frac{dx}{dt}\ne0\), then apply the same rule to the function \(\frac{dy}{dx}\) (which is a function of \(t\)) in place of \(y\):</p>
 \[\frac{d^2y}{dx^2}=\frac{d}{dx}\left(\frac{dy}{dx}\right)=\frac{\dfrac{d}{dt}\left(\dfrac{dy}{dx}\right)}{dx/dt}.\]
@@ -336,9 +392,9 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <div class="box eg"><span class="tag">Example 5 · tangents (slide 16)</span>
 <p>Find the slope of the tangent line at \((1,0)\) for \(x=t+\cos t,\ y=t+\sin t\) (the curve of Example 4).</p>
-<p><b>Step 1: find \(t\) at the point.</b> We need \(t+\cos t=1\) and \(t+\sin t=0\). \(t=0\) works: \(0+\cos0=1\), \(0+\sin 0=0\). It is the only value, because \(t+\sin t\) is increasing (its derivative \(1+\cos t\ge 0\), zero only at isolated points), so it equals 0 only once.</p>
+<p><b>Step 1: find \(t\) at the point.</b> We need \(t+\cos t=1\) and \(t+\sin t=0\). \(t=0\) works: \(0+\cos0=1\), \(0+\sin 0=0\). It is the only value, because \(t+\sin t\) is increasing (its derivative \(1+\cos t\ge 0\), zero only at isolated points), so it equals 0 only once. <span class="why">The slope formula works with clock readings, so a point given as \((x,y)\) must first be turned into its \(t\).</span></p>
 <p><b>Step 2: differentiate.</b> \(\frac{dx}{dt}=1-\sin t\), \(\frac{dy}{dt}=1+\cos t\).</p>
-<p><b>Step 3: at \(t=0\):</b> \(\frac{dx}{dt}=1\ne0\), \(\frac{dy}{dt}=2\), so</p>
+<p><b>Step 3: at \(t=0\):</b> \(\frac{dx}{dt}=1\ne0\), \(\frac{dy}{dt}=2\), so <span class="why">The horizontal speed is checked first because the rule divides by it.</span></p>
 \[\left.\frac{dy}{dx}\right|_{t=0}=\frac{1+\cos 0}{1-\sin 0}=\frac{2}{1}=2.\]
 <p>Slope \(=2\). Tangent line: \(y-0=2(x-1)\), i.e. \(y=2x-2\).</p>
 <p><b>Extra (second derivative, for practice).</b> \(\frac{dy}{dx}=\frac{1+\cos t}{1-\sin t}\). By the Quotient Rule, \(\frac{d}{dt}\left(\frac{dy}{dx}\right)=\frac{-\sin t(1-\sin t)+(1+\cos t)\cos t}{(1-\sin t)^2}\), which is \(2\) at \(t=0\). Dividing by \(\frac{dx}{dt}=1\): \(\frac{d^2y}{dx^2}=2\gt 0\), so the curve is concave up at \((1,0)\).</p></div>
@@ -354,21 +410,29 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">curve</span><span style="--k:var(--c2)">tangent line</span></div>
 <div class="readout" id="tg1-out"></div>
 <p class="cap">The readout shows \(\frac{dx}{dt}\), \(\frac{dy}{dt}\) and their quotient. Choosing a curve resets the slider to the point used in the text (for Example 5, \(t=0\), the point \((1,0)\)). When \(\frac{dx}{dt}=0\) the tangent is vertical.</p></div>
+<p class="cannow"><b>You can now:</b> find \(\frac{dy}{dx}=\frac{dy/dt}{dx/dt}\) at a given \(t\), or at a given point after finding its \(t\); write the tangent line; find horizontal and vertical tangents; compute \(\frac{d^2y}{dx^2}\) correctly and read concavity from its sign.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Area in parametric form (slides 17 and 18)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Area in parametric form (slides 17 and 18)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>As the bug walks above the \(x\)-axis, colour in the strip below it. In one tiny tick it moves sideways a little and is at some height, so it adds a thin strip of area: height × sideways step. Adding the strips over the whole walk gives the area. If the bug walks right to left, its sideways steps count as negative and the total comes out negative; and if it walks over the same stretch twice, that area is counted twice.</p></div></details>
 <p>For a curve \(y=F(x)\) from \(x=a\) to \(x=b\) (with \(F\ge0\)), the area under it is \(A=\int_a^b F(x)\,dx\) (Lecture 12). Now suppose the same curve is given parametrically by \(x=f(t),\ y=g(t)\) for \(\alpha\le t\le\beta\), so that \(g(t)=F(f(t))\), with \(f(\alpha)=a\) and \(f(\beta)=b\). Substitute \(x=f(t)\), \(dx=f'(t)\,dt\) (Substitution Rule, Lecture 13):</p>
 <div class="box thm"><span class="tag">Area under a parametric curve (slide 17)</span>
 \[A=\int_a^b F(x)\,dx=\int_\alpha^\beta g(t)\,f'(t)\,dt.\]
 <p class="word"><b>In words:</b> area = sum over time of (height \(y\)) × (small sideways step \(dx\)), where the sideways step is \(dx=\frac{dx}{dt}\,dt\). In short, \(A=\int y\,dx\) with everything written in \(t\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(g(t)\)</dt><dd>the bug's height \(y\) at time \(t\).</dd>
+<dt>\(f'(t)\,dt\)</dt><dd>the sideways step \(dx\) it makes in one tiny tick.</dd>
+<dt>\(g(t)\,f'(t)\,dt\)</dt><dd>the area of one thin strip under the bug.</dd>
+<dt>\(\alpha\), \(\beta\)</dt><dd>the clock readings at the left end \(x=a\) and the right end \(x=b\) of the walk.</dd>
+</dl></div>
 <div class="box warn"><span class="tag">Trap · direction of tracing <span class="pill">Beyond the handouts</span></span>
 <p>The limits must match: \(t=\alpha\) gives the <b>left</b> end \(x=a\) and \(t=\beta\) the <b>right</b> end \(x=b\). If the curve is traced from right to left as \(t\) increases, \(f'(t)\lt 0\) and the integral comes out <b>negative</b>; the area is its absolute value (Group Work 2 is an example). The curve should also be traced only once.</p></div>
 
 <div class="box eg"><span class="tag">Example 6 · area under a cycloid arch (slide 18)</span>
 <p>Find the area under one arch of the cycloid \(x=r(\theta-\sin\theta),\ y=r(1-\cos\theta)\).</p>
 <p>A <b>cycloid</b> is the path of a point on the rim of a wheel of radius \(r\) rolling along a straight line (the \(x\)-axis). Here \(\theta\) is a <b>parameter</b>: the angle the wheel has turned through (not a polar angle). The point touches the ground when \(y=0\), i.e. \(\cos\theta=1\): \(\theta=0,2\pi,4\pi,\dots\). One <b>arch</b> is one full turn, \(0\le\theta\le2\pi\), going from \(x=0\) to \(x=2\pi r\). The slide's picture shows the arches meeting the \(x\)-axis in sharp points at \(0\) and \(2\pi r\).</p>
-<p><b>Solution.</b> \(\frac{dx}{d\theta}=r(1-\cos\theta)\ge 0\), so the arch is traced left to right. With \(y=r(1-\cos\theta)\):</p>
+<p><b>Solution.</b> \(\frac{dx}{d\theta}=r(1-\cos\theta)\ge 0\), so the arch is traced left to right. With \(y=r(1-\cos\theta)\): <span class="why">Checking the direction first tells us the integral will come out positive, so no sign fix is needed.</span></p>
 \[\begin{aligned}A&=\int_0^{2\pi} r(1-\cos\theta)\cdot r(1-\cos\theta)\,d\theta\\&=r^2\int_0^{2\pi}\left(1-2\cos\theta+\cos^2\theta\right)d\theta.\end{aligned}\]
 <p>Use \(\cos^2\theta=\frac{1+\cos2\theta}{2}\) (Lecture 14):</p>
 \[\begin{aligned}A&=r^2\int_0^{2\pi}\left(\tfrac32-2\cos\theta+\tfrac12\cos2\theta\right)d\theta\\&=r^2\left[\tfrac32\theta-2\sin\theta+\tfrac14\sin2\theta\right]_0^{2\pi}\\&=r^2\cdot 3\pi=3\pi r^2.\end{aligned}\]
@@ -380,10 +444,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">cycloid</span><span style="--k:var(--c4)">rolling wheel</span><span style="--k:var(--c2)">point on the rim</span></div>
 <div class="readout" id="cyc-out"></div>
 <p class="cap">The shaded area is \(\int_0^{\theta} y\,\frac{dx}{d\theta}\,d\theta\) so far; at \(\theta=2\pi\) it reaches \(3\pi\approx 9.42\), three wheel areas.</p></div>
+<p class="cannow"><b>You can now:</b> find the area under a parametric curve with \(A=\int y\,\frac{dx}{dt}\,dt\); match the \(t\)-limits to the left and right ends; fix the sign when the curve is traced right to left; find the area under one arch of a cycloid.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Polar coordinates (slides 19 to 22)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Polar coordinates (slides 19 to 22)</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Stand at a lighthouse at the pole. To point out a ship you give two numbers: the direction of the beam (the angle \(\theta\), measured anticlockwise from the beam's starting position along the positive \(x\)-axis) and how far along the beam the ship is (the distance \(r\)). Spirals and flowers are easy to describe this way, because they are built from "how far out" in "which direction".</p></div></details>
 <p>Slide 19 shows several curves that would be very awkward to write as \(y=F(x)\) or even as a Cartesian equation: a spiral, a many-petalled flower and a looped curve. The figure below redraws curves of this kind. In <b>polar coordinates</b> each of them has a short equation, because they are naturally described by "how far from the centre, in which direction".</p>
 <div class="figure"><p class="ttl">Curves that are simple in polar form (slide 19 redrawn)</p>
 <canvas class="plot" id="zoo" style="aspect-ratio:16/11" aria-label="Spiral, rose and limacon"></canvas>
@@ -399,6 +465,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </ul>
 <p>Polar coordinates are an alternative to Cartesian coordinates \((x,y)\): the same point, described differently. Analogy: "walk 3 m east and 4 m north" (Cartesian) versus "face 53° north of east and walk 5 m" (polar).</p>
 
+<details class="idea"><summary>What is this? (negative r)</summary><div><p>A negative distance means: aim the beam at angle \(\theta\), then walk the distance backwards, through the lighthouse and out the other side. You end up on the beam pointing the opposite way. Turning the beam a full turn brings it back to the same direction, so one ship has many names.</p></div></details>
 <div class="box def"><span class="tag">Negative \(r\) and repeated names <span class="pill">Beyond the slides</span></span>
 <p>The slides use \(r\ge0\) in the pictures, but polar equations often produce <b>negative</b> \(r\). The rule: to plot \((r,\theta)\) with \(r\lt 0\), face direction \(\theta\), then walk \(|r|\) <b>backwards</b> (in the opposite direction, \(\theta+\pi\)). So</p>
 \[(-r,\theta)\ \text{is the same point as}\ (r,\theta+\pi).\]
@@ -420,11 +487,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="cap">\(\theta\) moves in steps of \(\frac{\pi}{12}=15^\circ\); \(r\) in steps of 0.1. The faint circle has radius \(|r|\). When \(r\lt 0\) the point lands on the red opposite ray.</p></div>
 
 <h3>Polar and Cartesian correspondence (slide 21)</h3>
+<details class="idea"><summary>What is this? (converting)</summary><div><p>The beam to the ship, the ground due east of the lighthouse, and a line dropped straight from the ship to that ground make a right-angled triangle. The beam is the hypotenuse, the across distance is the base, and the up distance is the height. Converting between the two kinds of coordinates is just this triangle.</p></div></details>
 <p>Put the pole at the origin and the initial ray along the positive \(x\)-axis (the slide's picture: a circle of radius \(r\) about the common origin, the ray \(\theta=\frac{\pi}{2}\) along the \(y\)-axis, and a right-angled triangle with hypotenuse \(r\), base \(x\), height \(y\), angle \(\theta\) at the origin). From that triangle (HKDSE Core trigonometry):</p>
 \[\begin{aligned}\cos\theta=\frac{x}{r}\ &\Rightarrow\ x=r\cos\theta,\\ \sin\theta=\frac{y}{r}\ &\Rightarrow\ y=r\sin\theta,\end{aligned}\]
 <p class="word"><b>In words:</b> across = distance × cos(angle); up = distance × sin(angle).</p>
 \[x^2+y^2=r^2,\qquad \tan\theta=\frac{y}{x}.\]
 <p class="word"><b>In words:</b> distance² = across² + up² (Pythagoras); tan(angle) = up ÷ across.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(r\)</dt><dd>the distance along the beam from the lighthouse to the ship.</dd>
+<dt>\(x=r\cos\theta\)</dt><dd>how far east of the lighthouse the ship is (negative means west): the base of the triangle.</dd>
+<dt>\(y=r\sin\theta\)</dt><dd>how far north it is (negative means south): the height of the triangle.</dd>
+<dt>\(x^2+y^2=r^2\)</dt><dd>Pythagoras on that triangle.</dd>
+<dt>\(\tan\theta=\frac{y}{x}\)</dt><dd>the steepness of the beam. A beam and the opposite beam have the same steepness, which is why the quadrant must be checked.</dd>
+</dl></div>
 <p>The first pair converts polar to Cartesian (always works, also for negative \(r\)). The second pair converts Cartesian to polar, but \(\tan\theta=\frac{y}{x}\) has two solutions in each full turn (they differ by \(\pi\)): choose the one in the <b>same quadrant as the point</b>. If \(x=0\), use \(\theta=\frac{\pi}{2}\) (for \(y\gt0\)) or \(-\frac{\pi}{2}\) (for \(y\lt 0\)).</p>
 
 <div class="box eg"><span class="tag">Example 7 · point conversion (slide 22)</span>
@@ -432,11 +507,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[\begin{aligned}x&=2\cos\frac{\pi}{3}=2\cdot\frac12=1,\\ y&=2\sin\frac{\pi}{3}=2\cdot\frac{\sqrt3}{2}=\sqrt3.\end{aligned}\]
 <p>So the point is \((1,\sqrt3)\).</p>
 <p><b>(b)</b> Convert \((1,-1)\) from Cartesian to polar.</p>
-<p>\(r=\sqrt{1^2+(-1)^2}=\sqrt2\). \(\tan\theta=\frac{-1}{1}=-1\), so \(\theta=-\frac{\pi}{4}\) or \(\frac{3\pi}{4}\) (within one turn). The point \((1,-1)\) is in quadrant IV (right and down), so \(\theta=-\frac{\pi}{4}\). Answer: \((\sqrt2,-\frac{\pi}{4})\), or equivalently \((\sqrt2,\frac{7\pi}{4})\). (Choosing \(\frac{3\pi}{4}\) with \(r=\sqrt2\) would give \((-1,1)\), the wrong point; \((-\sqrt2,\frac{3\pi}{4})\) is also correct.)</p></div>
+<p>\(r=\sqrt{1^2+(-1)^2}=\sqrt2\). \(\tan\theta=\frac{-1}{1}=-1\), so \(\theta=-\frac{\pi}{4}\) or \(\frac{3\pi}{4}\) (within one turn). The point \((1,-1)\) is in quadrant IV (right and down), so \(\theta=-\frac{\pi}{4}\). Answer: \((\sqrt2,-\frac{\pi}{4})\), or equivalently \((\sqrt2,\frac{7\pi}{4})\). (Choosing \(\frac{3\pi}{4}\) with \(r=\sqrt2\) would give \((-1,1)\), the wrong point; \((-\sqrt2,\frac{3\pi}{4})\) is also correct.) <span class="why">\(\tan\theta\) cannot tell a beam from the opposite beam; the quadrant picks the half that actually points at the ship.</span></p></div>
+<p class="cannow"><b>You can now:</b> plot a point from its polar coordinates, including negative \(r\); list other polar names for the same point; convert between polar and Cartesian coordinates, choosing \(\theta\) in the quadrant of the point.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Lines and circles in polar form (slides 23 and 24)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Lines and circles in polar form (slides 23 and 24)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The two simplest rules for the lighthouse: fix the direction of the beam and allow any distance, and you get a straight line through the lighthouse (negative distances give the back half). Fix the distance and sweep the beam all the way round, and you get a circle centred at the lighthouse. Other lines and circles have longer polar equations, found by putting the polar conversion into their Cartesian equations.</p></div></details>
 <p>A <b>polar curve</b> (polar equation) is an equation linking \(r\) and \(\theta\), usually \(r=f(\theta)\). Its graph is the set of points whose polar coordinates satisfy it (made precise in section 7).</p>
 
 <div class="box eg"><span class="tag">Example 8 · lines (slide 23)</span>
@@ -447,6 +524,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>The line with slope \(m\) through the point \((a,b)\) has polar equation</p>
 \[r=\frac{b-ma}{\sin\theta-m\cos\theta}.\]
 <p class="word"><b>In words:</b> distance from the pole to the line in direction \(\theta\) = (a fixed number) ÷ (sin of angle − slope × cos of angle).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(b-ma\)</dt><dd>the value of \(y-mx\) on the line (its \(y\)-intercept), the same at every point of the line.</dd>
+<dt>\(\sin\theta-m\cos\theta\)</dt><dd>the value of \(y-mx\) at the tip of a beam of length 1 at angle \(\theta\); a beam of length \(r\) gives \(r\) times this.</dd>
+<dt>the quotient</dt><dd>how long the beam must be for its tip to reach the line.</dd>
+<dt>denominator 0</dt><dd>the beam is parallel to the line and never reaches it.</dd>
+</dl></div>
 <p><b>Where it comes from.</b> The Cartesian line is \(y-b=m(x-a)\), i.e. \(y-mx=b-ma\). Substitute \(x=r\cos\theta\), \(y=r\sin\theta\): \(r(\sin\theta-m\cos\theta)=b-ma\); divide. Directions with \(\sin\theta=m\cos\theta\) (parallel to the line) never meet it, and the formula correctly gives no \(r\) there.</p>
 <p style="font-size:.92rem;color:var(--muted)">If the line passes through the pole, then \(b-ma=0\) and the formula gives only \(r=0\). Such lines are written as \(\theta=\) constant instead, as in Example 8. Vertical lines (no slope) are \(r\cos\theta=a\).</p></div>
 
@@ -454,6 +537,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Sketch the polar curve \(r=1\).</p>
 <p><b>Solution.</b> Every point at distance 1 from the pole, in every direction \(\theta\): the <b>circle of radius 1 centred at the origin</b> (Cartesian \(x^2+y^2=1\)). Compare with Example 8: "\(\theta\) = constant" is a line through the pole, "\(r\) = constant" is a circle about the pole.</p></div>
 
+<details class="idea"><summary>What is this? (polar circle)</summary><div><p>The line along a beam can cross a circle twice, touch it once, or miss it. The two signs in the formula give the two crossing points; one of them may be behind the lighthouse, with negative \(r\).</p></div></details>
 <div class="box def"><span class="tag">Circle in polar form (slide 24)</span>
 <p>A circle with radius \(R\) and centre \((h,k)\) has polar equation</p>
 \[\begin{aligned}r={}&h\cos\theta+k\sin\theta\\&\pm\sqrt{R^2-(h\sin\theta-k\cos\theta)^2}.\end{aligned}\]
@@ -475,19 +559,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">curve (r ≥ 0 part)</span><span style="--k:var(--c2)">r &lt; 0 part / second sign</span></div>
 <div class="readout" id="pl-out"></div>
 <p class="cap">For \(\theta=1\) the slider changes \(r\) (from \(-3\) to \(3\)); for the others it changes \(\theta\). The dashed segment joins the pole to the point.</p></div>
+<p class="cannow"><b>You can now:</b> recognise \(\theta=\) constant as a line through the pole and \(r=\) constant as a circle about the pole; write the polar equation of a line from its slope and a point; write a circle in polar form, and simplify it when the circle passes through the pole.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Sketching polar curves (slides 25 to 27)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Sketching polar curves (slides 25 to 27)</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Sweep the lighthouse beam slowly anticlockwise. At each angle a marker sits on the beam at the distance the equation gives (behind the lighthouse if that distance is negative). The trail the marker leaves is the polar curve. A point is on the curve if the marker passes over it at some moment of the sweep, even if other names for that point do not fit the equation.</p></div></details>
 <div class="box def"><span class="tag">Definition · graph of a polar equation (slide 25)</span>
 <p>The <b>graph of a polar equation</b> \(r=f(\theta)\) consists of all the points \(P\) that have <b>at least one</b> polar representation \((r,\theta)\) whose coordinates satisfy the equation.</p>
 <p class="word"><b>In words:</b> a point is on the curve if <b>some</b> name of it fits the equation, even if other names of it do not.</p>
 <p>Example: is the Cartesian point \((0,-1)\) on \(r=\cos2\theta\)? The name \((1,\frac{3\pi}{2})\) does not fit, since \(\cos3\pi=-1\ne1\). But the name \((-1,\frac{\pi}{2})\) (walk 1 backwards from direction \(\frac{\pi}{2}\)) fits: \(\cos\pi=-1\). So yes, it is on the curve.</p></div>
 <p><b>Techniques</b> (slide 25):</p>
-<ol class="steps">
-<li><b>Plot points and use symmetry.</b> Make a table of \(\theta\) and \(r\) (use angles like \(0,\frac{\pi}{6},\frac{\pi}{4},\frac{\pi}{3},\frac{\pi}{2},\dots\)), plot each point, join them in order of \(\theta\). Symmetry halves the work (tests below).</li>
-<li><b>Graph \(y=f(\theta)\) in the Cartesian \(r\theta\)-plane first</b>: draw an ordinary graph with \(\theta\) on the horizontal axis and \(r\) on the vertical axis. Then, as \(\theta\) increases, read off \(r\) and translate into the polar picture: where \(r\) is large the curve is far from the pole, where \(r=0\) it passes through the pole, where \(r\lt0\) it is on the opposite side. The big figure below shows both pictures side by side.</li>
-<li><b>Follow the curve-sketching guidelines</b> (Lecture 9): domain, where \(r=0\) (curve meets the pole), largest and smallest \(r\), symmetry, period.</li>
+<ol class="steps proc">
+<li><b>Do:</b> <b>Plot points and use symmetry.</b> Make a table of \(\theta\) and \(r\) (use angles like \(0,\frac{\pi}{6},\frac{\pi}{4},\frac{\pi}{3},\frac{\pi}{2},\dots\)), plot each point, join them in order of \(\theta\). Symmetry halves the work (tests below). <span class="why">Each row of the table is one snapshot of the beam and its marker; symmetry lets you mirror half of the snapshots instead of computing them.</span></li>
+<li><b>Do:</b> <b>Graph \(y=f(\theta)\) in the Cartesian \(r\theta\)-plane first</b>: draw an ordinary graph with \(\theta\) on the horizontal axis and \(r\) on the vertical axis. Then, as \(\theta\) increases, read off \(r\) and translate into the polar picture: where \(r\) is large the curve is far from the pole, where \(r=0\) it passes through the pole, where \(r\lt0\) it is on the opposite side. The big figure below shows both pictures side by side. <span class="why">This graph is the marker's distance against the beam angle, so you see at a glance when the marker is far out, at the lighthouse, or behind it.</span></li>
+<li><b>Do:</b> <b>Follow the curve-sketching guidelines</b> (Lecture 9): domain, where \(r=0\) (curve meets the pole), largest and smallest \(r\), symmetry, period. <span class="why">These are the special moments of the sweep (marker at the lighthouse, furthest out, starting to repeat), and they fix the shape before the fine detail.</span></li>
 </ol>
 <div class="box beyond"><span class="tag">Beyond the handouts · symmetry tests</span>
 <p>The polar curve is symmetric</p>
@@ -520,7 +606,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <tr><th>\(r\)</th><td>\(2\)</td><td>\(\sqrt3\)</td><td>\(\sqrt2\)</td><td>\(1\)</td><td>\(0\)</td><td>\(-1\)</td><td>\(-\sqrt2\)</td><td>\(-\sqrt3\)</td><td>\(-2\)</td></tr>
 </table></div>
 <p>For \(0\le\theta\le\frac{\pi}{2}\) the point moves from \((2,0)\) up and round to the pole, tracing the upper half of a circle. For \(\frac{\pi}{2}\lt\theta\le\pi\), \(r\lt0\), so the points are plotted on the opposite side: e.g. \((-1,\frac{2\pi}{3})\) is the Cartesian point \((\frac12,-\frac{\sqrt3}{2})\), in quadrant IV. These trace the lower half. So the curve is a <b>circle</b> through the pole, traced once for \(0\le\theta\le\pi\); from \(\pi\) to \(2\pi\) it is traced again. Symmetric about the \(x\)-axis (\(\cos(-\theta)=\cos\theta\)).</p>
-<p><b>(b) Cartesian representation.</b> Multiply by \(r\): \(r^2=2r\cos\theta\), so \(x^2+y^2=2x\). Completing the square:</p>
+<p><b>(b) Cartesian representation.</b> Multiply by \(r\): \(r^2=2r\cos\theta\), so \(x^2+y^2=2x\). Completing the square: <span class="why">The conversions use \(r^2\) and \(r\cos\theta\), so multiplying by \(r\) makes both appear at once.</span></p>
 \[(x-1)^2+y^2=1.\]
 <p class="word"><b>In words:</b> a circle with centre \((1,0)\) and radius 1.</p>
 <p>(Multiplying by \(r\) could add the pole as an extra point, but the pole is already on the curve, at \(\theta=\frac{\pi}{2}\).) This matches the slide-24 formula with \(h=1,k=0,R=1\).</p></div>
@@ -538,23 +624,32 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <li>It crosses the \(x\)-axis at \((1,0)\) (\(\theta=0\)) and \((-1,0)\) (\(\theta=\pi\)). It is traced once for \(0\le\theta\le2\pi\).</li>
 </ul>
 <p>Shape: a heart upside down, round at the top (height 2), with the dent (cusp) at the origin and the lower lobes dipping to \(y=-\frac14\).</p></div>
+<p class="cannow"><b>You can now:</b> decide whether a point lies on a polar curve using any of its names; sketch \(r=f(\theta)\) from a table, the \(r\theta\)-graph and the symmetry tests; identify circles through the pole and cardioids, and convert them to Cartesian form.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Tangents to polar curves (slides 28 and 29)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Tangents to polar curves (slides 28 and 29)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A polar curve is a parametric curve where the beam angle plays the part of the clock: as the beam turns, the marker's across and up positions both change. So the slope is again rise ÷ run, each measured per bit of turning. How fast the marker slides along the beam is not the slope: on a circle around the lighthouse the marker does not slide at all, yet the trail points in every direction in turn.</p></div></details>
 <p>A polar curve \(r=f(\theta)\) is a parametric curve in disguise, with \(\theta\) as the parameter:</p>
 \[x=r\cos\theta=f(\theta)\cos\theta,\qquad y=r\sin\theta=f(\theta)\sin\theta.\]
 <p>Use the parametric slope rule (section 3) with \(\theta\) in place of \(t\), and the Product Rule (Lecture 6) on each product:</p>
 <div class="box thm"><span class="tag">Slope of a polar curve (slide 28)</span>
 \[\begin{aligned}\frac{dy}{dx}&=\frac{dy/d\theta}{dx/d\theta}=\frac{\dfrac{dr}{d\theta}\sin\theta+r\cos\theta}{\dfrac{dr}{d\theta}\cos\theta-r\sin\theta}\\&\text{if }\frac{dx}{d\theta}\ne0.\end{aligned}\]
 <p class="word"><b>In words:</b> slope = (rate of change of height with angle) ÷ (rate of change of across-position with angle), where height = \(r\sin\theta\) and across = \(r\cos\theta\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\frac{dr}{d\theta}\sin\theta\)</dt><dd>height gained because the marker slides outwards along the beam.</dd>
+<dt>\(r\cos\theta\)</dt><dd>height gained just because the beam turns while the marker sits at distance \(r\).</dd>
+<dt>numerator</dt><dd>the two together: the rise per bit of turning, \(\frac{dy}{d\theta}\).</dd>
+<dt>denominator</dt><dd>the same two effects for the across position: the run per bit of turning, \(\frac{dx}{d\theta}\).</dd>
+<dt>\(\frac{dx}{d\theta}\ne0\)</dt><dd>the marker must be moving sideways; if not, the tangent is vertical.</dd>
+</dl></div>
 <div class="box warn"><span class="tag">Trap</span><p>The slope is <b>not</b> \(\frac{dr}{d\theta}\). \(\frac{dr}{d\theta}\) only measures how fast the distance from the pole changes; e.g. for the circle \(r=1\), \(\frac{dr}{d\theta}=0\) everywhere, but the tangent slopes take every value.</p></div>
 <div class="box beyond"><span class="tag">Beyond the handouts · horizontal/vertical tangents, tangent at the pole</span>
 <p>Horizontal tangent: numerator \(\frac{dy}{d\theta}=0\), denominator \(\ne0\). Vertical tangent: \(\frac{dx}{d\theta}=0\), numerator \(\ne0\). If \(r=0\) at \(\theta=\theta_0\) (the curve passes through the pole) and \(\frac{dr}{d\theta}\ne0\) there, the formula simplifies to \(\frac{dy}{dx}=\tan\theta_0\): the tangent at the pole is the line \(\theta=\theta_0\).</p></div>
 
 <div class="box eg"><span class="tag">Example 12 · tangent to the cardioid (slide 29)</span>
 <p>Find the tangent line of the cardioid \(r=1+\sin\theta\) at \(\theta=\frac{\pi}{3}\).</p>
-<p><b>Step 1: the point.</b> \(r=1+\frac{\sqrt3}{2}=\frac{2+\sqrt3}{2}\). So</p>
+<p><b>Step 1: the point.</b> \(r=1+\frac{\sqrt3}{2}=\frac{2+\sqrt3}{2}\). So <span class="why">The tangent line needs the Cartesian point \((x,y)\), not the polar pair.</span></p>
 \[\begin{aligned}x&=r\cos\frac{\pi}{3}=\frac{2+\sqrt3}{4},\\ y&=r\sin\frac{\pi}{3}=\frac{(2+\sqrt3)\sqrt3}{4}=\frac{3+2\sqrt3}{4}.\end{aligned}\]
 <p><b>Step 2: derivatives.</b> \(\frac{dr}{d\theta}=\cos\theta=\frac12\) at \(\theta=\frac{\pi}{3}\).</p>
 \[\begin{aligned}\frac{dy}{d\theta}&=\frac12\cdot\frac{\sqrt3}{2}+\frac{2+\sqrt3}{2}\cdot\frac12\\&=\frac{\sqrt3+2+\sqrt3}{4}=\frac{1+\sqrt3}{2},\end{aligned}\]
@@ -574,10 +669,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">curve</span><span style="--k:var(--c2)">tangent line</span></div>
 <div class="readout" id="tg2-out"></div>
 <p class="cap">Choosing a curve moves the slider to the angle used in the text (\(\frac{\pi}{3}\), \(\frac{\pi}{6}\), \(\frac{\pi}{3}\)). Slide it to find horizontal and vertical tangents.</p></div>
+<p class="cannow"><b>You can now:</b> write a polar curve as \(x=r\cos\theta\), \(y=r\sin\theta\); find \(\frac{dy}{dx}\) with both Product Rule terms and write the tangent line; find horizontal and vertical tangents and the tangent at the pole.</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Area in polar form (slides 30 and 31)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Area in polar form (slides 30 and 31)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>As the lighthouse beam turns through a tiny angle, it sweeps out a thin pizza slice from the lighthouse to the curve. Add up all the slices as the beam turns from the starting angle to the finishing angle, and you have the area. Each part of the region must be swept exactly once, so choose the range of angles that traces it once.</p></div></details>
 <p>For \(y=f(x)\), the area under the curve was built from thin <b>rectangles</b> (Riemann sums, Lecture 11):</p>
 \[A=\lim_{n\to\infty}\sum_{i=1}^{n}f(x_i^*)\,\Delta x=\int_a^b f(x)\,dx.\]
 <p class="word"><b>In words:</b> area = limit of the total of (height × width) over thinner and thinner strips.</p>
@@ -586,13 +683,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box thm"><span class="tag">Area in polar form (slide 30)</span>
 \[\begin{aligned}A&=\lim_{n\to\infty}\sum_{i=1}^{n}\frac12\left[f(\theta_i^*)\right]^2\Delta\theta\\&=\int_a^b\frac12\left[f(\theta)\right]^2d\theta=\int_a^b\frac12r^2\,d\theta.\end{aligned}\]
 <p class="word"><b>In words:</b> area swept out by the radius = integral of half the radius squared, with respect to the angle, from the starting ray \(\theta=a\) to the finishing ray \(\theta=b\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\frac12r^2\,d\theta\)</dt><dd>the area of one thin slice of radius \(r\) and angle \(d\theta\).</dd>
+<dt>\(r^2\)</dt><dd>a slice with twice the radius has four times the area, not twice.</dd>
+<dt>\(a\), \(b\)</dt><dd>the beam's starting and finishing directions.</dd>
+<dt>\(\int\)</dt><dd>adding up all the slices as the beam turns.</dd>
+</dl></div>
 <p style="font-size:.92rem;color:var(--muted)">Slide 30 has three small typos, corrected above: the rectangle sum is written \(\sum f(x_i^*)\Delta x\,dx\) (the extra \(dx\) should not be there); the sector sum is written with \(d\theta\) instead of \(\Delta\theta\); and the polar area is said to run "from \(x=a\) to \(x=b\)" where it should be "from \(\theta=a\) to \(\theta=b\)".</p>
 <div class="box warn"><span class="tag">Trap</span><p>Each piece of the region must be swept <b>once</b>. Choose the \(\theta\)-interval that traces the region exactly once (e.g. one loop), not automatically \(0\) to \(2\pi\).</p></div>
 
 <div class="box eg"><span class="tag">Example 13 · one loop of a four-leaf rose (slide 31)</span>
 <p>Find the area enclosed by one loop of the four-leaf rose \(r=\cos2\theta\).</p>
 <p>A <b>rose</b> is a curve \(r=a\cos n\theta\) or \(a\sin n\theta\): it has petals ("leaves", "loops"). The slide's picture shows four equal loops, centred on the positive and negative \(x\)- and \(y\)-axes, each of length 1.</p>
-<p><b>Step 1: find the \(\theta\)-range of one loop.</b> The loop on the positive \(x\)-axis starts and ends at the pole, where \(r=0\): \(\cos2\theta=0\) gives \(\theta=\pm\frac{\pi}{4}\). Between them, \(\cos2\theta\gt0\), so the loop is traced once for \(-\frac{\pi}{4}\le\theta\le\frac{\pi}{4}\).</p>
+<p><b>Step 1: find the \(\theta\)-range of one loop.</b> The loop on the positive \(x\)-axis starts and ends at the pole, where \(r=0\): \(\cos2\theta=0\) gives \(\theta=\pm\frac{\pi}{4}\). Between them, \(\cos2\theta\gt0\), so the loop is traced once for \(-\frac{\pi}{4}\le\theta\le\frac{\pi}{4}\). <span class="why">A loop starts and ends at the lighthouse, so the marker is at \(r=0\) at both ends of the sweep.</span></p>
 <p><b>Step 2: integrate</b>, using \(\cos^2 2\theta=\frac{1+\cos4\theta}{2}\):</p>
 \[\begin{aligned}A&=\int_{-\pi/4}^{\pi/4}\frac12\cos^2 2\theta\,d\theta\\&=\frac14\int_{-\pi/4}^{\pi/4}(1+\cos4\theta)\,d\theta\\&=\frac14\left[\theta+\frac{\sin4\theta}{4}\right]_{-\pi/4}^{\pi/4}\\&=\frac14\cdot\frac{\pi}{2}=\frac{\pi}{8}.\end{aligned}\]
 <p>So one loop has area <b>\(\frac{\pi}{8}\)</b> (all four loops together: \(\frac{\pi}{2}\)).</p>
@@ -609,10 +712,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">curve</span><span style="--k:var(--c4)">sectors</span></div>
 <div class="readout" id="pa-out"></div>
 <p class="cap">Each sector uses the smaller of the radii at its two edges, so the sectors sit (almost entirely) inside the region and the total \(\sum\frac12 r^2\Delta\theta\) is a little too small. As \(n\) grows it approaches the integral. (For \(r=2\) every sector fits exactly, so the sum equals \(4\pi\) for every \(n\).)</p></div>
+<p class="cannow"><b>You can now:</b> explain why polar area uses sectors \(\frac12r^2\Delta\theta\), not rectangles; find the \(\theta\)-range that traces a loop once; compute the area of a loop of a rose, or the inside of a cardioid, with \(A=\int\frac12r^2\,d\theta\).</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Summary (slide 32)</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Summary (slide 32)</span></h2>
 <ul class="list">
 <li>Parameterization frees us from the constraint of \(y=f(x)\) (one \(y\) per \(x\)) and unlocks more natural and powerful tools to model curves.</li>
 <li>Polar coordinates are a circle-centric way of seeing things: position = distance from a centre + direction.</li>
@@ -629,7 +733,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Common mistakes (slide 34)</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Common mistakes (slide 34)</span></h2>
 <h3>Parametric curves</h3>
 <div class="box"><div class="mistake">
 <span class="x">✗</span><span><b>Assuming \(\frac{dy}{dx}=\frac{dy}{dt}\).</b> For \(x=t^2,\ y=t^3\), writing \(\frac{dy}{dx}=3t^2\) is wrong. <span class="ok">✓</span> Divide by \(\frac{dx}{dt}=2t\): \(\frac{dy}{dx}=\frac{3t^2}{2t}=\frac{3t}{2}\) (for \(t\ne0\)). \(\frac{dy}{dt}\) is the vertical speed, not the slope.</span>
@@ -662,7 +766,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Group work (slide 35)</h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Group work (slide 35)</span></h2>
 
 <div class="q"><p class="qh">1. A curve is defined by the parametric equations \(x(t)=t^2-1,\ y(t)=t^3-3t\).<br>(a) Find the coordinates when \(t=0,1,2\). (b) Find \(\frac{dy}{dx}\) in terms of \(t\). (c) Find the points where the tangent line is horizontal.</p>
 <details><summary>Hint</summary><div><p>(a) Substitute. (b) Differentiate \(x\) and \(y\) with respect to \(t\) and divide. (c) Horizontal means \(\frac{dy}{dt}=0\) while \(\frac{dx}{dt}\ne0\). Try the "Group work 1" curve in the section 3 figure.</p></div></details>
@@ -709,7 +813,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Concept checks</h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Concept checks</span></h2>
 <p><span class="pill">Written for these notes</span></p>
 <div class="q"><p class="qh">1. Do \(x=t,\ y=t^2\) and \(x=t^3,\ y=t^6\) (both for all real \(t\)) give the same curve? What about \(x=t^2,\ y=t^4\)?</p>
 <details><summary>Answer</summary><div><p>The first two both give the whole parabola \(y=x^2\) (because \(t^3\) takes every real value): same curve, different parameterizations. \(x=t^2,\ y=t^4\) gives only the right half \(x\ge0\).</p></div></details></div>
@@ -726,7 +830,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ exam taster ============ -->
-<section id="pastpaper"><h2><span class="n">14</span>Exam taster</h2>
+<section id="pastpaper"><h2><span class="n">14</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Lecture 15's question types appear 15 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide.</p>
 
@@ -1098,5 +1202,13 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </html>

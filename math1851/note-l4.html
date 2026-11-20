@@ -106,6 +106,33 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -138,12 +165,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · Calculus · Lecture 4</span>
   <h1>Continuity</h1>
-  <p class="lede">Every slide of Lecture 4 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this lecture.</p>
 </header>
 
 <!-- ================= 0 ================= -->
-<section id="s0"><h2><span class="n">0</span>Where this lecture sits</h2>
-<p>Lectures 1 to 3 were all about <b>limits</b>: what value \(f(x)\) heads towards as \(x\) heads towards some number. Lecture 1 defined limits and one-sided limits, Lecture 2 gave the Sandwich Theorem and the key limit \(\lim_{x\to0}\frac{\sin x}{x}=1\), and Lecture 3 handled limits involving infinity (vertical and horizontal asymptotes). This lecture uses limits to make precise an idea you already know from drawing graphs: a graph with <b>no breaks, holes or jumps</b>. That idea is called <b>continuity</b>.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this lecture sits</span></h2>
+<p>Lectures 1 to 3 were about <b>limits</b>. This lecture uses them to make precise a picture you already know: a graph you can draw <b>without lifting the pen</b>, with no breaks, holes or jumps. That idea is called <b>continuity</b>.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>Continuous at a point means the pen passes through without lifting.</b> Three checks: a dot exists, the graph heads to one height, the dot sits at that height.</li>
+<li><a href="#s2">§2</a> <b>On an interval: no lifting inside, and each end dot is reached from inside.</b></li>
+<li><a href="#s3">§3</a> <b>Four ways to lift the pen:</b> a hole, a jump, a blow-up to infinity, an endless wiggle.</li>
+<li><a href="#s4">§4</a> <b>A single missing dot can be drawn in at the limit.</b> That is the continuous extension.</li>
+<li><a href="#s5">§5</a> <b>Combine unbroken graphs and you get an unbroken graph</b> (no dividing by zero). For pieces, check the joins.</li>
+<li><a href="#s6">§6</a> <b>A continuous function of a continuous function is continuous.</b></li>
+<li><a href="#s7">§7</a> <b>Move a limit inside a continuous outer function:</b> direct substitution.</li>
+<li><a href="#s8">§8</a> <b>IVT: a hiker going from below sea level to above must cross sea level,</b> if the path has no jumps.</li>
+</ol>
+</div>
+<p><b>You need:</b> limits and one-sided limits (Lecture 1, recalled below), the Sandwich Theorem and the key limit \(\lim_{x\to0}\frac{\sin x}{x}=1\) (Lecture 2), and limits involving infinity, i.e. vertical and horizontal asymptotes (Lecture 3). <b>In the exam:</b> 22 question parts in 23 papers (2013 to 2026): limits and continuity read off a graph (8), the IVT (7), constants that make a piecewise function continuous (5), classifying a discontinuity (2). See the <a href="guide-L4.html">L4 exam guide</a>.</p>
 
 <div class="box def"><span class="tag">Recall from Lecture 1 (slide 2) · Limit, intuitive definition</span>
 <p>Suppose \(f(x)\) is defined on an open interval about \(x_0\) (an interval \((p,q)\) with \(x_0\) strictly inside it; \(f\) may or may not be defined at \(x_0\) itself). We write</p>
@@ -163,7 +202,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= 1 ================= -->
-<section id="s1"><h2><span class="n">1</span>Continuity at a point</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Continuity at a point</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Imagine drawing a graph with a pen, from left to right. A continuous graph is one you can draw in a single stroke, without ever lifting the pen off the paper. You would have to lift it at a hole (a missing dot), at a jump, where the curve shoots off to infinity, or where it wiggles so fast you could never get through. Continuity at a point asks a smaller question: can the pen pass through this one point without lifting?</p></div></details>
 <h3>Continuous curves (slide 7)</h3>
 <p>Slide 7 shows three smooth curves \(f\), \(g\), \(h\) drawn on the same axes: \(f\) wiggles up and down, \(g\) is a single hump, and \(h\) is an S-shaped curve that rises and levels off. What they share: each one can be drawn <b>without lifting the pen off the paper</b>. That is the picture to keep in mind for "continuous". The slide's picture is redrawn below (the exact formulas are not given on the slide; the ones used here only reproduce the shapes).</p>
 <div class="figure"><p class="ttl">Three continuous curves (slide 7 redrawn)</p>
@@ -172,32 +212,40 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="cap">No breaks, no holes, no jumps, no vertical asymptotes: each curve is one unbroken stroke.</p></div>
 
 <p>"Without lifting the pen" is a good picture but not a definition you can calculate with. The definition uses limits.</p>
+<details class="idea"><summary>What is this? (continuity at a point)</summary><div><p>Watch the pen as it closes in on \(x=c\) from both sides. The limit is the height the pen is heading to. The value \(f(c)\) is where the dot actually is. Continuous at \(c\) means the pen arrives exactly on the dot, so it can carry straight on without lifting.</p></div></details>
 
 <div class="box def"><span class="tag">Definition · Continuity at a point (slide 8)</span>
 <p>A function \(f(x)\) is <b>continuous at an interior point</b> \(c\) if</p>
 \[\lim_{x\to c}f(x)=f(c).\]
 <p class="word"><b>In words:</b> the height the graph is heading to near \(c\) = the height the graph actually has at \(c\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\lim_{x\to c}f(x)\)</dt><dd>the height the pen is heading to as it closes in on \(c\), from the left and from the right.</dd>
+<dt>\(f(c)\)</dt><dd>where the dot at \(x=c\) actually sits.</dd>
+<dt>\(=\)</dt><dd>the pen lands exactly on the dot, so no lift is needed.</dd>
+</dl></div>
 <p>If \(f(x)\) does not satisfy this condition at \(c\), then \(f\) is <b>discontinuous at \(x=c\)</b>, and \(c\) is called a <b>point of discontinuity</b>.</p>
 <p>An <b>interior point</b> of the domain is a point \(c\) with some room on both sides: \(f\) is defined on a whole open interval around \(c\) (except possibly at \(c\)). Points at the edge of the domain (endpoints) are handled with one-sided limits in Section 2.</p>
 </div>
 
 <div class="box thm"><span class="tag">Theorem · Continuity Test (slide 8)</span>
 <p>A function \(f(x)\) is continuous at \(x=c\) <b>if and only if</b> (meaning: exactly when; each side guarantees the other) it meets all three conditions:</p>
-<ol class="steps">
-<li>\(f(c)\) is defined;</li>
-<li>\(\lim_{x\to c}f(x)\) exists;</li>
-<li>\(\lim_{x\to c}f(x)=f(c)\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> check that \(f(c)\) is defined; <span class="why">The pen needs a dot to pass through at \(x=c\). With no dot there is a hole, and you would have to lift the pen over it.</span></li>
+<li><b>Do:</b> check that \(\lim_{x\to c}f(x)\) exists; <span class="why">From the left and from the right the pen must head to one single height. Otherwise it has to jump, shoot off to infinity, or never settle.</span></li>
+<li><b>Do:</b> check that \(\lim_{x\to c}f(x)=f(c)\). <span class="why">The dot must sit exactly where the pen arrives. A dot placed above or below that height means lifting the pen to reach it.</span></li>
 </ol>
 <p class="word"><b>In words:</b> (i) there is a dot on the graph at \(x=c\); (ii) the graph heads to one single height from both sides; (iii) the dot sits exactly at that height.</p>
 </div>
 <p>The test is how you <b>prove</b> continuity or discontinuity at a point: check the three conditions in order and stop at the first one that fails. Each kind of failure gives a different picture, which is what the "types of discontinuity" in Section 3 describe.</p>
 <div class="box eg"><span class="tag">Quick illustration</span>
-<p>Let \(f(x)=\dfrac{x^2-1}{x-1}\). At \(c=1\): \(f(1)=\frac00\) is not defined, so condition (i) fails and \(f\) is discontinuous at \(1\), even though \(\lim_{x\to1}f(x)=\lim_{x\to1}(x+1)=2\) exists. At \(c=3\): \(f(3)=4\), \(\lim_{x\to3}f(x)=4\), equal, so \(f\) is continuous at \(3\).</p>
+<p>Let \(f(x)=\dfrac{x^2-1}{x-1}\). At \(c=1\): \(f(1)=\frac00\) is not defined, so condition (i) fails and \(f\) is discontinuous at \(1\), even though \(\lim_{x\to1}f(x)=\lim_{x\to1}(x+1)=2\) exists. <span class="why">The graph is the line \(y=x+1\) with one dot missing at \((1,2)\): the pen heads to height 2 but finds no dot there.</span> At \(c=3\): \(f(3)=4\), \(\lim_{x\to3}f(x)=4\), equal, so \(f\) is continuous at \(3\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> state the definition of continuity at a point; run the three-condition Continuity Test to prove a function is continuous or discontinuous at a point; and say which condition fails.</p>
 </section>
 
 <!-- ================= 2 ================= -->
-<section id="s2"><h2><span class="n">2</span>Continuity on an interval</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Continuity on an interval</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>On an interval you only draw the part of the graph above that stretch of the \(x\)-axis. Inside the stretch the pen must never lift. At an end, the pen can only come from one side (from inside the interval), so we only ask that it arrives on the end dot from that side. Whatever the graph does outside the interval does not count.</p></div></details>
 <p>At an endpoint of an interval you can only approach from one side, so the definition uses one-sided limits there.</p>
 <div class="box def"><span class="tag">Definition · Continuity on a closed interval (slide 9)</span>
 <p>A function \(f(x)\) is <b>continuous on the interval \([a,b]\)</b> if it meets the following three conditions.</p>
@@ -213,6 +261,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </div>
 <p>The symbol \(\in\) means "is an element of" (belongs to). A point where only one of the one-sided conditions holds is called <b>right-continuous</b> (\(\lim_{x\to c^+}f(x)=f(c)\)) or <b>left-continuous</b> (\(\lim_{x\to c^-}f(x)=f(c)\)). The same idea applies to half-open intervals such as \([a,b)\): check the interior points and the included endpoint only.</p>
 
+<details class="idea"><summary>What is this? (a continuous function)</summary><div><p>Here the pen picture needs care. The graph of \(1/x\) is drawn in two separate strokes, yet \(1/x\) counts as a "continuous function". The reason: the convention only checks points where the function exists, and at every one of those the pen passes through without lifting. The gap at \(0\) is not in the domain, so it is never checked.</p></div></details>
 <div class="box thm"><span class="tag">Convention (slide 9)</span>
 <p><b>A continuous function is continuous on its domain.</b> That is, when we simply call \(f\) "a continuous function", we mean it is continuous at every point where it is defined (using one-sided limits at any endpoints of the domain). The <b>domain</b> is the set of all \(x\) for which \(f(x)\) is defined.</p>
 <p class="word"><b>In words:</b> "continuous function" is judged only where the function exists. For example, \(1/x\) is a continuous function (it has no break anywhere on its domain), even though it is discontinuous at \(x=0\), where it is not defined.</p>
@@ -240,7 +289,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>(b) Intervals of continuity.</b> The graph is unbroken on each of these pieces:</p>
 \[[-2,-1),\quad(-1,0),\quad(0,1),\quad[1,2)\]
 <p>At \(x=-2\) the curve runs into the filled dot from the right, so \(\lim_{x\to-2^+}f(x)=f(-2)\) (right-continuous); that is why \(-2\) is included. At \(x=1\), \(\lim_{x\to1^+}f(x)=2=f(1)\), so \(f\) is right-continuous at \(1\) and \([1,2)\) includes \(1\); but \(\lim_{x\to1^-}f(x)=1\ne f(1)\), so the piece to the left stops at \((0,1)\), open at \(1\).</p>
-<p><b>(c) Points of discontinuity:</b> \(x=-1\), \(x=0\), \(x=1\).</p>
+<p><b>(c) Points of discontinuity:</b> \(x=-1\), \(x=0\), \(x=1\). <span class="why">These are the places inside the domain's span where the pen must lift; each fails a different condition of the Continuity Test.</span></p>
 <ul class="list">
 <li>\(x=-1\): \(f(-1)\) is not defined (test condition (i) fails), although the limit exists (both sides head to the hole at about \(-0.8\)). A <b>removable</b> discontinuity (Section 3).</li>
 <li>\(x=0\): \(f(0)\) is not defined; from the left the graph oscillates (no limit), from the right \(f(x)\to+\infty\). Oscillating on the left, infinite on the right.</li>
@@ -248,10 +297,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </ul>
 <p style="font-size:.9rem;color:var(--muted)">About \(x=2\): the graph simply ends there (there is nothing to the right of \(x=2\)), so \(x=2\) is an end of the picture rather than a break inside it, and the usual answer does not list it. Since \(f(2)\) is undefined, some readers would also call \(f\) discontinuous at \(x=2\); if you include it, say why. The slide gives no printed answer, so this is the reading used here.</p>
 </div>
+<p class="cannow"><b>You can now:</b> check continuity on a closed or half-open interval with one-sided limits at the ends; recognise right- and left-continuity; and read the domain, the intervals of continuity and the points of discontinuity off a graph.</p>
 </section>
 
 <!-- ================= 3 ================= -->
-<section id="s3"><h2><span class="n">3</span>Types of discontinuity (slide 11)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Types of discontinuity (slide 11)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>There are four ways the pen can be forced off the paper at a point. One dot is missing or put in the wrong place (removable). The graph steps to a different height (jump). The graph shoots off to infinity (infinite). The graph wiggles faster and faster and never settles (oscillating). Only the first can be repaired by adding or moving a single dot.</p></div></details>
 <p>Slide 11 shows four kinds of discontinuity, all at \(x=0\). Each matches a different failure in the Continuity Test. Use the selector to step through them; the readout runs the test.</p>
 <div class="figure"><p class="ttl">The four types of discontinuity at x = 0 (slide 11 redrawn)</p>
 <canvas class="plot" id="dt" style="aspect-ratio:16/10" aria-label="Graph illustrating the selected type of discontinuity at x = 0"></canvas>
@@ -275,14 +326,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>"Removable" does not mean the function is continuous. It is still discontinuous at that point; it just <i>could be made</i> continuous by changing or adding one value. Only removable discontinuities can be fixed this way; jump, infinite and oscillating ones cannot.</p></div>
 <div class="box beyond"><span class="tag">Beyond the handouts</span>
 <p>Jump, infinite and oscillating discontinuities are sometimes grouped together as <b>non-removable</b> (or "essential" in some books). Also, a function can mix types at one point, as in Example 1 at \(x=0\) (oscillating from the left, infinite from the right). Exams ask you to name the type, so describe each side if they differ.</p></div>
+<p class="cannow"><b>You can now:</b> name the type of a discontinuity (removable, jump, infinite, oscillating) from a graph or from one-sided limits; describe each side when they differ; and explain why only a removable one can be fixed.</p>
 </section>
 
 <!-- ================= 4 ================= -->
-<section id="s4"><h2><span class="n">4</span>Continuous extension (slide 12)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Continuous extension (slide 12)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A removable discontinuity is a graph with one dot missing. The continuous extension draws that dot in exactly where the pen was heading (the limit) and changes nothing else. If the pen was not heading to one height (a jump, a blow-up, a wiggle), there is no right place to put the dot, so no extension exists.</p></div></details>
 <div class="box def"><span class="tag">Definition · Continuous extension (slide 12)</span>
 <p>Suppose \(\lim_{x\to c}f(x)=L\) exists, but \(f(c)\) is not defined. The <b>continuous extension</b> of \(f\) to \(x=c\) is the function</p>
 \[F(x)=\begin{cases}f(x), & \text{if } x \text{ is in the domain of } f\\ L, & \text{if } x=c\end{cases}\]
 <p class="word"><b>In words:</b> keep \(f\) exactly as it is everywhere it already exists, and plug the hole at \(c\) with the limit value \(L\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(F\)</dt><dd>the repaired function: same graph, one more dot.</dd>
+<dt>\(f(x)\) in the domain of \(f\)</dt><dd>everywhere the graph already exists, leave it alone.</dd>
+<dt>\(L\) at \(x=c\)</dt><dd>draw the missing dot at the height the pen was heading to, so the pen now lands on it.</dd>
+</dl></div>
 <p>\(F\) is then continuous at \(c\) because \(\lim_{x\to c}F(x)=\lim_{x\to c}f(x)=L=F(c)\). "Extension" means the domain is extended (made bigger) by one point.</p>
 </div>
 <div class="box eg"><span class="tag">Example 2 (slide 12)</span>
@@ -299,10 +357,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="readout" id="ce-out"></div>
 <p class="cap">The two graphs are identical except at the single point x = 0.</p></div>
 <p>Not every hole can be plugged: if the limit at \(c\) does not exist (jump, infinite, oscillating), there is no continuous extension to \(c\). Group Work 1 (Section 12) asks about this.</p>
+<p class="cannow"><b>You can now:</b> find the continuous extension of a function with a removable discontinuity, written as a two-line piecewise function; and explain why there is none at a jump, infinite or oscillating discontinuity.</p>
 </section>
 
 <!-- ================= 5 ================= -->
-<section id="s5"><h2><span class="n">5</span>Properties of continuous functions</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Properties of continuous functions</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>If two graphs can each be drawn through \(x=c\) without lifting the pen, then their sum, difference, product or a multiple can be too: a small change in \(x\) gives small changes in each, and so a small change in the result. Dividing also works, as long as the bottom is not zero at \(c\); near a zero bottom the result can blow up. This is how you see at a glance that a formula built from familiar pieces is continuous.</p></div></details>
 <div class="box thm"><span class="tag">Theorem · Combinations (slide 13)</span>
 <p>If functions \(f\) and \(g\) are continuous at \(x=c\), then the following combinations are continuous at \(x=c\).</p>
 <div class="scroll"><table>
@@ -334,14 +394,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </div>
 <p>Together, the two theorems let you see continuity at a glance: build the function out of standard pieces, and the only places to check are where a denominator is zero, a root is of a negative number, or (for piecewise functions) where the formula changes.</p>
 
+<details class="idea"><summary>What is this? (joining pieces)</summary><div><p>A piecewise function is drawn with one formula on one part of the line and another formula on the next part. Each piece is unbroken on its own, so the only place you might have to lift the pen is the join. Continuity there means the first piece ends exactly where the second piece starts, and the dot at the join is at that same height.</p></div></details>
 <div class="box eg"><span class="tag">Example 3 (slide 15)</span>
 <p>For what value of \(b\) is</p>
 \[f(x)=\begin{cases}x, & \text{if } x\lt -2\\ bx^2, & \text{if } x\ge -2\end{cases}\]
 <p>continuous for every \(x\)?</p>
 <p><b>Solution.</b> A <b>piecewise function</b> uses different formulas on different parts of the number line. For \(x\lt-2\), \(f(x)=x\) is a polynomial, so continuous. For \(x\gt-2\), \(f(x)=bx^2\) is a polynomial, so continuous. The only point to check is the join \(x=-2\).</p>
 <ul class="list">
-<li>\(f(-2)=b(-2)^2=4b\) (the second formula applies since \(-2\ge-2\)).</li>
-<li>Left limit: \(\displaystyle\lim_{x\to-2^-}f(x)=\lim_{x\to-2^-}x=-2\).</li>
+<li>\(f(-2)=b(-2)^2=4b\) (the second formula applies since \(-2\ge-2\)). <span class="why">The dot at the join belongs to the piece whose condition includes \(-2\).</span></li>
+<li>Left limit: \(\displaystyle\lim_{x\to-2^-}f(x)=\lim_{x\to-2^-}x=-2\). <span class="why">Arriving from the left, the pen is drawing the first piece, \(y=x\), which is a polynomial, so just substitute.</span></li>
 <li>Right limit: \(\displaystyle\lim_{x\to-2^+}f(x)=\lim_{x\to-2^+}bx^2=4b\).</li>
 </ul>
 <p>For the limit to exist and equal \(f(-2)\) we need</p>
@@ -354,10 +415,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">y = x (x &lt; −2)</span><span style="--k:var(--c2)">y = bx² (x ≥ −2)</span></div>
 <div class="readout" id="e3-out"></div>
 <p class="cap">The open circle is where the left piece ends; the filled dot is f(−2) = 4b. They meet only at b = −1/2.</p></div>
+<p class="cannow"><b>You can now:</b> use the combination rules (with \(g(c)\ne0\) for quotients and the even-root condition) and the list of standard functions to say where a formula is continuous; and find a constant that makes a piecewise function continuous at its join.</p>
 </section>
 
 <!-- ================= 6 ================= -->
-<section id="s6"><h2><span class="n">6</span>Composites (slide 16)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Composites (slide 16)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A composite feeds the output of one function into another. A small nudge to \(x\) gives a small nudge to \(f(x)\). Because \(g\) is unbroken at that output, a small nudge to its input gives a small nudge to its output. So the pen tracing \(g(f(x))\) never has to lift either.</p></div></details>
 <p>A <b>composite</b> function applies one function and then another. \(g\circ f\) (read "\(g\) of \(f\)" or "\(g\) composed with \(f\)") means \((g\circ f)(x)=g(f(x))\): first apply \(f\), then feed the result into \(g\). For example if \(f(x)=x^2+1\) and \(g(u)=\sqrt u\), then \(g(f(x))=\sqrt{x^2+1}\).</p>
 <div class="box thm"><span class="tag">Theorem · Composite of continuous functions (slide 16)</span>
 <p>If \(f\) is continuous at \(c\) and \(g\) is continuous at \(f(c)\), then the composite \(g\circ f\) is continuous at \(c\).</p>
@@ -369,7 +432,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Find the interval for which \(y=\sqrt{\dfrac{x-1}{x+2}}\) is continuous.</p>
 <p><b>Solution.</b> This is a composite: inside \(f(x)=\dfrac{x-1}{x+2}\) (rational, continuous for \(x\ne-2\)), outside \(g(u)=\sqrt u\) (continuous for \(u\ge0\), one-sided at \(u=0\)). So \(y\) is continuous wherever it is defined, which is where</p>
 \[\frac{x-1}{x+2}\ge0\quad\text{and}\quad x\ne-2.\]
-<p>Sign table: the numerator is zero at \(x=1\), the denominator at \(x=-2\).</p>
+<p>Sign table: the numerator is zero at \(x=1\), the denominator at \(x=-2\). <span class="why">The outer square root only accepts inputs \(\ge0\), so we need to know where the inside is positive, zero or negative.</span></p>
 <div class="scroll"><table>
 <tr><th>\(x\)</th><th>\(x\lt-2\)</th><th>\(x=-2\)</th><th>\(-2\lt x\lt1\)</th><th>\(x=1\)</th><th>\(x\gt1\)</th></tr>
 <tr><td>\(x-1\)</td><td>−</td><td>−</td><td>−</td><td>0</td><td>+</td></tr>
@@ -384,14 +447,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <canvas class="plot" id="e4" style="aspect-ratio:16/9" aria-label="Graph of the square root of (x-1)/(x+2), existing for x less than -2 and x at least 1"></canvas>
 <div class="legend"><span style="--k:var(--accent)">y</span><span style="--k:var(--axis)">asymptotes x = −2, y = 1 (dashed)</span></div>
 <p class="cap">Two separate pieces. Left piece: rises to +∞ as x → −2⁻ (Lecture 3). Right piece: starts at the filled dot (1, 0) and levels off towards 1. Nothing exists for −2 ≤ x &lt; 1.</p></div>
+<p class="cannow"><b>You can now:</b> use the composite theorem to show that a function built in layers is continuous; and find where a function such as \(\sqrt{\frac{x-1}{x+2}}\) is continuous with a sign table, including the one-sided endpoint.</p>
 </section>
 
 <!-- ================= 7 ================= -->
-<section id="s7"><h2><span class="n">7</span>Limits of continuous functions (slide 17)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Limits of continuous functions (slide 17)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>If the inside heads to some value \(b\), and the outer function's graph is unbroken at \(b\), then the outer function heads to its own value at \(b\). The inside may even have a hole at \(c\): that does not matter, because a limit never looks at \(c\) itself, only at where the pen is heading.</p></div></details>
 <div class="box thm"><span class="tag">Theorem · Limits of continuous functions (slide 17)</span>
 <p>If \(g\) is continuous at \(b\) and \(\displaystyle\lim_{x\to c}f(x)=b\), then</p>
 \[\lim_{x\to c}g(f(x))=g\Big(\lim_{x\to c}f(x)\Big)=g(b).\]
 <p class="word"><b>In words:</b> limit of (continuous function of something) = continuous function of (limit of that something). You may move the limit inside a continuous outer function.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\lim_{x\to c}f(x)=b\)</dt><dd>the inside heads to \(b\); its own value at \(c\) does not matter.</dd>
+<dt>\(g\) continuous at \(b\)</dt><dd>the outer graph is unbroken at \(b\), so inputs near \(b\) give outputs near \(g(b)\).</dd>
+<dt>\(g\Big(\lim_{x\to c}f(x)\Big)\)</dt><dd>first find where the inside heads, then plug that into \(g\).</dd>
+</dl></div>
 </div>
 <p>This is stronger than Section 6: \(f\) itself need not be continuous at \(c\) (it need not even be defined there); only its limit \(b\) matters, and \(g\) must be continuous at \(b\). Together with Section 5 it justifies the slogan "limits of continuous functions can be evaluated by <b>direct substitution</b>": if \(h\) is continuous at \(c\), then \(\lim_{x\to c}h(x)=h(c)\), so just plug in.</p>
 <div class="box eg"><span class="tag">Example 5 (slide 17)</span>
@@ -400,15 +470,23 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[\begin{aligned}\lim_{x\to0}\cos\Big(\frac{\sin x}{x}\Big)&=\cos\Big(\lim_{x\to0}\frac{\sin x}{x}\Big)\\&=\cos 1\approx0.5403.\end{aligned}\]
 <p class="word"><b>In words:</b> the inside heads to 1, and cosine is smooth at 1, so the whole thing heads to cos 1 (1 radian, not 1 degree).</p>
 </div>
+<p class="cannow"><b>You can now:</b> move a limit inside a continuous outer function, after checking the outer function is continuous at the inside's limit; and evaluate limits of continuous functions by direct substitution.</p>
 </section>
 
 <!-- ================= 8 ================= -->
-<section id="s8"><h2><span class="n">8</span>The Intermediate Value Theorem (slides 18–19)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">The Intermediate Value Theorem (slides 18–19)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A hiker sets off from a point below sea level and finishes at a point above sea level. However her path twists, at some moment she was exactly at sea level, provided the path has no jumps: she cannot teleport over the shoreline. Read \(x\) as time and \(f(x)\) as her altitude. Continuity is the "no jumps" condition, and the closed interval \([a,b]\) means she really stands at the start and at the finish. Sea level is height 0, which is why the IVT finds roots.</p></div></details>
 <div class="box thm"><span class="tag">Theorem · Intermediate Value Theorem, IVT (slide 18)</span>
 <p>A function \(y=f(x)\) that is continuous on a closed interval \([a,b]\) takes on every value between \(f(a)\) and \(f(b)\). In other words, if \(y_0\) is any value between \(f(a)\) and \(f(b)\), then there exists \(c\in[a,b]\) such that</p>
 \[f(c)=y_0.\]
 <p class="word"><b>In words:</b> if an unbroken graph starts at height \(f(a)\) and ends at height \(f(b)\), it must pass through every height in between at least once.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(f\) continuous on \([a,b]\)</dt><dd>the hike has no jumps, from the start \(a\) to the finish \(b\), both included.</dd>
+<dt>\(y_0\) between \(f(a)\) and \(f(b)\)</dt><dd>any altitude between the starting and finishing heights.</dd>
+<dt>\(c\in[a,b]\)</dt><dd>some moment during the hike. The theorem does not say when, and it may happen more than once.</dd>
+<dt>\(f(c)=y_0\)</dt><dd>at that moment she is at exactly that altitude.</dd>
+</dl></div>
 <p>Analogy: you hike from a village at 200 m altitude to a peak at 800 m. However winding the path, at some moment you were at exactly 500 m, because you cannot teleport. The IVT says the same for graphs, and continuity is the "no teleporting" condition. Three things to notice:</p>
 <ul class="list">
 <li>Both conditions matter: <b>continuous</b> and on a <b>closed</b> interval \([a,b]\). Drop continuity and the graph can jump over \(y_0\) (try the jump case in the figure).</li>
@@ -428,10 +506,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box eg"><span class="tag">Example 6 (slide 19)</span>
 <p>Show that \(f(x)=\sqrt[3]{x}+x-1\) has a root in \([0,1]\).</p>
 <p><b>Solution.</b></p>
-<ol class="steps">
-<li><b>Continuity.</b> \(\sqrt[3]{x}\) is a root function and \(x-1\) is a polynomial; both are continuous for all real \(x\), so their sum \(f\) is continuous on \([0,1]\) (slides 13–14).</li>
-<li><b>End values.</b> \(f(0)=0+0-1=-1\lt0\) and \(f(1)=1+1-1=1\gt0\).</li>
-<li><b>Conclude.</b> \(0\) lies between \(f(0)=-1\) and \(f(1)=1\). By the Intermediate Value Theorem there exists \(c\in[0,1]\) with \(f(c)=0\), i.e. \(f\) has a root in \([0,1]\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> <b>Continuity.</b> \(\sqrt[3]{x}\) is a root function and \(x-1\) is a polynomial; both are continuous for all real \(x\), so their sum \(f\) is continuous on \([0,1]\) (slides 13–14). <span class="why">This is the "no jumps" condition. Without it the graph could jump over zero, as \(|x|/x\) does in Common Mistake 3.</span></li>
+<li><b>Do:</b> <b>End values.</b> \(f(0)=0+0-1=-1\lt0\) and \(f(1)=1+1-1=1\gt0\). <span class="why">The hike starts below sea level and finishes above it.</span></li>
+<li><b>Do:</b> <b>Conclude.</b> \(0\) lies between \(f(0)=-1\) and \(f(1)=1\). By the Intermediate Value Theorem there exists \(c\in[0,1]\) with \(f(c)=0\), i.e. \(f\) has a root in \([0,1]\). <span class="why">Height 0 lies between the start and finish heights, so the IVT promises a moment at sea level. Name the theorem and its conditions: Section 11 shows an answer that loses marks for skipping continuity.</span></li>
 </ol>
 <p class="word"><b>In words:</b> continuous, negative at one end, positive at the other, so it crosses zero in between.</p>
 </div>
@@ -443,10 +521,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">y = f(x)</span><span style="--k:var(--c4)">interval still known to contain the root</span></div>
 <div class="readout" id="bis-out"></div></div>
 </div>
+<p class="cannow"><b>You can now:</b> state the IVT with both of its conditions; show that an equation has a root in a given interval with the three-line argument (continuity, end values, conclude); and explain why the IVT says nothing without continuity or when the end values have the same sign.</p>
 </section>
 
 <!-- ================= 9 ================= -->
-<section id="s9"><h2><span class="n">9</span>Summary (slide 20)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Summary (slide 20)</span></h2>
 <ul class="list">
 <li>"The graph of a continuous function can be drawn without removing a pen from the paper." Precisely: \(\lim_{x\to c}f(x)=f(c)\) at every point (one-sided at endpoints).</li>
 <li>Types of discontinuity include <b>removable</b>, <b>jump</b>, <b>infinite</b> and <b>oscillating</b>.</li>
@@ -457,7 +536,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= 10 ================= -->
-<section id="s10"><h2><span class="n">10</span>Common mistakes (slide 22)</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Common mistakes (slide 22)</span></h2>
 <h3>1. Assuming that if \(f\) is discontinuous at \(x=c\), then \(\lim_{x\to c}f(x)\) does not exist</h3>
 <p>Slide's example: suppose</p>
 \[f(x)=\begin{cases}1 & \text{if } x\ne0\\ 0 & \text{if } x=0.\end{cases}\]
@@ -486,7 +565,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= 11 ================= -->
-<section id="s11"><h2><span class="n">11</span>Find the mistake (slide 21)</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Find the mistake (slide 21)</span></h2>
 <p>The slide shows a question and a student's handwritten answer. Find what is wrong or missing.</p>
 <div class="q"><p class="qh">Question 6. Apply the Intermediate Value Theorem to show that</p>
 \[f(x)=xe^x-x^2-1\]
@@ -508,7 +587,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= 12 ================= -->
-<section id="s12"><h2><span class="n">12</span>Group work (slide 23)</h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Group work (slide 23)</span></h2>
 
 <div class="q"><p class="qh">1. Find the continuous extension of \(f(x)=\dfrac{x^3+2x^2-1}{5-3x}\).</p>
 <details><summary>Hint</summary><div><p>Where is \(f\) undefined? Does the limit exist there? (Plug that point into the numerator.)</p></div></details>
@@ -559,7 +638,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= 13 ================= -->
-<section id="s13"><h2><span class="n">13</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Concept checks <span class="pill">Written for these notes</span></span></h2>
 
 <div class="q"><p class="qh">1. Can \(f\) be continuous at \(c\) if \(f(c)\) is not defined?</p>
 <details><summary>Answer</summary><div><p>No. Condition (i) of the Continuity Test requires \(f(c)\) to be defined. If the limit exists, you can build the continuous extension, but that is a new function \(F\).</p></div></details></div>
@@ -581,7 +660,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= Exam taster ================= -->
-<section id="pastpaper"><h2><span class="n">14</span>Exam taster</h2>
+<section id="pastpaper"><h2><span class="n">14</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Lecture 4's question types appear 22 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide. Lecture 4 types also appear inside later notes: Dec 2021 Q2(b), May 2017 Q1(c), Dec 2020 Q1(b), Dec 2019 Q1(a) and May 2018 Q2 (Lecture 7); May 2016 Q1(b) (Lecture 6); May 2019 Q5(b) (Lecture 8); May 2024 Q3(c) (Lecture 12).</p>
 
@@ -901,5 +980,13 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </html>

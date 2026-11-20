@@ -106,6 +106,34 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -136,12 +164,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · Calculus · Lecture 7</span>
   <h1>Derivatives of Inverse Functions</h1>
-  <p class="lede">Every slide of Lecture 7 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this lecture.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this lecture sits</h2>
-<p>Lectures 5 and 6 built the derivative: Lecture 5 defined it as a limit, and Lecture 6 gave the rules that let you differentiate without going back to the limit each time. Lecture 7 adds a whole new set of functions to the toolkit: <b>inverse functions</b>, and in particular the exponential, logarithmic and inverse trigonometric functions. It also adds one new technique, <b>logarithmic differentiation</b>.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this lecture sits</span></h2>
+<p>Lectures 5 and 6 built the derivative and its rules. This lecture runs functions backwards. Picture a function as a machine that turns each input into an output; its <b>inverse</b> is the undo machine that takes each output back to the input that made it. The new functions here (exponential, logarithmic, inverse trigonometric) are all built this way, and there is one new technique, <b>logarithmic differentiation</b>.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span><ol>
+<li><a href="#s1">§1</a> <b>An inverse is an undo machine.</b> It exists only if no two inputs give the same output, and its graph is the mirror image in \(y=x\).</li>
+<li><a href="#s2">§2</a> <b>In the mirror, every slope flips to its reciprocal.</b> So \((f^{-1})'(b)=1/f'(a)\) where \(f(a)=b\).</li>
+<li><a href="#s3">§3</a> <b>\(e^x\) and \(\ln x\) undo each other.</b> \(e^x\) is its own slope, so \(\ln x\) has slope \(1/x\). <span class="pill">Main exam type</span></li>
+<li><a href="#s4">§4</a> <b>Logs turn products into sums.</b> Take \(\ln\), split, differentiate: the tool for \(x^x\) and long products. <span class="pill">Main exam type</span></li>
+<li><a href="#s5">§5</a> <b>"Bring the power down, subtract one" works for every real power.</b></li>
+<li><a href="#s6">§6</a> <b>Cut sin, cos and tan down to one-to-one pieces, then undo them.</b> Their slopes come from the §2 flip. <span class="pill">Main exam type</span></li>
+<li><a href="#s7">§7</a> <b>All the new families are continuous where defined,</b> so limits can be found by substituting.</li>
+</ol></div>
+<p><b>You need:</b> the derivative rules of Lectures 5 and 6 (recalled below), especially the Chain Rule and implicit differentiation, and HKDSE logarithms. <b>In the exam:</b> this lecture appears in 12 of the 13 recent papers, mostly as Q2 "Find \(\frac{dy}{dx}\)" parts: logarithmic differentiation, and derivatives of \(e^{u}\), \(\ln u\), \(\sin^{-1}u\). Slope-of-an-inverse and choose-a-domain questions were common before 2019 but are rare now. See the <a href="guide-L7.html">L7 exam guide</a>.</p>
 
 <h3>Recall: the rules from Lecture 6 (slide 2)</h3>
 <p>The lecture opens by listing the explicit differentiation rules. "Explicit" means \(y\) is given directly as a formula in \(x\). Here \(f'(x)\) means the derivative of \(f\), the slope of its graph at \(x\).</p>
@@ -158,10 +195,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </table></div>
 <p>\(\mathbb Z\) is the set of integers (whole numbers, positive, negative or zero). The star on the Power Rule is a promise: in this lecture (section 5) the rule is extended from integer powers \(n\in\mathbb Z\) to <i>every</i> real power \(n\in\mathbb R\), using logarithmic differentiation. \((f\circ g)(x)\) means \(f(g(x))\), "\(f\) applied after \(g\)". Recall \(\csc x=\frac1{\sin x}\), \(\sec x=\frac1{\cos x}\), \(\cot x=\frac{\cos x}{\sin x}\).</p>
 <p>The slide also recalls <b>implicit differentiation</b> (Lecture 6), used when \(x\) and \(y\) are tied together by an equation rather than \(y=\) formula:</p>
-<ol class="steps">
-<li>Differentiate both sides of the equation with respect to \(x\).</li>
-<li>Apply the Chain Rule when differentiating anything containing \(y\): since \(y\) is secretly a function of \(x\), every time you differentiate a \(y\)-expression you multiply by \(\dfrac{dy}{dx}\). For example \(\dfrac{d}{dx}(y^2)=2y\dfrac{dy}{dx}\).</li>
-<li>Solve the resulting equation for \(\dfrac{dy}{dx}\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> Differentiate both sides of the equation with respect to \(x\). <span class="why">The two sides are equal at every point of the curve, so as \(x\) moves they must change at the same rate.</span></li>
+<li><b>Do:</b> Apply the Chain Rule when differentiating anything containing \(y\): since \(y\) is secretly a function of \(x\), every time you differentiate a \(y\)-expression you multiply by \(\dfrac{dy}{dx}\). For example \(\dfrac{d}{dx}(y^2)=2y\dfrac{dy}{dx}\). <span class="why">\(y\) moves when \(x\) moves, so a \(y\)-expression changes at its own rate times how fast \(y\) itself is changing.</span></li>
+<li><b>Do:</b> Solve the resulting equation for \(\dfrac{dy}{dx}\). <span class="why">\(\frac{dy}{dx}\) is the one unknown, and it appears only to the first power, so ordinary algebra isolates it.</span></li>
 </ol>
 <p>Implicit differentiation is the engine behind most of this lecture.</p>
 
@@ -175,7 +212,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>One-to-one functions and inverse functions</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">One-to-one functions and inverse functions</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A function is a machine: drop in an input and exactly one output comes out. The inverse is the undo machine: feed it an output and it hands back the input that made it. Think of a coat check. You hand in your coat and get ticket 17; hand in ticket 17 and you get your coat back. This only works if no two coats ever get the same ticket. If two coats had ticket 17, the attendant would not know which one to return.</p></div></details>
 <p>An inverse function "undoes" a function. If \(f\) turns 3 into 9, its inverse turns 9 back into 3. This only works if no two inputs give the same output: if \(f(3)=9\) and also \(f(-3)=9\), then "undo 9" has two possible answers, and a function must give exactly one. That is the idea behind <i>one-to-one</i>.</p>
 
 <div class="box def"><span class="tag">Definition: one-to-one (slide 7)</span>
@@ -205,6 +243,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> \(f^{-1}\) takes an output of \(f\) and returns the input that produced it. If \(f\) sends \(a\) to \(b\), then \(f^{-1}\) sends \(b\) back to \(a\).</p>
 <p>The domain of \(f^{-1}\) is \(R\) and the range of \(f^{-1}\) is \(D\). (The <b>range</b> is the set of all outputs.) Inputs and outputs simply swap roles.</p>
 </div>
+<details class="idea"><summary>What is this? (the mirror image)</summary><div><p>Write the machine as a table with an input column and an output column. The undo machine uses the very same table, read the other way: just swap the two column headings. On a graph, swapping the roles of \(x\) and \(y\) sends every point \((a,b)\) to \((b,a)\), which is its reflection in the diagonal line \(y=x\). So the graph of the undo machine is the original graph seen in a mirror laid along that diagonal.</p></div></details>
 <p>Two consequences listed on the slide:</p>
 <ul class="list">
 <li><b>Symmetry about \(y=x\).</b> If \((a,b)\) is on the graph of \(f\), then \((b,a)\) is on the graph of \(f^{-1}\). Swapping the coordinates of a point reflects it in the line \(y=x\), so the graph of \(f^{-1}\) is the mirror image of the graph of \(f\) in the line \(y=x\).</li>
@@ -216,10 +255,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box warn"><span class="tag">Trap: notation</span>
 <p>\(f^{-1}(x)\) means the <b>inverse function</b>, not \(\dfrac1{f(x)}\). For the reciprocal write \([f(x)]^{-1}\). This matters most for \(\sin^{-1}x\) in section 6.</p>
 </div>
+<p class="cannow"><b>You can now:</b> test whether a function is one-to-one with the Horizontal Line Test; restrict a domain so that it becomes one-to-one; state the domain and range of \(f^{-1}\) by swapping those of \(f\); sketch \(f^{-1}\) by reflecting in \(y=x\); and tell \(f^{-1}(x)\) apart from \(1/f(x)\).</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>The derivative of an inverse function</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">The derivative of an inverse function</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Hold the graph of \(f\) up to the mirror along \(y=x\): you see the graph of the undo machine. A ramp on \(f\) that climbs 3 units for every 1 unit across appears in the mirror as a ramp that climbs 1 unit for every 3 across, because the mirror swaps "up" and "across". So every slope flips to its reciprocal. The one danger is a flat spot: slope 0 on \(f\) becomes a vertical wall on \(f^{-1}\), where there is no slope at all.</p></div></details>
 
 <div class="box thm"><span class="tag">Theorem: Derivative of Inverse Functions (slide 9)</span>
 <p>If \(f\) is a one-to-one differentiable function with inverse function \(f^{-1}\) and \(f'(f^{-1}(x))\ne0\), then the inverse function is differentiable at \(x\) and</p>
@@ -227,6 +268,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> slope of the inverse at \(x\) = 1 ÷ (slope of the original function at the matching point \(f^{-1}(x)\)).</p>
 <p>"Differentiable" means the derivative exists (Lecture 5).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\((f^{-1})'(x)\)</dt><dd>the slope of the undo machine's graph at input \(x\): the thing we want.</dd><dt>\(f^{-1}(x)\)</dt><dd>run the undo machine first: the input of \(f\) that produced \(x\). This tells you where the matching point sits on the graph of \(f\).</dd><dt>\(f'\big(f^{-1}(x)\big)\)</dt><dd>the slope of the original graph at that matching point.</dd><dt>\(\dfrac{1}{\cdots}\)</dt><dd>the mirror swaps rise and run, so the slope flips.</dd><dt>\(f'(f^{-1}(x))\ne0\)</dt><dd>a flat spot on \(f\) becomes a vertical tangent on \(f^{-1}\), and there is no number to flip to.</dd></dl></div>
 
 <p>The slide gives two reasons why this is true.</p>
 <h3>(i) Geometric reason</h3>
@@ -247,6 +289,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[f'(y)\,\frac{dy}{dx}=1\]
 \[\Longrightarrow\quad \frac{dy}{dx}=\frac{1}{f'(y)}=\frac{1}{f'\big(f^{-1}(x)\big)} .\]
 <p class="word"><b>In words:</b> rewrite "\(y\) is the inverse of \(f\) at \(x\)" as "\(f\) of \(y\) is \(x\)", differentiate, and divide.</p>
+<p><span class="why">We know nothing directly about the undo machine, but \(f(y)=x\) only involves the original machine \(f\), whose derivative we do know.</span></p>
 <p>The division is only allowed when \(f'(y)\ne0\): that is the condition in the theorem. Where \(f'=0\), the graph of \(f\) has a horizontal tangent, and its mirror image has a <b>vertical</b> tangent, whose slope is undefined.</p>
 
 <div class="box eg"><span class="tag">Example 1 (slide 10)</span>
@@ -255,25 +298,28 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>Step 1: find \(a=f^{-1}(2)\).</b> Solve \(f(a)=2\):</p>
 \[\sqrt{a^3+a^2+a+1}=2\]
 \[\iff a^3+a^2+a+1=4 .\]
-<p>Try small integers: \(a=1\) gives \(1+1+1+1=4\). ✓ So \(f^{-1}(2)=1\). (It is the only solution: see the check below.)</p>
+<p>Try small integers: \(a=1\) gives \(1+1+1+1=4\). ✓ So \(f^{-1}(2)=1\). (It is the only solution: see the check below.) <span class="why">The slope must be read at the matching point on \(f\). Running the undo machine on 2 tells you where that is: at input 1.</span></p>
 <p><b>Step 2: differentiate \(f\).</b> By the Chain Rule (Lecture 6), with \(\sqrt u=u^{1/2}\):</p>
 \[f'(x)=\frac{3x^2+2x+1}{2\sqrt{x^3+x^2+x+1}} .\]
 <p><b>Step 3: evaluate at \(a=1\).</b></p>
 \[f'(1)=\frac{3+2+1}{2\sqrt4}=\frac{6}{4}=\frac32 .\]
 <p><b>Step 4: apply the theorem.</b></p>
 \[(f^{-1})'(2)=\frac{1}{f'(f^{-1}(2))}=\frac{1}{f'(1)}=\frac23 .\]
-<p><b>Check that \(f\) is one-to-one</b> (a marker expects this): \(x^3+x^2+x+1=(x+1)(x^2+1)\ge0\) needs \(x\ge-1\), so the domain is \([-1,\infty)\). For \(x\gt-1\), the numerator \(3x^2+2x+1\) is always positive (its discriminant \(4-12\lt0\)), so \(f'(x)\gt0\) and \(f\) is increasing, hence one-to-one. Also \(f'(1)=\frac32\ne0\), so the theorem applies.</p>
+<p><b>Check that \(f\) is one-to-one</b> (a marker expects this): \(x^3+x^2+x+1=(x+1)(x^2+1)\ge0\) needs \(x\ge-1\), so the domain is \([-1,\infty)\). For \(x\gt-1\), the numerator \(3x^2+2x+1\) is always positive (its discriminant \(4-12\lt0\)), so \(f'(x)\gt0\) and \(f\) is increasing, hence one-to-one. Also \(f'(1)=\frac32\ne0\), so the theorem applies. <span class="why">An increasing function never comes back to a height it has already reached, so it passes the Horizontal Line Test and the undo machine exists.</span></p>
 <p class="word"><b>In words:</b> to get the slope of the inverse at 2, find which input of \(f\) gives 2 (it is 1), find the slope of \(f\) there (\(\frac32\)), and flip it (\(\frac23\)).</p>
 </div>
 <div class="box warn"><span class="tag">Trap</span>
 <p>Do <b>not</b> compute \(\dfrac{1}{f'(2)}\). The slope of \(f\) must be taken at \(f^{-1}(2)=1\), the \(x\)-coordinate of the matching point on \(f\), not at \(2\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> explain why the slope of \(f^{-1}\) is the reciprocal of the slope of \(f\) at the mirror point; find \((f^{-1})'(c)\) without a formula for \(f^{-1}\) by solving \(f(a)=c\) and computing \(1/f'(a)\); prove the theorem by implicit differentiation; and check its conditions (one-to-one, \(f'(a)\ne0\)).</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Logarithmic and exponential functions</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Logarithmic and exponential functions</span> <span class="mins">~9 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>An exponential is a growth machine: start with 1 and multiply by the same factor \(a\) for every unit of \(x\), like bacteria that double every hour. The logarithm is its undo machine: tell it the amount and it tells you how much time the growth took. For bacteria that double every hour, \(\log_2 8=3\): reaching 8 times the starting amount takes 3 hours.</p></div></details>
 <p>From HKDSE you know \(\log_a x\): the power you must raise \(a\) to in order to get \(x\). So \(\log_2 8=3\) because \(2^3=8\). The exponential \(a^x\) and the logarithm \(\log_a x\) undo each other, so they are a pair of inverse functions. This section collects their properties and their derivatives.</p>
 
+<details class="idea"><summary>What is this? (the number e)</summary><div><p>Each growth factor gives a different base. One base is special: for \(e^x\), the speed at which the amount grows always equals the amount itself. A colony of size 100 is growing at 100 per unit time; when it reaches 500 it is growing at 500. The natural log \(\ln x\) undoes this growth: it tells you how long the colony needs to grow from 1 to size \(x\).</p></div></details>
 <div class="box def"><span class="tag">The number e and ln x</span>
 <p>\(e\approx2.71828\) is a special base. Its key property: the slope of \(y=e^x\) at every point equals its height, \(\frac{d}{dx}(e^x)=e^x\). The <b>natural logarithm</b> is the logarithm to base \(e\):</p>
 \[\ln x=\log_e x .\]
@@ -286,6 +332,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> slope of \(\log_a x\) at \(x\) = 1 ÷ (\(x\) times the natural log of the base).</p>
 <p style="font-size:.92rem;color:var(--muted)">The slide marks this with a footnote "a precise definition will be given in Lecture 10". (The usual precise definition, \(\ln x=\int_1^x\frac1t\,dt\), uses the definite integral of Lecture 12; for now treat \(\log_a x\) as the HKDSE logarithm.)</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(x\ln a\)</dt><dd>how fast the growth machine \(a^t\) is growing at the moment its amount has reached \(x\) (its slope there, from Example 3(b) below).</dd><dt>\(\dfrac{1}{x\ln a}\)</dt><dd>flip it: the extra time needed per extra unit of amount. This is the §2 mirror again, since \(\log_a\) is the undo machine of \(a^t\).</dd><dt>\(\dfrac1x\)</dt><dd>the bigger the amount, the faster it grows, so each extra unit takes less time: the log curve flattens out as \(x\) grows.</dd><dt>\(\ln a\)</dt><dd>a bigger growth factor reaches each amount sooner, so its log is flatter. With \(a=e\), \(\ln e=1\) and the slope is just \(\frac1x\). For \(0\lt a\lt1\), \(\ln a\lt0\): the machine shrinks instead of grows, and the log slopes downwards.</dd></dl></div>
 <p>Properties listed on the slide:</p>
 <ul class="list">
 <li><b>Continuous on its domain \((0,\infty)\).</b> Only positive numbers have a logarithm (no power of a positive base is zero or negative). "Continuous" means no breaks or jumps (Lecture 4).</li>
@@ -323,6 +370,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="cap">The two curves are mirror images in \(y=x\): \((0,1)\) on \(a^x\) matches \((1,0)\) on \(\log_a x\). For \(a\gt1\) both rise; for \(0\lt a\lt1\) both fall. With \(a=e\) you see the slide 13 picture: \(e^x\) and \(\ln x\).</p></div>
 
 <h3>ln x and eˣ are inverses (slide 13)</h3>
+<details class="idea"><summary>What is this? (the slope flip for e and ln)</summary><div><p>This is the §2 mirror in action. The slope of \(\ln\) at input \(u\) is \(\frac1u\). The matching point on \(e^x\) has height \(u\), and the mirror flips the slope to \(u\). So the slope of \(e^x\) equals its own height everywhere: the growth-machine property of \(e\) from the start of this section.</p></div></details>
 <p>The slide uses the Derivative of Inverses Theorem to get the derivative of \(e^x\) from that of \(\ln x\). Let \(f(x)=\ln x\), so \(f^{-1}(x)=e^x\) and \(f'(x)=\frac1x\). Then</p>
 \[\begin{aligned}(f^{-1})'(x)&=\frac{1}{f'(f^{-1}(x))}\\&=\frac{1}{f'(e^x)}\\&=\frac{1}{1/e^x}=e^x .\end{aligned}\]
 <p class="word"><b>In words:</b> the slope of \(\ln\) at the point \(e^x\) is \(\frac1{e^x}\); flip it and you get \(e^x\). So \(e^x\) is its own derivative.</p>
@@ -337,6 +385,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> any exponential can be rewritten with base \(e\): replace the base \(a\) by \(e^{\ln a}\) and multiply the powers.</p>
 This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 </ul>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(a=e^{\ln a}\)</dt><dd>multiplying by \(a\) once is the same as letting the \(e\)-machine grow for time \(\ln a\).</dd><dt>\(x\ln a\)</dt><dd>\(x\) rounds of multiplying by \(a\) is the same as letting the \(e\)-machine run for time \(x\ln a\).</dd><dt>\(e^{x\ln a}\)</dt><dd>so every exponential is the one \(e\)-machine run at a different speed, which is why one derivative rule (\((e^u)'=e^u u'\)) handles them all.</dd></dl></div>
 
 <div class="box eg"><span class="tag">Example 2 (slide 14)</span>
 <p>Evaluate \(\displaystyle\lim_{x\to\infty}\frac{e^{3x}+3}{e^{3x}}\).</p>
@@ -346,10 +395,12 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 \[\lim_{x\to\infty}\frac{e^{3x}+3}{e^{3x}}=1+0=1 .\]
 <p class="word"><b>In words:</b> for huge \(x\), adding 3 to the enormous number \(e^{3x}\) makes no visible difference, so the ratio is about 1.</p>
 </div>
+<p class="cannow"><b>You can now:</b> state the domain, monotonicity and limits of \(a^x\) and \(\log_a x\) for \(0\lt a\lt1\) and \(a\gt1\); differentiate \(\ln x\), \(\log_a x\) and \(e^x\); get \((e^x)'\) from \((\ln x)'\) with the inverse theorem; rewrite \(a^x=e^{x\ln a}\); and find limits like Example 2 from the behaviour of \(e^x\).</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Differentiating powers, and logarithmic differentiation</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Differentiating powers, and logarithmic differentiation</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A logarithm turns multiplying into adding: \(\ln(ab)=\ln a+\ln b\). That helps because rates of change of products are messy, but rates of change of sums simply add. Think of a shop's takings = price × number sold. If the price rises by 2% and sales rise by 3%, the takings rise by about 5%: the percentage changes add. Taking \(\ln\) is exactly the switch from "by how much" to "by what percentage", and \(\frac1y\frac{dy}{dx}\) is the relative (percentage) rate of change of \(y\).</p></div></details>
 <p>There are three different shapes of "power" and each needs a different rule. The rule depends on <b>where the variable sits</b>: in the base, in the exponent, or in both.</p>
 <div class="cases">
 <div><b>Variable base, constant power: \(x^a\)</b>Power Rule: \(ax^{a-1}\).</div>
@@ -360,13 +411,13 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 <div class="box eg"><span class="tag">Example 3 (slide 15)</span>
 <p>For variable \(x\gt0\) and constant \(a\gt0\), find (a) \(\dfrac{d}{dx}(x^a)\), (b) \(\dfrac{d}{dx}(a^x)\), (c) \(\dfrac{d}{dx}(x^x)\).</p>
 <p>All three use \(a^x=e^{x\ln a}\) (or its cousin \(x^a=e^{a\ln x}\)), then the Chain Rule with \(\frac{d}{dx}e^u=e^u\frac{du}{dx}\).</p>
-<p><b>(a)</b> Write \(x^a=e^{a\ln x}\). Then</p>
+<p><b>(a)</b> Write \(x^a=e^{a\ln x}\). Then <span class="why">Now the variable sits only in the exponent of the fixed base \(e\), where the rule \((e^u)'=e^u u'\) applies.</span></p>
 \[\begin{aligned}\frac{d}{dx}(x^a)&=e^{a\ln x}\cdot\frac{a}{x}\\&=x^a\cdot\frac ax=ax^{a-1}.\end{aligned}\]
 <p class="word"><b>In words:</b> the ordinary Power Rule (bring the power down, reduce it by one) works for any real power \(a\), not just integers.</p>
 <p><b>(b)</b> Write \(a^x=e^{x\ln a}\); here \(\ln a\) is a constant. Then</p>
 \[\frac{d}{dx}(a^x)=e^{x\ln a}\cdot\ln a=a^x\ln a .\]
 <p class="word"><b>In words:</b> slope of \(a^x\) = the function itself × the natural log of the base. (With \(a=e\), \(\ln e=1\) and we get back \((e^x)'=e^x\).) This is the "TBD" result of slide 12.</p>
-<p><b>(c)</b> Write \(x^x=e^{x\ln x}\). By the Chain Rule and Product Rule:</p>
+<p><b>(c)</b> Write \(x^x=e^{x\ln x}\). By the Chain Rule and Product Rule: <span class="why">The exponent \(x\ln x\) is a product of two moving parts, so it needs the Product Rule.</span></p>
 \[\begin{aligned}\frac{d}{dx}(x^x)&=e^{x\ln x}\cdot\frac{d}{dx}(x\ln x)\\&=x^x\Big(1\cdot\ln x+x\cdot\frac1x\Big)\\&=x^x(\ln x+1).\end{aligned}\]
 <p class="word"><b>In words:</b> slope of \(x^x\) = \(x^x\) × (\(\ln x\) + 1).</p>
 <p>The same answer comes from logarithmic differentiation (below): \(\ln y=x\ln x\), so \(\frac{y'}{y}=\ln x+1\).</p>
@@ -381,17 +432,17 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 
 <div class="box thm"><span class="tag">Method: logarithmic differentiation (slide 16)</span>
 <p>Given a function \(y=f(x)\), compute \(\dfrac{dy}{dx}\) as follows.</p>
-<ol class="steps">
-<li><b>Take the natural logarithm of both sides:</b> \(\ln y=\ln f(x)\).</li>
-<li><b>Use the Laws of Logarithms to simplify:</b> rewrite products, quotients and exponents as sums, differences and multiples.
+<ol class="steps proc">
+<li><b>Do:</b> <b>Take the natural logarithm of both sides:</b> \(\ln y=\ln f(x)\). <span class="why">This switches from the size of \(y\) to its log, where multiplying becomes adding.</span></li>
+<li><b>Do:</b> <b>Use the Laws of Logarithms to simplify:</b> rewrite products, quotients and exponents as sums, differences and multiples.
 <div class="scroll"><table>
 <tr><th>Law</th><th>Formula</th><th>In words</th></tr>
 <tr><td>Product</td><td>\(\ln(xy)=\ln x+\ln y\)</td><td>log of a product = sum of logs</td></tr>
 <tr><td>Quotient</td><td>\(\ln\left(\dfrac xy\right)=\ln x-\ln y\)</td><td>log of a quotient = difference of logs</td></tr>
 <tr><td>Exponent</td><td>\(\ln(x^r)=r\ln x\)</td><td>a power comes down in front</td></tr>
-</table></div></li>
-<li><b>Differentiate implicitly:</b> the left side gives \(\dfrac{d}{dx}(\ln y)=\dfrac1y\dfrac{dy}{dx}\) (Chain Rule).</li>
-<li><b>Write \(\dfrac{dy}{dx}\) in terms of \(x\):</b> multiply both sides by \(y\), then substitute the original formula for \(y\).</li>
+</table></div><span class="why">Each factor becomes its own separate term, so its contribution can be handled on its own, like the 2% and the 3% in the shop.</span></li>
+<li><b>Do:</b> <b>Differentiate implicitly:</b> the left side gives \(\dfrac{d}{dx}(\ln y)=\dfrac1y\dfrac{dy}{dx}\) (Chain Rule). <span class="why">The left side is now the relative rate of change of \(y\); the right side adds up the relative rates of its factors.</span></li>
+<li><b>Do:</b> <b>Write \(\dfrac{dy}{dx}\) in terms of \(x\):</b> multiply both sides by \(y\), then substitute the original formula for \(y\). <span class="why">You want the actual rate, not the percentage rate, so scale back up by the size of \(y\). Forgetting this is a common mistake (section 9).</span></li>
 </ol>
 <p class="word"><b>In words:</b> logs turn multiplication into addition and powers into multiples, so a messy product becomes a sum that is easy to differentiate term by term.</p>
 <p>Use it when (1) the variable is in both the base and the exponent, like \(f(x)^{g(x)}\), or (2) the function is a complicated product or quotient of many factors.</p>
@@ -408,6 +459,7 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 \[\ln y=\tfrac34\ln x+\tfrac12\ln(x^2+1)-5\ln(3x+2).\]
 <p><b>Step 3: differentiate implicitly</b> (Chain Rule on each log: \(\frac{d}{dx}\ln u=\frac{u'}{u}\)):</p>
 \[\begin{aligned}\frac1y\frac{dy}{dx}&=\frac34\cdot\frac1x+\frac12\cdot\frac{2x}{x^2+1}\\&\quad-5\cdot\frac{3}{3x+2}.\end{aligned}\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\dfrac1y\dfrac{dy}{dx}\)</dt><dd>the relative (percentage) rate of change of the whole expression.</dd><dt>\(\dfrac34\cdot\dfrac1x\)</dt><dd>\(x^{3/4}\) changes by three quarters of the percentage change of \(x\).</dd><dt>\(\dfrac12\cdot\dfrac{2x}{x^2+1}\)</dt><dd>the square root changes by half the percentage change of \(x^2+1\).</dd><dt>\(-5\cdot\dfrac{3}{3x+2}\)</dt><dd>a factor in the denominator pulls the total down, and the power 5 counts its percentage change five times.</dd></dl></div>
 <p><b>Step 4: multiply by \(y\) and substitute:</b></p>
 \[\begin{aligned}\frac{dy}{dx}&=\frac{x^{3/4}\sqrt{x^2+1}}{(3x+2)^5}\\&\quad\times\left(\frac{3}{4x}+\frac{x}{x^2+1}-\frac{15}{3x+2}\right).\end{aligned}\]
 <p class="word"><b>In words:</b> derivative = original function × (sum of each factor's "log-derivative", with a minus sign for factors in the denominator).</p>
@@ -424,10 +476,12 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 \[\frac{dy}{dx}=(x+1)^x\left(\ln(x+1)+\frac{x}{x+1}\right).\]
 <p class="word"><b>In words:</b> slope = original function × (derivative of "exponent × ln base").</p>
 </div>
+<p class="cannow"><b>You can now:</b> tell \(x^a\), \(a^x\) and \(x^x\) apart and pick the right rule; differentiate \(a^x\) and \(x^x\) by rewriting with base \(e\); and use logarithmic differentiation on \(f(x)^{g(x)}\) and on long products and quotients, remembering to multiply back by \(y\).</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>The General Power Rule</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">The General Power Rule</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The percentage picture from §4 gives the whole rule. If a positive \(x\) grows by 1%, then \(x^n\) grows by about \(n\)%: squaring doubles the percentage change, and a square root halves it. So the relative rate of \(x^n\) is \(n\) times that of \(x\), which is \(\frac nx\). Scaling back up by the size \(x^n\) gives \(nx^{n-1}\). Nothing in this needs \(n\) to be a whole number. Percentages only make sense for positive \(x\), which is why \(x\le0\) is handled separately below.</p></div></details>
 <div class="box thm"><span class="tag">Theorem: General Power Rule (slide 19)</span>
 <p>For \(x\gt0\) and \(n\in\mathbb R\),</p>
 \[\frac{d}{dx}x^n=nx^{n-1}.\]
@@ -456,10 +510,12 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 <p class="word"><b>In words:</b> power \(\frac12\) comes down, the power drops to \(-\frac12\), then multiply by the derivative of the inside.</p>
 <p>This holds wherever \(x^3+4\gt0\), i.e. \(x\gt-\sqrt[3]4\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> differentiate \(x^n\) for any real \(n\) (fractions, \(\sqrt2\), \(\pi\)); say how each case (\(\mathbb Z^+\), \(\mathbb Z\), \(\mathbb R\)) is proved; say where the rule fails because \(x^n\) or \(x^{n-1}\) does not exist; and combine it with the Chain Rule as in Example 6.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Inverse trigonometric functions</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Inverse trigonometric functions</span> <span class="mins">~9 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>\(\sin^{-1}\) is the undo machine for sine: give it a sine value and it returns an angle. The trouble is that sine repeats, so many angles share each value. Think of a seat on a Ferris wheel: knowing its height does not tell you where it is, because it passes each height twice per turn, once going up and once coming down. So we agree to answer only from the half-turn where the seat is climbing, from the bottom (\(-90^\circ\)) to the top (\(90^\circ\)). On that half-turn each height comes from exactly one angle.</p></div></details>
 <h3>Inverse of sin x? (slide 21)</h3>
 <p>\(\sin x\) repeats forever, so it fails the Horizontal Line Test badly: the line \(y=\frac12\) meets \(y=\sin x\) at \(\frac\pi6,\frac{5\pi}6,\frac{13\pi}6,\dots\). So \(\sin x\) on all real numbers has no inverse.</p>
 <p>The fix is to <b>restrict the domain</b>: keep one piece of the graph that passes the Horizontal Line Test and still takes every value between \(-1\) and \(1\) once. The standard choice is \([-\frac\pi2,\frac\pi2]\), where \(\sin x\) climbs steadily from \(-1\) to \(1\).</p>
@@ -499,9 +555,10 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 \[\frac{d}{dx}(\sin^{-1}x)=\frac{1}{\sqrt{1-x^2}},\qquad -1\lt x\lt1 .\]
 <p class="word"><b>In words:</b> slope of \(\sin^{-1}\) at \(x\) = 1 ÷ \(\sqrt{1-x^2}\).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\sqrt{1-x^2}\)</dt><dd>the slope of sine, \(\cos y\), at the matching angle \(y\), rewritten in terms of the height \(x\) (proof below).</dd><dt>\(\dfrac{1}{\sqrt{1-x^2}}\)</dt><dd>the §2 flip: slope of the undo machine = 1 ÷ slope of sine at the matching point.</dd><dt>smallest at \(x=0\)</dt><dd>sine is steepest (slope 1) as the seat passes the middle height, so \(\sin^{-1}\) is gentlest there, with slope exactly 1.</dd><dt>\(-1\lt x\lt1\)</dt><dd>at the top and bottom the seat moves sideways for an instant (sine is flat), so the flipped slope would be vertical. The ends are excluded.</dd></dl></div>
 <p><b>Proof</b> (implicit differentiation). Let \(y=\sin^{-1}x\), so \(\sin y=x\) with \(-\frac\pi2\le y\le\frac\pi2\). Differentiate both sides with respect to \(x\):</p>
 \[\cos y\,\frac{dy}{dx}=1\quad\Longrightarrow\quad\frac{dy}{dx}=\frac1{\cos y}.\]
-<p>Now express \(\cos y\) in terms of \(x\). From \(\sin^2y+\cos^2y=1\), \(\cos y=\pm\sqrt{1-\sin^2y}=\pm\sqrt{1-x^2}\). Because \(y\) is in \([-\frac\pi2,\frac\pi2]\), \(\cos y\ge0\), so take the \(+\) sign:</p>
+<p>Now express \(\cos y\) in terms of \(x\). <span class="why">The answer should be a function of the input \(x\), not of the hidden angle \(y\); a Pythagorean identity translates between them.</span> From \(\sin^2y+\cos^2y=1\), \(\cos y=\pm\sqrt{1-\sin^2y}=\pm\sqrt{1-x^2}\). Because \(y\) is in \([-\frac\pi2,\frac\pi2]\), \(\cos y\ge0\), so take the \(+\) sign:</p>
 \[\frac{dy}{dx}=\frac{1}{\sqrt{1-x^2}} .\]
 <p>At \(x=\pm1\), \(\cos y=0\) and we cannot divide: the graph of \(\sin^{-1}\) has vertical tangents at its endpoints. That is why the theorem says \(-1\lt x\lt1\). (This is exactly the condition \(f'(f^{-1}(x))\ne0\) from section 2.)</p>
 
@@ -531,7 +588,13 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 <tr><td>\(\sec x\)</td><td>\([0,\frac\pi2)\cup(\frac\pi2,\pi]\)</td><td>\(\sec x\tan x\)</td><td>\(\sec^{-1}x\)</td><td>\((-\infty,-1]\cup[1,\infty)\)</td><td>\(\dfrac1{x\sqrt{x^2-1}}\)</td></tr>
 <tr><td>\(\cot x\)</td><td>\((0,\pi)\)</td><td>\(-\csc^2x\)</td><td>\(\cot^{-1}x\)</td><td>\((-\infty,\infty)\)</td><td>\(-\dfrac1{1+x^2}\)</td></tr>
 </table></div>
-<p>Names: \(\cos^{-1}=\arccos\), \(\tan^{-1}=\arctan\), \(\csc^{-1}=\operatorname{arccsc}\), \(\sec^{-1}=\operatorname{arcsec}\), \(\cot^{-1}=\operatorname{arccot}\). Each derivative is found the same way as for \(\sin^{-1}\): write \(f(y)=x\), differentiate implicitly, and rewrite the answer in \(x\) using a Pythagorean identity. (Group Work 5 does this for \(\tan^{-1}\).)</p>
+<p>Names: \(\cos^{-1}=\arccos\), \(\tan^{-1}=\arctan\), \(\csc^{-1}=\operatorname{arccsc}\), \(\sec^{-1}=\operatorname{arcsec}\), \(\cot^{-1}=\operatorname{arccot}\). Each derivative is found the same way as for \(\sin^{-1}\):</p>
+<ol class="steps proc">
+<li><b>Do:</b> write \(f(y)=x\). <span class="why">This asks about the original trig function, whose slope we know, instead of the undo machine.</span></li>
+<li><b>Do:</b> differentiate implicitly. <span class="why">This gives \(\frac{dy}{dx}=\frac1{f'(y)}\): the §2 flip of the original slope.</span></li>
+<li><b>Do:</b> rewrite the answer in \(x\) using a Pythagorean identity. <span class="why">The identity links \(f'(y)\) back to \(f(y)=x\), and the restricted domain fixes the sign of any square root.</span></li>
+</ol>
+<p>(Group Work 5 does this for \(\tan^{-1}\).)</p>
 <p class="word"><b>In words:</b> the "co-" inverses (\(\cos^{-1}\), \(\csc^{-1}\), \(\cot^{-1}\)) have the same derivatives as their partners (\(\sin^{-1}\), \(\sec^{-1}\), \(\tan^{-1}\)) with a minus sign.</p>
 <p style="font-size:.92rem;color:var(--muted)">Slide typo: the slide prints the restricted domain of \(\sec x\) as "\([0,\pi/2)\cup(0,\pi]\)"; it should be \([0,\frac\pi2)\cup(\frac\pi2,\pi]\) (the point \(\frac\pi2\), where \(\cos x=0\), is removed).</p>
 <div class="box beyond"><span class="tag">Beyond the handouts: absolute values in the sec⁻¹ and csc⁻¹ formulas</span>
@@ -540,10 +603,12 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 \[\frac{d}{dx}\csc^{-1}x=-\frac{1}{|x|\sqrt{x^2-1}},\]
 <p>for \(|x|\gt1\). The table's versions without \(|\ |\) agree for \(x\gt1\) but have the wrong sign for \(x\lt-1\). (Reason: \(\sec^{-1}\) is increasing on both pieces of its domain, so its slope must always be positive.) Some textbooks choose a different restricted domain for \(\sec\) that makes the version without \(|\ |\) correct, which is why both appear in books. In exam questions with \(x\gt1\) (or with \(e^x\) inside, as in Group Work 4(b)) the two agree.</p>
 </div>
+<p class="cannow"><b>You can now:</b> explain why sin, cos and tan must be restricted before they have inverses, and state the standard domains; evaluate \(\sin^{-1}\) at standard values (answers in \([-\frac\pi2,\frac\pi2]\)); derive \((\sin^{-1}x)'\) and \((\tan^{-1}x)'\) by implicit differentiation; and differentiate \(\sin^{-1}u\), \(\tan^{-1}u\) and the rest of the table with the Chain Rule.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Continuity of the function families (slide 26)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Continuity of the function families (slide 26)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Continuous at a point means the graph has no break or jump there: near that point you can trace it without lifting your pen. Every family in this list is continuous at every point where it is defined. A function like \(\frac1x\) still has a gap at \(x=0\), but that point is not in its domain. This is what lets you find a limit by substituting: near a point where the pen never lifts, the curve heads straight for the value at that point.</p></div></details>
 <div class="box thm"><span class="tag">Theorem (slide 26)</span>
 <p>The following types of functions are continuous on their domains.</p>
 <ol class="steps">
@@ -559,10 +624,11 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 </div>
 <p>This extends the continuity theorem of Lecture 4 (which covered items 1 to 4) by adding the three new families of this lecture. Combined with the Lecture 4 facts that sums, products, quotients (where the denominator is not 0) and compositions of continuous functions are continuous, it lets you decide where functions like \(\frac{\sin^{-1}x}{e^x-2}\) are continuous (Group Work 2) and evaluate limits by substitution (Group Work 3(b)).</p>
 <p style="font-size:.92rem;color:var(--muted)">The slide says "Extension of Theorem stated in Lecture 7"; since this is Lecture 7, the intended reference is the continuity theorem of Lecture 4.</p>
+<p class="cannow"><b>You can now:</b> list the seven continuous families; decide where combinations like \(\frac{\sin^{-1}x}{e^x-2}\) are continuous; and evaluate limits of such functions by substitution, passing the limit inside a continuous outer function.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Summary (slide 27)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Summary (slide 27)</span></h2>
 <ul class="list">
 <li>If \(y=g(x)\) is the inverse of \(f(x)\), then
 \[g'(x)=\frac{1}{f'(g(x))}.\]
@@ -582,7 +648,7 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Common mistakes (slide 29)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Common mistakes (slide 29)</span></h2>
 <h3>Using the Power Rule incorrectly</h3>
 <div class="box"><div class="mistake">
 <span class="x">✗</span><span>\((e^x)'=x\cdot e^{x-1}\) <span class="ok">✓</span> \((e^x)'=e^x\). The Power Rule needs a variable base and a <b>constant</b> power; here the base is constant and the power varies.</span>
@@ -616,7 +682,7 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Find the mistake (slide 28)</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Find the mistake (slide 28)</span></h2>
 <p>The question: <b>Find the derivative of \(y=\dfrac{x^{2x}(x-1)^3}{(3+5x)^4}\) for \(x\gt1\).</b></p>
 <p>A student's handwritten work, reproduced:</p>
 <div class="handwork">
@@ -645,7 +711,7 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Group work (slide 30)</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Group work (slide 30)</span></h2>
 
 <div class="q"><p class="qh">1. Given \(f(x)=e^x+x\) and \(c=e^2+2\), find \((f^{-1})'(c)\).</p>
 <details><summary>Hint</summary><div><p>Find \(a\) with \(f(a)=e^2+2\): compare the shape of \(e^a+a\) with \(e^2+2\). Then use \((f^{-1})'(c)=\frac1{f'(a)}\).</p></div></details>
@@ -709,7 +775,7 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Concept checks <span class="pill">Written for these notes</span></span></h2>
 
 <div class="q"><p class="qh">1. \(f(x)=x^3\) is one-to-one on \(\mathbb R\) with inverse \(f^{-1}(x)=\sqrt[3]x\). Is \(f^{-1}\) differentiable at \(x=0\)? Explain using the Derivative of Inverses Theorem.</p>
 <details><summary>Answer</summary><div><p>No. \(f^{-1}(0)=0\) and \(f'(0)=3\cdot0^2=0\), so the theorem's condition \(f'(f^{-1}(0))\ne0\) fails and \(\frac1{f'(0)}\) would be \(\frac10\). Geometrically, \(x^3\) has a horizontal tangent at the origin, so its mirror image \(\sqrt[3]x\) has a vertical tangent there. (Directly: \(\frac{d}{dx}x^{1/3}=\frac13x^{-2/3}\), undefined at 0.)</p></div></details></div>
@@ -731,7 +797,7 @@ This is the key trick for differentiating \(a^x\) and \(x^x\).</li>
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="pastpaper"><h2><span class="n">13</span>Exam taster</h2>
+<section id="pastpaper"><h2><span class="n">13</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Lecture 7's question types appear 30 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide. Three Lecture 7 questions are housed in later notes because they also need later material: May 2020 Q3(c) (differentiating exp, log and inverse-trig expressions) in the Lecture 12 note, May 2014 Q4(b) (restricting a domain for an inverse) in the Lecture 9 note, and May 2015 Q1(a)(iii) (a limit with exp and ln) in the Lecture 10 note.</p>
 
@@ -1019,5 +1085,13 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </html>

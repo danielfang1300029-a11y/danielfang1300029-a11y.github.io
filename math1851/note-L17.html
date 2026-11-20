@@ -106,6 +106,34 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -135,16 +163,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · Calculus · Lecture 17</span>
   <h1>Arc Length and Surface Area</h1>
-  <p class="lede">Every slide of Lecture 17 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this lecture.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this lecture sits</h2>
-<p>Lecture 16 used definite integrals to find <b>areas</b> between curves and <b>volumes</b> of solids. This lecture, the last one on integration, uses the same "slice it up, add the slices, let the slices shrink" idea to measure two new things:</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this lecture sits</span></h2>
+<p>Picture walking along a curve in tiny straight steps. Each step is the slanted side of a tiny right-angled triangle, so Pythagoras gives its length, and the steps add up to the length of the curve. Spin the curve about an axis and each step sweeps out a thin band, like a ribbon glued round a vase; the bands add up to the surface area. Lecture 16 used definite integrals to find <b>areas</b> between curves and <b>volumes</b> of solids. This lecture, the last one on integration, uses the same "slice it up, add the slices, let the slices shrink" idea to measure two new things:</p>
 <ul class="list">
   <li>the <b>arc length</b> of a curve: how long the curve would be if you laid a piece of string along it and then pulled the string straight;</li>
   <li>the <b>surface area</b> of a <b>surface of revolution</b>: the area of the "skin" you get when a curve is spun around an axis (like the outside of a vase made on a potter's wheel).</li>
 </ul>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>A curve's length is the total of many tiny straight steps along it.</b> Pythagoras measures each step; shorter steps give the exact length.</li>
+<li><a href="#s2">§2</a> <b>Each step is √(1 + slope²) times its width; the integral adds the steps.</b> Exam curves make 1 + slope² a perfect square. <span class="pill">Most common L17 exam type</span></li>
+<li><a href="#s3">§3</a> <b>For a moving point, step length = speed × time, so the length is the integral of the speed.</b> The time range must trace the curve once.</li>
+<li><a href="#s4">§4</a> <b>A polar step has an outward part and a sideways part; Pythagoras on the two.</b></li>
+<li><a href="#s5">§5</a> <b>Surface area is the paint on the skin.</b> A lampshade band is its middle circumference × its slanted width.</li>
+<li><a href="#s6">§6</a> <b>Spin the curve: each step sweeps a thin band; add circumference × slanted width.</b> Use the slanted step \(ds\), never \(dx\).</li>
+</ol>
+</div>
+<p><b>You need:</b> the Distance Formula (Pythagoras), the chain rule, substitution (Lecture 13), trigonometric substitution (Lecture 14), parametric and polar curves (Lecture 15) and the slicing idea of Lecture 16. <b>In the exam:</b> 14 question parts in 23 past papers, in 7 of the 13 recent papers, nearly always one part of a region question next to a volume: arc length (Cartesian, parametric or polar) and surface area of revolution. See the <a href="guide-L17.html">L17 exam guide</a>.</p>
 
 <h3>Recall from Lecture 16 (slide 2)</h3>
 <div class="box def"><span class="tag">Definition (recall, slide 2)</span>
@@ -170,11 +208,17 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Arc length: from a line to a general curve</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Arc length: from a line to a general curve</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Walk along the curve taking tiny straight steps. Each step goes a little way across and a little way up; those two moves are the legs of a tiny right-angled triangle, and the step itself is the slanted side, so Pythagoras gives its length. Long steps cut corners and come up short. Shorter steps hug the curve, and in the limit their total is the exact length.</p></div></details>
 <h3>The length of a straight line (slide 7)</h3>
 <p>For a straight segment from \((x_1,y_1)\) to \((x_2,y_2)\), draw the horizontal and vertical dashed legs to make a right-angled triangle. The legs have lengths \(x_2-x_1\) and \(y_2-y_1\), so Pythagoras' theorem gives the <b>Distance Formula</b>:</p>
 \[ D=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}. \]
 <p class="word"><b>In words:</b> length of segment = √( (horizontal change)² + (vertical change)² ).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(x_2-x_1\)</dt><dd>how far one step goes across.</dd>
+<dt>\(y_2-y_1\)</dt><dd>how far it goes up (negative if it goes down; it is squared, so the sign does not matter).</dd>
+<dt>\(D\)</dt><dd>the step itself: the slanted side of the triangle.</dd>
+</dl></div>
 <div class="figure"><p class="ttl">The Distance Formula (the slide's picture is redrawn)</p>
 <canvas class="plot" id="fline" style="aspect-ratio:16/9" aria-label="A segment from (1,1) to (5,3) with dashed horizontal and vertical legs"></canvas>
 <div class="readout" id="fline-out"></div>
@@ -183,11 +227,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <h3>Approximating a curve by straight pieces (slide 8)</h3>
 <p>The idea (slide 8) is to replace the curve by many short straight segments, called <b>chords</b> (a chord is a straight line joining two points on a curve):</p>
-<ol class="steps">
-  <li><b>Partition</b> the interval \([a,b]\) into \(n\) <b>subintervals</b> (small pieces) of equal width \(\Delta x=\frac{b-a}{n}\), with endpoints \(a=x_0\lt x_1\lt\dots\lt x_n=b\). Above each \(x_i\) is the point \(P_i=(x_i,f(x_i))\) on the curve.</li>
-  <li><b>Add the linear distances</b> \(|P_0P_1|+|P_1P_2|+\dots+|P_{n-1}P_n|\) between the subinterval endpoints. Each one comes from the Distance Formula.
+<ol class="steps proc">
+  <li><b>Do:</b> <b>Partition</b> the interval \([a,b]\) into \(n\) <b>subintervals</b> (small pieces) of equal width \(\Delta x=\frac{b-a}{n}\), with endpoints \(a=x_0\lt x_1\lt\dots\lt x_n=b\). Above each \(x_i\) is the point \(P_i=(x_i,f(x_i))\) on the curve. <span class="why">This plants the walker's footprints on the curve, one above each \(x_i\), evenly spaced across.</span></li>
+  <li><b>Do:</b> <b>Add the linear distances</b> \(|P_0P_1|+|P_1P_2|+\dots+|P_{n-1}P_n|\) between the subinterval endpoints. Each one comes from the Distance Formula.
     <ul class="list"><li>For a fixed \(n\), this total is only an <b>approximation</b> to the arc length (the chords "cut corners").</li>
-    <li>As \(n\to\infty\), the chords hug the curve more and more closely, and the limit is the <b>exact</b> arc length.</li></ul></li>
+    <li>As \(n\to\infty\), the chords hug the curve more and more closely, and the limit is the <b>exact</b> arc length.</li></ul>
+    <span class="why">Each straight step is measured by Pythagoras, and shrinking the steps removes the corners they cut.</span></li>
 </ol>
 <p>Analogy: measuring a winding river on a map with a ruler. Laying the ruler in a few long straight pieces underestimates the length; using many tiny pieces gets you closer and closer to the true length.</p>
 <div class="figure"><p class="ttl">Chord approximation to arc length (key picture)</p>
@@ -201,15 +246,23 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">the curve y = f(x)</span><span style="--k:var(--c2)">chords P<sub>i−1</sub>P<sub>i</sub></span></div>
 <div class="readout" id="fchord-out"></div>
 <p class="cap">Drag the slider. The total chord length is always a little less than the true length (a straight line is the shortest path between two points), and the gap shrinks towards 0 as \(n\) grows.</p></div>
+<p class="cannow"><b>You can now:</b> find the length of a straight segment with the Distance Formula; explain why a chord total underestimates the arc length; and say why it tends to the exact length as \(n\to\infty\).</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>The arc length formula</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">The arc length formula</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Zoom in on one step of the walk. Over a short width the curve is nearly straight, so the step rises about (slope) × (width). Pythagoras then gives: step length = √(1 + slope²) × width. A flat step is just as long as its width; a steep step is much longer. The integral adds all the steps as they shrink. The slope must change smoothly, with no corners or vertical points, or the zoom-in picture breaks.</p></div></details>
 <div class="box thm"><span class="tag">Theorem: Arc Length Formula (slide 9)</span>
 <p>If \(f'\) is continuous on \([a,b]\), then the length of the curve \(y=f(x)\), \(a\le x\le b\), is</p>
 \[ \begin{aligned} L&=\lim_{n\to\infty}\sum_{i=1}^{n}\sqrt{1+[f'(x_i^*)]^2}\,\Delta x\\ &=\int_a^b\sqrt{1+[f'(x)]^2}\,dx. \end{aligned} \]
 <p class="word"><b>In words:</b> arc length = integral from a to b of √( 1 + (slope of the curve)² ) with respect to x.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(dx\)</dt><dd>the width of one tiny step, measured across.</dd>
+<dt>\(f'(x)\)</dt><dd>the slope at that step: how far the curve rises per unit across.</dd>
+<dt>\(\sqrt{1+[f'(x)]^2}\)</dt><dd>how many times longer the slanted step is than its width (always at least 1).</dd>
+<dt>\(\int_a^b\)</dt><dd>add up the steps from the start \(x=a\) to the end \(x=b\).</dd>
+</dl></div>
 <p>"\(f'\) is continuous" means the slope changes smoothly with no sudden jumps; such a curve is called <b>smooth</b>. It guarantees the integrand is continuous, so the integral exists (Lecture 12).</p>
 
 <h3>Why the formula is true (slide 9)</h3>
@@ -221,7 +274,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 &= \sqrt{1+[f'(x_i^*)]^2}\;\Delta x\\ &\qquad\text{(by } \sqrt{(\Delta x)^2}=\Delta x).
 \end{aligned} \]
 <ul class="list">
-  <li><b>The MVT step.</b> The Mean Value Theorem (Lecture 8) says there is a point \(x_i^*\) between \(x_{i-1}\) and \(x_i\) where the tangent slope equals the chord slope: \(f'(x_i^*)=\frac{\Delta y_i}{\Delta x}\). Multiply by \(\Delta x\): \(\Delta y_i=f'(x_i^*)\,\Delta x\).</li>
+  <li><b>The MVT step.</b> The Mean Value Theorem (Lecture 8) says there is a point \(x_i^*\) between \(x_{i-1}\) and \(x_i\) where the tangent slope equals the chord slope: \(f'(x_i^*)=\frac{\Delta y_i}{\Delta x}\). Multiply by \(\Delta x\): \(\Delta y_i=f'(x_i^*)\,\Delta x\). <span class="why">It writes each step's rise as (a slope the curve really has inside that step) × (width), which is exactly the shape a Riemann sum needs.</span></li>
   <li><b>The last step.</b> Factor \((\Delta x)^2\) out of the square root. Because \(\Delta x\gt 0\), \(\sqrt{(\Delta x)^2}=\Delta x\) (not \(-\Delta x\)).</li>
 </ul>
 <p>Adding all \(n\) chords gives \(\sum_{i=1}^n\sqrt{1+[f'(x_i^*)]^2}\,\Delta x\). This is a <b>Riemann sum</b> (Lecture 11) for the function \(\sqrt{1+[f'(x)]^2}\), so as \(n\to\infty\) it becomes the definite integral.</p>
@@ -234,6 +287,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </div>
 
 <h3>Reformulating with respect to \(y\) (slide 9)</h3>
+<details class="idea"><summary>What is this? (working in y)</summary><div><p>You can measure each step by how far it goes up instead of how far it goes across. It is the same walk with the page turned on its side: across and up swap roles. This helps where the curve is nearly vertical, because there the slope in \(x\) is huge but the slope in \(y\) is small.</p></div></details>
 <p>The slide notes that the formula "may be reformulated with respect to \(y\)". If the curve is written as \(x=g(y)\), \(c\le y\le d\), with \(g'\) continuous, swap the roles of \(x\) and \(y\):</p>
 \[ L=\int_c^d\sqrt{1+\left(\frac{dx}{dy}\right)^2}\,dy. \]
 <p class="word"><b>In words:</b> arc length = integral over the y-range of √(1 + (rate of change of x with respect to y)²).</p>
@@ -243,7 +297,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>Find the length of \(y=\frac23(x^2+1)^{3/2}\) on \([0,2]\).</b></p>
 <p><b>Step 1, differentiate</b> (chain rule, Lecture 6):</p>
 \[ \frac{dy}{dx}=\frac23\cdot\frac32(x^2+1)^{1/2}\cdot 2x=2x\sqrt{x^2+1}. \]
-<p><b>Step 2, simplify \(1+(y')^2\).</b> The trick is that it becomes a perfect square:</p>
+<p><b>Step 2, simplify \(1+(y')^2\).</b> The trick is that it becomes a perfect square: <span class="why">a perfect square is the easy way to get rid of the square root, and exam curves are chosen so that this happens (see "Exam pattern" below).</span></p>
 \[ \begin{aligned} 1+\left(\frac{dy}{dx}\right)^2&=1+4x^2(x^2+1)\\ &=4x^4+4x^2+1\\ &=(2x^2+1)^2. \end{aligned} \]
 <p><b>Step 3, integrate.</b> Since \(2x^2+1\gt0\), \(\sqrt{(2x^2+1)^2}=2x^2+1\):</p>
 \[ \begin{aligned} L&=\int_0^2(2x^2+1)\,dx=\left[\frac{2x^3}{3}+x\right]_0^2\\ &=\frac{16}{3}+2=\frac{22}{3}\approx 7.333. \end{aligned} \]
@@ -269,16 +323,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> when slope = (first part) − (second part) and 4 × first × second = 1, the "+1" turns the minus sign into a plus sign.</p>
 <p>Example 2 is this with \(A=\frac12e^x\), \(B=\frac12e^{-x}\). Group work 3 and the Find the Mistake slide use it too.</p>
 </div>
+<p class="cannow"><b>You can now:</b> write down the arc length integral for \(y=f(x)\) or \(x=g(y)\); differentiate, turn \(1+(y')^2\) into a perfect square and integrate; and spot the pattern \(y'=A-B\) with \(4AB=1\).</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Arc length of parametric curves</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Arc length of parametric curves</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Now the walker moves in time, like a car on a road. In a short time the car goes a little across and a little up, each equal to (rate of change) × (time), so by Pythagoras that step has length (speed) × (time). Adding the steps over the whole trip is reading the car's odometer: the total distance travelled. That is why the time range must trace the curve exactly once. Drive round a lap twice and the odometer counts it twice.</p></div></details>
 <p>A <b>parametric curve</b> (Lecture 15) describes both coordinates by a third variable, the <b>parameter</b> \(t\): \(x=f(t)\), \(y=g(t)\), \(\alpha\le t\le\beta\). Think of \(t\) as time and \((x,y)\) as the position of a moving point.</p>
 <div class="box thm"><span class="tag">Theorem: arc length of a parametric curve (slide 12)</span>
 <p>We know the arc length of \(y=F(x)\) for \(a\le x\le b\) is \(\displaystyle L=\int_a^b\sqrt{1+\left(\frac{dy}{dx}\right)^2}\,dx\). For parametric equations \(x=f(t)\) and \(y=g(t)\), \(\alpha\le t\le\beta\), with \(\frac{dx}{dt}=f'(t)\gt0\),</p>
 \[ L=\int_\alpha^\beta\sqrt{\left(\frac{dx}{dt}\right)^2+\left(\frac{dy}{dt}\right)^2}\,dt. \]
 <p class="word"><b>In words:</b> arc length = integral over the parameter range of √( (rate of change of x)² + (rate of change of y)² ) = integral of the speed of the moving point over time.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\frac{dx}{dt}\)</dt><dd>how fast the point moves across.</dd>
+<dt>\(\frac{dy}{dt}\)</dt><dd>how fast it moves up.</dd>
+<dt>\(\sqrt{\left(\frac{dx}{dt}\right)^2+\left(\frac{dy}{dt}\right)^2}\)</dt><dd>the speed: Pythagoras on the two rates.</dd>
+<dt>\(dt\)</dt><dd>a short tick of time; speed × time is the length of one step.</dd>
+<dt>\(\int_\alpha^\beta\)</dt><dd>the odometer: add the steps from the start time to the end time, with the curve traced exactly once.</dd>
+</dl></div>
 <p style="font-size:.92rem;color:var(--muted)">Notation: the slide writes the Cartesian curve as \(y=F(x)\) (capital \(F\)) because lower-case \(f\) is used for \(x=f(t)\).</p>
 <h3>Where it comes from</h3>
 <p>Since \(\frac{dx}{dt}\gt0\), \(x\) increases as \(t\) increases, so the curve is the graph of a function of \(x\) and we may substitute \(x=f(t)\), \(dx=\frac{dx}{dt}\,dt\) (Lecture 13), using \(\frac{dy}{dx}=\dfrac{dy/dt}{dx/dt}\) (Lecture 15):</p>
@@ -295,7 +358,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ \frac{dx}{dt}=-\sin t,\qquad \frac{dy}{dt}=\cos t, \]
 \[ \left(\frac{dx}{dt}\right)^2+\left(\frac{dy}{dt}\right)^2=\sin^2t+\cos^2t=1. \]
 \[ L=\int_0^{2\pi}\sqrt1\,dt=2\pi. \]
-<p>This agrees with the circumference \(2\pi r\) of a circle of radius \(r=1\), a good sanity check.</p>
+<p>This agrees with the circumference \(2\pi r\) of a circle of radius \(r=1\), a good sanity check. <span class="why">The point moves at constant speed 1 for a time of \(2\pi\), so the odometer reads \(2\pi\).</span></p>
 </div>
 
 <div class="figure"><p class="ttl">Arc length of parametric curves: watch the length build up</p>
@@ -308,10 +371,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">part traced so far</span><span style="--k:var(--axis)">rest of the curve</span></div>
 <div class="readout" id="fpar-out"></div>
 <p class="cap">The readout integrates the speed \(\sqrt{(dx/dt)^2+(dy/dt)^2}\) from the start up to the current \(t\). At the sharp points (cusps) of the second and third curves, the speed drops to 0: the point momentarily stops and turns.</p></div>
+<p class="cannow"><b>You can now:</b> write the arc length of a parametric curve as the integral of its speed; simplify the speed with \(\sin^2t+\cos^2t=1\) or a half-angle identity; and check that the parameter range traces the curve exactly once.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Arc length of polar curves</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Arc length of polar curves</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Walk a polar curve by turning a little and adjusting your distance from the origin. Each tiny step has two parts at right angles: an outward part (the change in your distance from the origin) and a sideways part along a circle round the origin (radius × the small angle turned). Pythagoras on those two parts gives the step length. Far from the origin the same small turn carries you further sideways, which is why the distance \(r\) itself appears in the formula.</p></div></details>
 <p>A <b>polar curve</b> \(r=f(\theta)\) (Lecture 15) gives the distance \(r\) from the origin for each angle \(\theta\) measured anticlockwise from the positive \(x\)-axis.</p>
 <h3>Turning a polar curve into a parametric one (slide 14)</h3>
 <p>Let the polar curve \(r=f(\theta)\) for \(a\le\theta\le b\) have parametric equations</p>
@@ -333,6 +398,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ L=\int_a^b\sqrt{r^2+\left(\frac{dr}{d\theta}\right)^2}\,d\theta. \]
 <p class="word"><b>In words:</b> polar arc length = integral over the angle range of √( (distance from origin)² + (rate of change of that distance)² ).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(r\)</dt><dd>the distance from the origin; \(r\) × (small turn) is the sideways part of a step.</dd>
+<dt>\(\frac{dr}{d\theta}\)</dt><dd>how fast the walker moves outward as the angle turns.</dd>
+<dt>\(\sqrt{r^2+\left(\frac{dr}{d\theta}\right)^2}\)</dt><dd>the step length per unit of turning: Pythagoras on the sideways and outward parts.</dd>
+<dt>\(\int_a^b\dots d\theta\)</dt><dd>add the steps over the angle range, with the curve traced exactly once.</dd>
+</dl></div>
 <p>Two checks: for a circle \(r=R\) (constant), \(\frac{dr}{d\theta}=0\) and \(L=\int_0^{2\pi}R\,d\theta=2\pi R\). And, as for parametric curves, the angle range must trace the curve exactly once.</p>
 
 <div class="box eg"><span class="tag">Example 4 (slide 16)</span>
@@ -346,7 +417,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>By the compound angle formula, \(\sin\frac\theta2+\cos\frac\theta2=\sqrt2\sin\!\left(\frac\theta2+\frac\pi4\right)\). Therefore</p>
 \[ \begin{aligned} \sqrt{2+2\sin\theta}&=\sqrt2\,\left|\sin\tfrac\theta2+\cos\tfrac\theta2\right|\\ &=2\left|\sin\!\left(\tfrac\theta2+\tfrac\pi4\right)\right|. \end{aligned} \]
 <p>The absolute value matters: \(\sqrt{u^2}=|u|\), not \(u\).</p>
-<p><b>Step 3, integrate.</b> Substitute \(\varphi=\frac\theta2+\frac\pi4\), \(d\theta=2\,d\varphi\); \(\theta=0\to\varphi=\frac\pi4\), \(\theta=2\pi\to\varphi=\frac{5\pi}4\). Since \(\sin\varphi\ge0\) on \([\frac\pi4,\pi]\) and \(\sin\varphi\le0\) on \([\pi,\frac{5\pi}4]\):</p>
+<p><b>Step 3, integrate.</b> Substitute \(\varphi=\frac\theta2+\frac\pi4\), \(d\theta=2\,d\varphi\); \(\theta=0\to\varphi=\frac\pi4\), \(\theta=2\pi\to\varphi=\frac{5\pi}4\). Since \(\sin\varphi\ge0\) on \([\frac\pi4,\pi]\) and \(\sin\varphi\le0\) on \([\pi,\frac{5\pi}4]\): <span class="why">every step adds length, so where the sine is negative the absolute value flips it back and that piece is added, not taken away.</span></p>
 \[ \begin{aligned} L&=4\int_{\pi/4}^{5\pi/4}|\sin\varphi|\,d\varphi\\ &=4\left(\int_{\pi/4}^{\pi}\sin\varphi\,d\varphi-\int_{\pi}^{5\pi/4}\sin\varphi\,d\varphi\right)\\ &=4\left[\left(1+\tfrac{\sqrt2}{2}\right)+\left(1-\tfrac{\sqrt2}{2}\right)\right]\\ &=8. \end{aligned} \]
 <p>Equivalently, in terms of \(\theta\): the integrand's sign changes at \(\theta=\frac{3\pi}{2}\) (the cusp of the cardioid, where \(r=0\)); the piece \(0\le\theta\le\frac{3\pi}2\) has length \(4+2\sqrt2\) and the piece \(\frac{3\pi}2\le\theta\le2\pi\) has length \(4-2\sqrt2\).</p>
 </div>
@@ -362,10 +433,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">part traced so far</span><span style="--k:var(--c2)">radius from the origin</span><span style="--k:var(--axis)">rest of the curve</span></div>
 <div class="readout" id="fpol-out"></div>
 <p class="cap">For the cardioid, put the slider at 0.75 (\(\theta=\frac{3\pi}{2}\)): the point sits at the origin (the cusp) and the length so far is \(4+2\sqrt2\approx6.83\). For \(r=\theta^2-1\), \(r\) is negative for \(\theta\lt1\), so the point is drawn on the opposite side of the origin; the formula still works because it only uses \(r^2\).</p></div>
+<p class="cannow"><b>You can now:</b> turn a polar curve into a parametric one with \(\theta\) as the parameter; use \(L=\int\sqrt{r^2+(r')^2}\,d\theta\); and remove the root with a half-angle identity, keeping the absolute value.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Surface areas of common shapes</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Surface areas of common shapes</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Surface area is the amount of paint needed to cover the outside. For curved skins, cut and flatten: the label peeled off a can unrolls into a flat rectangle, as wide as the can's circumference and as tall as the can. The side of a cone, cut along one slant line, flattens into a fan-shaped piece of a circle. The curved surfaces of section 6 are built from thin bands like these.</p></div></details>
 <p>The <b>surface area</b> of a solid is the total area of its outside skin, the amount of paint needed to cover it. Slide 17 recalls the formulas for three common shapes (radius \(r\), height \(h\), and for the cone the <b>slant height</b> \(s\), the distance from the tip down the side to the edge of the base):</p>
 <div class="figure"><p class="ttl">Sphere, cylinder, cone (the slide's picture is redrawn)</p>
 <canvas class="plot" id="fshape" style="aspect-ratio:16/8" aria-label="Sphere, cylinder and cone with their surface area formulas"></canvas>
@@ -375,22 +448,30 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>The curved part of a cylinder unrolls into a rectangle \(2\pi r\) wide and \(h\) high, hence \(2\pi rh\). The curved part of a cone has area \(\pi rs\).</p>
 <p>The slide asks: <b>what about more general shapes?</b> For a vase, a bowl, or a trumpet bell there is no school formula. The answer (section 6) is to cut the surface into thin bands and approximate each band by a simple shape.</p>
 
+<details class="idea"><summary>What is this? (the lampshade band)</summary><div><p>Cut a thin band off a lampshade, snip it once and lay it flat: it is a curved strip. Its length along the middle is the circumference at the average radius, and its width is the slanted side. So its area is (middle circumference) × (slanted width), just as for a rectangle. The width must be measured along the slant, because that is the real width of the material.</p></div></details>
 <div class="box beyond"><span class="tag">Beyond the handouts: the frustum, the building block</span>
 <p>A <b>frustum</b> is a cone with its tip cut off by a cut parallel to the base: a "lampshade" shape. If its two circular edges have radii \(r_1\) and \(r_2\) and its slanted side has length \(\ell\), its curved surface area is</p>
 \[ A_{\text{band}}=\pi(r_1+r_2)\,\ell=2\pi\cdot\frac{r_1+r_2}{2}\cdot\ell. \]
 <p class="word"><b>In words:</b> area of a lampshade band = circumference at its average radius × its slanted width.</p>
 <p>(It is the difference of two cone surfaces \(\pi rs\).) When \(r_1=r_2\) it is a cylinder band \(2\pi r\ell\); when \(r_2=0\) it is a cone \(\pi r_1\ell\). This is why surface area needs the slanted length \(\ell\), not the horizontal width.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(r_1,\ r_2\)</dt><dd>the radii of the band's two circular edges.</dd>
+<dt>\(2\pi\cdot\frac{r_1+r_2}{2}\)</dt><dd>the circumference along the middle of the band: the length of the flattened strip.</dd>
+<dt>\(\ell\)</dt><dd>the slanted width of the band, measured along its side.</dd>
+</dl></div>
 <div class="figure"><p class="ttl">A frustum band</p>
 <canvas class="plot" id="ffru" style="aspect-ratio:16/9" aria-label="A frustum with radii r1, r2 and slant length l"></canvas>
 <div class="ctrl"><label for="ffru-a">r₁ = <span id="ffru-av"></span> <input type="range" id="ffru-a" min="0" max="3" step="0.1" value="2.5"></label>
 <label for="ffru-b">r₂ = <span id="ffru-bv"></span> <input type="range" id="ffru-b" min="0" max="3" step="0.1" value="1.2"></label></div>
 <div class="readout" id="ffru-out"></div>
 <p class="cap">Height fixed at 2. Make the radii equal to get a cylinder band; set r₂ = 0 to get a cone.</p></div>
+<p class="cannow"><b>You can now:</b> quote the surface areas of a sphere, a closed cylinder and a cone; explain the curved side of a cylinder as an unrolled rectangle; and find the area of a frustum band from its two radii and its slant length.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Area of a surface of revolution</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Area of a surface of revolution</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Spin the curve about the axis, as on a potter's wheel. Each tiny straight step of the walk from section 1 sweeps out a thin band, like a ribbon glued round a vase. The band's area is its circumference, 2π × (distance from the axis), times its slanted width, which is the step length. Glue all the bands side by side and they cover the surface; the integral adds their areas as the bands get thinner.</p></div></details>
 <p>A <b>surface of revolution</b> is the surface swept out when a curve is rotated (spun) about a line, called the <b>axis of rotation</b>. Every point of the curve travels round a circle centred on the axis; the radius of that circle is the point's distance from the axis.</p>
 <div class="figure"><p class="ttl">Rotating about the x-axis and about the y-axis (the slide's picture is redrawn)</p>
 <canvas class="plot" id="faxes" style="aspect-ratio:16/10" aria-label="A curve rotated about an axis, with one circle highlighted"></canvas>
@@ -406,6 +487,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> surface area = integral of (circumference of the circle traced by the point) × (tiny length of curve) = ∫ 2π × (distance from the axis) × ds.</p>
 <p>(Here \(f(x)\ge0\) and \(f'\) is continuous.)</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(f(x)\)</dt><dd>the distance of the point from the \(x\)-axis: the radius of the circle it travels round.</dd>
+<dt>\(2\pi f(x)\)</dt><dd>the circumference of that circle: the length of the band round the axis.</dd>
+<dt>\(\sqrt{1+[f'(x)]^2}\,dx\)</dt><dd>the slanted width of the band, which is the step length \(ds\) of section 2.</dd>
+<dt>\(\int_a^b\)</dt><dd>glue the bands together from \(x=a\) to \(x=b\).</dd>
+</dl></div>
 <h3>Why: bands that are frustums</h3>
 <p>Cut \([a,b]\) into \(n\) subintervals as in section 1. The chord \(P_{i-1}P_i\), rotated about the \(x\)-axis, sweeps out a frustum band with radii \(f(x_{i-1})\), \(f(x_i)\) and slant length \(\ell=|P_{i-1}P_i|\approx\sqrt{1+[f'(x_i^*)]^2}\,\Delta x\) (section 2). Its area is about \(2\pi\cdot(\text{average radius})\cdot\ell\approx2\pi f(x_i^*)\sqrt{1+[f'(x_i^*)]^2}\,\Delta x\). Adding the bands gives a Riemann sum, and letting \(n\to\infty\) gives the integral. <span class="pill">Beyond the handouts</span></p>
 <div class="figure"><p class="ttl">Approximating a surface of revolution by frustum bands</p>
@@ -446,7 +533,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <div class="box eg"><span class="tag">Example 6 (slide 20)</span>
 <p><b>Find the surface area obtained by rotating \(x=1+2y^2\) \((1\le y\le2)\) about the \(x\)-axis.</b></p>
-<p>The curve is given as \(x\) in terms of \(y\), so work in \(y\). A point \((x,y)\) of the curve is at distance \(y\) from the \(x\)-axis, so the <b>radius is \(y\)</b>. The arc length element in \(y\) is</p>
+<p>The curve is given as \(x\) in terms of \(y\), so work in \(y\). A point \((x,y)\) of the curve is at distance \(y\) from the \(x\)-axis, so the <b>radius is \(y\)</b>. <span class="why">The spin axis is the \(x\)-axis, so each point travels round a circle whose radius is its height \(y\), whichever variable the curve is written in.</span> The arc length element in \(y\) is</p>
 \[ \frac{dx}{dy}=4y, \]
 \[ ds=\sqrt{1+\left(\frac{dx}{dy}\right)^2}\,dy=\sqrt{1+16y^2}\,dy. \]
 \[ S=\int_1^2 2\pi y\sqrt{1+16y^2}\,dy. \]
@@ -454,10 +541,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ \begin{aligned} S&=\frac{2\pi}{32}\int_{17}^{65}u^{1/2}\,du=\frac{\pi}{16}\cdot\frac23\Big[u^{3/2}\Big]_{17}^{65}\\ &=\frac{\pi}{24}\left(65\sqrt{65}-17\sqrt{17}\right)\approx59.42. \end{aligned} \]
 <p>Check: the same curve is \(y=\sqrt{\frac{x-1}{2}}\), \(3\le x\le9\); the slide-18 formula in \(x\) gives the same number (try it in the band figure, option "Example 6").</p>
 </div>
+<p class="cannow"><b>You can now:</b> set up \(S=\int2\pi\cdot\text{radius}\;ds\) about either axis, with the radius as the distance from the spin axis; choose \(ds\) in \(x\), \(y\) or \(t\); and evaluate the integral by substitution.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Summary (slide 21)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Summary (slide 21)</span></h2>
 <ul class="list">
 <li>Arc length and surface area may be computed via a definite integral in Cartesian, parametric, and/or polar coordinates.</li>
 <li>Arc length and surface area integrals are fundamentally related through the <b>differential arc length element</b> \(ds\) (the length of a tiny piece of the curve):
@@ -473,7 +561,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Common mistakes</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Common mistakes</span></h2>
 <p style="font-size:.92rem;color:var(--muted)">The handout's Common Mistakes slide (slide 23) is blank, so the list below is written for these notes from the traps of this lecture.</p>
 <div class="box"><div class="mistake">
 <span class="x">✗</span><span>\(L=\int_a^b\big(1+f'(x)\big)\,dx\) or \(\int_a^b\sqrt{1+f'(x)}\,dx\). <span class="ok">✓</span> The slope is <b>squared</b> inside a <b>square root</b>: \(\int_a^b\sqrt{1+[f'(x)]^2}\,dx\). <span class="pill">Written for these notes</span></span>
@@ -487,7 +575,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Find the mistake (slide 22)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Find the mistake (slide 22)</span></h2>
 <p>The slide shows a student's handwritten answer to this question:</p>
 <div class="q"><p class="qh">8. Consider \(y=\dfrac{x^4}{16}+\dfrac{1}{2x^2}\) from \(1\le x\le2\).<br>(b) Find the area of the surface obtained by rotating the curve around the \(y\)-axis.</p></div>
 <p>The student's work, transcribed line by line:</p>
@@ -520,7 +608,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Group work (slide 24)</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Group work (slide 24)</span></h2>
 
 <div class="q"><p class="qh">1. Let \(R\) be the region bounded by \(y=\sqrt x\), \(y=0\), and \(x=4\).<br>(a) Find the perimeter of \(R\).<br>(b) Find the surface area of \(R\) rotated about the \(y\)-axis.</p>
 <div class="figure"><p class="ttl">The region R and its boundary</p>
@@ -569,7 +657,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Concept checks</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Concept checks</span></h2>
 <div class="q"><p class="qh">1. Explain, using the integrand, why the length of \(y=f(x)\) over \([a,b]\) is always at least \(b-a\). When is it exactly \(b-a\)? <span class="pill">Written for these notes</span></p>
 <details><summary>Answer</summary><div><p>\(\sqrt{1+[f'(x)]^2}\ge\sqrt1=1\), so \(L\ge\int_a^b1\,dx=b-a\). Equality needs \(f'(x)=0\) everywhere, i.e. a horizontal line.</p></div></details></div>
 
@@ -590,7 +678,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="pastpaper"><h2><span class="n">12</span>Exam taster</h2>
+<section id="pastpaper"><h2><span class="n">12</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Lecture 17's question types appear 14 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide.</p>
 
@@ -1003,5 +1091,14 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
+
 </script>
 </html>

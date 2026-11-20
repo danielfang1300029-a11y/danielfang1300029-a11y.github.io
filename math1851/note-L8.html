@@ -106,6 +106,33 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -139,24 +166,32 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · Calculus · Lecture 8</span>
   <h1>Extreme Values and the Mean Value Theorem</h1>
-  <p class="lede">Every slide of Lecture 8 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. Each past paper question is tagged with its question type and links to the exam guide, where the full worked solution is.</p>
 </header>
 
 <!-- ============ 0 ============ -->
 <section id="s0">
-<h2><span class="n">0</span>Where this lecture sits</h2>
-<p>Lectures 5 to 7 were about <b>computing</b> derivatives. From Lecture 8 on, the course <b>uses</b> derivatives to say things about functions. This lecture answers two questions:</p>
-<ul class="list">
-  <li><b>Where is a function highest and lowest?</b> These are its <b>extreme values</b>. We will see when they are guaranteed to exist (the Extreme Value Theorem), where to look for them (critical points), and a recipe for finding them (the Closed Interval Method).</li>
-  <li><b>What does the derivative tell us about the function over a whole interval?</b> The Mean Value Theorem links the slope at a single point to the overall change between two points. It is the engine behind Lectures 9 to 12: curve sketching, L'Hôpital's Rule, antiderivatives and the Fundamental Theorem of Calculus.</li>
-</ul>
+<h2><span class="n">0</span><span class="h2t">Where this lecture sits</span></h2>
+<p>Lectures 5 to 7 computed derivatives; from here the course <b>uses</b> them. Picture a walk along a hilly trail between two fence posts: this lecture finds the highest and lowest spots of the walk, then, with a road trip, links the speed at one moment to the average speed over the whole trip. The Mean Value Theorem is the engine behind Lectures 9 to 12.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span><ol>
+<li><a href="#s1">§1</a> <b>The absolute maximum is the highest spot of the whole walk.</b> It must actually be reached.</li>
+<li><a href="#s2">§2</a> <b>A local maximum is a hilltop:</b> highest among its neighbours. A local minimum is a valley floor.</li>
+<li><a href="#s3">§3</a> <b>Unbroken trail, both fence posts included: a highest and a lowest spot are guaranteed</b> (the EVT).</li>
+<li><a href="#s4">§4</a> <b>Inside the fence, a top or bottom is at a flat spot or a sharp point:</b> a critical point.</li>
+<li><a href="#s5">§5</a> <b>Check the flat spots, the sharp points and the two fence ends; pick the highest and lowest.</b></li>
+<li><a href="#s6">§6</a> <b>A ball thrown up and caught at the same height stops rising for an instant</b> (Rolle).</li>
+<li><a href="#s7">§7</a> <b>On a road trip, the speedometer shows your average speed at some moment</b> (the MVT). <span class="pill">Statement asked word for word</span></li>
+<li><a href="#s8">§8</a> <b>A limit on the speed gives a limit on the distance.</b> Bounds from the MVT.</li>
+<li><a href="#s9">§9</a> <b>The IVT is about heights, the MVT about slopes.</b> "Exactly one root" uses both.</li>
+</ol></div>
+<p><b>You need:</b> all the derivative rules of Lectures 5 to 7 (slide 2's table, below), and continuity and the Intermediate Value Theorem from Lecture 4. <b>In the exam:</b> a long-question part in Part I: state the Mean Value Theorem with both conditions, a short proof that uses it (a bound, or "exactly one root"), and the critical-point-and-endpoint check inside curve-sketching questions. Name the theorem and check its conditions on paper. See the <a href="guide-L8.html">L8 exam guide</a>.</p>
 <p>Slide 2 repeats the full table of derivative rules from Lecture 7: constant, constant multiple, power (\(x^n\), any real \(n\)), sum and difference, product, quotient, chain, exponential (\(a^x\), \(e^x\)), logarithmic (\(\log_a x\), \(\ln x\)), the six trig functions and the six inverse trig functions. Nothing new is added; you need all of them to find critical points today.</p>
 <p style="font-size:.92rem;color:var(--muted)">Slides 3 to 6 are admin. Slide 3 links to the review questions on Ed and to the Moodle "Part I Lectures" folder. Slide 4 lists the textbook sections: Extreme Values of Functions (§3.1 custom edition, §4.1 MyLab) and The Mean Value Theorem (§3.2 custom, §4.2 MyLab). Slide 5 lists the learning objectives: tell absolute and local extrema apart, compute critical points, and apply the value theorems (the Extreme Value Theorem, the Mean Value Theorem, Rolle's Theorem). Slide 6 is the lecture timeline.</p>
 </section>
 
 <!-- ============ 1 ============ -->
 <section id="s1">
-<h2><span class="n">1</span>Absolute (global) extrema</h2>
+<h2><span class="n">1</span><span class="h2t">Absolute (global) extrema</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture a walk along a hilly trail from one fence post to another. The input is how far along the trail you are; the output is the height of the ground there. The absolute maximum is the highest spot you actually stand on during the whole walk, and the absolute minimum is the lowest. If the trail stops just short of the top, you never stand on it, and the walk has no highest spot at all.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 7)</span>
 <p>The maximum and minimum values of a function \(f\) are called its <b>extreme values</b> (or <b>extrema</b>; one of them is an <b>extremum</b>). Extrema are classified as <b>absolute</b> or <b>local</b>.</p>
 </div>
@@ -167,6 +202,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <li>the <b>absolute minimum value</b> of \(f\) at \(c\) if \(\;f(c)\le f(x)\;\) for all \(x\in D\).</li>
 </ul>
 <p>These are also called the <b>global</b> maximum and minimum values.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(f(c)\)</dt><dd>the height at one particular spot \(c\) on the trail.</dd><dt>\(\ge f(x)\)</dt><dd>at least as high as the height at spot \(x\) (ties are allowed, so a flat top still counts).</dd><dt>for all \(x\in D\)</dt><dd>compared with every spot of the walk, not just the nearby ones. That is what makes it <i>absolute</i>.</dd><dt>\(c\) in \(D\)</dt><dd>the spot must be on the walk itself: a height you only get close to does not count.</dd></dl></div>
 <p class="word"><b>In words:</b> the absolute maximum is the single highest output the function ever actually reaches on its whole domain; the absolute minimum is the single lowest output it ever actually reaches. (\(x\in D\) means "\(x\) is in the domain \(D\)".)</p>
 </div>
 <p>Two details matter in exams:</p>
@@ -191,11 +227,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <div class="readout" id="dom-out"></div>
 </div>
 <p><b>Analogy.</b> The absolute maximum is the summit of a hiking trail. If the trail stops just short of the summit (an open endpoint), you never stand on it, so the trail has no highest point, only points that get closer and closer.</p>
+<p class="cannow"><b>You can now:</b> say what the absolute maximum and minimum values of a function are; give both the value and where it occurs; and explain, using the domain and its endpoints, why a function such as \(x^2\) on \(0\lt x\le2\) has no minimum.</p>
 </section>
 
 <!-- ============ 2 ============ -->
 <section id="s2">
-<h2><span class="n">2</span>Local (relative) extrema</h2>
+<h2><span class="n">2</span><span class="h2t">Local (relative) extrema</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Back on the trail. A local maximum is a hilltop: stand there and every spot within a few steps is lower or level, even if a bigger mountain rises further along. A local minimum is a valley floor. The walk can have many hilltops; the absolute maximum is simply the highest spot of all.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 9)</span>
 <p>Let \(D\) be the domain of \(f\). Then \(f\) has</p>
 <ul class="list">
@@ -217,18 +255,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <ul class="list">
   <li>Absolute maximum value \(1\), reached at \(x=\frac\pi2+2k\pi\) for every integer \(k\) (…, \(-\frac{3\pi}2\), \(\frac\pi2\), \(\frac{5\pi}2\), …).</li>
   <li>Absolute minimum value \(-1\), reached at \(x=-\frac\pi2+2k\pi\) (…, \(-\frac\pi2\), \(\frac{3\pi}2\), …).</li>
-  <li>Each of these points is also a local maximum or local minimum, and there are no other local extrema: between a peak and the next trough, \(\sin x\) only goes one way.</li>
+  <li>Each of these points is also a local maximum or local minimum, and there are no other local extrema: between a peak and the next trough, \(\sin x\) only goes one way.<span class="why">From a peak, \(\sin x\) falls all the way to the next trough without turning, so there is no hilltop or valley floor in between.</span></li>
 </ul>
 <p class="word"><b>Lesson:</b> an absolute maximum value is unique (there is only one highest height) but it can be reached at many places.</p>
 </div>
+<p class="cannow"><b>You can now:</b> tell a local extremum from an absolute one; explain why an absolute maximum is also a local one but not the other way round; and list the extreme values of \(\sin x\) and where they occur.</p>
 </section>
 
 <!-- ============ 3 ============ -->
 <section id="s3">
-<h2><span class="n">3</span>When do extreme values exist? The Extreme Value Theorem</h2>
+<h2><span class="n">3</span><span class="h2t">When do extreme values exist? The Extreme Value Theorem</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The EVT is a guarantee for the walk. If the ground has no gaps or sudden jumps (continuous) and both fence posts are part of the walk (closed interval), you must pass a highest spot and a lowest spot. Take away either condition and the guarantee is gone: the trail could climb towards a fence post you may not stand on, or jump up at a gap to a height it never quite reaches.</p></div></details>
 <div class="box thm"><span class="tag">Theorem: Extreme Value Theorem, EVT (slide 11)</span>
 <p>If \(f\) is continuous on a closed interval \([a,b]\), then \(f\) attains both an absolute maximum value \(M\) and an absolute minimum value \(m\) in \([a,b]\). That is, there are numbers \(x_1\) and \(x_2\) in \([a,b]\) with</p>
 \[ \begin{gathered} f(x_1)=m,\qquad f(x_2)=M,\\ m\le f(x)\le M \ \text{ for every other } x \text{ in } [a,b]. \end{gathered} \]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>continuous on \([a,b]\)</dt><dd>the trail has no gaps or jumps anywhere, including right at the two fence posts, and both posts are part of the walk.</dd><dt>\(f(x_1)=m\)</dt><dd>the lowest height \(m\) is actually stood on, at the spot \(x_1\).</dd><dt>\(f(x_2)=M\)</dt><dd>the highest height \(M\) is actually stood on, at the spot \(x_2\).</dd><dt>\(m\le f(x)\le M\)</dt><dd>every other spot of the walk lies between these two heights.</dd></dl></div>
 <p class="word"><b>In words:</b> if the graph has no breaks (continuous) and you include both ends (closed interval), then there is a lowest point and a highest point, and the function actually reaches them.</p>
 </div>
 <p>Terms: <b>continuous</b> (Lecture 4) means no jumps, holes or blow-ups: \(\lim_{x\to c}f(x)=f(c)\) at every point. A <b>closed interval</b> \([a,b]\) includes both endpoints; an <b>open interval</b> \((a,b)\) excludes both. The slides omit the proof as technically difficult (it needs properties of the real numbers beyond this course).</p>
@@ -263,11 +304,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <p class="cap">The pictures follow the slides' ideas; the exact formulas are chosen for these notes.</p>
 </div>
 <p><b>Analogy.</b> A continuous function on a closed interval is like a walk along a mountain ridge from one marked post to another without ever leaving the ground. You must pass a highest and a lowest spot. Remove an end post (open interval) and the walk could climb forever towards a height it never reaches; allow teleporting (a jump) and the same can happen in the middle.</p>
+<p class="cannow"><b>You can now:</b> state the EVT with both conditions (continuous, closed interval); say that it guarantees existence but not location; and use the gallery cases to show why each condition matters, while remembering that extrema may still exist when a condition fails.</p>
 </section>
 
 <!-- ============ 4 ============ -->
 <section id="s4">
-<h2><span class="n">4</span>Where to look: critical points</h2>
+<h2><span class="n">4</span><span class="h2t">Where to look: critical points</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Where on the trail can a hilltop be? Inside the fence, a smooth hilltop is flat at the very top: you have stopped climbing and not yet started down. The only other way is a sharp peak, like a roof ridge, where there is no single slope. The fence posts are different: the walk just stops there, so the ground can still be sloping at your highest spot.</p></div></details>
 <div class="box thm"><span class="tag">Theorem: first derivative theorem for local extrema (slide 14)</span>
 <p>If \(f\) has a local maximum or minimum at an <b>interior</b> point \(c\) of its domain, and if \(f'(c)\) exists, then</p>
 \[ f'(c)=0. \]
@@ -301,33 +344,43 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <div class="readout" id="crit-out"></div>
 </div>
 
+<details class="idea"><summary>What is this? (critical point)</summary><div><p>A critical point is a spot inside the fence that is either flat or sharp. It is the shortlist of places where a hilltop or a valley floor could be. Being on the shortlist does not make it one: a flat ledge on a steady climb is flat but is neither a top nor a bottom.</p></div></details>
 <div class="box def"><span class="tag">Definition: critical point (slide 16)</span>
 <p>An <b>interior</b> point \(c\) in the domain of \(f\) where</p>
 \[ f'(c)=0 \quad\text{or}\quad f'(c)\ \text{does not exist} \]
 <p>is a <b>critical point</b> of \(f\).</p>
 <p class="word"><b>In words:</b> a critical point is an inside point where the graph is either flat or has no well-defined slope. Endpoints are never called critical points; they are checked separately.</p>
 </div>
+<p class="cannow"><b>You can now:</b> explain why an interior extremum with a derivative must have \(f'(c)=0\); list the three kinds of candidate points; find the critical points of a function, including where \(f'\) does not exist; and give \(x^3\) and \(|x|\) as warnings.</p>
 </section>
 
 <!-- ============ 5 ============ -->
 <section id="s5">
-<h2><span class="n">5</span>The Closed Interval Method</h2>
+<h2><span class="n">5</span><span class="h2t">The Closed Interval Method</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The method is a search for the highest and lowest spots of the fenced walk. The EVT says they exist, as long as the trail is unbroken and both fence posts are included. Section 4 says each one is at a flat spot, a sharp point or a fence post. So visit every one of those, measure the height, and pick the biggest and the smallest. You never need to work out the shape at each spot: the heights decide.</p></div></details>
 <div class="box thm"><span class="tag">Theorem: Closed Interval Method (slide 16)</span>
 <p>To find the absolute maximum and minimum values of a <b>continuous</b> function \(f\) on a <b>closed</b> interval \([a,b]\):</p>
-<ol class="steps">
-  <li>Evaluate \(f\) at all critical points and at the endpoints \(a\) and \(b\).</li>
-  <li>The largest of these values is the absolute maximum; the smallest is the absolute minimum.</li>
+<ol class="steps proc">
+  <li><b>Do:</b> Evaluate \(f\) at all critical points and at the endpoints \(a\) and \(b\). <span class="why">The highest and lowest spots exist (EVT) and can only be at flat spots, sharp points or fence posts, so this list cannot miss them.</span></li>
+  <li><b>Do:</b> The largest of these values is the absolute maximum; the smallest is the absolute minimum. <span class="why">Comparing heights picks the winners directly, so no test of the shape at each spot is needed.</span></li>
 </ol>
 <p class="word"><b>In words:</b> the EVT says the highest and lowest points exist; the first derivative theorem says they can only be at critical points or endpoints. So list every candidate, work out its height, and pick the biggest and smallest.</p>
 </div>
 <p>Why this works: by the EVT the absolute max is reached somewhere in \([a,b]\). If it is reached at an interior point, that point is also a local maximum, so by section 4 it is a critical point. Otherwise it is at an endpoint. Either way it is on your list. You do <b>not</b> need to decide whether each critical point is a max or a min; comparing values does that for you.</p>
-<p><b>Exam layout that earns full marks:</b> (1) say \(f\) is continuous on the closed interval; (2) compute \(f'\); (3) solve \(f'(x)=0\) and note where \(f'\) does not exist, keeping only points inside \((a,b)\); (4) table of candidates and values; (5) state the absolute max and min and where they occur.</p>
+<p><b>Exam layout that earns full marks:</b></p>
+<ol class="steps proc">
+  <li><b>Do:</b> (1) say \(f\) is continuous on the closed interval; <span class="why">this is the EVT's condition, and it is what guarantees there is a highest and a lowest spot to find.</span></li>
+  <li><b>Do:</b> (2) compute \(f'\); <span class="why">the slope is what shows where the trail is flat or sharp.</span></li>
+  <li><b>Do:</b> (3) solve \(f'(x)=0\) and note where \(f'\) does not exist, keeping only points inside \((a,b)\); <span class="why">these are the flat spots and sharp points inside the fence; a point outside \([a,b]\) is not on the walk at all.</span></li>
+  <li><b>Do:</b> (4) table of candidates and values; <span class="why">the heights, not the shapes, decide which spot is the top and which the bottom, and the table shows the marker every candidate was checked.</span></li>
+  <li><b>Do:</b> (5) state the absolute max and min and where they occur. <span class="why">The answer has two parts, the height and the place (section 1), and each earns marks.</span></li>
+</ol>
 
 <div class="box eg"><span class="tag">Example 2 (slide 17)</span>
 <p>Find the absolute extrema of \(f(x)=x^3+x^2-x\) on \([-1,2]\).</p>
 <p><b>Solution.</b> \(f\) is a polynomial, so it is continuous on \([-1,2]\) and differentiable everywhere.</p>
 \[ \begin{aligned} f'(x)&=3x^2+2x-1\\ &=(3x-1)(x+1)=0\\ &\iff x=\tfrac13 \ \text{ or } \ x=-1. \end{aligned} \]
-<p>\(x=-1\) is an endpoint, so the only critical point inside \((-1,2)\) is \(x=\frac13\). There are no points where \(f'\) fails to exist.</p>
+<p>\(x=-1\) is an endpoint, so the only critical point inside \((-1,2)\) is \(x=\frac13\). There are no points where \(f'\) fails to exist.<span class="why">\(x=-1\) is still checked, but as a fence post in the table, not as a critical point.</span></p>
 <div class="scroll"><table>
 <tr><th>Candidate \(x\)</th><th>Type</th><th>\(f(x)\)</th></tr>
 <tr><td>\(-1\)</td><td>endpoint</td><td>\(-1+1+1=1\)</td></tr>
@@ -341,7 +394,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Find the absolute extrema of \(g(t)=|3t-4|\) on \([0,3]\).</p>
 <p><b>Solution.</b> \(g\) is continuous (absolute value of a polynomial). Write it without the absolute value:</p>
 \[ \begin{gathered} g(t)=\begin{cases}4-3t, & t\lt\frac43\\[2pt] 3t-4, & t\ge\frac43\end{cases}\\[8pt] g'(t)=\begin{cases}-3, & t\lt\frac43\\[2pt] 3, & t\gt\frac43.\end{cases} \end{gathered} \]
-<p>\(g'\) is never 0. At \(t=\frac43\) the slope jumps from \(-3\) to \(3\) (a sharp corner), so \(g'(\frac43)\) does not exist. The only critical point is \(t=\frac43\).</p>
+<p>\(g'\) is never 0. At \(t=\frac43\) the slope jumps from \(-3\) to \(3\) (a sharp corner), so \(g'(\frac43)\) does not exist. The only critical point is \(t=\frac43\).<span class="why">The bottom of this V-shaped valley is a sharp point, not a flat spot, so solving \(g'=0\) alone cannot find it.</span></p>
 <div class="scroll"><table>
 <tr><th>Candidate \(t\)</th><th>Type</th><th>\(g(t)\)</th></tr>
 <tr><td>\(0\)</td><td>endpoint</td><td>\(4\)</td></tr>
@@ -365,11 +418,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <div class="legend"><span style="--k:var(--c4)">endpoint</span><span style="--k:var(--c2)">critical point</span><span style="--k:var(--c3)">absolute max / min</span></div>
   <div class="readout" id="cim-out"></div>
 </div>
+<p class="cannow"><b>You can now:</b> check that the Closed Interval Method applies (continuous, closed interval); list the critical points and the endpoints; tabulate their values; and state the absolute maximum and minimum with where they occur, including at a corner where \(f'\) does not exist.</p>
 </section>
 
 <!-- ============ 6 ============ -->
 <section id="s6">
-<h2><span class="n">6</span>Rolle's Theorem</h2>
+<h2><span class="n">6</span><span class="h2t">Rolle's Theorem</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Throw a ball straight up and catch it at the same height you let it go. While it rises its vertical velocity is positive; while it falls, negative. So at some moment in between, the top of the throw, the velocity is exactly zero. Each condition is part of the picture: the ball's height changes without jumps (continuous), it has a definite velocity at every moment in flight (differentiable), and it ends at the height it started (equal end values). The theorem promises only that such a moment exists, not when it happens.</p></div></details>
 <div class="box thm"><span class="tag">Theorem: Rolle's Theorem (slide 19)</span>
 <p>Suppose \(f\) satisfies:</p>
 <ol class="steps" style="list-style:lower-roman">
@@ -388,7 +443,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>The slide is left blank for the lecture; here is the standard proof. It uses only the EVT and the first derivative theorem.</p>
 <ol class="steps">
   <li><b>Case 1: \(f\) is constant on \([a,b]\).</b> Then \(f'(x)=0\) for every \(x\) in \((a,b)\), so any \(c\) works.</li>
-  <li><b>Case 2: \(f(x)\gt f(a)\) for some \(x\) in \((a,b)\).</b> By condition (i) and the EVT, \(f\) has an absolute maximum on \([a,b]\). That maximum is bigger than \(f(a)=f(b)\), so it is not at an endpoint; it is at some interior \(c\). An absolute max at an interior point is a local max, and \(f'(c)\) exists by condition (ii), so \(f'(c)=0\) by the first derivative theorem.</li>
+  <li><b>Case 2: \(f(x)\gt f(a)\) for some \(x\) in \((a,b)\).</b> By condition (i) and the EVT, \(f\) has an absolute maximum on \([a,b]\). That maximum is bigger than \(f(a)=f(b)\), so it is not at an endpoint; it is at some interior \(c\). An absolute max at an interior point is a local max, and \(f'(c)\) exists by condition (ii), so \(f'(c)=0\) by the first derivative theorem. <span class="why">The ball went above the hands, so the top of the throw happens in the air, strictly between \(a\) and \(b\), where the curve is smooth and must be flat at its top.</span></li>
   <li><b>Case 3: \(f(x)\lt f(a)\) for some \(x\) in \((a,b)\).</b> Same argument with the absolute minimum.</li>
 </ol>
 <p>One of the three cases always happens, so the theorem is proved. \(\blacksquare\)</p>
@@ -400,11 +455,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <div><b>Not differentiable at \(x=0\)</b>\(f(x)=1-(|x|-1)^2\) on \([-2,2]\) has a corner at 0 but flat tops at \(x=\pm1\); but \(f(x)=|x|\) on \([-1,1]\) has \(f(-1)=f(1)\) and its slope is only ever \(\pm1\), never 0.</div>
   <div><b>\(f(-1)\ne f(1)\)</b>\(f(x)=x^3\) still has \(f'(0)=0\); \(f(x)=x\) has slope 1 everywhere.</div>
 </div>
+<p class="cannow"><b>You can now:</b> state Rolle's Theorem with all three conditions; prove it from the EVT and the first derivative theorem; and give an example where a condition fails and no horizontal tangent exists, such as \(|x|\) on \([-1,1]\).</p>
 </section>
 
 <!-- ============ 7 ============ -->
 <section id="s7">
-<h2><span class="n">7</span>The Mean Value Theorem</h2>
+<h2><span class="n">7</span><span class="h2t">The Mean Value Theorem</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A road trip. Your position along the road is a function of time, and the speedometer shows its derivative. If you cover 120 km in 1.5 hours, your average speed is 80 km/h, so at some moment strictly during the trip the speedometer read exactly 80 km/h. The conditions are part of the picture: the car moves without teleporting, from departure to arrival included (continuous on the closed interval), and it has a definite speed at every moment in between (differentiable on the open interval).</p></div></details>
 <div class="box thm"><span class="tag">Theorem: Mean Value Theorem, MVT (slide 22)</span>
 <p>Suppose \(f\) satisfies:</p>
 <ol class="steps" style="list-style:lower-roman">
@@ -413,6 +470,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </ol>
 <p>Then there is at least one number \(c\) in \((a,b)\) at which</p>
 \[ f'(c)=\frac{f(b)-f(a)}{b-a}. \]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(f(b)-f(a)\)</dt><dd>distance covered between departure time \(a\) and arrival time \(b\).</dd><dt>\(b-a\)</dt><dd>how long the trip took.</dd><dt>\(\dfrac{f(b)-f(a)}{b-a}\)</dt><dd>your average speed: the slope of the straight chord from start to finish.</dd><dt>\(f'(c)\)</dt><dd>the speedometer reading at the moment \(c\).</dd><dt>\(c\) in \((a,b)\)</dt><dd>the moment is strictly during the trip, not at departure or arrival; you are not told when.</dd><dt>continuous on \([a,b]\)</dt><dd>no teleporting, including at departure and arrival.</dd><dt>differentiable on \((a,b)\)</dt><dd>a definite speed at every moment in between. A sudden corner in the position graph, such as the bounce in \(|x|\), has no single speed.</dd></dl></div>
 <p class="word"><b>In words:</b> slope of the tangent at \(c\) = slope of the straight line joining the two ends, i.e. the instantaneous rate of change at \(c\) = the average rate of change over \([a,b]\).</p>
 </div>
 <p>Rolle's Theorem is the "level" version (\(f(a)=f(b)\), so the average slope is 0). The MVT is the "tilted" version: tilt the picture so the two ends are at different heights, and the horizontal tangent becomes a tangent parallel to the chord.</p>
@@ -465,21 +523,30 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> \(h(x)\) = height of the curve minus height of the secant at the same \(x\), i.e. the vertical gap between them.</p>
 <ol class="steps">
   <li>\(h\) is continuous on \([a,b]\) and differentiable on \((a,b)\), because \(f\) is and \(L\) is a straight line.</li>
-  <li>\(h(a)=f(a)-f(a)-0=0\), and
+  <li>\(h(a)=f(a)-f(a)-0=0\), and <span class="why">Subtracting the secant levels the two ends, so the gap \(h\) is a ball caught at the height it was thrown from, and Rolle applies.</span>
   \[ \begin{aligned} h(b)&=f(b)-f(a)-m(b-a)\\ &=f(b)-f(a)-\big(f(b)-f(a)\big)\\ &=0. \end{aligned} \]
   So \(h(a)=h(b)\).</li>
   <li>By Rolle's Theorem there is \(c\) in \((a,b)\) with \(h'(c)=0\). Since \(h'(x)=f'(x)-m\), this says \(f'(c)=m=\dfrac{f(b)-f(a)}{b-a}\). \(\blacksquare\)</li>
 </ol>
 </div>
+<p class="cannow"><b>You can now:</b> state the MVT word for word with both conditions and \(c\) strictly between \(a\) and \(b\); explain it as a tangent parallel to the secant; find \(c\) for a given function; and prove the MVT from Rolle's Theorem.</p>
 </section>
 
 <!-- ============ 8 ============ -->
 <section id="s8">
-<h2><span class="n">8</span>Using the MVT: bounds, growth and uniqueness</h2>
+<h2><span class="n">8</span><span class="h2t">Using the MVT: bounds, growth and uniqueness</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Back on the road trip. Usually you do not know the moment \(c\), but you may know that the speedometer never showed less than 2, or always showed less than 3. Then the average speed obeys the same limit, and distance equals average speed times time. A limit on the speed at every moment becomes a limit on the total distance.</p></div></details>
 <p>Most exam uses of the MVT come from rearranging it as</p>
 \[ \begin{gathered} f(b)-f(a)=f'(c)\,(b-a)\\ \text{for some } c \text{ in } (a,b). \end{gathered} \]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(f(b)-f(a)\)</dt><dd>the total change: distance covered on the trip.</dd><dt>\(f'(c)\)</dt><dd>the speedometer at some unknown moment \(c\).</dd><dt>\((b-a)\)</dt><dd>the length of the trip, always positive when \(a\lt b\).</dd><dt>for some \(c\) in \((a,b)\)</dt><dd>you do not know when, so you use what you know about \(f'\) at every moment.</dd></dl></div>
 <p class="word"><b>In words:</b> total change in \(f\) = (slope somewhere in between) × (length of the interval).</p>
 <p>You usually do not know \(c\), but you often know something about \(f'\) everywhere (for example "\(f'(x)\ge2\)" or "\(f'(x)\lt3\)"). Then you know it at \(c\) too, and the equation turns into an inequality. This is how the group work questions 4 and 5 and several past paper questions work.</p>
+<p><b>How to bound with the MVT:</b></p>
+<ol class="steps proc">
+  <li><b>Do:</b> Check \(f\) is continuous on \([a,b]\) and differentiable on \((a,b)\) (differentiable on the closed interval covers both). <span class="why">Without these the MVT promises nothing, and markers look for them.</span></li>
+  <li><b>Do:</b> Write \(f(b)-f(a)=f'(c)\,(b-a)\) for some \(c\) in \((a,b)\). <span class="why">This turns the unknown total change into a speed times a time.</span></li>
+  <li><b>Do:</b> Replace \(f'(c)\) by the bound you know for every \(x\), and rearrange for the value you want. <span class="why">The bound holds at every moment, so it holds at the unknown \(c\) too; multiplying by \(b-a\gt0\) keeps the inequality the same way round.</span></li>
+</ol>
 
 <div class="box eg"><span class="tag">Idea, using Group work 4</span>
 <p>If \(f(1)=10\) and \(f'(x)\ge2\) on \([1,4]\), then \(f(4)-f(1)=f'(c)\cdot3\ge2\cdot3=6\), so \(f(4)\ge16\). The graph of \(f\) can never fall below the line through \((1,10)\) with slope 2.</p>
@@ -497,11 +564,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <li>If \(f'(x)\ne0\) everywhere on an interval, then \(f\) has at most one root there. If it had two roots \(r_1\lt r_2\), Rolle's Theorem on \([r_1,r_2]\) would give \(f'(c)=0\). (Example 5 below.)</li>
 </ul>
 </div>
+<p class="cannow"><b>You can now:</b> rewrite the MVT as total change = slope × length; turn a bound on \(f'\) into a bound on \(f(b)\); and explain why \(f'=0\) gives a constant, \(f'\gt0\) gives increasing, and \(f'\ne0\) gives at most one root.</p>
 </section>
 
 <!-- ============ 9 ============ -->
 <section id="s9">
-<h2><span class="n">9</span>IVT vs MVT, and "exactly one root"</h2>
+<h2><span class="n">9</span><span class="h2t">IVT vs MVT, and "exactly one root"</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Two different guarantees on the road trip. The IVT is about positions: if you were at kilometre 10 at one time and at kilometre 50 later, then at some moment in between you passed kilometre 30, because the car cannot teleport. The MVT and Rolle are about speeds: at some moment the speedometer showed your average speed. "Exactly one root" uses both: the IVT finds a crossing of the axis, and Rolle rules out a second one.</p></div></details>
 <p>Recall the <b>Intermediate Value Theorem</b> (IVT, Lecture 4): if \(f\) is continuous on \([a,b]\) and \(N\) is any number between \(f(a)\) and \(f(b)\), then \(f(c)=N\) for some \(c\) in \((a,b)\). Compare:</p>
 <div class="scroll"><table>
 <tr><th>Theorem</th><th>Needs</th><th>Guarantees a value of</th></tr>
@@ -518,7 +587,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </table></div>
 <p>(a) For \(0\lt t\lt60\), must there be a time \(t\) when \(v(t)=-5\)?<br>(b) For \(0\lt t\lt60\), must there be a time \(t\) when \(a(t)=0\)?</p>
 <p><b>(a) Yes, by the IVT.</b> \(v\) is continuous on \([35,50]\), and \(-5\) lies between \(v(35)=-10\) and \(v(50)=0\). So \(v(t)=-5\) for some \(t\) in \((35,50)\subset(0,60)\).</p>
-<p><b>(b) Yes, by Rolle's Theorem (the MVT).</b> Acceleration is the derivative of velocity, \(a(t)=v'(t)\), so \(v\) is differentiable, and continuous. Since \(v(0)=v(25)=-20\), Rolle's Theorem on \([0,25]\) gives some \(t\) in \((0,25)\) with \(v'(t)=a(t)=0\).</p>
+<p><b>(b) Yes, by Rolle's Theorem (the MVT).</b> Acceleration is the derivative of velocity, \(a(t)=v'(t)\), so \(v\) is differentiable, and continuous. Since \(v(0)=v(25)=-20\), Rolle's Theorem on \([0,25]\) gives some \(t\) in \((0,25)\) with \(v'(t)=a(t)=0\).<span class="why">The velocity came back to its starting value, like the ball back at the hands, so its rate of change, the acceleration, was zero at some moment.</span></p>
 <p class="word"><b>Lesson:</b> the table's \(a\) values are all positive, but that only tells you about 7 moments. The theorems tell you about the moments in between. The IVT is about the function's values; the MVT is about its slopes.</p>
 </div>
 
@@ -527,18 +596,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p style="font-size:.9rem;color:var(--muted)">The slide prints "\(x^3+2x=5=0\)", a typo. Read as \(x^3+2x-5=0\) (that is, \(x^3+2x=5\)). With \(+5\) instead, the identical argument works using \(f(-2)=-7\lt0\lt f(-1)=2\).</p>
 <p>"Exactly one" is two claims, so prove two things.</p>
 <p><b>At least one root (IVT).</b> Let \(f(x)=x^3+2x-5\), a polynomial, so continuous on \([1,2]\). \(f(1)=-2\lt0\) and \(f(2)=7\gt0\), so by the IVT there is \(r\) in \((1,2)\) with \(f(r)=0\).</p>
-<p><b>At most one root (Rolle).</b> Suppose there were two roots \(r_1\lt r_2\). \(f\) is continuous and differentiable everywhere and \(f(r_1)=f(r_2)=0\), so Rolle's Theorem gives \(c\) in \((r_1,r_2)\) with \(f'(c)=0\). But \(f'(x)=3x^2+2\ge2\gt0\) for all \(x\). Contradiction. So there cannot be two roots.</p>
+<p><b>At most one root (Rolle).</b> Suppose there were two roots \(r_1\lt r_2\). \(f\) is continuous and differentiable everywhere and \(f(r_1)=f(r_2)=0\), so Rolle's Theorem gives \(c\) in \((r_1,r_2)\) with \(f'(c)=0\). But \(f'(x)=3x^2+2\ge2\gt0\) for all \(x\). Contradiction. So there cannot be two roots.<span class="why">Two roots are two equal heights (both 0), which would force a flat moment in between; but \(f\) is always climbing, so it can never be flat.</span></p>
 <p><b>Conclusion:</b> exactly one real root (it is about \(1.328\)).</p>
 <div class="figure" style="margin:8px 0">
   <canvas class="plot" id="root" style="aspect-ratio:16/8" aria-label="Graph of x cubed plus 2x minus 5 crossing the axis once"></canvas>
 </div>
 <p class="word"><b>Template:</b> exists (IVT: sign change) + unique (Rolle: two roots would force \(f'(c)=0\), but \(f'\) is never 0). Name both theorems; markers look for them.</p>
 </div>
+<p><b>Method for "exactly one root":</b></p>
+<ol class="steps proc">
+  <li><b>Do:</b> Move everything to one side, call it \(f(x)\), and say why \(f\) is continuous and differentiable. <span class="why">Both theorems need these conditions, so state them first.</span></li>
+  <li><b>Do:</b> Find two points where \(f\) has opposite signs and quote the IVT. <span class="why">An unbroken graph that starts below the axis and ends above it must cross: at least one root.</span></li>
+  <li><b>Do:</b> Suppose two roots \(r_1\lt r_2\), apply Rolle's Theorem on \([r_1,r_2]\) to get \(f'(c)=0\), and show \(f'\) is never 0. <span class="why">Two roots would force a flat moment in between, which a function whose slope is never 0 does not have: at most one root.</span></li>
+  <li><b>Do:</b> Conclude "exactly one real root", naming both theorems. <span class="why">"At least one" and "at most one" together make "exactly one".</span></li>
+</ol>
+<p class="cannow"><b>You can now:</b> say which theorem gives a value of \(f\) (IVT) and which gives a value of \(f'\) (MVT, Rolle); answer table questions like Example 4; and prove an equation has exactly one real root with the IVT plus Rolle.</p>
 </section>
 
 <!-- ============ 10 ============ -->
 <section id="s10">
-<h2><span class="n">10</span>Summary (slide 27)</h2>
+<h2><span class="n">10</span><span class="h2t">Summary (slide 27)</span></h2>
 <ul class="list">
   <li><b>EVT:</b> a continuous function on a closed interval \([a,b]\) has an absolute maximum and an absolute minimum.</li>
   <li><b>Critical point:</b> an interior number \(c\) with \(f'(c)=0\) or \(f'(c)\) undefined.</li>
@@ -551,7 +628,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 11 ============ -->
 <section id="s11">
-<h2><span class="n">11</span>Common mistakes (slide 29)</h2>
+<h2><span class="n">11</span><span class="h2t">Common mistakes (slide 29)</span></h2>
 <div class="box">
 <div class="mistake">
 <span class="x">✗</span><span>"\(f(x)=|x|\) does not have a minimum value." <b>Why wrong:</b> it ignores critical points where \(f'\) is undefined. \(f'(0)\) does not exist, and \(f(0)=0\) is the absolute minimum. <span class="ok">✓</span> Always list points where \(f'\) DNE.</span>
@@ -566,7 +643,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 12 ============ -->
 <section id="s12">
-<h2><span class="n">12</span>Find the mistake (slide 28)</h2>
+<h2><span class="n">12</span><span class="h2t">Find the mistake (slide 28)</span></h2>
 <div class="q">
 <p class="qh">5. Let \(f(x)=px^2+qx+r\). Apply the Mean Value Theorem for the interval \([a,b]\). What is the value of \(c\) guaranteed by the Theorem?</p>
 <p>A student's work (reproduced from the slide):</p>
@@ -588,7 +665,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 13 ============ -->
 <section id="s13">
-<h2><span class="n">13</span>Group work (slide 30)</h2>
+<h2><span class="n">13</span><span class="h2t">Group work (slide 30)</span></h2>
 <div class="q"><p class="qh">1. Find the absolute extrema of</p>
 <p>(a) \(f(x)=x^3+x^2+x\) &nbsp; (b) \(f(t)=t^{3/4}-2t^{1/4}\) on \([0,1]\) &nbsp; (c) \(g(x)=x\ln x\) on \([\frac12,2]\) &nbsp; (d) \(f(\theta)=\cos\theta+\sin\theta\) on \([0,\pi]\)</p>
 <details><summary>Hints</summary><div>
@@ -623,7 +700,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 14 ============ -->
 <section id="s14">
-<h2><span class="n">14</span>Concept checks</h2>
+<h2><span class="n">14</span><span class="h2t">Concept checks</span></h2>
 <p>Short questions to test understanding, not computation. <span class="pill">Written for these notes</span></p>
 <div class="q"><p class="qh">C1. If \(f'(c)=0\), must \(f\) have a local extremum at \(c\)? If \(f\) has a local extremum at an interior \(c\), must \(f'(c)=0\)?</p>
 <details><summary>Answer</summary><div><p>No to both. \(x^3\) has \(f'(0)=0\) but no extremum. \(|x|\) has a minimum at 0 but \(f'(0)\) does not exist. The correct statement: an interior extremum forces \(f'(c)=0\) <i>or</i> \(f'(c)\) DNE, i.e. \(c\) is a critical point.</p></div></details></div>
@@ -641,7 +718,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 15 ============ -->
 <section id="pastpaper">
-<h2><span class="n">15</span>Exam taster</h2>
+<h2><span class="n">15</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Lecture 8's question types appear 14 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide.</p>
 <div class="q"><p class="src"><b>May 2017 Q2(d)</b><span>Q2 total 12%</span><span class="older">older format</span><a class="guide" data-guide="L8.1">Guide · L8.1 Absolute max and min on a closed interval</a></p>
@@ -928,5 +1005,13 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </body></html>

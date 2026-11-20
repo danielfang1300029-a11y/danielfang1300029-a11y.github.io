@@ -106,6 +106,34 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -134,18 +162,22 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · Calculus · Lecture 14</span>
   <h1>Techniques of Integration II</h1>
-  <p class="lede">Every slide of Lecture 14 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this lecture.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this lecture sits</h2>
-<p>Lecture 11 introduced the <b>antiderivative</b> (a function whose derivative is the given function) and the indefinite integral \(\int f(x)\,dx\). Lecture 12 gave the definite integral and the Fundamental Theorem of Calculus (FTC): to compute \(\int_a^b f(x)\,dx\), find any antiderivative \(F\) and work out \(F(b)-F(a)\). Lecture 13 gave the first two <b>techniques of integration</b> (systematic ways to find antiderivatives): the Substitution Rule and Integration by Parts.</p>
-<p>This lecture adds three more techniques, each aimed at a particular shape of <b>integrand</b> (the function being integrated):</p>
-<ul class="list">
-<li><b>Trigonometric integrals</b>: integrands built from sines, cosines and their relatives, handled by rewriting with identities.</li>
-<li><b>Trigonometric substitution</b>: integrands containing \(\sqrt{a^2+x^2}\), \(\sqrt{a^2-x^2}\) or \(\sqrt{x^2-a^2}\), where you put \(x\) equal to a trig function to get rid of the square root.</li>
-<li><b>Partial fractions</b>: integrands that are one polynomial divided by another, split into simpler fractions first.</li>
-</ul>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this lecture sits</span></h2>
+<p>There is no single recipe for integration. Each <b>technique of integration</b> (a systematic way to find antiderivatives) rewrites an <b>integrand</b> (the function being integrated) that you cannot integrate into an equal one that you can. This lecture adds three: identities give the same curve a friendlier formula; a trigonometric substitution uses a right triangle so that a square root disappears; partial fractions un-add a fraction into simple pieces.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>Each basic trig integral is a derivative fact read backwards.</b> \(\int\tan x\,dx\) needs a substitution; \(\int\sec x\,dx\) needs a trick.</li>
+<li><a href="#s2">§2</a> <b>An identity changes the formula, not the curve.</b> Power reduction, perfect squares, product to sum.</li>
+<li><a href="#s3">§3</a> <b>Powers of sine and cosine: save one factor for \(du\), or halve the powers if both are even.</b></li>
+<li><a href="#s4">§4</a> <b>Trig substitution: make \(x\) a side of a right triangle, so the square root is just another side.</b> \(a^2-x^2\) → sine, \(a^2+x^2\) → tangent, \(x^2-a^2\) → secant.</li>
+<li><a href="#s5">§5</a> <b>Partial fractions: un-add a fraction into simple pieces, each a log or an inverse tangent.</b> Divide first if it is top-heavy. <span class="pill">Most common type</span></li>
+<li><a href="#s6">§6</a> <b>Choose the method from the shape of the integrand, and check by differentiating.</b> Some integrals, such as \(\int e^{x^2}dx\), have no formula at all.</li>
+</ol>
+</div>
+<p><b>You need:</b> Lecture 11 (antiderivatives and the indefinite integral), Lecture 12 (the FTC: \(\int_a^b f(x)\,dx=F(b)-F(a)\)), Lecture 13 (the Substitution Rule and Integration by Parts, recalled below), the trig derivatives of Lecture 6, the inverse trig functions of Lecture 7, and completing the square. <b>In the exam:</b> Lecture 14's question types appear 28 times in the 23 past papers (2013 to 2026), mostly as parts of Q3 "evaluate each integral"; partial fractions is 19 of the 28. See the <a href="guide-L14.html">L14 exam guide</a>.</p>
 
 <h3>Recall (slide 2)</h3>
 <div class="box thm"><span class="tag">Theorem · Substitution Rule (Lecture 13)</span>
@@ -182,7 +214,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Basic trigonometric integrals (slide 7)</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Basic trigonometric integrals (slide 7)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Knowing that 6 × 7 = 42 lets you answer 42 ÷ 7 at once: you read the times table backwards. Integration works the same way. Every derivative you know, such as "the derivative of tan x is sec² x", is an integral answered in advance. One entry on the slide, the integral of tan x, is not on any derivative list, so it needs a substitution instead.</p></div></details>
 <p>HKDSE Core uses only \(\sin\), \(\cos\) and \(\tan\). University calculus also uses their three reciprocals:</p>
 <div class="box def"><span class="tag">Definition · reciprocal trig functions</span>
 \[\sec x=\frac{1}{\cos x},\qquad \csc x=\frac{1}{\sin x},\]
@@ -218,10 +251,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> integral of cosecant = log of |cosecant − cotangent|.</p>
 <p>You can always check such a formula by differentiating the answer (the Summary of this lecture recommends exactly this).</p>
 </div>
+<p class="cannow"><b>You can now:</b> write down the seven slide-7 integrals by reading derivatives backwards; derive \(\int\tan x\,dx\) with \(u=\cos x\); derive \(\int\sec x\,dx\) and \(\int\csc x\,dx\) with the multiply-top-and-bottom trick; and check any such formula by differentiating.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>Trigonometric identities (slides 8 to 11)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Trigonometric identities (slides 8 to 11)</span> <span class="mins">~10 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>An identity gives the same curve a different formula, like the same person in a different outfit. The graphs of cos² x and ½(1 + cos 2x) are exactly the same curve, so they have the same area underneath. Only the second formula is on the list of things we can integrate. Choosing an identity means choosing the outfit that the integration rules recognise.</p></div></details>
 <p>An <b>identity</b> is an equation that is true for every value of the variable, such as \(\sin^2x+\cos^2x=1\). In integration, identities let you replace an integrand you cannot integrate with an equal one you can.</p>
 
 <h3>The pictures on slide 8</h3>
@@ -244,6 +279,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Find \(\displaystyle\int\cos^2x\,dx\).</p>
 <p>There is no "chain rule in reverse" here (there is no extra \(\sin x\) factor), and the Power Rule does not apply to a function of \(x\) (see Common mistakes). Instead use the double angle formula \(\cos2x=2\cos^2x-1\), rearranged:</p>
 \[\cos^2x=\tfrac12(1+\cos2x).\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\cos^2x\)</dt><dd>a wave that swings between 0 and 1 (a square is never negative), repeating every \(\pi\).</dd>
+<dt>\(\tfrac12\)</dt><dd>the midline: the curve spends equal time above and below height \(\tfrac12\).</dd>
+<dt>\(\tfrac12\cos2x\)</dt><dd>the swing: half a unit up and down from the midline; the \(2x\) makes it repeat every \(\pi\), twice as often as \(\cos x\).</dd>
+</dl></div>
 <p>Then</p>
 \[\begin{aligned}\int\cos^2x\,dx&=\frac12\int(1+\cos2x)\,dx\\&=\frac12\left(x+\frac{\sin2x}{2}\right)+C\\&=\frac{x}{2}+\frac{\sin2x}{4}+C.\end{aligned}\]
 <p class="word"><b>In words:</b> cosine squared = half of (1 + cosine of double the angle), which is easy to integrate: half of \(x\), plus a quarter of \(\sin2x\).</p>
@@ -253,7 +293,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <h3>Example 2 · Double angle identity (slide 10)</h3>
 <div class="box eg"><span class="tag">Example 2 (slide 10)</span>
 <p>Evaluate \(\displaystyle\int_0^{\pi/4}\sqrt{1+\sin4x}\,dx\).</p>
-<p><b>Step 1: make the inside a perfect square.</b> Write \(1=\sin^22x+\cos^22x\) (fundamental identity with angle \(2x\)) and \(\sin4x=2\sin2x\cos2x\) (double angle with angle \(2x\)):</p>
+<p><b>Step 1: make the inside a perfect square.</b> Write \(1=\sin^22x+\cos^22x\) (fundamental identity with angle \(2x\)) and \(\sin4x=2\sin2x\cos2x\) (double angle with angle \(2x\)):<span class="why">together they give the pattern \(a^2+2ab+b^2\), a perfect square, and only a perfect square lets the root come off.</span></p>
 \[\begin{aligned}1+\sin4x&=\sin^22x+2\sin2x\cos2x+\cos^22x\\&=(\sin2x+\cos2x)^2.\end{aligned}\]
 <p><b>Step 2: take the square root carefully.</b> \(\sqrt{A^2}=|A|\), not \(A\). For \(0\le x\le\frac\pi4\) we have \(0\le2x\le\frac\pi2\), so \(\sin2x\ge0\) and \(\cos2x\ge0\). Hence \(\sin2x+\cos2x\ge0\) and</p>
 \[\sqrt{1+\sin4x}=\sin2x+\cos2x\quad\text{on }\left[0,\tfrac\pi4\right].\]
@@ -297,14 +337,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Find \(\int\sin3x\cos x\,dx\). Using \(\sin mx\cos nx=\frac12[\sin(m-n)x+\sin(m+n)x]\) with \(m=3\), \(n=1\):</p>
 \[\begin{aligned}\int\sin3x\cos x\,dx&=\frac12\int(\sin2x+\sin4x)\,dx\\&=-\frac{\cos2x}{4}-\frac{\cos4x}{8}+C.\end{aligned}\]
 </div>
+<p class="cannow"><b>You can now:</b> rewrite \(\sin^2x\) and \(\cos^2x\) with power reduction; spot a perfect square under a root and remove the root with an absolute-value check on the interval; turn a product of sines and cosines into a sum with product to sum; and check a rewrite by differentiating.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Powers of sine and cosine (slides 12 and 13)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Powers of sine and cosine (slides 12 and 13)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Think of the substitution \(u=\cos x\) as a purchase: \(du=-\sin x\,dx\) must be paid for with exactly one factor of sin x. So you set one sine aside as the payment, and turn every other sine into cosines with sin² x = 1 − cos² x. That identity only converts sines in pairs, so what is left must be an even power. If both powers are even, there is no spare factor to pay with, and you halve the powers with the double angle identities instead.</p></div></details>
 <h3>Example 3 · Trigonometric identity (slide 12)</h3>
 <div class="box eg"><span class="tag">Example 3 (slide 12)</span>
 <p>Find \(\displaystyle\int\sin^5x\cos^2x\,dx\).</p>
-<p>The power of sine (5) is odd. Keep <b>one</b> \(\sin x\) aside and turn the remaining \(\sin^4x\) into cosines with \(\sin^2x=1-\cos^2x\):</p>
+<p>The power of sine (5) is odd. Keep <b>one</b> \(\sin x\) aside and turn the remaining \(\sin^4x\) into cosines with \(\sin^2x=1-\cos^2x\):<span class="why">the single \(\sin x\) with \(dx\) is exactly what \(du=-\sin x\,dx\) needs, and \(\sin^4x\) is two pairs \(\sin^2x\), each of which converts.</span></p>
 \[\begin{aligned}\sin^5x\cos^2x&=(\sin^2x)^2\cos^2x\,\sin x\\&=(1-\cos^2x)^2\cos^2x\,\sin x.\end{aligned}\]
 <p>Now everything is a function of \(\cos x\), times \(\sin x\). Put \(u=\cos x\), \(du=-\sin x\,dx\):</p>
 \[\begin{aligned}
@@ -336,10 +378,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[\begin{aligned}&\int\sec^3\theta\,d\theta\\&=\frac12\Big(\sec\theta\tan\theta+\ln|\sec\theta+\tan\theta|\Big)+C.\end{aligned}\]
 <p class="word"><b>In words:</b> integral of secant cubed = half of (secant × tangent + log of |secant + tangent|).</p>
 </div>
+<p class="cannow"><b>You can now:</b> pick the right row of the strategy table from whether \(m\) and \(n\) are odd or even; save one factor for \(du\) and convert the rest with the fundamental identity; and reduce even powers with the double angle identities, repeating as often as needed.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Trigonometric substitution (slides 14 to 19)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Trigonometric substitution (slides 14 to 19)</span> <span class="mins">~11 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Draw a right triangle with one side \(x\) and one side a fixed length \(a\). Pythagoras makes the third side \(\sqrt{a^2-x^2}\), \(\sqrt{a^2+x^2}\) or \(\sqrt{x^2-a^2}\), depending on which side is the hypotenuse. Trigonometric substitution names an angle θ of that triangle and writes \(x\) as a trig ratio of θ. The awkward root is then just another side, \(a\) times one trig function of θ, and the square root disappears. At the end the same triangle translates everything back into \(x\).</p></div></details>
 <h3>Why it is needed (slide 14)</h3>
 <p>We already know a definite integral involving \(\sqrt{1-x^2}\): the graph of \(y=\sqrt{1-x^2}\) is the upper half of the circle of radius 1, so</p>
 \[\int_{-1}^{1}\sqrt{1-x^2}\,dx=\frac{\pi}{2}\quad(\text{area of half a unit disc}).\]
@@ -364,11 +408,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="cap">The area under \(y=\sqrt{1-x^2}\) from 0 to \(x\) splits into a right triangle and a slice of the disc with angle \(\theta=\sin^{-1}x\) (measured from the vertical axis). A slice of a radius-1 disc with angle \(\theta\) has area \(\frac\theta2\). For negative \(x\) both parts are counted as negative, as the integral from 0 to a negative number should be. At \(x=1\) the total is \(\frac\pi4\), a quarter of the disc.</p></div>
 
 <h3>Substitution rule in reverse (slide 15)</h3>
+<details class="idea"><summary>What is this? (inverse substitution)</summary><div><p>In Lecture 13 you gave a messy inside part a new name. Here you go the other way: you describe \(x\) itself by a new dial θ, the angle of the triangle. Turning the dial a little moves \(x\) a little, and \(dx=g'(\theta)\,d\theta\) says by how much. Each \(x\) must come from exactly one dial setting, so that you can read θ back off at the end; that is why θ is kept to a restricted range.</p></div></details>
 <div class="box thm"><span class="tag">Proposition (slide 15)</span>
 <p>Let \(g\) be a one-to-one function. If we replace \(u\) by \(x\) and \(x\) by \(\theta\) in the Substitution Rule, then</p>
 \[\int f(x)\,dx=\int f(g(\theta))\,g'(\theta)\,d\theta.\]
 <p class="word"><b>In words:</b> to integrate in \(x\), write \(x\) as a function \(g(\theta)\) of a new variable; replace every \(x\) by \(g(\theta)\) and replace \(dx\) by \(g'(\theta)\,d\theta\).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(x=g(\theta)\)</dt><dd>\(x\) described by the dial θ, for example \(x=a\sin\theta\): \(x\) is a side of the triangle with angle θ.</dd>
+<dt>\(f(g(\theta))\)</dt><dd>the same integrand with every \(x\) rewritten in θ; this is where the root becomes one side of the triangle.</dd>
+<dt>\(g'(\theta)\,d\theta\)</dt><dd>the width \(dx\) of each thin strip, converted: a small turn \(d\theta\) moves \(x\) by \(g'(\theta)\,d\theta\).</dd>
+<dt>\(g\) one-to-one</dt><dd>each \(x\) has exactly one θ, so the answer can be turned back into \(x\).</dd>
+</dl></div>
 <ul class="list">
 <li>A function is <b>one-to-one</b> if different inputs always give different outputs (Lecture 7). This is needed so that at the end you can go back from \(x\) to a single \(\theta=g^{-1}(x)\). That is why each substitution comes with a restricted range of \(\theta\).</li>
 <li>In Lecture 13 you set the <i>new</i> variable equal to a function of the old one (\(u=g(x)\)). Here you set the <i>old</i> variable equal to a function of the new one (\(x=g(\theta)\)). This is also known as <b>inverse substitution</b>.</li>
@@ -398,11 +449,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <h3>Steps to apply trigonometric substitution (slide 17)</h3>
 <p>Given an indefinite integral with \(\sqrt{a^2+x^2}\), \(\sqrt{a^2-x^2}\) or \(\sqrt{x^2-a^2}\) in the integrand:</p>
-<ol class="steps">
-<li><b>Choose a suitable substitution for \(x\)</b> from the table. Compute the differential \(dx\) (for example \(x=a\sin\theta\) gives \(dx=a\cos\theta\,d\theta\)), and state the values allowed for \(\theta\).</li>
-<li><b>Substitute</b> the trig expression for \(x\) and the differential \(dx\) into the integrand, then simplify algebraically (the square root should disappear).</li>
-<li><b>Integrate</b> the resulting trigonometric integral with respect to (WRT) \(\theta\), using Sections 1 to 3.</li>
-<li><b>Return to \(x\).</b> Draw a reference right triangle to read off \(\sin\theta\), \(\cos\theta\), \(\tan\theta\) in terms of \(x\), and write \(\theta\) itself as an inverse trig function of \(x\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> <b>Choose a suitable substitution for \(x\)</b> from the table. Compute the differential \(dx\) (for example \(x=a\sin\theta\) gives \(dx=a\cos\theta\,d\theta\)), and state the values allowed for \(\theta\). <span class="why">This fixes which side of the triangle \(x\) is; the θ-range makes the dial one-to-one and fixes the sign of the root.</span></li>
+<li><b>Do:</b> <b>Substitute</b> the trig expression for \(x\) and the differential \(dx\) into the integrand, then simplify algebraically (the square root should disappear). <span class="why">The identity is Pythagoras on the triangle, so the root collapses into one side, \(a\) times a trig function.</span></li>
+<li><b>Do:</b> <b>Integrate</b> the resulting trigonometric integral with respect to (WRT) \(\theta\), using Sections 1 to 3. <span class="why">With the root gone, what is left is the kind of trig integral those sections already handle.</span></li>
+<li><b>Do:</b> <b>Return to \(x\).</b> Draw a reference right triangle to read off \(\sin\theta\), \(\cos\theta\), \(\tan\theta\) in terms of \(x\), and write \(\theta\) itself as an inverse trig function of \(x\). <span class="why">The question was about \(x\); the triangle's sides turn every trig ratio of θ back into an expression in \(x\).</span></li>
 </ol>
 <p>(For a definite integral you may instead change the limits to \(\theta\)-values and skip step 4.)</p>
 
@@ -410,7 +461,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box eg"><span class="tag">Example 4 (slide 18)</span>
 <p>Find \(\displaystyle\int x^2\sqrt{4-x^2}\,dx\).</p>
 <p><b>Step 1.</b> The root has the form \(\sqrt{a^2-x^2}\) with \(a=2\). Let \(x=2\sin\theta\), \(-\frac\pi2\le\theta\le\frac\pi2\). Then \(dx=2\cos\theta\,d\theta\).</p>
-<p><b>Step 2.</b> \(\sqrt{4-x^2}=\sqrt{4-4\sin^2\theta}=\sqrt{4\cos^2\theta}=2|\cos\theta|=2\cos\theta\). So</p>
+<p><b>Step 2.</b> \(\sqrt{4-x^2}=\sqrt{4-4\sin^2\theta}=\sqrt{4\cos^2\theta}=2|\cos\theta|=2\cos\theta\).<span class="why">the absolute value can go because \(-\frac\pi2\le\theta\le\frac\pi2\), where \(\cos\theta\ge0\).</span> So</p>
 \[\begin{aligned}&\int x^2\sqrt{4-x^2}\,dx\\&=\int(4\sin^2\theta)(2\cos\theta)(2\cos\theta)\,d\theta\\&=16\int\sin^2\theta\cos^2\theta\,d\theta.\end{aligned}\]
 <p><b>Step 3.</b> Both powers are even. Use \(\sin\theta\cos\theta=\frac12\sin2\theta\), so \(\sin^2\theta\cos^2\theta=\frac14\sin^22\theta\), then power reduction \(\sin^22\theta=\frac12(1-\cos4\theta)\):</p>
 \[\begin{aligned}16\int\sin^2\theta\cos^2\theta\,d\theta&=4\int\sin^22\theta\,d\theta\\&=2\int(1-\cos4\theta)\,d\theta\\&=2\theta-\frac{\sin4\theta}{2}+C.\end{aligned}\]
@@ -424,17 +475,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <h3>Example 5 · Complete the square (slide 19)</h3>
 <div class="box eg"><span class="tag">Example 5 (slide 19)</span>
 <p>Find \(\displaystyle\int\frac{1}{x^2+2x+5}\,dx\).</p>
-<p>There is no square root, but the denominator can be turned into "something squared + a constant squared" by <b>completing the square</b> (HKDSE Core):</p>
+<p>There is no square root, but the denominator can be turned into "something squared + a constant squared" by <b>completing the square</b> (HKDSE Core):<span class="why">a sum of two squares is the \(a^2+x^2\) side of the tangent triangle, so \(1+\tan^2\theta=\sec^2\theta\) can then simplify it.</span></p>
 \[x^2+2x+5=(x+1)^2+4=(x+1)^2+2^2.\]
 <p>This has the form \(u^2+a^2\) with \(u=x+1\), \(a=2\), so use the tangent substitution \(x+1=2\tan\theta\), \(-\frac\pi2\lt\theta\lt\frac\pi2\). Then \(dx=2\sec^2\theta\,d\theta\) and \((x+1)^2+4=4\tan^2\theta+4=4\sec^2\theta\):</p>
 \[\begin{aligned}\int\frac{dx}{(x+1)^2+4}&=\int\frac{2\sec^2\theta}{4\sec^2\theta}\,d\theta=\int\frac12\,d\theta\\&=\frac\theta2+C\\&=\frac12\tan^{-1}\!\left(\frac{x+1}{2}\right)+C.\end{aligned}\]
 <p class="word"><b>In words:</b> complete the square to see a "sum of two squares"; a tangent substitution turns the whole fraction into a constant.</p>
 <p>Equivalently, put \(u=x+1\) and use formula 4 of slide 22 (Section 5): \(\int\frac{du}{a^2+u^2}=\frac1a\tan^{-1}\frac ua+C\). Completing the square works the same way inside a root, for example \(\sqrt{x^2+2x+5}=\sqrt{(x+1)^2+2^2}\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> pick \(x=a\sin\theta\), \(a\tan\theta\) or \(a\sec\theta\) from the shape of the root; state the θ-range and use it to drop the absolute value; carry the integral through in θ, including \(dx\); convert back to \(x\) with a reference triangle; and complete the square first when the quadratic is not yet a sum or difference of squares.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Partial fractions (slides 20 to 26)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Partial fractions (slides 20 to 26)</span> <span class="mins">~11 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Adding fractions is easy: put them over a common denominator and they merge into one fraction. Partial fractions runs this backwards. You are handed the merged fraction and asked which simple fractions were added to make it, like working out which slices made up the whole pizza. Each simple piece has only one factor of the bottom in its own denominator, so it integrates to a log, a power or an inverse tangent.</p></div></details>
 <h3>The decomposition concept (slide 20)</h3>
 <p>Slide 20 shows a whole pizza cut into 6 slices: 2 meat slices and 4 vegetable slices.</p>
 \[\text{entire pizza}=\text{2 meat slices}+\text{4 veg slices},\]
@@ -442,6 +495,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>The slide asks: <b>is it simpler to integrate the entire pizza or the slices?</b> The point: adding fractions is easy (find a common denominator), and <b>partial fractions</b> means doing it backwards: split one complicated fraction into a sum of simple pieces ("slices"), each of which you can integrate on its own. For example, \(\frac{2}{x-2}+\frac{3}{x+1}=\frac{5x-4}{x^2-x-2}\). Integrating the left side is easy (two logarithms); integrating the right side directly is not.</p>
 
 <h3>Rational functions (slide 21)</h3>
+<details class="idea"><summary>What is this? (proper and improper)</summary><div><p>A top-heavy number fraction hides a whole number: seven thirds is 2 and one third left over. A rational function whose top degree is at least the bottom degree likewise hides a polynomial part. Un-adding only works on the proper leftover, because simple pieces with their small numerators always add up to a proper fraction. So a top-heavy fraction must be divided first.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 21)</span>
 <p>A <b>polynomial</b> is a function that is a sum of (constant multiples of) powers of \(x\):</p>
 \[P(x)=a_nx^n+a_{n-1}x^{n-1}+\cdots+a_1x+a_0,\]
@@ -455,6 +509,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </ul>
 <p class="word"><b>In words:</b> top-heavy fraction = whole-polynomial part + proper leftover fraction, exactly like \(\frac73=2+\frac13\).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\frac{P(x)}{Q(x)}\)</dt><dd>the top-heavy fraction you were given.</dd>
+<dt>\(S(x)\)</dt><dd>the "whole number" part, a polynomial you can integrate term by term at once.</dd>
+<dt>\(\frac{R(x)}{Q(x)}\)</dt><dd>the proper leftover, with \(\deg(R)\lt\deg(Q)\): the only part that needs un-adding.</dd>
+</dl></div>
 <p>Example: \(\frac{x^3+2}{x^2-4}\) is improper (degree 3 over degree 2). Dividing, \(x^3+2=x(x^2-4)+(4x+2)\), so \(\frac{x^3+2}{x^2-4}=x+\frac{4x+2}{x^2-4}\). The quotient \(x\) integrates directly and only the proper part needs partial fractions (Group work 10).</p>
 
 <h3>Rational integration formulas (slide 22)</h3>
@@ -477,21 +536,23 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <h3>The method of partial fractions (slide 23)</h3>
 <p>Two words first. A <b>factor</b> of \(Q(x)\) is a polynomial that divides \(Q(x)\) exactly. A factor is <b>irreducible</b> if it cannot be factorised further into real polynomials of lower degree. Every linear factor \(ax-b\) is irreducible; a quadratic \(ax^2+bx+c\) is irreducible exactly when its discriminant \(b^2-4ac\lt0\) (no real roots), for example \(x^2+1\) or \(x^2+x+4\).</p>
+<details class="idea"><summary>What is this? (the PFD form)</summary><div><p>Before un-adding you write down the shape of the pieces, with unknown numbers on top: one piece for each factor of the bottom, and for a repeated factor one piece for each power. A linear factor gets a constant on top and a quadratic factor gets a linear top, so that every piece is proper. The rest of the method only finds the unknown numbers.</p></div></details>
 <div class="box thm"><span class="tag">Method (slide 23)</span>
 <p>Given \(\displaystyle\int\frac{P(x)}{Q(x)}\,dx\) with \(\deg(P)\lt\deg(Q)\):</p>
-<ol class="steps">
-<li><b>Equate</b> \(\frac{P(x)}{Q(x)}\) with its partial fraction decomposition (PFD) form. Factorise \(Q(x)\) into irreducible factors; each factor contributes terms as follows:
+<ol class="steps proc">
+<li><b>Do:</b> <b>Equate</b> \(\frac{P(x)}{Q(x)}\) with its partial fraction decomposition (PFD) form. Factorise \(Q(x)\) into irreducible factors; each factor contributes terms as follows:
 <div class="scroll"><table>
 <tr><th>Irreducible factor of \(Q(x)\)</th><th>Term(s) in the PFD</th></tr>
 <tr><td>\(ax-b\)</td><td>\(\dfrac{A}{ax-b}\)</td></tr>
 <tr><td>\((ax-b)^m\)</td><td>\(\dfrac{A_1}{ax-b}+\dfrac{A_2}{(ax-b)^2}+\cdots+\dfrac{A_m}{(ax-b)^m}\)</td></tr>
 <tr><td>\(ax^2+bx+c\)</td><td>\(\dfrac{Ax+B}{ax^2+bx+c}\)</td></tr>
 <tr><td>\((ax^2+bx+c)^m\)</td><td>\(\dfrac{A_1x+B_1}{ax^2+bx+c}+\dfrac{A_2x+B_2}{(ax^2+bx+c)^2}+\cdots+\dfrac{A_mx+B_m}{(ax^2+bx+c)^m}\)</td></tr>
-</table></div></li>
-<li><b>Multiply</b> both sides by the least common denominator (which is \(Q(x)\) itself), so there are no fractions left.</li>
-<li><b>Equate the coefficients</b> of each power of \(x\) on the two sides.*</li>
-<li><b>Solve</b> the resulting system of equations for the unknown constants.*</li>
-<li><b>Rewrite</b> \(\int\frac{P(x)}{Q(x)}\,dx\) as the integral of its PFD and evaluate it term by term.</li>
+</table></div>
+<span class="why">This lists every simple piece that could have been added to make the fraction, one for each power of each factor.</span></li>
+<li><b>Do:</b> <b>Multiply</b> both sides by the least common denominator (which is \(Q(x)\) itself), so there are no fractions left. <span class="why">This is the "adding" step done on the unknown pieces: what remains is two polynomials that must agree for every \(x\).</span></li>
+<li><b>Do:</b> <b>Equate the coefficients</b> of each power of \(x\) on the two sides.* <span class="why">Two polynomials agree for every \(x\) only if every power of \(x\) has the same coefficient on both sides.</span></li>
+<li><b>Do:</b> <b>Solve</b> the resulting system of equations for the unknown constants.* <span class="why">There are as many unknowns as equations (both equal \(\deg(Q)\)), so the pieces are pinned down.</span></li>
+<li><b>Do:</b> <b>Rewrite</b> \(\int\frac{P(x)}{Q(x)}\,dx\) as the integral of its PFD and evaluate it term by term. <span class="why">Each simple piece is one of the slide-22 formulas: a log, a power or an inverse tangent.</span></li>
 </ol>
 <p>* Alternative to steps 3 and 4: assign numerical values to \(x\), or differentiate.</p>
 <p class="word"><b>In words:</b> factorise the bottom; write one unknown-numerator fraction for each power of each factor (constant on top of a linear factor, linear on top of a quadratic factor); clear denominators; find the unknowns; integrate each piece.</p>
@@ -510,7 +571,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[\frac{5x-4}{(x-2)(x+1)}=\frac{A}{x-2}+\frac{B}{x+1}.\]
 <p>Multiply by \((x-2)(x+1)\): \(5x-4=A(x+1)+B(x-2)\).</p>
 <ul class="list">
-<li><b>By values:</b> \(x=2\): \(6=3A\Rightarrow A=2\). \(x=-1\): \(-9=-3B\Rightarrow B=3\).</li>
+<li><b>By values:</b> \(x=2\): \(6=3A\Rightarrow A=2\). \(x=-1\): \(-9=-3B\Rightarrow B=3\).<span class="why">at \(x=2\) the term \(B(x-2)\) is zero, so only \(A\) is left; at \(x=-1\) the \(A\) term vanishes instead.</span></li>
 <li><b>By coefficients (check):</b> \(x\): \(A+B=5\); constant: \(A-2B=-4\). Solving gives \(A=2\), \(B=3\) again.</li>
 </ul>
 \[\begin{aligned}&\int\frac{5x-4}{x^2-x-2}\,dx\\&=\int\left(\frac{2}{x-2}+\frac{3}{x+1}\right)dx\\&=2\ln|x-2|+3\ln|x+1|+C.\end{aligned}\]
@@ -550,23 +611,33 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> the cubed linear factor gives three constant-over-power terms; the plain linear factor gives one; the squared quadratic gives two linear-over-power terms; the plain quadratic gives one.</p>
 <p>Count: \(3+1+2\cdot2+2=10\) unknowns, equal to the degree of the bottom, as expected. The slide only asks for the setup. (Solving it gives unpleasant numbers; for example, putting \(x=1\) after multiplying by \((x-1)^3\) gives \(A_3=\frac{1+3-1}{2\cdot6^2\cdot5}=\frac1{120}\).)</p>
 </div>
+<p class="cannow"><b>You can now:</b> decide whether a rational function is proper and divide first if it is not; factorise the bottom and write the correct PFD form, including repeated and irreducible quadratic factors; find the constants by values or by comparing coefficients; and integrate each piece with the slide-22 formulas.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Summary (slide 27)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Summary (slide 27)</span></h2>
 <ul class="list">
 <li><b>Techniques of integration</b> so far: the Substitution Rule and Integration by Parts (Lecture 13); trigonometric identities, trigonometric substitution and partial fraction decomposition (this lecture).</li>
 <li><b>The best strategy for integration is practice.</b> There is no single algorithm; you learn to recognise the shape of an integrand: a root of \(a^2\pm x^2\) or \(x^2-a^2\) suggests trig substitution, a polynomial over a polynomial suggests (division and) partial fractions, powers of sine and cosine suggest the strategy table, a function times its inside derivative suggests ordinary substitution.</li>
 <li><b>To check an indefinite integral, differentiate your answer</b> and see whether you get the integrand back. This catches almost every slip (try it on the Find-the-mistake answer below).</li>
 <li><b>Differentiation always works, integration may not.</b> An <b>elementary function</b> is one built from polynomials, roots, exponentials, logarithms, trig and inverse trig functions using \(+,-,\times,\div\) and composition (putting one function inside another). If \(f(x)\) is elementary, then \(f'(x)\) is also elementary. But \(\int f(x)\,dx\) need not be elementary: for example, \(f(x)=e^{x^2}\) does not have an elementary antiderivative. It certainly has an antiderivative (by the FTC, \(F(x)=\int_0^x e^{t^2}\,dt\) is one), it just cannot be written as a formula using the functions above, so no technique in this course will find it.</li>
 </ul>
+<h3>Choosing a method</h3>
+<p>The recognition rules above, as an order to try them in:</p>
+<ol class="steps proc">
+<li><b>Do:</b> look first for an ordinary substitution: a function next to the derivative of its inside. <span class="why">It is the quickest route when it exists; a trig substitution may also work but takes much longer (Concept check 5).</span></li>
+<li><b>Do:</b> a polynomial over a polynomial: divide if it is top-heavy, then use partial fractions. <span class="why">Only a proper fraction can be un-added into simple pieces.</span></li>
+<li><b>Do:</b> a root of \(a^2-x^2\), \(a^2+x^2\) or \(x^2-a^2\) (completing the square if needed): trig substitution. <span class="why">The right triangle turns the root into one of its sides.</span></li>
+<li><b>Do:</b> powers or products of sines and cosines: the strategy table of Section 3 or an identity from Section 2. <span class="why">An identity changes the formula, not the curve, into one the basic list covers.</span></li>
+<li><b>Do:</b> differentiate your answer. <span class="why">Getting the integrand back proves the antiderivative is right, and differentiation always works.</span></li>
+</ol>
 <div class="box beyond"><span class="tag">Beyond the handouts</span>
 <p>Other common integrands with no elementary antiderivative include \(e^{-x^2}\) (central to statistics: the normal distribution), \(\frac{\sin x}{x}\), \(\frac{1}{\ln x}\) and \(\sqrt{1+x^3}\). Their antiderivatives are given new names (for example the "error function") or computed numerically.</p>
 </div>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Common mistakes (slide 29)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Common mistakes (slide 29)</span></h2>
 <h3>Trigonometric identities</h3>
 <div class="box"><div class="mistake">
 <span class="x">✗</span><span><b>Incorrectly applying the Power Rule:</b> \(\displaystyle\int\cos^2x\,dx=\frac13\cos^3x+C\).<br>
@@ -610,7 +681,7 @@ Two errors: the repeated factor needs the powers \((x+1)\) <i>and</i> \((x+1)^2\
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Find the mistake (slide 28)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Find the mistake (slide 28)</span></h2>
 <p>The slide shows a student's handwritten solution to this question:</p>
 <div class="box"><p><b>Make a substitution and use trigonometric substitution to evaluate</b></p>
 \[\int\frac{e^x}{\sqrt{e^{2x}-4}}\,dx.\]
@@ -652,7 +723,7 @@ Two errors: the repeated factor needs the powers \((x+1)\) <i>and</i> \((x+1)^2\
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Group work (slide 30)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Group work (slide 30)</span></h2>
 <p>Evaluate each integral.</p>
 
 <div class="q"><p class="qh">1. \(\displaystyle\int\sin^2x\cos^2x\,dx\)</p>
@@ -737,7 +808,7 @@ Two errors: the repeated factor needs the powers \((x+1)\) <i>and</i> \((x+1)^2\
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Concept checks <span class="pill">Written for these notes</span></span></h2>
 <div class="q"><p class="qh">1. Which row of the sine-cosine strategy table applies to \(\int\sin^3x\cos^4x\,dx\), and what is the answer?</p>
 <details><summary>Answer</summary><div><p>\(m=3\) is odd: keep one \(\sin x\), write \(\sin^2x=1-\cos^2x\), and put \(u=\cos x\): \(-\int(1-u^2)u^4\,du\), giving</p>
 \[\int\sin^3x\cos^4x\,dx=-\frac{\cos^5x}{5}+\frac{\cos^7x}{7}+C.\]</div></details></div>
@@ -763,7 +834,7 @@ Two errors: the repeated factor needs the powers \((x+1)\) <i>and</i> \((x+1)^2\
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="pastpaper"><h2><span class="n">11</span>Exam taster</h2>
+<section id="pastpaper"><h2><span class="n">11</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Lecture 14's question types appear 28 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide.</p>
 
@@ -1079,4 +1150,13 @@ function go(){
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
 </script>
-</html>
+</html><script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
+
+</script>
+

@@ -106,6 +106,34 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -134,13 +162,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · Calculus · Lecture 2</span>
   <h1>Sandwich Theorem</h1>
-  <p class="lede">Every slide of Lecture 2 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this lecture.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this lecture sits</h2>
-<p><b>What came before.</b> Lecture 1 introduced the <b>limit</b>: \(\lim_{x\to c} f(x)=L\) means that the output \(f(x)\) can be made as close to the number \(L\) as we like by taking the input \(x\) close enough to \(c\), but not equal to \(c\). What happens exactly at \(x=c\) does not matter. A <b>one-sided limit</b> only lets \(x\) approach from one side: \(x\to c^{+}\) means from the right (values bigger than \(c\)), and \(x\to c^{-}\) means from the left (values smaller than \(c\)).</p>
-<p><b>What this lecture adds.</b> Some limits cannot be done with the limit laws, because one of the pieces has no limit at all. The classic case is \(\sin\frac1x\), which wiggles faster and faster as \(x\to0\). The <b>Sandwich Theorem</b> handles these by trapping the function between two simpler functions. It also gives the most important trig limit of the course, \(\lim_{\theta\to0}\frac{\sin\theta}{\theta}=1\), which you will meet again whenever derivatives of trig functions appear.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this lecture sits</span></h2>
+<p>Some limits cannot be done with the limit laws, because one piece has no limit at all. Picture a suspect walked between two police officers: however much he wriggles, if both officers walk through the same door, so does he. This lecture turns that picture into the <b>Sandwich Theorem</b>.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>Trap a function between a floor and a ceiling that head to the same value, and it must go there too.</b></li>
+<li><a href="#s2">§2</a> <b>A bounded wiggle times something shrinking to 0 shrinks to 0.</b> Use absolute values when the multiplier can be negative.</li>
+<li><a href="#s3">§3</a> <b>For a tiny angle in radians, sine of the angle is almost the angle itself:</b> \(\frac{\sin\theta}{\theta}\to1\). You will meet it again whenever derivatives of trig functions appear.</li>
+<li><a href="#s4">§4</a> <b>One over a limit is the limit of one over</b>, as long as the limit is not 0.</li>
+<li><a href="#s5">§5</a> <b>Give every sine its own box:</b> rearrange so each \(\sin\Box\) sits over the same \(\Box\).</li>
+</ol>
+</div>
+<p><b>You need:</b> the limit from Lecture 1: \(\lim_{x\to c} f(x)=L\) means \(f(x)\) can be made as close to \(L\) as we like by taking \(x\) close enough to \(c\), but not equal to \(c\) (the value at \(c\) does not matter); \(x\to c^{+}\) approaches from the right (values bigger than \(c\)) and \(x\to c^{-}\) from the left (values smaller than \(c\)). <b>In the exam:</b> this lecture's question types (squeeze a bounded wiggle; make the boxes match) appear 8 times in the 23 past papers, usually inside Q1. See the <a href="guide-L2.html">L2 exam guide</a>.</p>
 
 <h3>Recall: the limit laws (slide 2)</h3>
 <p>The slide recalls the <b>limit laws</b> from Lecture 1. They all start with the same condition: <b>if \(\lim_{x\to c}f(x)\) and \(\lim_{x\to c}g(x)\) both exist</b> (are finite numbers), then:</p>
@@ -168,8 +204,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>The Sandwich Theorem</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">The Sandwich Theorem</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A suspect walks between two police officers, one on each side. He can wriggle as much as he likes, but he can never get past either officer. If both officers walk through the same door, he goes through that door too. The suspect is the function we cannot handle directly; the officers are two simpler functions whose limits we can work out.</p></div></details>
 <p>First, three terms used in the statement.</p>
+<details class="idea"><summary>What is this? (only the stretch near the point)</summary><div><p>Only the last stretch of the walk matters. The officers may be far from the suspect at the start, as long as they hold him between them for the final few steps before the door. What happens in the doorway itself is never checked.</p></div></details>
 <div class="box def"><span class="tag">Definitions</span>
 <p><b>Open interval containing \(c\):</b> a stretch of the number line \((a,b)\), meaning all \(x\) with \(a\lt x\lt b\), that has \(c\) inside it, for example \((c-0.1,\,c+0.1)\). It can be as small as you like. So the condition only has to hold <b>near \(c\)</b>, not everywhere.</p>
 <p><b>“Except possibly at \(x=c\)”:</b> the inequality does not need to hold at \(c\) itself, and the function does not even need to be defined there. This matches the idea of a limit (Lecture 1): the value at \(c\) never matters.</p>
@@ -187,6 +225,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> if a function is trapped between a floor and a ceiling near \(c\), and the floor and the ceiling both head to the same height \(L\), then the trapped function has no choice: it also heads to \(L\).</p>
 <p>* The theorem also applies to <b>one-sided limits</b>: if the inequality holds just to the right of \(c\) and both bounds tend to \(L\) as \(x\to c^{+}\), then \(\lim_{x\to c^{+}}f(x)=L\) (and similarly for \(x\to c^{-}\)).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(g(x)\le f(x)\le h(x)\) near \(c\)</dt><dd>the suspect \(f\) walks between the officers \(g\) (below) and \(h\) (above) for the last stretch before the door.</dd>
+<dt>except possibly at \(x=c\)</dt><dd>nobody checks the doorway itself; \(f\) need not even be defined there.</dd>
+<dt>\(\lim g=\lim h=L\)</dt><dd>both officers walk through the same door, at height \(L\).</dd>
+<dt>\(\lim f=L\)</dt><dd>so the suspect goes through that door too. If the officers aimed at different doors, he could end up anywhere between them.</dd>
+</dl></div>
 <p>It is also called the <b>Squeeze Theorem</b> or the <b>Pinching Theorem</b>. The slide shows a sandwich: \(g\) is the bottom slice of bread, \(h\) is the top slice, and \(f\) is the filling. Squash the two slices together at \(x=c\) and the filling is squashed to the same point.</p>
 <p>The slide's picture is redrawn below: \(h\) (top, red) and \(g\) (bottom, orange) both pass through the point \((c,L)\), and \(f\) (blue) wiggles between them, so it is forced through \((c,L)\) too.</p>
 <div class="figure"><p class="ttl">The idea of the Sandwich Theorem (slide 7 picture, redrawn)</p>
@@ -196,10 +240,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box eg"><span class="tag">Analogy</span><p>Two police officers walk a suspect between them. If both officers walk into the police station, the suspect ends up in the police station too, however much he wriggles on the way.</p></div>
 <div class="box warn"><span class="tag">Both conditions matter</span>
 <p>The theorem needs <b>both</b>: the inequality \(g\le f\le h\) near \(c\) <b>and</b> equal limits of \(g\) and \(h\). If the bounds tend to different numbers (say \(-1\) and \(1\)), the filling can be anywhere in between, and the theorem says nothing. If no such bounds exist (the function is <b>unbounded</b>, meaning it shoots off towards \(\pm\infty\)), the theorem cannot be used at all.</p></div>
+<p class="cannow"><b>You can now:</b> state the Sandwich Theorem with both of its conditions; explain why the value at \(c\) itself does not matter; and say why bounds with different limits prove nothing.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>Examples 1–3: squeezing a wiggle</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Examples 1–3: squeezing a wiggle</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>On its own, \(\sin\frac1x\) is a suspect bouncing between two walls that never move, one at height 1 and one at height −1. He never settles, so there is no limit. Now multiply by \(x^2\): the walls become officers who close in on him, and at \(x=0\) they meet at height 0. Every example here is the same move: a wiggle that stays between fixed walls, multiplied by something that shrinks to 0.</p></div></details>
 <p>All three examples contain \(\sin\frac1x\). As \(x\to0\), \(\frac1x\) becomes huge, so \(\sin\frac1x\) runs through complete waves faster and faster, swinging between \(-1\) and \(1\) forever. It has <b>no limit</b> at 0. But it is <b>bounded</b>: a function is bounded if its values stay between two fixed numbers. Here, for every \(x\ne0\),</p>
 \[-1\le\sin\frac1x\le1.\]
 <p class="word"><b>In words:</b> sine of anything is between −1 and 1.</p>
@@ -234,7 +280,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box eg"><span class="tag">Example 2 (slide 9)</span>
 <p>Find \(\displaystyle\lim_{x\to0}x\sin\left(\frac1x\right)\).</p>
 <p><b>The catch.</b> If we multiply \(-1\le\sin\frac1x\le1\) by \(x\), the direction of the inequality depends on the sign of \(x\): for \(x\lt0\) the signs flip. So “\(-x\le x\sin\frac1x\le x\)” is <b>false</b> for negative \(x\) (this is the first common mistake in Section 7).</p>
-<p><b>The fix: use absolute values.</b> \(|x\sin\frac1x|=|x|\,|\sin\frac1x|\le|x|\cdot1=|x|\). A number whose size is at most \(|x|\) lies between \(-|x|\) and \(|x|\):</p>
+<p><b>The fix: use absolute values.</b> \(|x\sin\frac1x|=|x|\,|\sin\frac1x|\le|x|\cdot1=|x|\). A number whose size is at most \(|x|\) lies between \(-|x|\) and \(|x|\):<span class="why">For negative \(x\), the "ceiling" \(x\) would sit below the "floor" \(-x\): the officers would have swapped sides. With \(\pm|x|\) the upper officer stays on top on both sides of 0.</span></p>
 \[-|x|\le x\sin\frac1x\le|x|\quad(x\ne0).\]
 <p><b>Limits of the bounds.</b> \(\lim_{x\to0}|x|=0\) and \(\lim_{x\to0}(-|x|)=0\).</p>
 <p><b>Conclude.</b> By the Sandwich Theorem,</p>
@@ -244,6 +290,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box thm"><span class="tag">Useful pattern</span>
 <p>If \(|f(x)|\le B(x)\) near \(c\) and \(\lim_{x\to c}B(x)=0\), then \(\lim_{x\to c}f(x)=0\) (sandwich between \(-B(x)\) and \(B(x)\)).</p>
 <p class="word"><b>In words:</b> if the size of \(f\) is squeezed to 0, then \(f\) itself goes to 0.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(|f(x)|\)</dt><dd>how far the suspect is from height 0, above or below.</dd>
+<dt>\(\le B(x)\)</dt><dd>he is never further than \(B(x)\) away, so the officers are \(-B(x)\) and \(B(x)\), one on each side.</dd>
+<dt>\(\lim B(x)=0\)</dt><dd>the officers close in on height 0 from both sides, so \(f\) is pinned to 0.</dd>
+</dl></div>
 
 <div class="box eg"><span class="tag">Example 3 (slide 10)</span>
 <p>Find \(\displaystyle\lim_{x\to0^{+}}\sqrt{x}\,\sin\left(\frac1x\right)\).</p>
@@ -256,19 +307,28 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> from the right, the wiggle is squeezed between \(-\sqrt x\) and \(\sqrt x\), and both go to 0.</p>
 </div>
 <div class="box eg"><span class="tag">The method in four lines</span>
-<ol class="steps"><li>Find the bounded wiggly part and write its bounds (\(-1\le\sin(\text{anything})\le1\), \(-1\le\cos(\text{anything})\le1\), \(0\le\sin^2(\text{anything})\le1\)).</li>
-<li>Multiply or add to rebuild \(f(x)\). When multiplying by something that could be negative, use absolute values.</li>
-<li>Check that both bounds have the <b>same</b> limit.</li>
-<li>Conclude, naming the Sandwich Theorem.</li></ol></div>
+<ol class="steps proc"><li><b>Do:</b> Find the bounded wiggly part and write its bounds (\(-1\le\sin(\text{anything})\le1\), \(-1\le\cos(\text{anything})\le1\), \(0\le\sin^2(\text{anything})\le1\)). <span class="why">These are the fixed walls the wiggle can never pass, true for every input, however fast it oscillates.</span></li>
+<li><b>Do:</b> Multiply or add to rebuild \(f(x)\). When multiplying by something that could be negative, use absolute values. <span class="why">This turns the fixed walls into officers that close in; a negative multiplier would swap floor and ceiling, which absolute values prevent.</span></li>
+<li><b>Do:</b> Check that both bounds have the <b>same</b> limit. <span class="why">Both officers must head for the same door, or the suspect could end up anywhere between them.</span></li>
+<li><b>Do:</b> Conclude, naming the Sandwich Theorem. <span class="why">The marks are for the reason: the bounds force the limit, not the limit laws.</span></li></ol></div>
+<p class="cannow"><b>You can now:</b> bound \(\sin\), \(\cos\) and \(\sin^2\) of anything; multiply the bounds by a shrinking factor, using absolute values when its sign can change; handle one-sided cases such as \(\sqrt x\); and write a full squeeze argument.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>The key limit \(\frac{\sin\theta}{\theta}\to1\)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">The key limit \(\frac{\sin\theta}{\theta}\to1\)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Start at the right-hand end of a circle of radius 1 and walk a short way anticlockwise along the edge. The distance you walk is the angle (in radians); how high you have climbed is its sine. At the start the edge points straight up, so for a very short walk almost all of it is climbing: height ≈ distance walked. The proof makes this exact with two officers: \(\frac{\sin\theta}{\theta}\) is held between \(\cos\theta\) and 1, and both head to 1.</p></div></details>
 <p>A <b>corollary</b> is a result that follows quickly from a theorem just proved. The slide calls the next limit the Sandwich Corollary, because it is proved with the Sandwich Theorem.</p>
 <div class="box thm"><span class="tag">Corollary: Sandwich (slide 11)</span>
 \[\lim_{\theta\to0}\frac{\sin\theta}{\theta}=1\]
 <p class="word"><b>In words:</b> for a very small angle measured in radians, sine of the angle ÷ the angle ≈ 1, i.e. sine of a tiny angle is almost the angle itself.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\theta\)</dt><dd>the distance walked along the edge of the unit circle (that is what a radian measures).</dd>
+<dt>\(\sin\theta\)</dt><dd>the height climbed during that walk.</dd>
+<dt>\(\frac{\sin\theta}{\theta}\)</dt><dd>the share of the walk that went into climbing.</dd>
+<dt>\(\to1\) as \(\theta\to0\)</dt><dd>for a very short walk the edge is almost straight up, so almost all of it is climbing. At \(\theta=0\) itself there is no walk at all, so the value there is never used.</dd>
+</dl></div>
+<details class="idea"><summary>What is this? (radian)</summary><div><p>A radian measures an angle by distance walked: on a circle of radius 1, walk along the edge and the angle you have turned through, in radians, is the distance you have walked. Degrees are an arbitrary split of a full turn into 360 parts, so they do not match distances, and the key limit fails in degrees.</p></div></details>
 <div class="box def"><span class="tag">Definition: radian</span>
 <p>The limit is only true when \(\theta\) is measured in <b>radians</b>. On a circle of radius 1, an angle of \(\theta\) radians cuts off an arc of length \(\theta\). A full turn is \(2\pi\) radians (\(=360^\circ\)), so \(\pi\) radians \(=180^\circ\) and \(1\) radian \(\approx57.3^\circ\). From now on, all angles in calculus are in radians unless stated otherwise.</p></div>
 <p><b>Why this is not obvious.</b> Putting \(\theta=0\) gives \(\frac{0}{0}\), which means nothing. The Quotient Rule fails because the bottom limit is 0. We cannot cancel anything either. The table shows what happens numerically:</p>
@@ -294,9 +354,9 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </ul>
 <p>The shapes are nested, so</p>
 \[\frac12\sin\theta\le\frac12\theta\le\frac12\tan\theta.\]
-<p>Multiply by 2 and divide by \(\sin\theta\gt0\):</p>
+<p>Multiply by 2 and divide by \(\sin\theta\gt0\):<span class="why">We want \(\theta\) and \(\sin\theta\) together in one fraction in the middle; dividing by a positive number keeps the signs the same way round.</span></p>
 \[1\le\frac{\theta}{\sin\theta}\le\frac{1}{\cos\theta}.\]
-<p>Take reciprocals of positive numbers, which reverses the inequalities:</p>
+<p>Take reciprocals of positive numbers, which reverses the inequalities:<span class="why">This flips the middle into \(\frac{\sin\theta}{\theta}\), the function we want, with officers \(\cos\theta\) below and 1 above.</span></p>
 \[\cos\theta\le\frac{\sin\theta}{\theta}\le1.\]
 <p class="word"><b>In words:</b> cosine of the angle ≤ sine ÷ angle ≤ 1.</p>
 <p>As \(\theta\to0^{+}\), \(\cos\theta\to1\) (on the unit circle, \(P\) slides down to \(A=(1,0)\), so its \(x\)-coordinate \(\cos\theta\) tends to 1), and the constant 1 stays at 1. By the Sandwich Theorem, \(\lim_{\theta\to0^{+}}\frac{\sin\theta}{\theta}=1\).</p>
@@ -309,10 +369,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="cap">The function is not defined at \(x=0\) (open circle), but its graph heads to height 1 from both sides. Near 0 it is trapped between \(\cos x\) and 1, which meet at height 1.</p></div>
 <div class="box beyond"><span class="tag">Beyond the handouts: degrees break it</span>
 <p>If \(x\) were in degrees, \(\sin(x^\circ)=\sin\left(\frac{\pi x}{180}\right)\), and then \(\lim_{x\to0}\frac{\sin(x^\circ)}{x}=\frac{\pi}{180}\), not 1. This is one reason calculus always uses radians.</p></div>
+<p class="cannow"><b>You can now:</b> quote \(\lim_{\theta\to0}\frac{\sin\theta}{\theta}=1\) and say it needs radians; explain why direct substitution fails; and outline the unit-circle proof that squeezes the ratio between \(\cos\theta\) and 1.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Corollary: the limit of a reciprocal</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Corollary: the limit of a reciprocal</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>If a car's speed settles at 4 km per minute, the time it takes per km settles at a quarter of a minute: time per km is one over the speed. This only works if the speed settles at something other than 0. If the car creeps to a stop, the time per km grows without limit. Turning a limit upside down is safe exactly when the limit is not 0.</p></div></details>
 <p>Slide 12 starts with an observation. Take \(f(x)=x+2\). Then \(\lim_{x\to2}f(x)=4\), and \(\lim_{x\to2}\frac{1}{f(x)}=\frac14\). The slide's picture is redrawn below.</p>
 <div class="figure"><p class="ttl">f(x) = x + 2 and 1/f(x) = 1/(x + 2) near x = 2 (slide 12 picture, redrawn)</p>
 <canvas class="plot" id="rc" style="aspect-ratio:16/10" aria-label="Line y = x + 2 and curve y = 1/(x + 2) with dashed guides at x = 2"></canvas>
@@ -330,14 +392,30 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[\lim_{\theta\to0}\frac{\theta}{\sin\theta}=\frac{1}{1}=1.\]
 <p class="word"><b>In words:</b> angle ÷ sine of the angle also tends to 1.</p>
 <p>This is used in Examples 5 and 6.</p>
+<p class="cannow"><b>You can now:</b> find \(\lim\frac{1}{f(x)}\) from \(\lim f(x)\) when that limit is not 0; explain where the condition \(L\ne0\) comes from; and use \(\frac{\theta}{\sin\theta}\to1\).</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Examples 4–6: make the boxes match</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Examples 4–6: make the boxes match</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The key limit says: for a very short walk around the unit circle, the height climbed is almost the distance walked. It does not care what the walk is called. If the walk is \(3x\), then \(\sin3x\) is almost \(3x\), not almost \(x\). So each sine must be compared with its own inside. The algebra in this section just rearranges the expression until every sine sits over exactly its own inside, and the inside is shrinking to 0.</p></div></details>
 <p>The key limit works for <b>any</b> expression in place of \(\theta\), as long as that expression tends to 0. Think of \(\theta\) as a box:</p>
 \[\lim\frac{\sin\Box}{\Box}=1\quad\text{whenever }\Box\to0.\]
 <p class="word"><b>In words:</b> sine of a box ÷ the same box → 1, provided the box shrinks to 0 (and is never exactly 0 along the way).</p>
 <p>The contents of the two boxes must be <b>identical</b>. Most of the work is rearranging so they match. To be precise, this is a <b>change of variable</b>: set \(\theta=\Box\), check that \(\theta\to0\) (and \(\theta\ne0\)) as \(x\) approaches its target, then use the key limit in the variable \(\theta\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\sin\Box\) on top</dt><dd>the height climbed on a walk of length \(\Box\).</dd>
+<dt>\(\Box\) underneath</dt><dd>the length of that same walk; it must be the identical expression.</dd>
+<dt>\(\Box\to0\), \(\Box\ne0\)</dt><dd>the walk gets very short but is never exactly zero, so the fraction always makes sense.</dd>
+<dt>\(=1\)</dt><dd>height and distance walked become equal in the limit.</dd>
+</dl></div>
+<p>The method, step by step:</p>
+<ol class="steps proc">
+<li><b>Do:</b> Find the box inside each sine (and inside each tan, after writing \(\tan=\frac{\sin}{\cos}\)). <span class="why">Each box is a separate short walk, and each sine needs to be compared with its own walk.</span></li>
+<li><b>Do:</b> Check that each box tends to 0 (and is not 0) as \(x\) approaches its target. <span class="why">The key limit is only about very short walks; if a box does not shrink to 0, the key limit says nothing about it.</span></li>
+<li><b>Do:</b> Insert the missing boxes and compensate: multiply and divide by the same thing, so that every \(\sin\Box\) sits over the same \(\Box\). <span class="why">Multiplying and dividing by the same non-zero thing changes nothing, but it puts each height next to its own walk.</span></li>
+<li><b>Do:</b> Set \(\theta=\Box\) and use \(\frac{\sin\theta}{\theta}\to1\) or \(\frac{\theta}{\sin\theta}\to1\) for each matched pair. Find the limit of whatever is left over. <span class="why">Every matched pair is now just "height over distance" for a short walk; only the leftover factor decides the answer.</span></li>
+<li><b>Do:</b> Combine with the Product Rule. <span class="why">Every factor now has a limit, so the limit laws can be used again.</span></li>
+</ol>
 
 <div class="box eg"><span class="tag">Example 4 (slide 13)</span>
 <p>Find \(\displaystyle\lim_{x\to0}\frac{\sin kx}{x}\), where \(k\in\mathbb R\) (\(k\) is any real constant).</p>
@@ -361,7 +439,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Find \(\displaystyle\lim_{x\to0}\frac{\tan3x}{\sin8x}\).</p>
 <p><b>Step 1: write tan in terms of sin and cos.</b> \(\tan3x=\frac{\sin3x}{\cos3x}\), so</p>
 \[\frac{\tan3x}{\sin8x}=\frac{\sin3x}{\cos3x\,\sin8x}.\]
-<p><b>Step 2: make the boxes match.</b> Next to \(\sin3x\) we want \(3x\); next to \(\sin8x\) we want \(8x\). Insert them and compensate:</p>
+<p><b>Step 2: make the boxes match.</b> Next to \(\sin3x\) we want \(3x\); next to \(\sin8x\) we want \(8x\). Insert them and compensate:<span class="why">Putting \(3x\) and \(8x\) in and taking them out again in \(\frac{3x}{8x}\) multiplies by 1 overall, so the expression is unchanged, but now each sine has its own box.</span></p>
 \[\begin{aligned}\frac{\tan3x}{\sin8x}&=\frac{\sin3x}{3x}\cdot\frac{8x}{\sin8x}\\&\quad\cdot\frac{1}{\cos3x}\cdot\frac{3x}{8x}.\end{aligned}\]
 <p>(Check: the \(3x\) and \(8x\) we inserted cancel with \(\frac{3x}{8x}\).) For \(x\ne0\), \(\frac{3x}{8x}=\frac38\).</p>
 <p><b>Step 3: limit of each factor.</b></p>
@@ -378,17 +456,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box eg"><span class="tag">Example 6 (slide 15)</span>
 <p>Find \(\displaystyle\lim_{x\to0^{+}}\frac{x}{\sin\sqrt x}\).</p>
 <p><b>Why one-sided?</b> \(\sqrt x\) needs \(x\ge0\).</p>
-<p><b>Make the box match.</b> The box inside sine is \(\sqrt x\). Split \(x=\sqrt x\cdot\sqrt x\) (true for \(x\gt0\)):</p>
+<p><b>Make the box match.</b> The box inside sine is \(\sqrt x\). Split \(x=\sqrt x\cdot\sqrt x\) (true for \(x\gt0\)):<span class="why">One \(\sqrt x\) goes on top of \(\sin\sqrt x\) to make a matched pair; the other \(\sqrt x\) is the leftover, and it decides the answer.</span></p>
 \[\frac{x}{\sin\sqrt x}=\sqrt x\cdot\frac{\sqrt x}{\sin\sqrt x}.\]
 <p>Let \(\theta=\sqrt x\). As \(x\to0^{+}\), \(\theta\to0^{+}\) and \(\theta\ne0\). By the reciprocal corollary, \(\frac{\theta}{\sin\theta}\to1\). Also \(\sqrt x\to0\). By the Product Rule,</p>
 \[\lim_{x\to0^{+}}\frac{x}{\sin\sqrt x}=0\cdot1=0.\]
 <p class="word"><b>In words:</b> for small positive \(x\), \(\sin\sqrt x\approx\sqrt x\), so the expression is about \(\frac{x}{\sqrt x}=\sqrt x\), which goes to 0.</p>
 </div>
 <div class="box warn"><span class="tag">Trap</span><p>It is tempting to write \(\frac{x}{\sin\sqrt x}\to1\) because “it looks like \(\frac{\theta}{\sin\theta}\)”. It does not: the top is \(x\), the box is \(\sqrt x\). The boxes must match exactly.</p></div>
+<p class="cannow"><b>You can now:</b> rewrite tan as sin over cos; insert and compensate so that every sine sits over its own box; check that each box tends to 0; and finish with the key limit, the reciprocal corollary and the Product Rule.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Summary</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Summary</span></h2>
 <p>The slide's summary, point by point:</p>
 <ul class="list">
 <li>The Sandwich Theorem is a powerful tool to evaluate limits for <b>oscillating functions</b> (functions that keep swinging up and down, like \(\sin\frac1x\) near 0) or limits where <b>direct substitution fails</b> (where putting \(x=c\) into the formula gives nonsense such as \(\frac00\), as in \(\frac{\sin\theta}{\theta}\)).</li>
@@ -404,7 +483,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Common mistakes</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Common mistakes</span></h2>
 <p>The four mistakes on slide 18, each explained.</p>
 <h3>1. Choosing incorrect bounds</h3>
 <div class="box"><div class="mistake"><span class="x">✗</span><span>\(-x\le x\sin\frac1x\le x\ \Rightarrow\ \lim_{x\to0}x\sin\frac1x=0\)</span></div></div>
@@ -434,7 +513,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Find the mistake</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Find the mistake</span></h2>
 <p>Slide 17 shows a student's handwritten answer to this question:</p>
 <div class="q"><p class="qh">3. Let \(f(x)=\sin x\cdot e^{\cos\left(\frac{1}{x^3}\right)}\). Apply the Sandwich Theorem to prove</p>
 \[\lim_{x\to0^{+}}\left(\sin x\cdot e^{\cos\left(\frac{1}{x^3}\right)}\right)=0.\]</div>
@@ -468,7 +547,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Group work</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Group work</span></h2>
 <p>Slide 19's six limits. Decide first which tool fits: the Sandwich Theorem (a bounded wiggle times something going to 0), or the key limit (match the boxes).</p>
 
 <div class="q"><p class="qh">1. Find</p>
@@ -520,7 +599,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Concept checks <span class="pill">Written for these notes</span></span></h2>
 
 <div class="q"><p class="qh">1. True or false: “Since \(-1\le\sin\frac1x\le1\), the limit \(\lim_{x\to0}\sin\frac1x\) is some number between −1 and 1.”</p>
 <details><summary>Answer</summary><div><p><b>False.</b> The limit does not exist: \(\sin\frac1x\) keeps hitting both 1 and −1 at points arbitrarily close to 0, so it never settles. Being bounded is not the same as having a limit. The bounds −1 and 1 have different limits, so the Sandwich Theorem gives nothing.</p></div></details></div>
@@ -548,7 +627,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="pastpaper"><h2><span class="n">11</span>Exam taster</h2>
+<section id="pastpaper"><h2><span class="n">11</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Lecture 2's question types appear 8 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide. Four more questions that use this lecture also need later material, so they are housed in later notes: Dec 2019 Q2(b) in Lecture 6, and May 2024 Q1(a), Dec 2018 Q1(a) and May 2017 Q1(b)(ii) in Lecture 10.</p>
 
@@ -816,5 +895,13 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </html>

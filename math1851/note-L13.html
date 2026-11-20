@@ -106,6 +106,34 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -140,18 +168,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · Calculus · Lecture 13</span>
   <h1>Techniques of Integration I: Substitution and Integration by Parts</h1>
-  <p class="lede">Every slide of Lecture 13 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. Each past paper question is tagged with its question type and links to the exam guide, where the full worked solution is.</p>
 </header>
 
 <!-- ============ 0 ============ -->
 <section id="s0">
-<h2><span class="n">0</span>Where this lecture sits</h2>
-<p>Lecture 11 introduced <b>antiderivatives</b>: a function \(F\) with \(F'=f\). The most general antiderivative is written \(\int f(x)\,dx=F(x)+C\) (the <b>indefinite integral</b>), and \(C\) is an arbitrary constant. Lecture 12 introduced the <b>definite integral</b> \(\int_a^b f(x)\,dx\) (net signed area) and the Fundamental Theorem of Calculus, which turns areas into antiderivatives. So far you could only integrate functions whose antiderivative you could guess from a table. This lecture gives two systematic techniques:</p>
-<ul class="list">
-  <li><b>The Substitution Rule</b> (the chain rule run backwards), for integrands with an "inside function" and its derivative.</li>
-  <li><b>Integration by Parts</b> (the product rule run backwards), for products such as \(x e^x\), \(x\cos x\), \(\ln x\).</li>
-</ul>
-<p>It also covers integrals of odd and even functions over intervals like \([-a,a]\), and <b>reduction formulas</b>, which express a family of integrals in terms of a simpler member of the same family.</p>
+<h2><span class="n">0</span><span class="h2t">Where this lecture sits</span></h2>
+<p>Integrating means running differentiation backwards: you are handed a derivative and asked what it came from. Each differentiation rule leaves its own fingerprint on the answer. This lecture learns to spot two of them: the chain rule's fingerprint (an inside function with its derivative beside it) and the product rule's (a product of two different kinds of function).</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span><ol>
+<li><a href="#s1">§1</a> <b>Every differentiation rule, read backwards, is an integration rule.</b> Definite gives a number, indefinite a family of functions.</li>
+<li><a href="#s2">§2</a> <b>Substitution is the chain rule run backwards:</b> spot an inside function and its derivative, then rename the inside \(u\).</li>
+<li><a href="#s3">§3</a> <b>Worked substitutions:</b> a spare constant is fine, a spare \(x\) must be rewritten in \(u\).</li>
+<li><a href="#s4">§4</a> <b>The five steps, and how to pick \(u\):</b> look for a pair where one piece is the derivative of the other.</li>
+<li><a href="#s5">§5</a> <b>In a definite integral, change the limits with the variable.</b> Never mix \(u\) and \(x\).</li>
+<li><a href="#s6">§6</a> <b>Over \([-a,a]\), an odd function cancels to 0 and an even one doubles its right half.</b></li>
+<li><a href="#s7">§7</a> <b>Integration by parts is the product rule run backwards:</b> it trades one integral for another.</li>
+<li><a href="#s8">§8</a> <b>Worked IBP:</b> twice in a row, reduction formulas, \(dv=dx\), and substitution first.</li>
+<li><a href="#s9">§9</a> <b>Choose \(u\) by LIATE,</b> so the integral you trade for is easier.</li>
+<li><a href="#s10">§10</a> <b>Two methods can give different-looking answers that differ by a constant.</b></li>
+<li><a href="#s11">§11</a>–<a href="#pastpaper">§16</a> Summary, common mistakes, practice and the exam taster.</li>
+</ol></div>
+<p><b>You need:</b> antiderivatives and \(\int f(x)\,dx=F(x)+C\) (Lecture 11), the definite integral as net signed area and the Fundamental Theorem of Calculus (Lecture 12, recalled below), and the chain and product rules. Before this lecture you could only integrate what you could guess from a table. <b>In the exam:</b> Lecture 13's question types appear 28 times in the 23 past papers (2013 to 2026), and in all 13 recent papers, usually as parts of the "Evaluate each of the following integrals" question, and these methods also finish many area, volume and ODE questions. See the <a href="guide-L13.html">L13 exam guide</a>.</p>
 
 <h3>Recall: the Fundamental Theorem of Calculus (slide 2)</h3>
 <div class="box thm"><span class="tag">Theorem (Part I) · Lecture 12</span>
@@ -172,7 +208,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 1 ============ -->
 <section id="s1">
-<h2><span class="n">1</span>Definite vs indefinite, and why rules come in pairs</h2>
+<h2><span class="n">1</span><span class="h2t">Definite vs indefinite, and why rules come in pairs</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A times table read backwards is a division table: knowing \(6\times7=42\) tells you at once that \(42\div7=6\). In the same way, every derivative you know, read from right to left, is an integral you know. The definite integral uses such an answer to get one number (an area); the indefinite integral is the answer itself, a whole family of functions that differ only by a constant.</p></div></details>
 <h3>Types of integrals (slide 7)</h3>
 <div class="scroll"><table>
 <tr><th></th><th>Definite</th><th>Indefinite</th></tr>
@@ -190,6 +227,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Integrating both sides (an antiderivative of a derivative is the function itself, plus a constant) gives the Power Rule for integration:</p>
 \[ \begin{aligned}\int x^n\,dx&=\int\frac{d}{dx}\left(\frac{x^{n+1}}{n+1}\right)dx\\&=\frac{x^{n+1}}{n+1}+C\qquad(n\ne-1).\end{aligned} \]
 <p class="word"><b>In words:</b> to integrate a power of \(x\), raise the power by one and divide by the new power.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(x^n\)</dt><dd>the derivative you were handed.</dd>
+<dt>\(\frac{x^{n+1}}{n+1}\)</dt><dd>the function it came from: the power rule run backwards (up by one, then divide).</dd>
+<dt>\(+C\)</dt><dd>any constant would have vanished when differentiated, so the backwards answer is only known up to a constant.</dd>
+<dt>\(n\ne-1\)</dt><dd>the one power where "divide by \(n+1\)" would mean dividing by 0.</dd>
+</dl></div>
+
 <p style="font-size:.9rem;color:var(--muted)">The slide does not write the condition \(n\ne-1\); it is needed because \(n+1\) would be 0. For \(n=-1\), \(\int\frac1x\,dx=\ln|x|+C\) (Lecture 11).</p>
 <p>So the Power Rule (for derivatives) corresponds to the Power Rule (for integrals). Slide 8 then asks: <b>what about the Chain Rule and the Product Rule?</b> They correspond to the Substitution Rule (section 2) and Integration by Parts (section 7).</p>
 <div class="scroll"><table>
@@ -198,33 +242,46 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <tr><td>Chain Rule: \(\frac{d}{dx}F(g(x))=F'(g(x))\,g'(x)\)</td><td>Substitution Rule</td><td>\(f(g(x))\,g'(x)\)</td></tr>
 <tr><td>Product Rule: \((fg)'=f'g+fg'\)</td><td>Integration by Parts</td><td>\(f(x)\,g'(x)\)</td></tr>
 </table></div>
+<p class="cannow"><b>You can now:</b> say whether an integral is definite or indefinite and what kind of answer it gives; integrate powers of \(x\) by reading the power rule backwards; and name the integration rule that matches the chain rule and the product rule.</p>
 </section>
 
 <!-- ============ 2 ============ -->
 <section id="s2">
-<h2><span class="n">2</span>The Substitution Rule</h2>
+<h2><span class="n">2</span><span class="h2t">The Substitution Rule</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>When the chain rule differentiates a function of an inside function, it always leaves the derivative of the inside behind as an extra factor. That factor is the chain rule's fingerprint. Substitution looks for it: if the integrand is something of an inside function, times the derivative of that inside function, then it came from the chain rule. Rename the inside \(u\), and the fingerprint becomes \(du\), leaving a plain integral of \(u\). The renaming only works if the whole fingerprint is there (up to a constant factor).</p></div></details>
 <p>Slide 9 reads "Chain Rule corresponds to ______". The blank is <b>the Substitution Rule</b>.</p>
 <div class="box thm"><span class="tag">Theorem: Substitution Rule (slide 10)</span>
 <p>If \(u=g(x)\) is a differentiable function whose range is an interval \(I\) and \(f\) is continuous on \(I\), then</p>
 \[ \int f(g(x))\,g'(x)\,dx=\int f(u)\,du . \]
 <p class="word"><b>In words:</b> if the integrand is (a function of an inside expression) × (the derivative of that inside expression), rename the inside expression \(u\); the integral becomes a plain integral of \(f(u)\) with respect to \(u\).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(g(x)\)</dt><dd>the inside function, which gets the new name \(u\).</dd>
+<dt>\(g'(x)\)</dt><dd>the chain rule's fingerprint: the derivative of the inside, sitting outside as a factor.</dd>
+<dt>\(f(g(x))\)</dt><dd>the outer function, applied to the inside.</dd>
+<dt>\(g'(x)\,dx\)</dt><dd>together these become \(du\), so the fingerprint is absorbed by the renaming.</dd>
+<dt>\(\int f(u)\,du\)</dt><dd>what is left: a plain integral in one letter, usually one from your table.</dd>
+</dl></div>
+
 <p>Terms: the <b>range</b> of \(g\) is the set of output values \(g(x)\). The conditions make sure \(f(u)\) is continuous wherever \(u\) can land, so \(f\) has an antiderivative there (Lecture 12).</p>
 <h3>The \(du\) notation</h3>
 <p>If \(u=g(x)\), then \(\dfrac{du}{dx}=g'(x)\). We write this as</p>
 \[ du=g'(x)\,dx . \]
+<details class="idea"><summary>What is this? (the du notation)</summary><div><p>Think of an exchange rate. If \(u\) changes three times as fast as \(x\) at some point, a small step in \(x\) there produces a step in \(u\) three times as big. The line \(du=g'(x)\,dx\) is that exchange rate written down: it converts steps in \(x\) into steps in \(u\).</p></div></details>
 <p class="word"><b>In words:</b> a small change in \(u\) = (rate of change of \(u\) with respect to \(x\)) × (small change in \(x\)).</p>
 <p>\(du\) and \(dx\) are called <b>differentials</b>. Treating \(\frac{du}{dx}\) as a fraction is not a proof (the proof is below), but it is a reliable bookkeeping device: in \(\int f(g(x))\,g'(x)\,dx\), the piece \(g'(x)\,dx\) is exactly \(du\), and \(g(x)\) is exactly \(u\).</p>
 
 <h3>Proof (slide 10)</h3>
-<p>Let \(F\) be an antiderivative of \(f\), so \(F'=f\). By the Chain Rule, \(\frac{d}{dx}F(g(x))=F'(g(x))\,g'(x)=f(g(x))\,g'(x)\). So</p>
+<p>Let \(F\) be an antiderivative of \(f\), so \(F'=f\). <span class="why">The proof just runs the chain rule forwards and shows it produces exactly the integrand with the fingerprint \(g'(x)\).</span> By the Chain Rule, \(\frac{d}{dx}F(g(x))=F'(g(x))\,g'(x)=f(g(x))\,g'(x)\). So</p>
 \[ \begin{aligned} \int f(g(x))\,g'(x)\,dx &= \int\frac{d}{dx}F(g(x))\,dx\\ &\qquad \text{(Chain Rule)}\\ &= F(g(x))+C\\ &\qquad \text{(an antiderivative of a}\\ &\qquad \text{derivative; FTC)}\\ &= F(u)+C\qquad (u=g(x))\\ &= \int F'(u)\,du\\ &= \int f(u)\,du . \end{aligned} \]
 <p><b>Analogy.</b> In HKDSE you solve \(x^4-5x^2+4=0\) by letting \(u=x^2\): the equation becomes \(u^2-5u+4=0\), which you already know how to solve. Substitution in integrals is the same idea: rename the awkward inside part so the problem becomes one from your table. The difference is that \(dx\) must be renamed too, which is why the derivative \(g'(x)\) has to be present.</p>
+<p class="cannow"><b>You can now:</b> recognise an integrand of the form \(f(g(x))\,g'(x)\); state the Substitution Rule with its conditions; write \(du=g'(x)\,dx\); and explain the rule as the chain rule run backwards.</p>
 </section>
 
 <!-- ============ 3 ============ -->
 <section id="s3">
-<h2><span class="n">3</span>Substitution: worked examples</h2>
+<h2><span class="n">3</span><span class="h2t">Substitution: worked examples</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Each example is a search for the chain rule's fingerprint. Sometimes it is sitting there in full (Example 1), sometimes it is off by a constant (Example 2), sometimes the integrand must be rewritten before it shows (Example 3), and sometimes a leftover \(x\) has to be rewritten in terms of \(u\) (Example 4).</p></div></details>
 <div class="box eg"><span class="tag">Example 1 (slide 11): new and old technique</span>
 <p>Evaluate \(\displaystyle\int (x^2-3)^3\,2x\,dx\) by (a) the Substitution Rule, (b) expanding the integrand.</p>
 <p><b>(a)</b> The inside function is \(x^2-3\) and its derivative \(2x\) is sitting right there. Let \(u=x^2-3\), so \(du=2x\,dx\):</p>
@@ -239,7 +296,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Evaluate \(\displaystyle\int \frac{e^{\frac{1}{2x}}}{x^2}\,dx\).</p>
 <p><b>Solution.</b> The inside function is \(\frac1{2x}=\frac12x^{-1}\). Let \(u=\frac{1}{2x}\). Then</p>
 \[ du=-\frac{1}{2x^2}\,dx\quad\Longrightarrow\quad \frac{dx}{x^2}=-2\,du . \]
-<p>The integrand has \(\frac{dx}{x^2}\), which is not exactly \(du\) but a <b>constant multiple</b> of it. Constants can be moved outside the integral, so this is fine:</p>
+<p>The integrand has \(\frac{dx}{x^2}\), which is not exactly \(du\) but a <b>constant multiple</b> of it. <span class="why">A constant can be carried outside the integral, so the fingerprint only needs to be right up to a constant factor.</span> Constants can be moved outside the integral, so this is fine:</p>
 \[ \begin{aligned}\int e^{\frac1{2x}}\cdot\frac{dx}{x^2}&=\int e^u\,(-2\,du)\\&=-2e^u+C=-2e^{\frac{1}{2x}}+C .\end{aligned} \]
 <p><b>Check:</b> \(\frac{d}{dx}\left(-2e^{\frac1{2x}}\right)=-2e^{\frac1{2x}}\cdot\left(-\frac1{2x^2}\right)=\frac{e^{\frac1{2x}}}{x^2}\). ✓</p>
 <p class="word"><b>Lesson:</b> a missing <i>constant</i> factor is never a problem; a missing <i>\(x\)</i> factor is (see Common mistakes).</p>
@@ -247,7 +304,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <div class="box eg"><span class="tag">Example 3 (slide 13): choice of \(u\)</span>
 <p>Evaluate \(\displaystyle\int\tan x\,dx\) by substitution with (a) \(u=\cos x\), (b) \(u=\sin x\).</p>
-<p>First <b>rewrite the integrand</b>: \(\tan x=\dfrac{\sin x}{\cos x}\).</p>
+<p>First <b>rewrite the integrand</b>: \(\tan x=\dfrac{\sin x}{\cos x}\).<span class="why">Written as \(\tan x\) there is no inside function to see; as a fraction, \(\cos x\) and its derivative \(-\sin x\) appear together.</span></p>
 <p><b>(a)</b> \(u=\cos x\), \(du=-\sin x\,dx\), so \(\sin x\,dx=-du\):</p>
 \[ \begin{aligned}\int\frac{\sin x}{\cos x}\,dx&=\int\frac{-du}{u}=-\ln|u|+C\\&=-\ln|\cos x|+C\\&=\ln|\sec x|+C .\end{aligned} \]
 <p><b>(b)</b> \(u=\sin x\), \(du=\cos x\,dx\). We need \(\cos x\,dx\) in the integral, so multiply top and bottom by \(\cos x\) and use \(\cos^2x=1-\sin^2x\):</p>
@@ -259,25 +316,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <div class="box eg"><span class="tag">Example 4 (slide 14): back substitution</span>
 <p>Evaluate \(\displaystyle\int 2x^3\sqrt{1+x^2}\,dx\).</p>
-<p><b>Solution.</b> Let \(u=1+x^2\), \(du=2x\,dx\). Split \(2x^3=x^2\cdot2x\). The leftover \(x^2\) is not yet in terms of \(u\), but we can solve the substitution for it: \(x^2=u-1\). This is <b>back substitution</b>: expressing leftover \(x\)'s using the substitution equation.</p>
+<p><b>Solution.</b> Let \(u=1+x^2\), \(du=2x\,dx\). Split \(2x^3=x^2\cdot2x\). The leftover \(x^2\) is not yet in terms of \(u\), but we can solve the substitution for it: \(x^2=u-1\). This is <b>back substitution</b>: expressing leftover \(x\)'s using the substitution equation.<span class="why">An integral with respect to \(u\) must contain only \(u\); a leftover \(x\) is not a constant and cannot stay.</span></p>
 \[ \begin{aligned}&\int x^2\sqrt{1+x^2}\;2x\,dx\\&\quad=\int (u-1)\sqrt u\,du\\&\quad=\int\left(u^{3/2}-u^{1/2}\right)du\\&\quad=\frac25u^{5/2}-\frac23u^{3/2}+C,\end{aligned} \]
 <p>so</p>
 \[ \begin{aligned}\int 2x^3\sqrt{1+x^2}\,dx&=\frac25(1+x^2)^{5/2}\\&\quad-\frac23(1+x^2)^{3/2}+C .\end{aligned} \]
 <p class="word"><b>Lesson:</b> after substituting, no \(x\) may remain. If one does, use \(u=g(x)\) to rewrite it in terms of \(u\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> carry out a substitution when the derivative of the inside is present exactly or up to a constant; rewrite the integrand first when the pair is hidden; use back substitution for leftover \(x\)'s; and check an answer by differentiating.</p>
 </section>
 
 <!-- ============ 4 ============ -->
 <section id="s4">
-<h2><span class="n">4</span>Steps, and how to choose \(u\)</h2>
+<h2><span class="n">4</span><span class="h2t">Steps, and how to choose \(u\)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Substitution is a translation. You translate the integral into the language of \(u\), where it is one you can read off a table, do it there, and translate the answer back into \(x\). The hard part is choosing which piece to call \(u\): pick the inside piece whose derivative also appears in the integrand.</p></div></details>
 <div class="box thm"><span class="tag">Steps to apply \(u\)-substitution (slide 15)</span>
 <p>Given an indefinite integral of the form \(\displaystyle\int f(g(x))\,g'(x)\,dx\):</p>
-<ol class="steps">
-  <li>Choose a \(u\)/\(du\) pair: \(u=g(x)\), \(du=g'(x)\,dx\).</li>
-  <li>Solve for "\(dx\)" (or for the piece of the integrand that equals a constant multiple of \(du\)).</li>
-  <li>Rewrite the integral entirely in terms of \(u\) and \(du\).</li>
-  <li>Evaluate the rewritten integral with respect to \(u\).</li>
-  <li>Return the answer in terms of \(x\) (replace \(u\) by \(g(x)\)).</li>
+<ol class="steps proc">
+  <li><b>Do:</b> Choose a \(u\)/\(du\) pair: \(u=g(x)\), \(du=g'(x)\,dx\). <span class="why">This names the inside function and its fingerprint, the two pieces the chain rule left behind.</span></li>
+  <li><b>Do:</b> Solve for "\(dx\)" (or for the piece of the integrand that equals a constant multiple of \(du\)). <span class="why">This is the exchange rate between steps in \(x\) and steps in \(u\), so the \(dx\) can be traded for \(du\).</span></li>
+  <li><b>Do:</b> Rewrite the integral entirely in terms of \(u\) and \(du\). <span class="why">If any \(x\) is left over, the translation is unfinished and the integral is not yet a plain one in \(u\).</span></li>
+  <li><b>Do:</b> Evaluate the rewritten integral with respect to \(u\). <span class="why">A good choice of \(u\) has turned it into an integral from your table.</span></li>
+  <li><b>Do:</b> Return the answer in terms of \(x\) (replace \(u\) by \(g(x)\)). <span class="why">The question was asked in \(x\), so the answer must be translated back.</span></li>
 </ol>
 </div>
 <h3>Choosing \(u\)/\(du\) pairs (slide 16)</h3>
@@ -297,17 +356,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <li><b>Back substitution</b>: express leftover \(x\)'s in terms of \(u\) (Example 4).</li>
   <li><b>Double substitution</b>: substitute twice in a row (Example 3(b)), or once with a bigger \(u\). For instance, in \(\int 2x\cos(x^2)\,e^{\sin(x^2)}\,dx\) you can let \(u=x^2\) and then \(w=\sin u\), or directly \(w=\sin(x^2)\), \(dw=2x\cos(x^2)\,dx\), giving \(\int e^w\,dw=e^{\sin(x^2)}+C\). <span class="pill">Written for these notes</span></li>
 </ul>
+<details class="idea"><summary>What is this? (choosing u)</summary><div><p>You are looking for two pieces of the integrand where one is the derivative of the other, up to a constant: \(\ln x\) with \(\frac1x\), \(\sin x\) with \(\cos x\), \(x^3\) inside something with \(x^2\) outside. The table lists the common pairs. If no pair shows, rewrite the integrand until one does.</p></div></details>
 <p>The slide calls choosing \(u\) a <b>"non-linear" problem</b>: there is no fixed recipe that always works; it needs practice, intuition and perseverance. If one choice fails, try another. You can always check an indefinite integral by differentiating your answer.</p>
+<p class="cannow"><b>You can now:</b> apply the five substitution steps in order; spot a \(u\)/\(du\) pair from the table of common pairs; and use the indirect moves (rewrite first, back substitution, double substitution) when no pair is visible at first.</p>
 </section>
 
 <!-- ============ 5 ============ -->
 <section id="s5">
-<h2><span class="n">5</span>Substitution in definite integrals</h2>
+<h2><span class="n">5</span><span class="h2t">Substitution in definite integrals</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Changing from \(x\) to \(u\) is like swapping one ruler for another with different markings. The start and the finish of the integral are the same places, but you must read them on the new ruler: the start becomes \(g(a)\) and the finish becomes \(g(b)\). Once the limits are read on the \(u\)-ruler, you never need to go back to \(x\).</p></div></details>
 <div class="box thm"><span class="tag">Theorem: definite integral substitutions (slide 17)</span>
 <p>If \(g'\) is continuous on \([a,b]\) and \(f\) is continuous on the range of \(u=g(x)\), then</p>
 \[ \int_a^b f(g(x))\,g'(x)\,dx=\int_{g(a)}^{g(b)}f(u)\,du . \]
 <p class="word"><b>In words:</b> when you change the variable from \(x\) to \(u\), change the limits too: the lower limit \(a\) becomes \(g(a)\) (the value of \(u\) when \(x=a\)) and the upper limit \(b\) becomes \(g(b)\). Then you never need to go back to \(x\).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(a,\ b\)</dt><dd>the start and finish, read on the \(x\)-ruler.</dd>
+<dt>\(g(a),\ g(b)\)</dt><dd>the same start and finish, read on the \(u\)-ruler.</dd>
+<dt>\(f(g(x))\,g'(x)\,dx\)</dt><dd>the integrand with the chain rule's fingerprint \(g'(x)\), which turns into \(du\).</dd>
+<dt>\(\int_{g(a)}^{g(b)}f(u)\,du\)</dt><dd>the same area, worked out entirely in \(u\).</dd>
+</dl></div>
+
 <p><b>Why it is true.</b> If \(F'=f\), then by the Evaluation Theorem both sides equal \(F(g(b))-F(g(a))\): the left side because \(F(g(x))\) is an antiderivative of \(f(g(x))g'(x)\) (Chain Rule), the right side directly.</p>
 <p><b>"Area is preserved" (slide 17).</b> The slide shows two graphs. On the left, the area under \(y=f(g(x))\,g'(x)\) from \(x=a\) to \(x=b\); on the right, the area under \(y=f(u)\) from \(u=g(a)\) to \(u=g(b)\). The shapes look completely different, yet the two areas are equal. Substitution stretches and squashes the horizontal axis, and the factor \(g'(x)\) adjusts the heights so the area comes out the same. The slide's pictures are exactly Example 5 below; the explorer lets you check the equality numerically.</p>
 
@@ -335,14 +404,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ \begin{aligned}\int_0^{\pi/2}\sin^2x\cos x\,dx&=\left[\frac{\sin^3x}{3}\right]_0^{\pi/2}\\&=\frac{1^3}{3}-\frac{0^3}{3}=\frac13 .\end{aligned} \]
 <p><b>(b) Limits in \(u\).</b> \(u=\sin x\): when \(x=0\), \(u=\sin0=0\); when \(x=\frac\pi2\), \(u=\sin\frac\pi2=1\). So</p>
 \[ \begin{aligned}\int_0^{\pi/2}\sin^2x\cos x\,dx&=\int_0^1u^2\,du\\&=\left[\frac{u^3}{3}\right]_0^1=\frac13 .\end{aligned} \]
-<p class="word"><b>Lesson:</b> either (a) substitute back to \(x\) and use the \(x\)-limits, or (b) change the limits and stay in \(u\). Never mix: \(u\)-integrand with \(x\)-limits is the classic error.</p>
+<p class="word"><b>Lesson:</b> either (a) substitute back to \(x\) and use the \(x\)-limits, or (b) change the limits and stay in \(u\).<span class="why">Limits and integrand must be read on the same ruler; an \(x\)-limit put into a \(u\)-integral measures the wrong place.</span> Never mix: \(u\)-integrand with \(x\)-limits is the classic error.</p>
 <p>Notation: \(\big[F(x)\big]_a^b\) means \(F(b)-F(a)\).</p>
 </div>
+<p class="cannow"><b>You can now:</b> change the limits when you substitute in a definite integral; evaluate it either by staying in \(u\) or by returning to \(x\) with the original limits; and explain why the two areas in slide 17's pictures are equal.</p>
 </section>
 
 <!-- ============ 6 ============ -->
 <section id="s6">
-<h2><span class="n">6</span>Odd and even functions over symmetric intervals</h2>
+<h2><span class="n">6</span><span class="h2t">Odd and even functions over symmetric intervals</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Fold the graph along the \(y\)-axis. For an even function the left half lands exactly on the right half, like a mirror image, so the two halves have the same area and the total is twice the right half. For an odd function the left half is the right half turned upside down, so every positive bit of area on one side is matched by an equal negative bit on the other, and the signed areas cancel to 0. This needs the function to be continuous on the whole interval \([-a,a]\).</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 19)</span>
 <ul class="list">
   <li>\(f\) is <b>even</b> \(\iff f(-x)=f(x)\) for all \(x\) in the domain. The graph is symmetric about the \(y\)-axis (mirror image). Examples: \(x^2\), \(x^4\), \(\cos x\), \(|x|\).</li>
@@ -359,6 +430,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </ul>
 <p class="word"><b>In words:</b> for an even function the left half has the same area as the right half, so the total is twice the right half. For an odd function the left half is the right half flipped upside down, so the signed areas cancel exactly.</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\([-a,a]\)</dt><dd>an interval centred at 0, so it has a left half and a matching right half.</dd>
+<dt>\(2\int_0^af(x)\,dx\)</dt><dd>even: the mirror-image left half adds the same area again.</dd>
+<dt>\(0\)</dt><dd>odd: the upside-down left half cancels the right half.</dd>
+<dt>continuous</dt><dd>no breaks or blow-ups anywhere on the interval, so both halves are genuine areas.</dd>
+</dl></div>
+
 <div class="figure">
   <p class="ttl">Odd, even, neither (slides 19 and 20)</p>
   <canvas class="plot" id="sym" style="aspect-ratio:16/9" aria-label="Signed areas of an odd or even function over a symmetric interval"></canvas>
@@ -376,7 +454,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <p class="cap">The slide's two pictures (a two-humped even curve and an S-shaped odd curve) are redrawn here with formulas chosen for these notes.</p>
 </div>
 <div class="box beyond"><span class="tag">Beyond the handouts: why the theorem is true, and how to tell odd from even</span>
-<p>Split \(\int_{-a}^a=\int_{-a}^0+\int_0^a\). In the first piece substitute \(x=-u\), \(dx=-du\); \(x=-a\) gives \(u=a\) and \(x=0\) gives \(u=0\):</p>
+<p>Split \(\int_{-a}^a=\int_{-a}^0+\int_0^a\). In the first piece substitute \(x=-u\)<span class="why">The substitution \(x=-u\) is the fold along the \(y\)-axis: it carries the left half onto the right half.</span>, \(dx=-du\); \(x=-a\) gives \(u=a\) and \(x=0\) gives \(u=0\):</p>
 \[ \begin{aligned}\int_{-a}^0f(x)\,dx&=\int_a^0f(-u)(-du)\\&=\int_0^af(-u)\,du .\end{aligned} \]
 <p>If \(f\) is even this is \(\int_0^af(u)\,du\), so the total is twice the right half. If \(f\) is odd it is \(-\int_0^af(u)\,du\), so the total is 0.</p>
 <p>Products and quotients follow sign rules like multiplying \(\pm1\): even × even = even, odd × odd = even, odd × even = odd (the same for ÷). A sum of an odd and an even function is usually neither.</p>
@@ -394,6 +472,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </div>
 
 <div class="box beyond"><span class="tag">Beyond the handouts (examined): the \(x\to a-x\) trick</span>
+<details class="idea"><summary>What is this? (the reversal trick)</summary><div><p>Walk across the interval from right to left instead of from left to right. You pass over exactly the same area, so the integral is unchanged. The trick is useful when reading the interval backwards turns the integrand into a partner that adds nicely to the original.</p></div></details>
 <p>A related symmetry appears in exams (question type L13.4). For \(f\) continuous on \([0,a]\),</p>
 \[ \int_0^af(x)\,dx=\int_0^af(a-x)\,dx . \]
 <p class="word"><b>In words:</b> reading the interval from right to left instead of left to right does not change the area.</p>
@@ -401,11 +480,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p><b>How it is used.</b> Call the integral \(I\). After the substitution you get a second expression for \(I\); adding (or comparing) the two expressions makes something cancel. Example: \(I=\displaystyle\int_0^{\pi/2}\frac{\sin x}{\sin x+\cos x}\,dx\). With \(x\to\frac\pi2-x\), \(\sin\) and \(\cos\) swap, so \(I=\displaystyle\int_0^{\pi/2}\frac{\cos x}{\cos x+\sin x}\,dx\). Adding,</p>
 \[ \begin{aligned}2I&=\int_0^{\pi/2}\frac{\sin x+\cos x}{\sin x+\cos x}\,dx\\&=\int_0^{\pi/2}1\,dx=\frac\pi2,\\I&=\frac\pi4 .\end{aligned} \]
 </div>
+<p class="cannow"><b>You can now:</b> test a function for odd or even symmetry using \(f(-x)\); evaluate an integral over \([-a,a]\) by symmetry, stating continuity; split a function that is neither into its odd and even parts; and use the \(x\to a-x\) trick.</p>
 </section>
 
 <!-- ============ 7 ============ -->
 <section id="s7">
-<h2><span class="n">7</span>Integration by Parts (IBP)</h2>
+<h2><span class="n">7</span><span class="h2t">Integration by Parts (IBP)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture a rectangle with sides \(u\) and \(v\) that both grow. Its area \(uv\) grows in two strips: one from \(u\) getting longer, one from \(v\) getting longer. That is the product rule. Integration by parts reads it backwards: if you want one strip, take the whole rectangle and subtract the other strip. So it does not finish the integral; it trades the integral you have for a different one, and it is worth doing only when the new one is easier.</p></div></details>
 <p>Slide 21 reads "Product Rule corresponds to ______". The blank is <b>Integration by Parts</b>.</p>
 <div class="box thm"><span class="tag">Theorem: Integration by Parts (slide 22)</span>
 <p>Let \(f\) and \(g\) be differentiable functions. Then</p>
@@ -413,7 +494,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="word"><b>In words:</b> integral of (first × derivative of second) = (first × second) − integral of (derivative of first × second).</p>
 </div>
 <h3>Proof (slide 22)</h3>
-<p>By the Product Rule, \(\frac{d}{dx}\big[f(x)g(x)\big]=f(x)g'(x)+f'(x)g(x)\). Integrating both sides (FTC: an antiderivative of a derivative is the function itself),</p>
+<p>By the Product Rule, \(\frac{d}{dx}\big[f(x)g(x)\big]=f(x)g'(x)+f'(x)g(x)\). <span class="why">These two terms are the two strips of the growing rectangle; integrating both gives back the whole rectangle \(fg\).</span> Integrating both sides (FTC: an antiderivative of a derivative is the function itself),</p>
 \[ \begin{aligned}&\int\big[f(x)g'(x)+f'(x)g(x)\big]\,dx\\&\quad=\int\frac{d}{dx}\big[f(x)g(x)\big]\,dx\\&\quad=f(x)g(x).\end{aligned} \]
 <p>By the addition property of integrals (the integral of a sum is the sum of the integrals) and rearranging,</p>
 \[ \int f(x)g'(x)\,dx=f(x)g(x)-\int f'(x)g(x)\,dx . \]
@@ -425,6 +506,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ \int u\,dv=uv-\int v\,du . \]
 <p class="word"><b>In words:</b> split the integrand into a part \(u\) that you will differentiate and a part \(dv\) that you will integrate. The integral of \(u\,dv\) = \(u\) times \(v\), minus the integral of \(v\,du\).</p>
 </div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\int u\,dv\)</dt><dd>the strip you want: the integral you were given.</dd>
+<dt>\(uv\)</dt><dd>the whole rectangle, a finished piece with no integral left in it.</dd>
+<dt>\(\int v\,du\)</dt><dd>the other strip: the new integral you trade for. It must be easier.</dd>
+<dt>\(u\)</dt><dd>the factor you differentiate; choose one that gets simpler.</dd>
+<dt>\(dv\)</dt><dd>the factor you integrate; choose one you can integrate without it getting worse.</dd>
+</dl></div>
+
 <p>IBP does not finish the integral. It <b>trades</b> \(\int u\,dv\) for \(\int v\,du\). It is worth doing only if the new integral is easier.</p>
 <p><b>Analogy.</b> IBP is like a currency exchange: you hand over one integral and get another, minus a fee (\(uv\)). The exchange is only worth it if the integral you receive is one you can actually spend.</p>
 
@@ -440,11 +529,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <p class="cap">Curve used: \(v=\frac{u^2}{4}+\frac12\), from \(u_1=1\). The unshaded corner is the small rectangle \(u_1v_1\).</p>
 </div>
 </div>
+<p class="cannow"><b>You can now:</b> state integration by parts in both forms; prove it from the product rule; explain it as a trade of \(\int u\,dv\) for \(\int v\,du\); and read the area picture of IBP.</p>
 </section>
 
 <!-- ============ 8 ============ -->
 <section id="s8">
-<h2><span class="n">8</span>Integration by parts: worked examples</h2>
+<h2><span class="n">8</span><span class="h2t">Integration by parts: worked examples</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Each example asks the same question: after the trade, is the new integral easier? A power of \(x\) gets easier when differentiated, \(e^x\) and \(\sin\), \(\cos\) stay the same size when integrated, and \(\ln x\) turns into \(\frac1x\). A good split differentiates the piece that shrinks and integrates the piece that does not grow.</p></div></details>
 <div class="box eg"><span class="tag">Example 6′ (slide 24): choose \(u\) and \(dv\)</span>
 <p style="font-size:.9rem;color:var(--muted)">The slides number this example 6 again (the symmetric-function example on slide 20 is also 6). It is called 6′ here.</p>
 <p>Evaluate \(\displaystyle\int xe^x\,dx\) with (a) \(u=x,\ dv=e^x\,dx\), (b) \(u=e^x,\ dv=x\,dx\).</p>
@@ -460,7 +551,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Evaluate \(\displaystyle\int x^2e^x\,dx\).</p>
 <p><b>Solution.</b> \(u=x^2\Rightarrow du=2x\,dx\); \(dv=e^x\,dx\Rightarrow v=e^x\):</p>
 \[ \int x^2e^x\,dx=x^2e^x-2\int xe^x\,dx . \]
-<p>The power dropped from 2 to 1. Apply IBP again with the <b>same type of choice</b> (\(u\) = the power of \(x\)); the result is Example 6′(a):</p>
+<p>The power dropped from 2 to 1. <span class="why">Each trade lowers the power of \(x\) by one, so after two trades no power of \(x\) is left.</span> Apply IBP again with the <b>same type of choice</b> (\(u\) = the power of \(x\)); the result is Example 6′(a):</p>
 \[ \begin{aligned}\int x^2e^x\,dx&=x^2e^x-2\big(xe^x-e^x\big)+C\\&=e^x\left(x^2-2x+2\right)+C .\end{aligned} \]
 </div>
 
@@ -478,14 +569,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <div class="box eg"><span class="tag">Example 9 (slide 27): set \(dv=dx\)</span>
 <p>Evaluate \(\displaystyle\int\ln x\,dx\).</p>
-<p><b>Solution.</b> There is only one factor, so think of the integrand as \(\ln x\cdot1\). Let \(u=\ln x\Rightarrow du=\frac1x\,dx\); \(dv=dx\Rightarrow v=x\):</p>
+<p><b>Solution.</b> There is only one factor, so think of the integrand as \(\ln x\cdot1\). <span class="why">You cannot integrate \(\ln x\) yet, but you can differentiate it, so it must be \(u\); the 1 is the easiest possible \(dv\).</span> Let \(u=\ln x\Rightarrow du=\frac1x\,dx\); \(dv=dx\Rightarrow v=x\):</p>
 \[ \begin{aligned}\int\ln x\,dx&=x\ln x-\int x\cdot\frac1x\,dx\\&=x\ln x-\int1\,dx\\&=x\ln x-x+C .\end{aligned} \]
 <p class="word"><b>Lesson:</b> when a function is easy to differentiate but you don't know its integral (\(\ln x\), \(\arctan x\), \(\sin^{-1}x\)), let it be \(u\) and let \(dv=dx\).</p>
 </div>
 
 <div class="box eg"><span class="tag">Example 10 (slide 28): substitution with IBP</span>
 <p>Evaluate \(\displaystyle\int\cos\sqrt x\,dx\).</p>
-<p><b>Solution.</b> First substitute to remove the square root: \(w=\sqrt x\), so \(x=w^2\) and \(dx=2w\,dw\).</p>
+<p><b>Solution.</b> First substitute to remove the square root: \(w=\sqrt x\), so \(x=w^2\) and \(dx=2w\,dw\).<span class="why">There is no \(\frac1{\sqrt x}\) to act as a fingerprint, so instead solve for \(x\); the exchange rate \(2w\,dw\) brings in the factor \(w\) that makes a product for IBP.</span></p>
 \[ \begin{aligned}\int\cos\sqrt x\,dx&=\int\cos w\cdot2w\,dw\\&=2\int w\cos w\,dw .\end{aligned} \]
 <p>Now IBP with \(u=w\Rightarrow du=dw\); \(dv=\cos w\,dw\Rightarrow v=\sin w\):</p>
 \[ \begin{aligned}&2\int w\cos w\,dw\\&\quad=2\left(w\sin w-\int\sin w\,dw\right)\\&\quad=2\left(w\sin w+\cos w\right)+C .\end{aligned} \]
@@ -493,23 +584,31 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ \begin{aligned}\int\cos\sqrt x\,dx&=2\sqrt x\,\sin\sqrt x\\&\quad+2\cos\sqrt x+C .\end{aligned} \]
 <p class="word"><b>Lesson:</b> a substitution can turn an integral that looks impossible into a standard IBP. (Here the letter \(w\) is used for the substitution so that \(u\) is free for IBP.)</p>
 </div>
+<p class="cannow"><b>You can now:</b> choose \(u\) and \(dv\) so the new integral is easier; apply IBP twice in a row for \(x^2e^x\)-type integrals; prove and use a reduction formula such as \(I_n=x^ne^x-nI_{n-1}\); use \(dv=dx\) for \(\ln x\); and substitute first when a root is inside.</p>
 </section>
 
 <!-- ============ 9 ============ -->
 <section id="s9">
-<h2><span class="n">9</span>Steps for IBP, and choosing \(u\) and \(dv\)</h2>
+<h2><span class="n">9</span><span class="h2t">Steps for IBP, and choosing \(u\) and \(dv\)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>IBP is always the same three moves: split the integrand into the strip you differentiate and the strip you integrate, work out the other strip, and make the trade. Everything depends on the split, and LIATE is a ranking that tells you which piece to differentiate.</p></div></details>
 <div class="box thm"><span class="tag">Steps to apply IBP (slide 29)</span>
 <p>Given an indefinite integral of the form \(\displaystyle\int f(x)\,g'(x)\,dx\):</p>
-<ol class="steps">
-  <li>Choose a \(u\)/\(dv\) pair.</li>
-  <li>Calculate \(du\) (differentiate \(u\)) and \(v\) (integrate \(dv\); no \(+C\) needed here).</li>
-  <li>Apply the IBP formula \(\int u\,dv=uv-\int v\,du\).</li>
+<ol class="steps proc">
+  <li><b>Do:</b> Choose a \(u\)/\(dv\) pair. <span class="why">The pair decides whether the trade gives an easier integral; LIATE (below) makes the choice for you.</span></li>
+  <li><b>Do:</b> Calculate \(du\) (differentiate \(u\)) and \(v\) (integrate \(dv\); no \(+C\) needed here). <span class="why">These give the other side of the rectangle and the other strip, the pieces of the new integral; one \(+C\) at the very end covers everything.</span></li>
+  <li><b>Do:</b> Apply the IBP formula \(\int u\,dv=uv-\int v\,du\). <span class="why">This makes the trade: the finished rectangle \(uv\), minus the new strip \(\int v\,du\), which you then evaluate.</span></li>
 </ol>
 </div>
 <div class="box thm"><span class="tag">Theorem: IBP for definite integrals (slide 29)</span>
 <p>Let \(f\) and \(g\) be differentiable functions (with \(f'\), \(g'\) continuous on \([a,b]\), so that the integrals exist). Then</p>
 \[ \begin{aligned}\int_a^bf(x)\,g'(x)\,dx&=\Big[f(x)g(x)\Big]_a^b\\&\quad-\int_a^bg(x)\,f'(x)\,dx .\end{aligned} \]
 <p class="word"><b>In words:</b> same formula as before, but the "\(uv\)" part is evaluated at the two limits, and the new integral keeps the same limits.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\Big[f(x)g(x)\Big]_a^b\)</dt><dd>the big rectangle minus the small rectangle: the finished piece, evaluated at the two ends.</dd>
+<dt>\(\int_a^bg(x)\,f'(x)\,dx\)</dt><dd>the new strip, over the same interval.</dd>
+<dt>same limits</dt><dd>unlike substitution, the variable is still \(x\), so the limits do not change.</dd>
+</dl></div>
+
 </div>
 <p>For example, with \(u=x\), \(dv=\cos x\,dx\) (so \(du=dx\), \(v=\sin x\)):</p>
 \[ \begin{aligned}\int_0^{\pi}x\cos x\,dx&=\Big[x\sin x\Big]_0^{\pi}-\int_0^{\pi}\sin x\,dx\\&=0-\Big[-\cos x\Big]_0^{\pi}\\&=0-(1+1)=-2 .\end{aligned} \]
@@ -518,16 +617,17 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <ul class="list">
   <li>Choose \(u\) and \(dv\) so that the integral \(\int v\,du\) is simpler than the one given.</li>
   <li>Try \(u\) = the "part" of the integrand that is easier to differentiate (gets simpler when differentiated).</li>
-  <li>Set \(u\) by the <b>LIATE</b> priority ordering (roughly): <b>L</b>ogarithmic, <b>I</b>nverse trigonometric, <b>A</b>lgebraic (powers of \(x\), polynomials), <b>T</b>rigonometric, <b>E</b>xponential. Whichever type comes first in this list is \(u\); the rest is \(dv\).</li>
+  <li>Set \(u\) by the <b>LIATE</b> priority ordering (roughly): <b>L</b>ogarithmic, <b>I</b>nverse trigonometric, <b>A</b>lgebraic (powers of \(x\), polynomials), <b>T</b>rigonometric, <b>E</b>xponential. Whichever type comes first in this list is \(u\); the rest is \(dv\). <span class="why">The types early in the list get simpler when differentiated, and the types late in the list stay the same size when integrated, so the trade gives an easier integral.</span></li>
   <li><b>Indirect applications:</b>
     <ul class="list">
-      <li><b>Multiple applications</b>, useful for integrands like \(x^n\cos x\), \(x^ne^x\), \(e^x\cos x\), \(\sin mx\cos nx\). Keep the <b>same function type</b> as \(u\) (and as \(dv\)) each time; switching undoes the previous step.</li>
+      <li><b>Multiple applications</b>, useful for integrands like \(x^n\cos x\), \(x^ne^x\), \(e^x\cos x\), \(\sin mx\cos nx\). Keep the <b>same function type</b> as \(u\) (and as \(dv\)) each time; switching undoes the previous step. <span class="why">Switching integrates what you just differentiated, so the second trade hands back the integral you started with, as \(I=I\).</span></li>
       <li><b>Set \(dv=dx\)</b> (Example 9).</li>
       <li><b>Combine the Substitution Rule with IBP</b> (Example 10).</li>
     </ul></li>
   <li>Like substitution, choosing the parts is a "non-linear" problem: it needs practice, intuition and perseverance.</li>
 </ul>
 <p style="font-size:.9rem;color:var(--muted)">The slide misspells "Algebraic" as "Alegbraic", and lists "\(e^n\cos x\)", which should read \(e^x\cos x\) (as in Group work 5).</p>
+<details class="idea"><summary>What is this? (LIATE)</summary><div><p>LIATE ranks function types by how much they gain from being differentiated. At the top, logs and inverse trig functions turn into simple fractions when differentiated, but you may not even know their integrals. At the bottom, exponentials and sines and cosines integrate without getting worse. So differentiate the type that comes first and integrate the rest.</p></div></details>
 <p><b>Why LIATE works.</b> Logs and inverse trig functions have simple derivatives (\(\frac1x\), \(\frac1{1+x^2}\)) but awkward integrals, so they should be differentiated. Exponentials and sines/cosines integrate without getting worse, so they make a good \(dv\). Powers of \(x\) sit in the middle: they shrink when differentiated.</p>
 
 <div class="figure">
@@ -555,11 +655,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[ \begin{aligned}\int_0^1x\,f'(x)\,dx&=\Big[x\,f(x)\Big]_0^1-\int_0^1f(x)\,dx\\&=f(1)-\int_0^1f(x)\,dx .\end{aligned} \]
 <p class="word"><b>In words:</b> moving the derivative off \(f\) and onto \(x\) costs a boundary term. Question type L13.3 (and reduction formula proofs) use this.</p>
 </div>
+<p class="cannow"><b>You can now:</b> apply the three IBP steps; use the definite form with the boundary term \(\big[uv\big]_a^b\); choose \(u\) by LIATE and explain why; keep the same type as \(u\) in repeated IBP; solve for \(I\) when the integral comes back; and use IBP when \(f\) is known only by its values.</p>
 </section>
 
 <!-- ============ 10 ============ -->
 <section id="s10">
-<h2><span class="n">10</span>Choice of techniques</h2>
+<h2><span class="n">10</span><span class="h2t">Choice of techniques</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Two different keys can open the same lock. Substitution and IBP can both find an antiderivative of the same function, and the answers may look different. But two antiderivatives of the same function have the same slope everywhere, so on an interval their graphs are the same curve shifted up or down: they differ only by a constant, and the \(+C\) absorbs it.</p></div></details>
 <div class="box eg"><span class="tag">Example 11 (slide 31)</span>
 <p>Evaluate \(\displaystyle\int\sin x\cos x\,dx\) by (a) the Substitution Rule, (b) Integration by Parts.</p>
 <p><b>(a)</b> \(u=\sin x\), \(du=\cos x\,dx\):</p>
@@ -567,7 +669,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>(With \(u=\cos x\) instead, \(du=-\sin x\,dx\) and you get \(-\frac{\cos^2x}{2}+C\).)</p>
 <p><b>(b)</b> \(u=\sin x\Rightarrow du=\cos x\,dx\); \(dv=\cos x\,dx\Rightarrow v=\sin x\). Call the integral \(I\):</p>
 \[ \begin{aligned}I&=\sin x\cdot\sin x-\int\sin x\cos x\,dx\\&=\sin^2x-I .\end{aligned} \]
-<p>The original integral reappears. Solve for it: \(2I=\sin^2x\), so \(I=\dfrac{\sin^2x}{2}+C\).</p>
+<p>The original integral reappears. <span class="why">Treat \(I\) as an unknown number in an equation; going round again would only bring it back once more.</span> Solve for it: \(2I=\sin^2x\), so \(I=\dfrac{\sin^2x}{2}+C\).</p>
 <p><b>Three answers?</b> Using \(\sin x\cos x=\frac12\sin2x\) gives a third answer, \(-\frac{\cos2x}{4}+C\). All three are correct: \(-\frac{\cos^2x}{2}=\frac{\sin^2x}{2}-\frac12\) and \(-\frac{\cos2x}4=\frac{\sin^2x}2-\frac14\). They differ by constants. Check with the graph below.</p>
 <p class="word"><b>Lesson:</b> two correct antiderivatives of the same function can look different but always differ by a constant (the graphs are vertical shifts of each other). To check an answer, differentiate it.</p>
 </div>
@@ -584,11 +686,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
   <div class="legend" id="cst-leg"></div>
   <div class="readout" id="cst-out"></div>
 </div>
+<p class="cannow"><b>You can now:</b> evaluate one integral by more than one technique; show that different-looking answers differ by a constant; and check any indefinite integral by differentiating it.</p>
 </section>
 
 <!-- ============ 11 ============ -->
 <section id="s11">
-<h2><span class="n">11</span>Summary (slide 32)</h2>
+<h2><span class="n">11</span><span class="h2t">Summary (slide 32)</span></h2>
 <ul class="list">
   <li>Thanks to the FTC, every differentiation rule has a corresponding integration rule: if \(y'\) is known, then \(\int y'\,dx=y+C\).
     <ul class="list">
@@ -606,7 +709,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 12 ============ -->
 <section id="s12">
-<h2><span class="n">12</span>Common mistakes (slide 34)</h2>
+<h2><span class="n">12</span><span class="h2t">Common mistakes (slide 34)</span></h2>
 <h3>Substitution Rule</h3>
 <div class="box">
 <div class="mistake">
@@ -629,7 +732,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 13 ============ -->
 <section id="s13">
-<h2><span class="n">13</span>Find the mistake (slide 33)</h2>
+<h2><span class="n">13</span><span class="h2t">Find the mistake (slide 33)</span></h2>
 <p>Slide 33 is a blank "Find the Mistake" slide, filled in during the lecture. The three items below are written for these notes in the same spirit, using the common mistakes above. <span class="pill">Written for these notes</span></p>
 <div class="q">
 <p class="qh">1. Evaluate \(\displaystyle\int_0^{\pi/2}\sin^2x\cos x\,dx\).</p>
@@ -665,7 +768,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 14 ============ -->
 <section id="s14">
-<h2><span class="n">14</span>Group work (slide 35)</h2>
+<h2><span class="n">14</span><span class="h2t">Group work (slide 35)</span></h2>
 <p>Evaluate each integral. Decide first: substitution, IBP, or both?</p>
 <div class="q"><p class="qh">1. \(\displaystyle\int x\cos(3x)\,dx\)</p>
 <details><summary>Hint</summary><div><p>IBP: LIATE says \(u=x\), \(dv=\cos3x\,dx\). Careful: \(v=\frac13\sin3x\).</p></div></details>
@@ -720,7 +823,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 15 ============ -->
 <section id="s15">
-<h2><span class="n">15</span>Concept checks</h2>
+<h2><span class="n">15</span><span class="h2t">Concept checks</span></h2>
 <p>Short questions to test understanding, not computation. <span class="pill">Written for these notes</span></p>
 <div class="q"><p class="qh">C1. Why does \(u=x^2\) work for \(\int x\,e^{x^2}\,dx\) but not for \(\int e^{x^2}\,dx\)?</p>
 <details><summary>Answer</summary><div><p>\(du=2x\,dx\). In the first integral the factor \(x\,dx=\frac12du\) is present, so everything converts to \(u\). In the second there is no \(x\) to absorb, and \(dx=\frac{du}{2x}\) would leave an \(x\) behind. (\(\int e^{x^2}dx\) has no formula in terms of the usual functions at all.)</p></div></details></div>
@@ -738,7 +841,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <!-- ============ 16 ============ -->
 <section id="pastpaper">
-<h2><span class="n">16</span>Exam taster</h2>
+<h2><span class="n">16</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Lecture 13's question types appear 28 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide.</p>
 <div class="q"><p class="src"><b>May 2020 Q3(a)</b><span>4% (Q3 total 16%)</span><a class="guide" data-guide="L13.1">Guide · L13.1 Substitution</a></p>
@@ -1010,5 +1113,13 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </body></html>

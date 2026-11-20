@@ -106,6 +106,34 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
 .cases b{display:block;margin-bottom:2px}
 @media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+ol.steps.proc{border-left:0}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -136,12 +164,23 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <header class="top">
   <span class="course">MATH1851 · Calculus · Lecture 16</span>
   <h1>Area and Volume</h1>
-  <p class="lede">Every slide of Lecture 16 explained from scratch, with interactive graphs. The worked examples from the slides are solved in full. Each practice question has a hint and a collapsed answer. The exam taster at the end shows how the exam asks about this lecture.</p>
 </header>
 
 <!-- ================= 0 ================= -->
-<section id="s0"><h2><span class="n">0</span>Where this lecture sits</h2>
-<p><b>What came before.</b> In Lecture 11 we met the idea that the area under a graph can be found by chopping it into thin rectangles and adding them up (a <b>Riemann sum</b>). In Lecture 12 that sum became the <b>definite integral</b> \(\int_a^b f(x)\,dx\), and the <b>Fundamental Theorem of Calculus</b> (FTC) let us evaluate it with an antiderivative. Lectures 13 and 14 gave us techniques (substitution, integration by parts, trigonometric substitution, partial fractions) to actually find those antiderivatives.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this lecture sits</span></h2>
+<p>This lecture uses one idea again and again: cut a shape into thin pieces, measure one piece, and add them all up with an integral. Flat regions are cut into thin strips; solids are cut into slices, like a loaf, or into thin tubes nested like cans.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>The area between two curves is a stack of thin strips, each one top minus bottom.</b> Split the region where the curves cross.</li>
+<li><a href="#s2">§2</a> <b>Turn the strips sideways when the curves are easier as \(x=\) (something in \(y\)):</b> each strip is right minus left.</li>
+<li><a href="#s3">§3</a> <b>A volume is a sliced loaf:</b> add up (area of each slice) × (its thickness).</li>
+<li><a href="#s4">§4</a> <b>Spin a region about a line and every slice is a coin (disc) or a ring (washer).</b> <span class="pill">Most common exam type</span></li>
+<li><a href="#s5">§5</a> <b>Or cut the solid into nested cans (shells):</b> each can wall is 2π × radius × height × thickness.</li>
+<li><a href="#s6">§6</a> <b>Choose the cut from the strip:</b> across the axis gives discs or washers; along the axis gives shells.</li>
+<li><a href="#s7">§7</a>–<a href="#pastpaper">§12</a> Summary table, common mistakes, the slides' practice questions, concept checks and an exam taster.</li>
+</ol>
+</div>
+<p><b>You need:</b> Riemann sums (Lecture 11), the definite integral \(\int_a^b f(x)\,dx\) and the Fundamental Theorem of Calculus (FTC, Lecture 12), and the integration techniques of Lectures 13 and 14 (substitution, integration by parts, trigonometric substitution, partial fractions). <b>In the exam:</b> a region question is in 10 of the 13 recent papers and in all 10 older ones, 34 question parts in all (2013 to 2026); usually you spin a region between two curves about a line and find the volume, sometimes you find the area. See the <a href="guide-L16.html">L16 exam guide</a>.</p>
 <p><b>The recall slide (slide 2)</b> summarised Lecture 15: parameterization frees us from having to write a curve as \(y=f(x)\).</p>
 <div class="scroll"><table>
 <tr><th></th><th>Parametric curves</th><th>Polar coordinates</th></tr>
@@ -162,7 +201,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= 1 ================= -->
-<section id="s1"><h2><span class="n">1</span>Area between curves</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Area between curves</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture the region between two curves as a shape cut out of card. Slice it into many thin vertical strips, like the slats of a fence standing side by side. Each strip is almost a rectangle: its height is the gap between the two curves at that point (top curve minus bottom curve), and its width is tiny. Add up the areas of all the strips and you have the area of the region. This needs curves without breaks, so that every strip has a definite top and bottom.</p></div></details>
 <p>Slide 7 shows two wavy curves \(y=f(x)\) and \(y=g(x)\) that keep crossing each other, with the gaps between them shaded, and asks: <b>how do we compute the area between \(f\) and \(g\) from \(a\) to \(b\)?</b></p>
 <p>The idea: cut the region into thin vertical strips. A strip at position \(x\) of width \(\Delta x\) is (almost) a rectangle whose height is the gap between the curves, <b>top curve minus bottom curve</b>. Its area is about \([f(x)-g(x)]\,\Delta x\) when \(f\) is on top. Adding up all strips and letting the width shrink to zero turns the sum into an integral, exactly as in Lecture 11.</p>
 
@@ -177,7 +217,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>The area \(A\) of the region bounded by the curves \(y=f(x)\), \(y=g(x)\) and the lines \(x=a\), \(x=b\), where \(f\) and \(g\) are <b>continuous</b> and \(f(x)\ge g(x)\) for all \(x\) in \([a,b]\), is</p>
 \[A=\int_a^b \big[f(x)-g(x)\big]\,dx.\]
 <p class="word"><b>In words:</b> area between the curves = integral from left end to right end of (upper curve − lower curve).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(f(x)-g(x)\)</dt><dd>the height of the strip standing at position \(x\): top curve minus bottom curve.</dd>
+<dt>\(dx\)</dt><dd>the strip's width, so height × width is the area of one strip.</dd>
+<dt>\(\int_a^b\)</dt><dd>add up the strips from the left edge \(a\) of the region to the right edge \(b\).</dd>
+<dt>\(f(x)\ge g(x)\)</dt><dd>\(f\) is the top all the way across, so every strip has a positive height and nothing cancels.</dd>
+<dt>continuous</dt><dd>no breaks in either curve, so every strip has a definite top and bottom and the integral exists.</dd>
+</dl></div>
 <p>Terms used here: <b>continuous</b> (Lecture 4) means the graph has no breaks or jumps on \([a,b]\), which guarantees the integral exists. The condition \(f(x)\ge g(x)\) says \(f\) is the upper curve throughout. Note that it does <b>not</b> matter whether the curves are above or below the \(x\)-axis: the height of a strip is \(f(x)-g(x)\ge0\) either way.</p>
+<details class="idea"><summary>What is this? (splitting at crossings)</summary><div><p>Where two curves cross, top and bottom swap places. A strip's height must always be a positive length. If you keep subtracting in the same order after the crossing, the strips there come out negative and cancel some of the others. So cut the region at every crossing and treat each piece on its own, with its own top and bottom.</p></div></details>
 <p>Slide 8 adds, for the picture: from \(a\) to \(b\), \(f(x)\ge g(x)\); from \(b\) to \(c\), \(g(x)\ge f(x)\). So the area from \(a\) to \(c\) must be split at \(b\):</p>
 \[A=\int_a^b\big[f(x)-g(x)\big]\,dx+\int_b^c\big[g(x)-f(x)\big]\,dx.\]
 <p class="word"><b>In words:</b> on each piece, subtract the lower curve from the upper one; then add the pieces.</p>
@@ -187,7 +235,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="box eg"><span class="tag">Example 1 (slide 9)</span>
 <p><b>Find the area of the region bounded by the curves \(y=x^3\) and \(y=x\).</b></p>
 <p><b>Step 1: where do they cross?</b> \(x^3=x\iff x^3-x=0\iff x(x-1)(x+1)=0\), so \(x=-1,\ 0,\ 1\). The curves enclose two pieces: one over \([-1,0]\) and one over \([0,1]\).</p>
-<p><b>Step 2: which is on top on each piece?</b> Test a point. At \(x=-\tfrac12\): \(x^3=-\tfrac18\) and \(x=-\tfrac12\), so \(x^3\) is on top on \([-1,0]\). At \(x=\tfrac12\): \(x^3=\tfrac18\lt\tfrac12=x\), so \(x\) is on top on \([0,1]\).</p>
+<p><b>Step 2: which is on top on each piece?</b> Test a point.<span class="why">Between two neighbouring crossings the curves cannot swap (both are continuous), so one test point decides the whole piece.</span> At \(x=-\tfrac12\): \(x^3=-\tfrac18\) and \(x=-\tfrac12\), so \(x^3\) is on top on \([-1,0]\). At \(x=\tfrac12\): \(x^3=\tfrac18\lt\tfrac12=x\), so \(x\) is on top on \([0,1]\).</p>
 <p><b>Step 3: integrate each piece.</b></p>
 \[\begin{aligned}A&=\int_{-1}^{0}(x^3-x)\,dx+\int_0^1(x-x^3)\,dx\\&=\Big[\tfrac{x^4}{4}-\tfrac{x^2}{2}\Big]_{-1}^{0}+\Big[\tfrac{x^2}{2}-\tfrac{x^4}{4}\Big]_0^1\\&=\tfrac14+\tfrac14=\tfrac12.\end{aligned}\]
 <p><b>Shortcut:</b> both functions are odd (\(h(-x)=-h(x)\)), so the picture is symmetric through the origin and the two pieces have equal area: \(A=2\int_0^1(x-x^3)\,dx=\tfrac12\).</p>
@@ -199,20 +247,28 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--c3)">counted as +</span><span style="--k:var(--c2)">counted as −</span></div>
 <div class="readout" id="fB-out"></div>
 <p class="cap">Colours show how the <b>single, unsplit integral</b> treats each piece. Red pieces are subtracted instead of added, so the unsplit integral is too small (even zero or negative). Splitting at the crossings and always using "upper − lower" makes every piece count positively.</p></div>
+<p class="cannow"><b>You can now:</b> write the area between two curves as an integral of (top − bottom); find where the curves cross and split the integral there; decide which curve is on top on each piece with one test point.</p>
 </section>
 
 <!-- ================= 2 ================= -->
-<section id="s2"><h2><span class="n">2</span>Slicing sideways: integrating with respect to \(y\)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Slicing sideways: integrating with respect to \(y\)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Now lay the strips sideways, like planks stacked one on top of another. Each horizontal strip runs from the left curve to the right curve, so its length is right minus left, and its thickness is a tiny step in height. Add them up from the bottom of the region to the top. This is worth doing when every horizontal strip meets the same two curves, while vertical strips would change their top or bottom part-way across.</p></div></details>
 <p>Some regions are bounded by curves that are easier to describe as \(x=\) (something in \(y\)). Then it is easier to cut the region into thin <b>horizontal</b> strips. A horizontal strip at height \(y\) of thickness \(\Delta y\) has length "right curve − left curve", so</p>
 \[A=\int_c^d\big[x_{\text{right}}(y)-x_{\text{left}}(y)\big]\,dy.\]
 <p class="word"><b>In words:</b> area = integral from bottom height to top height of (right curve − left curve).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(x_{\text{right}}(y)-x_{\text{left}}(y)\)</dt><dd>the length of the plank at height \(y\): where it ends minus where it starts.</dd>
+<dt>\(dy\)</dt><dd>the plank's thickness, a tiny step in height.</dd>
+<dt>\(\int_c^d\)</dt><dd>stack the planks from the lowest height \(c\) of the region to the highest height \(d\).</dd>
+<dt>\(x\) as a function of \(y\)</dt><dd>each plank is measured across, so both curves must be written as \(x=\) (something in \(y\)).</dd>
+</dl></div>
 
 <div class="box eg"><span class="tag">Example 2 (slide 10)</span>
 <p><b>Find the area enclosed by the line \(y=x-1\) and the parabola \(y^2=2x+6\) by evaluating an integral (a) with respect to \(x\), (b) with respect to \(y\).</b></p>
 <p><b>Sketch first.</b> \(y^2=2x+6\) means \(x=\tfrac{y^2}{2}-3\): a parabola opening to the right with its tip (vertex) at \((-3,0)\). Its upper half is \(y=\sqrt{2x+6}\) and its lower half is \(y=-\sqrt{2x+6}\).</p>
 <p><b>Intersection points.</b> Put \(x=y+1\) (from the line) into \(y^2=2x+6\): \(y^2=2y+8\iff y^2-2y-8=0\iff(y-4)(y+2)=0\). So \(y=4\) (point \((5,4)\)) or \(y=-2\) (point \((-1,-2)\)).</p>
 <h4>(a) With respect to \(x\) (vertical strips)</h4>
-<p>A vertical strip's top and bottom change at \(x=-1\):</p>
+<p>A vertical strip's top and bottom change at \(x=-1\):<span class="why">Left of \(x=-1\) both ends of the strip are on the parabola; to the right, the bottom end is on the line instead.</span></p>
 <ul class="list"><li>For \(-3\le x\le -1\): the strip runs from the lower half of the parabola to the upper half, height \(\sqrt{2x+6}-(-\sqrt{2x+6})=2\sqrt{2x+6}\).</li>
 <li>For \(-1\le x\le 5\): the strip runs from the line up to the upper half, height \(\sqrt{2x+6}-(x-1)\).</li></ul>
 \[\begin{aligned}A&=\int_{-3}^{-1}2\sqrt{2x+6}\,dx\\&\quad+\int_{-1}^{5}\big[\sqrt{2x+6}-x+1\big]\,dx.\end{aligned}\]
@@ -234,17 +290,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p class="cap">With vertical strips, the bottom of the strip changes from the parabola to the line at \(x=-1\), so two integrals are needed. With horizontal strips, every strip goes from the parabola (left) to the line (right).</p></div>
 
 <div class="box thm"><span class="tag">Steps to find area between curves (slide 11)</span>
-<ol class="steps">
-<li><b>Sketch the region.</b></li>
-<li><b>Choose the variable of integration</b> (\(x\): vertical strips; \(y\): horizontal strips).</li>
-<li><b>Find the limits of integration:</b> find the points of intersection; list the intervals between intersection points and endpoints.</li>
-<li><b>Determine the "top" and "bottom" functions</b> (for \(dx\)) or the <b>"left" and "right" functions</b> (for \(dy\)) on each interval.</li>
-<li><b>Set up the integral(s).</b> The total area is the sum of the integrals over all sub-regions.</li>
-<li><b>Evaluate the integral(s).</b></li></ol></div>
+<ol class="steps proc">
+<li><b>Do:</b> <b>Sketch the region.</b> <span class="why">You need to see the strips to know where each one starts and ends.</span></li>
+<li><b>Do:</b> <b>Choose the variable of integration</b> (\(x\): vertical strips; \(y\): horizontal strips). <span class="why">This decides which way the strips lie; choose the direction in which every strip meets the same two curves, if there is one.</span></li>
+<li><b>Do:</b> <b>Find the limits of integration:</b> find the points of intersection; list the intervals between intersection points and endpoints. <span class="why">The crossing points are where the region ends, or where a strip's top or bottom switches to another curve.</span></li>
+<li><b>Do:</b> <b>Determine the "top" and "bottom" functions</b> (for \(dx\)) or the <b>"left" and "right" functions</b> (for \(dy\)) on each interval. <span class="why">A strip's length is only positive if you subtract the right way round.</span></li>
+<li><b>Do:</b> <b>Set up the integral(s).</b> The total area is the sum of the integrals over all sub-regions. <span class="why">Each integral adds up the strips of one piece, and the pieces together make the whole region.</span></li>
+<li><b>Do:</b> <b>Evaluate the integral(s).</b> <span class="why">The FTC turns the sum of infinitely many thin strips into an antiderivative taken at the two ends.</span></li></ol></div>
+<p class="cannow"><b>You can now:</b> choose vertical or horizontal strips; rewrite curves as \(x=\) (something in \(y\)) when needed; set up and evaluate an area integral in \(y\) as right − left.</p>
 </section>
 
 <!-- ================= 3 ================= -->
-<section id="s3"><h2><span class="n">3</span>Volume by cross-sections</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Volume by cross-sections</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Think of a loaf of bread. Cut it into thin slices. Each slice is almost a flat slab, so its volume is the area of its face times its thickness. Add up all the slices and you have the volume of the loaf. Where the loaf is fatter the faces are bigger, so the face area changes along the loaf; the integral adds up face area × thickness as the slices get thinner and thinner.</p></div></details>
 <p>Slide 12 lists the volume formulas of common shapes (all within school geometry):</p>
 <div class="scroll"><table>
 <tr><th>Shape</th><th>Volume</th><th>In words</th></tr>
@@ -267,6 +325,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Let \(S\) be a solid that lies between \(x=a\) and \(x=b\). If the cross-sectional area of \(S\) in the plane \(P_x\), through \(x\) and perpendicular to the \(x\)-axis, is \(A(x)\), where \(A\) is an integrable function, then the <b>volume</b> of \(S\) is</p>
 \[V=\lim_{n\to\infty}\sum_{i=1}^{n}A(x_i^*)\,\Delta x=\int_a^b A(x)\,dx.\]
 <p class="word"><b>In words:</b> volume = sum of (area of slice × thickness of slice), in the limit of infinitely thin slices = integral of the cross-sectional area.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(A(x_i^*)\)</dt><dd>the face area of the \(i\)-th slice of the loaf, measured at one point inside it.</dd>
+<dt>\(\Delta x\)</dt><dd>the thickness of each slice.</dd>
+<dt>\(A(x_i^*)\,\Delta x\)</dt><dd>the volume of one slice, treated as a flat slab.</dd>
+<dt>\(\sum\), then \(n\to\infty\)</dt><dd>add up all the slices, then cut thinner and thinner until the slabs fit the loaf exactly.</dd>
+<dt>\(\int_a^b A(x)\,dx\)</dt><dd>the same thing written as an integral along the loaf, from one end \(a\) to the other end \(b\).</dd>
+</dl></div>
 <p>Unpacking the symbols:</p>
 <ul class="list">
 <li>\(P_x\) is the flat plane that cuts through the solid at position \(x\), at right angles to the \(x\)-axis (like a knife cut).</li>
@@ -283,10 +348,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--ink)">true outline</span><span style="--k:var(--accent)">slabs</span></div>
 <div class="readout" id="fD-out"></div>
 <p class="cap">Each slab is a short cylinder of volume \(A(x_i^*)\,\Delta x\) with \(A=\pi(\text{radius})^2\). For the cylinder every slab is exact. For the curved solid the sum gets closer to the integral as \(n\) grows.</p></div>
+<p class="cannow"><b>You can now:</b> explain a volume as a sum of thin slices; write \(V=\int_a^b A(x)\,dx\) once you know the area of a cross-section; rederive \(\pi r^2h\) for a cylinder.</p>
 </section>
 
 <!-- ================= 4 ================= -->
-<section id="s4"><h2><span class="n">4</span>Solids of revolution: the disc and washer method</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Solids of revolution: the disc and washer method</span> <span class="mins">~11 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Spin a flat region about a line, and it sweeps out a solid, the way a profile on a potter's wheel sweeps out a pot. Now slice that solid like a loaf, straight across the axis. Because every point went round in a circle, every slice is round: a solid coin if the region touched the axis, or a coin with a hole if there was a gap. So the face area of each slice is easy to write down, and §3 does the rest.</p></div></details>
 <div class="box def"><span class="tag">Definition (slide 15)</span>
 <p>A solid obtained by revolving (spinning) a flat region about a line is called a <b>solid of revolution</b>. The line is the <b>axis of rotation</b>.</p></div>
 <p>Analogy: a potter's wheel. A flat profile spun around the vertical spindle sweeps out a pot. Every point of the region travels in a circle around the axis, so <b>every cross-section perpendicular to the axis is a circle (or a ring)</b>. That makes \(A(x)\) easy to write down.</p>
@@ -299,15 +366,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div><b>Washer</b> (a coin with a hole, like a metal washer used with bolts): \[A=\pi(\text{outer radius})^2-\pi(\text{inner radius})^2\] <span class="word"><b>In words:</b> big circle minus the hole.</span></div></div>
 <p>Slide 15's pictures: a sphere cut by a plane shows a disc cross-section; a region that does not touch the axis, spun around it, gives a solid with a tunnel through it, so its cross-sections are washers.</p>
 
+<details class="idea"><summary>What is this? (disc method)</summary><div><p>Slice a cucumber across: every slice is a solid round coin. When the region touches the axis, each thin strip across the axis spins into such a coin. Its radius is how far the curve is from the axis at that point, so the face area is π times that distance squared.</p></div></details>
 <div class="box def"><span class="tag">Definition: disc method (slide 16)</span>
 <p>The volume of the solid formed when the region below \(y=f(x)\) (and above the \(x\)-axis), \(a\le x\le b\), is rotated about the \(x\)-axis is</p>
 \[V=\lim_{n\to\infty}\sum_{i=1}^{n}\pi\big[f(x_i^*)\big]^2\Delta x=\int_a^b\pi\big[f(x)\big]^2\,dx.\]
 <p class="word"><b>In words:</b> volume = integral of π × (radius)², where the radius of each disc is the height of the curve above the axis.</p></div>
+<details class="idea"><summary>What is this? (washer method)</summary><div><p>If there is a gap between the region and the axis, the solid has a tunnel through the middle, like a bagel or a ring of tinned pineapple. Each slice is then a coin with a hole. Its face area is the whole circle minus the hole. The outer edge comes from the curve farther from the axis and the hole from the nearer curve.</p></div></details>
 <div class="box def"><span class="tag">Definition: washer method (slide 16)</span>
 <p>The volume of the solid formed when the region between \(y=f(x)\) and \(y=g(x)\), where \(|f(x)|\ge|g(x)|\), is rotated about the \(x\)-axis is</p>
 \[\begin{aligned}V&=\lim_{n\to\infty}\sum_{i=1}^{n}\Big(\pi\big[f(x_i^*)\big]^2-\pi\big[g(x_i^*)\big]^2\Big)\Delta x\\&=\int_a^b\Big(\pi\big[f(x)\big]^2-\pi\big[g(x)\big]^2\Big)dx.\end{aligned}\]
 <p class="word"><b>In words:</b> volume = integral of π × [(outer radius)² − (inner radius)²]; the outer radius comes from the curve farther from the axis.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\pi\big[f(x)\big]^2\)</dt><dd>the area of the whole ring's outer circle: its radius is the distance from the axis to the farther curve.</dd>
+<dt>\(\pi\big[g(x)\big]^2\)</dt><dd>the area of the hole: its radius is the distance to the nearer curve.</dd>
+<dt>difference, times \(dx\)</dt><dd>face area of the ring × its thickness: the volume of one slice of the bagel.</dd>
+<dt>\(|f(x)|\ge|g(x)|\)</dt><dd>\(f\) is the farther curve, so the outer circle really is the bigger one.</dd>
+<dt>\(g=0\)</dt><dd>no hole: the formula becomes the disc method above.</dd>
+</dl></div>
 <p>Why \(|f(x)|\ge|g(x)|\)? The radius is a <b>distance</b> from the axis, and distance from the \(x\)-axis is \(|y|\). The condition says \(f\) is the curve farther from the axis (outer radius) and \(g\) the nearer one (inner radius). Since the radii are squared, the signs do not matter, but the order does: <b>outer² − inner²</b>, never \((\text{outer}-\text{inner})^2\).</p>
+<details class="idea"><summary>What is this? (another axis)</summary><div><p>Spinning about a different line, such as a horizontal line above the region, just moves the spindle of the potter's wheel. The slices are still coins or rings across the spindle. Every radius is measured from the spindle to a curve, not from the \(x\)-axis, so a curve that is lower can be the one farther away.</p></div></details>
 <p>Slide 16 ends: <b>the definition may be reformulated with respect to \(y\) and/or another axis of rotation.</b> The general rule:</p>
 \[V=\int\pi\big[R^2-r^2\big]\,d(\text{variable along the axis}),\]
 \[R=\text{outer radius},\quad r=\text{inner radius}.\]
@@ -333,7 +410,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>Horizontal slices at height \(y\), from \(x=y\) to \(x=\sqrt y\): washers with outer radius \(\sqrt y\), inner radius \(y\).</p>
 \[\begin{aligned}V&=\pi\int_0^1\big[(\sqrt y)^2-y^2\big]dy=\pi\int_0^1(y-y^2)\,dy\\&=\pi\Big(\tfrac12-\tfrac13\Big)=\frac{\pi}{6}.\end{aligned}\]
 <h4>(c) About the line \(y=2\)</h4>
-<p>The axis is horizontal, above the region. Vertical slices give washers. Distance from height \(y\) up to the axis is \(2-y\). The parabola \(y=x^2\) is lower, hence <b>farther</b> from \(y=2\): outer radius \(R=2-x^2\); inner radius \(r=2-x\).</p>
+<p>The axis is horizontal, above the region. Vertical slices give washers. Distance from height \(y\) up to the axis is \(2-y\). The parabola \(y=x^2\) is lower, hence <b>farther</b> from \(y=2\): outer radius \(R=2-x^2\); inner radius \(r=2-x\).<span class="why">The spindle is above the region, so the outer edge of each ring is traced by the lower curve.</span></p>
 \[\begin{aligned}V&=\pi\int_0^1\big[(2-x^2)^2-(2-x)^2\big]dx\\&=\pi\int_0^1\big(x^4-5x^2+4x\big)dx\\&=\pi\Big(\tfrac15-\tfrac53+2\Big)=\frac{8\pi}{15}.\end{aligned}\]
 <h4>(d) About the line \(x=-1\)</h4>
 <p>The axis is vertical, to the left of the region. Horizontal slices give washers. Distance from position \(x\) to the axis is \(x-(-1)=x+1\). The farther curve is the right one, \(x=\sqrt y\): \(R=1+\sqrt y\); \(r=1+y\).</p>
@@ -353,10 +430,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">region</span><span style="--k:var(--c2)">axis of rotation</span><span style="--k:var(--c4)">strip and what it sweeps</span><span style="--k:var(--c3)">inner radius r</span></div>
 <div class="readout" id="eA-out"></div>
 <p class="cap">Left: the flat region, the axis (dashed red) and one representative strip. Right: a sketch of the solid (faint, with the region drawn on it) and the disc, washer or shell that the strip sweeps out (orange; circles are drawn as ellipses because we view them at an angle). Choosing a region resets the axis and method to the slide's example; then move the axis with k or switch method. The volume is the same for both methods.</p></div>
+<p class="cannow"><b>You can now:</b> recognise a disc (no gap) or a washer (gap) from the sketch; write the outer and inner radii as distances from any horizontal or vertical axis; set up and evaluate \(\pi\int(R^2-r^2)\), in \(x\) or in \(y\).</p>
 </section>
 
 <!-- ================= 5 ================= -->
-<section id="s5"><h2><span class="n">5</span>The cylindrical shells method</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">The cylindrical shells method</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Instead of slicing across the axis, cut the solid into thin tubes around it, like a set of tin cans of increasing size, without lids or bases, nested one inside another. Each can wall is a thin sheet: cut it down the side and unroll it, and you get an almost flat rectangle. Its length is the distance round the can, its height is the height of the can, and its thickness is the thickness of the wall. A thin strip of the region lying alongside the axis sweeps out exactly one such can wall, and adding up all the walls gives the solid.</p></div></details>
 <p>Discs and washers need slices <b>perpendicular</b> to the axis. Sometimes that is awkward: for example, rotating the region under \(y=e^{-x^2}\) about the \(y\)-axis would need \(x\) in terms of \(y\) (\(x=\sqrt{-\ln y}\)), which is messy. The <b>shell method</b> uses strips <b>parallel</b> to the axis instead.</p>
 <div class="box def"><span class="tag">Definition: cylindrical shell</span>
 <p>A <b>cylindrical shell</b> is a thin-walled hollow cylinder, like a toilet-paper tube or one ring of an onion (or a Swiss roll). Its <b>radius</b> is the distance from the axis to the wall, its <b>height</b> is the length of the wall, and its <b>thickness</b> is the tiny width of the wall.</p></div>
@@ -375,6 +454,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <p>The volume of the solid formed when the region between \(y=f(x)\) and \(y=g(x)\) (where \(f(x)\ge g(x)\)), \(a\le x\le b\), is rotated about the \(y\)-axis is</p>
 \[\begin{aligned}V&=\lim_{n\to\infty}\sum_{i=1}^{n}2\pi x_i\big[f(x_i^*)-g(x_i^*)\big]\Delta x\\&=\int_a^b2\pi x\big[f(x)-g(x)\big]\,dx.\end{aligned}\]
 <p class="word"><b>In words:</b> volume = integral of 2π × (shell radius) × (shell height), where shell radius = distance to the axis and shell height = upper curve − lower curve.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(2\pi x\)</dt><dd>the distance round the can at radius \(x\): the length of the unrolled sheet.</dd>
+<dt>\(f(x)-g(x)\)</dt><dd>the height of the can: the length of the strip, top minus bottom.</dd>
+<dt>\(dx\)</dt><dd>the thickness of the can wall.</dd>
+<dt>\(\int_a^b\)</dt><dd>add up the cans from the innermost (radius \(a\)) to the outermost (radius \(b\)).</dd>
+</dl></div>
+
 <p>The definition may be reformulated with respect to \(y\) and/or the axis of rotation.</p></div>
 <p style="font-size:.92rem;color:var(--muted)">On the slide the radius in the sum is written \(x_i\) while the heights use \(x_i^*\). In the limit it makes no difference which point of the \(i\)-th piece is used, so the integral is the same.</p>
 <p>Here we assume \(0\le a\lt b\) (the region is on one side of the axis), so the radius \(x\) is positive. General version:</p>
@@ -393,13 +479,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 \[\begin{aligned}V&=\pi\int_0^1e^{-u}\,du=\pi\big[-e^{-u}\big]_0^1\\&=\pi\Big(1-\frac1e\Big)\approx1.986.\end{aligned}\]
 <p><b>Answer:</b> \(V=\pi\big(1-e^{-1}\big)\).</p></div>
 
+<details class="idea"><summary>What is this? (discs or shells?)</summary><div><p>The same solid can be cut into loaf slices or into nested cans. Both ways add up the same volume, so the answers must agree. The choice is only about which integral is easier to write down and to work out.</p></div></details>
 <div class="box eg"><span class="tag">Example 7 (slide 23): discs or shells?</span>
 <p><b>Find the volume of the solid obtained by rotating the region under the curve \(y=\sqrt x\) from \(x=0\) to \(x=1\) about the \(x\)-axis using (a) discs, (b) shells.</b></p>
 <h4>(a) Discs</h4>
 <p>Vertical slices at \(x\), from \(y=0\) to \(y=\sqrt x\), touch the axis: discs of radius \(\sqrt x\).</p>
 \[V=\pi\int_0^1(\sqrt x)^2\,dx=\pi\int_0^1x\,dx=\frac{\pi}{2}.\]
 <h4>(b) Shells</h4>
-<p>The axis is horizontal, so shells come from <b>horizontal</b> strips, and we integrate in \(y\). For \(0\le y\le1\), the strip at height \(y\) runs from the curve \(x=y^2\) (since \(y=\sqrt x\iff x=y^2\) for \(y\ge0\)) to the line \(x=1\): length (shell height) \(1-y^2\). Its distance from the \(x\)-axis (shell radius) is \(y\).</p>
+<p>The axis is horizontal, so shells come from <b>horizontal</b> strips, and we integrate in \(y\). For \(0\le y\le1\), the strip at height \(y\) runs from the curve \(x=y^2\) (since \(y=\sqrt x\iff x=y^2\) for \(y\ge0\)) to the line \(x=1\): length (shell height) \(1-y^2\). Its distance from the \(x\)-axis (shell radius) is \(y\).<span class="why">A strip alongside a horizontal axis must be horizontal, so it is measured across from left to right, and the region's right edge is the line \(x=1\).</span></p>
 \[V=\int_0^12\pi y\,(1-y^2)\,dy=2\pi\Big(\tfrac12-\tfrac14\Big)=\frac{\pi}{2}.\]
 <p><b>Answer:</b> \(V=\dfrac{\pi}{2}\) either way. Here discs are simpler. Choose whichever gives the easier integral.</p></div>
 
@@ -415,25 +502,37 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <div class="legend"><span style="--k:var(--accent)">region</span><span style="--k:var(--c2)">axis of rotation</span><span style="--k:var(--c4)">strip and what it sweeps</span><span style="--k:var(--c3)">inner radius r</span></div>
 <div class="readout" id="eB-out"></div>
 <p class="cap">Same tool as explorer A, starting from Example 6. Switch "Method" to see that a strip parallel to the axis makes a shell and a strip perpendicular to it makes a disc or washer. Try Example 5 with axis x = −1 and both methods: the shell integral \(2\pi\int_0^1(x+1)(x-x^2)\,dx\) is also \(\frac{\pi}{2}\).</p></div>
+<p class="cannow"><b>You can now:</b> picture a shell as an unrolled can wall; set up \(2\pi\int(\text{radius})(\text{height})\) about the \(y\)-axis, a line \(x=k\), or a horizontal axis using \(dy\); check a volume by doing it with both methods.</p>
 </section>
 
 <!-- ================= 6 ================= -->
-<section id="s6"><h2><span class="n">6</span>Steps to compute the volume of a solid of revolution</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Steps to compute the volume of a solid of revolution</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Every volume question starts from one thin strip of the region. Hold it up against the axis. If the strip lies across the axis, spinning it makes a coin or a ring: one slice of the loaf. If it lies alongside the axis, spinning it makes one can wall. The steps below make that choice and then read the radius and height off the sketch.</p></div></details>
 <div class="box thm"><span class="tag">Steps (slide 24)</span>
-<ol class="steps">
-<li><b>Sketch the region and the solid.</b> Draw the 2D region that will be rotated. Sketch the 3D solid, or at least one representative disc/washer/shell.</li>
-<li><b>Choose the axis of rotation and the method.</b> (The axis is usually given; you choose discs/washers or shells.)</li>
-<li><b>Choose the variable of integration.</b> Discs/washers: the variable runs <b>along</b> the axis. Shells: the variable runs <b>across</b> (perpendicular to) the axis.</li>
-<li><b>Determine the radius/height and the limits.</b> Find the points of intersection.</li>
-<li><b>Set up the integral(s).</b></li>
-<li><b>Evaluate the integral(s).</b></li></ol></div>
+<ol class="steps proc">
+<li><b>Do:</b> <b>Sketch the region and the solid.</b> Draw the 2D region that will be rotated. Sketch the 3D solid, or at least one representative disc/washer/shell. <span class="why">Every radius is a distance you read off this picture, from the axis to a boundary curve.</span></li>
+<li><b>Do:</b> <b>Choose the axis of rotation and the method.</b> (The axis is usually given; you choose discs/washers or shells.) <span class="why">A strip across the axis spins into a slice of the loaf; a strip alongside it spins into a can wall.</span></li>
+<li><b>Do:</b> <b>Choose the variable of integration.</b> Discs/washers: the variable runs <b>along</b> the axis. Shells: the variable runs <b>across</b> (perpendicular to) the axis. <span class="why">Loaf slices are stacked along the axis, while nested cans grow outward from it.</span></li>
+<li><b>Do:</b> <b>Determine the radius/height and the limits.</b> Find the points of intersection. <span class="why">These measure one typical slice or can, and the limits say where the first and last ones sit.</span></li>
+<li><b>Do:</b> <b>Set up the integral(s).</b> <span class="why">The integral adds up the volumes of all the slices or cans.</span></li>
+<li><b>Do:</b> <b>Evaluate the integral(s).</b> <span class="why">A volume must come out positive; zero or a negative answer means a radius, or top and bottom, is the wrong way round.</span></li></ol></div>
 <div class="cases">
 <div><b>Axis horizontal (y = k)</b>Washers: vertical strips, \(dx\), \(R,r=\) distances \(|y-k|\) to the curves.<br>Shells: horizontal strips, \(dy\), radius \(|y-k|\), height = right − left.</div>
 <div><b>Axis vertical (x = k)</b>Washers: horizontal strips, \(dy\), \(R,r=\) distances \(|x-k|\) to the curves.<br>Shells: vertical strips, \(dx\), radius \(|x-k|\), height = top − bottom.</div></div>
+<h3>Choosing discs/washers or shells</h3>
+<ol class="steps proc">
+<li><b>Do:</b> Look at the axis: horizontal (\(x\)-axis or \(y=k\)) or vertical (\(y\)-axis or \(x=k\)). <span class="why">The axis decides which strips make loaf slices and which make can walls.</span></li>
+<li><b>Do:</b> With the curves given as \(y=f(x)\), draw a vertical strip of the region. <span class="why">Its length is top − bottom, read straight from the formulas, with no need to solve for \(x\).</span></li>
+<li><b>Do:</b> If the axis is horizontal, use discs (the strip touches the axis) or washers (there is a gap), integrating in \(x\). <span class="why">The strip lies across the axis, so it spins into a coin or a ring.</span></li>
+<li><b>Do:</b> If the axis is vertical, use shells, with radius = distance from the axis to the strip, integrating in \(x\). <span class="why">The strip lies alongside the axis, so it spins into one can wall.</span></li>
+<li><b>Do:</b> Use horizontal strips (\(dy\)) instead only when the question asks for the other method, or when the \(x\)-integral is hard or needs many pieces. <span class="why">Horizontal strips need every curve rewritten as \(x=\) (something in \(y\)), which costs time.</span></li>
+<li><b>Do:</b> If a strip's top or bottom (or left or right end) changes part-way across, split the integral there. <span class="why">Each piece of the region needs its own pair of boundary curves, exactly as for areas in §1.</span></li>
+</ol>
+<p class="cannow"><b>You can now:</b> follow the six steps for any solid of revolution; pick discs, washers or shells from the direction of the strip; read radius and height from the sketch for any horizontal or vertical axis.</p>
 </section>
 
 <!-- ================= 7 ================= -->
-<section id="s7"><h2><span class="n">7</span>Summary</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Summary</span></h2>
 <ul class="list">
 <li>To compute areas between curves and volumes, <b>geometric visualization is essential</b>: draw the region first.</li>
 <li>Both quantities are computed by <b>Riemann sums</b> (thin strips or thin slices) which turn into a <b>definite integral</b> in the limit.</li>
@@ -449,7 +548,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= 8 ================= -->
-<section id="s8"><h2><span class="n">8</span>Common mistakes</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Common mistakes</span></h2>
 <h3>Area between curves</h3>
 <div class="box"><div class="mistake">
 <span class="x">✗</span><span><b>Forgetting to split the integral at intersection points.</b> Area between \(y=x^3\) and \(y=x\): writing \(A=\displaystyle\int_{-1}^{1}(x^3-x)\,dx\) gives \(0\), because \(x^3-x\) is positive on \((-1,0)\) and negative on \((0,1)\), and the two pieces cancel.
@@ -471,7 +570,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= 9 ================= -->
-<section id="s9"><h2><span class="n">9</span>Find the mistake</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Find the mistake</span></h2>
 <p>The question (slide 26): <b>Let \(\mathcal R\) be the region bounded by the functions \(f(x)=x^2+2\) and \(g(x)=4-x^2\). Write a definite integral for the volume \(V\) of the solid of revolution obtained by rotating \(\mathcal R\) about the given lines. Cite the method you applied. (a) \(y=0\) (b) \(x=5\).</b></p>
 <p>A student's work, copied faithfully:</p>
 <div class="handwork">
@@ -501,7 +600,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= 10 ================= -->
-<section id="s10"><h2><span class="n">10</span>Group work</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Group work</span></h2>
 <div class="q"><p class="qh">1. Find the volume of the solid generated when the region bounded by \(y=e^x\), \(y=e^{-x}\) and \(x=1\) is rotated about the line \(y=-2\).</p>
 <details><summary>Hint</summary><div><p>The curves meet where \(e^x=e^{-x}\), i.e. \(x=0\); so \(0\le x\le1\), with \(e^x\) on top. The axis \(y=-2\) is horizontal and below the region: use washers. Distance from height \(y\) down to the axis is \(y-(-2)=y+2\). Which curve is farther from \(y=-2\)?</p></div></details>
 <details><summary>Answer</summary><div>
@@ -533,7 +632,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= 11 ================= -->
-<section id="s11"><h2><span class="n">11</span>Concept checks <span class="pill">Written for these notes</span></h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Concept checks <span class="pill">Written for these notes</span></span></h2>
 <div class="q"><p class="qh">1. The region between two curves lies entirely below the \(x\)-axis. Does \(A=\int_a^b[f(x)-g(x)]\,dx\) (with \(f\) on top) still give a positive area?</p>
 <details><summary>Answer</summary><div><p>Yes. The strip height is upper − lower, which is \(\ge0\) wherever \(f\) is on top, whatever the sign of \(f\) and \(g\) themselves. Only "which is on top" matters.</p></div></details></div>
 <div class="q"><p class="qh">2. Without integrating, explain why \(\int_{-1}^{1}(x^3-x)\,dx=0\) even though \(y=x^3\) and \(y=x\) enclose a region of area \(\tfrac12\).</p>
@@ -551,7 +650,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 </section>
 
 <!-- ================= exam taster ================= -->
-<section id="pastpaper"><h2><span class="n">12</span>Exam taster</h2>
+<section id="pastpaper"><h2><span class="n">12</span><span class="h2t">Exam taster</span></h2>
 <p>A few real past-paper questions, about one for each main question type in this lecture, so you can see how the exam asks about it. Each has a hint and the final answer. The full working, and the standard method for each type, are in the exam guide.</p>
 <p style="font-size:.92rem;color:var(--muted)">Lecture 16's question types appear 34 times in the 23 past papers (2013 to 2026). All of them, grouped by type with full worked solutions, are in the exam guide. May 2017 Q5, which pairs a disc-method volume with an arc-length part, is in the Lecture 17 note.</p>
 
@@ -1009,5 +1108,13 @@ function go(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </html>
