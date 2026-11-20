@@ -155,6 +155,34 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
 
 
+
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -191,12 +219,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-D3.html">Exam guide · D3</a><a href="note-D2.html">← D2</a><a href="note-C1.html">Next: C1 →</a></nav>
   <span class="course">MECH2413 · Engineering Mechanics · Dynamics chapter 3</span>
   <h1>Dynamics of Rockets</h1>
-  <p class="lede">Every slide of the Dynamics chapter 3 handout (slides 79–96) explained from scratch: Newton's second law in momentum form for a body that loses mass, the derivation of the Tsiolkovsky rocket equation, thrust, burnout speed with and without gravity, varying-mass problems beyond rockets, rocket fuels, and why real rockets have several stages. Orbits appear only as background: they were removed from the syllabus for 2026/27. The exam taster at the end uses real past-paper parts that are still examinable.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
-<p>In <a href="note-D1.html">D1</a> you used Newton's second law \(F=ma\) for a particle whose mass never changes. A rocket breaks that assumption: it throws away most of its own mass (as hot exhaust gas) while it flies, and that throwing-away is exactly what pushes it forward. This chapter shows how to apply Newton's law correctly to such a body and what the result means for rocket design.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this chapter sits</span></h2>
+<p>A rocket is a person on a skateboard throwing bricks backwards: each throw pushes them forward, and the pile on board shrinks as they go. This chapter (handout slides 79–96) turns that picture into Newton's law for a body that loses mass, and into the rocket equation.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span><ol>
+<li><a href="#s1">§1</a> <b>Follow all the mass, bricks included.</b> Momentum of you plus the bricks is what Newton's law tracks.</li>
+<li><a href="#s2">§2</a> <b>Speed gained = throw speed × ln(mass ratio).</b> Later throws help more because you are lighter.</li>
+<li><a href="#s3">§3</a> <b>Derive it from one throw:</b> momentum after − momentum before = gravity's impulse. <span class="pill">Asked almost every paper</span></li>
+<li><a href="#s4">§4</a> <b>Thrust = throw speed × mass thrown per second.</b> Integrate for the burnout speed, minus the gravity loss \(gt\).</li>
+<li><a href="#s5">§5</a> <b>Three true-or-false traps</b> on burn time, payload and exhaust speed.</li>
+<li><a href="#s6">§6</a> <b>The Saturn V, worked in full.</b></li>
+<li><a href="#s7">§7</a> <b>Anything that throws mass away is pushed;</b> mass that just drops off gives no push.</li>
+<li><a href="#s8">§8</a> <b>Better fuel means harder throws:</b> hot, light exhaust.</li>
+<li><a href="#s9">§9</a> <b>Stages: drop the empty crate</b> so later throws push less dead weight. <span class="pill skip">Formula not examined 2026/27</span></li>
+<li><a href="#s10">§10</a> Orbits and satellites. <span class="pill prev">Out of 2026 syllabus</span> <span class="pill skip">Background only</span></li>
+</ol></div>
+<p><b>You need:</b> Newton's second law, momentum and impulse from <a href="note-D1.html">D1</a> (where mass never changed), and \(\int\mathrm dM/M=\ln M\). <b>In the exam:</b> one Section B rocket question: derive the rocket equation, then thrust, burnout time, burnout speed or fuel needed. See the <a href="guide-D3.html">D3 exam guide</a>.</p>
 <p>The opening slides set the scene. Slide 80 ("Rockets: how?") shows three launches: a Chinese Long March rocket beside its launch tower, a SpaceX Falcon 9, and a third rocket climbing on its exhaust plume. Slide 81 ("Rocket development") shows the family tree of U.S. rockets since the 1950s and a chart of the cost of putting 1 kg into low Earth orbit: on a logarithmic scale it falls from tens of thousands of dollars per kilogram (Space Shuttle era) towards a few hundred (Falcon Heavy, Starship), with a projected continuing fall. Slide 82 ("Space age is coming back?") is a bar chart of orbital launch attempts per year by country since 1957: a peak of about 120–140 a year in the Soviet era, a dip to about 50–60 around 2000–2005, and a sharp rise after 2015 driven by the USA and China, back to more than 140 a year by the early 2020s.</p>
 <div class="box warn"><span class="tag">Syllabus change for 2026/27</span>
 <p>Orbital dynamics (circular, elliptic and escape orbits, orbit transfer) and atmospheric re-entry were <b>removed</b> from the course from 2026/27 (D1 handout, slide 7). This handout keeps only three short slides on satellites (93–95), which are background. Past-paper questions on orbits and re-entry are listed in the exam guide as "no longer examined" and are not used on this page.</p></div>
@@ -222,23 +262,29 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Newton's second law for an open system (slide 83)</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Newton's second law for an open system (slide 83)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>You sit on a skateboard holding a pile of bricks and throw them backwards, one at a time. Each brick is pushed back by your hand, and your hand is pushed forward by the brick, so you roll forward. Nobody outside pushes you, so the total momentum of you plus all the bricks stays the same. A rocket does exactly this with its exhaust gas: millions of tiny bricks every second.</p></div></details>
 <p>Newton's second law is usually remembered as \(F=ma\), but Newton stated it in terms of <b>momentum</b> \(m\vb v\) (mass × velocity):</p>
 \[\vb F=\frac{\mathrm d}{\mathrm dt}(m\vb v),\]
 \[\vb I=\int_{t_1}^{t_2}\vb F(t)\,\mathrm dt=(m\vb v)_2-(m\vb v)_1\quad\text{Eq (1)}.\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\vb F\)</dt><dd>the net push from <b>outside</b> the system (gravity, drag). The push between you and a brick is inside, so it is not here.</dd><dt>\(\dfrac{\mathrm d}{\mathrm dt}(m\vb v)\)</dt><dd>how fast the momentum of the whole system (you and every brick) changes.</dd><dt>\(\int_{t_1}^{t_2}\vb F\,\mathrm dt\)</dt><dd>the impulse: the outside push added up over the time it acts.</dd><dt>\((m\vb v)_2-(m\vb v)_1\)</dt><dd>momentum after minus momentum before, counting the bricks already thrown too.</dd></dl></div>
 <p class="word"><b>In words:</b> the net external force equals the rate of change of momentum; integrated over a time interval, the <b>impulse</b> \(\vb I\) of the force equals the change of momentum. \(F=ma\) is the special case where \(m\) is constant.</p>
+<details class="idea"><summary>What is this? (open system)</summary><div><p>Draw a box round yourself only and bricks keep leaving it, so mass simply vanishes from your sums. Draw the box round you and the brick in your hand instead, and nothing leaves during the throw. That moving box is what slide 83 means by following all the particles.</p></div></details>
 <div class="box def"><span class="tag">Definition · open system</span>
 <p>An <b>open system</b> is one where part of the mass leaves (or enters) across a boundary, such as exhaust gas leaving a rocket nozzle. Slide 83 warns that Newton's law must then be applied so that it <b>follows all the particles in question</b>: draw the boundary around the rocket <b>and</b> the bit of gas that is about to leave, so that no mass crosses the boundary during the short time you look at (a "control volume" that moves with the mass).</p></div>
 <p class="word"><b>Analogy:</b> sit on a skateboard holding a pile of bricks and throw them backwards one by one. Each throw pushes you forward. If you only "watched" yourself, mass would vanish from your sums; if you include each brick in the system until it has left, momentum book-keeping works.</p>
 <p>Slide 83 lists the forces in chemical rocket engineering. Two <b>external</b> forces act: <b>gravity</b>, which varies with time and distance from Earth, and <b>atmospheric drag</b>. When both are ignored, the momentum of rocket + exhaust is <b>conserved</b>: the push between rocket and gas is internal (action and reaction). The slide adds that interplanetary or interstellar flight will probably need propulsion beyond chemical rockets: nuclear or other ideas (tethers, electrical propulsion, anti-matter).</p>
+<p class="cannow"><b>You can now:</b> state Newton's second law in momentum form and the impulse–momentum equation; explain why the system must include the gas about to leave; and say when the momentum of rocket plus exhaust is conserved.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>The Tsiolkovsky rocket equation at a glance (slide 84)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">The Tsiolkovsky rocket equation at a glance (slide 84)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Throw the first brick and you gain a little speed. By the last brick you are much lighter, so the same throw gives you a bigger kick. Each kick is in proportion to the brick's mass divided by your mass at that moment, so what counts is the <i>fraction</i> of your mass you throw away, not the kilograms. Adding up equal fractions gives a logarithm: halving your mass always buys the same speed, whether you go from 4 tonnes to 2 or from 2 tonnes to 1.</p></div></details>
 <div class="box thm"><span class="tag">Result · Tsiolkovsky rocket equation</span>
 \[\Delta v=v_{ex}\ln\frac{m_0}{m_f}\]
 <p>\(\Delta v\): change in velocity; \(v_{ex}\) (written \(v_e\) on slide 84): exhaust velocity; \(m_0\): initial mass; \(m_f\): final mass. Valid with no gravity and no drag.</p>
 <p class="word"><b>In words:</b> the speed a rocket can gain equals its exhaust speed times the natural logarithm of how many times heavier it was at the start than at the end.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\Delta v\)</dt><dd>the total speed gained once all the throws are done.</dd><dt>\(v_{ex}\)</dt><dd>how hard each brick is thrown, measured from the skateboard. Throw twice as hard and every kick doubles.</dd><dt>\(\dfrac{m_0}{m_f}\)</dt><dd>how many times heavier you were with the full pile than with none left.</dd><dt>\(\ln\)</dt><dd>adds up the kicks: every halving of your mass gives the same gain, \(0.69\,v_{ex}\).</dd></dl></div>
 <p>The equation is named after the Russian scientist <b>Konstantin Tsiolkovsky</b>, who derived it independently and published it in 1903. The right-hand graph on slide 84 turns it round: the mass ratio needed for a given \(\Delta v\) is</p>
 \[\frac{m_0}{m_f}=e^{\Delta v/v_{ex}},\]
 <p class="word"><b>In words:</b> the required mass ratio grows <b>exponentially</b> with the speed you want. \(\Delta v=v_{ex}\) needs a ratio of \(e=2.72\); \(2v_{ex}\) needs 7.39; \(3v_{ex}\) needs 20.1; \(4v_{ex}\) needs about 55 (the curve on slide 84 leaves the top of its graph at 40 just before \(\Delta v/v_{ex}=4\)).</p>
@@ -248,46 +294,54 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <label>exhaust speed \(v_{ex}\) (km/s) <input type="range" id="lnV" min="2" max="5" step="0.1" value="2.6"></label></div>
 <div class="readout" id="ln-out"></div>
 <p class="cap">Curve: \(\Delta v/v_{ex}=\ln(m_0/m_f)\) (slide 84 plots the same curve with the axes swapped). Going from ratio 4 to 8 adds only \(0.69\,v_{ex}\); raising \(v_{ex}\) scales every speed directly. Low Earth orbit needs roughly 9–10 km/s once gravity and drag losses are included, which a single stage with \(v_{ex}\approx 3\)–4 km/s cannot reach with a useful payload.</p></div>
+<p class="cannow"><b>You can now:</b> quote the Tsiolkovsky equation and when it holds (no gravity, no drag); turn it round to find the mass ratio for a given \(\Delta v\); and explain why extra fuel gives only a logarithmic gain.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Deriving the rocket equation: one small puff of exhaust (slide 85)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Deriving the rocket equation: one small puff of exhaust (slide 85)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Zoom in on one throw. Before it, you and the brick roll together. After it, you roll a little faster and the brick moves at your speed minus the throw speed. Momentum after minus momentum before must equal the impulse from outside, which here is only gravity pulling on everything for that short moment. Write that down, shrink the brick to a tiny puff, and you have the rocket's equation of motion.</p></div></details>
 <p>Consider a rocket of total instantaneous mass \(M(t)\) at time \(t\), moving at speed \(v(t)\) upward against gravity \(g\). Over a small time interval \(\Delta t\), a chunk of exhaust of mass \(\Delta m\) is expelled at velocity \(v_{ex}\) <b>relative to</b> the ascending rocket. Seen by a stationary observer the exhaust moves at \(v-v_{ex}\) upward (a negative number if \(v_{ex}\gt v\), i.e. downward). The remaining rocket, mass \(M-\Delta m\), now moves at \(v+\Delta v\). Both the remaining rocket and the exhaust feel gravity. Air drag is ignored for the moment, and \(g\) is constant over the short \(\Delta t\). Find \(\Delta v\) with the momentum law Eq (1), upward positive.</p>
 <div class="pair">
 <div><div id="fig-cv1"></div><p class="sub">Time \(t\): the system is the whole rocket, mass \(M\), speed \(v\).</p></div>
 <div><div id="fig-cv2"></div><p class="sub">Time \(t+\Delta t\): the same mass, now in two parts (dashed boundary).</p></div>
 </div>
 <p class="muted">Colour key in this chapter: red = force, grey = velocity.</p>
-<ol class="steps">
-<li><b>External force and impulse.</b> The only external force on the system (rocket + chunk) is its weight: \(F=-Mg\), so \(I=\int_0^{\Delta t}F\,\mathrm dt=-Mg\,\Delta t\).</li>
-<li><b>Change of momentum.</b> After minus before:
+<ol class="steps proc">
+<li><b>Do:</b> <b>External force and impulse.</b> The only external force on the system (rocket + chunk) is its weight: \(F=-Mg\), so \(I=\int_0^{\Delta t}F\,\mathrm dt=-Mg\,\Delta t\). <span class="why">The push between you and the brick is inside the system, so only gravity counts as an outside push.</span></li>
+<li><b>Do:</b> <b>Change of momentum.</b> After minus before:
 \[\begin{aligned}\Delta(mv)&=(M-\Delta m)(v+\Delta v)\\&\quad+\Delta m\,(v-v_{ex})-Mv\\&=(M-\Delta m)\Delta v-\Delta m\,v_{ex}.\end{aligned}\]
-(Expand: the \(Mv\), \(-\Delta m\,v\) and \(+\Delta m\,v\) terms cancel.)</li>
-<li><b>Impulse = change of momentum,</b> then divide by \(\Delta t\):
-\[\begin{aligned}-Mg\,\Delta t&=(M-\Delta m)\Delta v\\&\quad-\Delta m\,v_{ex}\\ \Rightarrow\ (M-\Delta m)\frac{\Delta v}{\Delta t}&=\frac{\Delta m}{\Delta t}v_{ex}\\&\quad-Mg.\end{aligned}\]</li>
-<li><b>Let \(\Delta t\to0\).</b> Every quantity with "\(\Delta\)" tends to zero, so \(M-\Delta m\to M\); but the ratios become derivatives, \(\Delta v/\Delta t\to\mathrm dv/\mathrm dt\) and \(\Delta m/\Delta t\to\mathrm dm/\mathrm dt\). The differential equation of rocket flight is
-\[M\frac{\mathrm dv}{\mathrm dt}=v_{ex}\frac{\mathrm dm}{\mathrm dt}-Mg.\]</li>
+(Expand: the \(Mv\), \(-\Delta m\,v\) and \(+\Delta m\,v\) terms cancel.) <span class="why">Momentum is measured by someone standing still, so the brick is counted at its ground speed \(v-v_{ex}\), not at the throw speed.</span></li>
+<li><b>Do:</b> <b>Impulse = change of momentum,</b> then divide by \(\Delta t\):
+\[\begin{aligned}-Mg\,\Delta t&=(M-\Delta m)\Delta v\\&\quad-\Delta m\,v_{ex}\\ \Rightarrow\ (M-\Delta m)\frac{\Delta v}{\Delta t}&=\frac{\Delta m}{\Delta t}v_{ex}\\&\quad-Mg.\end{aligned}\] <span class="why">This is Eq (1) for a single throw; dividing by \(\Delta t\) turns "per throw" into "per second".</span></li>
+<li><b>Do:</b> <b>Let \(\Delta t\to0\).</b> Every quantity with "\(\Delta\)" tends to zero, so \(M-\Delta m\to M\); but the ratios become derivatives, \(\Delta v/\Delta t\to\mathrm dv/\mathrm dt\) and \(\Delta m/\Delta t\to\mathrm dm/\mathrm dt\). The differential equation of rocket flight is
+\[M\frac{\mathrm dv}{\mathrm dt}=v_{ex}\frac{\mathrm dm}{\mathrm dt}-Mg.\] <span class="why">Real exhaust is a smooth stream, not separate bricks, so we make each brick vanishingly small and count how much leaves per second.</span></li>
 </ol>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(M\dfrac{\mathrm dv}{\mathrm dt}\)</dt><dd>your mass right now × your acceleration, the left side of \(F=ma\).</dd><dt>\(v_{ex}\dfrac{\mathrm dm}{\mathrm dt}\)</dt><dd>throw speed × mass thrown per second: the push you get back from throwing (the thrust).</dd><dt>\(-Mg\)</dt><dd>the weight of everything still on board, pulling back.</dd></dl></div>
 <p class="word"><b>In words:</b> mass × acceleration = (exhaust speed × rate of throwing out mass) − weight. The first term on the right behaves like a forward force, even though nothing outside the rocket is pushing it.</p>
 <div class="box warn"><span class="tag">Watch</span>
 <p>The exhaust's velocity in the momentum sum is the <b>ground-frame</b> velocity \(v-v_{ex}\), not \(-v_{ex}\). Using \(-v_{ex}\) alone gives an extra wrong \(\Delta m\,v\) term. Also note the term \(\Delta m\,\Delta v\) inside \((M-\Delta m)\Delta v\) is a product of two small quantities and drops out in the limit.</p></div>
+<p class="cannow"><b>You can now:</b> derive the rocket differential equation from momentum before and after one small puff, with gravity; use the exhaust's ground velocity \(v-v_{ex}\); and explain why \(\Delta m\,\Delta v\) drops out.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Thrust, and integrating the equation (slide 86)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Thrust, and integrating the equation (slide 86)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Throw bricks at a steady rate and the separate kicks blur into one steady push. Its size is how fast you throw each brick times how many kilograms you throw per second. That steady push is the thrust. With it the rocket obeys an ordinary \(F=ma\), except that the mass \(M\) keeps falling.</p></div></details>
 <p>\(\Delta m\) is the <b>reduction</b> of the rocket's mass, so \(\mathrm dm/\mathrm dt=-\mathrm dM/\mathrm dt\). The equation becomes an ODE (ordinary differential equation) in \(M\) and \(v\) only:</p>
 \[M\frac{\mathrm dv}{\mathrm dt}=-v_{ex}\frac{\mathrm dM}{\mathrm dt}-Mg.\]
 <div class="box thm"><span class="tag">Result · thrust force, Eq (2)</span>
 \[F_{th}=-v_{ex}\frac{\mathrm dM}{\mathrm dt}=v_{ex}\,\dot m\]
 <p class="word"><b>In words:</b> thrust = exhaust speed × mass of gas thrown out per second. Unit check: (m/s)(kg/s) = kg·m/s² = N. With it the rocket equation reads like \(F=ma\): \(M\,\mathrm dv/\mathrm dt=F_{th}-Mg\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(v_{ex}\)</dt><dd>the speed of each brick relative to you.</dd><dt>\(\dot m\)</dt><dd>kilograms of bricks thrown per second.</dd><dt>\(v_{ex}\,\dot m\)</dt><dd>momentum handed to the bricks every second, which by action and reaction is the push you get back.</dd><dt>\(-v_{ex}\dfrac{\mathrm dM}{\mathrm dt}\)</dt><dd>the same thing written with your own mass loss; the minus makes it positive, because \(M\) is falling.</dd></dl></div>
 <div id="fig-thrust"></div>
 <p class="sub">Free-body diagram of the rocket at any instant: thrust up, weight down, acceleration \(a=\mathrm dv/\mathrm dt\).</p>
 <h3>Integrating (Eq 3 and Eq 4)</h3>
+<details class="idea"><summary>What is this? (burnout speed)</summary><div><p>Now add up all the kicks from the first brick to the last. The throwing part gives the logarithm of Section 2. Gravity pulls the whole time you are throwing and takes away speed \(g\) every second, however heavy you are. So a long, slow burn wastes speed.</p></div></details>
 <p>Divide by \(M\):</p>
 \[\frac{\mathrm dv}{\mathrm dt}=-v_{ex}\frac{\mathrm dM}{M\,\mathrm dt}-g\qquad\text{Eq (3)}.\]
-<p>Integrate from \(0\) to \(t\) (the handwritten note on slide 86 does it with limits: at \(t=0\), \(v=v_i\), \(M=M_i\); at time \(t\), \(v=v_f\), \(M=M_f\)), using \(\mathrm dM/M=\mathrm d\ln M\):</p>
+<p>Integrate from \(0\) to \(t\) (the handwritten note on slide 86 does it with limits: at \(t=0\), \(v=v_i\), \(M=M_i\); at time \(t\), \(v=v_f\), \(M=M_f\)), using \(\mathrm dM/M=\mathrm d\ln M\): <span class="why">Each small mass loss gives a kick in proportion to \(\mathrm dM/M\), the fraction of your current mass thrown away, and adding up fractions gives a logarithm.</span></p>
 \[\int_{v_i}^{v_f}\mathrm dv=-v_{ex}\int_{M_i}^{M_f}\frac{\mathrm dM}{M}-g\int_0^t\mathrm dt,\]
 \[v(t)=v_{initial}+v_{ex}\ln\frac{M_{initial}}{M(t)}-gt.\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(v_{initial}\)</dt><dd>your speed before this burn started.</dd><dt>\(v_{ex}\ln\dfrac{M_{initial}}{M(t)}\)</dt><dd>speed gained from all the throws so far.</dd><dt>\(-gt\)</dt><dd>the gravity loss: speed gravity has taken during \(t\) seconds of burning. It does not depend on the mass.</dd></dl></div>
 <p class="word"><b>In words:</b> speed now = starting speed + (exhaust speed × log of how much lighter the rocket has become) − (gravity × time spent burning). The last term is the <b>gravity loss</b>.</p>
 <p>When the effect of \(g\) is ignored (in space, or for a very short burn):</p>
 <div class="box thm"><span class="tag">Result · Eq (4)</span>
@@ -299,15 +353,17 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p class="word"><b>In words:</b> the ODE, the thrust, the burnout speed with the gravity loss \(g\,t_b\), the burnout time, and the final mass for a required \(\Delta v\) (fuel needed = \(M_{ini}-M_{fi}\)).</p></div>
 <h3>Design guidelines (slide 86)</h3>
 <p>To get a high burnout speed \(v_{fi}\):</p>
-<ol class="steps">
-<li><b>Make the exhaust speed \(v_{ex}\) as high as possible.</b> \(v_{fi}\) is proportional to \(v_{ex}\). It is <b>not</b> very effective to push up the logarithmic term instead: doubling the mass ratio adds only \(v_{ex}\ln2=0.69\,v_{ex}\).</li>
-<li><b>Make the final mass as small as possible.</b> So the payload is severely limited: for a high orbit velocity it may be only about \(0.02\,M_{ini}\) (2% of the launch mass). Check: \(\ln(1/0.02)=3.91\), so even then \(\Delta v\approx3.9\,v_{ex}\) at most.</li>
-<li><b>Burn all the fuel quickly</b>, so that the gravity loss \(gt\) is small. The total burning time is the <b>burnout time</b>.</li>
+<ol class="steps proc">
+<li><b>Do:</b> <b>Make the exhaust speed \(v_{ex}\) as high as possible.</b> \(v_{fi}\) is proportional to \(v_{ex}\). It is <b>not</b> very effective to push up the logarithmic term instead: doubling the mass ratio adds only \(v_{ex}\ln2=0.69\,v_{ex}\). <span class="why">Throwing every brick harder makes every kick bigger in proportion; carrying more bricks only helps through the slow-growing logarithm.</span></li>
+<li><b>Do:</b> <b>Make the final mass as small as possible.</b> So the payload is severely limited: for a high orbit velocity it may be only about \(0.02\,M_{ini}\) (2% of the launch mass). Check: \(\ln(1/0.02)=3.91\), so even then \(\Delta v\approx3.9\,v_{ex}\) at most. <span class="why">Whatever is left at the end is dead weight that every throw had to push; less of it makes the mass ratio, and the logarithm, bigger.</span></li>
+<li><b>Do:</b> <b>Burn all the fuel quickly</b>, so that the gravity loss \(gt\) is small. The total burning time is the <b>burnout time</b>. <span class="why">Gravity takes speed \(g\) for every second you spend throwing, so finishing sooner loses less.</span></li>
 </ol>
+<p class="cannow"><b>You can now:</b> write the thrust as \(v_{ex}\dot m\) and check its units; integrate the rocket equation to get the burnout speed with the gravity loss \(gt\); find the final mass or fuel for a required \(\Delta v\); and state the three design guidelines with reasons.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>True or false? (slide 87)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">True or false? (slide 87)</span> <span class="mins">~1 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Each statement can be settled on the skateboard. Ask three things: does gravity get time to act while you throw? How much is still on the board at the end? And how fast is each brick thrown, compared with how fast you are already rolling?</p></div></details>
 <p>Slide 87 asks three questions, with the reference formula \(v_{fi}=v_{ini}+v_{ex}\ln(M_{ini}/M_{fi})-gt\) and a sketch of \(y=\ln x\), which passes through \((1,0)\) and \((e,1)\) and rises ever more slowly.</p>
 <div class="q"><p class="qh">C1 · Burnout time in outer space</p><p>True or false: in outer space, the shorter the burnout time, the higher the maximum speed attainable by a rocket.</p>
 <details><summary>Hint</summary><div><p>Which term in the formula contains \(t\)? What is \(g\) far out in space?</p></div></details>
@@ -316,10 +372,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <details><summary>Answer</summary><div><p><b>True.</b> A smaller payload makes \(M_{fi}\) smaller and the mass ratio larger, so \(\ln(M_{ini}/M_{fi})\) is larger. The gain is only logarithmic, though, and \(M_{fi}\) can never go below the empty structure.</p></div></details></div>
 <div class="q"><p class="qh">C3 · Faster than the exhaust?</p><p>True or false: the speed of a rocket is always greater than the exhaust gas speed \(v_{ex}\).</p>
 <details><summary>Answer</summary><div><p><b>False.</b> Starting from rest with no gravity, \(v=v_{ex}\ln(M_{ini}/M)\), which is less than \(v_{ex}\) until the mass ratio passes \(e=2.72\) (from the \((e,1)\) point on the graph). With ratio 2, \(v=0.69\,v_{ex}\). A rocket <b>can</b> go faster than its exhaust (ratio above \(e\)); then the exhaust moves forward relative to the ground, but still backward relative to the rocket, so it still pushes.</p></div></details></div>
+<p class="cannow"><b>You can now:</b> decide true-or-false statements on burnout time, payload and exhaust speed by pointing to the term of the burnout-speed formula that settles each one.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Worked example: the Saturn V (slides 88–89)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Worked example: the Saturn V (slides 88–89)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The Saturn V is the skateboard at full size: 3 million kg on the pad, throwing 14 tonnes of gas backwards every second. The four questions follow the picture in order: how hard each throw is, how long the bricks last, how hard the first push is against gravity, and how fast the rocket is going when the last brick leaves.</p></div></details>
 <div class="box eg"><span class="tag">Worked example · slides 88–89</span>
 <p>The <b>Saturn V</b> (土星 5, "Saturn five", not "v") rocket was used in NASA's Apollo Moon programme. Use the approximate data: \(M_{ini}=3\times10^6\u{kg}\), \(\mathrm dm/\mathrm dt=14\times10^3\u{kg/s}\), thrust \(F_{th}=36\times10^6\u{N}\), mass ratio (final ÷ initial) \(=0.25\). (1) Determine the exhaust speed of the burned fuel. (2) Determine the time of burnout. (3) Calculate the acceleration at take-off. (4) Calculate the speed at burnout.</p>
 <div class="pair">
@@ -327,26 +385,28 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div><div id="fig-sv-fbd"></div><p class="sub">FBD at take-off (slide 88's sketch: \(F_{th}\) up, \(Mg\) down, \(Ma\) up).</p></div>
 </div>
 <p class="muted">The slides give the question and the formulas; the numbers below are worked for these notes.</p>
-<ol class="steps">
-<li><b>Exhaust speed</b> from Eq (2), \(F_{th}=v_{ex}\,\dot m\):
-\[v_{ex}=\frac{36\times10^6\u{N}}{14\times10^3\u{kg/s}}=2571\u{m/s}.\]</li>
-<li><b>Burnout time.</b> Final mass \(=0.25\times3\times10^6=0.75\times10^6\u{kg}\), so the fuel is \(2.25\times10^6\u{kg}\):
-\[t_b=\frac{2.25\times10^6\u{kg}}{14\times10^3\u{kg/s}}=160.7\u{s}.\]</li>
-<li><b>Acceleration at take-off</b> (\(M=M_{ini}\)):
+<ol class="steps proc">
+<li><b>Do:</b> <b>Exhaust speed</b> from Eq (2), \(F_{th}=v_{ex}\,\dot m\):
+\[v_{ex}=\frac{36\times10^6\u{N}}{14\times10^3\u{kg/s}}=2571\u{m/s}.\] <span class="why">Thrust is throw speed × mass per second, so dividing the push by the mass rate leaves the throw speed.</span></li>
+<li><b>Do:</b> <b>Burnout time.</b> Final mass \(=0.25\times3\times10^6=0.75\times10^6\u{kg}\), so the fuel is \(2.25\times10^6\u{kg}\):
+\[t_b=\frac{2.25\times10^6\u{kg}}{14\times10^3\u{kg/s}}=160.7\u{s}.\] <span class="why">The bricks run out when all the fuel has gone at the steady rate; the 25% that is left (structure and payload) is never thrown.</span></li>
+<li><b>Do:</b> <b>Acceleration at take-off</b> (\(M=M_{ini}\)):
 \[\begin{aligned}a&=\frac{F_{th}-Mg}{M}=\frac{36\times10^6}{3\times10^6}-9.81\\&=12-9.81=2.19\u{m/s^2}.\end{aligned}\]
-(Thrust-to-weight ratio \(12/9.81=1.22\): the rocket barely lifts off at first. Just before burnout, \(M=0.75\times10^6\u{kg}\) and \(a=48-9.81=38.2\u{m/s^2}\), about 4\(g\): the same thrust on a much lighter rocket.)</li>
-<li><b>Speed at burnout</b>, from rest:
-\[\begin{aligned}v_b&=v_{ex}\ln\frac{M_{ini}}{M_{fi}}-g\,t_b\\&=2571\ln4-9.81(160.7)\\&=3565-1577=1988\u{m/s}.\end{aligned}\]</li>
+(Thrust-to-weight ratio \(12/9.81=1.22\): the rocket barely lifts off at first. Just before burnout, \(M=0.75\times10^6\u{kg}\) and \(a=48-9.81=38.2\u{m/s^2}\), about 4\(g\): the same thrust on a much lighter rocket.) <span class="why">On the pad the rocket is at its heaviest, so the same thrust gives the smallest acceleration, and the weight must be beaten first.</span></li>
+<li><b>Do:</b> <b>Speed at burnout</b>, from rest:
+\[\begin{aligned}v_b&=v_{ex}\ln\frac{M_{ini}}{M_{fi}}-g\,t_b\\&=2571\ln4-9.81(160.7)\\&=3565-1577=1988\u{m/s}.\end{aligned}\] <span class="why">The logarithm counts the kicks from all the fuel; \(g\,t_b\) is the speed gravity took during the 160.7 s burn.</span></li>
 </ol>
 <p>\(\boxed{v_{ex}=2571\u{m/s},\ t_b=160.7\u{s},\ a_0=2.19\u{m/s^2},\ v_b\approx1990\u{m/s}}\)</p>
 <p class="word"><b>Sense check:</b> slide 88 notes that the \(gt\) term → 0 if the burnout time is very short. Here it is not short: gravity eats 1577 m/s, about 44% of the ideal 3565 m/s. (Drag, ignored here, takes more.)</p></div>
 <div class="figure"><p class="ttl">Saturn V first stage · speed and acceleration during the burn</p>
 <canvas class="plot" id="cv-sv-v" style="height:170px"></canvas><canvas class="plot" id="cv-sv-a" style="height:150px"></canvas>
 <p class="cap">Top: \(v(t)=v_{ex}\ln\frac{M_{ini}}{M_{ini}-\dot mt}-gt\) (accent) and the no-gravity speed (dashed). Bottom: \(a(t)=F_{th}/M(t)-g\) rises as the rocket gets lighter. Neither curve is a straight line.</p></div>
+<p class="cannow"><b>You can now:</b> find the exhaust speed from thrust and burn rate, the burnout time from the fuel mass, the acceleration at take-off and burnout, and the burnout speed with the gravity loss.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Varying mass beyond rockets (slide 90)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Varying mass beyond rockets (slide 90)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The skateboard rule works for anything that sheds mass while it moves. Throw a brick backwards and you are pushed forwards. But let a brick simply slip off the back of the board and it keeps moving at your speed beside you: there was no throw, so there is no push. You are just lighter.</p></div></details>
 <p>The thrust expression Eq (2), \(F_{th}=-v_{ex}\,\mathrm dM/\mathrm dt\), came from momentum alone, so it applies to <b>any</b> system that gains or loses mass while moving (slide 90). The handout's examples: a fire-fighting helicopter releasing water, and a truck unloading sand from its back.</p>
 <div class="box thm"><span class="tag">Rule · when does losing mass push?</span>
 <p>Mass leaving with relative velocity \(\vb u\) (relative to the body) gives the body a force \(-\dot m\,\vb u\): opposite to the way the mass leaves, of size (relative speed) × (mass rate). If the mass simply <b>drops off</b> with zero relative velocity, there is <b>no thrust</b>: the body only gets lighter.</p>
@@ -361,21 +421,23 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box eg"><span class="tag">Past-paper worked example · Dec 2017 B3(a) · 12 marks · type D3.3</span>
 <p>The rocket has an initial mass \(m_0\) including the fuel. For practical reasons desired for the crew, it is required that it maintain a constant upward acceleration \(a_0\). If the fuel is expelled from the rocket at a constant relative speed \(v_{e/r}\), prove that the rate at which the fuel should be consumed \(\mathrm dm/\mathrm dt\) to maintain the desired motion is \(\dfrac{\mathrm dm}{\mathrm dt}=\dfrac{m_0(a_0+g)}{v_{e/r}}e^{(a_0+g)t/v_{e/r}}\). Neglect air resistance, and assume that the gravitational acceleration \(g\) is constant.</p>
 <div class="pair"><div><div id="fig-17a"></div><p class="sub">FBD: thrust \(v_{e/r}\dot m\) up, weight \(Mg\) down, \(\dot v=a_0\).</p></div></div>
-<ol class="steps">
-<li>Rocket ODE with \(\mathrm dv/\mathrm dt=a_0\) and \(M(t)\) the rocket mass:
-\[Ma_0=-v_{e/r}\frac{\mathrm dM}{\mathrm dt}-Mg.\]</li>
-<li>Separate variables:
-\[\begin{aligned}\frac{\mathrm dM}{M}&=-\frac{a_0+g}{v_{e/r}}\,\mathrm dt\\ \Rightarrow\ M&=m_0e^{-(a_0+g)t/v_{e/r}}.\end{aligned}\]</li>
-<li>Burn rate (mass leaving per second):
-\[\dot m=-\frac{\mathrm dM}{\mathrm dt}=\frac{m_0(a_0+g)}{v_{e/r}}e^{-(a_0+g)t/v_{e/r}}.\]</li>
+<ol class="steps proc">
+<li><b>Do:</b> Rocket ODE with \(\mathrm dv/\mathrm dt=a_0\) and \(M(t)\) the rocket mass:
+\[Ma_0=-v_{e/r}\frac{\mathrm dM}{\mathrm dt}-Mg.\] <span class="why">The acceleration is fixed by the crew's comfort, so the equation now tells us how fast the mass must fall instead.</span></li>
+<li><b>Do:</b> Separate variables:
+\[\begin{aligned}\frac{\mathrm dM}{M}&=-\frac{a_0+g}{v_{e/r}}\,\mathrm dt\\ \Rightarrow\ M&=m_0e^{-(a_0+g)t/v_{e/r}}.\end{aligned}\] <span class="why">The mass must drop by the same fraction every second, and a steady fractional drop is an exponential decay.</span></li>
+<li><b>Do:</b> Burn rate (mass leaving per second):
+\[\dot m=-\frac{\mathrm dM}{\mathrm dt}=\frac{m_0(a_0+g)}{v_{e/r}}e^{-(a_0+g)t/v_{e/r}}.\] <span class="why">The question asks for fuel leaving per second, which is minus the rocket's rate of mass change.</span></li>
 </ol>
 <p>\(\boxed{\dot m=\dfrac{m_0(a_0+g)}{v_{e/r}}\,e^{-(a_0+g)t/v_{e/r}}}\)</p>
 <p class="flag">the printed result has \(+\) in the exponent. A rocket that gets lighter needs a <b>falling</b> burn rate for constant acceleration (constant thrust on a lighter rocket would accelerate it more), so the exponent must be negative. Prove the correct form and point out the sign in one line.</p>
 <p class="word"><b>In words:</b> to keep the crew's acceleration steady, burn fuel in proportion to the rocket's current mass, so the burn rate decays exponentially.</p></div>
+<p class="cannow"><b>You can now:</b> apply thrust = relative speed × mass rate to helicopters, trucks and other bodies; tell a throw (thrust) from a drop (no thrust); and find the burn rate for constant acceleration by separating variables.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Liquid fuels: maximising the exhaust speed (slide 91)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Liquid fuels: maximising the exhaust speed (slide 91)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>On the skateboard, the best way to go faster is to throw harder. For a rocket, throwing harder means making the gas hotter and its molecules lighter, so it leaves the nozzle faster. The fuel table below is a list of how hard each fuel can throw.</p></div></details>
 <p>Design guideline 1 says: maximise \(v_{ex}\). It is set mainly by the chemistry: how hot the combustion gas gets and how light its molecules are (light, hot gas leaves the nozzle fastest). Slide 91 tabulates fuel/oxidiser pairs (the <b>oxidiser</b> supplies the oxygen, since there is no air in space):</p>
 <div class="scroll"><table>
 <tr><th>Fuel / oxidiser</th><th>Combustion temperature (K)</th><th>Max exhaust speed \(v_{ex}\) (km/s)</th></tr>
@@ -388,15 +450,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>The photos on slide 91 show the flame colours of different propellants: RP-1 (refined kerosene) burns bright orange; methane (liquefied natural gas) blue-purple; hydrogen clear to pale blue; solid propellant cloudy and bright white; hypergolic propellants (N₂O₄ with UDMH, which ignite on contact) blue with orange fumes. The last photo shows the liquid propellant tanks of NASA's Space Launch System (SLS) rocket.</p>
 <p class="flag">the slide-91 values are "maximum" (ideal) exhaust speeds. The Saturn V example in Section 6 gives an effective \(v_{ex}=2.57\) km/s for stage 1, lower than the table's 4 km/s, because real engines and sea-level operation lose performance and the example's data are approximate.</p>
 <p class="word"><b>In words:</b> hydrogen with oxygen gives the highest practical exhaust speed, which is why upper stages (which need the most efficiency) use it; denser kerosene suits first stages, where compact tanks and high thrust matter more.</p>
+<p class="cannow"><b>You can now:</b> name the main fuel/oxidiser pairs and their maximum exhaust speeds; explain why H₂/O₂ suits upper stages and kerosene first stages; and say why the Saturn V example's \(v_{ex}\) is below the table value.</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Multi-stage rockets (slide 92)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Multi-stage rockets (slide 92)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Say your bricks come in a big crate. Halfway through, half the crate is empty, but you are still pushing all of it along. Better: carry two crates, and when the first is empty, just let it drop off the board and carry on with the second. Dropping it gives no push (Section 7), but every later throw now moves less dead weight. That is staging.</p></div></details>
 <p>Slide 92 compares a <b>single-stage</b> rocket (payload on one booster) with a <b>two-stage</b> rocket (payload on stage 2, on stage 1). Stage 1 burns with initial and final masses \(M_{ini}^{(1)}, M_{fi}^{(1)}\). When it is empty its shell is <b>discarded</b>, and stage 2 then burns from \(M_{ini}^{(2)}\) to \(M_{fi}^{(2)}\).</p>
 <div id="fig-stages"></div>
 <div class="box thm"><span class="tag">Result · two stages (slide 92, no gravity)</span>
 \[\begin{aligned}\Delta V&=v_{ex}\ln\frac{M_{ini}^{(1)}}{M_{fi}^{(1)}}+v_{ex}\ln\frac{M_{ini}^{(2)}}{M_{fi}^{(2)}}\\&=v_{ex}\ln\left(\frac{M_{ini}^{(1)}}{M_{fi}^{(1)}}\times\frac{M_{ini}^{(2)}}{M_{fi}^{(2)}}\right),\end{aligned}\]
 <p>with \(M_{fi}^{(1)}\gt M_{ini}^{(2)}\) (the difference is the discarded shell).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(v_{ex}\ln\dfrac{M_{ini}^{(1)}}{M_{fi}^{(1)}}\)</dt><dd>speed from stage 1's fuel, pushing everything including both crates.</dd><dt>\(v_{ex}\ln\dfrac{M_{ini}^{(2)}}{M_{fi}^{(2)}}\)</dt><dd>speed from stage 2's fuel, after the empty first crate has been dropped.</dd><dt>\(\ln(\cdots\times\cdots)\)</dt><dd>the two gains add, so the mass ratios multiply.</dd><dt>\(M_{fi}^{(1)}\gt M_{ini}^{(2)}\)</dt><dd>the gap is the dropped crate (the stage-1 shell).</dd></dl></div>
 <p class="word"><b>In words:</b> apply the rocket equation once per stage and add the speed gains; the overall effect is as if the mass ratios were multiplied. Throwing away the shell makes the second ratio bigger than it would be if the shell were carried.</p></div>
 <p class="flag">slide 92 marks the two-stage formula box "Not examined" for this year. Past papers (Dec 2018 B3, Dec 2015 B2, May 2014 B2) did ask staging calculations; they need nothing beyond applying the rocket equation once per stage, so the practice question in the exam taster is kept, labelled lower priority.</p>
 <p>Slide 92's two points:</p>
@@ -413,10 +478,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p class="cap">Stage 2 gets the rest: \(420-F_1\) fuel and \(40-S_1\) structure. Both rockets burn for 140 s in total. The two-stage curve jumps nowhere, but after separation it climbs faster because it no longer carries stage 1's shell. Start values reproduce the past paper (single 4154 m/s, two-stage 5076 m/s).</p></div>
 <div class="beyond box"><span class="tag">Beyond the handouts · why "about 3 stages"</span>
 <p>Each extra stage saves less than the one before (the dead mass you avoid carrying gets smaller), while every stage adds engines, separation hardware, and a chance of failure at separation. For typical Earth-to-orbit missions the benefit flattens after 2–3 stages; most modern launchers have 2 (Falcon 9) or 3 (Saturn V, Long March 3B), sometimes with strap-on boosters as a "stage 0".</p></div>
+<p class="cannow"><b>You can now:</b> apply the rocket equation once per stage, dropping the empty shell between stages; explain why staging is more energy efficient; and say why designs stop at about 3 stages.</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Orbits and satellites: background only (slides 93–95)</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Orbits and satellites: background only (slides 93–95)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Once the last brick is thrown, the rocket's job is done and the satellite coasts round the Earth. These slides are about where satellites live and how crowded those places are getting, not about rocket maths.</p></div></details>
 <div class="box warn"><span class="tag">No longer examined</span>
 <p>Orbital dynamics was removed from the 2026/27 syllabus. These slides are qualitative background; the handout's summary (slide 96) does not list orbits. No formulas are needed.</p></div>
 <ul class="list">
@@ -430,10 +497,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>Allocate orbital "slots" (for GEO, international coordination of positions).</li>
 <li>At end of life, <b>de-orbit</b> LEO satellites so they burn up in the atmosphere, and move GEO satellites to a higher "graveyard" orbit.</li>
 <li>Design satellites not to shed debris; passivate (empty) old tanks and batteries so they cannot explode.</li></ul></div></details>
+<p class="cannow"><b>You can now:</b> name LEO, MEO and GEO with their rough heights, and explain why crowded orbits need tracking and collision avoidance (background only, not examined).</p>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Summary (slide 96)</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Summary (slide 96)</span></h2>
 <p>Slide 96 lists what this chapter should leave you able to do: use Newton's law in momentum-conservation form for systems whose mass varies during motion; write the instantaneous thrust and acceleration and the final velocity; appreciate the logarithm of the mass ratio and the limit set by the exhaust velocity; explain why real rockets use several stages; and apply the thrust force to moving systems of varying mass beyond rockets. Its calculation box: given the masses and \(v_{fi}\), find \(v_{ex}\), or given \(v_{ex}\), find \(v_{fi}\); given several stage masses, find \(v_{fi}\) or \(v_{ex}\).</p>
 <div class="scroll"><table>
 <tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
@@ -450,7 +518,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Common mistakes</h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Common mistakes</span></h2>
 <div class="mistake">
 <span class="x">✗</span><span>Writing the exhaust's momentum as \(\Delta m(-v_{ex})\).</span>
 <span class="ok">✓</span><span>Its ground velocity is \(v-v_{ex}\): momentum \(\Delta m(v-v_{ex})\).</span>
@@ -470,7 +538,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Find the mistake</h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Find the mistake</span></h2>
 <div class="q"><p class="qh">1 · Saturn V burnout speed</p>
 <p>"Mass ratio final/initial = 0.25, so \(v_b=2571\ln(0.25)-9.81(160.7)=-3565-1577=-5142\u{m/s}\). The minus sign means the rocket is going down."</p>
 <details><summary>Hint</summary><div><p>Which mass goes on top of the logarithm?</p></div></details>
@@ -486,7 +554,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="s14"><h2><span class="n">14</span>Concept checks</h2>
+<section id="s14"><h2><span class="n">14</span><span class="h2t">Concept checks</span></h2>
 <p class="muted">Written for these notes.</p>
 <div class="q"><p class="qh">1 · Pushing on nothing</p><p>In space there is no air to push against. What does the rocket push on?</p>
 <details><summary>Answer</summary><div><p>On its own exhaust gas. The engine pushes the gas backwards; by action and reaction the gas pushes the rocket forwards. Momentum of rocket + gas is conserved.</p></div></details></div>
@@ -501,7 +569,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 15 ============ -->
-<section id="s15"><h2><span class="n">15</span>Exam taster</h2>
+<section id="s15"><h2><span class="n">15</span><span class="h2t">Exam taster</span></h2>
 <p>Real past-paper parts that are still examinable. In 2014–2024 rockets appeared as one Section B question (often B2 or B3) mixed with orbit and re-entry parts, which are now removed; expect the rocket parts to stay and the rest to change. Full method and more questions: <a href="guide-D3.html">Exam guide · D3</a>.</p>
 
 <div class="q"><div class="src"><b>Dec 2024 B3(a)</b><span>4 marks</span><span>also Dec 2023 B3(a), Dec 2022 B3(a), Dec 2021 B2(a), Dec 2015 B2(a), Dec 2014 B2(a)</span><a class="guide" href="guide-D3.html#D3-1">D3.1 derive the rocket equation</a></div>
@@ -869,6 +937,15 @@ D('fig-thrust',{x0:-2.4,x1:2.6,y0:-3.0,y1:3.4,px:30,pad:8,maxw:220},[...rocket(0
     {o:{x0:-1.8,x1:2.6,y0:-2.4,y1:3.6,px:26,pad:8},cap:'FBD of B (gravity neglected)',items:[...rocket(0,-0.4,0.7,2.4),flame(0,-0.4,0.7,0.9),
       {t:'force',x:-0.6,y:-0.4,ang:90,len:50,k:'force',at:'tail',lbl:'F_th = 12 kN',dx:-46,dy:4},vel(1.0,1.2,36,'a')]}]);
 })();
+
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 
 </script>
 </body></html>

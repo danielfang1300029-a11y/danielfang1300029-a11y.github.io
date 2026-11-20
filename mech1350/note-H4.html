@@ -167,7 +167,7 @@ section.prev-sec>.prevbar{font-family:var(--mono);font-size:11px;letter-spacing:
 details.calc{border-left:3px solid var(--accent)}
 details.calc>summary{color:var(--accent);font-weight:500}
 details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
-details.calc .why{color:var(--muted);font-size:.9rem}
+details.calc .calcwhy{color:var(--muted);font-size:.9rem}
 table.tbl td,table.tbl th{padding:6px 8px}
 .circuit{width:100%;height:auto;display:block}
 .circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
@@ -196,6 +196,35 @@ details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-
 .stats span{font-size:.88rem;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted)}
 .stats b{color:var(--ink);font-family:var(--display)}
 .small{font-size:.88rem}
+
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+.pill.prev{background:var(--purple-soft);color:var(--purple)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 
 </style>
 <script>
@@ -231,13 +260,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-H4.html">Exam guide · H4</a><a href="note-H3.html">← H3</a><a href="note-F1.html">Next: F1 →</a></nav>
   <span class="course">MECH1350 · Hydrostatics · chapter 4</span>
   <h1>Buoyancy and flotation</h1>
-  <p class="lede">Why a fluid pushes up on anything in it, how to tell whether a body floats or sinks, and how to balance weight, buoyancy and cable tension on a floating, tethered or hanging body. Every slide on Archimedes' principle and every buoyancy concept question, explained from scratch.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
-<p>H2 gave the hydrostatic law \(p=\rho g h\) and H3 used it for forces on surfaces; here the pressure all round a body adds up to an <b>upward</b> buoyant force. This is the last hydrostatics chapter; F1 starts fluids in motion.</p>
-<p><b>In the exam:</b> true/false statements on Archimedes and sinking, and in almost every sitting since 2019 a 9–10 mark force balance on a tethered cylinder, a hanging plate or a cylinder carrying a sphere. The Dec 2026 review sheet lists Archimedes' principle, apparent weight, "an object weighs less when immersed in a denser fluid", sink/float by density and the law of flotation. See the <a href="guide-H4.html">H4 exam guide</a>.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this chapter sits</span></h2>
+<p>Put a body in water and it makes a hole. Before the body was there, that hole was full of water, and the water all round held it up. The surrounding water keeps pushing in exactly the same way, so the body gets the same upward push: the weight of the water that used to fill the hole. This chapter uses that one picture again and again.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span><ol>
+<li><a href="#s1">§1</a> <b>Equal weights, different sizes, different overflow.</b> How Archimedes caught the goldsmith.</li>
+<li><a href="#s2">§2</a> <b>Upthrust = the weight of the water that would fill the hole.</b> It acts at the centre of the hole. <span class="pill">On the review sheet</span></li>
+<li><a href="#s3">§3</a> <b>The bottom of the hole is deeper than its top, so it is pushed harder.</b> Depth does not matter.</li>
+<li><a href="#s4">§4</a> <b>Under water, the water carries part of the weight:</b> a balance reads weight minus upthrust. <span class="pill">On the review sheet</span></li>
+<li><a href="#s5">§5</a> <b>Denser than the fluid sinks; less dense floats.</b> <span class="pill">On the review sheet</span></li>
+<li><a href="#s6">§6</a> <b>A floater sinks in until its hole holds its own weight of water.</b> <span class="pill">On the review sheet</span></li>
+<li><a href="#s7">§7</a> <b>The handout's puzzles:</b> a melting iceberg, hydrogen, a "lighter than air" material, a hot-air balloon.</li>
+<li><a href="#s8">§8</a> <b>Tethered or hung: weight, upthrust and tension balance.</b> <span class="pill">Section B, almost every sitting</span></li>
+<li><a href="#s9">§9</a> <b>Weight acts at the middle of the body, upthrust at the middle of the hole:</b> take moments.</li>
+<li><a href="#s10">§10</a> Stability of a floating body: a rocking boat rights itself if the metacentre is above G. <span class="pill prev">Out of 2026 syllabus</span> <span class="pill skip">Optional on first read</span></li>
+<li><a href="#s11">§11</a> Stability of a hanging body: a pendulum. <span class="pill prev">Out of 2026 syllabus</span> <span class="pill skip">Optional on first read</span></li>
+<li><a href="#s12">§12–16</a> Summary, common mistakes, find the mistake, concept checks and exam taster.</li>
+</ol></div>
+<p><b>You need:</b> the hydrostatic law \(p=\rho g h\) (H2), forces on surfaces (H3), and free-body diagrams with force and moment balance. This is the last hydrostatics chapter; F1 starts fluids in motion. <b>In the exam:</b> true/false statements on Archimedes and sinking, and in almost every sitting since 2019 a 9–10 mark force balance on a tethered cylinder, a hanging plate or a cylinder carrying a sphere. The Dec 2026 review sheet lists Archimedes' principle, apparent weight, "an object weighs less when immersed in a denser fluid", sink/float by density and the law of flotation. See the <a href="guide-H4.html">H4 exam guide</a>.</p>
 <p class="muted small">Source: Fluid Statics handout (Prof C.O. Ng), slides 44–51 (of 51), and the supplement "Some Concept Questions" pp. 9–13. Slides 1–43 and concept-question pp. 1–8 are in H2 and H3. The slides carry no printed numbers: "slide n" = PDF page n. Purple sections 10–11 teach stability (Previous syllabus: asked up to May 2025, not in the 2026 handouts).</p>
 
 <div class="box conv"><span class="tag">Sign convention for this chapter</span>
@@ -267,7 +309,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Archimedes and the king's crown (slides 44–45)</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Archimedes and the king's crown (slides 44–45)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A kilogram of feathers and a kilogram of sand weigh the same, but the feathers fill a far bigger bag. Gold and silver are the same: a lump of silver is bigger than a lump of gold of the same weight. Push a lump under water in a brim-full vessel and it makes a hole its own size; the water that spills out is exactly the water that used to fill that hole. So the overflow measures the size of the hole, and a crown with silver in it makes a bigger hole than pure gold.</p></div></details>
 <p>Slide 44 introduces the last topic: <b>Archimedes' principle</b>, one of the earliest laws of mechanics, put forward by the Greek scientist Archimedes around 246 BC, long before anyone could explain it with hydrostatic pressure. (Section 3 gives that explanation.)</p>
 <p>Slide 45 ("Eureka!") tells the classic story, quoting the Encyclopaedia Britannica. King Hiero II of Syracuse (the slide spells it "Heiron") had a crown made of what was meant to be pure gold, but suspected the goldsmith had mixed in cheaper silver. Archimedes took a lump of gold and a lump of silver, <b>each equal in weight to the crown</b>. He filled a vessel to the brim with water, put in the silver and measured how much water overflowed; he refilled the vessel and did the same with the gold. The gold displaced <b>less</b> water than the silver. The crown displaced <b>more</b> water than the gold, so it could not be pure gold: it contained silver. The famous scene of Archimedes leaping from his bath shouting "Eureka!" ("I have found it!") is thought to be a later embellishment.</p>
 <div id="fig-crown"></div>
@@ -281,16 +324,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>Average density of the crown: \(1/(64.84\times10^{-6})\approx15\,400\u{kg/m^3}\), well below gold.</li>
 </ol>
 <p>The same test can be done with a balance instead of overflow (section 4): weighed under water, the gold reads \(9.30\u{N}\) and the crown \(9.17\u{N}\), because the crown's bigger volume gets a bigger upthrust.</p></div>
+<p class="cannow"><b>You can now:</b> explain why equal weights of different metals displace different volumes of water; turn a mass and a density into a volume and an overflow; say why the crown with silver in it overflows more than pure gold.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>Archimedes' principle (slide 46)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Archimedes' principle (slide 46)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture the water in a still pond and mark out any blob of it, say the shape of a fist. That blob just sits there: the water all round pushes on it, and the pushes add up to exactly its weight, upward. Now take the blob away and put a stone of the same shape in the hole. The surrounding water cannot tell the difference, so it pushes on the stone in exactly the same way. That push is the buoyant force.</p></div></details>
 <div class="box def"><span class="tag">Definition · buoyant force, displaced volume</span>
 <p>The <b>buoyant force</b> (or <b>upthrust</b>) is the net upward force that a fluid exerts on a body that is partly or wholly inside it. The <b>displaced volume</b> is the volume of fluid the body pushes out of the way: the part of the body that is below the fluid surface (all of it, if the body is fully submerged).</p></div>
 <div class="box thm"><span class="tag">Result · Archimedes' principle (law of buoyancy)</span>
 <p>The buoyant force acting on a body immersed in a fluid, whether <b>fully or partially</b>, is equal to the <b>weight of the fluid displaced</b> by the body, and it acts <b>upward through the centroid of the displaced volume</b>.</p>
 \[F_B=\rho_\text{fluid}\,g\,V_\text{displaced}\]
 <p class="word"><b>In words:</b> upthrust = density of the <b>fluid</b> × g × volume of the body that is <b>under the surface</b>. It is the weight of the fluid that would fill the hole the body makes.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(F_B\)</dt><dd>the push the surrounding fluid gives whatever sits in the hole.</dd><dt>\(V_\text{displaced}\)</dt><dd>the size of the hole: only the part of the body below the surface.</dd><dt>\(\rho_\text{fluid}\)</dt><dd>the density of the fluid that used to fill the hole, not of the body.</dd><dt>\(\rho_\text{fluid}\,g\,V_\text{displaced}\)</dt><dd>mass of that fluid times \(g\): its weight.</dd><dt>"through the centroid"</dt><dd>the fluid in the hole was held up at its own centre, so the push acts at the centre of the hole.</dd></dl></div>
 <p>Three points the exam checks:</p>
 <ul class="list">
 <li>The density in \(F_B\) is the <b>fluid's</b>, never the body's. A steel ball and a wooden ball of the same size, both held under water, get the <b>same</b> upthrust.</li>
@@ -298,15 +344,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>The upthrust acts through the <b>centre of buoyancy</b> B: the centroid (geometric centre) of the displaced volume. This is usually <b>not</b> the centre of gravity G of the body: for a half-submerged cylinder floating upright, B is at half the draught, a quarter of the way up the cylinder. Where B is matters as soon as moments come in (sections 9–11). "State the Archimedes principle" has been asked six times in the older course (2–4 marks): say both parts, the size <b>and</b> the line of action.</li>
 </ul>
 <h3>The "fluid body" argument (slide 46 figure)</h3>
+<details class="idea"><summary>What is this? (the fluid body)</summary><div><p>This is the pond picture drawn by the slide. The dashed outline is the hole; the blob inside it is the water that used to be there. If the water around can hold that blob still, it gives exactly the same push to any body that takes the blob's place.</p></div></details>
 <p>The slide's figure shows a solid body under water, and next to it a <b>fluid body</b> of exactly the same shape at the same depth: an imaginary blob of the water itself, outlined by a dashed line. The surrounding water cannot tell the two apart: at every point of the outline the pressure is the same \(\rho g h\), so the total pressure force is the same on both. Now the fluid blob is just water at rest in water: it does not sink or rise, so the pressure force on it must exactly balance its own weight. Hence the pressure force on <b>either</b> shape is upward and equal to the weight of a blob of water of that shape. The balance also tells us where it acts: for the fluid blob, the upthrust must pass through the blob's centre of gravity C (otherwise the blob would start to spin), and C of a uniform blob is the centroid of its volume.</p>
 <div id="fig-arch"></div>
 <p class="muted">Slide 46, redrawn. Left: a solid body; its weight W acts at its own centre of gravity, the buoyant force \(F_B\) at the centroid C of the displaced volume. Right: a fluid body of the same shape: \(F_B\) is identical and here exactly balances the fluid body's weight \(W\), equal and opposite.</p>
 <div class="box eg"><span class="tag">Example · written for these notes</span>
 <p>A sealed box of volume \(0.02\u{m^3}\) is held fully under water. \(F_B=1000\times9.81\times0.02=196\u{N}\), whatever the box is made of or contains. In sea water (\(1025\u{kg/m^3}\)) it would be 201 N; in air (\(1.2\u{kg/m^3}\)) only 0.24 N, which is why buoyancy in air is usually ignored (section 4).</p></div>
+<p class="cannow"><b>You can now:</b> state Archimedes' principle in full, size and line of action; use the fluid's density and the submerged volume in \(F_B\); place the upthrust at the centroid of the displaced volume, not at G.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Where the buoyant force comes from (slide 47)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Where the buoyant force comes from (slide 47)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Swim to the bottom of a pool and you feel the water pressing harder on your ears. The water in the hole feels the same: its bottom is deeper than its top, so the water underneath pushes up on it harder than the water above pushes down. The sideways pushes on its sides cancel. What is left over is an upward push, just big enough to hold up the water in the hole.</p></div></details>
 <p>With hydrostatics (H2) we can now explain the upthrust instead of just stating it. Pressure grows with depth. The <b>bottom</b> of a submerged body is deeper than its top, so the water pushes up on the bottom harder than it pushes down on the top. The difference is an upward force: the buoyant force. The sideways pushes on the vertical sides cancel in pairs (same depth, opposite directions).</p>
 <h3>A box-shaped body</h3>
 <p>Take a block with horizontal top and bottom faces of area \(A\), height \(a\), its top at depth \(h\) (slide 47's first figure: arrows pointing down on the top face, up on the bottom face, and inward on the sides).</p>
@@ -315,14 +364,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div><div id="fig-box-fbd"></div><p class="sub">Free-body diagram: the two face forces; their difference is \(F_B\).</p></div>
 </div>
 <details class="calc"><summary>the upthrust on a block from the pressures</summary><div>
-<p>1. Top face, depth \(h\): pressure \(\rho g h\), force down \(F_\text{top}=\rho g h A\). <span class="why">Force = pressure × area; pressure is uniform on a horizontal face (H3).</span></p>
-<p>2. Bottom face, depth \(h+a\): force up \(F_\text{bottom}=\rho g(h+a)A\). <span class="why">Deeper, so bigger.</span></p>
-<p>3. Side faces: each horizontal force has an equal and opposite partner on the opposite face. <span class="why">Same areas and the same pressures at each depth.</span></p>
+<p>1. Top face, depth \(h\): pressure \(\rho g h\), force down \(F_\text{top}=\rho g h A\). <span class="calcwhy">Force = pressure × area; pressure is uniform on a horizontal face (H3).</span></p>
+<p>2. Bottom face, depth \(h+a\): force up \(F_\text{bottom}=\rho g(h+a)A\). <span class="calcwhy">Deeper, so bigger.</span></p>
+<p>3. Side faces: each horizontal force has an equal and opposite partner on the opposite face. <span class="calcwhy">Same areas and the same pressures at each depth.</span></p>
 <p>4. Net upward force:</p>
 \[\begin{aligned}F_B&=F_\text{bottom}-F_\text{top}\\&=\rho g(h+a)A-\rho g hA\\&=\rho g\,(aA)=\rho g V.\end{aligned}\]
-<p>5. The depth \(h\) has cancelled: <b>the upthrust does not depend on how deep the body is</b> (for a liquid of constant density). <span class="why">Both face forces grow with depth at the same rate.</span></p>
+<p>5. The depth \(h\) has cancelled: <b>the upthrust does not depend on how deep the body is</b> (for a liquid of constant density). <span class="calcwhy">Both face forces grow with depth at the same rate.</span></p>
 </div></details>
 <h3>Any shape (slide 47's second figure)</h3>
+<details class="idea"><summary>What is this? (any shape)</summary><div><p>For a curved body, think of two stacks of water. The push down on the top of the body is the weight of the stack sitting on its upper surface. The push up on its bottom is as big as the weight of a stack reaching from its lower surface right up to the free surface, as if the body were not there. Take the first stack from the second and what is left is a body-shaped stack: the water that would fill the hole.</p></div></details>
 <p>For a curved body, split its surface into an <b>upper surface</b> (surface 1, facing up) and a <b>lower surface</b> (surface 2, facing down), along the widest outline seen from above. From H3 (curved surfaces), the vertical force on a curved surface equals the <b>weight of the fluid vertically above it</b>, up to the free surface:</p>
 <ul class="list">
 <li>On surface 1 the water pushes <b>down</b> with \(F_V(1)\) = weight of the water column above surface 1.</li>
@@ -331,22 +381,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box thm"><span class="tag">Result · upthrust as a difference of two vertical forces</span>
 \[F_B=F_V(2)-F_V(1)=\rho g V_\text{body}\]
 <p class="word"><b>In words:</b> the column above the lower surface minus the column above the upper surface leaves exactly a body-shaped column of water: its weight is the upthrust.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(F_V(2)\)</dt><dd>the upward push on the lower surface: the weight of a column from that surface up to the free surface, the body's own space included.</dd><dt>\(F_V(1)\)</dt><dd>the downward push on the upper surface: the weight of the water really sitting above it.</dd><dt>\(F_V(2)-F_V(1)\)</dt><dd>the two columns share everything above the body, so that part cancels.</dd><dt>\(\rho g V_\text{body}\)</dt><dd>what is left: the weight of a body-shaped piece of water, the water of the hole.</dd></dl></div>
 <div id="fig-curved"></div>
 <p class="muted">Slide 47's second figure, redrawn: hatched columns above surface 1 (pushing down) and above surface 2 (pushing up). The difference is the body-shaped region.</p>
 <div class="box eg"><span class="tag">Example · written for these notes · checking the principle</span>
 <p>A cube of side 0.2 m hangs in water with its top face 0.5 m below the surface. Top force \(1000\times9.81\times0.5\times0.04=196.2\u{N}\) down; bottom force \(1000\times9.81\times0.7\times0.04=274.7\u{N}\) up. Difference \(78.5\u{N}\) up, which equals \(\rho g V=1000\times9.81\times0.008=78.5\u{N}\). Move it to 2 m deep: both forces grow by the same amount and \(F_B\) is still 78.5 N.</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>A body sitting <b>flat on the bottom</b> with no water underneath (a suction cup, a block bedded in mud) gets no upward push on its base, so the usual upthrust does not act; the water then presses it <b>down</b>. Archimedes' principle assumes the fluid surrounds the submerged part.</p></div>
+<p class="cannow"><b>You can now:</b> explain the upthrust as the bottom force minus the top force; show with a block that the depth cancels; explain the curved-body case with two columns of water; say why a body bedded flat on the bottom gets no upthrust.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Apparent weight and submerged density (slide 48)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Apparent weight and submerged density (slide 48)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Lift a heavy stone under water in a river and it feels lighter. Its weight has not changed; the water round it is simply pushing up, just as hard as it pushed on the water that used to fill the stone's hole. So the water carries part of the weight, and your hand (or a spring balance) supplies only the rest. That rest is the apparent weight.</p></div></details>
 <div class="box def"><span class="tag">Definition · apparent weight</span>
 <p>The <b>apparent weight</b> \(W_\text{app}\) of an immersed body is the weight it seems to have: the reading of a spring balance holding it, or the force you need to hold it up. Because the fluid pushes up with \(F_B\), <b>a body weighs less when immersed in a fluid</b>.</p></div>
 <div class="box thm"><span class="tag">Result · apparent weight of a fully immersed body</span>
 \[F_B=\rho_\text{fluid}\,g\,V_\text{body}\]
 \[\begin{aligned}W_\text{app}&=W-F_B\\&=(\rho_\text{body}-\rho_\text{fluid})\,g\,V_\text{body}\end{aligned}\]
 <p class="word"><b>In words:</b> apparent weight = true weight − upthrust = (body density − fluid density) × g × volume.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(W\)</dt><dd>the true weight: gravity's pull on the body, the same in air or water.</dd><dt>\(F_B\)</dt><dd>the share the water carries: the weight of the water that would fill the hole.</dd><dt>\(W-F_B\)</dt><dd>what is left for the balance or your hand.</dd><dt>\(\rho_\text{body}-\rho_\text{fluid}\)</dt><dd>how much heavier the body is than the fluid it replaced, per cubic metre.</dd></dl></div>
 <p>The handout then defines the <b>submerged density</b> \(\rho'=\rho_\text{body}-\rho_\text{fluid}\), so that</p>
 \[W_\text{app}=\rho'\,g\,V_\text{body}\]
 <p class="word"><b>In words:</b> under water a body behaves as if its density were reduced by the fluid's density. A rock of density 2600 kg/m³ "feels" like 1600 kg/m³ under water, which is why stones are easy to lift in a river.</p>
@@ -363,15 +417,20 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[W_\text{app}=19.62-7.27=12.35\u{N}\]
 <p>Check with the submerged density: \(\rho'=1700\), \(1700\times9.81\times7.407\times10^{-4}=12.35\u{N}\).</p></div>
 <h3>Past-paper pattern: density from a ratio of weights</h3>
-<p>The older course (ENGG1205) liked questions that give apparent weights only as <b>fractions</b> of the true weight. The volume is never given, and it always cancels. Recipe: write \(W=\rho_b gV\) and \(F_B=\rho_f gV_\text{sub}\) for each situation, put the stated ratio into an equation, cancel \(gV\), solve.</p>
+<p>The older course (ENGG1205) liked questions that give apparent weights only as <b>fractions</b> of the true weight. The volume is never given, and it always cancels. Recipe:</p>
+<ol class="steps proc">
+<li><b>Do:</b> write \(W=\rho_b gV\) and \(F_B=\rho_f gV_\text{sub}\) for each situation. <span class="why">The weight never changes; only the size of the hole (full, half) changes from one situation to the next.</span></li>
+<li><b>Do:</b> put the stated ratio into an equation. <span class="why">The ratio is the only number given, so it is the one equation that links the two densities.</span></li>
+<li><b>Do:</b> cancel \(gV\), solve. <span class="why">The weight and the upthrust are both proportional to the body's volume, so the unknown size drops out and only densities are left.</span></li>
+</ol>
 <div class="box eg"><span class="tag">Past paper · ENGG1205 2015–16 Sem 2 Q2(a) · 6 marks</span>
 <p>"The apparent weight of an object when completely submerged in water is half that when half submerged in water. What is the density of this object?"</p>
 <details class="calc"><summary>the density from the two apparent weights</summary><div>
-<p>1. Fully submerged: \(W_1=(\rho_s-\rho_w)gV\). <span class="why">Upthrust uses the whole volume.</span></p>
-<p>2. Half submerged: \(W_2=\rho_sgV-\tfrac12\rho_wgV\). <span class="why">Only half the volume displaces water.</span></p>
+<p>1. Fully submerged: \(W_1=(\rho_s-\rho_w)gV\). <span class="calcwhy">Upthrust uses the whole volume.</span></p>
+<p>2. Half submerged: \(W_2=\rho_sgV-\tfrac12\rho_wgV\). <span class="calcwhy">Only half the volume displaces water.</span></p>
 <p>3. Given \(W_1=\tfrac12W_2\); cancel \(gV\):</p>
 \[\begin{aligned}\rho_s-\rho_w&=\tfrac12\rho_s-\tfrac14\rho_w\\ \tfrac12\rho_s&=\tfrac34\rho_w\end{aligned}\]
-<p>4. \(\rho_s=1.5\rho_w\). <span class="why">\(\rho_w=1000\).</span></p>
+<p>4. \(\rho_s=1.5\rho_w\). <span class="calcwhy">\(\rho_w=1000\).</span></p>
 </div></details>
 <p>\(\boxed{\rho=1500\u{kg/m^3}}\)</p></div>
 <div class="box eg"><span class="tag">Past paper · ENGG1205 2015–16 Sem 1 Q1(g) · 6 marks</span>
@@ -382,10 +441,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box eg"><span class="tag">Past paper · ENGG1205 2013–14 Sem 1 Q1(g) · 4 marks</span>
 <p>"When half submerged in water, a spherical object of homogeneous material will have an apparent weight equal to two-thirds of its weight in air. What is the relative density of the material of the object?"</p>
 <p>\(W-F_B=\tfrac23W\) with \(W=\rho_sgV\), \(F_B=\rho_wg\tfrac V2\): \(\rho_s-\tfrac12\rho_w=\tfrac23\rho_s\), so \(\tfrac13\rho_s=\tfrac12\rho_w\) and \(\boxed{\text{RD}=\rho_s/\rho_w=1.5}\).</p></div>
+<p class="cannow"><b>You can now:</b> find the apparent weight of a fully or partly immersed body; use the submerged density \(\rho'\); find a density or relative density from ratios of apparent weights.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Float or sink? (slide 49)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Float or sink? (slide 49)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Hold a body under water and let go. Gravity pulls it down with its weight; the water pushes it up with the weight of the water that used to fill its hole. The hole is the same size as the body, so the contest is simply: is the body heavier or lighter than the same volume of water? Heavier, it sinks. Lighter, it rises until part of it sticks out. Equal, it hovers.</p></div></details>
 <p>Let go of a body fully under the surface. Two forces act: its weight \(\rho_\text{body}gV\) down and the upthrust \(\rho_\text{fluid}gV\) up. The same \(gV\) appears in both, so the comparison is simply between the two <b>densities</b>:</p>
 <div class="scroll"><table class="tbl">
 <tr><th>Case</th><th>Densities</th><th>Apparent weight</th><th>Displaced volume</th></tr>
@@ -399,23 +460,28 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box thm"><span class="tag">Result · fraction of a floating body below the surface</span>
 \[\frac{V_\text{sub}}{V_\text{body}}=\frac{\rho_\text{body}}{\rho_\text{fluid}}\]
 <p class="word"><b>In words:</b> a floating body sinks in until the fraction under the surface equals the ratio of its density to the fluid's. Ice (917 kg/m³) in sea water (1025 kg/m³): 89.5% under, "the tip of the iceberg" is about a tenth.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(V_\text{sub}/V_\text{body}\)</dt><dd>the fraction of the body that is inside its hole, below the surface.</dd><dt>\(\rho_\text{body}/\rho_\text{fluid}\)</dt><dd>how heavy the body is compared with the same volume of fluid.</dd><dt>\(=\)</dt><dd>a floater settles where its hole is just big enough for the fluid in it to weigh what the body weighs.</dd></dl></div>
 <div class="figure"><p class="ttl">Try it · sink, float or hover</p>
 <div id="fig-try-float"></div>
 <div class="ctrl"><label>body density \(\rho_b\) <input type="range" id="f-rb" min="100" max="2000" step="10" value="600"></label><label>fluid density \(\rho_f\) <input type="range" id="f-rf" min="700" max="1400" step="5" value="1000"></label></div>
 <div class="readout" id="out-float"></div>
 <p class="cap">A 0.1 m³ block released in a deep fluid. The readout gives its weight, the upthrust when fully under, its apparent weight, and (if it floats) the fraction below the surface. Try 917 in 1025 (an iceberg), 1000 in 1000 (neutral), 2700 is off the scale: aluminium always sinks.</p></div>
 <h3>"An object weighs less in a denser liquid"</h3>
+<details class="idea"><summary>What is this? (a denser liquid)</summary><div><p>Same body, same hole, but now the hole used to be full of a heavier liquid. The liquid round it was holding up that heavier filling, so it pushes up harder on the body. The balance has less left to carry.</p></div></details>
 <p>From \(W_\text{app}=(\rho_\text{body}-\rho_\text{fluid})gV\): the same body, fully submerged, has a <b>smaller</b> apparent weight in the <b>denser</b> liquid, because the denser liquid gives a bigger upthrust. This is the review sheet's phrase, and it was tested as a true/false statement in Dec 2024 (see the exam taster).</p>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Do not reverse it. "Weighs <b>more</b> in liquid A than in liquid B" means the upthrust is <b>smaller</b> in A, so A is <b>less</b> dense than B.</p></div>
+<p class="cannow"><b>You can now:</b> decide sink, hover or float from the two densities; find the fraction of a floating body below the surface; say correctly in which liquid a body weighs less.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>The law of flotation (slide 50)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">The law of flotation (slide 50)</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Lower a boat gently into the water. At first its hole is small, and the water that would fill it weighs less than the boat, so the boat sinks deeper. The hole grows as it sinks. It stops when the water that would fill the hole weighs exactly as much as the boat. Load cargo and it sinks further, until the extra hole holds the cargo's weight of water.</p></div></details>
 <div class="box thm"><span class="tag">Result · law of flotation</span>
 <p>A <b>floating</b> object displaces a weight of fluid equal to its <b>own weight</b>.</p>
 \[\rho_\text{body}\,g\,V_\text{body}=\rho_\text{fluid}\,g\,V_\text{sub}\]
 <p class="word"><b>In words:</b> for anything floating freely, weight of the body (plus whatever it carries) = weight of fluid pushed aside = upthrust.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\rho_\text{body}\,g\,V_\text{body}\)</dt><dd>the weight of the whole floating body (and anything it carries).</dd><dt>\(V_\text{sub}\)</dt><dd>the hole: only the part below the waterline.</dd><dt>\(\rho_\text{fluid}\,g\,V_\text{sub}\)</dt><dd>the weight of the fluid that would fill the hole: the upthrust.</dd><dt>\(=\)</dt><dd>floating freely, only these two forces act, so they must balance.</dd></dl></div>
 <p>It is a corollary (a direct consequence) of Archimedes' principle: a freely floating body is in equilibrium under only two forces, so \(W=F_B\), and \(F_B\) is the weight of displaced fluid. The slide adds three remarks:</p>
 <ul class="list">
 <li>An object floats in a fluid <b>only when it is lighter (less dense)</b> on average than the fluid (section 5).</li>
@@ -426,13 +492,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>For a body with vertical sides (a box-shaped barge, a cylinder floating upright) the displaced volume is (waterplane area) × (draught), so the law of flotation gives the draught directly, and a <b>change</b> in draught gives a change in load:</p>
 \[\Delta W=\rho_f\,g\,A_\text{wp}\,\Delta h\]
 <p class="word"><b>In words:</b> extra load = weight of the extra slice of water displaced = specific weight × waterplane area × extra sinkage.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(A_\text{wp}\)</dt><dd>the footprint of the hull where it cuts the water surface.</dd><dt>\(\Delta h\)</dt><dd>how much deeper the body sits after loading.</dd><dt>\(A_\text{wp}\,\Delta h\)</dt><dd>the extra slice added to the hole.</dd><dt>\(\rho_f\,g\,A_\text{wp}\,\Delta h\)</dt><dd>the weight of water that would fill that slice, which must equal the extra load.</dd></dl></div>
 <div class="box eg"><span class="tag">Past paper · May 2024 Q2(a) · 6 marks</span>
 <p>"A rectangular flat-bottomed boat has a width of \(b=4\) m and a length of \(l=12\) m. The draught (distance between the waterline and the deepest point of the boat) before and after loading the cargo is \(h_1=0.5\) m and \(h_2=1\) m, respectively. The center of gravity after loading the cargo is \(g=0.85\) m from the bottom of the boat. Find the weight of the loaded cargo G." (Specific weight of water 9.81 kN/m³.)</p>
 <div id="fig-boat"></div>
 <details class="calc"><summary>the cargo weight</summary><div>
-<p>1. Before loading: boat weight = upthrust \(=\gamma_w\,b\,l\,h_1\): \[9.81\times4\times12\times0.5=235.4\u{kN}\] <span class="why">Law of flotation, box-shaped displaced volume.</span></p>
+<p>1. Before loading: boat weight = upthrust \(=\gamma_w\,b\,l\,h_1\): \[9.81\times4\times12\times0.5=235.4\u{kN}\] <span class="calcwhy">Law of flotation, box-shaped displaced volume.</span></p>
 <p>2. After loading: boat + cargo = \(\gamma_w\,b\,l\,h_2=470.9\u{kN}\).</p>
-<p>3. Subtract: \[\begin{aligned}G&=\gamma_w\,b\,l\,(h_2-h_1)\\&=9.81\times48\times0.5\end{aligned}\] <span class="why">The cargo's weight equals the extra water displaced.</span></p>
+<p>3. Subtract: \[\begin{aligned}G&=\gamma_w\,b\,l\,(h_2-h_1)\\&=9.81\times48\times0.5\end{aligned}\] <span class="calcwhy">The cargo's weight equals the extra water displaced.</span></p>
 <p>4. The centre of gravity height \(g=0.85\) m is not needed here; it is for part (b), stability (section 10).</p>
 </div></details>
 <p>\(\boxed{G=235.4\u{kN}}\) (the cargo weighs as much as the empty boat, since the draught doubled).</p></div>
@@ -440,8 +507,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>"As shown in Figure C1, a layer of a liquid (immiscible with water) of relative density 0.75 floats on top of a layer of water in a beaker. A completely submerged cylinder of relative density 0.9 adjusts itself so that its axis is vertical and one part of its height is above the liquid-water interface and one part is below. Find the fraction of the cylinder height which is below the interface." ("Immiscible" = does not mix.)</p>
 <div id="fig-layers"></div>
 <details class="calc"><summary>the fraction below the interface</summary><div>
-<p>1. Let the cylinder have cross-section \(A\), height \(H\), and a fraction \(x\) of its height in the water. <span class="why">Unknown to find.</span></p>
-<p>2. The upthrust is the weight of <b>both</b> fluids displaced: water \(\rho_wgA(xH)\) plus liquid \(0.75\rho_wgA(1-x)H\). <span class="why">Archimedes applies to each layer: weight of whatever fluid is pushed aside.</span></p>
+<p>1. Let the cylinder have cross-section \(A\), height \(H\), and a fraction \(x\) of its height in the water. <span class="calcwhy">Unknown to find.</span></p>
+<p>2. The upthrust is the weight of <b>both</b> fluids displaced: water \(\rho_wgA(xH)\) plus liquid \(0.75\rho_wgA(1-x)H\). <span class="calcwhy">Archimedes applies to each layer: weight of whatever fluid is pushed aside.</span></p>
 <p>3. Weight: \(0.9\rho_wgAH\). Balance and cancel \(\rho_wgAH\):</p>
 \[0.9=x+0.75(1-x)\]
 <p>4. \(0.15=0.25x\), so \(x=0.6\).</p>
@@ -451,8 +518,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>"As is shown in Figure C1, a spherical object of diameter \(d_o\) is made up of Material A and has a hollow core of diameter \(d_c\). If the relative density of Material A is \(r\gt1\), find the ratio of the diameters \(d_c/d_o\), in terms of \(r\), that will cause the object to be neutrally buoyant in water. Hint: the volume of a sphere \(=\tfrac\pi6\times\text{diameter}^3\)."</p>
 <div id="fig-hollow"></div>
 <details class="calc"><summary>the diameter ratio</summary><div>
-<p>1. Weight of the shell (the core is empty): \(W=\tfrac\pi6(d_o^3-d_c^3)\,r\rho_wg\). <span class="why">Volume of material = outer sphere − core.</span></p>
-<p>2. Upthrust on the whole sphere: \(F_B=\tfrac\pi6d_o^3\rho_wg\). <span class="why">The water is pushed aside by the outer surface.</span></p>
+<p>1. Weight of the shell (the core is empty): \(W=\tfrac\pi6(d_o^3-d_c^3)\,r\rho_wg\). <span class="calcwhy">Volume of material = outer sphere − core.</span></p>
+<p>2. Upthrust on the whole sphere: \(F_B=\tfrac\pi6d_o^3\rho_wg\). <span class="calcwhy">The water is pushed aside by the outer surface.</span></p>
 <p>3. Neutral buoyancy, \(W=F_B\); divide by \(\tfrac\pi6d_o^3\rho_wg\):</p>
 \[r\Big(1-\frac{d_c^3}{d_o^3}\Big)=1\]
 <p>4. \(d_c^3/d_o^3=1-1/r\).</p>
@@ -460,22 +527,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\boxed{\frac{d_c}{d_o}=\Big(1-\frac1r\Big)^{1/3}}\]
 <p>Check: \(r=2\) gives 0.794; steel (\(r=7.8\)) gives 0.955, a thin shell. As \(r\to1\) the core shrinks to nothing, as it should.</p></div>
 <h3>Gas bubbles and the "Bermuda Triangle" hypothesis (slide 51)</h3>
+<details class="idea"><summary>What is this? (gas bubbles)</summary><div><p>Now fill the water under a ship with bubbles. The ship's hole is the same size, but the frothy water that would fill it is lighter. The froth round the ship can only hold up as much as that lighter filling, so the push on the ship falls and may drop below its weight.</p></div></details>
 <p>The last slide applies the principle to a mystery. If a massive release of gas bubbles (for example an underwater gas eruption) happened under a ship, the bubbly water's <b>average density</b> could drop a lot. The upthrust \(\rho_\text{fluid}gV_\text{sub}\) would fall, possibly below the ship's weight, even with the whole hull submerged, and the ship would sink. This is only a <b>hypothesis</b> for the disappearance of ships in the Bermuda Triangle; there is no solid evidence for it so far.</p>
 <div class="box eg"><span class="tag">Example · written for these notes</span>
 <p>Water with 10% gas by volume has density about \(0.9\times1025+0.1\times1.2\approx923\u{kg/m^3}\). A ship that floats in clear sea water with 95% of its hull volume under water would need \(0.95\times1025/923=1.055\), i.e. 105.5% of its hull, to float in the bubbly water: impossible, so it sinks.</p></div>
+<p class="cannow"><b>You can now:</b> use the law of flotation to find a draught or a submerged fraction; find a cargo weight from a change of draught; handle a body across two liquid layers or a hollow, neutrally buoyant shell; explain how gas bubbles could sink a ship.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>The handout's concept questions (Some Concept Questions, pages 9–13)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">The handout's concept questions (Some Concept Questions, pages 9–13)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Every question here is the hole picture in disguise. A floating iceberg makes a hole that holds exactly its own weight of water; when it melts, that same weight of water fills the hole again, so the level does not move. A gas lighter than air is pushed up by the air round it, like a cork in water. A porous material with its pores full of air weighs its solid part plus that air, which is more than the air that would fill its hole.</p></div></details>
 <div class="q"><p class="qh">Melting of an iceberg (pages 9–10)</p>
 <p>"Some people say that the sea level will rise as a result of the melting of an iceberg. How true is this statement?" The handout's answer: <b>the statement is NOT true</b>, and asks you to explain why.</p>
 <div id="fig-ice"></div>
 <details><summary>Answer</summary><div>
 <p>A <b>floating</b> iceberg already displaces its own weight of water (law of flotation). When it melts, its mass does not change, and the melted water has the density of water, so it takes up exactly the volume of water that the floating ice was displacing. It fills its own "hole": the water level stays the same.</p>
 <details class="calc"><summary>the argument with symbols</summary><div>
-<p>1. Floating ice of mass \(m\) displaces \(V_d=m/\rho_w\). <span class="why">Law of flotation: \(\rho_wgV_d=mg\).</span></p>
-<p>2. Melted, the same mass occupies \(V_\text{melt}=m/\rho_w\). <span class="why">Same mass, now as water.</span></p>
-<p>3. \(V_\text{melt}=V_d\): no change of level. <span class="why">The ice above the waterline is exactly the extra volume ice has over its meltwater.</span></p>
+<p>1. Floating ice of mass \(m\) displaces \(V_d=m/\rho_w\). <span class="calcwhy">Law of flotation: \(\rho_wgV_d=mg\).</span></p>
+<p>2. Melted, the same mass occupies \(V_\text{melt}=m/\rho_w\). <span class="calcwhy">Same mass, now as water.</span></p>
+<p>3. \(V_\text{melt}=V_d\): no change of level. <span class="calcwhy">The ice above the waterline is exactly the extra volume ice has over its meltwater.</span></p>
 </div></details>
 </div></details>
 <div class="beyond box"><span class="tag">Beyond the handouts · two refinements</span>
@@ -491,27 +561,30 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="q"><p class="qh">Past paper · ENGG1205 2017–18 Sem 2 Q1(b)(iii) · 4 marks · a hot-air balloon</p>
 <p>"When the hot air balloon travels vertically upwards, hot air is continuously released. This allows cooler air to enter through the bottom of the balloon. Describe and explain the effect of this on the motion of the balloon. You may assume that the volume of the balloon does not change."</p>
 <details><summary>Answer</summary><div><p>The upthrust \(\rho_\text{air}gV\) stays (about) the same: same volume, same outside air. But cooler air is <b>denser</b> than hot air, so the balloon's contents get heavier and the total weight increases. The net upward force \(F_B-W\) falls and then becomes negative: the balloon <b>decelerates</b>, stops at a maximum height, then <b>descends</b>. (The given solution words this as the balloon's buoyancy decreasing relative to its weight.)</p></div></details></div>
+<p class="cannow"><b>You can now:</b> explain why a melting floating iceberg leaves the water level unchanged (and the two refinements); explain why hydrogen rises out of the air; explain why a porous "lighter than air" material does not float; describe a hot-air balloon's motion as its air cools.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Tethered and hanging bodies: the force balance</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Tethered and hanging bodies: the force balance</span> <span class="mins">~10 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Push a beach ball under the water in a pool and tie it to the bottom with a string. Its hole is now much bigger than when it floated, so the water pushes up far harder than the ball weighs. The string takes the difference. Turn it round for a stone hanging from a rope: the water carries part of its weight and the rope carries the rest.</p></div></details>
 <p>The handout states the principle; the exam turns it into a <b>free-body diagram</b> problem. A body held by a cable (tied down from below, or hung from above) is in equilibrium under <b>three</b> vertical forces: weight, upthrust and tension. This is the most frequent buoyancy question in Section B (Dec 2019 to Dec 2024).</p>
 <div class="box ready"><span class="tag">Ready method · body + cable + fluid</span>
-<ol class="steps">
-<li><b>Sketch and FBD.</b> Draw the body alone. Weight \(W\) down at G. Upthrust \(F_B=\rho_fgV_\text{sub}\) up at B. Tension \(T\) along the cable, <b>pulling away from the body</b>: down if the cable goes to the sea bed, up if the body hangs from a crane.</li>
-<li><b>Volumes.</b> \(V_\text{sub}\) = the part below the surface (whole body if fully submerged). Use the fluid named in the question (sea water 1027, not 1000).</li>
-<li><b>Balance.</b> \(\sum F_\text{up}=\sum F_\text{down}\). Tied down: \(F_B=W+T\). Hanging: \(T+F_B=W\).</li>
-<li><b>Two unknowns?</b> Use two states (two depths, two tensions) and subtract, or take two bodies and write one balance each (or one for the whole system: internal cable forces cancel).</li>
-<li><b>Check</b> the sign: a negative tension means the cable would have to push, i.e. it goes slack.</li>
+<ol class="steps proc">
+<li><b>Do:</b> <b>Sketch and FBD.</b> Draw the body alone. Weight \(W\) down at G. Upthrust \(F_B=\rho_fgV_\text{sub}\) up at B. Tension \(T\) along the cable, <b>pulling away from the body</b>: down if the cable goes to the sea bed, up if the body hangs from a crane. <span class="why">These are the only vertical forces: gravity, the surrounding water's push on the hole, and the cable. The sideways water pushes cancel.</span></li>
+<li><b>Do:</b> <b>Volumes.</b> \(V_\text{sub}\) = the part below the surface (whole body if fully submerged). Use the fluid named in the question (sea water 1027, not 1000). <span class="why">The upthrust is the weight of what would fill the hole, so you need the hole's size and the fluid that would fill it.</span></li>
+<li><b>Do:</b> <b>Balance.</b> \(\sum F_\text{up}=\sum F_\text{down}\). Tied down: \(F_B=W+T\). Hanging: \(T+F_B=W\). <span class="why">The body is at rest, so the upward pushes and the downward pulls must cancel.</span></li>
+<li><b>Do:</b> <b>Two unknowns?</b> Use two states (two depths, two tensions) and subtract, or take two bodies and write one balance each (or one for the whole system: internal cable forces cancel). <span class="why">Each state or body gives one equation. The weight is the same in both states, so subtracting leaves only what changes with the size of the hole.</span></li>
+<li><b>Do:</b> <b>Check</b> the sign: a negative tension means the cable would have to push, i.e. it goes slack. <span class="why">A cable can only pull. If the balance needs a push, the body would really float up until the cable hangs loose.</span></li>
 </ol></div>
 <div class="box thm"><span class="tag">Result · the two common balances</span>
 \[\text{tied down: }T=F_B-W\]
 \[\text{hung from above: }T=W-F_B=W_\text{app}\]
 <p class="word"><b>In words:</b> a cable holding a floater down carries the excess upthrust; a cable holding a sinker up carries its apparent weight.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(F_B\)</dt><dd>the push of the water on the hole; for a tied-down floater the hole is bigger than when it floated freely.</dd><dt>\(F_B-W\)</dt><dd>the part of that push the weight cannot balance: the cable to the bed must hold it down.</dd><dt>\(W-F_B\)</dt><dd>the part of the weight the water does not carry: the cable from above must hold it up.</dd><dt>\(W_\text{app}\)</dt><dd>the same number a spring balance would read (section 4).</dd></dl></div>
 <div class="box eg"><span class="tag">Example · written for these notes · a mooring buoy</span>
 <p>A buoy of volume 0.5 m³ and mass 120 kg is held fully under fresh water by a vertical chain to the bed. Find the chain tension.</p>
 <div id="fig-buoy"></div>
-<p>\(F_B=1000\times9.81\times0.5=4905\u{N}\) up; \(W=120\times9.81=1177\u{N}\) down; \(T\) down. Balance: \(T=4905-1177=\boxed{3728\u{N}}\). Cut the chain and the 3.7 kN imbalance drives the buoy up until it floats with \(V_\text{sub}=0.12\u{m^3}\).</p></div>
+<p>\(F_B=1000\times9.81\times0.5=4905\u{N}\) up; \(W=120\times9.81=1177\u{N}\) down; \(T\) down. Balance: \(T=4905-1177=\boxed{3728\u{N}}\). Cut the chain and the 3.7 kN imbalance drives the buoy up until it floats with \(V_\text{sub}=0.12\u{m^3}\). <span class="why">It stops rising when its hole holds 120 kg of water, its own mass: \(120/1000=0.12\u{m^3}\).</span></p></div>
 <div class="box eg"><span class="tag">Past paper · Dec 2021 Q3(a)(b) · 4 + 6 marks (same as May 2019 Q3)</span>
 <p>"A metal plate 3 mm thick with a uniform density of 7000 kg/m³ is hung from a port to the ocean. The density of ocean water is 1027 kg/m³ and gravitational acceleration is 9.81 m/s². (a) Draw a free body diagram of the metal plate and indicate all the forces acting on it. (b) What is the tension in the cable to hold the metal plate in place?" The figure shows a crane arm (davit) on a quay with a pulley; the cable hangs vertically into the sea and holds the top of a fully submerged plate 4 m high and 2 m wide.</p>
 <div class="pair">
@@ -519,10 +592,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div><div id="fig-plate21-fbd"></div><p class="sub">(a) FBD of the plate.</p></div>
 </div>
 <details class="calc"><summary>the tension</summary><div>
-<p>1. Volume \(V=4\times2\times0.003=0.024\u{m^3}\). <span class="why">Thickness in metres.</span></p>
-<p>2. \(W=7000\times9.81\times0.024=1648.1\u{N}\) down, at the plate's centre. <span class="why">Uniform plate: G at the centre.</span></p>
-<p>3. \(F_B=1027\times9.81\times0.024=241.8\u{N}\) up, at the same centre. <span class="why">Fully submerged: the displaced volume is the plate, with sea-water density.</span></p>
-<p>4. \(T+F_B=W\), so \(T=1648.1-241.8\). <span class="why">Vertical equilibrium; the cable pulls up.</span></p>
+<p>1. Volume \(V=4\times2\times0.003=0.024\u{m^3}\). <span class="calcwhy">Thickness in metres.</span></p>
+<p>2. \(W=7000\times9.81\times0.024=1648.1\u{N}\) down, at the plate's centre. <span class="calcwhy">Uniform plate: G at the centre.</span></p>
+<p>3. \(F_B=1027\times9.81\times0.024=241.8\u{N}\) up, at the same centre. <span class="calcwhy">Fully submerged: the displaced volume is the plate, with sea-water density.</span></p>
+<p>4. \(T+F_B=W\), so \(T=1648.1-241.8\). <span class="calcwhy">Vertical equilibrium; the cable pulls up.</span></p>
 </div></details>
 <p>\(\boxed{T\approx1406\u{N}=1.41\u{kN}}\)</p>
 <p>The FBD for (a) must show all three forces with labels and directions: \(T\) up at the cable attachment, \(W\) down and \(F_B\) up through the plate's centre. (The sideways water pressures cancel and need not be drawn; say so.) Part (c) of this question (stability) is in section 11.</p></div>
@@ -533,25 +606,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div><div id="fig-balloon-fbd"></div><p class="sub">FBD before release.</p></div>
 </div>
 <details class="calc"><summary>buoyancy and rope tension</summary><div>
-<p>(i) 1. Released: only \(U\) (upthrust) and \(W\) act, and the balloon accelerates up: \(U-W=ma\). <span class="why">Newton's second law, up positive.</span></p>
-<p>2. \[\begin{aligned}U&=500\times1.5+500\times9.81\\&=750+4905=5655\u{N}\end{aligned}\] <span class="why">The upthrust (set by the volume and the outside air) is the same just before and just after release.</span></p>
-<p>(ii) 3. Moored and at rest: \(U=W+2T\cos25^\circ\). <span class="why">Each rope pulls down-and-out; only its vertical part \(T\cos25^\circ\) counts; the horizontal parts cancel by symmetry.</span></p>
+<p>(i) 1. Released: only \(U\) (upthrust) and \(W\) act, and the balloon accelerates up: \(U-W=ma\). <span class="calcwhy">Newton's second law, up positive.</span></p>
+<p>2. \[\begin{aligned}U&=500\times1.5+500\times9.81\\&=750+4905=5655\u{N}\end{aligned}\] <span class="calcwhy">The upthrust (set by the volume and the outside air) is the same just before and just after release.</span></p>
+<p>(ii) 3. Moored and at rest: \(U=W+2T\cos25^\circ\). <span class="calcwhy">Each rope pulls down-and-out; only its vertical part \(T\cos25^\circ\) counts; the horizontal parts cancel by symmetry.</span></p>
 <p>4. \(T=\dfrac{U-W}{2\cos25^\circ}=\dfrac{750}{1.8126}\).</p>
 </div></details>
 <p>\(\boxed{U=5655\u{N}}\), \(\boxed{T=413.8\u{N}\text{ per rope}}\)</p></div>
 <h3>Two states: the tethered cylinder</h3>
+<details class="idea"><summary>What is this? (two states)</summary><div><p>Pull a tethered floater deeper by shortening its cable. Each extra metre of depth adds one more slice to its hole, and for a body with vertical sides every slice holds the same weight of water. The weight has not changed, so the cable takes all of the extra push. Equal steps in depth give equal steps in tension: a straight line.</p></div></details>
 <p>The commonest exam form gives a floating cylinder tied to the bed, with the cable tension at <b>two</b> depths of submergence \(h_1, h_2\), and asks for the cylinder's size and weight. With \(A\) the cross-section, \(F_B=\rho gAh\) and the balance \(T=\rho gAh-W\) is a straight line in \(h\): its <b>slope</b> is \(\rho gA\) and its intercept is \(-W\). Two points fix the line.</p>
 <div class="box thm"><span class="tag">Result · two-state tethered body</span>
 \[\rho g A\,(h_2-h_1)=T_2-T_1\]
 \[W=\rho gAh_1-T_1\]
 <p class="word"><b>In words:</b> the extra tension equals the weight of the extra water displaced (this gives \(A\)); then any one state gives \(W\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\rho gA\,(h_2-h_1)\)</dt><dd>the weight of water that would fill the extra slice of hole between the two depths.</dd><dt>\(T_2-T_1\)</dt><dd>the extra pull in the cable; the weight is unchanged, so the cable takes the whole extra push.</dd><dt>\(\rho gAh_1-T_1\)</dt><dd>in state 1, the push on the hole minus the part the cable holds down: what is left balances the weight.</dd></dl></div>
 <div class="box eg"><span class="tag">Past paper · ENGG1205 2014–15 Sem 1 Q1(b) · 18 marks</span>
 <p>"As is shown in Figure C1, a cylinder floats in water with its axis being vertical. The cylinder is fastened by a tethering cable attached to the bottom of the cylinder. If the tension in the cable is 5 kN and 15 kN when the depth of submergence of the cylinder bottom, \(h\), is 1 m and 2 m, respectively. Determine (i) the radius of the cylinder, and (ii) the mass of the cylinder." (Figure: as in the Dec 2024 question of the exam taster.)</p>
 <details class="calc"><summary>radius and mass</summary><div>
-<p>1. FBD: \(F_B\) up, \(W\) and \(T\) down, so \(F_B=W+T\) with \(F_B=\rho_wghA\). <span class="why">Cable to the bed pulls down.</span></p>
-<p>2. Subtract the two states: \(\rho_wg(h_2-h_1)A=T_2-T_1=10\u{kN}\). <span class="why">\(W\) is the same in both and cancels.</span></p>
+<p>1. FBD: \(F_B\) up, \(W\) and \(T\) down, so \(F_B=W+T\) with \(F_B=\rho_wghA\). <span class="calcwhy">Cable to the bed pulls down.</span></p>
+<p>2. Subtract the two states: \(\rho_wg(h_2-h_1)A=T_2-T_1=10\u{kN}\). <span class="calcwhy">\(W\) is the same in both and cancels.</span></p>
 <p>3. \[A=\frac{10\,000}{1000\times9.81\times1}=1.019\u{m^2}\] so \(r=\sqrt{A/\pi}=0.570\u{m}\).</p>
-<p>4. State 1: \(W=\rho_wgh_1A-T_1=10-5=5\u{kN}\). <span class="why">\(\rho_wgA=10\) kN per metre of depth.</span></p>
+<p>4. State 1: \(W=\rho_wgh_1A-T_1=10-5=5\u{kN}\). <span class="calcwhy">\(\rho_wgA=10\) kN per metre of depth.</span></p>
 <p>5. \(M=W/g=5000/9.81=510\u{kg}\).</p>
 </div></details>
 <p>\(\boxed{r=0.57\u{m}}\), \(\boxed{M=510\u{kg}}\)</p></div>
@@ -565,10 +640,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Pushing down by \(d=1\) cm moves a slice \(Ad\) of the cylinder from the liquid into the water: water upthrust rises by \(\rho_wgAd\), liquid upthrust falls by \(0.75\rho_wgAd\). The push must supply the net change:</p>
 \[\begin{aligned}F&=0.25\,\rho_w g\,d\,A\\&=0.25(1000)(9.81)(0.01)\pi(0.02)^2\end{aligned}\]
 <p>\(\boxed{F\approx0.031\u{N}}\) (the given solution rounds to 0.03 N).</p></div>
+<p class="cannow"><b>You can now:</b> draw the FBD of a tethered or hanging body with \(W\), \(F_B\) and \(T\); write the balance and find the tension; use two states, or two bodies, to find two unknowns; spot a slack cable.</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>A floating body with moments: the anchored timber</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">A floating body with moments: the anchored timber</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Hold one end of a long wooden stick under water and let the other end poke out. Gravity pulls down at the middle of the stick. The water pushes up at the middle of the hole, and the hole is only the wet part, so that push acts nearer your hand. The two forces are not on one line, so they try to turn the stick; the balance of turning effects about your hand decides how far it sticks out.</p></div></details>
 <p>When the forces on a body do not all act along one vertical line, force balance is not enough: the <b>moments</b> must balance too. This is where "the upthrust acts through the centroid of the displaced volume" (section 2) earns marks. The older course asked it twice with the same figure.</p>
 <div class="box eg"><span class="tag">Past paper · ENGG1205 2014–15 Sem 2 Q1(b) · 14 marks</span>
 <p>"The homogeneous timber \(AB\) of Figure C1 is 0.15 m by 0.35 m in cross section. Determine the density of the timber, and the tension in the rope." The figure: the timber lies at an angle in water; its lower end A is tied by a short vertical rope to a rock on the bed; it rises to the right and pierces the surface: 8 m of its length from A to the waterline is under water, the last 2 m to the upper end B is in air.</p>
@@ -577,23 +654,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div><div id="fig-timber-fbd"></div><p class="sub">FBD: \(T\) at A, \(W\) at mid-length, \(F_B\) at mid-point of the submerged 8 m.</p></div>
 </div>
 <details class="calc"><summary>density and tension</summary><div>
-<p>1. Weight \(W=\rho_sg(10\times0.15\times0.35)\), acting at the middle of the timber, <b>5 m</b> from A along it. <span class="why">Homogeneous: G at mid-length of the 10 m.</span></p>
-<p>2. Upthrust \(F_B=\rho_wg(8\times0.15\times0.35)\), acting at the middle of the submerged part, <b>4 m</b> from A. <span class="why">Centroid of the displaced volume (thin timber: the slant of the cut at the waterline is ignored).</span></p>
+<p>1. Weight \(W=\rho_sg(10\times0.15\times0.35)\), acting at the middle of the timber, <b>5 m</b> from A along it. <span class="calcwhy">Homogeneous: G at mid-length of the 10 m.</span></p>
+<p>2. Upthrust \(F_B=\rho_wg(8\times0.15\times0.35)\), acting at the middle of the submerged part, <b>4 m</b> from A. <span class="calcwhy">Centroid of the displaced volume (thin timber: the slant of the cut at the waterline is ignored).</span></p>
 <p>3. Moments about A (the rope force passes through A and drops out). With \(\theta\) the timber's angle to the horizontal, lever arms are \(5\cos\theta\) and \(4\cos\theta\):</p>
 \[W(5\cos\theta)=F_B(4\cos\theta)\]
 <p>4. The \(\cos\theta\) cancels, and so does \(g\times0.15\times0.35\):</p>
 \[\rho_s(10)(5)=\rho_w(8)(4)\;\Rightarrow\;\rho_s=\tfrac{32}{50}\rho_w\]
-<p>5. Vertical forces: \(T+W=F_B\), so \(T=F_B-W\). <span class="why">The rope pulls A down towards the rock.</span></p>
+<p>5. Vertical forces: \(T+W=F_B\), so \(T=F_B-W\). <span class="calcwhy">The rope pulls A down towards the rock.</span></p>
 \[\begin{aligned}T&=(1000\times8-640\times10)\\&\quad\times9.81\times0.15\times0.35\end{aligned}\]
 </div></details>
 <p>\(\boxed{\rho_s=640\u{kg/m^3}}\), \(\boxed{T\approx824\u{N}}\)</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>The upthrust does <b>not</b> act at the middle of the timber: only the submerged 8 m displaces water, so B sits at 4 m from A. Putting \(F_B\) at 5 m gives \(\rho_s=800\), wrong. Note also that the density does not depend on the cross-section; the tension does (ENGG1205 2017–18 Sem 1 repeats the figure with a 0.1 m × 0.75 m section: same 640 kg/m³, \(T=1177\u{N}\); exam taster).</p></div>
 <p class="word"><b>In words:</b> for an anchored floating stick, moments about the anchor say "weight × (half the length) = upthrust × (half the wetted length)", so \(\rho_s/\rho_w=(\text{wetted}/\text{total})^2\): here \((8/10)^2=0.64\).</p>
+<p class="cannow"><b>You can now:</b> put \(W\) at the middle of the body and \(F_B\) at the middle of the submerged part; take moments about the anchor to find the density; then use a vertical balance for the rope tension.</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10" class="prev-sec"><h2><span class="n">10</span>Stability of a floating body: the metacentre</h2>
+<section id="s10" class="prev-sec"><h2><span class="n">10</span><span class="h2t">Stability of a floating body: the metacentre</span> <span class="mins">~9 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Watch a boat rock. As it heels over, one side dips deeper and the other rises, so its hole in the water changes shape: it grows on the low side and shrinks on the high side. The centre of the hole, where the upthrust acts, slides towards the low side. The weight still acts at G, which stays put in the boat. Whether the boat comes back upright depends on which way this pair of forces turns it.</p></div></details>
 <p class="prevbar">Previous syllabus — not in the 2026 syllabus</p>
 <div class="box prev"><span class="tag">Previous syllabus · why this is here</span>
 <p>No 2026 handout or the Dec 2026 review sheet mentions stability or the metacentre, but three ENGG1350 parts asked for it (Dec 2018 Q3(b), May 2024 Q2(b), May 2025 Q4(b), 6–8 marks each), and the papers printed the formula \(MB=I/V_d\). It is taught here in full in case it returns; the solutions are on <a href="guide-prev.html#H4-4">guide-prev.html · H4.4</a>.</p></div>
@@ -602,6 +681,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p><b>The problem.</b> A floating body has only two forces: \(W\) down through G and \(F_B=W\) up through B. Upright, they lie on one vertical line, so there is no moment. Tilt the body by a small angle \(\theta\): G stays put in the body, but the <b>shape of the displaced volume changes</b> (a wedge of hull comes out of the water on one side and a wedge goes in on the other), so B moves sideways towards the lower side, to B′. The two forces now form a <b>couple</b>. Which way does it turn?</p>
 <div id="fig-meta"></div>
 <p class="muted">Drawn for these notes. Left: upright; G above B on the centreline. Right: tilted by \(\theta\). B shifts to B′; the vertical through B′ meets the centreline at the metacentre M. Here M is above G, so \(W\) and \(F_B\) form a couple that turns the body back upright.</p>
+<details class="idea"><summary>What is this? (metacentre)</summary><div><p>For small rocking, the boat swings as if it hung from a pivot at M, like a pendulum. If M is above the weight at G, the boat hangs below its pivot and swings back upright. If M is below G, the boat is balanced on top of its pivot and falls further over. A wide hull moves the centre of the hole a long way for a small tilt, which puts M high.</p></div></details>
 <div class="box def"><span class="tag">Definition · metacentre M, metacentric height GM</span>
 <p>The <b>metacentre</b> M is the point where the vertical line through the new centre of buoyancy B′ crosses the body's centreline (for small tilts it does not depend on \(\theta\)). The <b>metacentric height</b> GM is the distance from G up to M. K denotes the <b>keel</b>, the lowest point of the body, used as the reference for heights.</p></div>
 <div class="box thm"><span class="tag">Result · metacentric height and stability</span>
@@ -609,30 +689,31 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[GM=KB+BM-KG\]
 <p>\(GM\gt0\) (M above G): <b>stable</b>. \(GM\lt0\): <b>unstable</b>. \(GM=0\): <b>neutral</b>. The righting moment for a small tilt is \(W\cdot GM\sin\theta\).</p>
 <p class="word"><b>In words:</b> BM = second moment of area of the <b>waterplane</b> (the body's cross-section at the waterline) about the tilt axis ÷ displaced volume. The body is stable if the metacentre is above the centre of gravity.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(KB\)</dt><dd>the height of the centre of the hole above the keel.</dd><dt>\(BM=I/V_d\)</dt><dd>how high above B the new upthrust line crosses the centreline after a small rock: large for a wide waterplane (big \(I\)), small for a big hole (big \(V_d\)).</dd><dt>\(KG\)</dt><dd>the height of G, where the weight acts, above the keel.</dd><dt>\(GM\)</dt><dd>how far the pivot M is above G. Positive: the boat swings back.</dd></dl></div>
 <details class="calc"><summary>why BM = I / V_d</summary><div>
-<p>1. Tilt by a small \(\theta\) about the waterplane's centre line (axis along the body). Take a strip of waterplane at distance \(y\) from the axis, area \(\mathrm dA\). <span class="why">For small tilts the axis passes through the waterplane's centroid.</span></p>
-<p>2. The strip's waterline moves by \(y\theta\): on one side it is immersed by \(y\theta\), on the other it emerges. Volume moved: \(y\theta\,\mathrm dA\). <span class="why">Small angle: \(\tan\theta\approx\theta\).</span></p>
+<p>1. Tilt by a small \(\theta\) about the waterplane's centre line (axis along the body). Take a strip of waterplane at distance \(y\) from the axis, area \(\mathrm dA\). <span class="calcwhy">For small tilts the axis passes through the waterplane's centroid.</span></p>
+<p>2. The strip's waterline moves by \(y\theta\): on one side it is immersed by \(y\theta\), on the other it emerges. Volume moved: \(y\theta\,\mathrm dA\). <span class="calcwhy">Small angle: \(\tan\theta\approx\theta\).</span></p>
 <p>3. Moving volume \(y\theta\,\mathrm dA\) from \(-y\) to \(+y\) shifts the centroid of the whole displaced volume sideways by</p>
 \[BB'=\frac{\int y\,(y\theta)\,\mathrm dA}{V_d}=\frac{\theta\,I}{V_d}\]
-<p><span class="why">Moment of the moved volume ÷ total volume; \(\int y^2\mathrm dA=I\), the second moment of the waterplane about the tilt axis (H3).</span></p>
-<p>4. In the figure, \(BB'=BM\,\theta\) (M is where the new vertical through B′ meets the centreline). So \(BM=I/V_d\). <span class="why">Arc of radius BM through the small angle \(\theta\).</span></p>
-<p>5. The couple: \(W\) at G and \(F_B\) at B′ are a horizontal distance \(GM\sin\theta\) apart, so the moment is \(W\,GM\sin\theta\), righting if M is above G. <span class="why">Lever arm measured from G to the vertical through M.</span></p>
+<p><span class="calcwhy">Moment of the moved volume ÷ total volume; \(\int y^2\mathrm dA=I\), the second moment of the waterplane about the tilt axis (H3).</span></p>
+<p>4. In the figure, \(BB'=BM\,\theta\) (M is where the new vertical through B′ meets the centreline). So \(BM=I/V_d\). <span class="calcwhy">Arc of radius BM through the small angle \(\theta\).</span></p>
+<p>5. The couple: \(W\) at G and \(F_B\) at B′ are a horizontal distance \(GM\sin\theta\) apart, so the moment is \(W\,GM\sin\theta\), righting if M is above G. <span class="calcwhy">Lever arm measured from G to the vertical through M.</span></p>
 </div></details>
 <h3>Recipe</h3>
-<ol class="steps">
-<li>Draught \(d\) from the law of flotation (section 6). \(V_d\) = submerged volume.</li>
-<li>\(KB\): centroid of the displaced volume above the keel. For a box or upright cylinder, \(KB=d/2\).</li>
-<li>\(KG\): centre of gravity above the keel. Uniform solid of height \(H\): \(KG=H/2\); otherwise given.</li>
-<li>\(I\) of the waterplane about the axis it tilts about. Use the <b>smallest</b> \(I\) (the body tips the easiest way). Rectangle \(l\times b\) with \(b\lt l\): \(I_\text{min}=lb^3/12\) (the short side cubed). Circle: \(\pi D^4/64\).</li>
-<li>\(BM=I/V_d\); \(GM=KB+BM-KG\); decide by its sign.</li>
+<ol class="steps proc">
+<li><b>Do:</b> Draught \(d\) from the law of flotation (section 6). \(V_d\) = submerged volume. <span class="why">The draught fixes the hole: its depth and its volume.</span></li>
+<li><b>Do:</b> \(KB\): centroid of the displaced volume above the keel. For a box or upright cylinder, \(KB=d/2\). <span class="why">B is the centre of the hole; with vertical sides the hole is a box or a cylinder, so its centre is halfway down.</span></li>
+<li><b>Do:</b> \(KG\): centre of gravity above the keel. Uniform solid of height \(H\): \(KG=H/2\); otherwise given. <span class="why">G is where the weight acts, and it does not move when the boat rocks.</span></li>
+<li><b>Do:</b> \(I\) of the waterplane about the axis it tilts about. Use the <b>smallest</b> \(I\) (the body tips the easiest way). Rectangle \(l\times b\) with \(b\lt l\): \(I_\text{min}=lb^3/12\) (the short side cubed). Circle: \(\pi D^4/64\). <span class="why">A boat rocks most easily across its narrow width, so it must be stable for that tilt.</span></li>
+<li><b>Do:</b> \(BM=I/V_d\); \(GM=KB+BM-KG\); decide by its sign. <span class="why">This places the pivot M relative to G: above G the boat swings back, below G it falls over.</span></li>
 </ol>
 <div class="box eg"><span class="tag">Past paper · May 2025 Q4(b) · 7 marks (same as Dec 2018 Q3(b))</span>
 <p>"A cylinder, of diameter 0.3 m and height 1.0 m, with a specific weight of 7.8 kN/m³ is floating upright in water. (a) Determine the length of cylinder that is submerged in water, \(L\). (b) Is the cylinder stable? Support your answer with calculations and explanations. [\(MB=I/V_d\), second moment of area of a circle, \(I=\pi D^4/64\)]" (Part (a) is in the exam taster: \(L=0.795\u{m}\).)</p>
 <div id="fig-cylstab"></div>
 <details class="calc"><summary>the metacentric height</summary><div>
 <p>1. \(L=(7.8/9.81)(1.0)=0.7951\u{m}\) (part (a)). \(V_d=\tfrac\pi4(0.3)^2(0.7951)=0.05620\u{m^3}\).</p>
-<p>2. \(KB=L/2=0.3976\u{m}\); \(KG=1.0/2=0.5\u{m}\). <span class="why">Uniform solid cylinder; B at half the draught.</span></p>
-<p>3. \(I=\pi(0.3)^4/64=3.976\times10^{-4}\u{m^4}\). <span class="why">Circular waterplane, any diameter as axis.</span></p>
+<p>2. \(KB=L/2=0.3976\u{m}\); \(KG=1.0/2=0.5\u{m}\). <span class="calcwhy">Uniform solid cylinder; B at half the draught.</span></p>
+<p>3. \(I=\pi(0.3)^4/64=3.976\times10^{-4}\u{m^4}\). <span class="calcwhy">Circular waterplane, any diameter as axis.</span></p>
 <p>4. \(BM=I/V_d=0.00708\u{m}\). (For any upright cylinder \(BM=D^2/(16L)\).)</p>
 <p>5. \(GM=0.3976+0.0071-0.5\).</p>
 </div></details>
@@ -646,17 +727,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>(The boat of section 6: \(b=4\) m, \(l=12\) m, draught after loading \(h_2=1\) m, centre of gravity \(g=0.85\) m above the bottom.) "Determine the stability of the boat after loading the cargo. For a rectangle with two sides \(a\) and \(b\), minimal \(I=\dfrac{b\,a^3}{12}\), when \(a\lt b\). The specific weight of water is 9.81 kN/m³."</p>
 <details class="calc"><summary>the boat's metacentric height</summary><div>
 <p>1. \(V_d=4\times12\times1=48\u{m^3}\); \(KB=h_2/2=0.5\u{m}\); \(KG=0.85\u{m}\).</p>
-<p>2. Rolling (tilting about the long axis) uses the short side cubed: \(I=12\times4^3/12=64\u{m^4}\). <span class="why">The paper's \(a=4\) (short), \(b=12\). Using \(4\times12^3/12=576\) would be pitching, the hard direction.</span></p>
+<p>2. Rolling (tilting about the long axis) uses the short side cubed: \(I=12\times4^3/12=64\u{m^4}\). <span class="calcwhy">The paper's \(a=4\) (short), \(b=12\). Using \(4\times12^3/12=576\) would be pitching, the hard direction.</span></p>
 <p>3. \(BM=64/48=1.333\u{m}\).</p>
 <p>4. \(GM=0.5+1.333-0.85=0.983\u{m}\).</p>
 </div></details>
 <p>\(\boxed{GM\approx0.98\u{m}\gt0}\): M is above G, so a small heel produces a righting couple: the loaded boat is <b>stable</b>. (For a 5° heel: \(W=470.9\u{kN}\), righting moment \(470.9\times0.983\times\sin5^\circ\approx40\u{kN\,m}\).)</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>A <b>fully submerged</b> body has no waterplane, \(I=0\), so M coincides with B: it is stable only if B is <b>above</b> G (a submarine keeps its heavy batteries low). A wide, shallow waterplane (a raft, a barge) gives a large BM: wide bodies are stable even with a high G.</p></div>
+<p class="cannow"><b>You can now:</b> find the draught, \(KB\), \(KG\) and the smallest waterplane \(I\); compute \(BM=I/V_d\) and \(GM\); decide from the sign of \(GM\) whether a floating body is stable, and explain it with the shift of B.</p>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11" class="prev-sec"><h2><span class="n">11</span>Stability of a suspended, submerged body</h2>
+<section id="s11" class="prev-sec"><h2><span class="n">11</span><span class="h2t">Stability of a suspended, submerged body</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A fully submerged body hanging from a cable makes a hole exactly its own shape, so the centre of the hole B sits at the body's centre G. Weight and upthrust then act at the same point and combine into one net pull downward. Hang the body from a point above G and it is a pendulum: tilt it and it swings back.</p></div></details>
 <p class="prevbar">Previous syllabus — not in the 2026 syllabus</p>
 <div class="box prev"><span class="tag">Previous syllabus · the hanging plate</span>
 <p>Dec 2021 Q3(c) (same as May 2019) and Dec 2022 Q3(c), 4 marks each, ask whether the hanging plate of section 8 is stable. The stable/unstable/neutral classification is not taught in 2026, but the answer is just a moment balance after a small tilt, which the review sheet does cover ("balance of forces and moments"). Solutions on <a href="guide-prev.html#H4-5">guide-prev.html · H4.5</a>.</p></div>
@@ -668,6 +751,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>P <b>below</b> G (body balanced on top of a support): unstable. The moment turns it further over.</li>
 </ul>
 <p class="word"><b>In words:</b> hang it from above its centre and it hangs steady; the restoring moment after a tilt \(\theta\) is \((W-F_B)\times PG\times\sin\theta\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(W-F_B\)</dt><dd>the net downward pull at G: the apparent weight.</dd><dt>\(PG\)</dt><dd>the distance from the hanging point P to G: the length of the pendulum.</dd><dt>\(PG\sin\theta\)</dt><dd>how far G swings sideways from below P after a tilt \(\theta\): the lever arm.</dd><dt>product</dt><dd>force × lever arm: the moment that swings the body back.</dd></dl></div>
 <div class="pair">
 <div><div id="fig-hang-up"></div><p class="sub">Hanging upright: \(T\), \(W\), \(F_B\) on one vertical line.</p></div>
 <div><div id="fig-hang-tilt"></div><p class="sub">Tilted by \(\theta\) about P: \(W-F_B\) at G now has a lever arm about P and turns the plate back.</p></div>
@@ -675,10 +759,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box eg"><span class="tag">Past paper · Dec 2021 Q3(c) · 4 marks (same as May 2019 Q3(c)); Dec 2022 Q3(c) the same with a 3 m plate</span>
 <p>"The plate is assumed to be in a vertical position as shown. Is it stable, unstable or of neutral stability? Why?"</p>
 <p><b>Answer: stable.</b> The plate is uniform and fully submerged, so its centre of gravity G and centre of buoyancy B are both at its centre, 2 m (Dec 2022: 1.5 m) below the cable attachment at the top edge. Its weight exceeds the upthrust (\(\rho_\text{plate}\gt\rho_\text{sea}\)), so the net force \(W-F_B\) at G acts <b>down</b>, below the point of suspension. If the plate tilts slightly, this net force acts at a horizontal distance from the cable line and produces a moment about the attachment point that rotates the plate back to vertical, so the equilibrium is stable. (Dec 2022 numbers: \(W-F_B=1993\u{N}\) at 1.5 m below P; a 5° tilt gives a restoring moment \(1993\times1.5\times\sin5^\circ\approx261\u{N\,m}\).)</p></div>
+<p class="cannow"><b>You can now:</b> say whether a hanging, fully submerged body is stable, neutral or unstable from where it is attached relative to G; explain the answer as a pendulum with the net force \(W-F_B\) acting at G.</p>
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Summary</h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Summary</span></h2>
 <div class="scroll"><table>
 <tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
 <tr><td>Archimedes' principle</td><td>\(F_B=\rho_\text{fluid}gV_\text{displaced}\)</td><td>weight of fluid displaced, up through the centroid of the displaced volume</td></tr>
@@ -696,7 +781,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Common mistakes</h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Common mistakes</span></h2>
 <div class="mistake">
 <span class="x">✗</span><span>Using the body's density in \(F_B\).</span>
 <span class="ok">✓</span><span>\(F_B=\rho_\text{fluid}gV_\text{sub}\): the fluid's density, the body's submerged volume.</span>
@@ -720,7 +805,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="s14"><h2><span class="n">14</span>Find the mistake</h2>
+<section id="s14"><h2><span class="n">14</span><span class="h2t">Find the mistake</span></h2>
 <div class="q"><p class="qh">1 · A student's Dec 2022 Q3(b)</p>
 <p>"Steel plate 3 m × 2 m × 5 mm, density 7800 kg/m³, fully submerged in ocean water of density 1027 kg/m³, hung from a cable. \(V=0.03\u{m^3}\). \(W=7800\times9.81\times0.03=2295.5\u{N}\). \(F_B=1000\times9.81\times0.03=294.3\u{N}\). Tension \(T=W+F_B=2589.8\u{N}\)."</p>
 <details><summary>Hint</summary><div><p>Two mistakes: which density goes in \(F_B\), and which way does the upthrust push?</p></div></details>
@@ -736,7 +821,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 15 ============ -->
-<section id="s15"><h2><span class="n">15</span>Concept checks</h2>
+<section id="s15"><h2><span class="n">15</span><span class="h2t">Concept checks</span></h2>
 <p class="muted">Written for these notes.</p>
 <div class="q"><p class="qh">1 · Into the river</p><p>A ship sails from the sea (1025 kg/m³) into a fresh-water river. Does it float higher or lower? By how much does its displaced volume change?</p>
 <details><summary>Answer</summary><div><p><b>Lower.</b> Its weight is unchanged, so it must displace the same <b>weight</b> of a less dense fluid: \(V_\text{river}/V_\text{sea}=1025/1000\), 2.5% more volume. (Ships carry load lines marked "F" for fresh water above the sea marks.)</p></div></details></div>
@@ -754,7 +839,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 16 ============ -->
-<section id="s16"><h2><span class="n">16</span>Exam taster</h2>
+<section id="s16"><h2><span class="n">16</span><span class="h2t">Exam taster</span></h2>
 <p>Real past-paper parts (ENGG1350, the predecessor of MECH1350, and its older sister course ENGG1205; same lecturer and Section B content), one per main question type in this chapter. Full methods, every other sitting, and more practice: <a href="guide-H4.html">Exam guide · H4</a>. The stability parts (previous syllabus) are in sections 10–11.</p>
 
 <div class="q"><div class="src"><b>Dec 2024 Q1(o)(p)</b><span>1 + 1 mark</span><span>similar: "state the Archimedes principle", ENGG1205 ×6</span><a class="guide" href="guide-H4.html#H4-1">H4.1 Archimedes &amp; flotation concepts</a></div>
@@ -1368,6 +1453,15 @@ reg(function(){const host=$('fig-t-cs-fbd');if(!host)return;host.innerHTML='';co
   mk(false);mk(true);
 });
 timber('fig-t-timber','section 0.1 m × 0.75 m',false);
+
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 
 </script>
 </body></html>

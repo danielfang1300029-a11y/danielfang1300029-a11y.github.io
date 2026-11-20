@@ -222,6 +222,34 @@ p.tldr{font-size:15px;color:var(--muted);border-left:3px solid var(--accent);pad
 svg.tl text{paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round}
 .box svg.tl text{stroke:var(--card)}
 
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -252,7 +280,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <p class="lede">How a firm decides whether a long-term investment is worth taking: the NPV rule, and why IRR, payback, AAR and the profitability index sometimes give the wrong answer.</p>
 </header>
 
-<section id="s0"><h2><span class="n">0</span>Where this sits</h2>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this sits</span></h2>
 <p>L3 taught how to discount a stream of cash flows. This lecture turns that into a <b>decision rule</b> for projects. Textbook: Chapter 9.</p>
 <div class="box thm"><span class="tag">Recap from L3 · PV of a stream</span>
 \[\begin{aligned}PV={}&\frac{CF_1}{1+r}+\frac{CF_2}{(1+r)^2}\\&+\dots+\frac{CF_T}{(1+r)^T}\end{aligned}\]
@@ -260,7 +288,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box conv"><span class="tag">Sign convention</span><p>Money the firm <b>receives</b> is <b>+</b>, money it <b>pays</b> is <b>−</b>. \(CF_0\) at \(t=0\) (today) is usually the negative initial investment; \(CF_t\) arrives at the end of year \(t\).</p></div>
 </section>
 
-<section id="s1"><h2><span class="n">1</span>Capital budgeting</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Capital budgeting</span></h2>
 <p class="tldr">Take a long-term investment only if it is worth more to the firm than it costs.</p>
 <p><b>Capital budgeting</b> = planning and evaluating long-term investments. Examples: should a developer build flats or offices on a site; should an airline buy or lease aircraft; should a bakery add an oven line? These are big, long-lived and hard to reverse, so the decision rule matters.</p>
 <div class="tblw"><table class="fcard"><tr><th>Step</th><th>Question</th><th>Where</th></tr>
@@ -272,11 +300,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box def"><span class="tag">A good investment criterion</span><ul class="list"><li>adjusts for the <b>time value of money</b>;</li><li>adjusts for <b>risk</b>;</li><li>tells us whether the investment <b>creates value</b> for the firm.</li></ul><p>Every rule below is tested against these three.</p></div>
 </section>
 
-<section id="s2"><h2><span class="n">2</span>Net present value (NPV)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Net present value (NPV)</span></h2>
 <p class="tldr">NPV = what the investment is worth minus what it costs, both in today's money.</p>
+<details class="idea"><summary>What is this?</summary><div><p>Imagine you could sell the project the moment you start it. A buyer who could earn the required return elsewhere, on something equally risky, would pay at most the present value of its future cash flows: that is what the same cash would cost them elsewhere. NPV is that price minus what you spent to set the project up. It is the wealth the project creates today, on day one, before any of its cash has arrived.</p><p>Positive NPV: you built something worth more than it cost. Zero: you only matched what the market already offers. Negative: you overpaid.</p></div></details>
+
 <div class="box thm"><span class="tag">Definition · NPV</span>
 \[\begin{aligned}NPV={}&CF_0+\frac{CF_1}{1+r}+\frac{CF_2}{(1+r)^2}\\&+\dots+\frac{CF_T}{(1+r)^T}\end{aligned}\]
 <p class="word"><b>In words:</b> NPV = market value − cost, where market value = PV of all cash inflows and cost = PV of all cash outflows. \(r\) is the <b>required return</b>: what investors could earn elsewhere on something equally risky.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(CF_0\)</dt><dd>today's cash flow, usually the negative set-up cost. It is not discounted: it is already in today's money.</dd><dt>\(CF_t\)</dt><dd>the net cash the project brings in year \(t\): what the day-one buyer is paying for.</dd><dt>\(\dfrac{1}{(1+r)^t}\)</dt><dd>what $1 in year \(t\) is worth today. It is smaller for later years and for a higher \(r\).</dd><dt>\(r\)</dt><dd>the required return: the buyer's next-best use of the money at the same risk.</dd><dt>the sum</dt><dd>market value minus cost: the day-one gain in wealth.</dd></dl></div>
+
 <p><b>Three steps:</b> (1) estimate the cash flows; (2) estimate the required return for the project's risk; (3) discount every cash flow to today and add. Steps 1–2 (forecasts and a rate) are the hard part; step 3 is just L3.</p>
 
 <div class="box eg"><span class="tag">Example · a chocolate factory</span><p>Costs $500,000 today; net inflows $150,000, $200,000, $160,000 at the end of years 1–3; sold for $300,000 at the end of year 3. Required return 20%. Start it?</p>
@@ -321,10 +353,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="tlw" id="tl2"></div>
 \[\begin{aligned}NPV&=-550{,}000\\&\quad+150{,}000\times AF(12\%,4)\\&\quad+240{,}000/1.12^5\\&=-550{,}000+455{,}602+136{,}183\\&=\$41{,}785\gt0\end{aligned}\]
 <p>Invest. Treat years 1–4 as a 4-year annuity and year 5 separately.</p></div>
+<p class="cannow"><b>You can now:</b> say what NPV measures (value created today); compute it for an uneven stream, putting salvage and recovered NWC in the final year; apply the NPV rule to independent and mutually exclusive projects; and say where positive NPVs come from.</p>
 </section>
 
-<section id="s3"><h2><span class="n">3</span>Internal rate of return (IRR)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Internal rate of return (IRR)</span></h2>
 <p class="tldr">IRR is the discount rate that makes NPV exactly zero: the project's own rate of return.</p>
+<details class="idea"><summary>What is this?</summary><div><p>Think of the project as a savings account. You pay the set-up cost in today and take the later cash flows out. The IRR is the interest rate that account would have to pay so that your withdrawals empty it exactly at the end, no more and no less.</p><p>Then compare: if the project's “account” pays more than you could get elsewhere at the same risk (the required return), take it.</p></div></details>
+
 <div class="box thm"><span class="tag">Definition · IRR</span>
 \[\begin{aligned}0={}&CF_0+\frac{CF_1}{1+IRR}+\frac{CF_2}{(1+IRR)^2}\\&+\dots+\frac{CF_T}{(1+IRR)^T}\end{aligned}\]
 <p class="word"><b>In words:</b> the rate at which the PV of the inflows exactly pays back the cost. “Internal” because it depends only on the project's own cash flows, not on market rates. It is the project's expected return, and the <b>break-even</b> rate: the highest required return at which you would still accept.</p></div>
@@ -355,10 +390,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 
 <div class="box ready"><span class="tag">Tools</span><p><b>Calculator</b> (covered in tutorials): enter cash flows by stages: CF0 = −550,000; C01 = 150,000, F01 = 4 (four equal flows); C02 = 240,000, F02 = 1. NPV with I = 12 → $41,784.85; IRR → 14.83%.</p>
 <p><b>Excel:</b> <code>NPV(rate, value1, …)</code> treats value1 as year 1, so add CF0 outside: <code>=CF0+NPV(12%, CF1:CF5)</code>. <code>IRR(values, [guess])</code> includes CF0. (Lecture file: Excel_template_Lecture_07.xlsx.)</p></div>
+<p class="cannow"><b>You can now:</b> explain IRR as the project's own rate of return; find it by trial and error or with the calculator's cash-flow entries; apply the IRR rule and say when it agrees with NPV; and enter NPV and IRR in Excel correctly.</p>
 </section>
 
-<section id="s4"><h2><span class="n">4</span>When IRR misleads</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">When IRR misleads</span></h2>
 <p class="tldr">When NPV and another rule disagree, always use NPV. IRR fails with nonconventional cash flows and with mutually exclusive projects.</p>
+<details class="idea"><summary>What is this?</summary><div><p>The savings-account picture of IRR assumes you pay in first and take money out later. Take the money first and pay later, and you are the borrower: now a high rate is bad for you. Switch signs more than once, and two different rates can balance the account, or none can.</p><p>A rate also ignores size: 100% on $10 earns $10, while 20% on $1,000 earns $200. NPV counts the dollars created today, so it has none of these problems.</p></div></details>
+
 
 <h3>Nonconventional cash flows (a later cash flow is negative)</h3>
 <ul class="list"><li><b>I · Money now, payment later</b> (a <b>financing-type</b> project, like borrowing): +$100 today, −$120 next year. IRR = 20%, but NPV <b>rises</b> with \(r\): at 10%, \(NPV=100-120/1.1=-\$9.09\); at 30%, \(+\$7.69\). The rule flips: accept only if IRR &lt; required return. Blindly applying “IRR &gt; r” gets it backwards.</li>
@@ -388,9 +426,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <tr><td>Comparable with interest rates and inflation</td><td>Financing-type projects: NPV rises with the rate</td></tr>
 <tr><td>Same decision as NPV for conventional, independent projects</td><td>Mutually exclusive projects: can rank them wrongly</td></tr>
 <tr><td>No exact required return needed if the IRR is far above it</td><td>Ignores scale: a return, not a dollar value</td></tr></table></div>
+<p class="cannow"><b>You can now:</b> spot nonconventional cash flows and say why IRR fails for them (financing-type, multiple IRRs, no IRR); find the crossover rate as the IRR of the difference and use it to rank two projects; and explain why a higher IRR can come with a lower NPV when projects differ in scale.</p>
 </section>
 
-<section id="s5"><h2><span class="n">5</span>Payback and discounted payback</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Payback and discounted payback</span></h2>
 <p class="tldr">Payback = how many years until the cash flows recover the initial cost. Accept if shorter than a cutoff.</p>
 <div class="box eg"><span class="tag">Example · Chan's payback</span>
 <div class="tblw"><table class="fcard"><tr><th>Year</th><th>Coffee CF</th><th>Cumulative</th><th>Sandwich CF</th><th>Cumulative</th></tr>
@@ -425,7 +464,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Coffee: \(1+6{,}607/11{,}958=1.55\) years. Sandwich: never pays back. The final cumulative figure is the NPV. It fixes the time-value problem but keeps the arbitrary cutoff and still ignores flows after it.</p>
 </section>
 
-<section id="s6"><h2><span class="n">6</span>Average accounting return and profitability index</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Average accounting return and profitability index</span></h2>
 <h3>Average accounting return (AAR)</h3>
 <div class="box thm"><span class="tag">Definition · AAR</span>
 \[AAR=\frac{\text{average net income}}{\text{average book value}}\]
@@ -438,15 +477,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Against the 12% required return, AAR <b>accepts</b> the sandwich shop, whose NPV is −$979. AAR uses book values and accounting income, not cash flows or market values, and ignores timing.</p></div>
 
 <h3>Profitability index (PI)</h3>
+<details class="idea"><summary>What is this? (profitability index)</summary><div><p>PI is value for money: dollars of value today for every dollar put in. It helps when money, not ideas, is the bottleneck, because then you want the most value from each scarce dollar.</p><p>When you can pick only one project, though, the question is total dollars, not dollars per dollar. A small stall giving $1.82 per $1 on $10,000 adds less value than a shop giving $1.64 per $1 on $20,000.</p></div></details>
+
 <div class="box thm"><span class="tag">Definition · PI</span>
 \[PI=\frac{\text{PV of future cash flows}}{\text{initial investment}}\]
 <p class="word"><b>In words:</b> value created per dollar invested. Accept if PI &gt; 1, which for a single project is the same decision as NPV &gt; 0.</p>
 <p>Chan: coffee \(36{,}510/20{,}000=1.83\); sandwich \(19{,}021/20{,}000=0.95\).</p>
 <p>Useful when capital is limited: rank projects by value per dollar invested.</p></div>
 <p><b>But PI ranks mutually exclusive projects wrongly</b> (scale again). At 10%: A (−10,000, +20,000) has PI 1.82, NPV $8,181.82; B (−20,000, +36,000) has PI 1.64, NPV $12,727.27. PI prefers A; NPV correctly prefers B. The increment B − A has PI 1.45 &gt; 1, so the extra investment pays.</p>
+<p class="cannow"><b>You can now:</b> compute AAR and say why it is the wrong yardstick; compute PI and use it when capital is limited; and explain why PI, like IRR, can rank mutually exclusive projects wrongly.</p>
 </section>
 
-<section id="s7"><h2><span class="n">7</span>The rules compared</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">The rules compared</span></h2>
 <div class="tblw"><table class="fcard"><tr><th>Rule</th><th>Time value</th><th>Risk</th><th>Value created</th><th>Main problem</th></tr>
 <tr><td><b>NPV</b></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Needs cash flows and a rate</td></tr>
 <tr><td>IRR</td><td>Yes</td><td>Yes</td><td>No</td><td>Nonconventional; mutually exclusive</td></tr>
@@ -458,7 +500,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p><b>What CFOs use</b> (392 US and Canadian CFOs, 1999; share who always or almost always use each rule): IRR 75.6%, NPV 74.9%, payback 56.7%, discounted payback 29.5%, AAR 20.3%, PI 11.9%. Large firms use NPV and IRR more than small firms; small firms lean on payback almost as much as on NPV and IRR.</p>
 </section>
 
-<section id="s8"><h2><span class="n">8</span>Summary and formula card</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Summary and formula card</span></h2>
 <ul class="list"><li>Capital budgeting: take investments worth more than they cost. Steps: cash flows (L8), discount rate (L10), criteria (here), what-if analysis (L9).</li>
 <li>NPV is the only rule that measures value created; positive NPVs come from an edge over rivals.</li>
 <li>IRR agrees with NPV only for conventional, independent projects; it fails for financing-type flows, multiple or no IRRs, and mutually exclusive projects (timing via the crossover rate, scale).</li>
@@ -474,7 +516,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Calculator: CF0, C01 and F01, …, then NPV (enter I) or IRR.</p>
 </section>
 
-<section id="s9"><h2><span class="n">9</span>Common mistakes</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Common mistakes</span></h2>
 <ul class="list">
 <li><b>Excel's NPV()</b> discounts its first value by one period. Add CF0 outside: <code>=CF0+NPV(r, CF1:CFT)</code>.</li>
 <li><b>Missing last-year flows</b>: salvage value and recovered working capital sit in the final year alongside the operating cash flow.</li>
@@ -484,7 +526,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li><b>AAR uses net income and book value</b>, not cash flows; comparing it with a market required return is apples and oranges.</li></ul>
 </section>
 
-<section id="s10"><h2><span class="n">10</span>Practice</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Practice</span></h2>
 <p>The first four are the lecture's in-class quizzes; the rest are written for these notes.</p>
 <div class="q"><div class="src"><b>Lecture quiz</b><span>is this deal worth taking?</span></div>
 <p>Pay $100 today for a sure $110 in one year; the market rate is 5%. What is the deal worth to you today, net of its cost? A. −$4.76 · B. $0.00 · C. $4.76 · D. $10.00</p>
@@ -803,6 +845,15 @@ function pdraw(){
   $('pout').innerHTML=s;
 }
 $('pj').addEventListener('change',pdraw);$('rr').addEventListener('input',pdraw);redraws.push(pdraw);
+
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 
 </script>
 </body></html>

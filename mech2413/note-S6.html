@@ -155,6 +155,33 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
 
 
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -192,12 +219,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-S6.html">Exam guide · S6</a><a href="note-S5.html">← S5</a><a href="note-S7.html">Next: S7 →</a></nav>
   <span class="course">MECH2413 · Engineering Mechanics · Statics chapter 6</span>
   <h1>Torsion of Circular Shafts</h1>
-  <p class="lede"><span class="pill">Beyond the handouts</span> There is no handout for this chapter: the course contents (S1 handout, slide 6) list torsion of shafts as statics topic 6, and Section A has set a torsion question in seven of the twelve past papers. This whole note is written from standard textbooks (Beer, <i>Mechanics of Materials</i>; Hibbeler, <i>Mechanics of Materials</i>; Gere, <i>Mechanics of Materials</i>) and covers everything those papers need: shear stress and the torsion formula, the polar moment of inertia, angle of twist, power transmission, stepped shafts, shafts fixed at both ends, geared shafts and compound shafts. Every worked example is solved in full with a free-body diagram.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
-<p>In <a href="note-S2.html">S2</a> a beam was loaded <b>across</b> its length, and the internal forces were a shear force and a bending moment. In this chapter a long round bar, a <b>shaft</b>, is loaded by couples that act <b>about its own axis</b>, so it twists. The internal force is now a twisting moment, the <b>torque</b>, and it produces <b>shear stress</b> (S3) in the material. The method is the same as in S1 and S2: free-body diagram, method of sections, equilibrium; plus, for twisting, a geometry condition linking the angles of twist.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this chapter sits</span></h2>
+<p>Wring out a wet towel: your two hands turn opposite ways about its length, and every slice in between is twisted. A car's drive shaft does the same job in steel. This chapter is about round shafts twisted about their own axis: the torque they carry, the shear stress it causes, and how far they twist. <span class="pill">Beyond the handouts</span> There is no handout: the course contents (S1 handout, slide 6) list torsion of shafts as statics topic 6, so this note is written from standard textbooks (Beer, Hibbeler and Gere, each called <i>Mechanics of Materials</i>).</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>Torque is a twist about the shaft's own axis.</b> Every slice of a wrung towel carries the same internal torque.</li>
+<li><a href="#s2">§2</a> <b>A round shaft twists like a stack of coins fanned round.</b> Lines on the surface become helices; the strain grows with the radius.</li>
+<li><a href="#s3">§3</a> <b>Shear stress grows from zero on the axis to a maximum at the surface:</b> \(\tau=T\rho/J\).</li>
+<li><a href="#s4">§4</a> <b>\(J\) measures how much material sits far from the axis.</b> It goes with \(d^4\).</li>
+<li><a href="#s5">§5</a> <b>Twisting stretches the material along one \(45^\circ\) helix.</b> That is why chalk breaks on a spiral.</li>
+<li><a href="#s6">§6</a> <b>A shaft is a twisting spring:</b> \(\varphi=TL/(GJ)\), with signed twists added along the shaft.</li>
+<li><a href="#s7">§7</a> <b>Torque diagram, then twist from the wall outwards.</b> <span class="pill">Dec 2023 and Dec 2024</span></li>
+<li><a href="#s8">§8</a> <b>Power = torque × speed:</b> a slow shaft carries a big torque.</li>
+<li><a href="#s9">§9</a> <b>Two walls share the torque; the total twist between them is zero.</b> <span class="pill">3 past papers</span></li>
+<li><a href="#s10">§10</a> <b>Gears are levers made of teeth:</b> big gear, big torque, small rotation. <span class="pill">3 past papers</span></li>
+<li><a href="#s11">§11</a> <b>Compound shafts:</b> end to end the twists add; bonded together they share the torque by \(GJ\).</li>
+</ol></div>
+<p><b>You need:</b> free-body diagrams, the method of sections and equilibrium (S1, and the internal forces of beams in <a href="note-S2.html">S2</a>); shear stress, shear strain and Mohr's circle (S3); second moments of area (S4). <b>In the exam:</b> a whole Section A question (usually A3, 15–20 marks) in seven of the twelve papers, with no formula sheet. Every worked example here is solved in full with a free-body diagram. See the <a href="guide-S6.html">S6 exam guide</a>.</p>
 <div class="beyond box"><span class="tag">Beyond the handouts · the whole chapter</span>
 <p>No slides were issued for torsion. Every result below is standard and appears in the same form in Beer (ch. 3), Hibbeler (ch. 5) and Gere (ch. 3). Where those books use different letters, this note uses the letters of the MECH2413 past papers: \(T\) or \(M\) for torque, \(G\) for shear modulus, \(J\) for polar moment of inertia, \(\varphi\) for angle of twist.</p></div>
 <div class="box conv"><span class="tag">Sign convention for this chapter</span>
@@ -213,7 +254,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Torque and shafts</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Torque and shafts</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Wring out a wet towel. Your two hands turn in opposite directions about the towel's length, and the towel between them twists. Your hands apply the torques; every slice of towel passes the twist on to the next. A car's drive shaft is the same thing in steel: the gearbox turns one end and the wheels resist at the other.</p></div></details>
 <div class="box def"><span class="tag">Definitions · shaft, torque, torsion</span>
 <ul class="list">
 <li>A <b>shaft</b> is a long member, usually of circular cross-section, that transmits turning effect: a car drive shaft, a motor spindle, a screwdriver, a turbine shaft.</li>
@@ -224,13 +266,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-s1"></div>
 <p class="word"><b>Analogy:</b> wring out a wet towel. Your two hands apply equal and opposite torques; every slice of towel between them is twisted by the same internal torque.</p>
 <h3>Internal torque by the method of sections</h3>
+<details class="idea"><summary>What is this? (internal torque)</summary><div><p>Imagine cutting the towel in the middle while you are still wringing it. To keep the left half twisted, someone would have to grip the cut end and turn it as hard as your right hand was turning. That grip is the internal torque: the twist each part of the shaft passes to the other across a section.</p></div></details>
 <p>Cut the shaft at any section (S1 Section 2). For the piece on one side to stay in equilibrium, the other piece must apply a couple about the axis on the cut face: the <b>internal torque</b> \(T\). Moment equilibrium about the \(x\)-axis of either piece gives it:</p>
 \[\textstyle\sum M_x=0\quad\text{for the piece you keep.}\]
 <p class="word"><b>In words:</b> the internal torque at a cut equals the sum of all the applied torques on <b>one</b> side of the cut (taken with the sign rule of Section 0, as Section 7 shows).</p>
+<p class="cannow"><b>You can now:</b> describe a torque as a couple about the shaft axis and draw it as a double-headed arrow by the right-hand rule; and find the internal torque at a cut from \(\sum M_x=0\) on one piece.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>How a round shaft twists</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">How a round shaft twists</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Draw lines along a rubber rod and rings round it, so its surface is covered in small squares, then twist it. The rings stay flat rings: each one simply turns a little more than its neighbour, like a stack of coins fanned round. The straight lines tilt into gentle spirals (helices), and every small square leans over into a diamond. That leaning is the whole story: everything else in this chapter follows from it.</p></div></details>
 <p>Draw a square grid on the surface of a rubber rod and twist it. Experiments (and symmetry) show that for a <b>circular</b> shaft, solid or hollow:</p>
 <ol class="steps">
 <li>Each cross-section stays <b>plane</b> and <b>circular</b>; it just rotates as a rigid disc about the axis.</li>
@@ -239,19 +284,28 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>For small twists, the length and the radius do not change.</li>
 </ol>
 <div id="fig-s2"></div>
+<details class="idea"><summary>What is this? (shear strain)</summary><div><p>Look at one small square on the twisted rod. Its corners are no longer right angles: it has leaned over, like a rubber eraser pushed sideways at the top. The angle by which a corner closes is the shear strain. A square near the axis hardly leans, because points there barely move when the section turns; a square on the outer surface leans the most.</p></div></details>
 <div class="box def"><span class="tag">Definition · shear strain</span>
 <p><b>Shear strain</b> \(\gamma\) is the change, in radians, of an angle that was originally a right angle (S3). On the twisted shaft, a lengthwise line tilts by \(\gamma\), so a right-angled corner of the surface grid closes by \(\gamma\).</p></div>
 <p>Take a slice of length \(\mathrm dx\). One face turns by \(\mathrm d\varphi\) more than the other. A point at radius \(\rho\) (distance from the axis) moves round by the arc \(\rho\,\mathrm d\varphi\), so a lengthwise line at that radius tilts by</p>
 \[\gamma=\rho\,\frac{\mathrm d\varphi}{\mathrm dx}.\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\rho\)</dt><dd>how far the line is from the axis: the further out, the further a point travels when its section turns.</dd>
+<dt>\(\mathrm d\varphi\)</dt><dd>how much more one face of the thin slice turns than the other.</dd>
+<dt>\(\rho\,\mathrm d\varphi\)</dt><dd>the arc that a point at radius \(\rho\) slides round, relative to the matching point on the other face.</dd>
+<dt>\(\dfrac{\cdots}{\mathrm dx}\)</dt><dd>that sideways slide divided by the slice length is how far the line leans, in radians: the shear strain \(\gamma\).</dd>
+</dl></div>
 <p>When the torque is the same along a length \(L\) of uniform shaft, \(\mathrm d\varphi/\mathrm dx=\varphi/L\) is constant, and with outer radius \(c\):</p>
 \[\gamma=\frac{\rho\varphi}{L},\qquad \gamma_{\max}=\frac{c\,\varphi}{L},\qquad \gamma=\frac{\rho}{c}\gamma_{\max}.\]
 <p class="word"><b>In words:</b> shear strain is zero on the axis and grows in proportion to the distance from it, largest at the outer surface. This comes from geometry alone; it holds for any material.</p>
 <div class="box warn"><span class="tag">Watch</span>
 <p>All of this needs a <b>circular</b> section. A square or rectangular bar <b>warps</b> (its sections do not stay plane) and the formulas of this chapter do not apply to it. Exam shafts are always circular, solid or hollow.</p></div>
+<p class="cannow"><b>You can now:</b> state what happens to sections, radii and surface lines when a circular shaft twists; derive \(\gamma=\rho\,\mathrm d\varphi/\mathrm dx\) from a thin slice; and say why the strain is zero on the axis and largest at the surface.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Shear stress: the torsion formula</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Shear stress: the torsion formula</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Back to the rubber rod. Each small square that has leaned into a diamond pushes back, as an eraser does when you push its top sideways. That push, per unit area and acting along the face, is shear stress. Squares on the outside lean most, so they push back hardest; material near the axis barely works. Add up every push times its distance from the axis and you get the torque the shaft carries.</p></div></details>
 <div class="box def"><span class="tag">Definitions · shear stress, shear modulus</span>
 <p><b>Shear stress</b> \(\tau\) is force per unit area acting <b>along</b> (parallel to) a surface (S3). In the elastic range it is proportional to shear strain, <b>Hooke's law in shear</b>:</p>
 \[\tau=G\gamma.\]
@@ -263,9 +317,17 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <h3>From stress back to torque</h3>
 <p>A small ring of area \(\mathrm dA\) at radius \(\rho\) carries a force \(\tau\,\mathrm dA\), whose moment about the axis is \(\rho\,\tau\,\mathrm dA\). All these moments together must equal the internal torque:</p>
 \[\begin{aligned}T&=\int_A\rho\,\tau\,\mathrm dA=\frac{\tau_{\max}}{c}\int_A\rho^2\,\mathrm dA\\ &=\frac{\tau_{\max}}{c}\,J,\qquad J=\int_A\rho^2\,\mathrm dA.\end{aligned}\]
+<p><span class="why">Each piece's stress already carries one factor \(\rho\) (outer material leans more); its lever arm brings a second. That is where \(\rho^2\), and so \(J\), comes from.</span></p>
 <div class="box thm"><span class="tag">Result · the torsion formula</span>
 \[\tau=\frac{T\rho}{J},\qquad \tau_{\max}=\frac{Tc}{J}.\]
 <p class="word"><b>In words:</b> shear stress = torque × distance from the axis ÷ polar moment of inertia. The biggest stress is at the outer surface. \(J\) (Section 4) measures how much material sits far from the axis.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\tau\)</dt><dd>the sideways push per unit area on the cross-section, at the point you look at.</dd>
+<dt>\(T\)</dt><dd>the internal torque at that section: wring harder and every push grows in proportion.</dd>
+<dt>\(\rho\)</dt><dd>distance from the axis: outer material leans more, so it pushes harder. Zero on the axis.</dd>
+<dt>\(J\)</dt><dd>how much material sits far from the axis. More of it shares the torque, so each piece pushes less.</dd>
+<dt>\(\tau_{\max}=Tc/J\)</dt><dd>put \(\rho=c\): the outer surface, where the stress is largest and failure starts.</dd>
+</dl></div>
 <div class="box ready"><span class="tag">Ready result · solid shaft of diameter \(d\)</span>
 \[\tau_{\max}=\frac{16T}{\pi d^3}.\]
 <p class="word"><b>In words:</b> double the diameter and the peak stress falls eightfold.</p></div>
@@ -281,19 +343,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>\(J=\dfrac{\pi(0.05)^4}{32}=6.136\times10^{-7}\u{m^4}\).</li>
 <li>\(\tau_{\max}=\dfrac{2000\times0.025}{6.136\times10^{-7}}=81.5\u{MPa}\) (check: \(16(2000)/(\pi\,0.05^3)\) gives the same).</li>
 <li>\(\tau(15\u{mm})=\dfrac{15}{25}\times81.5=48.9\u{MPa}\).</li>
-<li>Hollow, same area: \(\tfrac\pi4(60^2-d_i^2)=\tfrac\pi4 50^2\Rightarrow d_i=33.2\u{mm}\). Then \(J=\tfrac{\pi}{32}(0.06^4-0.0332^4)=1.154\times10^{-6}\u{m^4}\) and \(\tau_{\max}=2000(0.03)/J=52.0\u{MPa}\).</li>
+<li>Hollow, same area: \(\tfrac\pi4(60^2-d_i^2)=\tfrac\pi4 50^2\Rightarrow d_i=33.2\u{mm}\). Then \(J=\tfrac{\pi}{32}(0.06^4-0.0332^4)=1.154\times10^{-6}\u{m^4}\) and \(\tau_{\max}=2000(0.03)/J=52.0\u{MPa}\). <span class="why">The same amount of steel moved further out leans more and has a longer lever arm, so \(J\) rises and the stress falls.</span></li>
 <li><b>Units:</b> N·m × m ÷ m⁴ = N/m² = Pa ✓.</li>
 </ol>
 <p>\(\boxed{\tau_{\max}=81.5\u{MPa},\ \tau(15\u{mm})=48.9\u{MPa};\ \text{hollow: }52.0\u{MPa}}\)</p>
 <p>The hollow shaft uses the same steel but is about 36% less stressed.</p></div>
+<p class="cannow"><b>You can now:</b> use \(\tau=G\gamma\) and \(G=E/(2(1+\nu))\); find the shear stress at any radius with \(\tau=T\rho/J\) and at the surface with \(\tau_{\max}=Tc/J=16T/(\pi d^3)\); and explain why a hollow shaft is more efficient.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Polar moment of inertia</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Polar moment of inertia</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>\(J\) measures how hard a cross-section is to twist, from its shape alone. Think of wringing a thick bath towel and then a thin tea towel: the thick one fights back far more. Material far from the axis counts twice over: it leans more, so it pushes harder, and it has a longer lever arm, so each push gives more torque. That is why every bit of area is weighted by its distance squared.</p></div></details>
 <div class="box def"><span class="tag">Definition · polar moment of inertia \(J\)</span>
 <p>\(J=\int_A\rho^2\,\mathrm dA\), the sum of every small area times the square of its distance from the axis. Unit: m⁴ (or mm⁴; \(1\u{mm^4}=10^{-12}\u{m^4}\)). The past papers call it the "polar moment of inertia" or the "torsion constant". Since \(\rho^2=y^2+z^2\), \(J=I_y+I_z\), the sum of the two second moments of area of <a href="note-S4.html">S4</a>.</p></div>
 <p>For a solid circle of radius \(c\), use rings of radius \(\rho\), width \(\mathrm d\rho\), area \(2\pi\rho\,\mathrm d\rho\):</p>
 \[J=\int_0^c\rho^2\,2\pi\rho\,\mathrm d\rho=\frac{\pi c^4}{2}=\frac{\pi d^4}{32}.\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(2\pi\rho\,\mathrm d\rho\)</dt><dd>the area of a thin ring: its length round (\(2\pi\rho\)) times its width.</dd>
+<dt>\(\rho^2\)</dt><dd>the double weighting: one \(\rho\) for the bigger push, one for the longer lever arm.</dd>
+<dt>\(\int_0^c\)</dt><dd>add every ring from the axis out to the surface.</dd>
+<dt>\(\dfrac{\pi d^4}{32}\)</dt><dd>fourth power of the diameter: a slightly fatter shaft is much harder to twist.</dd>
+</dl></div>
 <div class="box ready"><span class="tag">Ready results · \(J\) for circular sections</span>
 <div class="scroll"><table>
 <tr><th>Section</th><th>\(J\)</th><th>\(\tau_{\max}\)</th></tr>
@@ -306,10 +376,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>\(d=60\u{mm}\): \(J=1.272\times10^{6}\u{mm^4}\). \(d=30\u{mm}\): \(J=7.952\times10^{4}\u{mm^4}\). \(d=50\u{mm}\): \(J=6.136\times10^{5}\u{mm^4}\). \(d=72\u{mm}\): \(J=2.638\times10^{6}\u{mm^4}\).</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Use the <b>diameter</b> in \(\pi d^4/32\) and the <b>radius</b> \(c=d/2\) in \(\tau=Tc/J\). Mixing them up gives answers out by a factor of 16 or 2. And convert mm to m <b>before</b> raising to the fourth power, or keep everything in N·mm and mm (then \(\tau\) comes out in N/mm² = MPa).</p></div>
+<p class="cannow"><b>You can now:</b> compute \(J\) for solid, hollow and thin-tube sections in m⁴ or mm⁴; link \(J=I_y+I_z\) to S4; and avoid the radius/diameter and mm/m slips.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Pure shear, inclined planes and failure</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Pure shear, inclined planes and failure</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Look once more at a small square on the twisted rubber rod, now leaned into a diamond. One diagonal of the diamond has got longer and the other shorter. So along one \(45^\circ\) direction the material is being stretched, and along the other it is squashed, even though the shaft only carries shear. Twist a stick of chalk and it snaps along that stretched spiral.</p></div></details>
 <p>Cut a tiny square element from the surface of a twisted shaft, with sides along and across the axis. Its four faces carry only shear stress \(\tau\), no normal stress: a state of <b>pure shear</b>. (Shear stresses on perpendicular faces are always equal in size, because the element must not spin.)</p>
 <div id="fig-s5"></div>
 <p>Using the stress transformation of <a href="note-S3.html">S3</a> (Mohr's circle centred at the origin with radius \(\tau\)), the same state seen on planes at \(45^\circ\) to the axis is</p>
@@ -319,37 +391,54 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div><b>Ductile material (steel)</b>Weaker in shear: breaks on a plane square to the axis, a flat break.</div>
 <div><b>Brittle material (chalk, cast iron)</b>Weaker in tension: breaks along a \(45^\circ\) helix, where \(\sigma_1=\tau\) pulls it apart. Twist a stick of chalk to see it.</div>
 </div>
+<p class="cannow"><b>You can now:</b> describe the pure-shear state on the surface of a twisted shaft; state that it equals tension \(+\tau\) and compression \(-\tau\) on \(45^\circ\) planes; and predict a flat break for ductile and a helical break for brittle materials.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Angle of twist</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Angle of twist</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A shaft is a twisting spring. Hold one end of the rubber rod and turn the other: a long thin rod turns a long way for a small effort, while a short fat one hardly moves. The angle of twist says how far one section of a shaft turns relative to another. A car's drive shaft winds up by a small angle when you accelerate hard and unwinds when you ease off.</p></div></details>
 <p>Combine the three links: \(\gamma_{\max}=c\varphi/L\) (geometry), \(\tau_{\max}=G\gamma_{\max}\) (material), \(\tau_{\max}=Tc/J\) (equilibrium). Eliminating \(\tau_{\max}\) and \(\gamma_{\max}\):</p>
 <div class="box thm"><span class="tag">Result · angle of twist of a uniform segment</span>
 \[\varphi=\frac{TL}{GJ}.\]
 <p class="word"><b>In words:</b> twist = torque × length ÷ (shear modulus × polar moment). In radians. \(GJ\) is the <b>torsional rigidity</b>: the stiffer the material and the fatter the shaft, the less it twists.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\varphi\)</dt><dd>how far one end turns relative to the other, in radians.</dd>
+<dt>\(T\)</dt><dd>twist harder and it turns further, in proportion, like a spring.</dd>
+<dt>\(L\)</dt><dd>every slice adds its own small turn, so a longer shaft turns further.</dd>
+<dt>\(G\)</dt><dd>the material's stiffness in shear: aluminium turns about three times as far as steel.</dd>
+<dt>\(J\)</dt><dd>the shape of the section: a fatter shaft turns much less (fourth power of \(d\)).</dd>
+</dl></div>
 <p>This is the torsion version of the spring law: the <b>torsional stiffness</b> of a segment is</p>
 \[k_t=\frac{T}{\varphi}=\frac{GJ}{L}.\]
 <h3>Several segments, or torque that changes along the shaft</h3>
-<p>If the torque, the diameter or the material changes along the shaft, split it into segments in each of which \(T\), \(G\) and \(J\) are constant, and add the twists, <b>keeping the signs</b> of the internal torques:</p>
+<details class="idea"><summary>What is this? (several segments)</summary><div><p>Think of the drive shaft as several shorter shafts joined end to end. Each piece twists by its own amount, and the far end turns by the total, just as the end of a chain of springs moves by the sum of their stretches. A piece whose torque acts the other way twists back and undoes part of the rest.</p></div></details>
+<p>If the torque, the diameter or the material changes along the shaft:</p>
+<ol class="steps proc">
+<li><b>Do:</b> split it into segments in each of which \(T\), \(G\) and \(J\) are constant. <span class="why">Inside one segment the shaft is a single uniform spring, so \(\varphi=TL/(GJ)\) holds there.</span></li>
+<li><b>Do:</b> find the internal torque \(T_i\) of each segment, with its sign (Section 7). <span class="why">The sign says which way that piece twists.</span></li>
+<li><b>Do:</b> add the twists, <b>keeping the signs</b> of the internal torques: <span class="why">A piece twisted backwards turns its far end back, so its twist subtracts.</span></li>
+</ol>
 \[\varphi_{B/A}=\varphi_B-\varphi_A=\sum_i\frac{T_iL_i}{G_iJ_i}.\]
 <p class="word"><b>In words:</b> the rotation of one section relative to another is the sum of the twists of the pieces between them, like adding the stretches of springs in series.</p>
 <p>If \(T\) or \(J\) varies smoothly (a tapered shaft, a distributed torque \(t(x)\) in N·m/m):</p>
 \[\varphi=\int_0^L\frac{T(x)}{G\,J(x)}\,\mathrm dx.\]
 <div class="box warn"><span class="tag">Watch</span>
 <p>\(\varphi\) comes out in <b>radians</b>. Multiply by \(180/\pi\) for degrees. A limit such as "rotation must not exceed 0.5 rad" or "1° per metre" is a stiffness requirement; a stress limit is a strength requirement. A design must satisfy both (Section 8).</p></div>
+<p class="cannow"><b>You can now:</b> derive \(\varphi=TL/(GJ)\) from geometry, material and equilibrium; use the torsional stiffness \(k_t=GJ/L\); add the signed twists of several segments; and convert radians to degrees.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Torque diagrams and stepped shafts (fixed at one end)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Torque diagrams and stepped shafts (fixed at one end)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture a drive shaft held in a wall at one end, with spanners turning it at several points along its length. Start at the free end and walk towards the wall: each time you pass a spanner, the torque the shaft carries jumps by that spanner's torque. The torque diagram records those jumps. The twist diagram then adds up, from the wall outwards, how far each piece turns.</p></div></details>
 <p>This is the most common exam form (Dec 2024 A3, Dec 2023 A3): a shaft built into a wall at \(A\), made of segments of different diameters (a <b>stepped shaft</b>), with several torques applied along it. Find \(J\), the wall reaction, the internal torque in each segment, the twists and the largest stress.</p>
 <div class="box thm"><span class="tag">Recipe · shaft fixed at one end</span>
-<ol class="steps">
-<li><b>\(J\)</b> for each diameter (Section 4).</li>
-<li><b>Wall reaction</b> from equilibrium of the whole shaft: \(\sum M_x=0\Rightarrow M_A=-\sum(\text{applied torques})\).</li>
-<li><b>Internal torque</b> in each segment: cut, keep the piece <b>away from the wall</b> (no unknown on it). With the sign rule of Section 0, equilibrium of that piece gives
-\[\begin{aligned}T=\textstyle\sum&(\text{applied torques}\\&\text{beyond the cut}).\end{aligned}\]</li>
-<li><b>Twists</b> from the wall outward: \(\varphi_A=0\), then \(\varphi_{\text{next}}=\varphi_{\text{prev}}+T_iL_i/(GJ_i)\).</li>
-<li><b>Stresses</b> \(\tau_{\max}=|T_i|c_i/J_i\) in every segment; the largest wins. A thin segment with a small torque can beat a fat one with a big torque.</li>
+<ol class="steps proc">
+<li><b>Do:</b> <b>\(J\)</b> for each diameter (Section 4). <span class="why">Each diameter is a different spring with its own strength and stiffness, and every later step needs them.</span></li>
+<li><b>Do:</b> <b>Wall reaction</b> from equilibrium of the whole shaft: \(\sum M_x=0\Rightarrow M_A=-\sum(\text{applied torques})\). <span class="why">The wall must hold back the net twist of all the spanners, or the shaft would spin.</span></li>
+<li><b>Do:</b> <b>Internal torque</b> in each segment: cut, keep the piece <b>away from the wall</b> (no unknown on it). With the sign rule of Section 0, equilibrium of that piece gives
+\[\begin{aligned}T=\textstyle\sum&(\text{applied torques}\\&\text{beyond the cut}).\end{aligned}\] <span class="why">That piece has only known torques on it, so one equation gives \(T\) with no unknown: the jumps you pass walking in from the free end.</span></li>
+<li><b>Do:</b> <b>Twists</b> from the wall outward: \(\varphi_A=0\), then \(\varphi_{\text{next}}=\varphi_{\text{prev}}+T_iL_i/(GJ_i)\). <span class="why">The wall cannot turn, so it is the fixed starting point; each segment adds its own twist on top of the one before.</span></li>
+<li><b>Do:</b> <b>Stresses</b> \(\tau_{\max}=|T_i|c_i/J_i\) in every segment; the largest wins. A thin segment with a small torque can beat a fat one with a big torque. <span class="why">Stress goes with \(T/d^3\), not with \(T\) alone, so every segment must be checked.</span></li>
 </ol></div>
 <p class="word"><b>Why keep the outer piece?</b> For the piece beyond the cut, its cut face looks back towards the wall, so its outward normal is \(-x\). A positive internal torque points in \(-x\) there, and \(\sum M_x=0\) gives \(-T+\sum(\text{beyond})=0\).</p>
 
@@ -364,7 +453,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\begin{aligned}BC:&\ T_{BC}=+300\u{N\,m},\\ AB:&\ T_{AB}=-900+300=-600\u{N\,m}.\end{aligned}\]
 Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) pointing \(+x\) (outward), so \(M_A+T_{AB}=0\Rightarrow T_{AB}=-600\) ✓.</li>
 <li><b>Twists:</b>
-\[\begin{aligned}\varphi_B&=\frac{(-600)(0.6)}{(80\times10^9)(2.513\times10^{-7})}\\ &=-0.0179\u{rad}=-1.03^\circ,\\ \varphi_{C/B}&=\frac{300(0.4)}{(80\times10^9)(3.835\times10^{-8})}\\ &=0.0391\u{rad},\\ \varphi_C&=-0.0179+0.0391\\ &=0.0212\u{rad}=1.22^\circ.\end{aligned}\]</li>
+\[\begin{aligned}\varphi_B&=\frac{(-600)(0.6)}{(80\times10^9)(2.513\times10^{-7})}\\ &=-0.0179\u{rad}=-1.03^\circ,\\ \varphi_{C/B}&=\frac{300(0.4)}{(80\times10^9)(3.835\times10^{-8})}\\ &=0.0391\u{rad},\\ \varphi_C&=-0.0179+0.0391\\ &=0.0212\u{rad}=1.22^\circ.\end{aligned}\] <span class="why">\(AB\) carries a negative torque, so \(B\) turns backwards; \(BC\) carries a positive one and turns \(C\) forwards again. Keep the signs when adding.</span></li>
 <li><b>Stresses:</b> \(\tau_{AB}=600(0.02)/J_{AB}=47.7\u{MPa}\); \(\tau_{BC}=300(0.0125)/J_{BC}=97.8\u{MPa}\).</li>
 </ol>
 <p>\(\boxed{\begin{aligned}&M_A=600\u{N\,m}\ (+x),\ \varphi_B=-0.0179\u{rad},\\ &\varphi_C=+0.0212\u{rad},\ \tau_{\max}=97.8\u{MPa}\text{ on the surface of }BC\end{aligned}}\)</p>
@@ -379,41 +468,51 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 <p class="cap">Top: internal torque \(T(x)\), a staircase that steps at each applied torque (like the SFD of S2 for point forces). Bottom: angle of twist \(\varphi(x)\) in degrees, straight lines whose slope is \(T/(GJ)\); it starts at 0 at the wall. Thin segments twist faster.</p></div>
 <div class="box ready"><span class="tag">Ready answer · "maximum shear stress and its location"</span>
 <p>State the value, the <b>segment</b> and "at the outer surface" (\(\rho=c\)), e.g. "\(\tau_{\max}=97.8\u{MPa}\), on the outer surface of segment \(BC\), all along \(BC\)."</p></div>
+<p class="cannow"><b>You can now:</b> find the wall torque, the internal torque in each segment (keeping the outer piece) and the torque diagram of a shaft fixed at one end; build the twist from the wall outwards; and locate the maximum shear stress by checking \(|T|c/J\) in every segment.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Power transmission and shaft design</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Power transmission and shaft design</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A car's drive shaft carries the engine's power to the wheels. Power is how fast work is done: torque times how fast the shaft spins. In first gear the drive shaft turns slowly, so to pass on the same power it must carry a big torque; in top gear it spins fast with a smaller torque. A shaft must be thick enough not to break under its torque, and stiff enough not to twist too far.</p></div></details>
 <p>A shaft that turns at angular speed \(\omega\) while carrying torque \(T\) transmits power</p>
 \[P=T\omega=2\pi fT=\frac{2\pi n}{60}T,\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(T\)</dt><dd>how hard the shaft is being twisted.</dd>
+<dt>\(\omega\)</dt><dd>how fast it spins, in rad/s.</dd>
+<dt>\(T\omega\)</dt><dd>work done per second: torque times the angle turned per second.</dd>
+<dt>\(2\pi f\), \(\dfrac{2\pi n}{60}\)</dt><dd>the same speed from rev/s or rev/min: one revolution is \(2\pi\) rad, one minute is 60 s.</dd>
+</dl></div>
 <p>with \(P\) in W, \(T\) in N·m, \(\omega\) in rad/s, \(f\) in rev/s (Hz) and \(n\) in rev/min.</p>
 <p class="word"><b>In words:</b> power = torque × angular speed. For the same power, a slow shaft carries a big torque and needs to be thicker; that is why gearboxes put the reduction (slow, high-torque) shafts at the output.</p>
 <div class="box thm"><span class="tag">Design rules</span>
-<ul class="list">
-<li><b>Strength:</b> \(\tau_{\max}\le\tau_{\text{allow}}\Rightarrow d\ge\left(\dfrac{16T}{\pi\tau_{\text{allow}}}\right)^{1/3}\) for a solid shaft.</li>
-<li><b>Stiffness:</b> \(\varphi=TL/(GJ)\le\varphi_{\text{allow}}\Rightarrow J\ge\dfrac{TL}{G\varphi_{\text{allow}}}\).</li>
-<li>Take the larger diameter of the two, then round up to a standard size.</li>
-</ul></div>
+<ol class="steps proc">
+<li><b>Do:</b> <b>Strength:</b> \(\tau_{\max}\le\tau_{\text{allow}}\Rightarrow d\ge\left(\dfrac{16T}{\pi\tau_{\text{allow}}}\right)^{1/3}\) for a solid shaft. <span class="why">The outer surface carries the highest stress, so the shaft must be thick enough that even there the stress stays below the allowed value.</span></li>
+<li><b>Do:</b> <b>Stiffness:</b> \(\varphi=TL/(GJ)\le\varphi_{\text{allow}}\Rightarrow J\ge\dfrac{TL}{G\varphi_{\text{allow}}}\). <span class="why">A shaft can be strong enough and still wind up too far, so the driven end lags behind the driving end.</span></li>
+<li><b>Do:</b> Take the larger diameter of the two, then round up to a standard size. <span class="why">Only the larger diameter meets both limits; rounding down would break one of them.</span></li>
+</ol></div>
 <div class="box eg"><span class="tag">Worked example · written for these notes · motor shaft</span>
 <p>A motor delivers \(30\u{kW}\) at \(1500\u{rev/min}\) through a solid steel shaft (\(G=80\u{GPa}\), \(\tau_{\text{allow}}=40\u{MPa}\)). Find the torque and the smallest diameter, then the twist per metre for a 30 mm shaft.</p>
 <div id="fig-e3"></div>
 <ol class="steps">
 <li>\(\omega=1500\times2\pi/60=157.1\u{rad/s}\); \(T=P/\omega=30\,000/157.1=191.0\u{N\,m}\).</li>
-<li>\(d\ge\left(\dfrac{16\times191.0}{\pi\times40\times10^6}\right)^{1/3}=0.0290\u{m}=29.0\u{mm}\) → use 30 mm.</li>
+<li>\(d\ge\left(\dfrac{16\times191.0}{\pi\times40\times10^6}\right)^{1/3}=0.0290\u{m}=29.0\u{mm}\) → use 30 mm. <span class="why">Round up, never down: a thinner shaft than 29.0 mm would go over 40 MPa.</span></li>
 <li>Twist per metre: \(\dfrac{T}{GJ}=\dfrac{191.0}{80\times10^9\times\pi(0.03)^4/32}=0.0300\u{rad/m}=1.72^\circ/\mathrm m\).</li>
 <li><b>Units:</b> W ÷ (rad/s) = (N·m/s)·s = N·m ✓.</li>
 </ol>
 <p>\(\boxed{T=191\u{N\,m},\ d_{\min}=29.0\u{mm},\ 1.72^\circ\text{ per metre at }d=30\u{mm}}\)</p></div>
+<p class="cannow"><b>You can now:</b> convert rev/min to rad/s and use \(P=T\omega\); size a solid shaft for strength and for stiffness and take the larger diameter; and give the twist per metre.</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Shafts fixed at both ends (statically indeterminate)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Shafts fixed at both ends (statically indeterminate)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Two people each hold one end of a towel firmly, and a third twists it somewhere in between. Both ends resist. Because neither end can turn, whatever twist one part of the towel takes, the other part must take back. Equilibrium alone cannot say how the two ends share the load; the extra fact that the total twist is zero can. The shorter, stiffer side takes more.</p></div></details>
 <p>If a shaft is built into walls at <b>both</b> ends, there are two unknown wall torques \(T_A\), \(T_E\) but only one equilibrium equation (\(\sum M_x=0\)). The shaft is <b>statically indeterminate</b> to degree 1 (S1 Section 11). The missing equation is <b>compatibility</b>: both walls are fixed, so the total twist from one end to the other is zero.</p>
 <div class="box thm"><span class="tag">Recipe · both ends fixed</span>
-<ol class="steps">
-<li>Draw the FBD with both wall torques \(T_A\), \(T_E\) pointing \(+x\). <b>Equilibrium:</b> \(T_A+T_E+\sum(\text{applied})=0\).</li>
-<li>Write every internal torque in terms of \(T_A\) alone (keep the <b>left</b> piece: \(T=-T_A-\sum(\text{applied torques left of the cut})\)).</li>
-<li><b>Compatibility:</b> \(\varphi_{E/A}=\sum_iT_iL_i/(G_iJ_i)=0\). Solve for \(T_A\).</li>
-<li>Back-substitute: \(T_E\), the internal torques, the torque diagram, stresses and twists.</li>
+<ol class="steps proc">
+<li><b>Do:</b> Draw the FBD with both wall torques \(T_A\), \(T_E\) pointing \(+x\). <b>Equilibrium:</b> \(T_A+T_E+\sum(\text{applied})=0\). <span class="why">Drawing both positive lets the signs of the answers give the real directions. This is one equation for two unknowns, so it is not enough on its own.</span></li>
+<li><b>Do:</b> Write every internal torque in terms of \(T_A\) alone (keep the <b>left</b> piece: \(T=-T_A-\sum(\text{applied torques left of the cut})\)). <span class="why">With only one unknown in every segment, the twist condition becomes one equation in \(T_A\).</span></li>
+<li><b>Do:</b> <b>Compatibility:</b> \(\varphi_{E/A}=\sum_iT_iL_i/(G_iJ_i)=0\). Solve for \(T_A\). <span class="why">Neither wall turns, so whatever twist one part puts in, the rest must take out.</span></li>
+<li><b>Do:</b> Back-substitute: \(T_E\), the internal torques, the torque diagram, stresses and twists. <span class="why">Once \(T_A\) is known, the shaft is just like one fixed at a single end with all torques known.</span></li>
 </ol></div>
 <div class="box eg"><span class="tag">Worked example · written for these notes · one torque between two walls</span>
 <p>A uniform steel shaft, \(d=50\u{mm}\), \(L=1\u{m}\), \(G=80\u{GPa}\), is fixed at \(A\) and \(B\). A torque \(T_0=1\u{kN\,m}\) (\(+x\)) acts at \(C\), \(a=0.4\u{m}\) from \(A\) (\(b=0.6\u{m}\) from \(B\)). Find the wall torques and the rotation of \(C\).</p>
@@ -431,6 +530,11 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 <div class="box ready"><span class="tag">Ready result · two segments, one torque (Dec 2015 A3(b), May 2014 A2(a))</span>
 <p>Segments \(AC\) (\(l_1\), \(J_1\)) and \(CB\) (\(l_2\), \(J_2\)), same \(G\), torque \(T\) at \(C\). Torsion constants \(J_1=\pi d_1^4/32\), \(J_2=\pi d_2^4/32\). Magnitudes of the internal torques:</p>
 \[\begin{aligned}T_{AC}&=T\frac{l_2J_1}{l_1J_2+l_2J_1},\\ T_{CB}&=T\frac{l_1J_2}{l_1J_2+l_2J_1}.\end{aligned}\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(T_{AC}+T_{CB}=T\)</dt><dd>between them, the two walls hold back the whole applied torque.</dd>
+<dt>\(\dfrac{l_2J_1}{l_1J_2+l_2J_1}\)</dt><dd>the same as \((J_1/l_1)\big/(J_1/l_1+J_2/l_2)\): the stiffness of \(AC\) over the total (\(G\) cancels).</dd>
+<dt>shorter or fatter segment</dt><dd>stiffer, so it takes the larger share.</dd>
+</dl></div>
 <p class="word"><b>In words:</b> each segment's share is its stiffness \(GJ/l\) divided by the total stiffness; \(AC\) twists one way, \(CB\) the other, by the same angle \(\varphi_C\).</p></div>
 <div class="box eg"><span class="tag">Past paper as worked example · May 2014 A2(a) · 12 marks</span>
 <p>A solid circular shaft \(AB\) is fixed to rigid walls at both ends and subjected to a torque \(T\) at section \(C\). The diameters are \(d_1\) and \(d_2\) for segments \(AC\) and \(CB\), of the same material. If the maximum shearing stress in both segments is the same, show that the relation between the lengths \(l_1\) and \(l_2\) of \(AC\) and \(CB\) is</p>
@@ -438,16 +542,18 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 <div id="fig-14m"></div>
 <ol class="steps">
 <li><b>Equilibrium:</b> \(T_{AC}+T_{CB}=T\) (magnitudes; they resist in opposite senses).</li>
-<li><b>Compatibility:</b> both segments twist by the same \(\varphi_C\): \(\dfrac{T_{AC}l_1}{GJ_1}=\dfrac{T_{CB}l_2}{GJ_2}\Rightarrow\dfrac{T_{AC}}{T_{CB}}=\dfrac{l_2}{l_1}\alpha^4\).</li>
+<li><b>Compatibility:</b> both segments twist by the same \(\varphi_C\): \(\dfrac{T_{AC}l_1}{GJ_1}=\dfrac{T_{CB}l_2}{GJ_2}\Rightarrow\dfrac{T_{AC}}{T_{CB}}=\dfrac{l_2}{l_1}\alpha^4\). <span class="why">Both segments end at the one section \(C\), and their other ends are at walls that do not turn, so both twist by the same \(\varphi_C\).</span></li>
 <li><b>Equal stresses:</b> \(\dfrac{16T_{AC}}{\pi d_1^3}=\dfrac{16T_{CB}}{\pi d_2^3}\Rightarrow\dfrac{T_{AC}}{T_{CB}}=\alpha^3\).</li>
 <li>So \(\alpha^3=\dfrac{l_2}{l_1}\alpha^4\Rightarrow\dfrac{l_1}{l_2}=\alpha\).</li>
 <li>The printed relation, multiplied by \(r=l_1/l_2\), is \(r^2+(\alpha^4-\alpha)r-\alpha^5=(r-\alpha)(r+\alpha^4)=0\). Its only positive root is \(r=\alpha\), which is what step 4 gives. ∎</li>
 </ol>
 <p class="flag">the printed relation was checked by derivation (sympy): it is equivalent to \(l_1/l_2=d_1/d_2\). To "show" it, substitute \(l_1/l_2=\alpha\): \(\alpha+\alpha^4-\alpha-\alpha^4=0\).</p></div>
+<p class="cannow"><b>You can now:</b> recognise a shaft fixed at both ends as statically indeterminate; write equilibrium and the compatibility condition \(\sum T_iL_i/(G_iJ_i)=0\); solve for both wall torques; and draw the torque diagram.</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Geared shafts</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Geared shafts</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Two meshing gears are a pair of levers that touch at the teeth. The teeth push on each other with one force. On the big gear that force acts at a long radius, so it makes a big torque, but the big gear turns through a small angle. A car's gearbox uses this trade to give a big torque at low speed in first gear.</p></div></details>
 <p>Two parallel shafts can be linked by a pair of meshing gears. The <b>pitch circle</b> of a gear is the circle on which the teeth effectively roll; its diameter is the <b>pitch diameter</b>, and its radius \(r\) is the lever arm of the tooth force.</p>
 <div id="fig-gear"></div>
 <div class="box thm"><span class="tag">Results · a meshing pair \(B\) (radius \(r_B\)) and \(C\) (radius \(r_C\))</span>
@@ -458,13 +564,19 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 <li><b>Power</b> is unchanged (ignoring friction): \(T_B\omega_B=T_C\omega_C\).</li>
 </ul>
 <p class="word"><b>In words:</b> the bigger gear gets the bigger torque and the smaller rotation, in the ratio of the radii (or the numbers of teeth). It is a lever made of teeth.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(F\)</dt><dd>the one push between the teeth, the same on both gears (action and reaction).</dd>
+<dt>\(T=Fr\)</dt><dd>the same push on a longer lever arm gives a bigger torque.</dd>
+<dt>\(\varphi r\)</dt><dd>the arc each pitch circle rolls through; equal on both, because the teeth do not slip.</dd>
+<dt>\(T\omega\)</dt><dd>torque up, speed down by the same ratio: the power passes through unchanged.</dd>
+</dl></div>
 <div class="box thm"><span class="tag">Recipe · twist at the loaded end of a gear train</span>
-<ol class="steps">
-<li>Torque in the input shaft = applied torque \(T\). Tooth force \(F=T/r_B\).</li>
-<li>Torque in the other shaft \(T'=Fr_C=T\,r_C/r_B\).</li>
-<li>Twist of the shaft fixed at the far end: \(\varphi_C=T'L'/(GJ')\).</li>
-<li>Gear on the input shaft turns by \(\varphi_B=\varphi_C\,r_C/r_B\) (a rigid-body rotation passed through the teeth).</li>
-<li>Add the input shaft's own twist: \(\varphi_A=\varphi_B+TL/(GJ)\). (Magnitudes add: both rotations are in the sense of \(T\).)</li>
+<ol class="steps proc">
+<li><b>Do:</b> Torque in the input shaft = applied torque \(T\). Tooth force \(F=T/r_B\). <span class="why">The torque reaches gear \(B\) and is handed on as one push at the teeth, with lever arm \(r_B\).</span></li>
+<li><b>Do:</b> Torque in the other shaft \(T'=Fr_C=T\,r_C/r_B\). <span class="why">The same push acts on gear \(C\), but at radius \(r_C\).</span></li>
+<li><b>Do:</b> Twist of the shaft fixed at the far end: \(\varphi_C=T'L'/(GJ')\). <span class="why">The far end cannot turn, so gear \(C\) turns by exactly the twist of its shaft.</span></li>
+<li><b>Do:</b> Gear on the input shaft turns by \(\varphi_B=\varphi_C\,r_C/r_B\) (a rigid-body rotation passed through the teeth). <span class="why">The pitch circles roll through equal arcs, so the smaller gear turns through the bigger angle.</span></li>
+<li><b>Do:</b> Add the input shaft's own twist: \(\varphi_A=\varphi_B+TL/(GJ)\). (Magnitudes add: both rotations are in the sense of \(T\).) <span class="why">End \(A\) turns by as much as gear \(B\), plus however much the input shaft winds up between \(B\) and \(A\).</span></li>
 </ol></div>
 <div class="box eg"><span class="tag">Worked example · written for these notes · a gear pair</span>
 <p>Shaft \(AB\) (steel, \(d=30\u{mm}\), 1.2 m) carries gear \(B\) (\(r_B=60\u{mm}\)) and a torque \(150\u{N\,m}\) at \(A\). Gear \(B\) drives gear \(C\) (\(r_C=180\u{mm}\)) on shaft \(CD\) (\(d=40\u{mm}\), 0.8 m), fixed at \(D\). \(G=80\u{GPa}\). Find the rotation of \(A\).</p>
@@ -472,7 +584,7 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 <ol class="steps">
 <li>\(F=150/0.06=2500\u{N}\); \(T_{CD}=2500\times0.18=450\u{N\,m}\).</li>
 <li>\(\varphi_C=\dfrac{450(0.8)}{80\times10^9\times2.513\times10^{-7}}=0.0179\u{rad}\).</li>
-<li>\(\varphi_B=0.0179\times\dfrac{180}{60}=0.0537\u{rad}\).</li>
+<li>\(\varphi_B=0.0179\times\dfrac{180}{60}=0.0537\u{rad}\). <span class="why">Equal arcs at the teeth: gear \(B\) is a third the size of \(C\), so it turns three times as far.</span></li>
 <li>\(\varphi_{A/B}=\dfrac{150(1.2)}{80\times10^9\times7.952\times10^{-8}}=0.0283\u{rad}\).</li>
 <li>\(\varphi_A=0.0537+0.0283=0.0820\u{rad}\).</li>
 </ol>
@@ -487,10 +599,12 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 <li>With \(d_{CD}=10.22\u{mm}\), \(J=1.072\times10^{-9}\u{m^4}\): \(L\le\dfrac{0.5\,GJ}{T_{CD}}=\dfrac{0.5(26.3\times10^9)(1.072\times10^{-9})}{21.76}=0.648\u{m}\).</li>
 </ol>
 <p>\(\boxed{d_{AB}=13.9\u{mm},\ d_{CD}=10.2\u{mm},\ L_{CD}\le0.648\u{m}}\)</p></div>
+<p class="cannow"><b>You can now:</b> find the tooth force and the torque ratio of a gear pair; pass a rotation through the mesh with \(\varphi_Br_B=\varphi_Cr_C\); add the input shaft's twist to get the rotation of the loaded end; and size geared shafts for stress and twist.</p>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Compound shafts</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Compound shafts</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Glue a pencil inside a cardboard tube, or bond a steel core inside an aluminium sleeve, and twist the end. Because they are joined, both parts turn by the same angle, so they share the torque, the stiffer part taking more. Put two shafts end to end instead and the opposite happens: the same torque goes through both, and their twists add.</p></div></details>
 <p>A <b>compound</b> (composite) shaft is made of two materials. There are two ways to join them:</p>
 <div class="cases">
 <div><b>In series (end to end)</b>The same torque passes through both; the twists add: \(\varphi=\sum T_iL_i/(G_iJ_i)\). Nothing new: Section 7.</div>
@@ -499,6 +613,12 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 <div class="box thm"><span class="tag">Result · two parts in parallel over length \(L\)</span>
 \[\begin{aligned}&\frac{T_1L}{G_1J_1}=\frac{T_2L}{G_2J_2}=\varphi,\\ &T_i=T\,\frac{G_iJ_i}{G_1J_1+G_2J_2},\\ &\varphi=\frac{TL}{G_1J_1+G_2J_2}.\end{aligned}\]
 <p class="word"><b>In words:</b> each part takes a share of the torque in proportion to its torsional rigidity \(GJ\); together they behave like one shaft of rigidity \(G_1J_1+G_2J_2\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\dfrac{T_1L}{G_1J_1}=\dfrac{T_2L}{G_2J_2}\)</dt><dd>joined, so both parts turn by the same angle \(\varphi\): the compatibility condition.</dd>
+<dt>\(G_iJ_i\)</dt><dd>each part's torsional rigidity: how hard it is to twist.</dd>
+<dt>\(T_i=T\,\dfrac{G_iJ_i}{G_1J_1+G_2J_2}\)</dt><dd>each part takes a share of the torque in proportion to its rigidity.</dd>
+<dt>\(\varphi=\dfrac{TL}{G_1J_1+G_2J_2}\)</dt><dd>together they twist like one shaft with the two rigidities added, like two springs side by side.</dd>
+</dl></div>
 <div class="box eg"><span class="tag">Worked example · written for these notes · steel core in an aluminium sleeve</span>
 <p>A solid steel core (\(d=40\u{mm}\), \(G_s=80\u{GPa}\)) is bonded inside an aluminium tube (40 mm inner, 60 mm outer diameter, \(G_a=28\u{GPa}\)). Length 1 m, torque \(3\u{kN\,m}\). Find the torque in each, the stresses and the twist.</p>
 <div class="pair"><div><div id="fig-e6"></div><p class="sub">Cross-section and FBD of the end: \(T=T_s+T_a\)</p></div><div><canvas class="plot" id="cv-e6" style="height:220px"></canvas><p class="sub">Shear stress against radius: it jumps at the bond</p></div></div>
@@ -511,14 +631,16 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 </ol>
 <p>\(\boxed{T_s=1239\u{N\,m},\ T_a=1761\u{N\,m},\ \tau_{s}=98.6,\ \tau_{a}=51.8\u{MPa},\ \varphi=0.0616\u{rad}}\)</p></div>
 <h3>Parts joined by a pin</h3>
+<details class="idea"><summary>What is this? (pin joint)</summary><div><p>Push a skewer through a cardboard tube and the pencil inside it. Turn the pencil and the skewer drags the tube round. The skewer is pushed at the two places where it crosses from pencil into tube, one push on each side of the pencil, in opposite directions. Those two pushes form a couple, and that couple is the torque handed from the inner shaft to the tube.</p></div></details>
 <p>Sometimes the inner shaft and the outer tube are joined only by a <b>pin</b> through both. The pin then carries the torque between them as a pair of shear forces \(V\) at the interface, one on each side of the shaft, a distance \(d\) apart (the shaft diameter):</p>
 \[T_{\text{pin}}=V\,d,\qquad V=\tau_{\text{pin}}\,\frac{\pi d_{\text{pin}}^2}{4}.\]
 <div id="fig-pin"></div>
 <p class="word"><b>In words:</b> the pin is sheared at the two places where it crosses from shaft into tube; the two shear forces form a couple, and that couple is the torque handed from the shaft to the tube. A limit on the pin's shear stress therefore limits the torque the pin can pass. (This is the set-up of Dec 2014 A3(b), in the exam taster.)</p>
+<p class="cannow"><b>You can now:</b> tell series from parallel compound shafts; share a torque between bonded parts in proportion to \(GJ\); check that the shear strain is continuous at the bond; and find the torque a pin can pass from \(T_{\text{pin}}=Vd\).</p>
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Summary</h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Summary</span></h2>
 <div class="scroll"><table>
 <tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
 <tr><td>Internal torque</td><td>\(T=\sum(\text{applied torques beyond the cut})\)</td><td>cut, keep the piece with no unknowns, \(\sum M_x=0\)</td></tr>
@@ -536,7 +658,7 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Common mistakes</h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Common mistakes</span></h2>
 <div class="mistake">
 <span class="x">✗</span><span>Using the radius in \(J=\pi d^4/32\) or the diameter in \(\tau=Tc/J\).</span>
 <span class="ok">✓</span><span>\(J\) with \(d\); \(\tau\) with \(c=d/2\). A slip costs a factor of 16 or 2.</span>
@@ -558,7 +680,7 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="s14"><h2><span class="n">14</span>Find the mistake</h2>
+<section id="s14"><h2><span class="n">14</span><span class="h2t">Find the mistake</span></h2>
 <div class="q"><p class="qh">1 · Stress in the stepped shaft of Section 7</p>
 <p>"\(\tau_{\max}\) is in \(AB\) because it carries 600 N·m, twice the torque in \(BC\): \(\tau=600(0.02)/J_{AB}=47.7\u{MPa}\)."</p>
 <details><summary>Hint</summary><div><p>How does \(\tau_{\max}\) scale with the diameter?</p></div></details>
@@ -574,7 +696,7 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 </section>
 
 <!-- ============ 15 ============ -->
-<section id="s15"><h2><span class="n">15</span>Concept checks</h2>
+<section id="s15"><h2><span class="n">15</span><span class="h2t">Concept checks</span></h2>
 <p class="muted">Written for these notes.</p>
 <div class="q"><p class="qh">1 · Doubling the diameter</p><p>A solid shaft's diameter is doubled; the torque stays the same. By what factors do \(\tau_{\max}\) and \(\varphi\) change?</p>
 <details><summary>Answer</summary><div><p>\(\tau_{\max}\propto1/d^3\): falls 8 times. \(\varphi\propto1/J\propto1/d^4\): falls 16 times.</p></div></details></div>
@@ -589,7 +711,7 @@ Check with the wall side for \(AB\): the left piece has \(M_A\) and \(T_{AB}\) p
 </section>
 
 <!-- ============ 16 ============ -->
-<section id="s16"><h2><span class="n">16</span>Exam taster</h2>
+<section id="s16"><h2><span class="n">16</span><span class="h2t">Exam taster</span></h2>
 <p>Real past-paper questions, one per question type. Torsion appears as a whole Section A question (usually A3, 15–20 marks) in seven of the twelve papers. No formula sheet is given for Section A: learn \(J=\pi d^4/32\), \(\tau=Tc/J\) and \(\varphi=TL/(GJ)\). Full method and more questions: <a href="guide-S6.html">Exam guide · S6</a>.</p>
 
 <div class="q"><div class="src"><b>Dec 2024 A3</b><span>20 marks</span><span>similar: Dec 2023 A3</span><a class="guide" href="guide-S6.html#S6-1">S6.1 stepped shaft fixed at one end</a></div>
@@ -1025,5 +1147,13 @@ D('fig-e3',{x0:-1.8,x1:5.4,y0:-1.1,y1:1.2,px:44,pad:8,maxw:400},[{t:'rect',x:-1.
   redraws.push(d1,d2);
 })();
 
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </body></html>

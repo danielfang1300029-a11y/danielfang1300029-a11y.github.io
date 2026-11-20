@@ -154,6 +154,35 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 .pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
 nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
 
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
+
 
 </style>
 <script>
@@ -192,19 +221,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-S5.html">Exam guide · S5</a><a href="note-S4.html">← S4</a><a href="note-S6.html">Next: S6 →</a></nav>
   <span class="course">MECH2413 · Engineering Mechanics · Statics chapter 5</span>
   <h1>Deflection of Beams</h1>
-  <p class="lede">Every slide of the Statics chapter 5 handout (22 slides) explained from scratch: how bending stresses lead to the law \(EIw''=M\), boundary and matching conditions, deflection by integration in one region and in several regions, and superposition. Because the exam also asks for Macaulay-bracket deflections and statically indeterminate beams (propped cantilevers, spring supports), those are added as clearly labelled "Beyond the handouts" sections. Every worked example has a sketch, a free-body diagram and a plotted deflection curve.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
-<p>In <a href="note-S2.html">S2</a> you found the bending moment \(M(x)\) inside a beam; in <a href="note-S4.html">S4</a> you turned it into bending stress. This chapter asks the last question about a beam: <b>how far does it bend?</b> (slide 2: "the geometric result of a beam being stressed"). The answer matters for two reasons. A floor that sags 3 cm feels unsafe even when the steel is far from breaking, so designers limit deflection directly. And a beam with "too many" supports (S1 Section 11) cannot be solved by equilibrium alone; the missing equation comes from deflection.</p>
-<p>The handout's plan (slide 2):</p>
-<ol class="steps">
-<li>a summary of the important equations of ordinary bending theory (Sections 1–4);</li>
-<li>deflection in a <b>single region</b>: one equation for the whole beam (Section 6);</li>
-<li>deflection in <b>multiple regions</b>: one equation per region, joined by matching conditions (Section 7);</li>
-<li><b>superposition</b>: adding up simple cases (Section 9).</li>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this chapter sits</span></h2>
+<p>In <a href="note-S2.html">S2</a> you found the bending moment \(M(x)\) inside a beam; in <a href="note-S4.html">S4</a> you turned it into bending stress. This chapter asks the last question about a beam: <b>how far does it bend?</b> (slide 2: "the geometric result of a beam being stressed"). Picture a plank laid across a stream: stand on it and it sags into a smooth curve, and we want that curve point by point: how far each point drops (the <b>sag</b>) and how much the plank tilts there (the <b>slope</b>). Sag matters in its own right (a floor that sags 3 cm feels unsafe even when the steel is far from breaking), and it gives the missing equation for a beam with "too many" supports (S1 Section 11).</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>The bending moment is the plank's internal bending effort at a cut.</b> Recap of S2.</li>
+<li><a href="#s2">§2</a> <b>Bending stretches one face and squashes the other;</b> the neutral axis keeps its length.</li>
+<li><a href="#s3">§3</a> <b>Cross-sections stay flat and only tilt,</b> like lines drawn across the side of a bent foam bar.</li>
+<li><a href="#s4">§4</a> <b>\(EIw''=M\): the bigger the moment, the tighter the bend.</b> Integrate once for the slope, twice for the sag.</li>
+<li><a href="#s5">§5</a> <b>Supports pin the curve down:</b> a pin fixes the height, a clamp fixes height and tilt.</li>
+<li><a href="#s6">§6</a> <b>One formula for \(M\) along the whole beam: integrate once, fix two constants.</b> Cantilevers.</li>
+<li><a href="#s7">§7</a> <b>\(M\) changes formula at a load: one curve per piece, joined with no break and no kink.</b></li>
+<li><a href="#s8">§8</a> Macaulay brackets: one expression, still two constants. <span class="pill">Beyond</span></li>
+<li><a href="#s9">§9</a> <b>Several loads: add the sags of simple cases.</b></li>
+<li><a href="#s10">§10</a> <b>Too many supports: the beam's shape gives the missing equation.</b> <span class="pill">Beyond</span></li>
+<li><a href="#s11">§11</a> Explorer, then summary, common mistakes, checks and an exam taster (§12–§16).</li>
 </ol>
+<p class="small muted">The handout (22 slides) has four parts (slide 2): the equations of ordinary bending (§1–§4), a single region (§6), multiple regions with matching conditions (§7), and superposition (§9). §8 and §10 are "Beyond the handouts", added because past papers ask for Macaulay-bracket deflections and statically indeterminate beams (propped cantilevers, spring supports). Every worked example has a sketch, a free-body diagram and a plotted deflection curve.</p></div>
+<p><b>You need:</b> the bending moment \(M(x)\) from S2 (and its Macaulay form, S2 Section 7), \(I\) from S4, and integration. <b>In the exam:</b> usually a 6–10 mark part of Question A2 or A3, straight after the shear-force and bending-moment diagrams; Section A has no formula sheet. See the <a href="guide-S5.html">S5 exam guide</a>.</p>
 <div class="box def"><span class="tag">Definitions · deflection, slope, elastic line</span>
 <p>As a beam bends, each point of its axis moves sideways (across the beam) by a small distance \(w(x)\), the <b>deflection</b>. The bent axis is called the <b>deflection curve</b> or <b>elastic line</b> (slide 11). Its gradient \(w'(x)=\mathrm dw/\mathrm dx\) is the <b>slope</b>: for small bending it equals the angle (in radians) through which the beam has turned at \(x\).</p></div>
 
@@ -220,7 +257,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Ordinary bending: equilibrium and stress resultants (slides 3–4)</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Ordinary bending: equilibrium and stress resultants (slides 3–4)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Cut the loaded plank anywhere in your mind. The two halves still hold each other up, so something must pass across the cut. For a sagging plank the top layers on the two sides push against each other and the bottom layers pull on each other. Added up, these pushes and pulls make a turning effect, the <b>bending moment</b>, and it is this moment that bends the plank. This section is a recap of S2 and S4; it only collects the equations the rest of the chapter needs.</p></div></details>
 <div class="box def"><span class="tag">Definition · ordinary (uniaxial) bending</span>
 <p><b>Ordinary bending</b> is bending in one plane only: the loads act in the \(x\)–\(z\) plane, which is a plane of symmetry of the cross-section, so the beam bends in that plane without twisting. Every beam in this course is of this kind.</p></div>
 <p>Slide 3 recalls the slice of length \(\mathrm dx\) from S2: shear \(V\) and moment \(M\) on its left face, \(V+\mathrm dV\) and \(M+\mathrm dM\) on its right face, and the load \(q\) on top. Equilibrium of the slice gave</p>
@@ -229,29 +267,36 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-s1-el"></div>
 <p>Slide 4 reminds us where \(N\), \(V\) and \(M\) come from. Over the cut face, each small patch \(\mathrm dA\) at height \(z\) carries a <b>normal stress</b> \(\sigma\) (pulling along \(x\)) and a <b>shear stress</b> \(\tau\) (along \(z\)). Adding them up:</p>
 \[\begin{aligned}N&=\int\sigma\,\mathrm dA,\qquad V=\int\tau\,\mathrm dA,\\ M&=\int z\,\sigma\,\mathrm dA.\end{aligned}\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\sigma\,\mathrm dA\)</dt><dd>the push or pull carried by one small patch of the cut face.</dd><dt>\(\int\sigma\,\mathrm dA=N\)</dt><dd>all those pushes and pulls added up. In a plank that is only bent the pushes and pulls cancel, so there is no net stretching force.</dd><dt>\(z\)</dt><dd>the lever arm: how far the patch is from the neutral axis.</dd><dt>\(\int z\,\sigma\,\mathrm dA=M\)</dt><dd>the turning effects added up. Pushes at the top and pulls at the bottom do not cancel here: they turn the same way, and this is the moment that bends the plank.</dd></dl></div>
 <p class="word"><b>In words:</b> the normal force is the total of the normal stresses; the shear force is the total of the shear stresses; the bending moment is the total turning effect of the normal stresses about the axis (each stress times its lever arm \(z\)).</p>
 <div class="box def"><span class="tag">Definitions · stress</span>
 <p><b>Stress</b> is force per unit area (unit Pa = N/m², usually MPa). <b>Normal stress</b> \(\sigma\) acts perpendicular to a surface (stretching or squashing it); <b>shear stress</b> \(\tau\) acts along the surface (trying to slide it). See <a href="note-S3.html">S3</a>.</p></div>
+<p class="cannow"><b>You can now:</b> state \(\mathrm dV/\mathrm dx=-q\) and \(\mathrm dM/\mathrm dx=V\); and explain \(N\), \(V\) and \(M\) as the totals of the stresses on a cut, with \(M\) the total turning effect.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>Strain, stress and the neutral axis (slides 5–6)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Strain, stress and the neutral axis (slides 5–6)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Bend a thick foam bar into a smile between your hands. The top face gets shorter and the bottom face gets longer. Somewhere in between is a layer that keeps its original length. To describe this we need to know how far each little piece of the bar moves, how much it stretches (strain), and how hard the material resists the stretch (stress).</p></div></details>
 <p>Inside the beam, describe the movement of each point by two <b>displacements</b>: \(u(x,z)\) along \(x\) and \(w(x,z)\) along \(z\). Slide 5 shows how a small element \(\mathrm dx\times\mathrm dz\) deforms:</p>
 <div id="fig-s2-el"></div>
 <div class="box def"><span class="tag">Definitions · strain and shear strain (slide 5)</span>
 \[\varepsilon=\frac{\partial u}{\partial x},\qquad\gamma=\frac{\partial w}{\partial x}+\frac{\partial u}{\partial z}.\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\varepsilon=\partial u/\partial x\)</dt><dd>how much a layer of the bar stretches per unit length (negative if it is squashed).</dd><dt>\(\partial w/\partial x\)</dt><dd>how much a horizontal edge of a small square tilts as the bar bends.</dd><dt>\(\partial u/\partial z\)</dt><dd>how much a vertical edge of the same square tilts, because layers at different heights slide by different amounts.</dd><dt>\(\gamma\)</dt><dd>the two tilts together: how far the square has been squeezed into a lozenge.</dd></dl></div>
 <p class="word"><b>In words:</b> the <b>strain</b> \(\varepsilon\) is the stretch per unit length: the element of length \(\mathrm dx\) gets longer by \(\mathrm du=\varepsilon\,\mathrm dx\). The <b>shear strain</b> \(\gamma\) is the loss of the right angle at a corner (in radians): one edge tilts by \(\partial w/\partial x\), the other by \(\partial u/\partial z\).</p>
 <p>(\(\partial/\partial x\) is a <b>partial derivative</b>: differentiate with respect to \(x\) while holding \(z\) fixed.)</p></div>
 <p>For an elastic material, stress is proportional to strain (<b>Hooke's law</b>, <a href="note-S3.html">S3</a>):</p>
 \[\begin{aligned}\sigma&=E\varepsilon=E\frac{\partial u}{\partial x},\\ \tau&=G\gamma=G\left(\frac{\partial w}{\partial x}+\frac{\partial u}{\partial z}\right).\end{aligned}\]
 <p class="word"><b>In words:</b> stress = stiffness × strain. \(E\) is <b>Young's modulus</b> (stiffness in stretching, about 200 GPa for steel); \(G\) is the <b>shear modulus</b> (stiffness in shearing).</p>
+<details class="idea"><summary>What is this? (neutral axis)</summary><div><p>In the bent foam bar, the layer in the middle that neither stretches nor shortens is the <b>neutral axis</b>. Above it the bar is squashed, below it stretched (for a smile). We measure every height \(z\) from this layer.</p></div></details>
 <div class="box def"><span class="tag">Definition · neutral axis (slide 6)</span>
 <p>The <b>neutral axis</b> is the line in the cross-section along which there is <b>no longitudinal stress or strain</b>: fibres there neither stretch nor shorten. If the section is symmetric, the material is <b>isotropic</b> (same properties in every direction) and the beam is straight before bending, the neutral axis passes through the <b>centroid</b> of the section (<a href="note-S1.html#s8">S1 Section 8</a>).</p></div>
 <p>Section 4 shows <i>why</i> it is the centroid. We measure \(z\) from the neutral axis, so \(z=0\) on it.</p>
+<p class="cannow"><b>You can now:</b> define strain, shear strain and the neutral axis; write Hooke's law \(\sigma=E\varepsilon\), \(\tau=G\gamma\); and say when the neutral axis passes through the centroid.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Two kinematic assumptions (slides 7–9)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Two kinematic assumptions (slides 7–9)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Draw straight vertical lines across the side of the foam bar with a ruler, then bend it. Two things stay true. The bar is as thick as before, so every point of one line moves up or down by the same amount. And each line is still straight; it has only tilted. These two observations are the two assumptions, and they turn the movement of the whole cross-section into just two numbers: how far it moves sideways (\(w\)) and how much it tilts (\(\psi\)).</p></div></details>
 <p>To find the deflection we need to know how the cross-sections move. Slide 7 shows a point \(P\) at depth \(z\) in a section; after bending it has moved to \(P'\): down by \(w\), and sideways because the section has tilted by an angle \(\psi\). The handout makes two assumptions (slide 8):</p>
 <div class="box thm"><span class="tag">Assumption 1 · the beam does not get thinner or thicker</span>
 <p>Every point of a cross-section has the <b>same deflection</b>, so \(w\) depends on \(x\) only:</p>
@@ -260,21 +305,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box thm"><span class="tag">Assumption 2 · plane sections remain plane</span>
 <p>A cross-section that was a flat plane stays a flat plane; it only <b>rotates</b> through a small angle \(\psi(x)\). So a point at distance \(z\) from the axis moves along the beam by (slide 9)</p>
 \[u(x,z)=\psi(x)\,z,\qquad\frac{\partial u}{\partial z}=\psi(x).\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\psi(x)\)</dt><dd>how much the drawn line at position \(x\) has tilted (a small angle in radians).</dd><dt>\(z\)</dt><dd>how far the point is from the neutral axis along that line.</dd><dt>\(u=\psi z\)</dt><dd>how far the point slides along the bar: zero on the neutral axis, growing straight in proportion to \(z\), in opposite directions on the two sides. That is what a straight tilted line looks like.</dd></dl></div>
 <p class="word"><b>In words:</b> the sideways shift grows linearly with distance from the neutral axis, like the pages of a closed book that slide over each other when you bend it: the further a page is from the middle, the more it slides.</p></div>
 <div id="fig-s3"></div>
 <p>Both assumptions are accurate for a <b>slender</b> beam (long compared with its depth) of constant cross-section, or one that tapers only slightly (slide 9). A small angle means \(\psi\) in radians is much less than 1, so \(\sin\psi\approx\tan\psi\approx\psi\).</p>
 <div class="beyond box"><span class="tag">Beyond the handouts · names</span>
 <p>These are the assumptions of <b>Euler–Bernoulli beam theory</b> (also called "engineering beam theory" or "ordinary bending theory"). Adding the rule that sections stay <b>perpendicular</b> to the bent axis (shear deformation neglected) is what gives \(w'=\psi\) in Section 4.</p></div>
+<p class="cannow"><b>You can now:</b> state the two kinematic assumptions (\(w=w(x)\); plane sections stay plane, \(u=\psi z\)); and say when they hold (slender beam, small angles).</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>The moment–curvature law \(EIw''=M\) (slides 10–11)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">The moment–curvature law \(EIw''=M\) (slides 10–11)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Bend a plastic ruler between your hands. Push harder (a bigger moment) and it curls more tightly; a steel ruler of the same size (a stiffer one) curls less for the same push. The law \(EIw''=M\) says exactly this: how sharply the beam curves at a point is the moment there divided by its bending stiffness. And if you know how sharply the plank curves at every point, you can rebuild its whole shape: the curvature tells you how the tilt changes along the plank, and the tilt tells you how the height changes.</p></div></details>
 <p>Put the displacement \(u=z\psi\) into the stress–strain laws of Section 2 (slide 10):</p>
 \[\begin{aligned}\sigma&=E\frac{\partial u}{\partial x}=E\frac{\partial(\psi z)}{\partial x}\\&=Ez\psi',\\ \tau&=G\left(\frac{\partial w}{\partial x}+\frac{\partial u}{\partial z}\right)\\&=G(w'+\psi).\end{aligned}\]
 <p class="word"><b>In words:</b> the bending stress grows linearly with distance \(z\) from the neutral axis, at a rate set by how fast the sections rotate, \(\psi'\).</p>
 <p>Now add up the stresses over the section (slide 10):</p>
 \[N=\int\sigma\,\mathrm dA=E\psi'\int z\,\mathrm dA.\]
-<p>In pure bending there is no normal force, \(N=0\), so \(\int z\,\mathrm dA=0\). That integral is zero exactly when \(z\) is measured from the <b>centroid</b> of the section: this is why the neutral axis passes through the centroid (Section 2). For the moment:</p>
+<p>In pure bending there is no normal force, \(N=0\), so \(\int z\,\mathrm dA=0\). <span class="why">A beam that is only bent is not pulled as a whole, so the stretched layers below the neutral axis and the squashed layers above it must balance exactly.</span> That integral is zero exactly when \(z\) is measured from the <b>centroid</b> of the section: this is why the neutral axis passes through the centroid (Section 2). For the moment:</p>
 \[M=\int z\sigma\,\mathrm dA=E\psi'\int z^2\,\mathrm dA=EI\psi'.\]
 <div class="box def"><span class="tag">Definitions · second moment of area, flexural rigidity</span>
 <p>\(I=\int z^2\,\mathrm dA\) is the <b>second moment of area</b> of the cross-section about its neutral axis (unit m⁴; see <a href="note-S4.html">S4</a>). For a rectangle of width \(b\) and depth \(h\), \(I=bh^3/12\).</p>
@@ -289,13 +337,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box thm"><span class="tag">Result · differential equation of the elastic line (slide 11)</span>
 \[\begin{aligned}EI\,w''(x)&=M(x),\\ EI\,w'(x)&=\int_0^xM\,\mathrm dx+C_1,\\ EI\,w(x)&=\int_0^x\!\mathrm dx\int_0^xM\,\mathrm dx\\&\quad+C_1x+C_2.\end{aligned}\]
 <p class="word"><b>In words:</b> bending stiffness × curvature = bending moment. Integrate the moment once to get the slope, twice to get the deflection; two constants of integration, \(C_1\) and \(C_2\), are fixed by the supports.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(EI\)</dt><dd>how stiff the plank is: a thick steel beam has a large \(EI\), a thin plastic ruler a small one.</dd><dt>\(w''\)</dt><dd>how sharply the plank curves at \(x\): positive for a smile, negative for a frown.</dd><dt>\(M(x)\)</dt><dd>the bending effort at \(x\) (sagging positive). Same sign as \(w''\), so a sagging moment gives a smile.</dd><dt>\(EIw'=\int_0^xM\,\mathrm dx+C_1\)</dt><dd>the tilt at \(x\) is the tilt at the start plus all the curving that happened on the way. \(C_1\) is \(EI\) times the tilt at \(x=0\).</dd><dt>\(EIw=\cdots+C_1x+C_2\)</dt><dd>the height at \(x\) is the starting height plus all the rising and falling on the way. \(C_2\) is \(EI\) times the height at \(x=0\).</dd><dt>\(C_1,\ C_2\)</dt><dd>the moment alone cannot know where the plank starts or how it is tilted there; the supports tell us (Section 5).</dd></dl></div>
 <div class="figure"><p class="ttl">Sign check · sagging moment, upward curvature</p>
 <div id="fig-s4-sign"></div>
 <p class="cap">Left: \(M\gt0\) (sagging) gives \(w''\gt0\): the curve is concave up, a smile. Right: \(M\lt0\) (hogging) gives \(w''\lt0\): a frown. With \(w\) measured up, the equation needs no minus sign.</p></div>
+<p class="cannow"><b>You can now:</b> derive \(M=EI\psi'\) and \(EIw''=M\) from the two assumptions; explain why the neutral axis is at the centroid; and read the sign: sagging \(M\), smile, \(w''\gt0\) with \(w\) up.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Boundary conditions (slides 12–13)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Boundary conditions (slides 12–13)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Supports are rules about the shape of the curve at one point. The ends of a plank bridge rest on the banks: they cannot drop, but the plank can tilt there freely (a pin or roller). A diving board built into concrete at its base can neither drop nor tilt there (a clamp). The far end of the diving board is free: it drops and tilts as much as the load makes it. Each rule fixes the height or the tilt of the curve at that point, and that is what pins down \(C_1\) and \(C_2\).</p></div></details>
 <p>The two constants need two facts about the beam's ends. Slide 12 names two kinds:</p>
 <div class="box def"><span class="tag">Definitions · geometrical and statical boundary conditions</span>
 <ol class="steps">
@@ -315,29 +366,38 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-s5"></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>The free end of a cantilever has <b>no</b> geometrical condition (it moves and turns). Both constants then come from the <b>fixed</b> end: \(w=0\) and \(w'=0\) there. Students often wrongly write \(w'=0\) at a pin; a pin lets the beam rotate.</p></div>
+<p><b>How to apply them</b> (one region):</p>
+<ol class="steps proc">
+<li><b>Do:</b> for each support, read its row of the slide-13 table and keep the <b>geometrical</b> zeros: \(w=0\), \(w'=0\) or both. <span class="why">These are the points where the curve is pinned in height (bank, pin) or in tilt (wall, clamp).</span></li>
+<li><b>Do:</b> check that you have exactly two: pin and roller give \(w=0\) at both ends; a clamp gives \(w=0\) and \(w'=0\) at the same point; a free end gives none. <span class="why">Two constants means two unknowns about the curve: its starting height and its starting tilt.</span></li>
+<li><b>Do:</b> put each condition into the integrated \(w\) or \(w'\) at the support's \(x\) and solve for \(C_1\), \(C_2\). With a symmetric load, \(w'=0\) at mid-span may replace one condition (concept check 5). <span class="why">On a symmetric plank bridge the lowest point is in the middle, where the plank is level.</span></li>
+</ol>
+<p class="cannow"><b>You can now:</b> tell geometrical from statical boundary conditions; give the two zeros for a pin, a clamp, a free end and a parallel-motion support; and choose the two conditions that fix \(C_1\) and \(C_2\).</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Single region: cantilevers (slides 14–16)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Single region: cantilevers (slides 14–16)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A diving board with a diver standing on its tip. At the concrete it is level and does not drop; further out it drops more and more and tilts more and more, and the tip drops the most. One formula for the moment covers the whole board, so one curve with two constants describes the whole shape.</p></div></details>
 <p>If one formula for \(M(x)\) holds along the whole beam, one integration does the job: <b>single-region</b> calculation.</p>
 <div class="box eg"><span class="tag">Worked example · slides 14–16 · cantilever with an end load</span>
 <p>A cantilever of length \(l\) and bending stiffness \(EI\) is clamped at \(x=0\) and carries a downward force \(F\) at its free end \(x=l\). Find the slope and deflection.</p>
 <div class="pair"><div><div id="fig-c1-sys"></div><p class="sub">System (slide 14)</p></div><div><div id="fig-c1-fbd"></div><p class="sub">Left piece of a cut at \(x\) (wall reactions \(F\) up, \(Fl\) anticlockwise)</p></div></div>
-<ol class="steps">
-<li><b>Moment.</b> Keep the piece to the <b>right</b> of the cut (only \(F\) acts on it). \(F\) is a distance \(l-x\) to the right of the cut and points down, so it bends the beam into a frown (hogging):
+<ol class="steps proc">
+<li><b>Do:</b> <b>Moment.</b> Keep the piece to the <b>right</b> of the cut (only \(F\) acts on it). \(F\) is a distance \(l-x\) to the right of the cut and points down, so it bends the beam into a frown (hogging):
 \[M=-F(l-x).\]
-(From the left piece: \(M=F x-Fl\), the same.)</li>
-<li><b>Integrate twice</b> (slide 14):
-\[\begin{aligned}EIw''&=F(x-l),\\ EIw'&=F\left(\frac{x^2}{2}-lx\right)+C_1,\\ EIw&=F\left(\frac{x^3}{6}-\frac{lx^2}{2}\right)+C_1x+C_2.\end{aligned}\]</li>
-<li><b>Boundary conditions</b> at the clamp (slide 15): \(w'(0)=0\Rightarrow C_1=0\); \(w(0)=0\Rightarrow C_2=0\).</li>
-<li><b>Result</b> (slide 15):
-\[\begin{aligned}w'(x)&=\frac{F}{EI}\left(\frac{x^2}{2}-lx\right),\\ w(x)&=\frac{F}{EI}\left(\frac{x^3}{6}-\frac{lx^2}{2}\right).\end{aligned}\]</li>
-<li><b>Maximum values</b>, at the free end \(x=l\) (slide 16):
-\[w'_{\max}=-\frac{Fl^2}{2EI},\qquad w_{\max}=-\frac{Fl^3}{3EI}.\]</li>
-<li><b>Dimension check:</b> \(\dfrac{\mathrm N\cdot\mathrm m^3}{\mathrm N\,\mathrm m^2}=\mathrm m\) ✓. The minus signs mean the tip moves <b>down</b> and the beam slopes down to the right ✓.</li>
+(From the left piece: \(M=F x-Fl\), the same.) <span class="why">Bigger \(|M|\) means a tighter curl: the board bends hardest at the wall, where the lever arm \(l-x\) is longest, and not at all at the tip.</span></li>
+<li><b>Do:</b> <b>Integrate twice</b> (slide 14):
+\[\begin{aligned}EIw''&=F(x-l),\\ EIw'&=F\left(\frac{x^2}{2}-lx\right)+C_1,\\ EIw&=F\left(\frac{x^3}{6}-\frac{lx^2}{2}\right)+C_1x+C_2.\end{aligned}\] <span class="why">The first integration turns the curl into tilt, the second turns tilt into height; each adds an unknown (a starting tilt, then a starting height).</span></li>
+<li><b>Do:</b> <b>Boundary conditions</b> at the clamp (slide 15): \(w'(0)=0\Rightarrow C_1=0\); \(w(0)=0\Rightarrow C_2=0\). <span class="why">The board leaves the concrete level and at zero height, which fixes both unknowns at once.</span></li>
+<li><b>Do:</b> <b>Result</b> (slide 15):
+\[\begin{aligned}w'(x)&=\frac{F}{EI}\left(\frac{x^2}{2}-lx\right),\\ w(x)&=\frac{F}{EI}\left(\frac{x^3}{6}-\frac{lx^2}{2}\right).\end{aligned}\] <span class="why">Both are negative for every \(x\gt0\): beyond the wall the board slopes down and has dropped.</span></li>
+<li><b>Do:</b> <b>Maximum values</b>, at the free end \(x=l\) (slide 16):
+\[w'_{\max}=-\frac{Fl^2}{2EI},\qquad w_{\max}=-\frac{Fl^3}{3EI}.\] <span class="why">The curl is a frown everywhere, so the tilt only gets steeper going out: the tip has both the biggest drop and the steepest slope.</span></li>
+<li><b>Do:</b> <b>Dimension check:</b> \(\dfrac{\mathrm N\cdot\mathrm m^3}{\mathrm N\,\mathrm m^2}=\mathrm m\) ✓. The minus signs mean the tip moves <b>down</b> and the beam slopes down to the right ✓. <span class="why">A lost \(EI\) or a wrong power of \(l\) shows up at once, and the signs must match the picture of a board bending down.</span></li>
 </ol>
 <p>\(\boxed{w_{\max}=-\dfrac{Fl^3}{3EI}\ \ \text{(down)},\qquad w'_{\max}=-\dfrac{Fl^2}{2EI}}\)</p>
 <p class="word"><b>In words:</b> the tip of a cantilever drops by "force × length³ ÷ (3 × bending stiffness)". Double the length and the drop is 8 times bigger.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(F\)</dt><dd>a heavier diver: the drop grows in proportion.</dd><dt>\(l^3\)</dt><dd>a longer board: a longer lever (more moment) acting over a longer length that keeps curling, so length counts three times over.</dd><dt>\(EI\)</dt><dd>a stiffer board drops less.</dd><dt>\(3\)</dt><dd>comes from integrating the straight-line moment twice.</dd><dt>minus sign</dt><dd>the tip moves down (\(w\) is measured up).</dd></dl></div>
 <div class="figure"><canvas class="plot" id="cv-c1" style="height:170px"></canvas><p class="cap">Deflection curve \(w\,EI/(Fl^3)\) against \(x/l\): zero value and zero slope at the wall, steepest at the tip, \(-1/3\) at the tip.</p></div></div>
 
 <div class="box eg"><span class="tag">Worked example · past paper Dec 2021 A3(b) · 10 marks · cantilever with a uniform load</span>
@@ -346,7 +406,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <ol class="steps">
 <li><b>Moment</b> from the left piece (only the load \(w_0x\), acting at \(x/2\) from the cut, hogging): \(M=-\dfrac{w_0x^2}{2}\).</li>
 <li><b>Integrate:</b> \(EIw'=-\dfrac{w_0x^3}{6}+C_1\), \(EIw=-\dfrac{w_0x^4}{24}+C_1x+C_2\).</li>
-<li><b>Conditions at the wall</b> \(x=L\): \(w'(L)=0\Rightarrow C_1=\dfrac{w_0L^3}{6}\); \(w(L)=0\Rightarrow C_2=\dfrac{w_0L^4}{24}-\dfrac{w_0L^4}{6}=-\dfrac{w_0L^4}{8}\).</li>
+<li><b>Conditions at the wall</b> \(x=L\): \(w'(L)=0\Rightarrow C_1=\dfrac{w_0L^3}{6}\); \(w(L)=0\Rightarrow C_2=\dfrac{w_0L^4}{24}-\dfrac{w_0L^4}{6}=-\dfrac{w_0L^4}{8}\). <span class="why">Here the board is built into the wall on the right, so it is level and at zero height at \(x=L\); the free end \(A\) just follows.</span></li>
 <li><b>Result:</b>
 \[w(x)=-\frac{w_0}{24EI}\left(x^4-4L^3x+3L^4\right).\]</li>
 <li><b>Check:</b> \(w(L)=-\frac{w_0}{24EI}(L^4-4L^4+3L^4)=0\) ✓; free end \(w(0)=-\dfrac{w_0L^4}{8EI}\) (down) ✓.</li>
@@ -356,26 +416,28 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box ready"><span class="tag">Ready results · cantilevers (length \(l\), tip values, downward loads)</span>
 <ul class="list"><li>End force \(F\): tip deflection \(\dfrac{Fl^3}{3EI}\) down, tip slope \(\dfrac{Fl^2}{2EI}\).</li>
 <li>Uniform load \(q\) over the whole length: tip deflection \(\dfrac{ql^4}{8EI}\) down, tip slope \(\dfrac{ql^3}{6EI}\).</li></ul></div>
+<p class="cannow"><b>You can now:</b> find \(w(x)\) and \(w'(x)\) of a cantilever with an end force or a uniform load, with the wall on either side; and quote the tip values \(Fl^3/3EI\) and \(ql^4/8EI\).</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Multiple regions: a point load on a simply supported beam (slides 17–20)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Multiple regions: a point load on a simply supported beam (slides 17–20)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Back to the plank bridge, with you standing off-centre. Under your feet the moment changes its formula, so the left part and the right part of the plank need separate curves. But it is still one plank: at your feet the two curves must meet at the same height (no break) and with the same tilt (no kink). Those two facts are the matching conditions.</p></div></details>
 <p>When the formula for \(M\) changes along the beam (at a point force, a couple, or where a distributed load starts or stops), integrate separately in each <b>region</b>. Each region brings two constants, so extra conditions are needed: the <b>matching conditions</b> at the point where the regions meet.</p>
 <div class="box eg"><span class="tag">Worked example · slides 17–20 · force \(F\) at \(x=a\)</span>
 <p>A simply supported beam (pin \(A\), roller \(B\)), span \(l=a+b\), bending stiffness \(EI\), carries a downward force \(F\) at \(x=a\). Find \(w\) and \(w'\) (slide 17).</p>
 <div class="pair"><div><div id="fig-p-sys"></div><p class="sub">System (slide 17)</p></div><div><div id="fig-p-fbd"></div><p class="sub">FBD: \(A=Fb/l\), \(B=Fa/l\) (S2 Section 2)</p></div></div>
-<ol class="steps">
-<li><b>Moment</b> (slide 18). The shear force jumps at \(x=a\), so \(M\) has two formulas (from <a href="note-S2.html#s2">S2 Section 2</a>):
+<ol class="steps proc">
+<li><b>Do:</b> <b>Moment</b> (slide 18). The shear force jumps at \(x=a\), so \(M\) has two formulas (from <a href="note-S2.html#s2">S2 Section 2</a>):
 \[M(x)=\begin{cases}F\dfrac bl\,x, & 0\le x\le a,\\[4pt] F\dfrac al\,(l-x), & a\le x\le l.\end{cases}\]
-Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
-<li><b>Integrate in each region</b> (slide 19):
+Region I is \(0\le x\le a\), region II is \(a\le x\le l\). <span class="why">Your weight splits the plank into two stretches that curl by different rules, so no single formula fits.</span></li>
+<li><b>Do:</b> <b>Integrate in each region</b> (slide 19):
 <br>Region I:\[\begin{aligned}EIw_{\rm I}''&=F\tfrac bl x,\\ EIw_{\rm I}'&=F\tfrac bl\tfrac{x^2}{2}+C_1,\\ EIw_{\rm I}&=F\tfrac bl\tfrac{x^3}{6}+C_1x+C_2;\end{aligned}\]Region II:\[\begin{aligned}EIw_{\rm II}''&=F\tfrac al(l-x),\\ EIw_{\rm II}'&=-F\tfrac al\tfrac{(l-x)^2}{2}+C_3,\\ EIw_{\rm II}&=F\tfrac al\tfrac{(l-x)^3}{6}\\&\quad-C_3(l-x)+C_4.\end{aligned}\]
-<span class="muted">(Region II is integrated in powers of \((l-x)\), so that the roller condition at \(x=l\) is easy. Writing \(-C_3(l-x)\) instead of \(C_3x\) just moves a constant into \(C_4\).)</span></li>
-<li><b>Boundary conditions</b> (slide 20): \(w_{\rm I}(0)=0\Rightarrow C_2=0\); \(w_{\rm II}(l)=0\Rightarrow C_4=0\).</li>
-<li><b>Matching conditions</b> (slide 20). A real beam does not break or kink at the load, so the deflection and the slope are <b>continuous</b> at \(x=a\):
-\[\begin{aligned}w_{\rm I}(a)&=w_{\rm II}(a):\\ &F\tfrac bl\tfrac{a^3}{6}+C_1a=F\tfrac al\tfrac{b^3}{6}-C_3b,\\ w_{\rm I}'(a)&=w_{\rm II}'(a):\\ &F\tfrac bl\tfrac{a^2}{2}+C_1=-F\tfrac al\tfrac{b^2}{2}+C_3.\end{aligned}\]</li>
-<li><b>Solve</b> the two equations (slide 20):
-\[\begin{aligned}C_1&=-\frac{Fab(a+2b)}{6l},\\ C_3&=\frac{Fab(b+2a)}{6l}.\end{aligned}\]</li>
+<span class="muted">(Region II is integrated in powers of \((l-x)\), so that the roller condition at \(x=l\) is easy. Writing \(-C_3(l-x)\) instead of \(C_3x\) just moves a constant into \(C_4\).)</span> <span class="why">Each stretch gets its own curve with its own starting tilt and height: four unknowns in all.</span></li>
+<li><b>Do:</b> <b>Boundary conditions</b> (slide 20): \(w_{\rm I}(0)=0\Rightarrow C_2=0\); \(w_{\rm II}(l)=0\Rightarrow C_4=0\). <span class="why">Each bank holds its end of the plank at zero height. The ends may tilt, so there is no slope condition there.</span></li>
+<li><b>Do:</b> <b>Matching conditions</b> (slide 20). A real beam does not break or kink at the load, so the deflection and the slope are <b>continuous</b> at \(x=a\):
+\[\begin{aligned}w_{\rm I}(a)&=w_{\rm II}(a):\\ &F\tfrac bl\tfrac{a^3}{6}+C_1a=F\tfrac al\tfrac{b^3}{6}-C_3b,\\ w_{\rm I}'(a)&=w_{\rm II}'(a):\\ &F\tfrac bl\tfrac{a^2}{2}+C_1=-F\tfrac al\tfrac{b^2}{2}+C_3.\end{aligned}\] <span class="why">Without these, the two curves could meet in a step or a sharp corner under your feet; with them, four equations fix the four constants.</span></li>
+<li><b>Do:</b> <b>Solve</b> the two equations (slide 20):
+\[\begin{aligned}C_1&=-\frac{Fab(a+2b)}{6l},\\ C_3&=\frac{Fab(b+2a)}{6l}.\end{aligned}\] <span class="why">\(C_1/EI\) is the tilt at the left bank (negative: the plank dips going in) and \(C_3/EI\) the tilt at the right bank (positive: it climbs out), as in the end slopes below.</span></li>
 </ol>
 <div class="box def"><span class="tag">Definition · matching (continuity) conditions for deflection</span>
 <p>At the boundary between two regions: \(w\) and \(w'\) are always continuous (the beam stays in one piece and has no kink) unless there is an internal <b>hinge</b>, where \(w'\) may jump. Compare <a href="note-S2.html#s11">S2 Section 11</a>, where \(V\) and \(M\) were matched.</p></div>
@@ -385,6 +447,8 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 <div class="box thm"><span class="tag">Key values (written for these notes)</span>
 <p>Under the load:</p>\[w(a)=-\frac{Fa^2b^2}{3lEI}.\]<p>End slopes:</p>\[\begin{aligned}w'(0)&=-\frac{Fab(l+b)}{6lEI},\\ w'(l)&=\frac{Fab(l+a)}{6lEI}.\end{aligned}\]<p>Central load (\(a=b=\tfrac l2\)):</p>\[w_{\max}=-\frac{Fl^3}{48EI}.\]
 <p class="word"><b>In words:</b> a central load on a simply supported beam deflects it by \(Fl^3/48EI\): 16 times less than the same load on a cantilever of the same length.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(a^2b^2\)</dt><dd>how far you stand from each bank. Near a bank one of them is small and the plank hardly sags under you; the product is largest when you stand in the middle.</dd><dt>\(l\) and \(EI\) underneath</dt><dd>a stiffer plank sags less; for a fixed position the sag grows like \(l^3\) (put \(a=b=l/2\)).</dd><dt>minus sign</dt><dd>the plank goes down under your feet.</dd></dl></div>
+
 <p>If \(a\ge b\), the largest deflection is in region I, where \(w_{\rm I}'=0\):</p>
 \[\begin{aligned}x_m&=\sqrt{\frac{l^2-b^2}{3}},\\ w_{\max}&=-\frac{Fb\,(l^2-b^2)^{3/2}}{9\sqrt3\,lEI}.\end{aligned}\]
 <p class="muted">The maximum is <b>not</b> under the load unless the load is central; it is always within about \(0.077l\) of mid-span.</p></div>
@@ -395,20 +459,22 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 <div class="readout" id="p-out"></div>
 <p class="cap">Deflection \(1000\,w\,EI/(Fl^3)\). The dot marks the load; the ring marks the maximum deflection. Watch the ring stay near mid-span while the load moves.</p></div>
 </div>
+<p class="cannow"><b>You can now:</b> split a beam into regions where \(M\) changes formula; integrate in each; use boundary and matching conditions (\(w\) and \(w'\) continuous) to find four constants; and quote \(w(a)=-Fa^2b^2/3lEI\) and \(Fl^3/48EI\).</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Macaulay brackets for deflection <span class="pill">Beyond</span></h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Macaulay brackets for deflection <span class="pill">Beyond</span></span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Instead of separate curves glued together at every load, write one formula with switches in it. A bracket \([x-a]\) is a switch that stays off (zero) until \(x\) passes \(a\), and then turns on. After integration the switch turns on gently, with zero height and zero tilt at \(a\), so it never puts a break or a kink into the plank. The gluing then takes care of itself.</p></div></details>
 <div class="beyond box"><span class="tag">Beyond the handouts · why the exam needs this</span>
 <p>The deflection handout stops at two regions. With three or more load points the matching method needs 6, 8, … constants. Dec 2014 A1(c) asks for a deflection on a beam written with Macaulay brackets (<a href="note-S2.html#s7">S2 Section 7</a>), and the bracket method keeps <b>two constants for the whole beam</b>. Source: Hibbeler, <i>Mechanics of Materials</i>, ch. 12; Gere, ch. 9.</p></div>
 <div class="box thm"><span class="tag">Rule · integrating a Macaulay bracket</span>
 \[\int[x-a]^n\,\mathrm dx=\frac{[x-a]^{n+1}}{n+1}\qquad(n\ge0).\]
 <p class="word"><b>In words:</b> integrate a bracket like an ordinary power of \((x-a)\), and <b>keep the bracket</b>: never multiply it out. Because each bracket is zero (with zero slope) until \(x=a\), the matching conditions \(w_{\rm I}=w_{\rm II}\), \(w'_{\rm I}=w'_{\rm II}\) are satisfied automatically, and the same two constants \(C_1,C_2\) hold in every region.</p></div>
-<ol class="steps">
-<li>Write \(M(x)\) as one Macaulay expression, from the <b>left</b> end (S2 Section 7 table: force \(-P[x-a]\), clockwise couple \(+M_0[x-a]^0\), uniform load \(-\tfrac q2[x-a]^2\)).</li>
-<li>\(EIw''=M\); integrate twice, bracket by bracket, adding \(C_1x+C_2\) once.</li>
-<li>Use the two support conditions (usually \(w=0\) at each support) to find \(C_1,C_2\).</li>
-<li>Evaluate \(w\) where asked: brackets with \(x\lt a\) are zero.</li>
+<ol class="steps proc">
+<li><b>Do:</b> Write \(M(x)\) as one Macaulay expression, from the <b>left</b> end (S2 Section 7 table: force \(-P[x-a]\), clockwise couple \(+M_0[x-a]^0\), uniform load \(-\tfrac q2[x-a]^2\)). <span class="why">Each load adds its own switch at the point where it acts, so one line describes every stretch of the plank.</span></li>
+<li><b>Do:</b> \(EIw''=M\); integrate twice, bracket by bracket, adding \(C_1x+C_2\) once. <span class="why">Each switched term integrates to one that turns on with zero height and zero tilt, so no break or kink appears and no new constants are needed.</span></li>
+<li><b>Do:</b> Use the two support conditions (usually \(w=0\) at each support) to find \(C_1,C_2\). <span class="why">The whole plank is one curve with one starting tilt and one starting height, so two support facts fix it.</span></li>
+<li><b>Do:</b> Evaluate \(w\) where asked: brackets with \(x\lt a\) are zero. <span class="why">Loads further right have not switched on yet at that point; they still count, through \(C_1\).</span></li>
 </ol>
 <div class="box eg"><span class="tag">Worked example · written for these notes · the S2 Macaulay beam</span>
 <p>The beam of <a href="note-S2.html#s7">S2 Section 7</a>: span 10 m, pin at \(x=0\), roller at \(x=10\u{m}\), \(30\u{kN}\) at 3 m, \(50\u{kN}\) at 7 m; reactions \(36\u{kN}\) and \(44\u{kN}\). Find the deflection at 3 m, 5 m and 7 m and the largest deflection.</p>
@@ -420,7 +486,7 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 <li>\(w(0)=0\): every bracket is zero, so \(C_2=0\). \(w(10)=0\): \(6000-5(343)-\tfrac{25}{3}(27)+10C_1=0\Rightarrow 6000-1715-225+10C_1=0\Rightarrow C_1=-406\u{kN\,m^2}\).</li>
 <li>Values (\(EI\) in kN·m², \(w\) in m):
 \[\begin{aligned}EIw(3)&=162-1218\\&=-1056,\\ EIw(5)&=750-40-2030\\&=-1320,\\ EIw(7)&=2058-320-2842\\&=-1104.\end{aligned}\]</li>
-<li>Largest deflection where \(w'=0\). Try \(3\lt x\lt7\): \(18x^2-15(x-3)^2-406=0\Rightarrow 3x^2+90x-541=0\Rightarrow x=5.13\u{m}\), giving \(EIw=-1321\u{kN\,m^3}\).</li>
+<li>Largest deflection where \(w'=0\). <span class="why">The lowest point of the sag is where the plank is level, like the bottom of a valley.</span> Try \(3\lt x\lt7\): \(18x^2-15(x-3)^2-406=0\Rightarrow 3x^2+90x-541=0\Rightarrow x=5.13\u{m}\), giving \(EIw=-1321\u{kN\,m^3}\).</li>
 <li><b>Check by superposition</b> (Section 9): the slide-20 formula for 30 kN at 3 m plus that for 50 kN at 7 m gives the same \(EIw(5)=-1320\) ✓.</li>
 </ol>
 <p>\(\boxed{w(5\u{m})=-\dfrac{1320\u{kN\,m^3}}{EI},\quad w_{\max}=-\dfrac{1321\u{kN\,m^3}}{EI}\text{ at }x=5.13\u{m}}\)</p>
@@ -428,15 +494,23 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 <div class="figure"><canvas class="plot" id="cv-mc-w" style="height:170px"></canvas><p class="cap">\(EIw\) (kN·m³) along the beam. One expression covers all three regions.</p></div></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>A couple term \(+M_0[x-a]^0\) integrates to \(M_0[x-a]\) and then \(\tfrac{M_0}{2}[x-a]^2\). Do not drop it because "a couple has no distance": in the deflection it does matter where the couple sits.</p></div>
+<p class="cannow"><b>You can now:</b> write \(M\) with Macaulay brackets, integrate it twice keeping the brackets, find \(C_1,C_2\) from the two supports, and evaluate the deflection at a point or its maximum.</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>The method of superposition (slides 21–22)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">The method of superposition (slides 21–22)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Two people stand on the plank bridge. The sag with both of them is the sag the first one makes alone plus the sag the second one makes alone. This works because the plank responds in proportion: twice the load, twice the sag, and the two effects do not interfere.</p></div></details>
 <p>Slide 21: a simply supported beam carries a line load \(q_1\) over its left part and a force \(F_2\) further right. Instead of a new calculation, split it into two simpler beams, one with only \(q_1\) and one with only \(F_2\), and <b>add</b> the results (slide 22):</p>
 <div id="fig-sup"></div>
 <div class="box thm"><span class="tag">Principle · superposition (slide 22)</span>
 \[\begin{aligned}w&=w_1+w_2,\quad w'=w_1'+w_2',\\ M&=M_1+M_2,\quad V=V_1+V_2.\end{aligned}\]
 <p class="word"><b>In words:</b> the effect of several loads together is the sum of their effects one at a time.</p></div>
+<ol class="steps proc">
+<li><b>Do:</b> split the loading into simple cases that you know (slide 22; the ready table below). <span class="why">Each case is the plank with one person on it, whose sag is already worked out.</span></li>
+<li><b>Do:</b> write each case's \(w(x)\), or its value at the point asked, with the same \(x\) and the same sign convention. <span class="why">You are adding heights at the same spot on the same plank; a different origin or sign would add the wrong things.</span></li>
+<li><b>Do:</b> add: \(w=w_1+w_2\), and likewise \(w'\), \(M\), \(V\). <span class="why">Each part fits its own moment and the same supports, so the sum fits the total moment and the supports too.</span></li>
+<li><b>Do:</b> for the largest deflection, add the functions and then look for \(w'=0\); add the maxima directly only if they sit at the same point. <span class="why">Two dips in different places do not stack into one dip as deep as both.</span></li>
+</ol>
 <div class="beyond box"><span class="tag">Beyond the handouts · why it works, and when it does not</span>
 <p>The equation \(EIw''=M\) is <b>linear</b>: if \(w_1\) solves it for \(M_1\) and \(w_2\) for \(M_2\), then \(w_1+w_2\) solves it for \(M_1+M_2\), with the same (zero) boundary conditions. This needs small deflections and a linear-elastic material. It fails if the beam yields, or if it deflects so much that the geometry changes (then the small-angle assumption of Section 3 is gone).</p></div>
 <div class="box ready"><span class="tag">Ready table · standard cases <span class="pill">Beyond</span> (magnitudes, downward loads, span \(l\))</span>
@@ -455,10 +529,12 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 <div id="fig-sup2"></div>
 \[\begin{aligned}EIw_1&=\frac{5ql^4}{384}=\frac{5(4)(6^4)}{384}=67.5\u{kN\,m^3},\\ EIw_2&=\frac{Fl^3}{48}=\frac{10(6^3)}{48}=45\u{kN\,m^3},\\ EI|w|&=67.5+45=112.5\u{kN\,m^3}.\end{aligned}\]
 <p>\(\boxed{w_{\rm mid}=-\dfrac{112.5\u{kN\,m^3}}{EI}}\) (both maxima are at mid-span, so here they add directly; in general add the <b>functions</b>, then look for the maximum).</p></div>
+<p class="cannow"><b>You can now:</b> split a loading into standard cases; add their deflections and slopes at the same point; and use the ready table of standard results.</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Statically indeterminate beams <span class="pill">Beyond</span></h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Statically indeterminate beams <span class="pill">Beyond</span></span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Prop the tip of the diving board on a post. Now the wall and the post share the load, and equilibrium cannot say how: the wall could hold more and the post less, or the other way round. The board's shape settles it. The post holds the tip at zero height, so it must push up exactly hard enough to cancel the drop the load would cause.</p></div></details>
 <div class="beyond box"><span class="tag">Beyond the handouts · why this section is here</span>
 <p>A beam with more supports than equilibrium can handle (degree of indeterminacy \(x\ge1\), <a href="note-S1.html#s11">S1 Section 11</a>) cannot be solved with statics alone. The handouts stop at determinate beams, but past papers ask for propped cantilevers (Dec 2018 A1(b), Dec 2015 A1(c)) and a spring-supported beam (May 2013 A3). The extra equation always comes from <b>deflection</b>: the beam must fit its supports. This is called a <b>compatibility condition</b>. Sources: Hibbeler ch. 12.8–12.9; Gere ch. 10.</p></div>
 <h3>Method A · integrate with the redundant reaction kept as an unknown</h3>
@@ -470,9 +546,9 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 \[M=B(l-x)-\tfrac12q_0(l-x)^2.\]</li>
 <li><b>Integrate</b> (in powers of \(l-x\)):
 \[\begin{aligned}EIw'&=-\tfrac B2(l-x)^2+\tfrac{q_0}{6}(l-x)^3\\&\quad+C_1,\\ EIw&=\tfrac B6(l-x)^3-\tfrac{q_0}{24}(l-x)^4\\&\quad-C_1(l-x)+C_2.\end{aligned}\]</li>
-<li><b>Three geometrical conditions</b> for three unknowns \(C_1,C_2,B\): \(w(l)=0\Rightarrow C_2=0\); \(w'(0)=0\Rightarrow C_1=\tfrac B2l^2-\tfrac{q_0}6l^3\); \(w(0)=0\Rightarrow \tfrac B6l^3-\tfrac{q_0}{24}l^4-C_1l=0\).</li>
+<li><b>Three geometrical conditions</b> for three unknowns \(C_1,C_2,B\): \(w(l)=0\Rightarrow C_2=0\); \(w'(0)=0\Rightarrow C_1=\tfrac B2l^2-\tfrac{q_0}6l^3\); \(w(0)=0\Rightarrow \tfrac B6l^3-\tfrac{q_0}{24}l^4-C_1l=0\). <span class="why">The roller force is one more unknown, and the roller gives one more fact about the shape: the height there is zero.</span></li>
 <li>Substituting \(C_1\): \(\tfrac B6l^3-\tfrac B2l^3-\tfrac{q_0}{24}l^4+\tfrac{q_0}{6}l^4=0\Rightarrow -\tfrac B3+\tfrac{q_0l}{8}=0\Rightarrow B=\tfrac38q_0l\).</li>
-<li><b>Now statics</b> finishes the job: \(A_V=q_0l-B=\tfrac58q_0l\); \(M(0)=\tfrac38q_0l^2-\tfrac12q_0l^2=-\tfrac18q_0l^2\) (hogging at the wall).</li>
+<li><b>Now statics</b> finishes the job: \(A_V=q_0l-B=\tfrac58q_0l\); \(M(0)=\tfrac38q_0l^2-\tfrac12q_0l^2=-\tfrac18q_0l^2\) (hogging at the wall). <span class="why">Once \(B\) is known the beam is an ordinary determinate one.</span></li>
 </ol>
 <p>\(\boxed{B=\tfrac38q_0l,\quad A_V=\tfrac58q_0l,\quad M_A=\tfrac18q_0l^2\text{ (hogging)}}\)</p>
 <p>Also: \(V=q_0\left(\tfrac58l-x\right)\); the largest sagging moment is \(\tfrac{9}{128}q_0l^2\) at \(x=\tfrac58l\) (where \(V=0\)); the largest deflection is \(\dfrac{q_0l^4}{185EI}\) at \(x=0.578l\).</p>
@@ -483,6 +559,11 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 
 <h3>Method B · compatibility by superposition</h3>
 <p>Remove the extra support, call its force \(B\) (the <b>redundant</b>), and demand that the deflections it removes add up to what the support allows.</p>
+<ol class="steps proc">
+<li><b>Do:</b> remove the extra support and put its unknown force \(B\) in its place. <span class="why">Without the post the board is an ordinary cantilever, whose sag is in the ready table.</span></li>
+<li><b>Do:</b> find the deflection at that point from the load alone and from \(B\) alone. <span class="why">By superposition (Section 9) the real deflection is the sum of the two.</span></li>
+<li><b>Do:</b> set the sum equal to what the support allows: 0 for a rigid prop, the spring's compression \(R/k\) for a spring. <span class="why">This is the compatibility condition: the board must end up where the support holds it.</span></li>
+</ol>
 <div id="fig-pc-comp"></div>
 \[\underbrace{-\frac{q_0l^4}{8EI}}_{\text{load alone}}+\underbrace{\frac{Bl^3}{3EI}}_{B\text{ alone}}=0\quad\Rightarrow\quad B=\frac38q_0l.\]
 <p class="word"><b>In words:</b> the roller must push the tip back up by exactly as much as the load pushed it down. Both terms come straight from the ready table (Section 9).</p>
@@ -493,7 +574,7 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 <p class="muted">Pin at \(A\), roller at \(C\), span 9 m (4.5 m + 4.5 m), spring at mid-span \(B\), uniform \(16\u{kN/m}\) over the whole span.</p>
 <ol class="steps">
 <li><b>Data in SI.</b> \(EI=204\times10^9\u{Pa}\times9350\times10^{-8}\u{m^4}=1.907\times10^7\u{N\,m^2}\). A kgf (kilogram-force) is the weight of 1 kg, \(9.807\u{N}\), so the spring stiffness is \(k=\dfrac{9.807\u{N}}{0.0005\times10^{-3}\u{m}}=1.961\times10^7\u{N/m}\).</li>
-<li><b>Compatibility.</b> Remove the spring, replace it by its upward force \(R\). The beam's mid-span deflection must equal the spring's compression \(R/k\):
+<li><b>Compatibility.</b> Remove the spring, replace it by its upward force \(R\). The beam's mid-span deflection must equal the spring's compression \(R/k\): <span class="why">The beam and the top of the spring move together, so the spring is squashed by exactly as much as the beam sags there.</span>
 \[\frac{5qL^4}{384EI}-\frac{RL^3}{48EI}=\frac Rk.\]</li>
 <li>Numbers: \(\dfrac{5qL^4}{384EI}=\dfrac{5(16000)(9^4)}{384(1.907\times10^7)}=0.07166\u{m}\); \(\dfrac{L^3}{48EI}=7.96\times10^{-7}\u{m/N}\); \(\dfrac1k=5.10\times10^{-8}\u{m/N}\).
 \[\begin{aligned}R&=\frac{0.07166}{7.96\times10^{-7}+5.10\times10^{-8}}\\&=84.6\u{kN}.\end{aligned}\]</li>
@@ -503,10 +584,12 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 <p>\(\boxed{\delta_B=4.31\u{mm}\ \text{down};\quad |M|_{\max}=28.3\u{kN\,m}\ \text{(hogging) at }B}\)</p>
 <p class="word"><b>Sense check:</b> a rigid prop (\(k\to\infty\)) would take \(\tfrac58qL=90\u{kN}\); the springy prop takes slightly less, 84.6 kN ✓. Without it the beam would sag 71.7 mm; the spring cuts that to 4.3 mm.</p>
 <p class="flag">"deflects 0.0005 mm per kgf" is read as the spring's flexibility (compression per unit force), so \(k=1\u{kgf}/0.0005\u{mm}\).</p></div>
+<p class="cannow"><b>You can now:</b> recognise a statically indeterminate beam; find the redundant reaction by integrating with it as an unknown (or the load four times), or by compatibility with the ready table; and handle a spring support with \(\delta=R/k\).</p>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Deflection explorer</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Deflection explorer</span> <span class="mins">~1 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A test bench for the whole chapter. Pick a beam, move the load, and watch the moment diagram and the bent shape side by side: where the moment is positive the plank smiles, where it is negative it frowns.</p></div></details>
 <div class="figure"><p class="ttl">Try it · deflected shape and bending moment for the standard cases</p>
 <div class="ctrl"><label>case <select id="xsel">
 <option value="cf">cantilever, end force</option><option value="cq">cantilever, uniform load</option>
@@ -517,10 +600,11 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 <canvas class="plot" id="cv-x-M" style="height:150px"></canvas><canvas class="plot" id="cv-x-w" style="height:170px"></canvas>
 <div class="readout" id="x-out"></div>
 <p class="cap">\(M\) in units of \(Fl\) or \(q l^2\); \(w\) plotted ×1000 in units of \(Fl^3/EI\) or \(ql^4/EI\) (negative = down). Notice: \(w''\) has the same sign as \(M\) everywhere, so the curve is concave up (smile) where \(M\gt0\), concave down where \(M\lt0\), and has an inflection point where \(M=0\) (see the propped cantilever).</p></div>
+<p class="cannow"><b>You can now:</b> predict the shape of the deflected beam from the sign of \(M\): smile, frown and inflection points.</p>
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Summary</h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Summary</span></h2>
 <div class="scroll"><table>
 <tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
 <tr><td>Assumptions</td><td>\(w=w(x)\); plane sections stay plane, \(u=z\psi\); \(w'=\psi\)</td><td>slender beam, small angles, shear deformation neglected</td></tr>
@@ -536,7 +620,7 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Common mistakes</h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Common mistakes</span></h2>
 <div class="mistake">
 <span class="x">✗</span><span>Writing \(w'=0\) at a pin or roller.</span>
 <span class="ok">✓</span><span>A pin lets the beam turn: only \(w=0\). Slope zero only at a clamp (or a parallel-motion support, or by symmetry at mid-span).</span>
@@ -558,7 +642,7 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="s14"><h2><span class="n">14</span>Find the mistake</h2>
+<section id="s14"><h2><span class="n">14</span><span class="h2t">Find the mistake</span></h2>
 <div class="q"><p class="qh">1 · A cantilever with the wall on the right</p>
 <p>"Free end at \(x=0\), wall at \(x=L\), end load \(F\) down at \(x=0\). \(M=-Fx\), so \(EIw'=-\tfrac F2x^2+C_1\), \(EIw=-\tfrac F6x^3+C_1x+C_2\). At the free end \(w'(0)=0\) and \(w(0)=0\), so \(C_1=C_2=0\) and \(w=-Fx^3/6EI\)."</p>
 <details><summary>Hint</summary><div><p>Which end is clamped?</p></div></details>
@@ -574,7 +658,7 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 </section>
 
 <!-- ============ 15 ============ -->
-<section id="s15"><h2><span class="n">15</span>Concept checks</h2>
+<section id="s15"><h2><span class="n">15</span><span class="h2t">Concept checks</span></h2>
 <p class="muted">Written for these notes.</p>
 <div class="q"><p class="qh">1 · Which is stiffer?</p><p>Two beams of equal length carry the same central load: one simply supported, one a cantilever loaded at its tip. Ratio of their largest deflections?</p>
 <details><summary>Answer</summary><div><p>\(\dfrac{Fl^3/3EI}{Fl^3/48EI}=16\). The cantilever deflects 16 times more.</p></div></details></div>
@@ -589,7 +673,7 @@ Region I is \(0\le x\le a\), region II is \(a\le x\le l\).</li>
 </section>
 
 <!-- ============ 16 ============ -->
-<section id="s16"><h2><span class="n">16</span>Exam taster</h2>
+<section id="s16"><h2><span class="n">16</span><span class="h2t">Exam taster</span></h2>
 <p>Real past-paper parts, about one per question type. Deflection usually appears in Question A2 or A3 as a 6–10 mark part after the shear-force and bending-moment diagrams. There is no formula sheet for Section A, so the standard results must be derived or remembered. Full method and more questions: <a href="guide-S5.html">Exam guide · S5</a>.</p>
 
 <div class="q"><div class="src"><b>Dec 2024 A2(c), (e)</b><span>7 + 2 marks</span><a class="guide" href="guide-S5.html#S5-1">S5.1 cantilever deflection</a></div>
@@ -1044,6 +1128,15 @@ P('fig-s4-sign',[
     T(-0.3,0.3,'A'),T(1.75,0.35,'B'),T(4.4,-0.45,'C'),T(5.75,0.1,'D'),T(2.5,1.15,'E',null,10),
     {t:'dim',x1:0,x2:2,y:-1.35,lbl:'2 m'},{t:'dim',x1:2,x2:4,y:-1.35,lbl:'2 m'},{t:'dim',x1:4,x2:5.5,y:-1.35,lbl:'1.5 m'},{t:'dim',x1:2,x2:2.5,y:2.15,lbl:'0.5 m'}]);
 })();
+
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 
 </script>
 </body></html>

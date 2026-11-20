@@ -167,7 +167,7 @@ section.prev-sec>.prevbar{font-family:var(--mono);font-size:11px;letter-spacing:
 details.calc{border-left:3px solid var(--accent)}
 details.calc>summary{color:var(--accent);font-weight:500}
 details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
-details.calc .why{color:var(--muted);font-size:.9rem}
+details.calc .calcwhy{color:var(--muted);font-size:.9rem}
 table.tbl td,table.tbl th{padding:6px 8px}
 .circuit{width:100%;height:auto;display:block}
 .circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
@@ -197,6 +197,36 @@ details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-
 .stats b{color:var(--ink);font-family:var(--display)}
 .small{font-size:.88rem}
 
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
+/* F2: older .proc box rule must not hit procedure lists */
+ol.steps.proc{border-left:0}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -231,13 +261,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-F2.html">Exam guide · F2</a><a href="note-F1.html">← F1</a><a href="note-F3.html">Next: F3 →</a></nav>
   <span class="course">MECH1350 · Fluid dynamics · chapter 2</span>
   <h1>The continuity equation</h1>
-  <p class="lede">Conservation of mass for flowing fluids: systems and control volumes, flow rates, and the continuity equation \(V_1A_1=V_2A_2\). Every slide and all four handout examples, explained from scratch.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
-<p>F1 described flows in words (steady, uniform, viscous, laminar); this chapter puts the first conservation law, <b>mass</b>, into a form you can calculate with. F3 adds energy (the Bernoulli equation) and F4 momentum (forces from jets).</p>
-<p><b>In the exam:</b> continuity is the first step of most Section C questions (the speed at each section), plus short flow-rate questions and control-volume or streamline sketches. See the <a href="guide-F2.html">F2 exam guide</a>.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this chapter sits</span></h2>
+<p>Put your thumb over the end of a garden hose and the water squirts faster. The water per second coming down the hose must all get out through the small gap under your thumb, so it has to go faster. This chapter turns that, and the plain fact that what goes in must come out, into the first conservation law of flow: <b>mass</b>. F1 described flows in words (steady, uniform, viscous, laminar); F3 adds energy (the Bernoulli equation) and F4 momentum (forces from jets).</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>Flow problems are solved with conservation laws.</b> Statics needs only density and the free surface; flow needs much more.</li>
+<li><a href="#s2">§2</a> <b>A system is whatever you draw a line around.</b> Closed: no mass crosses. Open: mass crosses.</li>
+<li><a href="#s3">§3</a> <b>A control volume is a fixed box you keep accounts for:</b> stored = in − out.</li>
+<li><a href="#s4">§4</a> <b>Count what crosses a fixed box instead of following every drop.</b></li>
+<li><a href="#s5">§5</a> <b>Three laws: mass, momentum, energy.</b> They give continuity (F2), forces (F4) and Bernoulli (F3).</li>
+<li><a href="#s6">§6</a> <b>Flow rate is how fast the bucket fills:</b> \(Q=VA\), then mass flow and momentum flux.</li>
+<li><a href="#s7">§7</a> <b>What goes in must come out, so a smaller opening means faster water.</b> <span class="pill">Step 1 of most Section C questions</span></li>
+<li><a href="#s8">§8</a> <b>A wider pipe slows the water; a branch shares it.</b> Handout Examples 1 and 2.</li>
+<li><a href="#s9">§9</a> <b>At a junction flow rates add; speeds do not.</b> Example 3.</li>
+<li><a href="#s10">§10</a> <b>The garden-hose nozzle: the thumb in numbers.</b> Example 4.</li>
+<li><a href="#s11">§11</a> <b>The same rule in exam dress:</b> channels, tanks, radial sheets, Bernoulli step 1.</li>
+<li><a href="#s12">§12–§16</a> Summary, common mistakes, find the mistake, concept checks, exam taster.</li>
+</ol></div>
+<p><b>You need:</b> F1's words for flows (steady, streamline, incompressible), the area of a circle and unit conversions. <b>In the exam:</b> continuity is the first step of most Section C questions (the speed at each section), plus short flow-rate questions and control-volume or streamline sketches. See the <a href="guide-F2.html">F2 exam guide</a>.</p>
 <p class="muted small">Source: lecture "Continuity Equation" (Dr Yan Wei), 23 slides; slide numbers = printed numbers = PDF pages.</p>
 
 <div class="box conv"><span class="tag">Conventions for this chapter</span>
@@ -267,7 +311,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Fluid mechanics: statics versus flow (slides 1–3)</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Fluid mechanics: statics versus flow (slides 1–3)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Before you can say how well a hose, a pump or a wing works, you need rules that always hold, whatever the shape. Those rules are conservation laws: some quantity, such as mass, is never created or destroyed, only moved around. Water standing still in a bucket is easy: its depth and density give the pressure everywhere. Water rushing through a hose is harder, because its speed changes from place to place and depends on the hose's shape and on what happens at its ends.</p></div></details>
 <p>Slide 3 says that fluid-mechanics problems usually use <b>conservation laws</b> (laws that say some quantity, such as mass or energy, is neither created nor destroyed) to work out how well a device performs. It contrasts the two halves of the course:</p>
 <ul class="list">
 <li><b>Statics problems</b> (Section B, chapters H1–H4: fluid at rest) need only the <b>density</b> of the fluid and the <b>position of the free surface</b>. From those two, \(p=\rho gh\) gives the pressure everywhere.</li>
@@ -276,10 +321,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Slide 3 shows three devices whose performance is worked out this way: an <b>airfoil</b> (a wing section, with streamlines bending over it), a <b>pump</b> (a spinning impeller that pushes fluid out, adding energy) and a <b>turbine</b> (fluid flowing through blades and turning a shaft, taking energy out).</p>
 <div id="fig-s1"></div>
 <p class="muted">The three devices on slide 3, redrawn. Arrows show the flow.</p>
+<p class="cannow"><b>You can now:</b> say why flow problems are solved with conservation laws; list what a statics problem needs (density, free surface) and what a flow problem needs (geometry, boundary conditions, laws of mechanics); and say what an airfoil, a pump and a turbine do to a flow.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>Systems, surroundings and boundaries (slides 4–5)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Systems, surroundings and boundaries (slides 4–5)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Before you count anything you must say what you are counting. Draw a line around the thing you care about: that is the system, and everything else is the surroundings. You could draw it around a sealed bottle of water, or around one metre of garden hose. Where the line goes is your choice, and a good choice makes the problem easy.</p></div></details>
 <div class="box def"><span class="tag">Definitions · system, surroundings, boundary (slide 4)</span>
 <ul class="list">
 <li>A <b>system</b> is a quantity of matter, or a region in space, that <b>you choose</b> to study.</li>
@@ -287,6 +334,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>The real or imaginary surface separating the system from its surroundings is the <b>boundary</b>. A boundary can be <b>fixed</b> (it stays where it is) or <b>movable</b> (for example a piston that slides).</li>
 </ul></div>
 <p>The point of the word "choose": the laws of physics apply to <i>anything</i>, so engineers draw the boundary wherever it makes the problem easiest. The same pipe can be studied as one system or chopped into several.</p>
+<details class="idea"><summary>What is this? (closed and open systems)</summary><div><p>A sealed bottle of water is a closed system: you can warm it in your hand, but no water gets in or out. A metre of garden hose with water running through it is an open system: water keeps crossing its two ends. For flows the open kind is the useful one, because the interesting thing is the water passing through.</p></div></details>
 <div class="box def"><span class="tag">Definitions · closed and open systems (slide 5)</span>
 <ul class="list">
 <li>A <b>closed system</b>, also called a <b>control mass</b>: a fixed amount of mass. <b>No mass</b> can cross its boundary (nothing enters or leaves), but <b>energy can</b> (heat and work).</li>
@@ -299,10 +347,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p class="word"><b>Analogy:</b> a closed system is like following one particular group of tourists wherever they walk (the same people all the time). A control volume is like standing at the doors of a shop and counting who goes in and who comes out (the same place all the time, different people).</p>
 <div class="box warn"><span class="tag">Watch</span>
 <p>"Closed" does not mean "insulated". A closed system can be heated or cooled and can do work (the gas under the piston pushes the piston up). Only <b>mass</b> is shut in.</p></div>
+<p class="cannow"><b>You can now:</b> define system, surroundings and boundary; tell a closed system (control mass: no mass crosses, energy can) from an open system (control volume: mass and energy cross); and explain why closed does not mean insulated.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Control volume and control surface (slides 5, 6 and 8)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Control volume and control surface (slides 5, 6 and 8)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture a see-through box drawn around the nozzle end of a hose. The box does not move; water flows in through one face and out through another. That box is a control volume, and its faces are the control surface. Some faces are real walls (the inside of the nozzle); the faces across the water are imaginary, just lines you drew where you want to count.</p></div></details>
 <div class="box def"><span class="tag">Definition · control surface (slide 6)</span>
 <p>The boundary of a control volume is called the <b>control surface</b>. Parts of it can be <b>real</b> (an actual wall) or <b>imaginary</b> (a surface drawn across the flow where no wall exists).</p></div>
 <p>Slides 5 and 6 show two control volumes (CV), each with its boundary drawn as a dashed line:</p>
@@ -316,23 +366,32 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </div>
 <div class="box def"><span class="tag">Definition · control volume (slide 8)</span>
 <p>A <b>control volume</b> is a <b>finite region</b> chosen carefully by the analyst for a particular problem, with <b>open boundaries</b> through which <b>mass, momentum and energy</b> may cross.</p></div>
+<details class="idea"><summary>What is this? (the budget)</summary><div><p>Keep accounts for the box like a bank account: money in, money out, and the change in the balance. For the hose box the money is water. If more goes in than comes out, water piles up inside; if the flow is steady, nothing piles up, so what goes in must come out. The accounts give you the totals, not what each drop did inside.</p></div></details>
 <p>The analyst makes a <b>budget</b> (a balance), like a bank statement: what came in, what went out, and the change in what is stored inside. From that budget you get the <b>gross properties</b> (overall quantities) of the device: the net force on it, its total power output, the total heat transfer. You do <b>not</b> find out the details of the flow inside the control volume, and you do not need them (slide 8).</p>
 <div id="fig-s3c"></div>
 <div class="box thm"><span class="tag">Result · the budget idea for any quantity</span>
 \[\begin{aligned}&\text{rate of change stored inside}\\&\quad=\text{rate in}-\text{rate out}\end{aligned}\]
 <p class="word"><b>In words:</b> whatever accumulates inside the control volume per second equals what enters per second minus what leaves per second. If the flow is steady, nothing accumulates, so in = out.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>rate of change stored inside</dt><dd>how fast the amount of water in the box grows (negative if the box is emptying).</dd>
+<dt>rate in</dt><dd>water crossing the inlet faces per second.</dd>
+<dt>rate out</dt><dd>water crossing the outlet faces per second.</dd>
+<dt>steady flow</dt><dd>nothing inside changes, so the left side is 0 and in = out: the hose rule.</dd>
+</dl></div>
 <div class="box ready"><span class="tag">Ready answer · "sketch the control volume" (type F2.2)</span>
-<ol class="steps">
-<li>Redraw the device and draw the control volume as a <b>dashed</b> line around it (or around the fluid in it).</li>
-<li>Where fluid enters or leaves, let the dashed line <b>cut straight across the stream, perpendicular to the flow</b>, at the section where you know (or want) \(V\), \(A\) and \(p\). Number these sections as the question does.</li>
-<li>Draw and label an arrow for each inflow and outflow (\(V_1\), \(A_1\), …), and the axes if forces will be needed later.</li>
-<li>If a support force is wanted later (F4: a scale, a bolt, a bracket), let the boundary cut through the support so that force appears on your sketch.</li>
-<li>One sentence: "Steady flow; the control volume is fixed; mass enters at 1 and leaves at 2 and 3."</li>
+<ol class="steps proc">
+<li><b>Do:</b> Redraw the device and draw the control volume as a <b>dashed</b> line around it (or around the fluid in it). <span class="why">The dashed line is the box you keep accounts for; dashed shows it is drawn, not a wall.</span></li>
+<li><b>Do:</b> Where fluid enters or leaves, let the dashed line <b>cut straight across the stream, perpendicular to the flow</b>, at the section where you know (or want) \(V\), \(A\) and \(p\). Number these sections as the question does. <span class="why">Water then crosses each face straight through, so the face's area is the true flow area and one speed describes it.</span></li>
+<li><b>Do:</b> Draw and label an arrow for each inflow and outflow (\(V_1\), \(A_1\), …), and the axes if forces will be needed later. <span class="why">Each arrow is one entry in the budget: every term of the continuity equation comes from one of them.</span></li>
+<li><b>Do:</b> If a support force is wanted later (F4: a scale, a bolt, a bracket), let the boundary cut through the support so that force appears on your sketch. <span class="why">Only forces acting where the boundary cuts something enter the box's force budget, so the support must be cut to count.</span></li>
+<li><b>Do:</b> One sentence: "Steady flow; the control volume is fixed; mass enters at 1 and leaves at 2 and 3." <span class="why">It states the assumptions that let you write in = out.</span></li>
 </ol></div>
+<p class="cannow"><b>You can now:</b> define control surface and control volume, with real and imaginary, fixed and moving boundaries; write the budget stored = in − out and reduce it to in = out for steady flow; and sketch a control volume for an exam device.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Control volume versus differential analysis (slide 7)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Control volume versus differential analysis (slide 7)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>There are two ways to study the water in a hose. You could follow one drop and track every twist of its journey, which needs detailed calculus. Or you could stand at the nozzle with a bucket and a stopwatch and simply count what passes. The second is the control-volume way, the one this course uses: it gives the totals without the drop-by-drop detail.</p></div></details>
 <p>Slide 7 compares two ways of describing a flow:</p>
 <ul class="list">
 <li><b>Following the fluid.</b> Track the individual "chunks" (small parcels) of fluid as they move, and describe the flow pattern in detail at every point \((x,y,z)\). The slide calls this the <b>"differential" approach</b>; it needs calculus on small elements and belongs to a later fluid-mechanics course.</li>
@@ -343,10 +402,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>This picture is how the laws of mechanics (written for a <b>system</b>, Section 5) are turned into control-volume form: the change of the system's mass equals the change of what is in the CV plus what flowed out minus what flowed in during \(\mathrm dt\).</p>
 <div class="beyond box"><span class="tag">Beyond the handouts · Lagrangian and Eulerian</span>
 <p>Textbooks call "following each fluid particle" the <b>Lagrangian</b> description and "watching fixed points or a fixed region" the <b>Eulerian</b> description; the formula that converts one into the other for a control volume is the <b>Reynolds transport theorem</b>. You do not need either name for MECH1350; the handout simply says the control-volume method is "the easier way".</p></div>
+<p class="cannow"><b>You can now:</b> compare following the fluid (the differential approach) with the control-volume approach; and explain slide 7's picture of a system moving through a fixed control volume.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>The three basic laws of fluid mechanics (slides 9–11)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">The three basic laws of fluid mechanics (slides 9–11)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Three rules keep the accounts for any flow. Water is not created or destroyed (mass). A stream pushes on whatever it hits, as you feel when a hose jet hits your hand (momentum). A pump that drives the water must supply energy, which the water carries away (energy). Each rule is first written for a fixed lump of fluid, then turned into box form.</p></div></details>
 <p>The laws of mechanics say what happens when a system interacts with its surroundings (slide 9). There are three, each first written for a <b>system</b> (a fixed quantity of mass \(m\)).</p>
 <div class="box thm"><span class="tag">Law 1 · conservation of mass (slide 9)</span>
 \[m_\text{syst}=\text{const},\qquad\frac{\mathrm dm}{\mathrm dt}=0\]
@@ -359,6 +420,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\delta Q-\delta W=\mathrm dE\]
 \[\dot Q-\dot W=\frac{\mathrm dE}{\mathrm dt}\]
 <p class="word"><b>In words:</b> heat added to the system minus work done by the system equals the increase in the system's energy (per second, in the rate form). This is the same first law as in chapter T4.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\delta Q\)</dt><dd>heat put into the lump of fluid.</dd>
+<dt>\(-\,\delta W\)</dt><dd>work the lump does on its surroundings (pushing a piston or a turbine blade) is energy leaving it, hence the minus.</dd>
+<dt>\(\mathrm dE\)</dt><dd>what is left over is stored: the rise in the lump's internal, kinetic and potential energy.</dd>
+<dt>dots, per \(\mathrm dt\)</dt><dd>the same balance per second, as rates.</dd>
+</dl></div>
 <p>Here \(\delta Q\) is a small amount of heat added, \(\delta W\) a small amount of work done <b>by</b> the system, and \(E\) the system's total energy (internal + kinetic + potential). The \(\delta\) (rather than "d") reminds you that heat and work are amounts transferred, not properties the system "has".</p>
 <p>Slide 11: the course puts these three laws into <b>control-volume form</b>, and each gives one of the main equations of Section C:</p>
 <div class="scroll"><table class="tbl">
@@ -369,10 +436,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </table></div>
 <div class="box ready"><span class="tag">Ready answer · "What are the fundamental physical laws that govern fluid flow?" (F2.2)</span>
 <p>(i) <b>Conservation of mass</b> (gives the continuity equation); (ii) <b>Newton's second law / conservation of linear momentum</b> (gives the force on a body from a flow); (iii) <b>conservation of energy</b>, the first law of thermodynamics (gives the Bernoulli/energy equation). If the question asks for <b>two</b> (as ENGG1205 2013–14 did; its own answer: mass and momentum), give mass and momentum, and mention energy as the third.</p></div>
+<p class="cannow"><b>You can now:</b> state the three basic laws for a system (conservation of mass, Newton's second law, the first law of thermodynamics); match each to the equation it gives (continuity F2, forces F4, Bernoulli F3); and answer the fundamental-laws question.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Flow rates and momentum flux (slides 12–13)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Flow rates and momentum flux (slides 12–13)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Hold a bucket under the hose and time how long it takes to fill. Litres per second is the volume flow rate. It depends on two things: how fast the water moves and how big the opening is. Fast water through a big opening fills the bucket quickest.</p></div></details>
 <p>Slide 12 sets up a general control volume: a tank, a reservoir or a compartment inside a machine, with a number of <b>one-dimensional</b> inlets and outlets (each inlet or outlet is a pipe where the fluid crosses with one speed, straight across the opening). The slide's sketch has two inlets (green arrows) and three outlets (red arrows). For each inlet and outlet we write:</p>
 <ul class="list">
 <li>\(V\) = velocity of the fluid in the stream;</li>
@@ -387,24 +456,38 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box thm"><span class="tag">Result · discharge</span>
 \[Q=VA\]
 <p class="word"><b>In words:</b> volume flow rate = average speed × cross-sectional area.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(Q\)</dt><dd>how fast the bucket fills: cubic metres of water per second.</dd>
+<dt>\(V\)</dt><dd>how far the water travels in one second.</dd>
+<dt>\(A\)</dt><dd>the size of the opening, measured straight across the flow.</dd>
+<dt>\(VA\)</dt><dd>the slab of water, \(A\) across and \(V\) long, that crosses in one second.</dd>
+</dl></div>
 <div id="fig-s6slab"></div>
 <details class="calc"><summary>why \(Q=VA\)</summary><div>
-<p>1. Look at the fluid that is just about to cross a section of area \(A\). In a short time \(\Delta t\) it moves forward a distance \(V\Delta t\). <span class="why">Distance = speed × time.</span></p>
-<p>2. All the fluid in the slab of length \(V\Delta t\) behind the section crosses it in that time. The slab's volume is \(A\times V\Delta t\). <span class="why">Volume of a prism = cross-section × length.</span></p>
-<p>3. Volume per unit time: \(Q=AV\Delta t/\Delta t=VA\). <span class="why">Divide by the time.</span></p>
+<p>1. Look at the fluid that is just about to cross a section of area \(A\). In a short time \(\Delta t\) it moves forward a distance \(V\Delta t\). <span class="calcwhy">Distance = speed × time.</span></p>
+<p>2. All the fluid in the slab of length \(V\Delta t\) behind the section crosses it in that time. The slab's volume is \(A\times V\Delta t\). <span class="calcwhy">Volume of a prism = cross-section × length.</span></p>
+<p>3. Volume per unit time: \(Q=AV\Delta t/\Delta t=VA\). <span class="calcwhy">Divide by the time.</span></p>
 <p>4. Units: (m/s)(m²) = m³/s ✓. If the speed varies across the pipe (slower near the walls), \(V\) is defined as the <b>average</b> speed that gives the right \(Q\).</p>
 </div></details>
 <h3>Mass flow rate</h3>
+<details class="idea"><summary>What is this? (mass flow rate)</summary><div><p>Weigh the bucket instead of reading its volume: kilograms per second is the mass flow rate. For water each litre has a mass of about 1 kg, so the two numbers match. For a gas, whose density can change, mass is the one that is truly conserved.</p></div></details>
 <div class="box def"><span class="tag">Definition · mass flow rate \(\dot m\) (slide 13)</span>
 <p>The <b>mass flow rate</b> is the <b>mass of fluid crossing a section per unit time</b>. Unit: kg/s.</p></div>
 <div class="box thm"><span class="tag">Result · mass flow rate</span>
 \[\dot m=\rho VA=\rho Q\]
 <p class="word"><b>In words:</b> mass flow rate = density × volume flow rate (each cubic metre that crosses carries \(\rho\) kilograms).</p></div>
 <h3>Momentum flux</h3>
+<details class="idea"><summary>What is this? (momentum flux)</summary><div><p>Put your hand in the hose jet and you feel a push. The jet carries momentum with it, and the momentum arriving per second is the momentum flux. A faster jet through the same opening pushes harder for two reasons: more mass arrives each second, and each kilogram is moving faster.</p></div></details>
 <div class="box def"><span class="tag">Definition · momentum flux (slide 13)</span>
 <p>The <b>momentum flux</b> is the <b>momentum of the fluid crossing a section per unit time</b>:</p>
 \[\text{momentum flux}=\dot mV=\rho QV=\rho AV^2\]
 <p class="word"><b>In words:</b> momentum flux = mass flow rate × velocity. Its unit is (kg/s)(m/s) = kg·m/s² = N, a force: it is the "push" a stream carries, used in F4 for forces on plates and bends.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\dot m\)</dt><dd>kilograms of water reaching your hand each second.</dd>
+<dt>\(V\)</dt><dd>how fast each of those kilograms is moving.</dd>
+<dt>\(\dot mV\)</dt><dd>momentum arriving per second, which is a force in newtons.</dd>
+<dt>\(\rho AV^2\)</dt><dd>\(V\) appears twice, once inside \(\dot m\) and once as the speed, so doubling the speed through the same opening makes the push four times larger.</dd>
+</dl></div>
 <div class="box def"><span class="tag">Definition · flux in general (May 2019 Q1(c))</span>
 <p>A <b>flux</b> is the <b>amount of some quantity (volume, mass, momentum, energy, heat) carried across a surface per unit time</b>. \(Q\) is a volume flux, \(\dot m\) a mass flux, \(\dot mV\) a momentum flux. (Some books also call flow per unit area a flux, as in heat flux W/m² in chapter T3; say which you mean.)</p></div>
 <div class="beyond box"><span class="tag">Beyond the handouts · weight flow rate</span>
@@ -412,28 +495,36 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box eg"><span class="tag">Example · written for these notes · the four flow measures</span>
 <p>Water (\(\rho=1000\u{kg/m^3}\)) flows at \(V=3\u{m/s}\) through a section of area \(A=0.02\u{m^2}\). How much crosses in 2 s, and what are \(Q\), \(\dot m\) and the momentum flux?</p>
 <ol class="steps">
-<li>Slab volume in 2 s: \(AV\Delta t=0.02(3)(2)=0.12\u{m^3}\).</li>
+<li>Slab volume in 2 s: \(AV\Delta t=0.02(3)(2)=0.12\u{m^3}\). <span class="why">The water that crosses in 2 s is the slab behind the section: at 3 m/s it is 6 m long.</span></li>
 <li>\(Q=VA=3(0.02)=0.06\u{m^3/s}\) (60 L/s).</li>
 <li>\(\dot m=\rho Q=1000(0.06)=60\u{kg/s}\).</li>
 <li>Momentum flux \(\dot mV=60(3)=180\u{N}\).</li>
 </ol></div>
+<p class="cannow"><b>You can now:</b> compute \(Q=VA\), \(\dot m=\rho Q\), the weight flow \(\gamma Q\) and the momentum flux \(\dot mV\) with the right units; and explain what a flux is.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>The continuity equation (slides 14–15)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">The continuity equation (slides 14–15)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Put your thumb over the end of a hose. The water per second coming down the hose must all get out through the gap under your thumb: it has nowhere else to go, and the hose does not fill up. The gap is smaller than the hose, so the water must go faster. That is the continuity equation: in steady flow, what goes in must come out.</p></div></details>
 <p>Slide 14: if the flow is <b>steady</b>, the total mass of fluid inside the control volume cannot change with time. So the mass flowing in per second must <b>exactly balance</b> the mass flowing out per second:</p>
 <p style="text-align:center"><b>Total mass outflow = Total mass inflow</b></p>
 <div class="box thm"><span class="tag">Result · continuity equation, steady flow (slide 14)</span>
 \[\sum_{i=1}^{M}(\rho_iV_iA_i)_\text{in}=\sum_{i=1}^{N}(\rho_iV_iA_i)_\text{out}\]
 <p>\(M\) = number of inlets, \(N\) = number of outlets.</p>
 <p class="word"><b>In words:</b> the sum of the mass flow rates \(\rho VA\) of all the inlets equals the sum over all the outlets.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\rho_iV_iA_i\)</dt><dd>kilograms per second through one opening: density × speed × area.</dd>
+<dt>\(\sum_\text{in}\), \(\sum_\text{out}\)</dt><dd>add every opening where water enters, and every opening where it leaves; there can be any number of each.</dd>
+<dt>\(=\)</dt><dd>steady flow: nothing piles up inside the box, so the two totals must match.</dd>
+</dl></div>
 <details class="calc"><summary>from "mass is conserved" to the continuity equation</summary><div>
-<p>1. Budget for mass in the control volume (Section 3): rate of change of mass inside = mass in per second − mass out per second. <span class="why">Mass is neither created nor destroyed (Law 1).</span></p>
-<p>2. Each inlet brings \(\rho_iV_iA_i\) kg/s; each outlet removes \(\rho_iV_iA_i\) kg/s. <span class="why">Section 6: \(\dot m=\rho VA\).</span></p>
-<p>3. Steady flow: nothing inside changes, so the rate of change of mass inside is 0. <span class="why">Definition of steady.</span></p>
+<p>1. Budget for mass in the control volume (Section 3): rate of change of mass inside = mass in per second − mass out per second. <span class="calcwhy">Mass is neither created nor destroyed (Law 1).</span></p>
+<p>2. Each inlet brings \(\rho_iV_iA_i\) kg/s; each outlet removes \(\rho_iV_iA_i\) kg/s. <span class="calcwhy">Section 6: \(\dot m=\rho VA\).</span></p>
+<p>3. Steady flow: nothing inside changes, so the rate of change of mass inside is 0. <span class="calcwhy">Definition of steady.</span></p>
 <p>4. Therefore \(0=\sum\dot m_\text{in}-\sum\dot m_\text{out}\), which is the equation above.</p>
 </div></details>
 <h3>Incompressible fluids (slide 15)</h3>
+<details class="idea"><summary>What is this? (incompressible)</summary><div><p>You cannot squash water into a hose: a litre stays a litre. So for water you can count litres instead of kilograms. Air can be squashed, but when it moves slowly it hardly is, so it behaves the same way.</p></div></details>
 <div class="box def"><span class="tag">Definition · incompressible</span>
 <p>A fluid is <b>incompressible</b> if its density \(\rho\) stays effectively constant, whatever the pressure. Liquids such as water are treated as incompressible; gases are too when they move slowly (F1: Mach number below about 0.3).</p></div>
 <p>If \(\rho\) is the same at every inlet and outlet, it cancels from both sides (slide 15):</p>
@@ -443,14 +534,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>For a single pipe with one inlet (1) and one outlet (2):</p>
 \[Q=V_1A_1=V_2A_2=\text{constant}\]
 <p class="word"><b>In words:</b> for water, the volume flowing in per second equals the volume flowing out per second; along one pipe the discharge is the same at every section, so where the pipe is narrower the water must go faster.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(V_1A_1\)</dt><dd>litres per second coming down the hose.</dd>
+<dt>\(V_2A_2\)</dt><dd>litres per second leaving through the gap under your thumb.</dd>
+<dt>\(=\text{constant}\)</dt><dd>the same at every section of one pipe, because no water can pile up between them.</dd>
+<dt>small \(A_2\)</dt><dd>forces a large \(V_2\): the thumb on the hose.</dd>
+</dl></div>
 <p>Slide 15 draws a pipe that runs horizontally and then bends upwards, with section (1) across the horizontal part and section (2) across the sloping part, both drawn perpendicular to the pipe. The same \(Q\) passes both.</p>
 <div id="fig-s7bend"></div>
 <div class="box thm"><span class="tag">Result · velocity and diameter in a round pipe</span>
 \[\frac{V_2}{V_1}=\frac{A_1}{A_2}=\left(\frac{D_1}{D_2}\right)^{2}\]
 <p class="word"><b>In words:</b> speed is inversely proportional to area, so inversely proportional to the <b>square</b> of the diameter. Halve the diameter and the speed becomes four times as large.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(V_2/V_1\)</dt><dd>how many times faster the water leaves than it arrives.</dd>
+<dt>\(A_1/A_2\)</dt><dd>how many times bigger the hose opening is than the gap.</dd>
+<dt>the square on \(D_1/D_2\)</dt><dd>an opening's area grows with its diameter squared, so a small change in diameter makes a big change in speed.</dd>
+</dl></div>
 <details class="calc"><summary>the diameter rule</summary><div>
-<p>1. \(V_1A_1=V_2A_2\), so \(V_2/V_1=A_1/A_2\). <span class="why">Continuity for one inlet, one outlet.</span></p>
-<p>2. \(A=\pi D^2/4\): the \(\pi/4\) cancels in the ratio, leaving \(D_1^2/D_2^2\). <span class="why">Saves calculating areas when only a speed is wanted.</span></p>
+<p>1. \(V_1A_1=V_2A_2\), so \(V_2/V_1=A_1/A_2\). <span class="calcwhy">Continuity for one inlet, one outlet.</span></p>
+<p>2. \(A=\pi D^2/4\): the \(\pi/4\) cancels in the ratio, leaving \(D_1^2/D_2^2\). <span class="calcwhy">Saves calculating areas when only a speed is wanted.</span></p>
 </div></details>
 <div class="figure" id="fig-pipesim"><p class="ttl">Try it · water through a pipe that changes diameter</p>
 <div id="pipesim-svg"></div>
@@ -467,27 +569,29 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <ol class="steps">
 <li>\(\sum Q_\text{in}=0.02(3)+0.01(2)=0.08\u{m^3/s}\).</li>
 <li>Known outflow: \(0.01(2)+0.005(4)=0.04\u{m^3/s}\).</li>
-<li>Third outlet carries the rest: \(0.08-0.04=0.04\u{m^3/s}\), so \(V=0.04/0.01=\boxed{4\u{m/s}}\).</li>
+<li>Third outlet carries the rest: \(0.08-0.04=0.04\u{m^3/s}\), so \(V=0.04/0.01=\boxed{4\u{m/s}}\). <span class="why">Steady: the tank neither fills nor empties, so whatever the other outlets do not carry must leave by the third.</span></li>
 </ol></div>
+<p class="cannow"><b>You can now:</b> write the continuity equation for any number of inlets and outlets; cancel \(\rho\) for a liquid to get \(V_1A_1=V_2A_2\); and use the diameter rule to find a speed without working out areas.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Examples 1 and 2: a pipe that widens, and a branch (slides 16–17)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Examples 1 and 2: a pipe that widens, and a branch (slides 16–17)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Example 1 is the thumb in reverse: the pipe gets wider, so the same water per second spreads over a bigger opening and slows down. Example 2 is a hose with a Y-splitter: the water from one pipe is shared between two, so the two outflows add up to the inflow.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 1 · slide 16 (textbook Problem 5.1)</span>
 <p>The diameters of a pipe at sections 1 and 2 are 10 cm and 15 cm respectively. Find the discharge through the pipe if the velocity of water flowing through the pipe at section 1 is 5 m/s. Determine also the velocity at section 2.</p>
 <div id="fig-ex1"></div>
 <ol class="steps">
-<li>Data in metres: \(D_1=0.1\u{m}\), \(D_2=0.15\u{m}\), \(V_1=5\u{m/s}\).</li>
+<li>Data in metres: \(D_1=0.1\u{m}\), \(D_2=0.15\u{m}\), \(V_1=5\u{m/s}\). <span class="why">Areas then come out in m² and speeds in m/s.</span></li>
 <li>Areas: \(A_1=\tfrac{\pi}{4}(0.1)^2=0.007854\u{m^2}\); \(A_2=\tfrac{\pi}{4}(0.15)^2=0.01767\u{m^2}\).</li>
 <li>(i) Discharge: \(Q=A_1V_1=0.007854\times5\), so \(\boxed{Q=0.03927\u{m^3/s}}\) (39.3 L/s).</li>
-<li>(ii) Continuity \(A_1V_1=A_2V_2\):</li>
+<li>(ii) Continuity \(A_1V_1=A_2V_2\): <span class="why">The same water per second passes section 2, but over a bigger area, so it must move more slowly.</span></li>
 </ol>
 \[V_2=\frac{A_1V_1}{A_2}=\frac{0.007854}{0.01767}\times5\]
 \[\boxed{V_2=2.22\u{m/s}}\]
 <p>Check with the diameter rule: \(V_2=5(10/15)^2=5(0.444)=2.22\u{m/s}\) ✓. The pipe widens, so the water slows down.</p>
 <details class="calc"><summary>extra: mass flow and momentum flux at each section</summary><div>
-<p>Mass flow is the same at both sections: \(\dot m=\rho Q=1000(0.03927)\) \(=39.27\u{kg/s}\). <span class="why">Continuity: mass in = mass out.</span></p>
-<p>Momentum flux at 1: \(\dot mV_1=39.27(5)=196.3\u{N}\); at 2: \(\dot mV_2=39.27(2.22)=87.3\u{N}\). <span class="why">Momentum flux is <b>not</b> conserved along a pipe: the change, 109 N, is what the pipe wall and pressure must supply (F4).</span></p>
+<p>Mass flow is the same at both sections: \(\dot m=\rho Q=1000(0.03927)\) \(=39.27\u{kg/s}\). <span class="calcwhy">Continuity: mass in = mass out.</span></p>
+<p>Momentum flux at 1: \(\dot mV_1=39.27(5)=196.3\u{N}\); at 2: \(\dot mV_2=39.27(2.22)=87.3\u{N}\). <span class="calcwhy">Momentum flux is <b>not</b> conserved along a pipe: the change, 109 N, is what the pipe wall and pressure must supply (F4).</span></p>
 </div></details></div>
 
 <div class="box eg"><span class="tag">Worked example 2 · slide 17 (textbook Problem 5.2) · one pipe splits into two</span>
@@ -496,7 +600,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <ol class="steps">
 <li>Label: pipe 1 (\(D_1=0.30\u{m}\), \(V_1=2.5\u{m/s}\)) is the inlet; pipes 2 (\(D_2=0.20\u{m}\), \(V_2=2\u{m/s}\)) and 3 (\(D_3=0.15\u{m}\), \(V_3=?\)) are the outlets.</li>
 <li>Areas: \(A_1=\tfrac{\pi}{4}(0.3)^2=0.07068\u{m^2}\); \(A_2=\tfrac{\pi}{4}(0.2)^2=0.0314\u{m^2}\); \(A_3=\tfrac{\pi}{4}(0.15)^2=0.01767\u{m^2}\).</li>
-<li>Continuity (one inlet, two outlets): \(Q_1=Q_2+Q_3\).</li>
+<li>Continuity (one inlet, two outlets): \(Q_1=Q_2+Q_3\). <span class="why">Every litre arriving in pipe 1 leaves by pipe 2 or pipe 3; none piles up at the split.</span></li>
 <li>(i) \(Q_1=A_1V_1=0.07068\times2.5\), so \(\boxed{Q_1=0.1767\u{m^3/s}}\).</li>
 <li>(ii) \(Q_2=A_2V_2=0.0314\times2\) \(=0.0628\u{m^3/s}\), so \(Q_3=0.1767-0.0628\) \(=0.1139\u{m^3/s}\).</li>
 </ol>
@@ -508,10 +612,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[V_3=\frac{D_1^2V_1-D_2^2V_2}{D_3^2}\]
 \[=\frac{0.09(2.5)-0.04(2)}{0.0225}=6.44\u{m/s}\]
 </div></details></div>
+<p class="cannow"><b>You can now:</b> find \(Q\) and the speed at each section of a pipe that changes diameter; check the answer with the diameter rule; and solve a one-into-two branch with \(Q_1=Q_2+Q_3\).</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Example 3: a pipe that branches (slides 18–20)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Example 3: a pipe that branches (slides 18–20)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A big pipe that splits is like a hose feeding a Y-splitter into two sprinklers. The litres per second from the main pipe are shared out, and the shares add up to the total. The speeds do not add: a thin branch can run faster than the main pipe even though it carries less water.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 3 · slides 18–20 (textbook Problem 5.3)</span>
 <p>Water flows through a pipe AB 1.2 m diameter at 3 m/s and then passes through a pipe BC 1.5 m diameter. At C, the pipe branches. Branch CD is 0.8 m in diameter and carries one-third of the flow in AB. The flow velocity in branch CE is 2.5 m/s. Find the volume rate of flow in AB, the velocity in BC, the velocity in CD and the diameter of CE.</p>
 <div id="fig-ex3"></div>
@@ -522,7 +628,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[Q=V_{AB}\,\frac{\pi}{4}D_{AB}^2=3.0\times\frac{\pi}{4}(1.2)^2\]
 \[\boxed{Q=3.393\u{m^3/s}}\]
 <ol class="steps" start="2">
-<li>(ii) AB and BC are one pipe in series: the same \(Q\). Continuity \(V_{AB}A_{AB}=V_{BC}A_{BC}\), divide by \(\pi/4\):</li>
+<li>(ii) AB and BC are one pipe in series: the same \(Q\). Continuity \(V_{AB}A_{AB}=V_{BC}A_{BC}\), divide by \(\pi/4\): <span class="why">Nothing leaves between A and C, so all the water from AB passes through BC.</span></li>
 </ol>
 \[3.0(1.2)^2=V_{BC}(1.5)^2\]
 \[V_{BC}=\frac{3\times1.44}{2.25}=\boxed{1.92\u{m/s}}\]
@@ -531,14 +637,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </ol>
 \[V_{CD}=\frac{1.131}{0.5027}=\boxed{2.25\u{m/s}}\]
 <ol class="steps" start="4">
-<li>(iv) Branch CE: \(Q_2=Q-Q_1=3.393-1.131\) \(=2.262\u{m^3/s}\), and \(Q_2=V_{CE}\tfrac{\pi}{4}D_{CE}^2\):</li>
+<li>(iv) Branch CE: \(Q_2=Q-Q_1=3.393-1.131\) \(=2.262\u{m^3/s}\), and \(Q_2=V_{CE}\tfrac{\pi}{4}D_{CE}^2\): <span class="why">Whatever arrives at C and does not go down CD must go down CE.</span></li>
 </ol>
 \[2.262=2.5\times\frac{\pi}{4}D_{CE}^2\]
 \[D_{CE}=\sqrt{\frac{2.262\times4}{2.5\pi}}=\sqrt{1.152}\]
 \[\boxed{D_{CE}=1.073\u{m}}\]
 <p class="flag">slide 20 prints \(Q_2=2.262\) in one line and 2.263 in the next, and \(D_{CE}=1.0735\u{m}\); unrounded values give \(D_{CE}=1.0733\u{m}\). The difference is rounding only: 1.07 m either way.</p>
 <details class="calc"><summary>a check on the whole junction</summary><div>
-<p>Inflow at C: \(Q=3.393\). Outflows: CD \(2.25\times0.5027=1.131\); CE \(2.5\times\tfrac{\pi}{4}(1.0733)^2=2.262\). Sum \(3.393\) ✓. <span class="why">Continuity at the junction C: what arrives from BC leaves through CD and CE.</span></p>
+<p>Inflow at C: \(Q=3.393\). Outflows: CD \(2.25\times0.5027=1.131\); CE \(2.5\times\tfrac{\pi}{4}(1.0733)^2=2.262\). Sum \(3.393\) ✓. <span class="calcwhy">Continuity at the junction C: what arrives from BC leaves through CD and CE.</span></p>
 <p>Note that the <b>velocities do not add</b>: \(V_{BC}=1.92\) is not \(2.25+2.5\). Only flow rates add.</p>
 </div></details></div>
 <div class="figure" id="fig-branchsim"><p class="ttl">Try it · splitting a flow at a junction</p>
@@ -551,24 +657,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </div>
 <div class="readout" id="out-branch"></div>
 <p class="cap">Main pipe 30 cm. The defaults are Example 2 (2 m/s in the 20 cm branch is a 36% share). The arrow widths are proportional to the flow rates: they always add up at the junction, while the speeds do not.</p></div>
+<p class="cannow"><b>You can now:</b> solve a pipe in series followed by a junction; turn a stated share (one-third) into the flow in each branch; and find an unknown diameter from \(Q=V\pi D^2/4\).</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Example 4: water flow through a garden-hose nozzle (slides 21–23)</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Example 4: water flow through a garden-hose nozzle (slides 21–23)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>This is the thumb on the hose, with numbers. The bucket and stopwatch measure the litres per second. Water cannot pile up inside the hose, so the same litres per second leave the nozzle; the nozzle opening is much smaller than the hose, so the water leaves much faster.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 4 · slides 21–22</span>
 <p>A garden hose attached with a nozzle is used to fill a 10-gal bucket. The inner diameter of the hose is 2 cm, and it reduces to 0.8 cm at the nozzle exit. If it takes 50 s to fill the bucket with water, determine (a) the volume and mass flow rates of water through the hose, and (b) the average velocity of water at the nozzle exit.</p>
 <div id="fig-hose"></div>
 <p><b>Assumptions</b> (slide 22): (1) water is incompressible; (2) the flow through the hose is steady; (3) no water is wasted by splashing. <b>Property:</b> \(\rho=1000\u{kg/m^3}=1\u{kg/L}\).</p>
 <p>A <b>gallon</b> (gal) is a US unit of volume: 1 gal = 3.7854 L.</p>
 <ol class="steps">
-<li>(a) 10 gal are delivered in 50 s:</li>
+<li>(a) 10 gal are delivered in 50 s: <span class="why">Volume collected ÷ time taken is exactly the bucket-and-stopwatch picture of \(Q\).</span></li>
 </ol>
 \[Q=\frac{V}{\Delta t}=\frac{10\u{gal}}{50\u{s}}\times\frac{3.7854\u{L}}{1\u{gal}}\]
 \[\boxed{Q=0.757\u{L/s}}=7.57\times10^{-4}\u{m^3/s}\]
 \[\dot m=\rho Q=(1\u{kg/L})(0.757\u{L/s})\]
 \[\boxed{\dot m=0.757\u{kg/s}}\]
 <ol class="steps" start="2">
-<li>(b) Nozzle exit area, radius 0.4 cm:</li>
+<li>(b) Nozzle exit area, radius 0.4 cm: <span class="why">The exit diameter is 0.8 cm, so the radius is half of that.</span></li>
 </ol>
 \[A_e=\pi r_e^2=\pi(0.4\u{cm})^2=0.5027\u{cm^2}\]
 \[A_e=0.5027\times10^{-4}\u{m^2}\]
@@ -578,17 +686,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <details class="calc"><summary>extra: the speed in the hose itself</summary><div>
 <p>\(A_\text{hose}=\pi(0.01)^2=3.142\times10^{-4}\u{m^2}\), so</p>
 \[V_\text{hose}=\frac{7.57\times10^{-4}}{3.142\times10^{-4}}=2.41\u{m/s}\]
-<p class="why">Same \(Q\) through the hose.</p>
+<p class="calcwhy">Same \(Q\) through the hose.</p>
 <p>Ratio \(V_e/V_\text{hose}=(2/0.8)^2=6.25\) ✓: the nozzle makes the jet six times faster without changing how quickly the bucket fills. That is why you put your thumb over a hose to make it squirt further: you reduce \(A\), so \(V\) rises.</p>
 </div></details></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Convert cm² to m² with \(10^{-4}\) (1 cm = \(10^{-2}\) m, squared), and litres to m³ with \(10^{-3}\). Forgetting the \(10^{-4}\) in (b) gives a "speed" of 0.0015 m/s.</p></div>
 <p>Slide 23 is headed "Practice" but contains no questions. Use the concept checks (Section 15) and the exam taster (Section 16) instead.</p>
 <p class="flag">slide 23 ("Practice") is blank in the handout copy; there are no class or group exercises in this lecture, so this note has no Group work section.</p>
+<p class="cannow"><b>You can now:</b> convert gallons, litres and cm² to SI units; find \(Q\) and \(\dot m\) from a fill time; and find a nozzle's exit speed from \(Q\) and the exit area.</p>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Continuity in exam questions</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Continuity in exam questions</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Exam questions dress the hose up as a channel, a tank, a jet hitting a plate or the first step of a Bernoulli question. The rule is the same each time: what goes in must come out. The only new thinking is which opening the water actually crosses, and how big that opening is.</p></div></details>
 <p>The handout examples are all pipes. Past papers use the same equation in a few other settings. Each one is still "\(\sum Q_\text{in}=\sum Q_\text{out}\)", with care over <b>which area</b> to use.</p>
 <h3>Streamlines in a channel that widens</h3>
 <p>Recall from F1 that a <b>streamline</b> is a line drawn tangent to the velocity everywhere; no fluid crosses it. Between two streamlines the discharge is fixed, so where the flow speeds up the streamlines must <b>crowd together</b>, and where it slows down they <b>spread apart</b>. In a <b>diverging</b> (widening) channel, \(A_2\gt A_1\): \(Q_1=Q_2=Q\), but \(V_2=Q/A_2\lt V_1=Q/A_1\), and the streamlines fan out, following the walls.</p>
@@ -599,8 +709,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>If the level is <b>not</b> steady, the budget of Section 3 still works: the volume stored per second is \(A_\text{tank}\,\mathrm dh/\mathrm dt\), so</p>
 \[A_\text{tank}\frac{\mathrm dh}{\mathrm dt}=Q_\text{in}-Q_\text{out}\]
 <p class="word"><b>In words:</b> the rate the level rises × tank area = inflow − outflow.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(A_\text{tank}\dfrac{\mathrm dh}{\mathrm dt}\)</dt><dd>volume stored per second: the tank's floor area times how fast the water level rises.</dd>
+<dt>\(Q_\text{in}-Q_\text{out}\)</dt><dd>the water per second that comes in but does not go out.</dd>
+<dt>a negative answer</dt><dd>more leaves than arrives, so the level falls.</dd>
+</dl></div>
 <p>Example (written for these notes): a tank of area 0.1 m² receives 0.03 m³/s and loses 0.04 m³/s, so \(\mathrm dh/\mathrm dt=(0.03-0.04)/0.1=-0.1\u{m/s}\): the level falls 100 mm every second.</p></div>
 <h3>A jet that spreads into a thin sheet</h3>
+<details class="idea"><summary>What is this? (a radial sheet)</summary><div><p>Point a hose straight at a flat plate and the water spreads out sideways in a thin, round sheet. It leaves through a thin ring at the plate's edge. That ring is the opening it crosses: its length is the plate's circumference and its height is the sheet's thickness.</p></div></details>
 <p>When a round jet hits a flat plate and spreads out radially as a thin sheet of thickness \(t\), the fluid leaves through the side of a short cylinder at the plate's edge. That outlet area is the cylinder's curved surface, \(A_2=\pi Dt\) (circumference × thickness), not \(\pi D^2/4\).</p>
 <div id="fig-s11sheet"></div>
 <p>Example: a plate of diameter 0.1 m with a sheet 0.4 mm thick gives \(A_2=\pi(0.1)(0.0004)\) \(=1.257\times10^{-4}\u{m^2}\). (May 2019 Q3 uses exactly this; see the exam taster.)</p>
@@ -612,17 +728,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[V_2=\frac{\dot m}{\rho_2A_2}=\frac{1.2}{1.00(0.01)}=120\u{m/s}\]
 <p>Treating it as incompressible would give 100 m/s, 17% too low.</p></div>
 <div class="box ready"><span class="tag">Ready answer · continuity questions (type F2.1)</span>
-<ol class="steps">
-<li>Sketch the pipe or tank; number the sections; draw the control volume (dashed) cutting each inlet and outlet perpendicular to the flow.</li>
-<li>Convert every length to metres; find each area (\(\pi D^2/4\) for a pipe, \(\pi Dt\) for a radial sheet).</li>
-<li>Write \(\sum(VA)_\text{in}=\sum(VA)_\text{out}\) (or with \(\rho\) for a gas) and solve for the unknown.</li>
-<li>Then \(Q=VA\), \(\dot m=\rho Q\), weight flow \(\gamma Q\), with units m³/s, kg/s, N/s.</li>
-<li>Sense check: smaller area → faster; flow rates add at a junction, speeds do not.</li>
+<ol class="steps proc">
+<li><b>Do:</b> Sketch the pipe or tank; number the sections; draw the control volume (dashed) cutting each inlet and outlet perpendicular to the flow. <span class="why">The box and the numbered faces tell you exactly which openings go into the budget.</span></li>
+<li><b>Do:</b> Convert every length to metres; find each area (\(\pi D^2/4\) for a pipe, \(\pi Dt\) for a radial sheet). <span class="why">The area must be the opening the water actually crosses, in m², or every speed comes out wrong.</span></li>
+<li><b>Do:</b> Write \(\sum(VA)_\text{in}=\sum(VA)_\text{out}\) (or with \(\rho\) for a gas) and solve for the unknown. <span class="why">This is what goes in must come out, written for this device.</span></li>
+<li><b>Do:</b> Then \(Q=VA\), \(\dot m=\rho Q\), weight flow \(\gamma Q\), with units m³/s, kg/s, N/s. <span class="why">Once one speed and area are known, every flow measure follows from the same \(Q\).</span></li>
+<li><b>Do:</b> Sense check: smaller area → faster; flow rates add at a junction, speeds do not. <span class="why">The thumb on the hose: a smaller opening always means faster water, and a splitter shares litres, not speeds.</span></li>
 </ol></div>
+<p class="cannow"><b>You can now:</b> draw streamlines in a widening channel; apply continuity to a tank (steady or with a changing level), a radial sheet (\(A=\pi Dt\)) and a gas; and use continuity as step 1 of a Bernoulli question.</p>
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Summary</h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Summary</span></h2>
 <div class="scroll"><table>
 <tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
 <tr><td>Closed system</td><td>control mass</td><td>fixed mass; energy may cross, mass may not</td></tr>
@@ -640,7 +757,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Common mistakes</h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Common mistakes</span></h2>
 <div class="mistake">
 <span class="x">✗</span><span>Using the diameter ratio instead of its square: \(V_2=V_1(D_1/D_2)\).</span>
 <span class="ok">✓</span><span>Area goes with \(D^2\): \(V_2=V_1(D_1/D_2)^2\).</span>
@@ -662,7 +779,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="s14"><h2><span class="n">14</span>Find the mistake</h2>
+<section id="s14"><h2><span class="n">14</span><span class="h2t">Find the mistake</span></h2>
 <div class="q"><p class="qh">1 · A student's Dec 2023 Q1(a)</p>
 <p>"Diameters 50 mm and 100 mm, \(V_1=8\u{m/s}\). The pipe is twice as wide, so \(V_2=8\times\tfrac{50}{100}=4\u{m/s}\)."</p>
 <details><summary>Hint</summary><div><p>Twice the diameter is how many times the area?</p></div></details>
@@ -682,7 +799,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 15 ============ -->
-<section id="s15"><h2><span class="n">15</span>Concept checks</h2>
+<section id="s15"><h2><span class="n">15</span><span class="h2t">Concept checks</span></h2>
 <p class="muted">Written for these notes.</p>
 <div class="q"><p class="qh">1 · Closed or open?</p><p>Which of these are best studied as a closed system and which as a control volume? (a) air in a sealed balloon being heated; (b) a jet engine in flight; (c) a car tyre being pumped up.</p>
 <details><summary>Answer</summary><div><p>(a) Closed system (no mass crosses; heat does). (b) Control volume (air and fuel flow through). (c) Control volume (air enters through the valve); or, if you follow all the air that ends up inside, a closed system with a moving boundary. The choice is yours; pick the one that makes the budget easy.</p></div></details></div>
@@ -700,7 +817,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 16 ============ -->
-<section id="s16"><h2><span class="n">16</span>Exam taster</h2>
+<section id="s16"><h2><span class="n">16</span><span class="h2t">Exam taster</span></h2>
 <p>Real past-paper parts (ENGG1350, the predecessor of MECH1350; same Section C structure), covering both question types of this chapter. Continuity is usually the first part of a longer question; the later parts are in chapters F3 and F4. Full methods, every other sitting, and more practice: <a href="guide-F2.html">Exam guide · F2</a>.</p>
 
 <div class="q"><div class="src"><b>Dec 2023 Q1(a)–(d)</b><span>3 + 3 + 3 + 3 marks</span><span>same question: Dec 2022 Q1</span><a class="guide" href="guide-F2.html#F2-1">F2.1 continuity and flow rates</a></div>
@@ -1233,6 +1350,15 @@ reg(function(){const g=E('g',{},svgIn('fig-t4',400,300,'tank with oil over water
   E('line',{x1:30,y1:fl,x2:360,y2:fl,style:'stroke:var(--ink);stroke-width:1.6'},g);for(let x=34;x<360;x+=9)E('line',{x1:x,y1:fl+6,x2:x+6,y2:fl,style:'stroke:var(--axis);stroke-width:1'},g);
   E('line',{x1:208,y1:ne,x2:262,y2:ne,style:'stroke:var(--muted);stroke-width:.8;stroke-dasharray:3 3'},g);E('line',{x1:208,y1:pc,x2:228,y2:pc,style:'stroke:var(--muted);stroke-width:.8;stroke-dasharray:3 3'},g);});
 jetPlate('fig-t5',true);
+
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 
 </script>
 </body></html>

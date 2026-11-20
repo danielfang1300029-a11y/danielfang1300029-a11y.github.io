@@ -222,6 +222,34 @@ p.tldr{font-size:15px;color:var(--muted);border-left:3px solid var(--accent);pad
 svg.tl text{paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round}
 .box svg.tl text{stroke:var(--card)}
 
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -252,7 +280,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <p class="lede">An NPV is only as good as its forecasts. Tools to see how much it depends on them: scenarios, sensitivity, simulation, break-even points, operating leverage; plus what to do when there is not enough money for every good project.</p>
 </header>
 
-<section id="s0"><h2><span class="n">0</span>Where this sits</h2>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this sits</span></h2>
 <p>Capital budgeting in four steps: ① cash flows (L8) · ② discount rate (L10) · ③ investment criteria (L7) · ④ <b>additional analysis: what if the forecasts are wrong?</b> (this lecture). Textbook: Chapter 11.</p>
 <div class="box thm"><span class="tag">Recap from L8 · operating cash flow (tax-shield form)</span>
 \[OCF=\big[(P-v)\,Q-FC\big](1-T)+D\,T\]
@@ -260,15 +288,17 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box conv"><span class="tag">Sign convention</span><p>Money in <b>+</b>, money out <b>−</b>; \(t=0\) is today. Throughout, \(AF(12\%,5)=3.6048\).</p></div>
 </section>
 
-<section id="s1"><h2><span class="n">1</span>Problems with NPV</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Problems with NPV</span></h2>
 <p class="tldr">NPV uses the <b>average</b> forecast; the firm gets <b>one</b> actual outcome.</p>
 <ul class="list"><li><b>Projected</b> cash flows = the average over possible outcomes; <b>actual</b> cash flows depend on which outcome occurs.</li>
 <li>NPV &gt; 0 on projected flows → a good decision <b>ex ante</b> (before the fact). NPV &lt; 0 on actual flows → a bad investment <b>ex post</b> (after the fact). A good decision can still turn out badly.</li></ul>
 <div class="box def"><span class="tag">Definition · forecasting risk</span><p>The risk of a bad decision because cash flows were misestimated. Sources: states of the world you did not anticipate; wrong probabilities for the states you did; wrong cash flows within a state. The rest of this lecture: tools to see how much NPV depends on the forecasts.</p></div>
 </section>
 
-<section id="s2"><h2><span class="n">2</span>Scenario analysis</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Scenario analysis</span></h2>
 <p class="tldr">Recompute NPV in a few internally consistent “states of the world”.</p>
+<details class="idea"><summary>What is this?</summary><div><p>Think of the forecast as a panel of dials: price, unit sales, variable cost, fixed costs, the investment. The base-case NPV is what you get with every dial on its best guess.</p><p>Scenario analysis sets all the dials to match one story at once (a recession: fewer units and a lower price together) and reads off the NPV. Sensitivity analysis (§3) turns one dial and leaves the rest alone; simulation (§4) spins them all at random, thousands of times.</p></div></details>
+
 <p><b>Base case</b> = NPV from the projected cash flows. <b>What-if analysis</b> = NPV if sales, price, costs, etc. differ. Three tools: <b>scenario</b> analysis (a few consistent states: a recession, a new competitor, a cost plan that fails), <b>sensitivity</b> analysis (one input at a time, s3), <b>simulation</b> (many inputs, many random values, s4).</p>
 <div class="box eg"><span class="tag">Running example · the base case</span>
 <p>Equipment $200,000, straight-line to 0 over 5 years (\(D=\$40{,}000\), no salvage). 6,000 units a year at $80; variable cost $60 a unit; fixed costs $50,000 a year; tax 34%; required return 12%; no net working capital.</p>
@@ -298,9 +328,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box warn"><span class="tag">What scenarios can and cannot tell you</span><ul class="list"><li>Any number of scenarios: 3 (worst, base, best), 5 (worst, bad, base, good, best) or more.</li>
 <li>Reality can be worse than the worst case or better than the best.</li>
 <li>It shows what happens <b>in</b> a state, not <b>whether</b> to invest. Many scenarios with NPV &lt; 0 is a warning sign.</li></ul></div>
+<p class="cannow"><b>You can now:</b> compute base, worst and best-case OCF and NPV, setting each input (the investment included) at the bound that lowers or raises NPV; and say what scenario analysis can and cannot tell you.</p>
 </section>
 
-<section id="s3"><h2><span class="n">3</span>Sensitivity analysis</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Sensitivity analysis</span></h2>
 <p class="tldr">Hold everything at base case, move one input, and see how steeply NPV moves.</p>
 <p>A steep line = NPV is sensitive to that input → spend effort forecasting that input well.</p>
 <div class="figure"><p class="ttl">Try it · NPV against one input (others at base case)</p>
@@ -324,7 +355,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>In practice: in a 1999 survey of 392 CFOs, 51.5% always or almost always used sensitivity analysis (IRR 75.6%, NPV 74.9%, hurdle rate 56.9%, payback 56.7%, earnings multiple 38.9%, discounted payback 29.5%, real options 26.6%, accounting rate of return 20.3%, simulation or VaR 13.7%, profitability index 11.9%, adjusted PV 10.8%).</p>
 </section>
 
-<section id="s4"><h2><span class="n">4</span>Simulation</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Simulation</span></h2>
 <p class="tldr">Scenario + sensitivity combined: let several inputs vary at once, at random, thousands of times.</p>
 <p>Draw a price from $75–85 and unit sales from 5,500–6,500, compute the NPV, repeat 100,000 times. Read off the <b>average</b> NPV, its <b>spread</b> (standard deviation, SD: the typical distance from the average) and the <b>chance of NPV &lt; 0</b>. Inputs may move together (high sales with a high price), which <b>widens</b> the spread.</p>
 <div class="tblw"><table class="fcard"><tr><th>100,000 draws</th><th>Mean NPV</th><th>SD</th><th>NPV &lt; 0</th></tr>
@@ -337,8 +368,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box beyond"><span class="tag">Beyond the handouts · correlation</span><p>Correlation (between −1 and 1) measures how much two inputs move together. Positive correlation makes good inputs arrive with good inputs, so extremes are more likely and the spread widens.</p></div>
 </section>
 
-<section id="s5"><h2><span class="n">5</span>Break-even analysis</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Break-even analysis</span></h2>
 <p class="tldr">How low can sales go before the project loses on a given measure?</p>
+<details class="idea"><summary>What is this?</summary><div><p>Picture three finishing lines on the same track, each asking more of the project. The <b>cash</b> break-even is where the year's operating cash in just covers the cash out. The <b>accounting</b> break-even is further on: sales must also cover depreciation, the machine's cost spread over its life, so the investment comes back but earns nothing.</p><p>The <b>financial</b> break-even is furthest: sales must return the investment plus the required return on it, which is exactly what NPV = 0 means.</p></div></details>
+
 <div class="box def"><span class="tag">Definitions · the unit sales at which…</span><ul class="list"><li><b>Accounting break-even</b>: net income = 0</li><li><b>Cash break-even</b>: OCF = 0</li><li><b>Financial break-even</b>: NPV = 0</li></ul><p>Sales below a break-even → the project loses on that measure.</p></div>
 
 <h3>Accounting break-even</h3>
@@ -350,6 +383,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <ul class="list"><li>The same at any tax rate (tax is a fraction of zero).</li>
 <li>OCF = NI + D = \(D\) every year, so payback = the project's life.</li>
 <li>You only get the investment back, so IRR = 0 → NPV &lt; 0 at any positive required return.</li></ul></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(P-v\)</dt><dd>what each unit sold contributes: its price minus the variable cost of making it.</dd><dt>\(FC\)</dt><dd>the fixed costs to cover each year, whatever you sell.</dd><dt>\(D\)</dt><dd>the machine's cost spread over its life. Covering it means the investment comes back, with nothing earned on it.</dd><dt>\(Q\)</dt><dd>how many unit contributions it takes to cover both: the accounting finishing line.</dd></dl></div>
+
 
 <h3>Cash break-even</h3>
 \[\begin{aligned}OCF&=NI+D=13.2Q-59{,}400+40{,}000\\&=13.2Q-19{,}400\end{aligned}\]
@@ -357,9 +392,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box warn"><span class="tag">When is cash break-even useful?</span><p>At the cash break-even, NI &lt; 0 (as \(D\gt0\)) and NPV &lt; 0: none of the initial investment comes back. But once the project is running, the investment is <b>sunk</b> (spent and unrecoverable, L8). Above the cash break-even, continuing still brings in cash, so don't shut it down just because it is losing on paper.</p></div>
 
 <h3>Financial break-even</h3>
-<p>Find the OCF that makes NPV = 0, then the sales that produce it:</p>
+
+<ol class="steps proc"><li><b>Do:</b> Find the OCF that makes NPV = 0. <span class="why">This yearly cash, received as an annuity, just repays the investment with the required return on it: the furthest finishing line, in dollars.</span></li><li><b>Do:</b> Then find the sales that produce it. <span class="why">OCF rises with unit sales, so solve the OCF formula for the units that deliver it.</span></li></ol>
+
 \[\begin{aligned}0&=-200{,}000+OCF^*\times3.6048\\OCF^*&=200{,}000/3.6048=\$55{,}482\end{aligned}\]
 <p>\(13.2Q-19{,}400=55{,}482\) → \(Q=5{,}673\) units. Below 5,673, NPV &lt; 0. Without taxes:</p>\[\begin{aligned}Q&=(FC+OCF^*)/(P-v)\\&=105{,}482/20=5{,}274\end{aligned}\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(OCF^*\)</dt><dd>the yearly OCF that makes NPV = 0.</dd><dt>\(FC+OCF^*\)</dt><dd>with no tax, sales must cover the fixed costs and still leave \(OCF^*\) over.</dd><dt>\(P-v\)</dt><dd>each unit's contribution, as in the accounting break-even.</dd></dl></div>
+
 
 <div class="box eg"><span class="tag">Example · financial break-even with salvage and NWC</span>
 <p>Same project, plus: equipment sold for $20,000 at the end of year 5; net working capital (NWC) of $10,000 at the start, recovered at the end. Book value at year 5 is 0, so salvage after tax \(=20{,}000(1-0.34)=\$13{,}200\). Year 5 adds \(13{,}200+10{,}000=\$23{,}200\).</p>
@@ -372,10 +411,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <canvas class="plot" id="cvb" style="height:260px"></canvas>
 <div class="legend"><span><i style="background:var(--accent)"></i>NPV</span><span><i style="background:var(--c2)"></i>net income</span><span><i style="background:var(--warm)"></i>OCF</span></div>
 <p class="cap">$ thousands against unit sales. Each line crosses zero at its break-even: cash (OCF) 1,470, accounting (net income) 4,500, financial (NPV) 5,673. All three lines have the same yearly slope per unit; NPV's is 3.6048 times steeper.</p></div>
+<p class="cannow"><b>You can now:</b> compute the cash, accounting and financial break-evens, with and without taxes; include salvage and NWC in the financial one; and explain why cash &lt; accounting &lt; financial and when the cash break-even matters.</p>
 </section>
 
-<section id="s6"><h2><span class="n">6</span>Operating leverage</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Operating leverage</span></h2>
 <p class="tldr">Fixed costs magnify forecast errors: a small miss in sales becomes a large miss in OCF.</p>
+<details class="idea"><summary>What is this?</summary><div><p>Think of a bus company and a taxi driver. The bus costs about the same to run whether 10 or 40 passengers ride, so each extra passenger is nearly pure profit and each lost one nearly pure loss. The taxi's costs (fuel, time) mostly rise and fall with its trips, so its profit moves more gently.</p><p>High fixed costs make a project like the bus: they magnify any miss in the sales forecast.</p></div></details>
+
 <p><b>Operating leverage</b> = how much a project relies on fixed costs. Higher fixed costs → OCF swings more when sales change → higher forecasting risk. Renting equipment or outsourcing turns fixed costs into variable ones and lowers it.</p>
 <div class="box thm"><span class="tag">Result · degree of operating leverage</span>
 \[\begin{aligned}DOL&=\frac{\%\text{ change in }OCF}{\%\text{ change in }Q}\\&=\frac{\Delta OCF/OCF}{\Delta Q/Q}\end{aligned}\]
@@ -386,13 +428,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Change \(Q\) by \(\Delta Q\): only the first term moves, so \(\Delta OCF=(P-v)(1-T)\Delta Q\). From the line above,</p>\[\begin{aligned}&(P-v)(1-T)Q\\&=OCF+FC(1-T)-DT\end{aligned}\]<p>Hence</p>
 \[\begin{aligned}\frac{\Delta OCF}{OCF}&=\frac{\Delta Q}{Q}\cdot\frac{(P-v)(1-T)Q}{OCF}\\&=\frac{\Delta Q}{Q}\Big(1+\tfrac{FC(1-T)-DT}{OCF}\Big)\end{aligned}\]
 <p>Divide by \(\Delta Q/Q\) to get DOL.</p></div></details></div>
+
+<ol class="steps proc"><li><b>Do:</b> Compute OCF at the current sales level. <span class="why">DOL depends on where you stand: the same fixed costs weigh more when OCF is small.</span></li><li><b>Do:</b> \(DOL=1+FC/OCF\) without taxes; with taxes, use \(1+[FC(1-T)-DT]/OCF\). <span class="why">It compares the fixed costs with the cash left after them: the bus's running cost against its takings.</span></li><li><b>Do:</b> Multiply the % change in sales by DOL to get the % change in OCF. <span class="why">That is what DOL means: the factor that turns a sales miss into an OCF miss.</span></li></ol>
 <div class="box eg"><span class="tag">Example · our project, ignoring taxes</span>
 <ul class="list"><li>6,000 units: OCF \(=20\times6{,}000-50{,}000=\$70{,}000\); DOL \(=1+50{,}000/70{,}000=1.71\). Sales 10% higher → OCF up \(1.71\times10\%=17.1\%\).</li>
 <li>5,500 units: OCF \(=\$60{,}000\); DOL \(=1+50{,}000/60{,}000=1.83\).</li></ul>
 <p>DOL rises as sales fall towards the cash break-even (where OCF → 0 and DOL → ∞).</p></div>
+<p class="cannow"><b>You can now:</b> compute DOL with and without taxes; use it to turn a % change in sales into a % change in OCF; and explain why it rises as sales fall towards the cash break-even.</p>
 </section>
 
-<section id="s7"><h2><span class="n">7</span>Capital rationing</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Capital rationing</span></h2>
 <p class="tldr">More positive-NPV projects than money: pick the set with the most total NPV.</p>
 <ul class="list"><li><b>Capital rationing</b>: positive-NPV projects the firm cannot fund.</li>
 <li><b>Soft rationing</b>: a division gets a fixed budget; the firm as a whole is not short of capital. Ask for more, or choose the projects with the most total NPV.</li>
@@ -409,7 +454,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>The profitability index (PI, L7) works only when the budget is used up exactly; otherwise compare the total NPV of every combination that fits.</p></div>
 </section>
 
-<section id="s8"><h2><span class="n">8</span>Summary and formula card</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Summary and formula card</span></h2>
 <ul class="list"><li>NPV rests on forecasts; project analysis <b>measures</b> forecasting risk, it does not decide.</li>
 <li>Scenarios: worst, base and best NPV (worst case: least favourable inputs, investment included). Sensitivity: one input at a time. Simulation: many at once, a distribution of NPVs.</li>
 <li>Break-evens: cash &lt; accounting &lt; financial; include terminal flows in the financial one.</li>
@@ -423,7 +468,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <tr><td>DOL</td><td>\(1+[FC(1-T)-DT]/OCF\); no tax: \(1+FC/OCF\)</td></tr></table></div>
 </section>
 
-<section id="s9"><h2><span class="n">9</span>Common mistakes</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Common mistakes</span></h2>
 <ul class="list">
 <li><b>Mixing directions in a worst case.</b> Costs go to their <b>higher</b> bound, sales and price to the lower; investment to the higher (and its depreciation shield up with it).</li>
 <li><b>Forgetting the depreciation tax shield</b> when the investment changes, or when going from NI to OCF (add \(D\) back).</li>
@@ -434,7 +479,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li><b>Ranking by PI</b> when the budget is not used up exactly.</li></ul>
 </section>
 
-<section id="s10"><h2><span class="n">10</span>Practice</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Practice</span></h2>
 <p>The first three are the lecture's in-class quizzes; the rest are written for these notes.</p>
 <div class="q"><div class="src"><b>Lecture quiz</b><span>what NPV will the firm actually get?</span></div>
 <p>A project's NPV is $15,566 at the expected values of its inputs. Unit sales could be anywhere from 5,500 to 6,500 a year. What NPV will the firm actually get? A. $15,566, because NPV uses the expected cash flows · B. More, because sales can reach 6,500 · C. Less, because forecasts are optimistic · D. Unknown until sales are known, and it could be negative</p>
@@ -776,6 +821,15 @@ function bdraw(){
     pts:[{x:1.470,y:0,color:css('--warm'),label:'1,470',align:'right'},{x:4.5,y:0,color:css('--c2'),label:'4,500',align:'right'},{x:5.673,y:0,color:css('--accent'),label:'5,673',align:'left'}]});
 }
 redraws.push(bdraw);
+
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 
 </script>
 </body></html>

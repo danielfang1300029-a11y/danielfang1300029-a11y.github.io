@@ -168,6 +168,7 @@ details.calc{border-left:3px solid var(--accent)}
 details.calc>summary{color:var(--accent);font-weight:500}
 details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 details.calc .why{color:var(--muted);font-size:.9rem}
+details.calc .calcwhy{color:var(--muted);font-size:.9rem}
 table.tbl td,table.tbl th{padding:6px 8px}
 .circuit{width:100%;height:auto;display:block}
 .circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
@@ -197,6 +198,36 @@ details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-
 .stats b{color:var(--ink);font-family:var(--display)}
 .small{font-size:.88rem}
 
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
+/* F1: the page's older .proc box rule must not draw a bar beside Do/Why lists */
+ol.steps.proc{border-left:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -231,13 +262,26 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-F1.html">Exam guide · F1</a><a href="note-H4.html">← H4</a><a href="note-F2.html">Next: F2 →</a></nav>
   <span class="course">MECH1350 · Fluid dynamics · chapter 1</span>
   <h1>Introduction to fluid dynamics</h1>
-  <p class="lede">What fluids in motion are made of: viscosity, the six ways engineers sort flows, and the Mach and Reynolds numbers that decide compressibility and turbulence. Every slide of the 27-slide lecture explained from scratch.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
-<p>H1–H4 studied fluids <b>at rest</b>; this chapter starts Section C, fluids <b>in motion</b>, with the vocabulary and the two dimensionless numbers the rest of the theme uses. F2 then adds conservation of mass (continuity), F3 the Bernoulli equation, and F4 the past-paper topics no 2026 handout covers.</p>
-<p><b>In the exam:</b> short, reliable marks: flow-type definitions, viscosity unit conversions, a Reynolds-number verdict and the Reynolds dye experiment in words. See the <a href="guide-F1.html">F1 exam guide</a>.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this chapter sits</span></h2>
+<p>H1–H4 studied fluids <b>at rest</b>; this chapter starts Section C, fluids <b>in motion</b>. Picture a river: it can look the same every time you visit or surge after a storm, and its water can slide by smoothly like honey or churn like a tap at full blast. This chapter gives the words for sorting such flows and the two numbers (Mach and Reynolds) that decide them. F2 then adds conservation of mass (continuity), F3 the Bernoulli equation, and F4 the past-paper topics no 2026 handout covers.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>A fluid is anything that keeps flowing for as long as you push it sideways.</b> Fluid mechanics studies liquids and gases, at rest and moving.</li>
+<li><a href="#s2">§2</a> <b>Viscosity is a fluid's internal friction:</b> honey resists layers sliding over each other, water hardly does. \(\tau=\mu\,\Delta u/\Delta y\).</li>
+<li><a href="#s3">§3</a> <b>Six yes/no questions sort every flow.</b> Steady: one spot of the river looks the same every visit.</li>
+<li><a href="#s4">§4</a> <b>Uniform: one snapshot shows the same velocity everywhere.</b></li>
+<li><a href="#s5">§5</a> <b>Viscosity matters near walls:</b> in pipes, and in the thin boundary layer round a body.</li>
+<li><a href="#s6">§6</a> <b>A gas acts incompressible when slow compared with sound:</b> \(M\lt 0.3\).</li>
+<li><a href="#s7">§7</a> Why a rocket nozzle narrows, then widens. <span class="pill skip">Optional on first read</span></li>
+<li><a href="#s8">§8</a> <b>Laminar is honey pouring in smooth sheets; turbulent is a tap at full blast.</b></li>
+<li><a href="#s9">§9</a> <b>The Reynolds number is the score of inertia against viscosity:</b> below 2000 laminar, above 4000 turbulent. <span class="pill">Most predictable F1 marks</span></li>
+<li><a href="#s10">§10</a> <b>Section C treats a pipe as one-dimensional:</b> one mean speed per cross-section. Streamlines are the lanes of the flow.</li>
+<li><a href="#s11">§11</a> Flow visualisation, the textbook and practice.</li>
+</ol></div>
+<p><b>You need:</b> density, viscosity and specific gravity from H1, and SI unit conversions. <b>In the exam:</b> short, reliable marks: flow-type definitions, viscosity unit conversions, a Reynolds-number verdict and the Reynolds dye experiment in words. See the <a href="guide-F1.html">F1 exam guide</a>.</p>
 <p class="muted small">Source: "Introduction to Fluid Mechanics" (Dr Yan Wei), 27 slides; slide numbers = printed numbers = PDF pages. Slides 14, 17 (lower half), 19 and 25 are video stills: described, not reproduced.</p>
 
 <div class="box conv"><span class="tag">Sign and symbol conventions for this chapter</span>
@@ -268,7 +312,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>What fluid mechanics studies (slides 3–6)</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">What fluid mechanics studies (slides 3–6)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A fluid is anything that keeps flowing for as long as you push it sideways. Push sideways on the top of a rubber eraser: it leans over a little, then stops and holds. Push sideways on the surface of honey or water and it keeps sliding for as long as you push. Water, air, honey and ketchup are all fluids; what makes them different is how hard they resist that sliding.</p></div></details>
 <h3>Why do different fluids flow differently? (slide 3)</h3>
 <p>Slide 3 opens with three pictures: water running from a tap in a smooth glassy stream; a close-up of a water stream broken into a rough, bubbly column; and two hands squeezing a bottle of tomato ketchup. Water pours at once; ketchup sits in the bottle until you squeeze or shake it, then suddenly flows. The property behind the difference is <b>viscosity</b> (Section 2), and the change from a smooth to a rough stream is the change from <b>laminar</b> to <b>turbulent</b> flow (Section 8). The whole chapter answers the question on this slide.</p>
 <h3>How do ships move and aeroplanes fly? (slide 4)</h3>
@@ -296,10 +341,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li><b>Weather and environmental systems</b>: a satellite image of a hurricane (atmosphere and ocean flows, pollution spread).</li>
 <li><b>Biomedical devices</b>: the heart and blood vessels (blood flow, artificial valves, stents).</li>
 </ul>
+<p class="cannow"><b>You can now:</b> say what fluid mechanics studies and what makes a substance a fluid; sort fluid quantities into the four groups of slide 5; name the three conservation laws Section C is built on.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>Viscosity: Newtonian and non-Newtonian fluids (slide 7)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Viscosity: Newtonian and non-Newtonian fluids (slide 7)</span> <span class="mins">~10 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Drag a spoon slowly across the top of a jar of honey. The honey touching the spoon moves with it, the honey at the bottom stays put, and every layer in between slides over the one beneath it, like the cards of a deck pushed sideways. Viscosity is how hard the fluid resists this layer-on-layer sliding: honey a lot, water very little. For an ordinary fluid, the faster the layers slide past each other, the harder you have to push.</p></div></details>
 <p>Put a thin layer of fluid between two flat plates. Hold the bottom plate still and pull the top plate sideways at a steady speed \(U\). The fluid touching each plate moves with that plate (it "sticks" to it: the <b>no-slip condition</b>, Section 5), so the fluid velocity \(u\) rises from 0 at the bottom to \(U\) at the top. Each layer slides over the one below it, like the cards in a deck pushed sideways. This sliding is called <b>shearing</b>, and the fluid resists it with a <b>shear stress</b> \(\tau\).</p>
 <div id="fig-shear"></div>
 <div class="box def"><span class="tag">Definitions · shear stress, rate of strain, viscosity</span>
@@ -312,13 +359,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\tau=\mu\frac{\Delta\theta}{\Delta t}=\mu\frac{\Delta u}{\Delta y}\]
 \[\mu\ne\text{function}\Big(\frac{\Delta\theta}{\Delta t}\Big)\]
 <p class="word"><b>In words:</b> shear stress = viscosity × rate of strain, and the rate of strain equals the velocity gradient (change in velocity per unit distance across the flow). For a <b>Newtonian fluid</b> the viscosity is a constant of the fluid (at a given temperature): it does not depend on how fast the fluid is sheared, so \(\tau\) is <b>directly proportional</b> to the rate of strain.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\tau\)</dt><dd>the sideways drag one layer feels from its neighbour, per square metre: what you feel through the spoon.</dd>
+<dt>\(\Delta u\)</dt><dd>how much faster the upper layer moves than the lower one.</dd>
+<dt>\(\Delta y\)</dt><dd>the distance between the two layers.</dd>
+<dt>\(\Delta u/\Delta y\)</dt><dd>how violently the layers slide past each other: a big speed difference across a thin gap is fierce shearing.</dd>
+<dt>\(\mu\)</dt><dd>the fluid's stickiness: large for honey, small for water. For a Newtonian fluid it is a fixed number, so twice the sliding rate means twice the drag.</dd>
+</dl></div>
 <details class="calc"><summary>why the rate of strain equals the velocity gradient \(\Delta u/\Delta y\)</summary><div>
-<p>1. Take a small rectangle of fluid of height \(\Delta y\). Its bottom edge moves at \(u\), its top edge at \(u+\Delta u\). <span class="why">The velocity changes across the layer.</span></p>
-<p>2. In a short time \(\Delta t\) the top edge moves \(\Delta u\,\Delta t\) further than the bottom edge, so the vertical sides tilt. <span class="why">Relative displacement = relative speed × time.</span></p>
-<p>3. The tilt angle is \(\Delta\theta\approx\tan\Delta\theta=\Delta u\,\Delta t/\Delta y\). <span class="why">For small angles (in radians) \(\tan\theta\approx\theta\).</span></p>
-<p>4. Divide by \(\Delta t\): \(\Delta\theta/\Delta t=\Delta u/\Delta y\). <span class="why">The rate at which the right angle closes equals the velocity gradient.</span></p>
+<p>1. Take a small rectangle of fluid of height \(\Delta y\). Its bottom edge moves at \(u\), its top edge at \(u+\Delta u\). <span class="calcwhy">The velocity changes across the layer.</span></p>
+<p>2. In a short time \(\Delta t\) the top edge moves \(\Delta u\,\Delta t\) further than the bottom edge, so the vertical sides tilt. <span class="calcwhy">Relative displacement = relative speed × time.</span></p>
+<p>3. The tilt angle is \(\Delta\theta\approx\tan\Delta\theta=\Delta u\,\Delta t/\Delta y\). <span class="calcwhy">For small angles (in radians) \(\tan\theta\approx\theta\).</span></p>
+<p>4. Divide by \(\Delta t\): \(\Delta\theta/\Delta t=\Delta u/\Delta y\). <span class="calcwhy">The rate at which the right angle closes equals the velocity gradient.</span></p>
 <p>5. In the limit of a very thin layer this is the derivative \(\mathrm du/\mathrm dy\); textbooks write Newton's law of viscosity as \(\tau=\mu\,\mathrm du/\mathrm dy\).</p>
 </div></details>
+<details class="idea"><summary>What is this? (non-Newtonian fluids)</summary><div><p>For water or honey the stickiness is fixed: shear it twice as fast and it pushes back twice as hard. Some fluids change their stickiness as you shear them. Ketchup gets runnier when you shake it; cornflour paste goes stiff when you punch it; toothpaste will not move at all until you squeeze hard enough.</p></div></details>
 <div class="box def"><span class="tag">Definition · Newtonian and non-Newtonian fluids (slide 7)</span>
 <p>A <b>Newtonian fluid</b> has shear stress directly proportional to rate of strain (straight line through the origin on a \(\tau\)–rate graph). Water, air, petrol, most oils and glycerin are Newtonian.</p>
 <p>A <b>non-Newtonian fluid</b> has shear stress that varies with rate of strain in a <b>non-linear</b> way. The handout still writes \(\tau=\mu\,\Delta\theta/\Delta t\), but now the "viscosity" depends on the rate of strain:</p>
@@ -347,10 +402,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <ol class="steps">
 <li>Velocity gradient: \(\Delta u/\Delta y=0.4/0.002=200\u{s^{-1}}\).</li>
 <li>Shear stress: \(\tau=\mu\,\Delta u/\Delta y=0.25(200)=50\u{Pa}\).</li>
-<li>Horizontal balance on the plate: \(F=\tau A=50(0.5)=\boxed{25\u{N}}\).</li>
+<li>Horizontal balance on the plate: \(F=\tau A=50(0.5)=\boxed{25\u{N}}\). <span class="why">The plate moves at a steady speed, so your pull must exactly cancel the oil's drag on its whole underside.</span></li>
 <li>Power = force × speed \(=25(0.4)=\boxed{10\u{W}}\), all turned into heat in the oil.</li>
 </ol></div>
 <h3>Units of viscosity and kinematic viscosity</h3>
+<details class="idea"><summary>What is this? (kinematic viscosity)</summary><div><p>Dynamic viscosity \(\mu\) says how sticky a fluid is. Kinematic viscosity \(\nu\) divides that stickiness by the density, so it says how sticky the fluid is for its weight. A light fluid has little mass to slow down, so the same stickiness smooths out its motion more quickly. That is why air, far less sticky than water, has the larger kinematic viscosity.</p></div></details>
 <p>From \(\tau=\mu\,\Delta u/\Delta y\), \(\mu=\tau\div(\Delta u/\Delta y)\), so its unit is Pa ÷ (1/s) = <b>Pa·s</b>. Viscosity and \(\nu=\mu/\rho\) are first met in H1 (Theme 2). Section C asks you to convert between their many units:</p>
 <div class="box thm"><span class="tag">Result · kinematic viscosity</span>
 \[\nu=\frac{\mu}{\rho}\qquad\Longleftrightarrow\qquad\mu=\rho\,\nu\]
@@ -365,10 +421,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>To test whether a unit can be a viscosity, reduce it to kg, m and s: it must come out as kg/(m·s). For example N·m/s = (kg·m/s²)·m/s = kg·m²/s³, which is a <b>power</b> (watt), not a viscosity.</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Convert \(\nu\) given in mm²/s by multiplying by \(10^{-6}\) (1 mm² = 10⁻⁶ m²), not \(10^{-3}\). And go from \(\nu\) to \(\mu\) by <b>multiplying</b> by \(\rho\), never dividing by SG.</p></div>
+<p class="cannow"><b>You can now:</b> state Newton's law of viscosity and read a \(\tau\)–rate-of-strain graph; tell Newtonian, shear-thinning, shear-thickening and Bingham fluids apart, with an example of each; find the shear stress and drag force on a plate over a thin film; convert between Pa·s, cP, m²/s and cSt.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Classifying flows; steady and unsteady flow (slides 8–9)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Classifying flows; steady and unsteady flow (slides 8–9)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Stand on a bridge and watch one spot of a river. If the water there moves the same way every time you visit, the flow is steady, even though it is different water each time and even though the water near the bank is slower than in the middle. After a storm the river rises and surges, and the same spot looks different from one minute to the next: the flow is unsteady. Steady and unsteady are only one of six ways to sort a flow; each way asks one simple question about it.</p></div></details>
 <p>Real flows are complicated, so engineers first sort a flow into types; each type allows certain simplifications. Slide 8 lists six pairs, and each pair is one yes/no question about the flow:</p>
 <div class="scroll"><table class="tbl">
 <tr><th>Pair (slide 8)</th><th>The question</th><th>Section</th></tr>
@@ -380,6 +438,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <tr><td>one-, two-, three-dimensional</td><td>How many velocity <b>components</b> (and directions of variation) matter?</td><td>10</td></tr>
 </table></div>
 <p>The pairs are independent: one flow can be, for example, steady, non-uniform, turbulent, viscous and incompressible all at once (water in a tapering garden-hose nozzle). Exam answers should name the property each word is about.</p>
+<p><b>How to classify a flow</b> (exam type F1.1), one question per pair:</p>
+<ol class="steps proc">
+<li><b>Do:</b> Fix one point and ask whether its readings change with time: steady or unsteady. <span class="why">This is visiting the same spot of the river on different days.</span></li>
+<li><b>Do:</b> Freeze one instant and compare different points: uniform or non-uniform. <span class="why">This is one photograph of the whole river: is every part flowing the same way at the same speed?</span></li>
+<li><b>Do:</b> Ask whether the layers slide smoothly or mix: laminar or turbulent (decide with \(\mathrm{Re}\), Section 9). <span class="why">Smooth sheets like pouring honey, or churning like a tap at full blast.</span></li>
+<li><b>Do:</b> Ask whether viscosity matters where you are looking: viscous or inviscid. <span class="why">Friction only matters where neighbouring layers move at very different speeds, which happens next to walls.</span></li>
+<li><b>Do:</b> Ask whether the density changes: liquids (except sudden stops such as water hammer) and gases with \(M\lt 0.3\) are incompressible. <span class="why">A fluid is squeezed only when it is pushed hard or fast compared with how quickly pressure travels through it.</span></li>
+<li><b>Do:</b> Count the velocity components that matter: one-, two- or three-dimensional. <span class="why">Each component you can drop makes the model simpler to solve by hand.</span></li>
+</ol>
 <div class="box def"><span class="tag">Definition · steady and unsteady flow (slide 9)</span>
 <p><b>Steady flow:</b> the flow properties (velocity, pressure, density) <b>at a given point do not change with time</b>.</p>
 <p><b>Unsteady flow:</b> the flow properties at a given point <b>change with time</b>.</p></div>
@@ -398,10 +465,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </ul></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Turbulent flow is strictly unsteady: the velocity at a point flickers all the time (Section 8). Engineers still call a turbulent pipe flow "steady" when its <b>time-averaged</b> values do not change. In a definition question, say "at a fixed point" and "with time"; do not confuse steady (time) with uniform (position).</p></div>
+<p class="cannow"><b>You can now:</b> list the six pairs of slide 8 and the question behind each; define steady and unsteady flow using "at a fixed point" and "with time"; classify everyday flows as steady or unsteady.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Uniform and non-uniform flow (slide 10)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Uniform and non-uniform flow (slide 10)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Now take one photograph of the whole river at a single instant. In a straight canal of constant width the water moves at the same speed in the same direction all along it: uniform flow. Where the river squeezes through a narrow gorge, the water there runs faster than upstream and bends with the banks: non-uniform flow. Steady asks about time at one spot; uniform asks about place at one instant.</p></div></details>
 <div class="box def"><span class="tag">Definition · uniform and non-uniform flow (slide 10)</span>
 <p><b>Uniform flow:</b> the flow velocity has the <b>same magnitude and direction at every point</b> in the flow; the flow conditions do <b>not change with position</b>.</p>
 <p><b>Non-uniform flow:</b> at a given instant, the velocity is <b>not the same at every point</b>.</p></div>
@@ -415,10 +484,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </table></div></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Strictly, real fluid flowing in a pipe is never perfectly uniform: it is zero at the wall (no slip, Section 5). "Uniform" in pipe problems means the <b>mean</b> velocity is the same along the pipe, which is the one-dimensional picture of Section 10.</p></div>
+<p class="cannow"><b>You can now:</b> define uniform and non-uniform flow; give an example of each of the four steady/unsteady and uniform/non-uniform combinations; explain why "uniform" in a pipe refers to the mean velocity.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Viscous and inviscid flow (slides 11–12)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Viscous and inviscid flow (slides 11–12)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Think of wind blowing over a field. High up, the air sweeps along freely; right at the ground it is held still, and only a thin layer of air near the grass feels the drag. Around a wing this thin layer is the boundary layer, and outside it the air flows as if it had no viscosity at all: inviscid flow. Inside a pipe the walls surround the fluid on every side, so the slowed layers fill the pipe and viscosity matters everywhere: viscous flow.</p></div></details>
 <div class="box def"><span class="tag">Definition · inviscid and viscous flow (slide 11)</span>
 <p>An <b>inviscid flow</b> is one in which viscous effects do <b>not significantly influence</b> the flow, so they are neglected. If the shear stresses are small and act over such small areas that they do not noticeably change the flow field, the flow can be treated as inviscid.</p>
 <p>In a <b>viscous flow</b> the effects of viscosity are <b>important</b> and cannot be ignored.</p></div>
@@ -431,16 +502,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-bl"></div>
 <h3>Internal flows are viscous (slide 12)</h3>
 <p><b>Viscous flows</b> include the broad class of <b>internal flows</b>, where the fluid is enclosed by walls: flows in pipes, hydraulic machines, conduits (closed ducts) and open channels (rivers, canals). In such flows viscous effects cause large <b>"losses"</b> (mechanical energy turned into heat by friction), which is why huge amounts of energy must be spent pumping oil and gas along pipelines. The losses come from the <b>no-slip condition</b> and the shear stresses it creates.</p>
+<details class="idea"><summary>What is this? (no-slip)</summary><div><p>Fluid touching a solid sticks to it. That is why a car's bonnet is still dusty after a motorway drive: the air right at the surface moves with the car, so it never blows the dust off. Moving away from the surface, the fluid speed has to climb from zero, and that climb is where the friction comes from.</p></div></details>
 <div class="box def"><span class="tag">Definition · no-slip condition (slide 12)</span>
 <p>A real (viscous) fluid in contact with a solid surface moves <b>with</b> the surface: at a stationary wall its velocity is <b>zero</b>. The velocity therefore has to rise from zero at the wall to its larger value away from it, and this velocity gradient produces shear stresses \(\tau=\mu\,\Delta u/\Delta y\).</p></div>
 <p>Slide 12's figure, "Viscous internal flow: (a) in a pipe; (b) between two parallel plates", shows the velocity profiles: arrows that are zero at the walls and longest in the middle, forming a rounded (parabolic) profile \(u(r)\) across the pipe radius \(r\), and \(u(y)\) across the gap between plates.</p>
 <div id="fig-profiles"></div>
 <div class="beyond box"><span class="tag">Beyond the handouts · the laminar pipe profile</span>
 <p>For laminar flow in a round pipe of radius \(R\) the profile is exactly a parabola, \(u=u_\text{max}(1-r^2/R^2)\), and the mean velocity is half the centre-line velocity: \(\bar V=u_\text{max}/2\). This is why the Reynolds number uses the section-<b>mean</b> velocity \(\bar V=Q/A\), not the maximum. A turbulent profile is much flatter in the middle and steeper at the wall.</p></div>
+<p class="cannow"><b>You can now:</b> define viscous and inviscid flow; explain why external flows are inviscid outside a thin boundary layer while internal flows are viscous; state the no-slip condition and sketch the velocity profile in a pipe and between plates.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Compressible and incompressible flow; the Mach number (slides 13–15)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Compressible and incompressible flow; the Mach number (slides 13–15)</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Put your finger over the end of a syringe full of air and push the plunger: the air squashes easily. Do the same with water and the plunger barely moves. That is compressibility. A flowing gas is only squashed if it is pushed faster than it can get out of the way. Pressure changes travel through the gas at the speed of sound, so when the flow is slow compared with sound, the gas ahead feels the push coming and moves aside, and its density hardly changes.</p></div></details>
 <div class="box def"><span class="tag">Definition · compressible and incompressible flow (slide 13)</span>
 <p>A flow is <b>incompressible</b> if the density of every bit of fluid stays (practically) constant. It is <b>compressible</b> if the density changes noticeably because of pressure changes in the flow.</p></div>
 <p>The points of slide 13:</p>
@@ -456,6 +530,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>The textbook (Joukowsky) estimate is \(\Delta p=\rho c\,\Delta V\), with \(c\approx1480\u{m/s}\) for water. Stopping water flowing at 2 m/s instantly: \(\Delta p=1000(1480)(2)\approx2.96\u{MPa}\), the pressure at the bottom of a 300 m column of water. This is why long pipelines close their valves slowly.</p></div>
 <p>Slide 14 is a still from a video (link on the slide). <span class="muted">The video is not part of the handout; it illustrates compressible versus incompressible flow.</span></p>
 <h3>Low-speed gas flows and the Mach number (slide 15)</h3>
+<details class="idea"><summary>What is this? (Mach number)</summary><div><p>The Mach number compares the flow's speed with the speed at which pressure changes travel through it, the speed of sound. At \(M=0.1\) the push travels ten times faster than the flow, so the gas has plenty of warning and simply flows aside. Near \(M=1\) there is no warning, and the gas piles up and is squeezed.</p></div></details>
+
 <p>Low-speed gas flows, such as ordinary winds in the atmosphere, are also treated as incompressible. The test uses the Mach number.</p>
 <div class="box thm"><span class="tag">Definition · Mach number (slide 15)</span>
 \[M=\frac{V}{c}\]
@@ -475,7 +551,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box eg"><span class="tag">Examples · written for these notes · compressible or not?</span>
 <ol class="steps">
 <li>A car at 30 m/s in air at 15 °C: \(M=30/340.3=0.088\lt 0.3\): incompressible.</li>
-<li>An airliner cruising at 250 m/s at high altitude where the air is −50 °C (223.15 K): \(c=\sqrt{1.4(287)(223.15)}=299.5\u{m/s}\), so \(M=250/299.5=0.835\gt 0.3\): compressible.</li>
+<li>An airliner cruising at 250 m/s at high altitude where the air is −50 °C (223.15 K): \(c=\sqrt{1.4(287)(223.15)}=299.5\u{m/s}\), so \(M=250/299.5=0.835\gt 0.3\): compressible. <span class="why">Cold air carries sound more slowly, so the speed of sound must be worked out at the cruising temperature, not at 15 °C.</span></li>
 <li>Water at 20 m/s in a pipe: \(M\approx20/1480=0.014\): incompressible (unless the flow is stopped suddenly: water hammer).</li>
 </ol></div>
 <div class="figure" id="fig-mach"><p class="ttl">Try it · Mach number and density change</p>
@@ -486,10 +562,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </div>
 <div class="readout" id="out-mach"></div>
 <p class="cap">Curve: percentage drop in density of moving air compared with the same air at rest, \(1-(1+0.2M^2)^{-2.5}\) (textbook isentropic formula, beyond the handout). The shaded band is \(M\lt 0.3\), where the handout treats the flow as incompressible. Cold air has a lower speed of sound, so the same speed gives a higher \(M\).</p></div>
+<p class="cannow"><b>You can now:</b> explain why all fluids are compressible yet liquids are usually treated as incompressible; explain water hammer; compute \(M=V/c\) and use \(M\lt 0.3\) (air below about 100 m/s) to decide whether a gas flow is incompressible.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Why does a rocket nozzle first narrow and then expand? (slide 16)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Why does a rocket nozzle first narrow and then expand? (slide 16)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Squeeze the end of a garden hose and the water speeds up: less room, the same flow, so faster water. Gas slower than sound behaves the same way, so a rocket nozzle first narrows to speed the gas up. But once the gas is faster than sound, every gain in speed makes it expand so much that it needs more room, not less. So beyond the narrowest point the nozzle must widen to let the gas keep accelerating.</p></div></details>
 <p>Slide 16 shows a rocket nozzle: a <b>converging section</b> (getting narrower), a narrowest point called the <b>throat</b>, and a <b>diverging section</b> (getting wider), coloured green to red from top to bottom. Arrows show the gas flowing down through it. Beside it, three curves are plotted against position along the nozzle (position runs downwards):</p>
 <ul class="list">
 <li>the area ratio \(A/A^*\) (area ÷ throat area): falls to 1 at the throat, then rises;</li>
@@ -505,26 +583,36 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box thm"><span class="tag">Result · area–velocity relation (slide 16)</span>
 \[\frac{\mathrm dA}{A}=(M^2-1)\frac{\mathrm dV}{V}\]
 <p class="word"><b>In words:</b> the fractional change in area = \((M^2-1)\) × the fractional change in velocity. Below the speed of sound (\(M\lt 1\)) the bracket is negative, so to speed the gas up (\(\mathrm dV\gt 0\)) the area must <b>shrink</b>. Above it (\(M\gt 1\)) the bracket is positive, so to keep speeding up the area must <b>grow</b>. At \(M=1\) the bracket is zero: that can only happen where \(\mathrm dA=0\), at the throat.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\mathrm dA/A\)</dt><dd>the fractional change in nozzle area as you move along it: negative where it narrows, positive where it widens.</dd>
+<dt>\(\mathrm dV/V\)</dt><dd>the fractional change in gas speed: positive all the way down a rocket nozzle.</dd>
+<dt>\(M^2-1\)</dt><dd>the switch: negative below the speed of sound (the garden-hose rule, narrow to speed up), positive above it (widen to speed up).</dd>
+<dt>\(M=1\)</dt><dd>the switch is at zero, so the area must stop changing there: the throat.</dd>
+</dl></div>
 <p>That is the answer to the slide's question: the gas leaves the combustion chamber slowly (subsonic), so the nozzle first <b>narrows</b> to accelerate it up to the speed of sound at the throat; after that it must <b>widen</b> to accelerate it further to supersonic exhaust speeds, which gives more thrust. (This converging–diverging shape is called a de Laval nozzle.) For \(M\) near 0 the relation becomes \(\mathrm dA/A=-\mathrm dV/V\), the incompressible rule.</p>
 <details class="calc"><summary>where \(\mathrm dA/A=(M^2-1)\,\mathrm dV/V\) comes from (beyond the handout)</summary><div>
-<p>1. Mass conservation: \(\rho AV=\) constant. Take logs and differentiate: \(\dfrac{\mathrm d\rho}{\rho}+\dfrac{\mathrm dA}{A}+\dfrac{\mathrm dV}{V}=0\). <span class="why">\(\ln\rho+\ln A+\ln V=\) constant.</span></p>
-<p>2. Momentum along the flow, friction neglected (Euler's equation): \(\mathrm dp=-\rho V\,\mathrm dV\). <span class="why">A pressure drop pushes the gas faster (the idea behind Bernoulli, F3).</span></p>
-<p>3. Speed of sound: \(\mathrm dp=c^2\,\mathrm d\rho\). <span class="why">This is the definition of \(c\) for a small, fast (isentropic) disturbance.</span></p>
-<p>4. Combine 2 and 3: \(\dfrac{\mathrm d\rho}{\rho}=-\dfrac{V\,\mathrm dV}{c^2}=-M^2\dfrac{\mathrm dV}{V}\). <span class="why">\(V^2/c^2=M^2\).</span></p>
+<p>1. Mass conservation: \(\rho AV=\) constant. Take logs and differentiate: \(\dfrac{\mathrm d\rho}{\rho}+\dfrac{\mathrm dA}{A}+\dfrac{\mathrm dV}{V}=0\). <span class="calcwhy">\(\ln\rho+\ln A+\ln V=\) constant.</span></p>
+<p>2. Momentum along the flow, friction neglected (Euler's equation): \(\mathrm dp=-\rho V\,\mathrm dV\). <span class="calcwhy">A pressure drop pushes the gas faster (the idea behind Bernoulli, F3).</span></p>
+<p>3. Speed of sound: \(\mathrm dp=c^2\,\mathrm d\rho\). <span class="calcwhy">This is the definition of \(c\) for a small, fast (isentropic) disturbance.</span></p>
+<p>4. Combine 2 and 3: \(\dfrac{\mathrm d\rho}{\rho}=-\dfrac{V\,\mathrm dV}{c^2}=-M^2\dfrac{\mathrm dV}{V}\). <span class="calcwhy">\(V^2/c^2=M^2\).</span></p>
 <p>5. Put into 1: \(\dfrac{\mathrm dA}{A}=-\dfrac{\mathrm d\rho}{\rho}-\dfrac{\mathrm dV}{V}=(M^2-1)\dfrac{\mathrm dV}{V}\).</p>
 <p>Numbers: at \(M=0.5\), \(\mathrm dA/A=-0.75\,\mathrm dV/V\) (a 1% speed-up needs 0.75% less area); at \(M=2\), \(\mathrm dA/A=+3\,\mathrm dV/V\) (a 1% speed-up needs 3% more area).</p>
 </div></details>
 <div class="beyond box"><span class="tag">Beyond the handouts · scope</span>
 <p>Slide 16 is a motivating example for "compressibility matters". No past MECH1350/ENGG1350 paper has asked for compressible-nozzle calculations; know the qualitative story above and the meaning of the relation.</p></div>
+<p class="cannow"><b>You can now:</b> explain why a rocket nozzle converges and then diverges; read the sign of \(M^2-1\) in the area–velocity relation; say where in the nozzle \(M=1\).</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Laminar and turbulent flow; Reynolds's experiment (slides 17–19)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Laminar and turbulent flow; Reynolds's experiment (slides 17–19)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Pour honey from a spoon: it falls in a smooth, glassy ribbon, every layer sliding neatly beside the next. That is laminar flow. Now open a tap at full blast: the stream turns rough, white and noisy, with water swirling from one side of the stream to the other. That is turbulent flow. The same water can do both: a gently opened tap gives a glassy stream too.</p></div></details>
 <div class="box def"><span class="tag">Definition · laminar and turbulent flow (slide 17)</span>
 <p><b>Laminar flow:</b> all fluid layers move <b>parallel</b> to each other and do <b>not cross</b> one another ("lamina" = a thin sheet).</p>
 <p><b>Turbulent flow:</b> fluid layers <b>cross</b> each other and do not move parallel; the fluid mixes in irregular swirls called <b>eddies</b>.</p></div>
 <p>Slide 17 draws two pipes. In the "Laminar Flow" pipe, straight parallel arrows run the length of the pipe. In the "Turbulent Flow" pipe, the inside is filled with tangled loops and curls. The photo below them is a still from a video (link on the slide) of a tap stream; <span class="muted">the standard demonstration: a gently opened tap gives a clear, glassy, smooth stream (laminar); opened wide, the stream becomes rough, cloudy and noisy (turbulent), the two streams of slide 3.</span></p>
 <h3>Reynolds's dye experiment (slide 18)</h3>
+<details class="idea"><summary>What is this? (the dye experiment)</summary><div><p>Reynolds made the difference visible with a thin thread of dye in a glass pipe. In smooth flow the thread stays a straight line, because no water crosses from one layer to another. Once the flow turns turbulent, the swirls tear the thread apart and the whole pipe turns coloured, like a drop of ink stirred into a glass of water.</p></div></details>
+
 <p>In 1883 Osborne Reynolds ran water from a tank through a glass pipe with a <b>smooth, well-rounded entrance</b> (so the entrance itself does not stir the water) and injected a thin streak of <b>dye</b> into the middle of the flow through a fine tube. The flow rate \(Q=VA\) is set by a valve. Slide 18 (a) shows the set-up: pipe of diameter \(D\), dye reservoir above, dye streak running along the pipe. Slide 18 (b) shows three dye pictures as the flow rate rises:</p>
 <div id="fig-reynolds"></div>
 <ul class="list">
@@ -555,15 +643,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box ready"><span class="tag">Ready answer · sketching laminar and turbulent flow in a water channel</span>
 <p>Laminar: a channel with straight, parallel, evenly spaced streamlines (or a straight dye line), velocity arrows growing from zero at the bed. Turbulent: the same channel with swirling eddies of different sizes, crossing paths and a dye trace that spreads out; draw a flatter velocity profile. Label both.</p>
 <div id="fig-channel"></div></div>
+<p class="cannow"><b>You can now:</b> define laminar and turbulent flow; describe Reynolds's dye experiment and sketch the three dye streaks; list the key differences between laminar and turbulent flow.</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>The Reynolds number (slide 20)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">The Reynolds number (slide 20)</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Why is honey laminar but a tap at full blast turbulent? Inside every flow there is a tug of war. The fluid's momentum (its inertia) carries any small wobble onwards and lets it grow into a swirl; viscosity smooths the wobble out. The Reynolds number is the score: inertia divided by viscosity. Honey is so sticky that viscosity wins; fast water in a wide pipe carries so much momentum that inertia wins.</p></div></details>
 <p>Whether a flow is laminar or turbulent depends not on the speed alone but on one combination of speed, size and fluid properties, the <b>Reynolds number</b>.</p>
 <div class="box thm"><span class="tag">Definition · Reynolds number (slide 20)</span>
 \[\mathrm{Re}\equiv\frac{\rho\bar Vd}{\mu}=\frac{\bar Vd}{\nu}\]
 <p>\(\rho\) = density, \(\mu\) = viscosity, \(\bar V\) = <b>section-mean</b> velocity, \(d\) = (inner) diameter of the pipe; \(\nu=\mu/\rho\).</p>
 <p class="word"><b>In words:</b> Reynolds number = density × mean velocity × pipe diameter ÷ viscosity (or mean velocity × diameter ÷ kinematic viscosity). It has no units.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\rho\)</dt><dd>a denser fluid carries more momentum, so wobbles keep going: pushes towards turbulence.</dd>
+<dt>\(\bar V\)</dt><dd>faster flow, more momentum: pushes towards turbulence (the tap at full blast).</dd>
+<dt>\(d\)</dt><dd>a wider pipe spreads the speed differences over a larger distance, so the viscous stresses that damp wobbles are weaker: pushes towards turbulence.</dd>
+<dt>\(\mu\) on the bottom</dt><dd>a stickier fluid damps wobbles harder: pushes towards laminar (the honey).</dd>
+<dt>no units</dt><dd>a pure score, so the same 2000 and 4000 limits work for any fluid in any pipe.</dd>
+</dl></div>
 <div class="box ready"><span class="tag">Result · pipe-flow regimes, found by experiment (slide 20)</span>
 \[\mathrm{Re}\ \begin{cases}\lt 2000 & \text{laminar flow}\\ 2000\text{ to }4000 & \text{transitional flow}\\ \gt 4000 & \text{turbulent flow}\end{cases}\]</div>
 <h3>What the Reynolds number means</h3>
@@ -573,16 +670,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>So the flow becomes turbulent more easily with a <b>faster</b> flow, a <b>bigger</b> pipe, a <b>denser</b> fluid, or a <b>less viscous</b> fluid. Honey in a straw is laminar; water in a water main is turbulent.</p>
 <details class="calc"><summary>checking that Re has no units</summary><div>
 <p>\(\rho\): kg/m³; \(V\): m/s; \(d\): m; \(\mu\): Pa·s = kg/(m·s).</p>
-<p>Numerator \(\rho Vd\): (kg/m³)(m/s)(m) = kg/(m·s). <span class="why">m·m/m³ = 1/m.</span></p>
-<p>Divide by \(\mu\) in kg/(m·s): the units cancel completely. <span class="why">If your Re ends up with a unit, a quantity was not in SI.</span></p>
+<p>Numerator \(\rho Vd\): (kg/m³)(m/s)(m) = kg/(m·s). <span class="calcwhy">m·m/m³ = 1/m.</span></p>
+<p>Divide by \(\mu\) in kg/(m·s): the units cancel completely. <span class="calcwhy">If your Re ends up with a unit, a quantity was not in SI.</span></p>
 </div></details>
 <div class="box ready"><span class="tag">Ready answer · Reynolds-number questions (exam type F1.3)</span>
-<ol class="steps">
-<li>Convert everything to SI: mm → m, L/min → m³/s (÷ 1000 ÷ 60), mm²/s → m²/s (× 10⁻⁶), cP → Pa·s (× 10⁻³).</li>
-<li>Find the <b>inner</b> diameter: for a tube "OD × wall", \(d=\text{OD}-2\times\text{wall}\).</li>
-<li>If a flow rate is given, mean velocity \(\bar V=Q/A\) with \(A=\pi d^2/4\).</li>
-<li>\(\mathrm{Re}=\rho\bar Vd/\mu\), or \(\bar Vd/\nu\) if \(\nu\) is given.</li>
-<li>Compare with 2000 and 4000 and state the regime in words.</li>
+<ol class="steps proc">
+<li><b>Do:</b> Convert everything to SI: mm → m, L/min → m³/s (÷ 1000 ÷ 60), mm²/s → m²/s (× 10⁻⁶), cP → Pa·s (× 10⁻³). <span class="why">Re is a pure number only if the units cancel; one unconverted mm leaves the score off by a factor of 1000.</span></li>
+<li><b>Do:</b> Find the <b>inner</b> diameter: for a tube "OD × wall", \(d=\text{OD}-2\times\text{wall}\). <span class="why">The tug of war happens in the fluid, and the fluid only fills the inside of the tube.</span></li>
+<li><b>Do:</b> If a flow rate is given, mean velocity \(\bar V=Q/A\) with \(A=\pi d^2/4\). <span class="why">Re needs the typical speed of the fluid, and \(Q/A\) spreads the flow evenly over the cross-section.</span></li>
+<li><b>Do:</b> \(\mathrm{Re}=\rho\bar Vd/\mu\), or \(\bar Vd/\nu\) if \(\nu\) is given. <span class="why">This is the score: inertia divided by viscosity.</span></li>
+<li><b>Do:</b> Compare with 2000 and 4000 and state the regime in words. <span class="why">The limits come from Reynolds-type experiments: below 2000 viscosity damps every wobble, above 4000 inertia wins.</span></li>
 </ol>
 <p>Shortcut when \(Q\) is given: \(\mathrm{Re}=\dfrac{4\rho Q}{\pi\mu d}=\dfrac{4Q}{\pi\nu d}\).</p></div>
 <div class="box eg"><span class="tag">Worked example · Dec 2023 Q3 (= Dec 2022 Q3), 5 marks</span>
@@ -596,7 +693,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>\(Q=0.2\times10^{-3}=2.0\times10^{-4}\u{m^3/s}\); \(A=\pi(0.025)^2/4=4.909\times10^{-4}\u{m^2}\).</li>
 <li>\(\bar V=Q/A=0.4074\u{m/s}\).</li>
 <li>\(\mathrm{Re}=\bar Vd/\nu\) \(=0.4074(0.025)/10^{-6}\) \(=10\,186\gt 4000\): <b>turbulent</b>.</li>
-<li>(b) Laminar needs \(\mathrm{Re}\lt 2000\): \(\bar V\lt 2000\nu/d\) \(=2000(10^{-6})/0.025\) \(=0.08\u{m/s}\), i.e. \(Q\lt 0.08A\) \(=3.93\times10^{-5}\u{m^3/s}\) \(\approx\boxed{0.039\u{L/s}}\), a thin trickle.</li>
+<li>(b) Laminar needs \(\mathrm{Re}\lt 2000\): \(\bar V\lt 2000\nu/d\) \(=2000(10^{-6})/0.025\) \(=0.08\u{m/s}\), i.e. \(Q\lt 0.08A\) \(=3.93\times10^{-5}\u{m^3/s}\) \(\approx\boxed{0.039\u{L/s}}\), a thin trickle. <span class="why">In the same pipe with the same water, Re is proportional to the speed, so set Re = 2000 and solve for the largest speed.</span></li>
 </ol>
 <p>Most everyday water flows in pipes are turbulent.</p></div>
 <h3>Reynolds's experiment with a different fluid</h3>
@@ -615,14 +712,22 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </div>
 <div class="readout" id="out-re"></div>
 <p class="cap">The dye streak is redrawn from the Reynolds number: straight below 2000, wavy between 2000 and 4000, broken into eddies above 4000. The velocity slider is logarithmic (0.001 to 20 m/s). It starts at water, 25 mm, 0.4 m/s (Re ≈ 10 000, the kitchen-tap example). Switch to glycerin: the same pipe and speed give a laminar flow.</p></div>
+<p class="cannow"><b>You can now:</b> compute \(\mathrm{Re}\) from \(\rho,\bar V,d,\mu\) or \(\nu\), including from a flow rate and an OD × wall tube, and classify the flow; explain Re as inertial over viscous forces; predict how a change of fluid or pipe moves the onset of turbulence.</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>One-, two- and three-dimensional flow (slides 21–24)</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">One-, two- and three-dimensional flow (slides 21–24)</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>In general fluid moves in all three directions at once, but often one or two of those motions are tiny and can be dropped. Think of traffic on a long straight motorway: cars mostly move along the road, a little sideways when they change lane, and never up. Knowing the speed along the road tells you nearly everything. Water in a long straight pipe is the same, and that one-dimensional model, one mean speed per cross-section, is the one Section C uses.</p></div></details>
 <p>In general a fluid flow is <b>three-dimensional</b> and depends on position and time (slide 21). The velocity at position \(\vec r=(x,y,z)\) at time \(t\) is a vector with three components:</p>
 \[\vec V=\vec V(\vec r,t)\]
 \[\vec V=u(\vec r,t)\,\mathbf i+v(\vec r,t)\,\mathbf j+w(\vec r,t)\,\mathbf k\]
 <p class="word"><b>In words:</b> the velocity is made of a part \(u\) along \(x\), a part \(v\) along \(y\) and a part \(w\) along \(z\); each part may depend on where you are and when you look. \(\mathbf i\), \(\mathbf j\), \(\mathbf k\) are unit vectors (length-1 arrows) along the \(x\), \(y\), \(z\) axes.</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\vec V\)</dt><dd>the velocity arrow of the fluid at one place and one moment.</dd>
+<dt>\(u\,\mathbf i\)</dt><dd>the part of the arrow along \(x\): on the motorway, the speed along the road.</dd>
+<dt>\(v\,\mathbf j,\ w\,\mathbf k\)</dt><dd>the parts along \(y\) and \(z\): sideways and up. Drop the ones that are tiny to get a 2-D or 1-D flow.</dd>
+<dt>\((\vec r,t)\) in each part</dt><dd>each part may change from place to place (non-uniform) and from moment to moment (unsteady).</dd>
+</dl></div>
 <p>The earlier definitions in symbols (slide 21): the flow is <b>uniform</b> if \(u, v, w\) do not depend on the position \((x,y,z)\), and <b>steady</b> if they do not depend on the time \(t\).</p>
 <h3>Two-dimensional flow (slide 22)</h3>
 <p>In many engineering applications the flow can be treated as <b>two-dimensional</b>: one velocity component (say \(w\)) is zero or much smaller than the other two, and the flow varies essentially only in two directions (\(x\) and \(y\)). The velocity reduces to</p>
@@ -640,23 +745,28 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-path"></div>
 <div class="beyond box"><span class="tag">Beyond the handouts · streamline, pathline, streakline (exam type F1.1)</span>
 <p>The handout uses "streamline" (F3) and draws a "particle path" (slide 23) without defining them. May 2019 Q1 asked for both.</p>
+<details class="idea"><summary>What is this? (streamline)</summary><div><p>Streamlines are the lanes of traffic in a flow. Each lane follows the direction the fluid is heading at that instant, and fluid never changes lane, so none crosses a streamline. Each lane carries a fixed amount of fluid, so where the lanes are squeezed closer together, that fluid must move faster to get through. Lanes are drawn at one instant; a pathline is instead the route one particular car actually drove.</p></div></details>
+
 <ul class="list">
 <li><b>Pathline</b>: the actual path traced out by one fluid particle over a period of time (slide 23's "particle path"). A long-exposure photo of one floating light.</li>
 <li><b>Streamline</b>: a line drawn in the flow at one instant that is everywhere <b>tangent to the velocity</b>. No fluid crosses a streamline; closely spaced streamlines mean fast flow.</li>
 <li><b>Streakline</b>: the line formed at one instant by all the particles that have passed through one fixed point, such as the dye line in Reynolds's experiment or smoke from a chimney.</li>
 </ul>
 <p>In <b>steady</b> flow the three coincide. In unsteady flow they differ.</p></div>
+<p class="cannow"><b>You can now:</b> write the velocity as \(u\mathbf i+v\mathbf j+w\mathbf k\) and state uniform and steady in those terms; say when a flow can be treated as two- or one-dimensional; define pathline, streamline and streakline.</p>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Flow visualisation, the textbook and practice (slides 25–27)</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Flow visualisation, the textbook and practice (slides 25–27)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Air and water are mostly invisible, so their motion has to be made visible. Flow visualisation is like scattering leaves on a river to watch the current: you add something you can see, such as dye, smoke, tufts or tiny particles, and it traces out the lanes, the swirls and the slow layers near walls.</p></div></details>
 <p>Slide 25, "Flow Visualization", is a still from a video (link on the slide). <span class="muted">Flow visualisation means making an invisible flow visible: dye in water (as in Reynolds's experiment), smoke in a wind tunnel, small tufts of wool taped to a car, or tiny particles lit by a laser sheet. The patterns show streamlines and streaklines, boundary layers, laminar and turbulent regions and where the flow separates from a body.</span></p>
 <p>Slide 26 gives the <b>recommended textbook</b>: R. L. Mott and J. A. Untener, <i>Applied Fluid Mechanics</i>, 7th edition (Global Edition), Pearson, ISBN 9781292073125. A hard copy is on 1-day reserve in the HKU Main Library, and an online copy (limited users at a time, limited page downloads per day) is available through HKU Libraries' ebook service.</p>
 <p>Slide 27 is titled "Practice" but has no content in the handout; there are no class exercises, so this note has no group-work section. The concept checks and the exam taster below take its place.</p>
+<p class="cannow"><b>You can now:</b> name the common ways of making a flow visible and say what the patterns reveal; find the recommended textbook.</p>
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Summary</h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Summary</span></h2>
 <div class="scroll"><table>
 <tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
 <tr><td>Newtonian fluid</td><td>\(\tau=\mu\,\Delta u/\Delta y\), \(\mu\) constant</td><td>shear stress ∝ rate of strain</td></tr>
@@ -674,7 +784,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Common mistakes</h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Common mistakes</span></h2>
 <div class="mistake">
 <span class="x">✗</span><span>Using the outer diameter of a tube in \(A\) and \(\mathrm{Re}\).</span>
 <span class="ok">✓</span><span>\(d=\text{OD}-2\times\text{wall}\): the fluid fills only the inside.</span>
@@ -696,7 +806,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="s14"><h2><span class="n">14</span>Find the mistake</h2>
+<section id="s14"><h2><span class="n">14</span><span class="h2t">Find the mistake</span></h2>
 <div class="q"><p class="qh">1 · A student's Dec 2023 Q4</p>
 <p>"Copper tube 32 mm OD × 2.0 mm wall, 285 L/min, \(\nu=4.11\times10^{-7}\u{m^2/s}\). \(A=\pi(0.032)^2/4\), \(V=0.00475/A=5.91\u{m/s}\), \(\mathrm{Re}=5.91(0.032)/4.11\times10^{-7}\) \(=4.6\times10^{5}\): turbulent."</p>
 <details><summary>Hint</summary><div><p>Which diameter does the water actually fill?</p></div></details>
@@ -712,7 +822,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 15 ============ -->
-<section id="s15"><h2><span class="n">15</span>Concept checks</h2>
+<section id="s15"><h2><span class="n">15</span><span class="h2t">Concept checks</span></h2>
 <p class="muted">Written for these notes.</p>
 <div class="q"><p class="qh">1 · Classify the flow</p><p>A large tank empties through a short tapered nozzle at its base. Is the flow in the nozzle steady or unsteady? Uniform or non-uniform?</p>
 <details><summary>Answer</summary><div><p><b>Unsteady</b>: the water level falls, so the outflow speed at a fixed point in the nozzle decreases with time. <b>Non-uniform</b>: the nozzle narrows, so the velocity changes from place to place. (If the tank is kept topped up, the flow becomes steady but stays non-uniform.)</p></div></details></div>
@@ -730,7 +840,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 16 ============ -->
-<section id="s16"><h2><span class="n">16</span>Exam taster</h2>
+<section id="s16"><h2><span class="n">16</span><span class="h2t">Exam taster</span></h2>
 <p>Real past-paper parts (ENGG1350, the predecessor of MECH1350; same Section C structure), about one per question type in this chapter. Full methods, every other sitting, and more practice: <a href="guide-F1.html">Exam guide · F1</a>.</p>
 
 <div class="q"><div class="src"><b>May 2025 Q4</b><span>4 marks</span><a class="guide" href="guide-F1.html#F1-3">F1.3 Reynolds number: compute &amp; classify</a></div>
@@ -1157,6 +1267,15 @@ reg(function(){const svg=svgIn('fig-path',400,230,'particle path in three dimens
   [A,B].forEach(p=>E('circle',{cx:p[0],cy:p[1],r:6,style:'fill:var(--c2);stroke:var(--card);stroke-width:1.5'},g));
   T(g,A[0]-6,A[1]-18,'A at time t',{fs:12,a:'end'});T(g,B[0]+10,B[1]+16,'A at t + δt',{fs:12,a:'start'});
   T(g,108,128,'r_A(t)',{fs:12});T(g,262,112,'r_A(t + δt)',{fs:12});});
+
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 
 </script>
 </body></html>

@@ -168,6 +168,7 @@ details.calc{border-left:3px solid var(--accent)}
 details.calc>summary{color:var(--accent);font-weight:500}
 details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 details.calc .why{color:var(--muted);font-size:.9rem}
+details.calc .calcwhy{color:var(--muted);font-size:.9rem}
 table.tbl td,table.tbl th{padding:6px 8px}
 .circuit{width:100%;height:auto;display:block}
 .circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
@@ -197,6 +198,36 @@ details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-
 .stats b{color:var(--ink);font-family:var(--display)}
 .small{font-size:.88rem}
 
+
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
+ol.steps.proc{border-left:0}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -234,13 +265,29 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-F3.html">Exam guide · F3</a><a href="note-F2.html">← F2</a><a href="note-F4.html">Next: F4 →</a></nav>
   <span class="course">MECH1350 · Fluid dynamics · chapter 3</span>
   <h1>The Bernoulli equation</h1>
-  <p class="lede">How pressure trades against speed and height in a moving fluid, and how tanks, jets, Venturi meters and Pitot tubes follow from it. Every slide and all thirteen handout examples, explained from scratch.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
-<p>F2 gave <b>continuity</b>, \(Q=A_1V_1=A_2V_2\): how <b>speed</b> changes with area. This chapter adds how <b>pressure</b> changes with speed and height; together they solve almost every Section C calculation. F4 then adds forces (momentum) and losses.</p>
-<p><b>In the exam:</b> the biggest fluid-dynamics chapter, examined in all 11 past sittings: a 10–16 mark tank-and-jet, Venturi or Pitot question plus 3–5 mark "explain this everyday effect" parts. See the <a href="guide-F3.html">F3 exam guide</a>.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this chapter sits</span></h2>
+<p>F2 gave <b>continuity</b>, \(Q=A_1V_1=A_2V_2\): how <b>speed</b> changes with area. This chapter adds how <b>pressure</b> changes with speed and height. Picture each kilogram of flowing water carrying a fixed energy budget, split between three shares: pressure, speed and height. Along a streamline, with no friction and no pump, energy moves between the shares but the total never changes. F4 then adds forces (momentum) and losses.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>Fast fluid has low pressure, so a body is pushed towards the fast side.</b> Paper, ping-pong balls, a wing.</li>
+<li><a href="#s2">§2</a> <b>Bernoulli: pressure + speed share + height share is constant along a streamline.</b> Five assumptions say when it holds.</li>
+<li><a href="#s3">§3</a> <b>The work done by pressure becomes kinetic plus potential energy.</b> That is the derivation.</li>
+<li><a href="#s4">§4</a> <b>Heads are the same budget counted per newton, so every share is a height in metres.</b></li>
+<li><a href="#s5">§5</a> <b>Every everyday effect is one recipe:</b> where is it fast, so where is the pressure low, so which way is the push.</li>
+<li><a href="#s6">§6</a> <b>A jet leaves a tank as fast as a stone dropped from the surface to the hole.</b> <span class="pill">Most common exam type</span></li>
+<li><a href="#s7">§7</a> <b>A Venturi meter squeezes the flow; the pressure dip at the throat measures the flow rate.</b></li>
+<li><a href="#s8">§8</a> Examples 1–2: contractions with gauges and with a manometer.</li>
+<li><a href="#s9">§9</a> <b>Stopping a fluid turns its speed share into pressure;</b> a Pitot tube reads that to give the speed.</li>
+<li><a href="#s10">§10</a> Examples 3–4: in a Pitot reading only the excess column matters.</li>
+<li><a href="#s11">§11</a> Examples 5–6: manometers across an expansion and a riser.</li>
+<li><a href="#s12">§12</a> Examples 7, 8, 10: constant-level tank, water-jet cutter, oil layer on water. <span class="pill">Most common exam type</span></li>
+<li><a href="#s13">§13</a> Examples 9, 11: wind tunnel and inverted manometer.</li>
+<li><a href="#s14">§14</a> Examples 12–13: a spreading sheet leaves through circumference × thickness.</li>
+</ol></div>
+<p><b>You need:</b> continuity from F2, the manometer rule from H2, and work, kinetic and potential energy from HKDSE Physics. <b>In the exam:</b> the biggest fluid-dynamics chapter, examined in all 11 past sittings: a 10–16 mark tank-and-jet, Venturi or Pitot question plus 3–5 mark "explain this everyday effect" parts; with continuity it solves almost every Section C calculation. See the <a href="guide-F3.html">F3 exam guide</a>.</p>
 <p class="muted small">Source: lecture "Bernoulli equation" (Dr Yan Wei), 49 slides; slide numbers = printed numbers = PDF pages. Examples 6 and 9 are in US units; the note keeps them and gives SI equivalents.</p>
 
 <div class="box conv"><span class="tag">Sign and unit conventions for this chapter</span>
@@ -271,7 +318,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Fun observations: fast air, low pressure (slides 2–6)</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Fun observations: fast air, low pressure (slides 2–6)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture every kilogram of air or water carrying a fixed energy budget, split between three shares: pressure, speed and height. If nothing adds energy and nothing leaks away, the total stays the same as the fluid moves along. So when the fluid speeds up at the same height, the extra speed is paid for out of the pressure share. That is why fast air has low pressure, and why the slower air nearby, at higher pressure, pushes things towards the fast stream.</p></div></details>
 <p>The lecture opens with experiments you can do with your own breath. They all show one surprising fact, which the rest of the chapter turns into an equation:</p>
 <div class="box thm"><span class="tag">Key idea · Bernoulli's principle in words</span>
 <p class="word"><b>In words:</b> where a fluid moves <b>faster</b>, its pressure is <b>lower</b>; where it moves slower, its pressure is higher. A body with fast-moving fluid on one side and slow or still fluid on the other is pushed <b>towards the fast side</b>.</p></div>
@@ -286,22 +334,33 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-balls"></div>
 <p class="muted">Left: ball held in an upward jet; a sideways drift is pushed back by the higher outside pressure. Right: two hanging balls pushed together when air is blown between them.</p>
 <h3>How does a plane wing work? (slide 6)</h3>
+<details class="idea"><summary>What is this? (wing lift)</summary><div><p>A wing is shaped and tilted so that it bends the oncoming air downwards as it passes. The air sweeping over the curved top is sped up, so its pressure share drops; the air underneath is slowed a little, so its pressure rises. The two streams do not have to meet again at the back edge: in fact the air over the top gets there first. The pressure difference over the wing area is the lift.</p></div></details>
 <p>Slide 6 is a photo of an airliner with a link to a short MIT video. The wing is shaped and tilted so that air flows <b>faster over the top</b> than under the bottom; by the same principle, the pressure on top is lower, and the net upward pressure force is the <b>lift</b> that holds the plane up. Section 5 returns to this with slide 15's diagram.</p>
 <p class="flag">slides 4 and 6 refer to videos (YouTube and MIT); the descriptions here are of the standard versions of these demonstrations.</p>
 <div class="beyond box"><span class="tag">Beyond the handouts · a caution about these explanations</span>
 <p>Bernoulli's equation strictly compares points on the <b>same streamline</b> (Section 2), while the blown stream and the still air below a sheet are different streams. Physicists add that the stream also <b>curves</b> around the paper or wing, and a curved stream needs lower pressure on the inside of the bend. Both pictures agree on the answer (fast, curving flow has low pressure). In the exam, give the handout's explanation: <b>fast flow → low pressure → net force towards the fast side</b>.</p></div>
+<p class="cannow"><b>You can now:</b> explain the paper-lift, two-sheet and floating-ball demonstrations with "fast flow, low pressure, push towards the fast side"; say how a wing gets lift from faster, lower-pressure air over its top; give the handout's explanation in the exam even though the full physics has more to it.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>The Bernoulli equation and when it is valid (slides 7–9)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">The Bernoulli equation and when it is valid (slides 7–9)</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Bernoulli's equation is the energy budget written out for each cubic metre of moving fluid: a pressure share, a speed share and a height share. Follow the fluid along one streamline and energy can move from one share to another, but the sum stays fixed. Speed up and the pressure must fall; climb and the pressure must fall too.</p></div></details>
+<details class="idea"><summary>What is this? (streamline)</summary><div><p>A streamline is like one lane of a motorway: the fluid in it keeps to its lane. The budget is kept lane by lane, which is why Bernoulli only compares two points on the same streamline.</p></div></details>
 <div class="box def"><span class="tag">Definition · streamline</span>
 <p>A <b>streamline</b> is a line drawn in a flow that is everywhere in the direction of the flow (tangent to the velocity). In <b>steady</b> flow (nothing changes with time) it is also the path that a fluid particle follows. Picture the trail of a tiny drop of dye released into the stream.</p></div>
 <div class="box thm"><span class="tag">Result · the Bernoulli equation (slide 8)</span>
 \[\begin{aligned}&p+\tfrac12\rho V^2+\rho gh=\text{constant}\\&\text{(along a streamline)}\end{aligned}\]
 <p>\(p\): static pressure (the fluid pressure); \(\tfrac12\rho V^2\): <b>dynamic pressure</b> (from the speed \(V\)); \(\rho gh\): <b>hydrostatic pressure</b> (from the height \(h\); \(g\) is the gravitational acceleration).</p>
 <p class="word"><b>In words:</b> static pressure + dynamic pressure + hydrostatic pressure stays the same as you follow the fluid along a streamline. If the fluid speeds up, or rises, its pressure must drop to compensate.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(p\)</dt><dd>the pressure share: the work the surrounding fluid can do pushing each cubic metre along.</dd>
+<dt>\(\tfrac12\rho V^2\)</dt><dd>the speed share: the kinetic energy of each cubic metre.</dd>
+<dt>\(\rho gh\)</dt><dd>the height share: the potential energy of each cubic metre above the datum.</dd>
+<dt>\(=\text{constant}\)</dt><dd>the total budget: the same at every point of one streamline, though each streamline may have its own value.</dd>
+</dl></div>
 <p>Each term is an <b>energy per unit volume</b> (J/m³ = N/m² = Pa): \(\tfrac12\rho V^2\) is kinetic energy per m³, \(\rho gh\) is potential energy per m³, and \(p\) is the work the pressure does per m³ pushing fluid along (Section 3). So Bernoulli is <b>conservation of mechanical energy for a flowing fluid</b>. The equation is named after Daniel Bernoulli (1700–1782), shown on slide 8.</p>
 <p>Slide 7 calls it "an approximate relation between pressure, velocity, and elevation", valid in regions of <b>steady, incompressible flow where net frictional forces are negligible</b>. Despite its simplicity it is one of the most powerful tools in fluid mechanics.</p>
+<details class="idea"><summary>What is this? (the five assumptions)</summary><div><p>Each assumption protects the budget. Friction would leak energy away as heat; a pump or fan would add some; heating or cooling would change it; in a changing flow the budget at a point is not settled; and another streamline may start with a different budget. Constant density keeps the pressure share simple. If any assumption fails, the books no longer balance.</p></div></details>
 <div class="box def"><span class="tag">Definitions · the five assumptions (slide 9)</span>
 <ol class="steps">
 <li><b>Steady flow</b>: at any fixed point, speed and pressure do not change with time.</li>
@@ -319,10 +378,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box ready"><span class="tag">Ready answer · when does Bernoulli NOT apply? (exam type F3.1)</span>
 <p>Check each assumption: <b>unsteady</b> flow (a valve opening, a gust); <b>viscous</b> regions (boundary layers, wakes, long pipes with friction losses, flow through a filter); <b>compressible</b> flow (gas at high speed, say above about 100 m/s); a <b>pump, fan or turbine</b> between the points, or heating; points on <b>different streamlines</b> in a flow that is not uniform. Example (May 2022 Q4, multiple choice): which of "air flow of red wine in a decanter", "lift of an aerofoil", "blood flow in our eyes" and "pulling felt in a subway tunnel" is <i>not</i> a Bernoulli flow? Aerofoil lift (slide 15) and the pull towards a passing train are textbook Bernoulli effects; for the other two, run through the five assumptions (is the flow slow and dominated by friction in tiny vessels? is it a swirling, unsteady pour?).</p>
 <p class="flag">the intended answer to May 2022 Q4 is not certain from the handout (slide 17 uses blood flow in arteries as a Bernoulli example, but the vessels of the eye are tiny and friction-dominated); the exam guide records the decision.</p></div>
+<p class="cannow"><b>You can now:</b> write Bernoulli's equation and name its three terms; state the five assumptions; say where it fails (boundary layers, wakes, pumps and fans, unsteady or fast gas flow) for a "when does Bernoulli not apply" question.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Deriving Bernoulli from work and energy (slides 10–12)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Deriving Bernoulli from work and energy (slides 10–12)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The derivation is bookkeeping for the budget. Follow a slug of fluid along a pipe. The fluid behind pushes it forward, so pressure pays energy in; the fluid ahead pushes back, so pressure takes some out. With no friction, the net payment must show up as extra speed or extra height of the slug. Write that down, divide by the volume, and Bernoulli's equation appears.</p></div></details>
 <p>The handout derives the equation with the <b>work–energy theorem</b> from HKDSE Physics: <b>net work done on a body = change in its mechanical energy</b>. The "body" is a slug of fluid moving along a pipe that rises and changes area.</p>
 <div id="fig-deriv"></div>
 <p class="muted">Slides 10–11 redrawn. The fluid between the two green slices moves right. In a short time the left end moves \(x_1\) (cross-section \(A_1\), pressure \(P_1\), speed \(v_1\), height \(h_1\)) and the right end moves \(x_2\) (\(A_2\), \(P_2\), \(v_2\), \(h_2\)). Net effect: a small mass \(m\) has been moved from the low end to the high end.</p>
@@ -341,14 +402,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\begin{aligned}\Delta E&=E_2-E_1=(U_2+K_2)-(U_1+K_1)\\&=\big(mgh_2+\tfrac12mv_2^2\big)\\&\quad-\big(mgh_1+\tfrac12mv_1^2\big)\qquad(5)\end{aligned}\]
 <h3>Putting them together (slide 12)</h3>
 <details class="calc"><summary>from work–energy to Bernoulli, step by step</summary><div>
-<p>1. Work–energy theorem: \(\Delta W=\Delta E\) (Eq. 6). <span class="why">No friction, so all the work by pressure goes into kinetic plus potential energy.</span></p>
+<p>1. Work–energy theorem: \(\Delta W=\Delta E\) (Eq. 6). <span class="calcwhy">No friction, so all the work by pressure goes into kinetic plus potential energy.</span></p>
 <p>2. Substitute (4) and (5) (Eq. 7):</p>
 \[\begin{aligned}(P_1-P_2)V&=\big(mgh_2+\tfrac12mv_2^2\big)\\&\quad-\big(mgh_1+\tfrac12mv_1^2\big)\end{aligned}\]
-<p>3. Divide by the volume \(V\), using \(\rho=m/V\) (Eq. 8, 9): <span class="why">mass ÷ volume = density</span></p>
+<p>3. Divide by the volume \(V\), using \(\rho=m/V\) (Eq. 8, 9): <span class="calcwhy">mass ÷ volume = density</span></p>
 \[\begin{aligned}P_1-P_2&=\big(\rho gh_2+\tfrac12\rho v_2^2\big)\\&\quad-\big(\rho gh_1+\tfrac12\rho v_1^2\big)\end{aligned}\]
 <p>4. Put the point-1 terms on one side and the point-2 terms on the other (Eq. 10):</p>
 \[\begin{aligned}&P_1+\rho gh_1+\tfrac12\rho v_1^2\\&=P_2+\rho gh_2+\tfrac12\rho v_2^2\end{aligned}\]
-<p>5. Points 1 and 2 were any two points along the flow, so the combination is the same everywhere along it (Eq. 11):</p>
+<p>5. Points 1 and 2 were any two points along the flow, so the combination is the same everywhere along it (Eq. 11): <span class="why">If every pair of points has the same total, there is one fixed budget for the whole streamline.</span></p>
 \[P+\rho gh+\tfrac12\rho v^2=\text{constant}\]
 </div></details>
 <div class="box thm"><span class="tag">Result · Bernoulli between two points (slide 12, Eq. 10)</span>
@@ -356,10 +417,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p class="word"><b>In words:</b> (pressure + potential energy per volume + kinetic energy per volume) at point 1 = the same total at point 2, for two points on one streamline of a steady, frictionless, incompressible flow.</p></div>
 <div class="beyond box"><span class="tag">Beyond the handouts · the analogy</span>
 <p>Think of a skateboarder on a ramp: going down she gains speed (kinetic energy) by losing height (potential energy), and the total stays the same if there is no friction. A fluid has a third "energy account", <b>pressure</b>. It can trade between all three: speed up by losing pressure (a nozzle), rise by losing pressure (water pushed up a pipe), or speed up by falling (a jet from a tank).</p></div>
+<p class="cannow"><b>You can now:</b> derive Bernoulli from the work–energy theorem: net work by pressure \((P_1-P_2)V\), change in kinetic plus potential energy, then divide by the volume; explain why the volume swept at each end is the same.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Heads: the equation per unit weight (slides 13–14)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Heads: the equation per unit weight (slides 13–14)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Heads are the same energy budget, counted per newton of fluid instead of per cubic metre. Energy per newton comes out in metres, so each share becomes a height. The pressure share is how high the pressure could push the fluid up a tube; the speed share is how high the fluid would fly if thrown straight up; the height share is just its height. The total head is the whole budget as one height.</p></div></details>
 <p>Slide 13 says that "if we further assume the flow is incompressible, we may integrate Euler's equation" to get the same result in a second form.</p>
 <div class="beyond box"><span class="tag">Beyond the handouts · Euler's equation</span>
 <p><b>Euler's equation</b> is Newton's second law (\(F=ma\)) applied to a tiny fluid particle moving along a streamline, with only pressure and gravity acting (no friction). Integrating it along the streamline with \(\rho\) constant gives exactly Bernoulli's equation. It is the same result as Section 3, reached through forces instead of work.</p></div>
@@ -369,6 +432,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\frac{p_1}{\rho g}+z_1+\frac{V_1^2}{2g}=\frac{p_2}{\rho g}+z_2+\frac{V_2^2}{2g}\]
 <p>\(p/(\rho g)\): <b>pressure head</b>; \(z\): <b>elevation</b> (potential) <b>head</b>; \(V^2/(2g)\): <b>velocity head</b>. All in metres.</p>
 <p class="word"><b>In words:</b> pressure head + elevation head + velocity head is the same at any two points on the same streamline. This is the form printed on recent papers, \(z+P/(\rho g)+U^2/(2g)=\text{constant}\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\dfrac{p}{\rho g}\)</dt><dd>pressure head: how high the pressure share could push the fluid up a tube.</dd>
+<dt>\(z\)</dt><dd>elevation head: the height share, measured from your datum.</dd>
+<dt>\(\dfrac{V^2}{2g}\)</dt><dd>velocity head: the speed share, as the height a jet at that speed would climb.</dd>
+<dt>\(=\text{constant}\)</dt><dd>total head: the whole budget as one height. For ideal flow it is a level line, the energy line.</dd>
+</dl></div>
+<details class="idea"><summary>What is this? (piezometric and total head)</summary><div><p>Two kinds of tube read the budget. A plain tube on the pipe wall (a piezometer) sees only the pressure and height shares. A tube turned to face the flow stops the fluid at its mouth, so it also catches the speed share and shows the whole budget. The gap between the two levels is the speed share.</p></div></details>
 <div class="box def"><span class="tag">Definitions · heads (slides 13–14)</span>
 <ul class="list">
 <li>A <b>head</b> is an <b>energy per unit weight</b> of fluid (J/N = m), so it has the <b>dimension of length</b> [L]. It is the height of a column of the flowing fluid that would hold that much energy.</li>
@@ -389,17 +459,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Piezometric head \(=20.39+5=25.39\u{m}\); total head \(=\boxed{25.85\u{m}}\). The velocity head is small: a piezometer would show 25.39 m, a Pitot tube 25.85 m.</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Heads use the density of the <b>flowing</b> fluid. For air (\(\rho\approx1.2\)), 100 Pa is a pressure head of \(100/(1.2\times9.81)=8.5\u{m}\) of air. In gas problems the elevation terms are tiny compared with the others and are usually dropped (Example 2).</p></div>
+<p class="cannow"><b>You can now:</b> convert a pressure into a pressure head and a speed into a velocity head; define energy head and give its dimension [L]; say what a piezometer and a Pitot tube read and what the gap between their levels means.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Everyday applications (slides 15–18)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Everyday applications (slides 15–18)</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Every everyday Bernoulli effect is the same story. Something makes the fluid fast in one place: a narrow gap, a blown stream, a spinning surface. At the same height, the extra speed is paid for out of the pressure share, so the pressure there is low. The slower fluid on the other side, at higher pressure, pushes the body towards the fast side.</p></div></details>
 <p>Each slide below follows the same two-step logic, which is also the marking scheme for "explain" questions:</p>
 <div class="box ready"><span class="tag">Ready answer · explaining an everyday effect (exam type F3.2)</span>
-<ol class="steps">
-<li><b>Where is the fluid fast?</b> Use continuity: a smaller gap or area means a higher speed (\(A_1V_1=A_2V_2\)); or the fluid is blown, or moves relative to the body.</li>
-<li><b>Bernoulli:</b> along a streamline (same height), higher speed means lower pressure, \(p+\tfrac12\rho V^2=\text{constant}\).</li>
-<li><b>Force:</b> the higher-pressure side pushes the body towards the lower-pressure side; state the motion that results.</li>
-<li>Draw a sketch with streamlines (closer together = faster), mark "low p" and "high p", and the force arrow.</li>
+<ol class="steps proc">
+<li><b>Do:</b> <b>Where is the fluid fast?</b> Use continuity: a smaller gap or area means a higher speed (\(A_1V_1=A_2V_2\)); or the fluid is blown, or moves relative to the body. <span class="why">You must find where the budget has moved into speed before you can say where the pressure is low.</span></li>
+<li><b>Do:</b> <b>Bernoulli:</b> along a streamline (same height), higher speed means lower pressure, \(p+\tfrac12\rho V^2=\text{constant}\). <span class="why">At the same height, a bigger speed share leaves a smaller pressure share.</span></li>
+<li><b>Do:</b> <b>Force:</b> the higher-pressure side pushes the body towards the lower-pressure side; state the motion that results. <span class="why">The question is always about what the body does, and the net pressure force points from high pressure to low.</span></li>
+<li><b>Do:</b> Draw a sketch with streamlines (closer together = faster), mark "low p" and "high p", and the force arrow. <span class="why">Crowded streamlines show the fast flow at a glance, and a labelled sketch can earn a mark (May 2025 Q3).</span></li>
 </ol></div>
 <div id="fig-apps"></div>
 <p class="muted">Slides 15–18 redrawn: wing (streamlines crowd over the top), spinning baseball, a constricted artery in the neck, and a burrow (or chimney) with wind blowing across its higher opening.</p>
@@ -417,10 +489,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p><b>Thumb over a garden hose.</b> The tap delivers roughly the same flow rate \(Q\). Covering part of the end reduces the exit area \(A\), so by continuity the exit speed \(V=Q/A\) rises; Bernoulli says the pressure in the hose is converted into this extra speed at the exit. A faster jet travels further before gravity brings it down (range grows with speed, like a projectile).</p>
 <p><b>Two boats side by side.</b> Water between two boats moving in parallel is squeezed through a narrow channel, so it flows faster <b>relative to the boats</b> than the water on their outer sides (continuity). Faster water means lower pressure between the hulls (Bernoulli). The higher pressure on the outer sides pushes the boats <b>towards each other</b>, so they risk colliding. (The same effect pulls you towards a passing train or a subway train in a tunnel.)</p>
 <p><b>Bladeless fan.</b> A fan in the base pushes air up into a hollow ring, which blows it out of a thin slit at high speed. The fast jet has low pressure, so it pulls (<b>entrains</b>) the surrounding still air through the ring and around it; the moving air leaving the front is many times the air the motor pumps. The guide gives a full answer with a sketch.</p></div>
+<p class="cannow"><b>You can now:</b> explain any everyday Bernoulli effect (wing, curving ball, narrowed artery, chimney, hose, two boats, bladeless fan) in the where-fast, low-pressure, force form; write a full-mark answer to the windy-chimney question.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Torricelli's theorem: jets from tanks (slide 19)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Torricelli's theorem: jets from tanks (slide 19)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>At the free surface of a big tank the water is almost still and open to the air, so its whole budget sits in the height share. At the hole it is open to the air again but lower down, so the height it lost has become speed. That is why the jet moves as fast as a stone dropped from the surface to the hole. Point the jet upwards and the speed turns back into height: it climbs back towards the surface level.</p></div></details>
 <p>A large open tank has a small tap (spigot) near its bottom. How fast does the water come out? Take point 2 on the <b>free surface</b> (height \(y_2\)) and point 1 in the <b>jet</b> just outside the tap (height \(y_1\)), on the same streamline.</p>
 <div class="pair">
 <div><div id="fig-torr"></div><p class="sub">Slide 19: open tank, water surface at \(y_2\), jet leaves the tap at \(y_1\).</p></div>
@@ -449,7 +523,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <details class="calc"><summary>a neat formula for the range</summary><div>
 <p>Depth of hole below surface \(\Delta y\), height of hole above floor \(y_1\). Speed \(v=\sqrt{2g\,\Delta y}\); fall time \(t=\sqrt{2y_1/g}\).</p>
 \[\begin{aligned}\text{range}&=vt=\sqrt{2g\,\Delta y}\sqrt{\frac{2y_1}{g}}\\&=2\sqrt{\Delta y\,y_1}\end{aligned}\]
-<p><span class="why">\(g\) cancels.</span> For a fixed total water depth \(\Delta y+y_1\), the product \(\Delta y\,y_1\) is largest when the two are equal: a hole at <b>half</b> the water depth throws furthest. With 3 m of water, a hole at 1.5 m throws \(2\sqrt{1.5\times1.5}=3.0\u{m}\).</p>
+<p><span class="calcwhy">\(g\) cancels.</span> For a fixed total water depth \(\Delta y+y_1\), the product \(\Delta y\,y_1\) is largest when the two are equal: a hole at <b>half</b> the water depth throws furthest. With 3 m of water, a hole at 1.5 m throws \(2\sqrt{1.5\times1.5}=3.0\u{m}\).</p>
 <p>Check with the numbers above: \(2\sqrt{2\times1}=2.83\u{m}\) ✓.</p></div></details></div>
 <div class="figure" id="fig-torrsim"><p class="ttl">Try it · a jet from a hole in a tank</p>
 <canvas class="plot" id="cv-torr" style="height:270px"></canvas>
@@ -460,17 +534,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="readout" id="out-torr"></div>
 <p class="cap">The tank wall is at \(x=0\); the blue curve is the jet. It starts as the written example (2 m of water above a hole 1 m up). Keep the total depth fixed and move the hole: the longest throw is with the hole at half depth.</p></div>
 <div class="box ready"><span class="tag">Ready answer · tanks and free jets (exam type F3.3)</span>
-<ol class="steps">
-<li>Point 1 on the free surface: \(V_1\approx0\); \(p_1=0\) if open, or the gauge pressure of the air above it, or \(\rho_\text{oil}g\,h_\text{oil}\) if a layer of oil sits on top (Example 10).</li>
-<li>Point 2 in the free jet: \(p_2=0\). Bernoulli gives the jet speed; a vertical jet rises \(V^2/(2g)\).</li>
-<li>Continuity for any pipe speed: \(V_\text{pipe}=V_\text{jet}A_\text{jet}/A_\text{pipe}\); \(Q=AV\).</li>
-<li>Bernoulli again from a point in the pipe to the jet (or from the surface to the pipe) for the pipe pressure.</li>
-<li>"Level stays constant" means \(Q_\text{in}=Q_\text{out}\) (Example 7).</li>
+<ol class="steps proc">
+<li><b>Do:</b> Point 1 on the free surface: \(V_1\approx0\); \(p_1=0\) if open, or the gauge pressure of the air above it, or \(\rho_\text{oil}g\,h_\text{oil}\) if a layer of oil sits on top (Example 10). <span class="why">A large surface hardly moves, so its budget is known: its height plus any pressure sitting on top.</span></li>
+<li><b>Do:</b> Point 2 in the free jet: \(p_2=0\). Bernoulli gives the jet speed; a vertical jet rises \(V^2/(2g)\). <span class="why">The jet is surrounded by air, so its pressure share is zero and what is left is speed and height.</span></li>
+<li><b>Do:</b> Continuity for any pipe speed: \(V_\text{pipe}=V_\text{jet}A_\text{jet}/A_\text{pipe}\); \(Q=AV\). <span class="why">Bernoulli gives one speed; continuity carries the same flow rate to every other section.</span></li>
+<li><b>Do:</b> Bernoulli again from a point in the pipe to the jet (or from the surface to the pipe) for the pipe pressure. <span class="why">The pipe lies on the same streamline, so it has the same budget; its pressure share is whatever its speed and height leave over.</span></li>
+<li><b>Do:</b> "Level stays constant" means \(Q_\text{in}=Q_\text{out}\) (Example 7). <span class="why">A steady level means water in balances water out, and that is what links two Bernoulli problems (May 2025 Q5).</span></li>
 </ol></div>
+<p class="cannow"><b>You can now:</b> find a jet speed from a tank with Torricelli; find how high a vertical jet rises; find where a horizontal jet lands; set up surface-to-jet and pipe-to-jet Bernoulli with continuity for a tank question.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Flow meters: Venturi, nozzle and orifice (slides 20–23)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Flow meters: Venturi, nozzle and orifice (slides 20–23)</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A Venturi meter is a deliberate squeeze in the pipe. The same flow must pass through the narrow throat, so it goes faster there (continuity). The extra speed share is paid for out of the pressure share, so the pressure at the throat dips. The bigger the flow, the bigger the dip, so measuring the dip measures the flow rate. The gentle widening after the throat slows the water again and gives most of the pressure back.</p></div></details>
 <p>Slide 20: many problems on one-dimensional flow of an ideal fluid are solved by <b>using Bernoulli's equation and the continuity equation together</b>. The most useful are flow meters.</p>
 <div class="box def"><span class="tag">Definitions · three meters for measuring discharge in a pipe (slides 20–21)</span>
 <ul class="list">
@@ -486,8 +562,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\begin{aligned}&p_1+\tfrac12\rho V_1^2=p_2+\tfrac12\rho V_2^2\\&\text{(Bernoulli, } z_1=z_2)\end{aligned}\]
 \[Q=A_1V_1=A_2V_2\qquad\text{(continuity, }A_2\lt A_1)\]
 <details class="calc"><summary>combining the two into the flow-rate formula</summary><div>
-<p>1. Continuity: \(V_1=V_2A_2/A_1\). <span class="why">Same \(Q\) through both sections.</span></p>
-<p>2. Bernoulli rearranged: \(p_1-p_2=\tfrac12\rho(V_2^2-V_1^2)\). <span class="why">The pressure drop pays for the extra kinetic energy.</span></p>
+<p>1. Continuity: \(V_1=V_2A_2/A_1\). <span class="calcwhy">Same \(Q\) through both sections.</span></p>
+<p>2. Bernoulli rearranged: \(p_1-p_2=\tfrac12\rho(V_2^2-V_1^2)\). <span class="calcwhy">The pressure drop pays for the extra kinetic energy.</span></p>
 <p>3. Substitute step 1:</p>
 \[p_1-p_2=\tfrac12\rho V_2^2\big[1-(A_2/A_1)^2\big]\]
 <p>4. Solve for \(V_2\) and multiply by \(A_2\):</p>
@@ -496,6 +572,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box thm"><span class="tag">Result · theoretical (ideal) flow rate (slide 23)</span>
 \[Q=A_2\sqrt{\frac{2(p_1-p_2)}{\rho\,[1-(A_2/A_1)^2]}}\]
 <p class="word"><b>In words:</b> flow rate = throat area × the speed that the measured pressure drop can produce, corrected for the fluid already moving at the inlet. For a given meter (\(A_1\), \(A_2\) fixed), measure \(p_1-p_2\) and you know \(Q\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(A_2\)</dt><dd>the throat area: flow rate = throat speed × throat area.</dd>
+<dt>\(p_1-p_2\)</dt><dd>the pressure dip: the pressure share spent on extra speed between inlet and throat.</dd>
+<dt>\(\rho\)</dt><dd>the density of the flowing fluid: a lighter fluid gains more speed from the same dip.</dd>
+<dt>\(1-(A_2/A_1)^2\)</dt><dd>a correction for the speed share the fluid already has at the inlet; close to 1 when the throat is much narrower than the inlet.</dd>
+</dl></div>
 <p>Real fluids have friction, so the real flow is a little smaller. Slide 23 includes a <b>coefficient of discharge</b> \(C_d\):</p>
 <div class="box thm"><span class="tag">Result · actual flow rate (slide 23)</span>
 \[\begin{aligned}Q_\text{actual}&=C_dQ_\text{ideal}\\&=C_dA_2\sqrt{\frac{2(p_1-p_2)}{\rho\,[1-(A_2/A_1)^2]}}\end{aligned}\]
@@ -510,7 +592,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box eg"><span class="tag">Example · written for these notes</span>
 <p>A horizontal Venturi meter (inlet 100 mm, throat 50 mm) carries water. A mercury (SG 13.6) U-tube between inlet and throat reads \(H=200\u{mm}\); \(C_d=0.98\). Find the discharge.</p>
 <ol class="steps">
-<li>Pressure difference: \[\begin{aligned}p_1-p_2&=(\rho_m-\rho)gH\\&=12\,600(9.81)(0.2)=24.7\u{kPa}\end{aligned}\]</li>
+<li>Pressure difference: \[\begin{aligned}p_1-p_2&=(\rho_m-\rho)gH\\&=12\,600(9.81)(0.2)=24.7\u{kPa}\end{aligned}\] <span class="why">The limbs above the mercury are full of water too, so only the extra density of the mercury counts.</span></li>
 <li>Area ratio \(A_2/A_1=(50/100)^2=0.25\), so \(1-(A_2/A_1)^2=0.9375\).</li>
 </ol>
 \[V_2=\sqrt{\frac{2(24\,721)}{1000(0.9375)}}=7.26\u{m/s}\]
@@ -526,23 +608,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="beyond box"><span class="tag">Beyond the handouts · advantages and limitations of a Venturi meter (May 2024 Q1(b)(c), exam type F3.5)</span>
 <p><b>Key advantage:</b> the <b>gentle diffuser</b> lets the flow slow down smoothly and recover most of its pressure, so the <b>permanent pressure loss is small</b> (much smaller than an orifice, whose flow leaves the hole as a jet and wastes its energy in eddies). Also: <b>no moving parts</b>, robust, accurate (\(C_d\) close to 1 and well known), suits large flows and dirty fluids (smooth walls, nothing to clog).</p>
 <p><b>Drawbacks with turbulence and separation:</b> the formula assumes steady, uniform, frictionless flow. In <b>turbulent</b> flow the velocity fluctuates and is not uniform across the section, so the readings fluctuate and friction losses grow. If the diffuser angle is too large or the flow too fast, the flow <b>separates</b> from the diffuser wall (it stops following the wall and forms a swirling, reversed-flow region): pressure is not recovered, losses rise sharply, and the pressure at the throat tap may be disturbed. Bernoulli's assumptions then fail, \(C_d\) is no longer the calibrated value, and the measured \(Q\) becomes unreliable. Other drawbacks: Venturis are long and expensive.</p></div>
+<p class="cannow"><b>You can now:</b> describe Venturi, nozzle and orifice meters; derive the ideal Venturi flow-rate formula from Bernoulli and continuity; apply \(C_d\); turn a manometer reading into a pressure difference; give the Venturi's main advantage and its drawbacks with turbulence and separation.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Examples 1–2: Venturi with gauges and with a manometer (slides 24–28)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Examples 1–2: Venturi with gauges and with a manometer (slides 24–28)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Both examples are the Venturi budget swap again. In Example 1 the water falls 10 m with no change in pressure, so the height it gives up all becomes extra speed. In Example 2 the air speeds up through a reducer at the same height, so the speed is paid for out of pressure; the water manometer only measures that pressure drop.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 1 · slide 24 · vertical contraction with two gauges</span>
 <p>Water (inviscid, incompressible) flows steadily <b>downward</b> in a vertical pipe whose diameter is 2 m at the upper gauge and 1 m at the lower gauge, 10 m below. Both gauges read \(p=50\u{kPa}\). Determine the flow rate.</p>
 <div id="fig-ex1"></div>
 <ol class="steps">
 <li>Points: 1 at the upper gauge (\(D_1=2\u{m}\), \(z_1=10\u{m}\)), 2 at the lower gauge (\(D_2=1\u{m}\), \(z_2=0\)). \(p_1=p_2\).</li>
-<li>Bernoulli in heads; the pressure heads cancel:</li>
+<li>Bernoulli in heads; the pressure heads cancel: <span class="why">Equal gauge readings mean the pressure share is the same at both points, so only height and speed trade.</span></li>
 </ol>
 \[\begin{aligned}&z_1+\frac{V_1^2}{2g}=z_2+\frac{V_2^2}{2g}\\&\Rightarrow\ V_2^2-V_1^2=2g(10)\end{aligned}\]
 <ol class="steps" start="3">
 <li>Continuity: \(V_1=V_2(D_2/D_1)^2=V_2/4\).</li>
 </ol>
 <details class="calc"><summary>solving for \(V_2\) and \(Q\)</summary><div>
-<p>\(V_2^2(1-\tfrac1{16})=196.2\) <span class="why">substitute \(V_1=V_2/4\); \(2g(10)=196.2\)</span></p>
+<p>\(V_2^2(1-\tfrac1{16})=196.2\) <span class="calcwhy">substitute \(V_1=V_2/4\); \(2g(10)=196.2\)</span></p>
 <p>\(V_2=\sqrt{196.2/0.9375}=14.47\u{m/s}\); \(V_1=3.62\u{m/s}\).</p>
 <p>\[\begin{aligned}Q&=A_2V_2=\tfrac\pi4(1)^2(14.47)\\&=11.36\u{m^3/s}\end{aligned}\]</p></div></details>
 <p>\(\boxed{Q=11.4\u{m^3/s}}\) (the handout gives only this answer).</p>
@@ -556,27 +640,29 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </ol>
 \[p_1-p_2=\frac{\rho_\text{air}(V_2^2-V_1^2)}{2}\qquad(1)\]
 <ol class="steps" start="2">
-<li>Manometer (slide 27): the water levels differ by \(h\), so \(p_1-p_2=\rho_wgh\) (2). <span class="why">Air columns weigh almost nothing; only the water column counts.</span></li>
+<li>Manometer (slide 27): the water levels differ by \(h\), so \(p_1-p_2=\rho_wgh\) (2). <span class="calcwhy">Air columns weigh almost nothing; only the water column counts.</span></li>
 <li>Combine (1) and (2):</li>
 </ol>
 \[h=\frac{\rho_\text{air}(V_2^2-V_1^2)}{2g\rho_w}=\frac{V_2^2-V_1^2}{2g\,\rho_w/\rho_\text{air}}\]
 <details class="calc"><summary>the speeds and \(h\) (slide 28)</summary><div>
-<p>\(V_1=\dfrac{0.2}{\pi(0.2)^2/4}=6.37\u{m/s}\), \(V_2=\dfrac{0.2}{\pi(0.1)^2/4}=25.5\u{m/s}\). <span class="why">200 L/s = 0.2 m³/s.</span></p>
+<p>\(V_1=\dfrac{0.2}{\pi(0.2)^2/4}=6.37\u{m/s}\), \(V_2=\dfrac{0.2}{\pi(0.1)^2/4}=25.5\u{m/s}\). <span class="calcwhy">200 L/s = 0.2 m³/s.</span></p>
 \[h=\frac{25.5^2-6.37^2}{2(9.81)(1000/1.20)}=0.037\u{m}\]
 <p>The pressure difference itself is \(\tfrac12(1.2)(25.5^2-6.37^2)\approx365\u{Pa}\), tiny compared with water pressures.</p></div></details>
 <p>\(\boxed{h=3.7\u{cm}}\) of water.</p></div>
 <div class="box ready"><span class="tag">Ready answer · contraction with gauges or a manometer (exam type F3.4)</span>
-<ol class="steps">
-<li>Write Bernoulli 1→2 in heads and <b>keep \(z\)</b> if the pipe is vertical or inclined.</li>
-<li>Continuity: \(V_1=V_2(D_2/D_1)^2\).</li>
-<li>Pressure data: two gauges give \(p_1\), \(p_2\) directly; a manometer gives \[\begin{aligned}&(p_1+\rho gz_1)-(p_2+\rho gz_2)\\&=(\rho_m-\rho)gH\end{aligned}\] (heavier manometer liquid; for an inverted air manometer \(\rho_m\approx0\), Example 11).</li>
-<li>Solve for \(V_2\); \(Q=A_2V_2\); multiply by \(C_d\) if given.</li>
+<ol class="steps proc">
+<li><b>Do:</b> Write Bernoulli 1→2 in heads and <b>keep \(z\)</b> if the pipe is vertical or inclined. <span class="why">In a sloping pipe part of the budget moves into or out of height, and gauge readings do not include it.</span></li>
+<li><b>Do:</b> Continuity: \(V_1=V_2(D_2/D_1)^2\). <span class="why">Bernoulli has two unknown speeds; continuity links them so only one is left.</span></li>
+<li><b>Do:</b> Pressure data: two gauges give \(p_1\), \(p_2\) directly; a manometer gives \[\begin{aligned}&(p_1+\rho gz_1)-(p_2+\rho gz_2)\\&=(\rho_m-\rho)gH\end{aligned}\] (heavier manometer liquid; for an inverted air manometer \(\rho_m\approx0\), Example 11). <span class="why">The manometer limbs hold flowing fluid at the two tap heights, so the reading already includes the height share: it gives the piezometric difference.</span></li>
+<li><b>Do:</b> Solve for \(V_2\); \(Q=A_2V_2\); multiply by \(C_d\) if given. <span class="why">The flow rate is the same at every section, so the throat values give it; \(C_d\) allows for the small friction loss the ideal budget ignores.</span></li>
 </ol>
 <p>Example: May 2024 Q2 (vertical pipe, upward flow, 0.4 m → 0.2 m, gauges 140 kPa and 70 kPa, section 2 1.2 m higher) gives \(Q\approx0.350\u{m^3/s}\); the figure's "1 m" would give 0.356 m³/s. The exam guide has the full solution.</p></div>
+<p class="cannow"><b>You can now:</b> solve a vertical or inclined contraction with two gauges, keeping \(z\); turn a manometer reading into a pressure difference for a gas flow; get \(Q\) from Bernoulli plus continuity.</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Stagnation point and the Pitot tube (slides 29–32)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Stagnation point and the Pitot tube (slides 29–32)</span> <span class="mins">~9 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Put a blunt object in a stream and the fluid heading straight for its nose has to stop. Stopping empties the speed share of the budget into the pressure share, so the pressure at the nose is the highest anywhere on that streamline. The rise in pressure is exactly the speed share the fluid had.</p></div></details>
 <h3>Stagnation point (slide 29)</h3>
 <p>When a uniform stream flows towards a <b>blunt body</b> (a body with a rounded or flat front, not a sharp edge), the streamlines split: some go over, some under. But the one in the centre, the <b>stagnation streamline</b>, runs straight into the tip of the body and stops. There the velocity is zero: the fluid does not move at this one point.</p>
 <div class="box def"><span class="tag">Definition · stagnation point</span>
@@ -592,18 +678,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\text{stagnation pressure}=p_1+\tfrac12\rho V_1^2\]
 \[\text{stagnation head}=\frac{p_1}{\rho g}+\frac{V_1^2}{2g}\]
 <p class="word"><b>In words:</b> bringing a moving fluid to rest turns all its kinetic energy into pressure. The rise in pressure, \(\tfrac12\rho V^2\), is the <b>dynamic pressure</b>; static pressure + dynamic pressure is the <b>stagnation pressure</b> (or <b>total pressure</b>).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(p_1\)</dt><dd>static pressure: the pressure share the moving fluid has; what a side hole or piezometer feels.</dd>
+<dt>\(\tfrac12\rho V_1^2\)</dt><dd>dynamic pressure: the speed share, turned into pressure when the fluid stops.</dd>
+<dt>\(p_1+\tfrac12\rho V_1^2\)</dt><dd>stagnation (total) pressure: the whole budget at that height, felt at the stagnation point.</dd>
+</dl></div>
 <div class="box ready"><span class="tag">Ready answer · "Briefly explain the stagnation pressure" (May 2021 Q4, 3 marks; exam type F3.1)</span>
 <p>(1) At a <b>stagnation point</b> the flow is brought to rest (\(V=0\)), for example at the nose of a body or the mouth of a Pitot tube. (2) Applying Bernoulli along the streamline (no height change), its kinetic energy is converted into pressure: \(p_0=p+\tfrac12\rho V^2\). (3) The stagnation (total) pressure is the static pressure plus the dynamic pressure \(\tfrac12\rho V^2\); it is the highest pressure on that streamline, and measuring \(p_0-p\) gives the speed \(V=\sqrt{2(p_0-p)/\rho}\).</p></div>
 <div class="box eg"><span class="tag">Example · written for these notes</span>
 <p>A car drives at 100 km/h through still air (\(\rho=1.23\u{kg/m^3}\)). How much higher than the surrounding air pressure is the pressure on the front of its bonnet (the stagnation point)?</p>
 <p>Seen from the car, air arrives at \(V=100/3.6=27.78\u{m/s}\) and stops at the front. \(\tfrac12\rho V^2=\tfrac12(1.23)(27.78)^2=\boxed{475\u{Pa}}\), about 0.5% of atmospheric pressure.</p></div>
 <h3>The Pitot tube (slides 31–32)</h3>
+<details class="idea"><summary>What is this? (Pitot tube)</summary><div><p>Hold your hand out of a car window, palm forward: the air that comes to rest against your palm pushes harder than the surrounding air pressure. A Pitot tube measures that extra push. Its mouth faces the flow and stops the fluid, so it feels the whole budget; a side hole or piezometer feels only the pressure share. The difference is the speed share, which gives the speed.</p></div></details>
 <p>The <b>Pitot tube</b> measures the velocity of flow at any point in a pipe or channel. <b>Principle</b> (slide 31): where the velocity drops to zero, the pressure rises, because kinetic energy is converted into pressure energy. In its simplest form it is a glass tube bent at a right angle, with its open end facing <b>into</b> the flow.</p>
 <div id="fig-pitot"></div>
 <p class="muted">Slides 31–32 redrawn: an open channel flowing at speed \(V\). A straight piezometer tube with its opening flush with the flow (point 1) rises to a height \(h\) above point 1: it shows the static pressure. A Pitot tube bent to face upstream has its mouth at the stagnation point 2 (\(V_2=0\)) and its water column rises to \(H\) above point 2: it shows the stagnation pressure.</p>
 <details class="calc"><summary>the Pitot formula (slide 32)</summary><div>
-<p>1. Stagnation: \(p_2=p_1+\tfrac12\rho V_1^2\). <span class="why">Section 9, points 1 and 2 at the same height.</span></p>
-<p>2. Each tube column is a hydrostatic column: \(p_1=\rho gh\), \(p_2=\rho gH\). <span class="why">The liquid in a tube is at rest; pressure = \(\rho g\) × height of liquid above the point.</span></p>
+<p>1. Stagnation: \(p_2=p_1+\tfrac12\rho V_1^2\). <span class="calcwhy">Section 9, points 1 and 2 at the same height.</span></p>
+<p>2. Each tube column is a hydrostatic column: \(p_1=\rho gh\), \(p_2=\rho gH\). <span class="calcwhy">The liquid in a tube is at rest; pressure = \(\rho g\) × height of liquid above the point.</span></p>
 <p>3. Substitute: \(\rho gH=\rho gh+\tfrac12\rho V^2\).</p>
 <p>4. Cancel \(\rho\) and solve: \(V=\sqrt{2g(H-h)}\).</p></div></details>
 <div class="box thm"><span class="tag">Result · Pitot tube with a piezometer (slide 32)</span>
@@ -622,22 +714,24 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-pstatic"></div>
 <p class="muted">Pitot-static tube in a pipe, drawn for these notes: the inner tube (nose) sees \(p_0\), the side holes see \(p\); the manometer reading \(H\) gives \(p_0-p\).</p>
 <div class="box ready"><span class="tag">Ready answer · Pitot problems (exam type F3.6)</span>
-<ol class="steps">
-<li>Find the stagnation point (tube mouth facing the flow, nose of a body, centre of a plate struck by a jet): \(V=0\) there.</li>
-<li>Bernoulli along the stagnation streamline: \(p_0-p=\tfrac12\rho V^2\) (add \(\rho g\Delta z\) if the points are at different heights).</li>
-<li>Get \(p_0-p\) from the instrument: column heights (\(\rho g(H-h)\)) or a manometer (\((\rho_m-\rho)gH\), counting <b>each</b> fluid's density separately, e.g. an oil layer).</li>
-<li>\(V=\sqrt{2(p_0-p)/\rho}\) (times \(C_v\) if given); \(Q=VA\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> Find the stagnation point (tube mouth facing the flow, nose of a body, centre of a plate struck by a jet): \(V=0\) there. <span class="why">That is where the whole speed share has been turned into pressure.</span></li>
+<li><b>Do:</b> Bernoulli along the stagnation streamline: \(p_0-p=\tfrac12\rho V^2\) (add \(\rho g\Delta z\) if the points are at different heights). <span class="why">Both points lie on the one streamline that ends at the stagnation point, so they share one budget.</span></li>
+<li><b>Do:</b> Get \(p_0-p\) from the instrument: column heights (\(\rho g(H-h)\)) or a manometer (\((\rho_m-\rho)gH\), counting <b>each</b> fluid's density separately, e.g. an oil layer). <span class="why">Each column or manometer turns a pressure into a height of its own liquid, so each liquid's density must be counted.</span></li>
+<li><b>Do:</b> \(V=\sqrt{2(p_0-p)/\rho}\) (times \(C_v\) if given); \(Q=VA\). <span class="why">The difference \(p_0-p\) is exactly the speed share, so it gives \(V\) directly.</span></li>
 </ol></div>
+<p class="cannow"><b>You can now:</b> define stagnation point, dynamic pressure and stagnation pressure; explain stagnation pressure for 3 marks; find a speed from a Pitot tube and piezometer, or from a Pitot-static tube and manometer; describe how to get a pipe's flow rate with a Pitot-static tube.</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Examples 3–4: Pitot tube and piezometer in pipes (slides 33–36)</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Examples 3–4: Pitot tube and piezometer in pipes (slides 33–36)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Both examples read the budget with two tubes. A piezometer shows the pressure and height shares; a Pitot tube facing the flow shows the whole budget. So the excess column in the Pitot tube is the speed share alone, and everything else cancels: the depth of the pipe, unknown levels, even the size of a downstream pipe.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 3 · slides 33–34 · velocity measurement by a Pitot tube</span>
 <p>A piezometer and a Pitot tube are tapped into a horizontal water pipe to measure static and stagnation (static + dynamic) pressures. The water column heights are: \(h_1=3\u{cm}\) (from the centreline up to the top of the pipe), \(h_2=7\u{cm}\) (pipe top to the level in the piezometer) and \(h_3=12\u{cm}\) (extra height of the column in the Pitot tube). Determine the velocity at the centre of the pipe.</p>
 <div id="fig-ex3"></div>
 <ol class="steps">
 <li>Point 1 on the centreline directly under the piezometer; point 2 at the tip of the Pitot tube, the stagnation point (\(V_2=0\), \(z_1=z_2\)). Steady flow, straight parallel streamlines.</li>
-<li>Gauge pressures from the columns: \(p_1=\rho g(h_1+h_2)\), \(p_2=\rho g(h_1+h_2+h_3)\). <span class="why">Each is \(\rho g\) × the height of water standing above the point.</span></li>
+<li>Gauge pressures from the columns: \(p_1=\rho g(h_1+h_2)\), \(p_2=\rho g(h_1+h_2+h_3)\). <span class="calcwhy">Each is \(\rho g\) × the height of water standing above the point.</span></li>
 <li>Bernoulli 1→2:</li>
 </ol>
 \[\frac{V_1^2}{2g}=\frac{p_2-p_1}{\rho g}=h_3\]
@@ -648,28 +742,30 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-ex4"></div>
 <ol class="steps">
 <li>Bernoulli from point 1 (centreline of the big pipe) to point 2 (tip of the Pitot tube, \(V_2=0\)), \(z_1=z_2\): \(\dfrac{p_1}{\rho g}+\dfrac{V_1^2}{2g}=\dfrac{p_2}{\rho g}\).</li>
-<li>Columns: \(p_1/(\rho g)=x\) (piezometer level above the centreline) and \(p_2/(\rho g)=0.2+x\). <span class="why">The unknown \(x\) is the same in both and cancels.</span></li>
+<li>Columns: \(p_1/(\rho g)=x\) (piezometer level above the centreline) and \(p_2/(\rho g)=0.2+x\). <span class="calcwhy">The unknown \(x\) is the same in both and cancels.</span></li>
 <li>So \(x+V_1^2/(2g)=0.2+x\), i.e. \(V_1=\sqrt{2(9.81)(0.2)}=1.98\u{m/s}\).</li>
 <li>\(Q=A_1V_1=\tfrac\pi4(0.1)^2(1.98)\).</li>
 </ol>
 <p>\(\boxed{Q=0.0156\u{m^3/s}\ \text{for any }D}\)</p>
 <p class="word"><b>Why \(D\) does not matter:</b> the Pitot tube reads the <b>total</b> head, which is the same everywhere along the streamline (no friction), wherever the tube is placed. The piezometer reads the piezometric head at section 1. Their difference is the velocity head at section 1, and section 1's area is known.</p></div>
+<p class="cannow"><b>You can now:</b> find the speed in a pipe from the excess column in a Pitot tube; explain why the reading does not depend on where the Pitot tube sits along a frictionless streamline.</p>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Examples 5–6: manometers across an expansion and a riser (slides 37–41)</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Examples 5–6: manometers across an expansion and a riser (slides 37–41)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Here the budget is read with manometers instead of open tubes. In Example 5 the pipe widens, so the water slows and gets some pressure share back. In Example 6 the tube at point 2 stops the flow, so it feels the whole budget, while the tap at point 1 feels only pressure and height. The manometer just turns the pressure difference into a level difference; walking through it from one point to the other, as in H2, gives the link.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 5 · slides 37–39 · inverted manometer with a light liquid</span>
 <p>Water flows steadily, with negligible viscous effects, through a pipe that widens from area 0.05 m² (section 1) to 0.07 m² (section 2). An inverted U-tube manometer connects the two sections; its top is filled with a liquid of density \(600\u{kg/m^3}\) (lighter than water). Determine the manometer reading \(H\) if the flowrate is \(0.5\u{m^3/s}\).</p>
 <div id="fig-ex5"></div>
 <ol class="steps">
-<li>Bernoulli, \(z_1=z_2\): \(p_2-p_1=\tfrac12\rho(V_1^2-V_2^2)\) (1). <span class="why">The pipe widens, so the flow slows and the pressure <b>rises</b>.</span></li>
+<li>Bernoulli, \(z_1=z_2\): \(p_2-p_1=\tfrac12\rho(V_1^2-V_2^2)\) (1). <span class="calcwhy">The pipe widens, so the flow slows and the pressure <b>rises</b>.</span></li>
 <li>Continuity: \(V_1=0.5/0.05=10\u{m/s}\), \(V_2=0.5/0.07=7.14\u{m/s}\).</li>
-<li>So \[\begin{aligned}p_2-p_1&=\tfrac12(999)(10^2-7.14^2)\\&=24.5\times10^3\u{N/m^2}\end{aligned}\] (2). <span class="why">The handout uses \(\rho_\text{water}=999\).</span></li>
+<li>So \[\begin{aligned}p_2-p_1&=\tfrac12(999)(10^2-7.14^2)\\&=24.5\times10^3\u{N/m^2}\end{aligned}\] (2). <span class="calcwhy">The handout uses \(\rho_\text{water}=999\).</span></li>
 </ol>
 <details class="calc"><summary>the manometer equation (slide 39)</summary><div>
 <p>Start at point 1 (centreline). Go <b>up</b> a height \(h\) through water to the water–light-liquid interface in the left limb: subtract \(\gamma_w h\). Go up \(H\) through the light liquid to the level of the right-limb interface: subtract \(\gamma_m H\). The light liquid then fills the top bend across to the right limb. Go <b>down</b> through water a height \(h+H\) to point 2: add \(\gamma_w(h+H)\).</p>
 \[p_1-\gamma_wh-\gamma_mH+\gamma_w(h+H)=p_2\]
-<p>So \[\begin{aligned}p_2-p_1&=(\gamma_w-\gamma_m)H\\&=g(\rho_w-\rho_m)H\end{aligned}\] (3). <span class="why">\(h\) cancels: only the reading \(H\) matters.</span></p>
+<p>So \[\begin{aligned}p_2-p_1&=(\gamma_w-\gamma_m)H\\&=g(\rho_w-\rho_m)H\end{aligned}\] (3). <span class="calcwhy">\(h\) cancels: only the reading \(H\) matters.</span></p>
 <p>Equate (2) and (3): \(24.5\times10^3=9.81(999-600)H\).</p></div></details>
 <p>\(\boxed{H=6.26\u{m}}\) (with \(\rho_w=1000\): 6.24 m).</p>
 <p class="word">The water stands higher on the right (at 2), because the pressure is higher there. A light manometer liquid makes \(\rho_w-\rho_m\) small, which gives a large, easily read \(H\) for a small pressure difference (here, a very large one: a mercury U-tube would read only 0.2 m).</p></div>
@@ -683,19 +779,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </ol>
 \[p_1+\gamma z_1+\tfrac12\rho V_1^2=p_2+\gamma z_2+\tfrac12\rho V_2^2\]
 \[p_1+\tfrac12(1.94)(5.09)^2=p_2+62.4(3)\]
-<p>so \(p_1-p_2=162\u{lb/ft^2}\) (1). <span class="why">US units: water \(\rho=1.94\u{slugs/ft^3}\), \(\gamma=62.4\u{lb/ft^3}\).</span></p>
+<p>so \(p_1-p_2=162\u{lb/ft^2}\) (1). <span class="calcwhy">US units: water \(\rho=1.94\u{slugs/ft^3}\), \(\gamma=62.4\u{lb/ft^3}\).</span></p>
 <details class="calc"><summary>the manometer equation (slide 41)</summary><div>
 <p>From point 1 go <b>up</b> through water to the right-limb water surface, a height \(\ell+3\u{ft}\): subtract \(\gamma(\ell+3)\). Across the air: no change. Go <b>down</b> the left limb through water a height \(h+\ell\) to point 2: add \(\gamma(h+\ell)\).</p>
 \[p_1-\gamma(\ell+3)+\gamma(h+\ell)=p_2\]
-<p>so \(p_1=p_2+187-62.4h\). <span class="why">\(62.4\times3=187\); \(\ell\) cancels.</span></p>
+<p>so \(p_1=p_2+187-62.4h\). <span class="calcwhy">\(62.4\times3=187\); \(\ell\) cancels.</span></p>
 <p>Combine with (1): \(187-62.4h=162\), \(h=25/62.4\).</p></div></details>
 <p>\(\boxed{h=0.400\u{ft}}\) (≈ 0.12 m); the left (stagnation) side stands higher.</p>
 <p class="flag">the handout rounds to 187 and 162 lb/ft² and gets 0.400 ft; unrounded, \[\begin{aligned}h&=V_1^2/(2g)=5.09^2/(2\times32.2)\\&=0.403\u{ft}\end{aligned}\]</p>
 <p class="word"><b>A shortcut:</b> the tap at 1 reads the piezometric head at 1, the tube at 2 reads the total head (the same as at 1). So \(h\) is just the velocity head at section 1, \(V_1^2/2g\), and the 3 ft rise does not matter. This is Example 4's idea again.</p></div>
+<p class="cannow"><b>You can now:</b> write the manometer equation for an inverted U-tube with a light liquid or air; combine it with Bernoulli and continuity to find a reading; spot when a reading is just the velocity head.</p>
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Tanks and jets: examples 7, 8 and 10 (slides 42, 43, 46)</h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Tanks and jets: examples 7, 8 and 10 (slides 42, 43, 46)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>All three are tank-and-jet budgets. A tank surface holds its share as height (plus any pressure from an oil layer on top), and a free jet takes it as speed. Example 7 balances inflow and outflow; Example 8 starts with a huge pressure share in almost still water and ends with it all as speed; Example 10 counts the oil layer as extra pressure on the water surface.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 7 · slide 42 · a tank kept at constant level</span>
 <p>Water flows into a large tank at \(0.011\u{m^3/s}\). It leaves through 20 holes in the bottom of the tank, each producing a stream of 10 mm diameter. Determine the equilibrium height \(h\) of water for steady operation.</p>
 <div id="fig-ex7"></div>
@@ -706,14 +804,14 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </ol>
 <details class="calc"><summary>solving for \(h\)</summary><div>
 <p>Total hole area \(=20\times\tfrac\pi4(0.01)^2=1.571\times10^{-3}\u{m^2}\).</p>
-<p>\(V_2=0.011/1.571\times10^{-3}=7.00\u{m/s}\). <span class="why">Each stream carries one twentieth of the flow.</span></p>
+<p>\(V_2=0.011/1.571\times10^{-3}=7.00\u{m/s}\). <span class="calcwhy">Each stream carries one twentieth of the flow.</span></p>
 <p>\(h=V_2^2/(2g)=49.0/19.62=2.50\u{m}\).</p></div></details>
 <p>\(\boxed{h=2.50\u{m}}\). If the level were lower, the outflow would be less than 0.011 m³/s and the tank would fill up until \(h=2.50\u{m}\); if higher, it would drain down to it.</p></div>
 <div class="box eg"><span class="tag">Worked example 8 · slide 43 · water-jet cutter</span>
 <p>Small-diameter, high-pressure liquid jets can cut materials. Neglecting viscous effects, estimate the pressure needed to produce a 0.10 mm diameter water jet with a speed of 700 m/s, and the flowrate.</p>
 <div id="fig-ex8"></div>
 <ol class="steps">
-<li>Point 1 inside the supply, where the water is almost still (\(V_1\approx0\)); point 2 in the jet (\(p_2=0\), \(V_2=700\u{m/s}\)); \(z_1\approx z_2\).</li>
+<li>Point 1 inside the supply, where the water is almost still (\(V_1\approx0\)); point 2 in the jet (\(p_2=0\), \(V_2=700\u{m/s}\)); \(z_1\approx z_2\). <span class="why">In the wide supply the budget is almost all pressure; in the jet it is all speed.</span></li>
 <li>Bernoulli: \[\begin{aligned}p_1&=\tfrac12\rho V_2^2\\&=\tfrac12(999)(700)^2\\&=2.45\times10^{8}\u{Pa}\end{aligned}\]</li>
 <li>\[\begin{aligned}Q&=V_2A_2\\&=700\times\tfrac\pi4(10^{-4})^2\\&=5.50\times10^{-6}\u{m^3/s}\end{aligned}\]</li>
 </ol>
@@ -724,7 +822,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>A large open tank contains a 4 m layer of oil (SG 0.7) floating on 2 m of water. A horizontal 0.2 m diameter pipe leaves the tank 1 m above the floor (1 m below the oil–water interface), then turns up and ends in a 0.1 m nozzle whose exit is level with the interface. The flow is steady and inviscid. Determine (a) the height \(h\) the water jet rises, (b) the water velocity in the pipe, (c) the pressure in the horizontal pipe.</p>
 <div id="fig-ex10"></div>
 <p>Datum \(z=0\) at the oil–water interface (and nozzle exit). Points: 1 on the interface inside the tank (water just below the oil, at rest); 3 at the nozzle exit; 2 at the top of the jet; 4 in the horizontal pipe (\(z_4=-1\u{m}\)).</p>
-<p><b>(a)</b> Bernoulli 1→2: \(z_1=0\), \(V_1=V_2=0\) (the jet stops at its top), \(p_2=0\), \(z_2=h\), and \(p_1\) is the weight of the oil above: \(p_1=\gamma_\text{oil}(4\u{m})\), with \(\gamma_\text{oil}=0.7(9.80)=6.86\u{kN/m^3}\).</p>
+<p><b>(a)</b> Bernoulli 1→2: \(z_1=0\), \(V_1=V_2=0\) (the jet stops at its top), \(p_2=0\), \(z_2=h\), and \(p_1\) is the weight of the oil above: \(p_1=\gamma_\text{oil}(4\u{m})\), with \(\gamma_\text{oil}=0.7(9.80)=6.86\u{kN/m^3}\). <span class="why">The oil does not flow; its weight presses on the water like an extra pressure share.</span></p>
 \[\frac{p_1}{\gamma}=z_2\ \Rightarrow\ h=\frac{4(6.86)}{9.80}=\boxed{2.80\u{m}}\]
 <p class="word">The oil acts like 2.8 m of extra water on top: \(0.7\times4=2.8\). The jet climbs back to that "equivalent water level".</p>
 <p><b>(b)</b> Jet speed at the nozzle (3): \[\begin{aligned}V_3&=\sqrt{2gh}\\&=\sqrt{2(9.81)(2.80)}=7.41\u{m/s}\end{aligned}\] Continuity, \(V_4A_4=V_3A_3\):</p>
@@ -734,10 +832,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>\(p_4=3.63(9.80)=\boxed{35.5\u{kPa}}\).</p>
 <p class="flag">the handout mixes \(\gamma_w=9.80\u{kN/m^3}\) with \(g=9.81\); 3.63 × 9.80 = 35.57, printed as 35.5 kPa. With 9.81 throughout, \(p_4=35.6\u{kPa}\). Either is accepted.</p>
 <p class="muted">May 2021 Q1 is the reverse problem: the jet speed (5 m/s) is given and the oil thickness \(H\) is found (0.394 m, with \(g=9.8\)); pipe speed 1.25 m/s, pipe pressure 31.3 kPa. Solved in the exam guide.</p></div>
+<p class="cannow"><b>You can now:</b> find the steady water level for a given inflow; find the supply pressure for a given jet speed; handle an oil layer through its pressure at the interface, and find a jet height, pipe speed and pipe pressure (Dec 2018 Q1, May 2021 Q1).</p>
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Examples 9 and 11: wind tunnel and inverted manometer (slides 44–45, 47)</h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Examples 9 and 11: wind tunnel and inverted manometer (slides 44–45, 47)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>In the wind tunnel, still outside air is drawn in and speeds up, so it pays with pressure: the test section is below atmospheric. At the car's nose the air stops again and gets that pressure back. In Example 11 a Pitot tube and a static tap are joined by an inverted U-tube holding a liquid a little lighter than water, which turns a small pressure difference into a large reading.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 9 · slides 44–45 · wind tunnel (US units)</span>
 <p>Air is drawn into a wind tunnel for testing cars by a fan at the far end. (a) Determine the manometer reading \(h\) when the velocity in the test section is 60 mph. A U-tube below the test section has one limb connected to a wall tap (point 2) and the other open to the air; there is a 1-inch column of oil (SG 0.9) on the water in the open limb. (b) Determine the difference between the stagnation pressure on the front of the car (point 3) and the pressure in the test section.</p>
 <div id="fig-ex9"></div>
@@ -765,10 +865,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[V_1=\Big[2(9.81)\Big(1-\frac{900}{999}\Big)(2.5)\Big]^{1/2}\]
 <p>\(V_1=2.20\u{m/s}\); \[\begin{aligned}Q&=A_1V_1=\tfrac\pi4(0.08)^2(2.20)\\&=\boxed{0.0111\u{m^3/s}}\end{aligned}\]</p>
 <p class="word">With \(\rho_m\) close to \(\rho\), a small pressure difference (here 2.4 kPa) gives a large, accurate reading (2.5 m).</p></div>
+<p class="cannow"><b>You can now:</b> find the suction in a wind-tunnel test section and the manometer reading with an oil layer; find the stagnation pressure rise on a body; find a flow rate from an inverted U-tube with oil.</p>
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="s14"><h2><span class="n">14</span>Examples 12–13: jets that spread into thin sheets (slides 48–49)</h2>
+<section id="s14"><h2><span class="n">14</span><span class="h2t">Examples 12–13: jets that spread into thin sheets (slides 48–49)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A jet that hits a plate or a cone spreads out into a thin sheet. The flow rate stays the same, so the sheet's speed is the flow rate divided by its exit area, and that area is a ring: circumference times thickness. Bernoulli then says how much height or pressure must be traded for that speed.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 12 · slide 48 · jet on a plate (= May 2019 Q3(a)–(c))</span>
 <p>Water flows upward from a 0.01 m diameter pipe as a free jet and strikes a horizontal circular flat plate 0.2 m above the pipe exit. It spreads radially and leaves the edge of the 0.1 m diameter plate as a sheet 0.4 mm thick. The flow is axisymmetric. A tube through the centre of the plate rises to a water level \(H\) above the plate. Determine the flowrate and the manometer reading \(H\).</p>
 <div id="fig-ex12"></div>
@@ -785,7 +887,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>\[\begin{aligned}Q&=A_2V_2\\&=\pi(0.1)(4\times10^{-4})(1.59)\\&=2.00\times10^{-4}\u{m^3/s}\end{aligned}\]</p>
 <p>For \(H\): point 0 is the stagnation point at the centre of the plate (\(V_0=0\), \(z_0=0.2\u{m}\)), on the centre streamline from point 1 (\(V_1=1.6(1.59)=2.54\u{m/s}\), \(p_1=0\)):</p>
 \[\begin{aligned}&\frac{V_1^2}{2g}=\frac{p_0}{\gamma}+z_0\\&\Rightarrow\ H=\frac{p_0}{\gamma}=\frac{V_1^2}{2g}-z_0\end{aligned}\]
-<p>\(H=\dfrac{2.54^2}{2(9.81)}-0.2=0.129\u{m}\). <span class="why">The tube shows the stagnation pressure at the plate as a water column.</span></p></div></details>
+<p>\(H=\dfrac{2.54^2}{2(9.81)}-0.2=0.129\u{m}\). <span class="calcwhy">The tube shows the stagnation pressure at the plate as a water column.</span></p></div></details>
 <p>\(\boxed{Q=2.00\times10^{-4}\u{m^3/s},\quad H=0.129\u{m}}\)</p>
 <p class="flag">unrounded \(V_1=2.537\u{m/s}\) gives \(H=0.128\u{m}\); the handout's 0.129 m uses \(V_1\) rounded to 2.54.</p>
 <p class="word">The jet slows as it rises (from 2.54 to 1.59 m/s); the stagnation pressure at the plate holds up a 12.9 cm water column. May 2019 Q3(d) adds the impact force on the plate, which needs the momentum equation (chapter F4).</p></div>
@@ -795,16 +897,17 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <ol class="steps">
 <li>Bernoulli from point 1 in the pipe to point 2 in the free jet at the cone edge: \(z_1=z_2\), \(p_2=0\).</li>
 <li>\(V_1=\dfrac{0.5}{\frac\pi4(0.23)^2}=12.0\u{m/s}\).</li>
-<li>\[\begin{aligned}V_2&=\dfrac{Q}{2\pi Rh}\\&=\dfrac{0.5}{2\pi(0.2)(0.02)}\\&=19.9\u{m/s}\end{aligned}\] <span class="why">The sheet leaves through a ring: circumference \(2\pi R\) times thickness \(h\).</span></li>
+<li>\[\begin{aligned}V_2&=\dfrac{Q}{2\pi Rh}\\&=\dfrac{0.5}{2\pi(0.2)(0.02)}\\&=19.9\u{m/s}\end{aligned}\] <span class="calcwhy">The sheet leaves through a ring: circumference \(2\pi R\) times thickness \(h\).</span></li>
 <li>\[\begin{aligned}p_1&=\tfrac12\rho(V_2^2-V_1^2)\\&=\tfrac12(1.23)(19.9^2-12.0^2)\end{aligned}\]</li>
 </ol>
 <p>\(\boxed{p_1=155\u{N/m^2}}\) (gauge).</p>
 <p class="flag">with unrounded speeds (12.03 and 19.89 m/s) the result is 154 N/m²; the handout's 155 uses the rounded speeds.</p>
 <p class="word">The air must speed up from 12 to 20 m/s to escape through the narrow ring, and only a small pipe pressure (0.15% of an atmosphere) is needed because air is so light.</p></div>
+<p class="cannow"><b>You can now:</b> find the exit area of a radial sheet; combine it with Bernoulli to get a flow rate, a stagnation reading on a plate, or a supply pressure.</p>
 </section>
 
 <!-- ============ 15 ============ -->
-<section id="s15"><h2><span class="n">15</span>Summary</h2>
+<section id="s15"><h2><span class="n">15</span><span class="h2t">Summary</span></h2>
 <div class="scroll"><table>
 <tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
 <tr><td>Bernoulli's principle</td><td>fast ⇒ low \(p\)</td><td>a body is pushed towards the side where the fluid is faster</td></tr>
@@ -823,7 +926,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 16 ============ -->
-<section id="s16"><h2><span class="n">16</span>Common mistakes</h2>
+<section id="s16"><h2><span class="n">16</span><span class="h2t">Common mistakes</span></h2>
 <div class="mistake">
 <span class="x">✗</span><span>Using absolute pressure at one point and gauge pressure at the other.</span>
 <span class="ok">✓</span><span>Use gauge throughout: free surfaces and free jets are \(p=0\).</span>
@@ -845,7 +948,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 17 ============ -->
-<section id="s17"><h2><span class="n">17</span>Find the mistake</h2>
+<section id="s17"><h2><span class="n">17</span><span class="h2t">Find the mistake</span></h2>
 <div class="q"><p class="qh">1 · A student's nozzle speed (May 2025 Q5 set-up)</p>
 <p>"The piezometer on the 4.5 cm pipe stands 1.2 m high and the nozzle exit (3 cm) is at the same height and open to the air, so \(V_\text{nozzle}=\sqrt{2g(1.2)}=4.85\u{m/s}\)."</p>
 <details><summary>Hint</summary><div><p>Is the water in the 4.5 cm pipe at rest?</p></div></details>
@@ -861,7 +964,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 18 ============ -->
-<section id="s18"><h2><span class="n">18</span>Concept checks</h2>
+<section id="s18"><h2><span class="n">18</span><span class="h2t">Concept checks</span></h2>
 <p class="muted">Written for these notes.</p>
 <div class="q"><p class="qh">1 · A fountain</p><p>A fountain must throw water 5 m straight up. What speed must the water leave the nozzle with (no losses)?</p>
 <details><summary>Answer</summary><div><p>All velocity head becomes elevation head: \(V=\sqrt{2g(5)}=9.90\u{m/s}\).</p></div></details></div>
@@ -879,7 +982,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 19 ============ -->
-<section id="s19"><h2><span class="n">19</span>Exam taster</h2>
+<section id="s19"><h2><span class="n">19</span><span class="h2t">Exam taster</span></h2>
 <p>Real past-paper parts (ENGG1350, the predecessor of MECH1350; same Section C structure), one per main question type in this chapter. Full methods, every other sitting, and more practice: <a href="guide-F3.html">Exam guide · F3</a>.</p>
 
 <div class="q"><div class="src"><b>May 2025 Q5</b><span>9 marks</span><span>same family: Dec 2023 Q2, May 2023 Q2</span><a class="guide" href="guide-F3.html#F3-3">F3.3 tanks &amp; free jets</a></div>
@@ -914,7 +1017,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <details class="calc"><summary>the proof, step by step</summary><div>
 <p>1. Same level, same fluid at rest: pressure at the left surface = pressure at the same level in the right limb.</p>
 \[\begin{aligned}&P_1+\rho gh_1\\&=P_2+\rho g(z_2+h_2)+\rho_\text{man}gH\end{aligned}\]
-<p>2. Use \(h_1=h_2+H\) <span class="why">the left surface is \(H\) below the right one</span>:</p>
+<p>2. Use \(h_1=h_2+H\) <span class="calcwhy">the left surface is \(H\) below the right one</span>:</p>
 \[P_1-(P_2+\rho gz_2)=(\rho_\text{man}-\rho)gH\]
 <p>3. Bernoulli (C1) 1→2 with \(z_1=0\):</p>
 \[\frac{P_1-(P_2+\rho gz_2)}{\rho g}=\frac{U_2^2-U_1^2}{2g}\]
@@ -1576,6 +1679,15 @@ reg(function(){const g=E('g',{transform:'translate(24,0)'},svgIn('fig-t3',470,29
   L(g,116,yl,250,yl,'stroke:var(--muted);stroke-dasharray:3 3;stroke-width:1');L(g,226,yr,250,yr,'stroke:var(--muted);stroke-dasharray:3 3;stroke-width:1');dimV(g,246,yl,yr,'1 cm');
   T(g,165,236,'water',{fs:11,col:'var(--muted)'});T(g,300,170,'to probe',{fs:11,a:'start',col:'var(--muted)'});
 });
+
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 
 </script>
 </body></html>

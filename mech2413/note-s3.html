@@ -155,6 +155,34 @@ mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflo
 nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
 
 
+
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -200,13 +228,34 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-S3.html">Exam guide · S3</a><a href="note-S2.html">← S2</a><a href="note-S4.html">Next: S4 →</a></nav>
   <span class="course">MECH2413 · Engineering Mechanics · Statics chapter 3</span>
   <h1>Stress, Strain and Mohr's Circle</h1>
-  <p class="lede">Every slide of the Statics chapter 3 handout (56 slides) explained from scratch: normal and shear stress, strain, Young's modulus, thermal strain, Poisson's ratio, shear and bulk moduli, Hooke's law in three dimensions, the stress transformation equations, principal stresses and Mohr's circle. Every worked example is solved in full, with sketches of the loaded part and of the stress element. Mohr's circle questions appear on almost every paper, so the interactive circle in Section 18 and the exam taster at the end are worth the time.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
-<p>In <a href="note-S2.html">S2</a> you found the internal forces \(N\), \(V\), \(M\) in a beam: the <b>totals</b> of what one piece does to the other across a cut. This chapter asks how those totals are <b>spread over the cut</b> (stress), how the material <b>stretches</b> in response (strain), and how the push-and-pull on a tiny square changes when you look at it from a different angle (Mohr's circle). The handout lists five topics (slide 2): (1) normal and shear stress; (2) strain, Young's modulus and thermal strain; (3) Hooke's law; (4) transformation of stress; (5) Mohr's circle.</p>
-<p>What comes next uses this chapter directly: bending stress in <a href="note-S4.html">S4</a> is a normal stress, torsion (S6) gives shear stress, and in pressure vessels (S7) you combine two normal stresses and use Mohr's circle on a weld.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this chapter sits</span></h2>
+<p>In <a href="note-S2.html">S2</a> you found the totals \(N\), \(V\), \(M\) acting across a cut. This chapter slices a loaded part with an imaginary thin knife and asks what you would feel with your palm on the cut face: a push or pull straight through it (normal stress), a drag along it (shear stress), and how both change as you tilt the knife (Mohr's circle). The handout's 56 slides cover five topics (slide 2): (1) normal and shear stress; (2) strain, Young's modulus and thermal strain; (3) Hooke's law; (4) transformation of stress; (5) Mohr's circle.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>Normal stress is force per area, felt straight through the cut.</b></li>
+<li><a href="#s2">§2</a> <b>Tilt the cut and the same pull splits into a pull and a slide.</b> The slide is biggest at \(45^\circ\).</li>
+<li><a href="#s3">§3</a> <b>Keep the stress below the allowable value.</b> A narrow section concentrates it.</li>
+<li><a href="#s4">§4</a> <b>Strain is the stretch as a fraction of the length.</b></li>
+<li><a href="#s5">§5</a> <b>Below yield, a material is a spring:</b> \(\sigma=E\varepsilon\).</li>
+<li><a href="#s6">§6</a> <b>Heat stretches a bar too; stop it growing and you get stress.</b></li>
+<li><a href="#s7">§7</a> <b>Parts squeezed together share the load by stiffness \(EA\).</b></li>
+<li><a href="#s8">§8</a> <b>Pull one way and it gets thinner the other ways</b> (Poisson).</li>
+<li><a href="#s9">§9</a> <b>Several stresses at once: add their stretches.</b></li>
+<li><a href="#s10">§10</a> <b>Shear makes a block lean;</b> \(G=E/2(1+\nu)\).</li>
+<li><a href="#s11">§11</a> <b>Hooke's law in 3D:</b> all the stretches, thinnings, leans and heat in one table.</li>
+<li><a href="#s12">§12</a> <b>Squeeze from all sides and the volume must fall,</b> so \(\nu\lt\tfrac12\).</li>
+<li><a href="#s13">§13</a> <b>Worked example:</b> a circle on a stretched plate.</li>
+<li><a href="#s14">§14</a> <b>Same point, different cut, different numbers.</b></li>
+<li><a href="#s15">§15</a> <b>The transformation equations give the push and slide on a cut at any angle.</b></li>
+<li><a href="#s16">§16</a> <b>Principal stresses: the two cuts with no slide at all.</b> <span class="pill">Every paper since 2022</span></li>
+<li><a href="#s17">§17</a> <b>The biggest slide is at \(45^\circ\) to those;</b> the average push never changes.</li>
+<li><a href="#s18">§18</a> <b>Mohr's circle: every cut angle is one dot on one circle.</b> <span class="pill">On almost every paper</span></li>
+<li><a href="#s19">§19</a> <b>Mohr's circle once through, on the slide 54 element.</b></li>
+</ol></div>
+<p><b>You need:</b> \(N\), \(V\), \(M\) from S2, statically indeterminate bars (S1 Section 11) and the double-angle formulas. <b>In the exam:</b> Section A on almost every paper: a 5–7 mark "principal stresses from this element" in A1 on every paper since 2022, and a full 10–20 mark Mohr's circle question before that. Later chapters build on it: bending stress in <a href="note-S4.html">S4</a> is a normal stress, torsion (S6) gives shear stress, and pressure vessels (S7) use Mohr's circle on a weld. See the <a href="guide-S3.html">S3 exam guide</a>.</p>
 <div class="box def"><span class="tag">Definition · stress</span>
 <p><b>Stress</b> is internal force per unit area on a cut: how hard the material on one side of the cut is pushing, pulling or dragging the material on the other side, per square metre. Unit: pascal, \(1\u{Pa}=1\u{N/m^2}\). Engineers usually use \(1\u{MPa}=10^6\u{Pa}=1\u{N/mm^2}\) (handy: newtons divided by square millimetres gives MPa directly).</p></div>
 <div class="box conv"><span class="tag">Sign convention for this chapter</span>
@@ -221,7 +270,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Normal stress (slides 2–3)</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Normal stress (slides 2–3)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Pull a steel bar from both ends. Imagine slicing across it with a very thin knife, then putting your palm on the cut face to feel what the other piece was doing to it. Here it pulls straight out of the face, spread evenly over it. Normal stress is that pull per square metre of face. Squeeze the bar instead and you feel a push into the face. This knife-and-palm picture runs through the whole chapter.</p></div></details>
 <p>Pull a straight bar with a force \(F\) at each end and imagine cutting it at \(c\)–\(c\), at right angles to its axis (slide 3). The left piece is in equilibrium only if the right piece pulls on it across the whole cut face. Those spread-out internal forces are the <b>stresses</b>.</p>
 <div id="fig-s1-bar"></div>
 <div class="box def"><span class="tag">Definition · normal stress (slide 3)</span>
@@ -229,15 +279,17 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\sigma=\frac{N}{A}=\frac{F}{A}.\]
 <p class="word"><b>In words:</b> normal stress = normal force ÷ area of the cut. Twice the force on the same bar doubles the stress; the same force on a bar twice as thick halves it.</p></div>
 <p>\(N\) is the normal force of S2 (here \(N=F\)). For a bar in compression \(N\) and \(\sigma\) are negative.</p>
+<p class="cannow"><b>You can now:</b> work out a normal stress as \(N/A\) with the right sign (tension +); and turn N/mm² straight into MPa.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>Stress on an inclined cut (slides 4–6)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Stress on an inclined cut (slides 4–6)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Now tilt the knife. The other piece still pulls along the bar, but the cut face leans, so your palm feels the pull split in two: part straight out of the face, trying to open the cut, and part along the face, trying to slide the two pieces past each other. The tilted face is also bigger, so the force is spread more thinly. Tilt further and the slide grows while the straight pull fades.</p></div></details>
 <p>Now cut the same bar along a line tilted at angle \(\varphi\) (phi) to the cross-section (slide 4). The internal force on that cut is still \(F\) along the bar, but it is no longer perpendicular to the cut face. Split the stress on the inclined face into</p>
 <ul class="list"><li>a component \(\sigma\) <b>perpendicular</b> to the cut (normal stress), and</li>
 <li>a component \(\tau\) <b>along</b> the cut (<b>shear stress</b>: it tries to slide one piece past the other, like the blades of scissors).</li></ul>
 <div id="fig-s2-cut"></div>
-<p>The inclined face is longer than the straight cross-section, so its area is \(A^*=A/\cos\varphi\) (slide 4). Equilibrium of the left piece (slide 5), resolving along the bar (→) and across it (↑):</p>
+<p>The inclined face is longer than the straight cross-section, so its area is \(A^*=A/\cos\varphi\) (slide 4). Equilibrium of the left piece (slide 5), resolving along the bar (→) and across it (↑): <span class="why">The left piece is at rest, so whatever the cut face does to it must exactly cancel the pull \(F\) at its far end.</span></p>
 \[\begin{aligned}\rightarrow:&\quad \sigma A^*\cos\varphi+\tau A^*\sin\varphi-F=0,\\ \uparrow:&\quad \sigma A^*\sin\varphi-\tau A^*\cos\varphi=0.\end{aligned}\]
 <p>Solving the two equations with \(A^*=A/\cos\varphi\):</p>
 <div class="box thm"><span class="tag">Result · stresses on an inclined section (slides 5–6)</span>
@@ -245,6 +297,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>With \(\cos^2\varphi=\tfrac12(1+\cos2\varphi)\), \(\sin\varphi\cos\varphi=\tfrac12\sin2\varphi\) and \(\sigma_0=F/A\) (the stress on the straight cross-section):</p>
 \[\sigma=\frac{\sigma_0}{2}(1+\cos2\varphi),\qquad\tau=\frac{\sigma_0}{2}\sin2\varphi.\]
 <p class="word"><b>In words:</b> as the cut tilts, the normal stress falls from \(\sigma_0\) to zero and a shear stress appears. \(\sigma_{\max}=\sigma_0\) on the straight cut (\(\varphi=0\)); \(\tau_{\max}=\sigma_0/2\) on the cut at \(\varphi=\pi/4=45^\circ\) (slide 6).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\sigma=\frac FA\cos^2\varphi\)</dt><dd>one \(\cos\varphi\) because only the part \(F\cos\varphi\) of the force points straight out of the tilted face; the other because that face is bigger, \(A/\cos\varphi\), so the pull is spread more thinly.</dd>
+<dt>\(\tau=\frac FA\sin\varphi\cos\varphi\)</dt><dd>the sliding part of the force, \(F\sin\varphi\), spread over the same bigger face.</dd>
+<dt>\(\varphi=45^\circ\)</dt><dd>the slide is largest: half the pull you felt on the straight cut.</dd>
+<dt>\(\varphi=90^\circ\)</dt><dd>a cut along the bar: the force runs parallel to the face and never crosses it, so you feel neither pull nor slide.</dd>
+</dl></div>
 <div class="figure"><p class="ttl">Try it · stresses on a cut at angle \(\varphi\), in units of \(\sigma_0=F/A\)</p>
 <canvas class="plot" id="cv-s2" style="height:220px"></canvas>
 <div class="ctrl"><label>\(\varphi\) (degrees) <input type="range" id="s2phi" min="0" max="90" step="1" value="30"></label></div>
@@ -255,10 +313,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>A bar carries \(\sigma_0=100\u{MPa}\) in tension. On a cut at \(\varphi=30^\circ\):</p>
 \[\begin{aligned}\sigma&=100\cos^230^\circ=\boxed{75\u{MPa}},\\ \tau&=\tfrac{100}{2}\sin60^\circ=\boxed{43.3\u{MPa}}.\end{aligned}\]</div>
 <p class="muted">Slide 35 repeats this result as the starting point for principal stresses (Section 14): one force gives \(\sigma_{\max}=\sigma_0\) at \(\varphi=0\) and \(\tau_{\max}=\sigma_0/2\) at \(\varphi=\pi/4\).</p>
+<p class="cannow"><b>You can now:</b> split the stress on a tilted cut into \(\sigma=\sigma_0\cos^2\varphi\) and \(\tau=\tfrac12\sigma_0\sin2\varphi\); and say on which cut each is largest.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Allowable stress and a tapered bar (slides 7–8)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Allowable stress and a tapered bar (slides 7–8)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A lift is rated for a set number of people even though its cables could hold far more: the rating is a safe limit with a margin built in. Allowable stress is the same idea for a material. And where a bar narrows, the same force has to pass through a smaller face, so your palm on a cut there feels a harder pull or push per square millimetre.</p></div></details>
 <p>If the cross-section changes along the bar, so does the stress (slide 7):</p>
 \[\sigma(x)=\frac{N(x)}{A(x)}.\]
 <div class="box def"><span class="tag">Definition · allowable stress (slide 7)</span>
@@ -272,26 +332,37 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-s3-taper"></div>
 <ol class="steps">
 <li>Radius at distance \(x\): \(r(x)=r_0+\dfrac{r_0}{l}x=r_0\left(1+\dfrac xl\right)\); area \(A(x)=\pi r^2(x)\).</li>
-<li>Every cut carries the same normal force \(N=-F\) (compression).</li>
+<li>Every cut carries the same normal force \(N=-F\) (compression). <span class="why">Cut anywhere and look at the left piece: the only outside force on it is \(F\) at its end, so the cut must supply the same force whatever the radius there.</span></li>
 <li>\[\sigma(x)=\frac{N}{A(x)}=\boxed{\frac{-F}{\pi r_0^2\left(1+\dfrac xl\right)^2}}\]</li>
 </ol>
 <p class="word"><b>In words:</b> the stress is largest at the thin end (\(x=0\)) and falls to a quarter of that at the thick end, because the area there is four times bigger.</p></div>
+<p class="cannow"><b>You can now:</b> size a bar from \(A_{\text{req}}=|N|/\sigma_{\text{allow}}\); and write \(\sigma(x)=N(x)/A(x)\) for a bar whose section varies, as in slide 8.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Strain (slides 9–10)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Strain (slides 9–10)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Strain is how much the material stretches compared with its size. A 1 mm stretch is a lot for a short rubber band and almost nothing for a long cable, so we divide the stretch by the original length. That makes strain a pure fraction, the same for a short or a long bar of the same material under the same stress.</p></div></details>
 <div class="box def"><span class="tag">Definition · strain (slide 9)</span>
 \[\varepsilon=\frac{\Delta l}{l}\]
 <p><b>Strain</b> \(\varepsilon\) (epsilon) is the elongation \(\Delta l\) divided by the original (undeformed) length \(l\). It has no units (m/m); values are tiny, e.g. \(10^{-3}\), sometimes quoted as "1000 microstrain" (\(\mu\varepsilon\)).</p>
 <p class="word"><b>In words:</b> strain is the fractional change of length: a 2 m bar that grows by 1 mm has strain \(0.5\times10^{-3}\).</p></div>
 <div id="fig-s4"></div>
+<details class="idea"><summary>What is this? (local strain)</summary><div><p>Hang a slinky from its top. The coils near the top are pulled far apart and the ones near the bottom hardly at all, because the top coils carry the weight of everything below them. One strain for the whole slinky would hide this, so we measure the stretch of each short piece separately.</p></div></details>
 <p><b>Local strain (slide 10).</b> If the cross-section varies, or the bar carries forces along its length (such as its own weight), different bits stretch by different amounts. Let \(u(x)\) be the <b>displacement</b> of the cross-section that started at \(x\) (how far it moves along the bar). A short piece \(\mathrm dx\) becomes \(\mathrm dx+\mathrm du\) long, so</p>
 \[\varepsilon(x)=\frac{\mathrm du}{\mathrm dx}.\]
 <p class="word"><b>In words:</b> the local strain is the rate at which the displacement changes along the bar. If the whole bar stretches evenly, \(u\) grows linearly and \(\varepsilon\) is constant, giving back \(\Delta l/l\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(u(x)\)</dt><dd>how far the slice that started at \(x\) has moved along the bar.</dd>
+<dt>\(\mathrm du\)</dt><dd>how much further the far end of a short piece moved than its near end: the stretch of that piece.</dd>
+<dt>\(\mathrm dx\)</dt><dd>the original length of the piece.</dd>
+<dt>\(\mathrm du/\mathrm dx\)</dt><dd>stretch ÷ original length for that one piece: the strain at \(x\), large near the top of the slinky, small near the bottom.</dd>
+</dl></div>
+<p class="cannow"><b>You can now:</b> compute a strain as \(\Delta l/l\) (no units); and use \(\varepsilon=\mathrm du/\mathrm dx\) when different parts of a bar stretch by different amounts.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>The stress–strain diagram and Young's modulus (slides 11–12)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">The stress–strain diagram and Young's modulus (slides 11–12)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Bend a paper clip a little and it springs back: that is the straight, elastic part of the graph. Bend it further and it stays bent: the metal has yielded, and the bend left over is plastic strain. Young's modulus is the steepness of the springy part: how much stress it takes to get a given stretch.</p></div></details>
 <p>Pull a test specimen (slide 11 shows a dog-bone bar of length \(l\), area \(A\)) and plot stress against strain:</p>
 <div class="figure"><p class="ttl">Stress–strain diagram of a ductile metal (sketch after slide 11)</p>
 <canvas class="plot" id="cv-ss" style="height:240px"></canvas>
@@ -318,10 +389,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <tr><td>Brass</td><td>\(1.0\times10^5\)</td><td>\(1.8\times10^{-5}\)</td></tr>
 </table></div>
 <p class="muted">\(2.1\times10^5\u{MPa}=210\u{GPa}\). Slide 24 gives slightly different values from another source (e.g. steel 200 GPa); use whatever the question gives.</p></div>
+<p class="cannow"><b>You can now:</b> name the proportional limit, yield stress, plastic strain and true stress on the diagram; use \(\sigma=E\varepsilon\) in the elastic range; and read \(E\) and \(\alpha_T\) from the slide 12 table.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Thermal strain and the change in length (slides 13–14)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Thermal strain and the change in length (slides 13–14)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Metal grows when it warms, which is why bridges have expansion joints. A bar that is free to grow just gets longer and carries no stress at all. If walls stop it growing, they must push it back to its original length, and that push is a compressive stress inside the bar.</p></div></details>
 <div class="box def"><span class="tag">Definition · thermal strain (slide 13)</span>
 \[\varepsilon_T=\alpha_T\,\Delta T\]
 <p>A temperature rise \(\Delta T\), assumed uniform over the section and along the bar, makes the material expand freely by a strain proportional to \(\Delta T\). \(\alpha_T\) is the <b>coefficient of thermal expansion</b> (1/°C or 1/K).</p></div>
@@ -333,39 +406,57 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>If the area or the force varies along the bar (slide 14):</p>
 \[\Delta l=\int_0^l\left(\frac{N}{EA}+\alpha_T\Delta T\right)\mathrm dx.\]
 <p class="word"><b>In words:</b> a bar gets longer by "force × length ÷ (stiffness × area)" plus "expansion coefficient × temperature rise × length". \(EA\) is called the <b>axial rigidity</b>: the bigger it is, the less the bar stretches.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\dfrac{Fl}{EA}\)</dt><dd>the stretch caused by the force: more force or a longer bar stretches more; a stiffer material or a fatter bar stretches less.</dd>
+<dt>\(EA\)</dt><dd>how hard the bar resists stretching: material stiffness × amount of material in the cut.</dd>
+<dt>\(\alpha_T\Delta T\,l\)</dt><dd>the free growth from heating. It needs no force at all.</dd>
+<dt>\(+\)</dt><dd>the two stretches simply add. If walls force \(\Delta l=0\), the force term has to cancel the heat term.</dd>
+</dl></div>
+
 <div class="box eg"><span class="tag">Examples · written for these notes</span>
 <ol class="steps">
 <li><b>Free expansion.</b> A 2 m steel rod (\(\alpha_T=1.2\times10^{-5}\)/°C) is heated by 40 °C with no force: \(\Delta l=1.2\times10^{-5}\times40\times2000\u{mm}=\boxed{0.96\u{mm}}\).</li>
-<li><b>Fully restrained.</b> The same rod between rigid walls cannot grow: \(\Delta l=0\Rightarrow \sigma/E=-\alpha_T\Delta T\), so \(\sigma=-E\alpha_T\Delta T=-210\,000\times1.2\times10^{-5}\times40=\boxed{-100.8\u{MPa}}\) (compression). Note the length cancels.</li>
+<li><b>Fully restrained.</b> The same rod between rigid walls cannot grow: \(\Delta l=0\Rightarrow \sigma/E=-\alpha_T\Delta T\), so \(\sigma=-E\alpha_T\Delta T=-210\,000\times1.2\times10^{-5}\times40=\boxed{-100.8\u{MPa}}\) (compression). Note the length cancels. <span class="why">The walls push the bar back by exactly the amount heat would have grown it, so the elastic shortening must cancel the thermal growth.</span></li>
 <li><b>Tapered bar of slide 8.</b> With \(N=-F\) and \(A=\pi r_0^2(1+x/l)^2\), the integral gives \(\Delta l=-\dfrac{Fl}{2\pi Er_0^2}\): half the shortening of a bar of constant radius \(r_0\).</li>
 </ol>
 <p class="muted">Example 3 is beyond the slides (they stop at the stress); it shows how the integral formula is used.</p></div>
+<p class="cannow"><b>You can now:</b> find the change in length from force and temperature together; find the stress in a fully restrained heated bar; and use the integral form when \(N\) or \(A\) varies along the bar.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Example: a steel cylinder inside a copper tube (slides 15–17)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Example: a steel cylinder inside a copper tube (slides 15–17)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Put a stiff spring and a soft spring side by side under a rigid board and press down. The board stays flat, so both springs squash by the same amount, and the stiff one ends up carrying more of the load. The steel cylinder and the copper tube are those two springs.</p></div></details>
 <p>A solid steel cylinder (area \(A_S\), modulus \(E_S\), length \(l\)) sits inside a copper tube (\(A_C\), \(E_C\), same length \(l\)). A rigid plate on top squeezes the assembly onto a rigid floor with a force \(F\). Find the stresses in each part and the shortening (slides 15–16).</p>
 <div id="fig-s7"></div>
 <p>This problem is <b>statically indeterminate</b> (S1 Section 11): equilibrium gives one equation for two unknown forces. The missing equation comes from the <b>deformation</b>: the plate is rigid, so both parts shorten by the same amount. This "equilibrium + compatibility" recipe returns in S5, S6 and S7.</p>
-<ol class="steps">
-<li><b>Equilibrium of the plate</b> (forces taken as compressive, positive): \(F_C+F_S=F\).</li>
-<li><b>Each part's shortening</b> (Section 6): \(\Delta l_C=\dfrac{F_Cl}{E_CA_C}\), \(\Delta l_S=\dfrac{F_Sl}{E_SA_S}\).</li>
-<li><b>Compatibility</b> \(\Delta l_C=\Delta l_S\):
-\[\frac{F_Cl}{E_CA_C}=\frac{F_Sl}{E_SA_S}\ \Rightarrow\ F_S=\frac{E_SA_S}{E_CA_C}F_C.\]</li>
-<li><b>Substitute</b> into equilibrium: \(F_C\left(1+\dfrac{E_SA_S}{E_CA_C}\right)=F\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> <b>Equilibrium of the plate</b> (forces taken as compressive, positive): \(F_C+F_S=F\). <span class="why">The board's forces must balance, but this is one equation with two unknowns: not enough on its own.</span></li>
+<li><b>Do:</b> <b>Each part's shortening</b> (Section 6): \(\Delta l_C=\dfrac{F_Cl}{E_CA_C}\), \(\Delta l_S=\dfrac{F_Sl}{E_SA_S}\). <span class="why">Each part is a spring with its own stiffness, so its force fixes how much it shortens.</span></li>
+<li><b>Do:</b> <b>Compatibility</b> \(\Delta l_C=\Delta l_S\):
+\[\frac{F_Cl}{E_CA_C}=\frac{F_Sl}{E_SA_S}\ \Rightarrow\ F_S=\frac{E_SA_S}{E_CA_C}F_C.\] <span class="why">The rigid plate stays flat, so both springs squash by the same amount: this is the missing second equation.</span></li>
+<li><b>Do:</b> <b>Substitute</b> into equilibrium: \(F_C\left(1+\dfrac{E_SA_S}{E_CA_C}\right)=F\). <span class="why">Two equations, two unknowns: solve for one force, then the other follows.</span></li>
 </ol>
 <div class="box thm"><span class="tag">Result · slide 17</span>
 \[\begin{aligned}F_C&=\frac{E_CA_C}{E_CA_C+E_SA_S}F,\\ F_S&=\frac{E_SA_S}{E_CA_C+E_SA_S}F,\\ \sigma_C&=\frac{E_C}{E_CA_C+E_SA_S}F,\\ \sigma_S&=\frac{E_S}{E_CA_C+E_SA_S}F,\\ \Delta l_C&=\Delta l_S\\&=\frac{Fl}{E_CA_C+E_SA_S}.\end{aligned}\]
 <p>(The stresses are compressive; magnitudes shown.)</p>
 <p class="word"><b>In words:</b> the parts share the load in proportion to their axial rigidities \(EA\): the stiffer part takes more. The assembly behaves like one bar of rigidity \(E_CA_C+E_SA_S\) (two springs side by side: stiffnesses add).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(E_CA_C\), \(E_SA_S\)</dt><dd>the stiffness of each spring: material stiffness × area.</dd>
+<dt>\(\dfrac{E_CA_C}{E_CA_C+E_SA_S}\)</dt><dd>copper's share of the total stiffness, which is also its share of the load.</dd>
+<dt>\(\sigma_C=\dfrac{E_C}{\cdots}F\)</dt><dd>the area cancels: both parts have the same strain, so each stress is just its own \(E\) × that strain.</dd>
+<dt>\(\Delta l=\dfrac{Fl}{E_CA_C+E_SA_S}\)</dt><dd>the assembly squashes like one bar whose stiffness is the sum of the two.</dd>
+</dl></div>
+
 <div class="box eg"><span class="tag">Numbers · written for these notes</span>
 <p>Steel cylinder \(d=40\u{mm}\): \(A_S=1257\u{mm^2}\), \(E_S=200\u{GPa}\). Copper tube 60 mm outside, 44 mm inside: \(A_C=1307\u{mm^2}\), \(E_C=110\u{GPa}\). \(F=200\u{kN}\), \(l=300\u{mm}\).</p>
 \[\begin{aligned}E_CA_C&=1.438\times10^8\u{N},\\ E_SA_S&=2.513\times10^8\u{N},\\ \text{sum}&=3.951\times10^8\u{N},\\ F_C&=72.8\u{kN},\quad F_S=127.2\u{kN},\\ \sigma_C&=55.7\u{MPa},\\ \sigma_S&=101.2\u{MPa},\\ \Delta l&=\frac{200\,000\times300}{3.951\times10^8}\\&=\boxed{0.152\u{mm}}.\end{aligned}\]<p>(Both stresses compressive.)</p>
 <p class="muted">Check: \(\sigma_S/\sigma_C=E_S/E_C=1.82\) ✓, since both parts have the same strain.</p></div>
+<p class="cannow"><b>You can now:</b> solve a two-material, statically indeterminate bar with equilibrium + equal shortening; and explain why the stiffer part carries more of the load.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Four elastic constants; the Poisson effect (slides 18–20)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Four elastic constants; the Poisson effect (slides 18–20)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>You can deform a block in four basic ways: stretch it, watch it get thinner as it stretches, make it lean, or squeeze it from all sides. Each way has its own number saying how much the material resists. This section names the four and looks at the second.</p></div></details>
 <p>Slide 18 lists four numbers that measure how stiff a material is:</p>
 <div class="cases">
 <div><b>Young's modulus \(E\)</b>resistance to stretching under a normal stress (Section 5).</div>
@@ -373,39 +464,62 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div><b>Shear modulus \(G\)</b>resistance to distortion (change of shape) under shear stress (Section 10).</div>
 <div><b>Bulk modulus \(k\)</b>resistance to uniform compression from all sides (Section 12).</div>
 </div>
+<details class="idea"><summary>What is this? (Poisson effect)</summary><div><p>Stretch a rubber band and watch it get thinner as it gets longer. Steel does the same, only far too little to see. Poisson's ratio says how much thinner, as a strain, for each unit of lengthening.</p></div></details>
 <p>Pull a rectangular block with a tensile stress \(\sigma_x\) (slide 19). It gets longer in \(x\) (strain \(\varepsilon_x\)) and also <b>thinner</b> in \(y\) and \(z\). This sideways shrinking is the <b>lateral contraction</b> or <b>Poisson effect</b>.</p>
 <div id="fig-s8"></div>
 <div class="box def"><span class="tag">Definition · Poisson's ratio (slide 19)</span>
 \[\begin{aligned}\nu&=-\frac{\text{lateral strain}}{\text{axial strain}},\\ \varepsilon_y&=-\nu\varepsilon_x,\quad\varepsilon_z=-\nu\varepsilon_x.\end{aligned}\]
 <p>\(\nu\) ("nu") is a positive number, so the minus sign makes the lateral strain negative (shrinking) when the axial strain is positive.</p>
 <p class="word"><b>In words:</b> stretch a rubber band and it gets thinner. Poisson's ratio says how many units thinner (as a strain) for each unit longer.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\varepsilon_x\)</dt><dd>the lengthening along the pull.</dd>
+<dt>\(\varepsilon_y\), \(\varepsilon_z\)</dt><dd>the thinning across it, in both sideways directions equally.</dd>
+<dt>the minus sign</dt><dd>longer one way means thinner the others, so the strains have opposite signs; the minus makes \(\nu\) a positive number.</dd>
+<dt>\(\nu\)</dt><dd>the exchange rate: for steel, about 0.3 units of thinning strain for each unit of stretching strain.</dd>
+</dl></div>
+
 <div class="box ready"><span class="tag">Table · slide 20 · Poisson's ratio</span>
 <div class="scroll"><table><tr><th>Aluminium</th><th>Brass</th><th>Glass</th><th>Gold</th><th>Lead</th><th>Steel</th></tr>
 <tr><td>0.33</td><td>0.34</td><td>0.22</td><td>0.44</td><td>0.43</td><td>0.29</td></tr></table></div></div>
+<p class="cannow"><b>You can now:</b> name the four elastic constants and what each resists; and use \(\varepsilon_y=\varepsilon_z=-\nu\varepsilon_x\) for a bar pulled one way.</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Multi-axial stress and strain (slides 21–22)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Multi-axial stress and strain (slides 21–22)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Pull a block in \(x\) only and it gets longer in \(x\) and thinner in \(y\) and \(z\). Pull it in \(y\) only and it gets longer in \(y\) and thinner in the other two. Pull both ways at once and, because the material behaves like a linear spring, you simply add the two results. Each line of the result is "my own stretch minus the thinning caused by the others".</p></div></details>
 <p>When \(\sigma_x\), \(\sigma_y\) and \(\sigma_z\) all act at once (slide 21), each one stretches the material along its own direction and, by the Poisson effect, shrinks it along the other two. For a linear material the effects simply <b>add</b> (superposition, slide 22):</p>
 <div class="box thm"><span class="tag">Result · strains under three normal stresses (slide 22)</span>
 \[\begin{aligned}\varepsilon_x&=\frac{1}{E}\left(\sigma_x-\nu\sigma_y-\nu\sigma_z\right),\\ \varepsilon_y&=\frac{1}{E}\left(\sigma_y-\nu\sigma_x-\nu\sigma_z\right),\\ \varepsilon_z&=\frac{1}{E}\left(\sigma_z-\nu\sigma_x-\nu\sigma_y\right).\end{aligned}\]
 <p class="word"><b>In words:</b> the strain in one direction = (its own stress minus \(\nu\) times each of the other two stresses) ÷ \(E\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\sigma_x/E\)</dt><dd>the stretch in \(x\) from its own pull.</dd>
+<dt>\(-\nu\sigma_y/E\)</dt><dd>the thinning in \(x\) caused by the pull in \(y\) (Poisson).</dd>
+<dt>\(-\nu\sigma_z/E\)</dt><dd>the same for the pull in \(z\).</dd>
+<dt>the sum</dt><dd>superposition: each stress acts as if alone, and the effects add.</dd>
+</dl></div>
 <div class="box warn"><span class="tag">Watch (slide 22)</span>
 <p>Inside the derivation the slide writes \(\varepsilon_y'\), \(\varepsilon_z'\) for the <b>partial</b> strains caused by \(\sigma_y\) alone and \(\sigma_z\) alone. You cannot put the total \(\varepsilon_z\) back in their place. And the \(\sigma\)'s here are normal stresses only: shear stresses do not change lengths along \(x\), \(y\), \(z\) (for an isotropic material).</p></div>
 <div class="beyond box"><span class="tag">Beyond the handouts · plane stress and the inverse form</span>
 <p><b>Plane stress</b> means \(\sigma_z=0\) (and no shear on the \(z\)-faces): the usual state in a thin plate loaded in its own plane. Then \(\varepsilon_z=-\frac{\nu}{E}(\sigma_x+\sigma_y)\ne0\): the plate still changes thickness. Solving the first two equations for the stresses gives the form you need when strain gauges are measured (May 2019 A2(a), in the exam taster):</p>
 \[\begin{aligned}\sigma_x&=\frac{E}{1-\nu^2}\left(\varepsilon_x+\nu\varepsilon_y\right),\\ \sigma_y&=\frac{E}{1-\nu^2}\left(\varepsilon_y+\nu\varepsilon_x\right).\end{aligned}\]
 <p class="word"><b>In words:</b> to get a stress from two measured strains, add \(\nu\) times the other strain, and multiply by \(E/(1-\nu^2)\).</p></div>
+<p class="cannow"><b>You can now:</b> write the three normal strains from three normal stresses; and, in plane stress, get \(\sigma_x\) and \(\sigma_y\) from two strain-gauge readings with the inverse form.</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Shear stress, shear strain, shear modulus (slides 23–25)</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Shear stress, shear strain, shear modulus (slides 23–25)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Push sideways on the top of a thick book lying on a table. The pages slide a little over each other and the book leans, but it gets neither taller nor shorter. Shear stress is that sideways push per square metre of the top face; shear strain is the angle of lean; the shear modulus says how hard the material resists leaning.</p></div></details>
 <p>Glue a block to the floor and push its top face sideways with a force \(F\) spread over the top area \(A\) (slide 23). The block does not get longer; it <b>leans</b>: its right angles become slightly less than \(90^\circ\).</p>
 <div id="fig-s10"></div>
 <div class="box def"><span class="tag">Definitions · shear strain and shear modulus (slide 23)</span>
 \[\begin{aligned}\tau_{xy}&=\frac FA\overset{\text{def}}{=}G\gamma_{xy},\\ \gamma_{xy}&=\frac{\Delta x}{l}=\tan\theta\approx\theta.\end{aligned}\]
 <p>The <b>shear strain</b> \(\gamma_{xy}\) (gamma) is the change of the right angle, in radians: sideways shift \(\Delta x\) over height \(l\). For small angles \(\tan\theta\approx\theta\). The <b>shear modulus</b> \(G\) is the shear version of \(E\).</p>
 <p class="word"><b>In words:</b> shear stress = shear modulus × angle of lean. Like pushing the top of a stack of paper: the stiffer the stack, the less it leans.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\tau_{xy}=F/A\)</dt><dd>the sideways push spread over the top face: what your palm would feel as a drag on a cut parallel to the floor.</dd>
+<dt>\(\gamma_{xy}\)</dt><dd>the angle of lean in radians: sideways shift ÷ height.</dd>
+<dt>\(G\)</dt><dd>the stiffness against leaning: the bigger it is, the smaller the lean for the same push.</dd>
+</dl></div>
 <div class="box ready"><span class="tag">Table · slide 24 · elastic constants at room temperature (\(1\u{Pa}=1\u{N/m^2}\))</span>
 <div class="scroll"><table>
 <tr><th>Material</th><th>\(E\) (GPa)</th><th>\(G\) (GPa)</th><th>\(\nu\)</th></tr>
@@ -417,24 +531,36 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <tr><td>Tungsten</td><td>400</td><td>157</td><td>0.27</td></tr>
 </table></div></div>
 <h3>The link between \(E\), \(G\) and \(\nu\) (slide 25)</h3>
+<details class="idea"><summary>What is this? (the link between \(E\), \(G\), \(\nu\))</summary><div><p>Draw both diagonals on the side of the leaning book. As it leans, one diagonal gets longer and the other shorter. So a lean is also a stretch along one diagonal and a squash along the other. That is why the leaning stiffness \(G\) is not a new property: it follows from the stretching stiffness \(E\) and the thinning \(\nu\).</p></div></details>
 <p>Slide 25 draws a square under pure shear \(\tau\) with its two diagonals: one diagonal is stretched (labelled "tension"), the other squashed ("compression"). Seen on the diagonals, pure shear is a pull of size \(\tau\) one way and a push of size \(\tau\) at right angles (you can check this with the transformation equations of Section 15 at \(\theta=45^\circ\)). Working out the diagonal's stretch both ways gives:</p>
 <div id="fig-s10b"></div>
 <div class="box thm"><span class="tag">Result · slide 25 (isotropic, linear elastic)</span>
 \[G=\frac{E}{2(1+\nu)}\]
 <p class="word"><b>In words:</b> the three constants are not independent: know two, and the third follows. For metals with \(\nu\approx0.3\), \(G\approx0.38E\). (Check against the table: aluminium \(72.4/2.62=27.6\u{GPa}\) ✓.)</p></div>
 <div class="box def"><span class="tag">Definition · isotropic</span><p>An <b>isotropic</b> material has the same properties in every direction (most metals). Wood is not: it is much stiffer along the grain.</p></div>
+<p class="cannow"><b>You can now:</b> compute \(\tau=F/A\), \(\gamma\) and \(G\) for a block in shear; and get any one of \(E\), \(G\), \(\nu\) from the other two.</p>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Hooke's law for multi-axial loading (slide 26)</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Hooke's law for multi-axial loading (slide 26)</span> <span class="mins">~1 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>This is the whole chapter's bookkeeping in one table. Each stretch is its own stretch, minus the Poisson thinning from the other two pulls, plus the same heat growth in every direction. Each lean comes only from its own shear. Heating makes a block bigger but never makes it lean.</p></div></details>
 <div class="box thm"><span class="tag">Result · generalised Hooke's law with temperature (slide 26)</span>
 \[\begin{aligned}\varepsilon_x&=\tfrac1E\left(\sigma_x-\nu\sigma_y-\nu\sigma_z\right)+\alpha_T\Delta T,\\ \varepsilon_y&=\tfrac1E\left(\sigma_y-\nu\sigma_x-\nu\sigma_z\right)+\alpha_T\Delta T,\\ \varepsilon_z&=\tfrac1E\left(\sigma_z-\nu\sigma_x-\nu\sigma_y\right)+\alpha_T\Delta T,\\ \gamma_{xy}&=\tfrac1G\tau_{xy},\quad\gamma_{xz}=\tfrac1G\tau_{xz},\quad\gamma_{yz}=\tfrac1G\tau_{yz}.\end{aligned}\]
 <p class="word"><b>In words:</b> normal strains come from the three normal stresses (with the Poisson cross-terms) plus the same thermal expansion in every direction; each shear strain comes only from its own shear stress. A temperature change never produces shear strain.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\tfrac1E(\sigma_x-\nu\sigma_y-\nu\sigma_z)\)</dt><dd>the stretch in \(x\) from the three pulls, exactly as in Section 9.</dd>
+<dt>\(+\alpha_T\Delta T\)</dt><dd>the free heat growth, the same in \(x\), \(y\) and \(z\).</dd>
+<dt>\(\gamma_{xy}=\tfrac1G\tau_{xy}\)</dt><dd>the lean in the \(x\)–\(y\) plane comes from \(\tau_{xy}\) alone.</dd>
+<dt>no \(\alpha_T\Delta T\) in \(\gamma\)</dt><dd>uniform heating scales the block up without changing its right angles.</dd>
+</dl></div>
+<p class="cannow"><b>You can now:</b> write the generalised Hooke's law with temperature from memory; and say which terms drop out in plane stress or with no temperature change.</p>
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Bulk modulus and the limits on \(\nu\) (slides 27–30)</h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Bulk modulus and the limits on \(\nu\) (slides 27–30)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Drop a sponge and a stone deep into the sea: the water squeezes both equally from every side. The sponge shrinks a lot and the stone hardly at all. The bulk modulus measures how hard a material resists this all-round squeeze.</p></div></details>
 <p>The <b>bulk modulus</b> measures how hard a material resists being squeezed into a smaller volume (slide 27).</p>
+<details class="idea"><summary>What is this? (volumetric strain)</summary><div><p>A box whose three sides each grow by a tiny fraction grows in volume by about the sum of those fractions: 1% longer, 1% wider and 1% taller is about 3% more volume. The leftover bits (fractions times fractions) are far too small to matter for strains.</p></div></details>
 <p><b>Volume change (slide 28).</b> Take a unit cube (\(1\times1\times1\)). Under \(\sigma_x,\sigma_y,\sigma_z\) its sides become \(1+\varepsilon_x\), \(1+\varepsilon_y\), \(1+\varepsilon_z\), so</p>
 \[\begin{aligned}V&=(1+\varepsilon_x)(1+\varepsilon_y)(1+\varepsilon_z)\\ &=1+\varepsilon_x+\varepsilon_y+\varepsilon_z+\varepsilon_x\varepsilon_y\\&\quad+\varepsilon_y\varepsilon_z+\varepsilon_x\varepsilon_z+\varepsilon_x\varepsilon_y\varepsilon_z\\ &\approx1+\varepsilon_x+\varepsilon_y+\varepsilon_z,\end{aligned}\]
 <p>because products of strains (like \(10^{-3}\times10^{-3}\)) are far smaller than the strains themselves.</p>
@@ -448,13 +574,22 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box thm"><span class="tag">Result · bulk modulus (slide 29)</span>
 \[\begin{aligned}e&=-\frac{3(1-2\nu)}{E}p=-\frac pk,\\ k&=\frac{E}{3(1-2\nu)}.\end{aligned}\]
 <p class="word"><b>In words:</b> volumetric strain = − pressure ÷ bulk modulus. For steel (\(E=200\u{GPa}\), \(\nu=0.29\)): \(k\approx159\u{GPa}\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(1-2\nu\)</dt><dd>each squeeze shortens its own side by \(p/E\) but, through Poisson, lengthens each of the other two by \(\nu p/E\); so each side shrinks by only \((1-2\nu)p/E\).</dd>
+<dt>\(3\)</dt><dd>three sides, each shrinking by that amount, add up to the volume change.</dd>
+<dt>\(k\)</dt><dd>pressure needed per unit fraction of volume lost: the all-round stiffness.</dd>
+</dl></div>
+
+<details class="idea"><summary>What is this? (why \(\nu\lt\tfrac12\))</summary><div><p>Squeeze anything from every side and it must get smaller: a material that swelled under all-round pressure would not be stable. A Poisson's ratio above one half would mean exactly that, because each side's sideways growth (from the other two squeezes) would outweigh its own shortening.</p></div></details>
 <p><b>Why \(\nu\lt\tfrac12\) (slide 30).</b> A stable material squeezed from all sides can only <b>lose</b> volume, so \(e\lt0\) whenever \(p\gt0\). That needs \(1-2\nu\gt0\):</p>
 \[0\lt\nu\lt\tfrac12\quad\text{for any engineering material}.\]
 <p>For most metals \(\nu\) is around 0.3. (\(\nu\to\tfrac12\) means incompressible, like rubber.)</p>
+<p class="cannow"><b>You can now:</b> find the volumetric strain as \(\varepsilon_x+\varepsilon_y+\varepsilon_z\); compute \(k\) from \(E\) and \(\nu\); and explain why \(0\lt\nu\lt\tfrac12\).</p>
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Example: a circle scribed on a plate (slides 31–33)</h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Example: a circle scribed on a plate (slides 31–33)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Draw a circle on a rubber sheet and stretch the sheet more one way than the other: the circle becomes an oval. Each diameter grows by its own strain times its length. The sheet also gets thinner, even though nothing pushes on its faces, because of the Poisson effect.</p></div></details>
 <div class="box eg"><span class="tag">Worked example · slides 31–33</span>
 <p>A circle of diameter \(d=200\u{mm}\) is scribed on an unstressed \(360\times350\u{mm}\) aluminium plate of thickness \(t=18\u{mm}\). In-plane stresses \(\sigma_x=150\u{MPa}\) and \(\sigma_y=85\u{MPa}\) (both tension) are then applied. Assuming plane stress (\(\sigma_z=0\)), find the change in (a) the diameters \(AB\) (vertical) and \(CD\) (horizontal), (b) the thickness, (c) the plate volume.</p>
 <div id="fig-s13"></div>
@@ -469,10 +604,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </ol>
 <p class="flag">slide 32 writes "\(\varepsilon_z d\)" for the thickness change but multiplies by \(t=18\u{mm}\) (correct); slide 33 prints the volume change as "2.538 mm³". The plate volume is \(2.268\times10^6\u{mm^3}\) (\(=0.36\times0.35\times0.018\u{m^3}\)), so the change is \(2538\u{mm^3}=2.538\times10^{-6}\u{m^3}\): the slide's unit is a slip.</p>
 <p class="word"><b>Dimension check:</b> strain (no unit) × mm = mm ✓; strain × mm³ = mm³ ✓.</p></div>
+<p class="cannow"><b>You can now:</b> find the changes of length, thickness and volume of a plate in plane stress from the three strains, with consistent units.</p>
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="s14"><h2><span class="n">14</span>Stress at a point depends on the axes (slides 34–36)</h2>
+<section id="s14"><h2><span class="n">14</span><span class="h2t">Stress at a point depends on the axes (slides 34–36)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Cut a tiny cube out of a loaded part. Its faces are cuts, and on each one your palm feels a push or pull and a slide. Now cut a second tiny cube at the very same point, but with the knife held at an angle. The material is in exactly the same state, yet the knife meets it from a different direction, so the push and slide you feel on the new faces are different. The stress state is one thing; the numbers on the faces depend on how you hold the knife.</p></div></details>
 <p>Slide 34 starts the second lecture of the chapter. Section 2 showed that one force on a bar gives \(\sigma_{\max}=\sigma_0\) on the straight cut and \(\tau_{\max}=\sigma_0/2\) on the \(45^\circ\) cut (slide 35). With <b>several</b> forces we want the same answers: on which cut is the normal stress largest or smallest, and how big is it? The tool is a <b>coordinate transformation</b>, and Mohr's circle is a picture of it (slide 35).</p>
 <div class="box def"><span class="tag">Definition · stress element, plane stress</span>
 <p>A <b>stress element</b> is a tiny square (cube, in 3D) drawn around one point of a body, with the stresses on its faces drawn as arrows. In <b>plane stress</b> only the in-plane stresses \(\sigma_x\), \(\sigma_y\) and \(\tau_{xy}=\tau_{yx}\) act.</p></div>
@@ -481,13 +618,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p class="word"><b>Analogy:</b> a wind blowing north-east is "so much north plus so much east", or "all north-east and nothing across". Same wind, different components. A stress state is the same idea one level up: turning the element changes how the stress is split into normal and shear parts.</p>
 <p>The bar of Section 2 shows it: one stress \(\sigma_0\) on the axis-aligned element becomes normal <b>and</b> shear stresses on an element turned by \(30^\circ\):</p>
 <div id="fig-s14b"></div>
+<details class="idea"><summary>What is this? (shear stresses in pairs)</summary><div><p>Picture a tiny square with shear on its left and right faces only: up on the right face, down on the left. That pair would spin the square anticlockwise, and something that small would spin up at once. The square stays still only because the top and bottom faces carry an equal pair turning it clockwise: right along the top, left along the bottom. That matching pair is \(\tau_{yx}\).</p></div></details>
 <div class="box thm"><span class="tag">Fact · shear stresses come in pairs</span>
 <p>\(\tau_{yx}=\tau_{xy}\). Otherwise the shear arrows on the four faces of the tiny square would form an unbalanced couple and it would spin (moment equilibrium of the element). The handout uses this on slide 40.</p></div>
+<p class="cannow"><b>You can now:</b> say what a stress element and plane stress are; explain why one point shows different stresses on differently turned elements; and explain why \(\tau_{yx}=\tau_{xy}\).</p>
 </section>
 
 <!-- ============ 15 ============ -->
-<section id="s15"><h2><span class="n">15</span>The stress transformation equations (slides 37–42)</h2>
-<p>Take a <b>wedge</b> of thickness \(t\) cut from the element (slides 37–39): a vertical face \(OQ\) (an \(x\)-face), a horizontal face \(OR\) (a \(y\)-face) and a sloping face \(QR\) whose outward normal is the new axis \(x'\), at angle \(\theta\) <b>anticlockwise</b> from \(x\). Let the sloping face have area \(\mathrm dA\) (\(=\mathrm dy'\,t\), slide 38). Then the vertical face has area \(\mathrm dA\cos\theta\) and the horizontal face \(\mathrm dA\sin\theta\).</p>
+<section id="s15"><h2><span class="n">15</span><span class="h2t">The stress transformation equations (slides 37–42)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Take the tiny square and slice a corner off with a slanted knife. The wedge you cut off has three faces: the two straight ones, where you already know the stresses, and the slanted one, where you do not. The wedge is at rest, so the push and slide on the slanted face must balance everything on the two straight faces. Doing that balance once, for a general knife angle \(\theta\), gives the push \(\sigma_{x'}\) and the slide \(\tau_{x'y'}\) on a cut at any angle.</p></div></details>
+<p>Take a <b>wedge</b> of thickness \(t\) cut from the element (slides 37–39): a vertical face \(OQ\) (an \(x\)-face), a horizontal face \(OR\) (a \(y\)-face) and a sloping face \(QR\) whose outward normal is the new axis \(x'\), at angle \(\theta\) <b>anticlockwise</b> from \(x\). Let the sloping face have area \(\mathrm dA\) (\(=\mathrm dy'\,t\), slide 38). Then the vertical face has area \(\mathrm dA\cos\theta\) and the horizontal face \(\mathrm dA\sin\theta\). <span class="why">Seen from the side, the slanted face is the long side of a right triangle and the two straight faces are its shorter sides.</span></p>
 <div id="fig-s15"></div>
 <p class="muted">Slide 37 repeats the sign convention: \(\sigma_x\), \(\sigma_y\) positive in tension, \(\tau_{xy}\) positive anticlockwise. Arrows in the sketch are drawn positive.</p>
 <p><b>Force balance (slide 40).</b> Force = stress × area. Resolve along \(x'\) and along \(y'\):</p>
@@ -496,16 +636,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>With \(\tau_{yx}=\tau_{xy}\) and dividing by \(\mathrm dA\) (slide 41):</p>
 \[\begin{aligned}\sigma_{x'}&=\sigma_x\cos^2\theta+\sigma_y\sin^2\theta+2\tau_{xy}\sin\theta\cos\theta,\\ \tau_{x'y'}&=-(\sigma_x-\sigma_y)\cos\theta\sin\theta\\&\quad+\tau_{xy}(\cos^2\theta-\sin^2\theta),\\ \sigma_{y'}&=\sigma_x\sin^2\theta+\sigma_y\cos^2\theta-2\tau_{xy}\sin\theta\cos\theta.\end{aligned}\]
 <p>(\(\sigma_{y'}\) is \(\sigma_{x'}\) with \(\theta\) replaced by \(\theta+90^\circ\): the \(y'\)-face is the \(x'\)-face turned a further right angle.)</p>
+<details class="idea"><summary>What is this? (why \(2\theta\))</summary><div><p>Turn the knife by half a turn and you are cutting the same plane again, just from the other side, so you must feel the same push and slide. Anything that repeats every \(180^\circ\) of knife turn is written most simply with \(2\theta\), which repeats every \(180^\circ\) of \(\theta\). That is why doubled angles appear.</p></div></details>
 <p><b>Double angles (slide 42).</b> Using \(\cos^2\theta=\tfrac12(1+\cos2\theta)\), \(\sin^2\theta=\tfrac12(1-\cos2\theta)\), \(2\sin\theta\cos\theta=\sin2\theta\), \(\cos^2\theta-\sin^2\theta=\cos2\theta\):</p>
 <div class="box thm"><span class="tag">Result · transformation equations (slide 42)</span>
 \[\begin{aligned}\sigma_{x'}&=\frac{\sigma_x+\sigma_y}{2}+\frac{\sigma_x-\sigma_y}{2}\cos2\theta\\&\quad+\tau_{xy}\sin2\theta,\\ \sigma_{y'}&=\frac{\sigma_x+\sigma_y}{2}-\frac{\sigma_x-\sigma_y}{2}\cos2\theta\\&\quad-\tau_{xy}\sin2\theta,\\ \tau_{x'y'}&=-\frac{\sigma_x-\sigma_y}{2}\sin2\theta+\tau_{xy}\cos2\theta.\end{aligned}\]
 <p class="word"><b>In words:</b> the normal stress on a face turned by \(\theta\) is the average stress plus a part that swings with \(2\theta\); the shear stress swings with \(2\theta\) too, a quarter-cycle out of step. Everything repeats every \(180^\circ\) of element rotation, because a face and the opposite face carry the same stress.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\dfrac{\sigma_x+\sigma_y}{2}\)</dt><dd>the average push: the steady middle that every knife angle feels.</dd>
+<dt>\(\dfrac{\sigma_x-\sigma_y}{2}\cos2\theta\)</dt><dd>the extra push because the \(x\)- and \(y\)-pushes differ; it swings as the knife turns.</dd>
+<dt>\(\tau_{xy}\sin2\theta\)</dt><dd>part of the original slide now shows up as push on the slanted face.</dd>
+<dt>signs flipped in \(\sigma_{y'}\)</dt><dd>the \(y'\)-face is a further quarter-turn of the knife, so its swinging part is the mirror image: what one face gains, the other loses.</dd>
+<dt>\(\tau_{x'y'}\)</dt><dd>the slide on the slanted face. It is half the rate at which \(\sigma_{x'}\) changes with \(\theta\), so it is zero exactly where the push peaks (Section 16).</dd>
+</dl></div>
+
 <div class="box ready"><span class="tag">Ready answer · "what is \(\sigma_{y'}\)?" (Dec 2015 A2(b))</span>
 <p>Replace \(\theta\) by \(\theta+90^\circ\) in \(\sigma_{x'}\): \(\cos(2\theta+180^\circ)=-\cos2\theta\), \(\sin(2\theta+180^\circ)=-\sin2\theta\), giving the \(\sigma_{y'}\) line above. Note \(\sigma_{x'}+\sigma_{y'}=\sigma_x+\sigma_y\).</p></div>
+<p class="cannow"><b>You can now:</b> derive \(\sigma_{x'}\) and \(\tau_{x'y'}\) from equilibrium of a wedge; write \(\sigma_{y'}\) by replacing \(\theta\) with \(\theta+90^\circ\); and evaluate all three for a given angle.</p>
 </section>
 
 <!-- ============ 16 ============ -->
-<section id="s16"><h2><span class="n">16</span>Principal stresses and principal directions (slides 43–45)</h2>
+<section id="s16"><h2><span class="n">16</span><span class="h2t">Principal stresses and principal directions (slides 43–45)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Keep turning the knife and watch the slide on the cut face. At one special angle the slide vanishes completely: the other side only pulls or pushes straight through the face. That face feels the biggest pull of any angle (or the smallest), and the face at right angles to it feels the other extreme. These two pulls are the principal stresses.</p></div></details>
 <p>Which angle makes \(\sigma_{x'}\) largest or smallest (slide 43)? Set the derivative to zero:</p>
 \[\frac{\mathrm d\sigma_{x'}}{\mathrm d\theta}=-(\sigma_x-\sigma_y)\sin2\theta+2\tau_{xy}\cos2\theta=0\]
 <p>(and \(\mathrm d\sigma_{y'}/\mathrm d\theta\) is the same with the opposite sign). Call the solution \(\theta'\):</p>
@@ -518,29 +669,45 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box thm"><span class="tag">Result · principal stresses (slide 45)</span>
 \[\begin{aligned}\sigma_{\max/\min}&=\frac{\sigma_x+\sigma_y}{2}\\&\quad\pm\sqrt{\left(\frac{\sigma_x-\sigma_y}{2}\right)^2+\tau_{xy}^2}.\end{aligned}\]
 <p class="word"><b>In words:</b> principal stress = average normal stress ± the "radius" \(\sqrt{(\text{half the difference})^2+\text{shear}^2}\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\dfrac{\sigma_x+\sigma_y}{2}\)</dt><dd>the average push, which no knife angle can change.</dd>
+<dt>\(\sqrt{\left(\frac{\sigma_x-\sigma_y}{2}\right)^2+\tau_{xy}^2}\)</dt><dd>how far the push can swing either side of that average as the knife turns.</dd>
+<dt>\(\pm\)</dt><dd>\(+\) on one no-slide face, \(-\) on the other, a quarter-turn away.</dd>
+<dt>\(\tan2\theta'=\dfrac{2\tau_{xy}}{\sigma_x-\sigma_y}\)</dt><dd>the knife angle where the slide is zero; it does not tell you which of the two faces you have found.</dd>
+</dl></div>
 <div class="box def"><span class="tag">Definitions · principal stress, principal coordinate system (slide 45)</span>
 <p>\(\sigma_{\max}\) and \(\sigma_{\min}\) (also written \(\sigma_1\), \(\sigma_2\)) are the <b>principal stresses</b>, acting on faces at the principal angles \(\theta'\) and \(\theta'+\pi/2\). <b>The shear stress on those faces is zero.</b> Axes pointing along the principal directions form the <b>principal coordinate system</b>: in it the element is only pulled or pushed, never sheared.</p>
 <p class="word"><b>In words (exam-ready, Dec 2015 A2(a)):</b> the principal stresses are the largest and smallest normal stresses at a point over all orientations; they act on two perpendicular planes that carry no shear. The principal coordinate system is the pair of axes normal to those planes.</p></div>
 <div class="box warn"><span class="tag">Watch · which angle carries which stress?</span>
 <p>\(\tan^{-1}\) only gives an angle between \(-90^\circ\) and \(90^\circ\), so \(\tfrac12\tan^{-1}\) cannot tell you whether \(\theta'\) carries \(\sigma_{\max}\) or \(\sigma_{\min}\). Always substitute \(\theta'\) back into \(\sigma_{x'}\) (or read it off Mohr's circle, which shows it at a glance). Example 1 in Section 19 is a case where the calculator angle gives \(\sigma_{\min}\).</p></div>
+<p class="cannow"><b>You can now:</b> find the principal stresses and angles from \(\sigma_x\), \(\sigma_y\), \(\tau_{xy}\); check which angle carries \(\sigma_{\max}\) by substituting back; and define principal stresses and the principal coordinate system in words.</p>
 </section>
 
 <!-- ============ 17 ============ -->
-<section id="s17"><h2><span class="n">17</span>Maximum shear stress and mean stress (slides 46–47)</h2>
+<section id="s17"><h2><span class="n">17</span><span class="h2t">Maximum shear stress and mean stress (slides 46–47)</span> <span class="mins">~2 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Now turn the knife looking for the strongest slide instead. It comes halfway between the two no-slide faces, at \(45^\circ\) to them, just as the \(45^\circ\) cut on the pulled bar of Section 2 felt the most slide. On those faces you still feel a push or pull: the average of the two principal stresses, which is the same at every knife angle.</p></div></details>
 <p>Doing the same for the shear stress (slide 46):</p>
 \[\begin{aligned}\frac{\mathrm d\tau_{x'y'}}{\mathrm d\theta}&=-(\sigma_x-\sigma_y)\cos2\theta\\&\quad-2\tau_{xy}\sin2\theta=0\\ \Rightarrow\ \tan2\theta''&=-\frac{\sigma_x-\sigma_y}{2\tau_{xy}}.\end{aligned}\]
 <div class="box thm"><span class="tag">Result · maximum shear stress (slide 46)</span>
 \[\begin{aligned}\tau_{\max}&=\pm\sqrt{\left(\frac{\sigma_x-\sigma_y}{2}\right)^2+\tau_{xy}^2}\\&=\pm\tfrac12\left(\sigma_{\max}-\sigma_{\min}\right).\end{aligned}\]
 <p>The two values differ only in sign (sense of direction), so both are called the <b>maximum shear stress</b>.</p>
 <p class="word"><b>In words:</b> the biggest shear is half the difference between the principal stresses. Since \(\tan2\theta''=-1/\tan2\theta'\), the angles \(2\theta''\) and \(2\theta'\) differ by \(90^\circ\): the planes of maximum shear are at \(45^\circ\) to the principal planes.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\sqrt{\cdots}\)</dt><dd>the same swing as in the principal stresses: the biggest slide equals how far the push swings from the average.</dd>
+<dt>\(\tfrac12(\sigma_{\max}-\sigma_{\min})\)</dt><dd>half the gap between the strongest and the weakest push.</dd>
+<dt>\(\pm\)</dt><dd>equal slides in opposite senses on two faces a quarter-turn apart.</dd>
+</dl></div>
+
 <div class="box thm"><span class="tag">Result · the mean stress does not change (slide 47)</span>
 \[\begin{aligned}\sigma_M&=\tfrac12\left(\sigma_{x'}+\sigma_{y'}\right)=\tfrac12\left(\sigma_x+\sigma_y\right)\\&=\tfrac12\left(\sigma_{\max}+\sigma_{\min}\right).\end{aligned}\]
 <p class="word"><b>In words:</b> however you turn the element, the average of the two normal stresses stays the same. On the planes of maximum shear the normal stress equals this average (not zero).</p></div>
 <p>These formulas are hard to remember and easy to get wrong. Mohr's circle packs them all into one picture (slide 47).</p>
+<p class="cannow"><b>You can now:</b> compute \(\tau_{\max}\) and the normal stress \(\sigma_M\) on its planes; and place those planes at \(45^\circ\) to the principal planes.</p>
 </section>
 
 <!-- ============ 18 ============ -->
-<section id="s18"><h2><span class="n">18</span>Mohr's circle (slides 48–53)</h2>
+<section id="s18"><h2><span class="n">18</span><span class="h2t">Mohr's circle (slides 48–53)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Turn the knife round the point and, at each angle, write down two readings: the push on the cut face (\(\sigma\)) and the slide along it (\(\tau\)). Mark each pair as a dot on a graph, push across and slide up. The dots always fall on one circle. Its centre is the average push, which never changes; the two ends of the horizontal diameter are the no-slide faces (the principal stresses); the top and bottom are the biggest slide. A full lap of the circle is only half a turn of the knife, because after half a turn you are cutting the same plane again.</p></div></details>
 <p>Square and add the transformation equations: \(\left(\sigma_{x'}-\sigma_M\right)^2+\tau_{x'y'}^2=r^2\) for every \(\theta\). So as the element turns, the point \((\sigma_{x'},\tau_{x'y'})\) runs round a <b>circle</b> with centre \((\sigma_M,0)\) and radius \(r\). That is <b>Mohr's circle</b>.</p>
 <div id="fig-s18"></div>
 <h3>Building it (slides 48–50)</h3>
@@ -552,19 +719,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box thm"><span class="tag">Result · radius and angle (slide 49)</span>
 \[\begin{aligned}r&=\sqrt{\left(\frac{\sigma_x-\sigma_y}{2}\right)^2+\tau_{xy}^2}=\tau_{\max},\\ r\cos2\theta'&=\frac{\sigma_x-\sigma_y}{2},\quad r\sin2\theta'=\tau_{xy},\\ \tan2\theta'&=\frac{2\tau_{xy}}{\sigma_x-\sigma_y}.\end{aligned}\]
 <p class="word"><b>In words:</b> the radius is the maximum shear stress, and the angle \(2\theta'\) at the centre between \(MP\) and the \(\sigma\)-axis is twice the principal angle.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(M=(\sigma_M,0)\)</dt><dd>the centre: the average push, the same for every knife angle.</dd>
+<dt>\(r\)</dt><dd>the radius: how far the push swings either way, and also the biggest slide.</dd>
+<dt>\(P(\sigma_x,\ \tau_{xy})\)</dt><dd>the dot for the \(x\)-face: its push and its slide (positive if the pair turns the element anticlockwise).</dd>
+<dt>\(P'(\sigma_y,\ -\tau_{xy})\)</dt><dd>the dot for the \(y\)-face. The same-sized shear on the \(y\)-faces turns the element clockwise, so by the anticlockwise-positive rule it is plotted as \(-\tau_{xy}\).</dd>
+<dt>\(2\theta'\)</dt><dd>the angle at the centre: always twice the knife angle on the element.</dd>
+</dl></div>
 <div class="box thm"><span class="tag">Result · principal stresses on the circle (slide 50)</span>
 \[\begin{aligned}S&=\sigma_M+r\\&=\frac{\sigma_{\max}+\sigma_{\min}}{2}+\frac{\sigma_{\max}-\sigma_{\min}}{2}\\&=\sigma_{\max},\\ S'&=\sigma_M-r=\sigma_{\min}.\end{aligned}\]
 <p class="word"><b>In words:</b> where the circle cuts the \(\sigma\)-axis (zero shear) are the principal stresses; the top and bottom of the circle are \(\pm\tau_{\max}\), at normal stress \(\sigma_M\). Slide 51 marks all four: \(\sigma_{\max}\), \(\sigma_{\min}\), \(\tau_{\max}\), \(\tau_{\min}\).</p></div>
 <h3>Stresses on a rotated element (slides 52–53)</h3>
+<details class="idea"><summary>What is this? (turning the element)</summary><div><p>Turning the knife by \(\theta\) slides the dot round the circle by \(2\theta\). In this course's drawing (\(\tau\) up), an anticlockwise turn of the element moves the dot clockwise. So to get the stresses on a turned element you do not need the formulas: move the dot and read off its coordinates.</p></div></details>
 <p>To get the stresses on an element turned by \(\theta\) <b>anticlockwise</b> (slide 52): rotate \(P\) by \(2\theta\) <b>clockwise</b> round the circle to \(Q(a,b)\), and \(P'\) likewise to \(Q'(a',b')\). With the angle of \(P\) being \(2\theta'\), \(Q\) sits at angle \(2\theta'-2\theta\):</p>
 \[\begin{aligned}a&=\frac{\sigma_x+\sigma_y}{2}+r\cos(2\theta'-2\theta)\\ &=\frac{\sigma_x+\sigma_y}{2}+r\cos2\theta'\cos2\theta\\&\quad+r\sin2\theta'\sin2\theta\\ &=\frac{\sigma_x+\sigma_y}{2}+\frac{\sigma_x-\sigma_y}{2}\cos2\theta\\&\quad+\tau_{xy}\sin2\theta=\sigma_{x'},\\ a'&=\frac{\sigma_x+\sigma_y}{2}-r\cos(2\theta'-2\theta)\\&=\sigma_{y'},\\ b&=-b'=r\sin(2\theta'-2\theta)\\ &=-\frac{\sigma_x-\sigma_y}{2}\sin2\theta+\tau_{xy}\cos2\theta\\&=\tau_{x'y'}.\end{aligned}\]
 <p class="word"><b>In words:</b> reading the coordinates of \(Q\) gives back exactly the transformation equations. So the circle <b>is</b> the transformation equations, drawn.</p>
 <div class="box ready"><span class="tag">Ready answer · general steps (slide 53)</span>
-<ol class="steps">
-<li>Get \(P(\sigma_x,\tau_{xy})\) and \(P'(\sigma_y,-\tau_{xy})\) from the given values (or by calculation). Read the signs off the drawn element carefully.</li>
-<li>Plot \(P\) and \(P'\) and draw the diameter \(PP'\).</li>
-<li>Locate the centre \(M\); calculate the radius \(r=\tau_{\max}\); read \(\sigma_{\max}=\sigma_M+r\) and \(\sigma_{\min}=\sigma_M-r\) on the \(\sigma\)-axis.</li>
-<li>Angles: \(2\theta'\) from \(MP\) to the \(\sigma\)-axis; on the element, turn by \(\theta'\) in the <b>opposite</b> sense to the circle. For a rotated element at \(\theta\), turn \(P\) by \(2\theta\) the opposite way.</li>
+<ol class="steps proc">
+<li><b>Do:</b> Get \(P(\sigma_x,\tau_{xy})\) and \(P'(\sigma_y,-\tau_{xy})\) from the given values (or by calculation). Read the signs off the drawn element carefully. <span class="why">These are the readings on the two cuts you already know, the \(x\)-face and the \(y\)-face. A sign slip here mirrors every angle later.</span></li>
+<li><b>Do:</b> Plot \(P\) and \(P'\) and draw the diameter \(PP'\). <span class="why">The two faces are a quarter-turn of the knife apart, which is half a lap of the circle, so their dots sit at opposite ends of a diameter.</span></li>
+<li><b>Do:</b> Locate the centre \(M\); calculate the radius \(r=\tau_{\max}\); read \(\sigma_{\max}=\sigma_M+r\) and \(\sigma_{\min}=\sigma_M-r\) on the \(\sigma\)-axis. <span class="why">The centre is the average push; the points on the \(\sigma\)-axis have zero slide, so they are the principal faces.</span></li>
+<li><b>Do:</b> Angles: \(2\theta'\) from \(MP\) to the \(\sigma\)-axis; on the element, turn by \(\theta'\) in the <b>opposite</b> sense to the circle. For a rotated element at \(\theta\), turn \(P\) by \(2\theta\) the opposite way. <span class="why">Every angle on the circle is twice the knife angle, and with \(\tau\) plotted up the point \(Q\) sits at \(2\theta'-2\theta\): turning the element anticlockwise moves the dot clockwise.</span></li>
 </ol>
 <p>There is no need to draw the circle to scale; a sketch will do (slide 53). Label the points and show the angles.</p></div>
 <div class="figure"><p class="ttl">Try it · Mohr's circle explorer (MPa)</p>
@@ -578,23 +753,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="legend"><span style="--k:var(--c2)">\(\sigma_{x'}(\theta)\)</span><span style="--k:var(--c3)">\(\tau_{x'y'}(\theta)\)</span></div>
 <div class="readout" id="mx-out"></div>
 <p class="cap">Drag \(\theta\) until the shear arrows vanish: that is a principal direction, and the normal stress there is \(\sigma_1\) or \(\sigma_2\). The bottom graph shows \(\sigma_{x'}\) and \(\tau_{x'y'}\) for every \(\theta\): \(\tau\) is zero exactly where \(\sigma\) peaks. "Equal biaxial" shrinks the circle to a point: every direction is principal.</p></div>
+<p class="cannow"><b>You can now:</b> build Mohr's circle from \(P\) and \(P'\); read off \(\sigma_{\max}\), \(\sigma_{\min}\) and \(\tau_{\max}\); and find the stresses on an element turned by \(\theta\) anticlockwise by turning \(P\) through \(2\theta\) clockwise.</p>
 </section>
 
 <!-- ============ 19 ============ -->
-<section id="s19"><h2><span class="n">19</span>Mohr's circle example (slides 54–56)</h2>
+<section id="s19"><h2><span class="n">19</span><span class="h2t">Mohr's circle example (slides 54–56)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>This is the whole method once through, on the element of slide 54. Keep the knife in mind: the circle tells you which way to turn the knife so that the cut face feels no slide, and how hard the material pulls or pushes on those two faces.</p></div></details>
 <div class="box eg"><span class="tag">Worked example · slides 54–56 (same numbers as Dec 2015 A2(c))</span>
 <p>For the stress state shown (MPa), calculate the principal stresses and principal stress angles.</p>
 <div id="fig-ex1"></div>
-<ol class="steps">
-<li><b>Read the element.</b> \(x\)-faces: arrows of 5 pointing <b>in</b> → \(\sigma_x=-5\u{MPa}\). \(y\)-faces: 20 pointing out → \(\sigma_y=20\u{MPa}\). Shear 15: on the right face it points <b>down</b>, so the \(x\)-face pair turns the element clockwise → \(\tau_{xy}=-15\u{MPa}\).</li>
-<li><b>Points.</b> \(P(\sigma_x,\tau_{xy})=(-5,\,-15)\); \(P'(\sigma_y,-\tau_{xy})=(20,\,15)\) (slide 55 plots these two).</li>
-<li><b>Centre</b> \(\sigma_M=\tfrac{20-5}{2}=7.5\u{MPa}\), i.e. \(M=(7.5,0)\).</li>
-<li><b>Radius</b> \(r=\sqrt{(20-7.5)^2+15^2}=19.53\u{MPa}=\tau_{\max}\).</li>
-<li><b>Principal stresses</b> (slide 56): \(\sigma_{\max}=7.5+19.53=27.03\u{MPa}\); \(\sigma_{\min}=7.5-19.53=-12.03\u{MPa}\).</li>
-<li><b>Angles.</b> Let \(\phi=\tan^{-1}\dfrac{15}{20-7.5}=50.19^\circ\): the angle at \(M\) between the diameter \(PP'\) and the \(\sigma\)-axis. \(P(-5,-15)\) lies below and to the left of \(M\), \(\phi\) below the left end \(S'\). Turning \(P\) <b>clockwise</b> round the circle by \(\phi\) brings it up to \(S'\) (\(\sigma_{\min}\)). A clockwise turn of \(2\theta\) on the circle is an <b>anticlockwise</b> turn of \(\theta\) of the element, so
+<ol class="steps proc">
+<li><b>Do:</b> <b>Read the element.</b> \(x\)-faces: arrows of 5 pointing <b>in</b> → \(\sigma_x=-5\u{MPa}\). \(y\)-faces: 20 pointing out → \(\sigma_y=20\u{MPa}\). Shear 15: on the right face it points <b>down</b>, so the \(x\)-face pair turns the element clockwise → \(\tau_{xy}=-15\u{MPa}\). <span class="why">The sign rule is defined on the right (\(+x\)) face, so read the shear there, not off the top face.</span></li>
+<li><b>Do:</b> <b>Points.</b> \(P(\sigma_x,\tau_{xy})=(-5,\,-15)\); \(P'(\sigma_y,-\tau_{xy})=(20,\,15)\) (slide 55 plots these two). <span class="why">These are the dots for the two cuts you already know: the \(x\)-face and the \(y\)-face.</span></li>
+<li><b>Do:</b> <b>Centre</b> \(\sigma_M=\tfrac{20-5}{2}=7.5\u{MPa}\), i.e. \(M=(7.5,0)\). <span class="why">The average push, which no turn of the knife can change.</span></li>
+<li><b>Do:</b> <b>Radius</b> \(r=\sqrt{(20-7.5)^2+15^2}=19.53\u{MPa}=\tau_{\max}\). <span class="why">How far the push can swing either side of the average, which is also the biggest slide.</span></li>
+<li><b>Do:</b> <b>Principal stresses</b> (slide 56): \(\sigma_{\max}=7.5+19.53=27.03\u{MPa}\); \(\sigma_{\min}=7.5-19.53=-12.03\u{MPa}\). <span class="why">The two ends of the horizontal diameter: the cuts with no slide.</span></li>
+<li><b>Do:</b> <b>Angles.</b> Let \(\phi=\tan^{-1}\dfrac{15}{20-7.5}=50.19^\circ\): the angle at \(M\) between the diameter \(PP'\) and the \(\sigma\)-axis. \(P(-5,-15)\) lies below and to the left of \(M\), \(\phi\) below the left end \(S'\). Turning \(P\) <b>clockwise</b> round the circle by \(\phi\) brings it up to \(S'\) (\(\sigma_{\min}\)). A clockwise turn of \(2\theta\) on the circle is an <b>anticlockwise</b> turn of \(\theta\) of the element, so
 \[\begin{aligned}\sigma_{\min}&=-12.03\u{MPa}\ \text{ on the face at}\\ &\tfrac12\tan^{-1}\tfrac{15}{12.5}=25.10^\circ\\ &\text{anticlockwise};\end{aligned}\]
 \(S\) is reached by turning \(P\) the other way (anticlockwise) by \(180^\circ-\phi=129.81^\circ\), so
-\[\begin{aligned}\sigma_{\max}&=27.03\u{MPa}\ \text{ on the face at}\\ &\tfrac12(180^\circ-\phi)=64.90^\circ\ \text{clockwise}.\end{aligned}\]</li>
+\[\begin{aligned}\sigma_{\max}&=27.03\u{MPa}\ \text{ on the face at}\\ &\tfrac12(180^\circ-\phi)=64.90^\circ\ \text{clockwise}.\end{aligned}\] <span class="why">The calculator angle alone does not say which principal stress it belongs to; the circle shows which end of the horizontal diameter \(P\) reaches when turned through that angle.</span></li>
 </ol>
 <div id="fig-ex1-mohr"></div>
 <p>\(\boxed{\sigma_{\max}=27.03\u{MPa}\ (64.90^\circ\ \text{cw}),\ \ \sigma_{\min}=-12.03\u{MPa}\ (25.10^\circ\ \text{acw}),\ \ \tau_{\max}=19.53\u{MPa}}\)</p>
@@ -605,10 +782,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Turn \(P\) by \(60^\circ\) clockwise to \(Q\). With the formulas: \(\sigma_{x'}=7.5-12.5\cos60^\circ-15\sin60^\circ=-11.74\u{MPa}\), \(\sigma_{y'}=26.74\u{MPa}\), \(\tau_{x'y'}=12.5\sin60^\circ-15\cos60^\circ=+3.33\u{MPa}\).</p>
 <div id="fig-ex1-30"></div>
 <p>Check: \(\sigma_{x'}+\sigma_{y'}=15=\sigma_x+\sigma_y\) ✓.</p></div>
+<p class="cannow"><b>You can now:</b> solve a full "principal stresses and angles" question with Mohr's circle, including which angle carries which stress; and find the stresses on the same element turned by any angle.</p>
 </section>
 
 <!-- ============ 20 ============ -->
-<section id="s20"><h2><span class="n">20</span>Summary</h2>
+<section id="s20"><h2><span class="n">20</span><span class="h2t">Summary</span></h2>
 <div class="scroll"><table>
 <tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
 <tr><td>Normal stress</td><td>\(\sigma=N/A\)</td><td>force per area, tension +</td></tr>
@@ -628,7 +806,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 21 ============ -->
-<section id="s21"><h2><span class="n">21</span>Common mistakes</h2>
+<section id="s21"><h2><span class="n">21</span><span class="h2t">Common mistakes</span></h2>
 <div class="mistake">
 <span class="x">✗</span><span>Reading \(\tau_{xy}\) off the top face and getting its sign wrong.</span>
 <span class="ok">✓</span><span>Look at the <b>right</b> (\(+x\)) face: shear pointing up → \(\tau_{xy}\gt0\); pointing down → \(\tau_{xy}\lt0\).</span>
@@ -648,7 +826,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 22 ============ -->
-<section id="s22"><h2><span class="n">22</span>Find the mistake</h2>
+<section id="s22"><h2><span class="n">22</span><span class="h2t">Find the mistake</span></h2>
 <div class="q"><p class="qh">1 · A student's Mohr's circle for slide 54</p>
 <p>"\(\sigma_x=-5\), \(\sigma_y=20\), and the shear arrow on the top face points left, so \(\tau_{xy}=+15\). \(P=(-5,15)\). Then \(\sigma_{\max}=27.03\) at \(25.10^\circ\) anticlockwise."</p>
 <details><summary>Hint</summary><div><p>Which face defines \(\tau_{xy}\), and which way does its arrow point?</p></div></details>
@@ -662,7 +840,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 23 ============ -->
-<section id="s23"><h2><span class="n">23</span>Concept checks</h2>
+<section id="s23"><h2><span class="n">23</span><span class="h2t">Concept checks</span></h2>
 <p class="muted">Written for these notes.</p>
 <div class="q"><p class="qh">1 · Pure shear</p><p>An element has \(\sigma_x=\sigma_y=0\), \(\tau_{xy}=50\u{MPa}\). Principal stresses and directions?</p>
 <details><summary>Answer</summary><div><p>Centre at 0, radius 50: \(\sigma_{1}=50\u{MPa}\), \(\sigma_2=-50\u{MPa}\), on faces at \(45^\circ\) (\(\tan2\theta'=\infty\)). This is slide 25's picture: tension on one diagonal, compression on the other.</p></div></details></div>
@@ -679,7 +857,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 24 ============ -->
-<section id="s24"><h2><span class="n">24</span>Exam taster</h2>
+<section id="s24"><h2><span class="n">24</span><span class="h2t">Exam taster</span></h2>
 <p>Real past-paper parts, one per question type. This chapter appears in Section A on most papers: a 5–7 mark "principal stresses from this element" in A1 on every paper since 2022, and a full 10–20 mark Mohr's circle question earlier. Full method and more questions: <a href="guide-S3.html">Exam guide · S3</a>.</p>
 
 <div class="q"><div class="src"><b>Dec 2024 A1(c)</b><span>5 marks</span><span>same type: Dec 2023 A1(b), Dec 2022 A1(b)</span><a class="guide" href="guide-S3.html#S3-1">S3.1 principal stresses from an element</a></div>
@@ -1185,5 +1363,13 @@ P('fig-t5a',[mohrPanel(67.52,33.05,0,'Q: normal of the inclined plane at 120°',
 /* plots in collapsed answers: redraw when opened */
 document.querySelectorAll('details').forEach(dt=>dt.addEventListener('toggle',()=>{if(dt.open)redraws.forEach(f=>{try{f();}catch(e){}});}));
 
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </body></html>

@@ -168,6 +168,7 @@ details.calc{border-left:3px solid var(--accent)}
 details.calc>summary{color:var(--accent);font-weight:500}
 details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 details.calc .why{color:var(--muted);font-size:.9rem}
+details.calc .calcwhy{color:var(--muted);font-size:.9rem}
 table.tbl td,table.tbl th{padding:6px 8px}
 .circuit{width:100%;height:auto;display:block}
 .circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
@@ -197,6 +198,35 @@ details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-
 .stats b{color:var(--ink);font-family:var(--display)}
 .small{font-size:.88rem}
 
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+/* MECH1350: the page's older .proc box rule would put a bar beside Do/Why lists */
+ol.steps.proc{border-left:0}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -237,13 +267,32 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-T3.html">Exam guide · T3</a><a href="note-T2.html">← T2</a><a href="note-T4.html">Next: T4 →</a></nav>
   <span class="course">MECH1350 · Thermal science · chapter 3</span>
   <h1>Heat transfer: conduction, convection and radiation</h1>
-  <p class="lede">How heat moves by conduction, convection and radiation, and how to solve any wall as a thermal resistance circuit. Every slide and all twelve handout examples, explained from scratch.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
-<p>T1–T2 described a substance's <b>state</b>; this chapter asks <b>how fast heat moves</b> from hot to cold. T4 then combines heat and work in the laws of thermodynamics.</p>
-<p><b>In the exam:</b> one of the most reliable sources of Section A marks, usually a 6–15 mark composite-wall question plus short questions on \(h\) and emissivity. See the <a href="guide-T3.html">T3 exam guide</a>.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this chapter sits</span></h2>
+<p>T1–T2 described a substance's <b>state</b>; this chapter asks <b>how fast heat moves</b> from hot to cold. Heat is passed through a material, carried off by a moving fluid, or sent across a gap as infrared light. Each of these acts like a resistor, so a whole wall becomes a simple circuit.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span><ol>
+<li><a href="#s1">§1</a> <b>Heat moves three ways: passed along, carried off, or beamed across.</b></li>
+<li><a href="#s2">§2</a> <b>Heat is an amount; heat rate is per second; flux is per second per square metre.</b></li>
+<li><a href="#s3">§3</a> <b>Conduction passes heat from neighbour to neighbour through still material.</b> In steady state the temperature falls in a straight line.</li>
+<li><a href="#s4">§4</a> <b>More area, a bigger temperature difference or a better conductor: more heat. Thicker: less.</b></li>
+<li><a href="#s5">§5</a> <b>A layer is a resistor:</b> temperature difference pushes, \(R=L/(kA)\) resists.</li>
+<li><a href="#s6">§6</a> <b>Layers in a row carry the same heat, and their resistances add.</b></li>
+<li><a href="#s7">§7</a> <b>Paths side by side share the heat:</b> add the reciprocals.</li>
+<li><a href="#s8">§8</a> <b>Handout examples 1–4: add the resistances, divide, walk through the wall.</b></li>
+<li><a href="#s9">§9</a> <b>Insulation design works backwards from a target heat rate.</b></li>
+<li><a href="#s10">§10</a> <b>Draw the circuit by following the heat from hot to cold.</b> <span class="pill">Asked in most papers</span></li>
+<li><a href="#s11">§11</a> <b>Convection: a moving fluid carries heat away from a surface.</b></li>
+<li><a href="#s12">§12</a> <b>A fluid film is one more resistor, \(1/(hA)\), in the chain.</b></li>
+<li><a href="#s13">§13</a> <b>\(h\) is smallest for gases, largest for boiling and condensing.</b></li>
+<li><a href="#s14">§14</a> <b>Everything glows in infrared, and hotter things far more (\(T^4\), in kelvin).</b></li>
+<li><a href="#s15">§15</a> <b>Real surfaces emit a fraction \(\varepsilon\) of the ideal; shiny metals least.</b></li>
+<li><a href="#s16">§16</a> <b>Radiation written like convection; on one face the two coefficients add.</b></li>
+<li><a href="#s17">§17</a> <b>Everything in one circuit: films, layers and radiation.</b> <span class="pill">Asked in most papers</span></li>
+<li><a href="#s18">§18–§22</a> Summary, common mistakes, checks and real exam parts.</li>
+</ol></div>
+<p><b>You need:</b> T1–T2 (state and temperature), and series and parallel resistors from HKDSE Physics. T4 then combines heat and work in the laws of thermodynamics. <b>In the exam:</b> one of the most reliable sources of Section A marks, usually a 6–15 mark composite-wall question plus short questions on \(h\) and emissivity. See the <a href="guide-T3.html">T3 exam guide</a>.</p>
 <p class="muted small">Source: Lecture Note 3, Part 1 (Dr Match W. L. Ko), 50 slides; slide numbers = printed numbers = PDF pages.</p>
 
 <div class="box conv"><span class="tag">Sign convention for this chapter</span>
@@ -275,7 +324,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Heat transfer and its three modes</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Heat transfer and its three modes</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Think of a campfire. Heat reaches you in three ways. Hold a metal poker in it and the handle warms, because heat is passed along the metal from particle to particle (conduction). Blow on a bowl of hot soup and the moving air carries heat away from its surface (convection). Sit across the room from a fire and your face still feels warm, although no hot air reaches you, because the fire sends out infrared light (radiation). These three pictures come back in every section.</p></div></details>
 <div class="box def"><span class="tag">Definition · heat transfer (slide 4)</span>
 <p><b>Heat transfer</b> is the study of how <b>thermal energy</b> (the energy of the random jiggling of molecules) moves from one place to another because of a <b>temperature difference</b>. It happens in three ways, called <b>modes</b>:</p>
 <ul class="list">
@@ -302,10 +352,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div><div id="fig-s1-wall"></div><p class="sub">The wall of slide 6: heat \(q\) flows from \(T_1\) to \(T_2\).</p></div>
 <div><div id="fig-s1-circ"></div><p class="sub">Its "thermal circuit": blocks one after another are in series; blocks side by side are in parallel.</p></div>
 </div>
+<p class="cannow"><b>You can now:</b> name and describe the three modes of heat transfer; pick out which modes act in an everyday scene; and describe heating soup on a stove, step by step.</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>Heat, heat rate and heat flux (slide 7)</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Heat, heat rate and heat flux (slide 7)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Three different questions about the same flow of heat. How much heat got through in total? How fast is it getting through? How fast is it getting through each square metre? A big window and a small window, made of the same glass in the same wall, have the same flux but very different heat rates.</p></div></details>
 <div class="box def"><span class="tag">Definitions · three ways to measure "how much heat"</span>
 <ul class="list">
 <li><b>Heat</b> \(Q\): the amount of thermal energy transferred. Unit: joule (J).</li>
@@ -320,10 +372,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>A 500 W heater runs for one hour. The heat delivered is \(Q=qt=500\times3600\u{J}\), which is \(1.8\times10^{6}\u{J}=1.8\u{MJ}\). If a window of area 1.5 m² lets out \(4500\u{W}\), the heat flux through it is \(Q''=4500/1.5=3000\u{W/m^2}\).</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Read the question's units. "Rate of heat loss per unit area" means flux (W/m²); "heat flow rate across the wall" means \(q\) (W). Several handout examples set \(A=1\u{m^2}\), so the two numbers are equal there, but in exam walls \(A\) is 10–20 m².</p></div>
+<p class="cannow"><b>You can now:</b> convert between heat, heat rate and heat flux; and tell from the units whether a question wants \(q\) (W) or flux (W/m²).</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Conduction and the temperature gradient (slides 8–10)</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Conduction and the temperature gradient (slides 8–10)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture heat working its way through a wall like a shove passing through a packed crowd. People at the hot side are jostling hard. Each person only bumps their neighbours, and the bumping is passed on row by row towards the calm side. Energy crosses the crowd although nobody walks across it. That is conduction: molecules stay roughly where they are and pass energy on by collisions.</p></div></details>
 <h3>What conduction depends on (slide 8)</h3>
 <p>Slide 8 shows a close-up of a surface between a hotter region (left) and a colder region (right). A <b>high-energy</b> (fast) molecule from the hot side collides with a <b>low-energy</b> (slow) molecule near the surface; after the collision the slow one moves faster. Energy has crossed the surface although no molecule travelled far. Repeated billions of times, this is <b>heat conduction</b> \(Q\) from hot to cold.</p>
 <div id="fig-molecules"></div>
@@ -337,6 +391,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>It does <b>not</b> depend on the mass of the material (May 2023 Q1 asked exactly this).</p>
 
 <h3>Temperature gradient (slide 9)</h3>
+<details class="idea"><summary>What is this? (temperature gradient)</summary><div><p>In the crowd, the gradient is how quickly the jostling dies away as you move through the rows. If it fades sharply over a few rows, energy is being handed on fast. If every row is about as restless as the next, very little is passed on. Heat always goes down the gradient, from the restless side to the calm side.</p></div></details>
 <div class="box def"><span class="tag">Definition · temperature gradient</span>
 <p>The <b>temperature gradient</b> between two points \(A\) and \(B\) a distance \(\Delta x\) apart is the temperature change per unit length:</p>
 \[\text{gradient}=\frac{\Delta T}{\Delta x}=\frac{T_B-T_A}{\Delta x}\quad(\mathrm{K/m}).\]
@@ -344,6 +399,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Heat always flows <b>down</b> the gradient, from hotter to colder, until the temperature difference has disappeared and the two places are in <b>thermal equilibrium</b> (same temperature). (Slide 9 says "temperature always flows"; it means <b>heat</b> flows. Temperature is a property of a place; heat is what moves.)</p>
 
 <h3>Steady conduction gives a straight-line profile (slide 10)</h3>
+<details class="idea"><summary>What is this? (steady state)</summary><div><p>Steady state is a crowd in which every row hands on exactly as much as it receives each second. No row gets more restless or calmer over time, even though energy keeps streaming through. In a uniform material each row needs the same difference from its neighbour to pass on that same amount, so the restlessness falls off in even steps: a straight line.</p></div></details>
 <div class="box def"><span class="tag">Definition · steady state</span>
 <p>A process is <b>steady</b> (in <b>steady state</b>) when nothing at any point changes with time: every temperature stays fixed, even though heat keeps flowing through.</p></div>
 <p>Slide 10 shows a bar between a hot object (left, red) and a cold object (right, blue), both kept at constant temperature. Look at one thin slice of the bar, thickness \(\mathrm dx\) (mass \(\mathrm dm\)). Heat \(\dot Q_x\) enters its left face and \(\dot Q_{x+\mathrm dx}\) leaves its right face.</p>
@@ -352,8 +408,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\frac{\mathrm d^2T}{\mathrm dx^2}=0\quad\Longrightarrow\quad T(x)\ \text{is a straight line}\]
 <p class="word"><b>In words:</b> in steady state, with no heat made inside the material, the temperature falls in a straight line through a uniform layer.</p></div>
 <details class="calc"><summary>why the profile must be a straight line</summary><div>
-<p>1. Steady state: the slice's temperature is not changing, so its stored energy is not changing. <span class="why">Energy in = energy out for the slice.</span></p>
-<p>2. So \(\dot Q_x=\dot Q_{x+\mathrm dx}\): the same heat rate crosses every slice. <span class="why">No heat is made or absorbed inside (no "heat generation").</span></p>
+<p>1. Steady state: the slice's temperature is not changing, so its stored energy is not changing. <span class="calcwhy">Energy in = energy out for the slice.</span></p>
+<p>2. So \(\dot Q_x=\dot Q_{x+\mathrm dx}\): the same heat rate crosses every slice. <span class="calcwhy">No heat is made or absorbed inside (no "heat generation").</span></p>
 <p>3. The heat rate through a slice is proportional to the local slope \(\mathrm dT/\mathrm dx\) (Section 4: \(q=-kA\,\mathrm dT/\mathrm dx\)). With \(k\) and \(A\) the same everywhere, equal \(q\) means equal slope everywhere.</p>
 <p>4. A constant slope means \(\mathrm d^2T/\mathrm dx^2=0\) (the slope does not change), and a graph with constant slope is a straight line: \(T=T_1+(\text{slope})\,x\).</p>
 </div></details>
@@ -364,10 +420,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>A 0.1 m thick plate has faces at \(T_1=100\)&nbsp;°C and \(T_2=20\)&nbsp;°C. Find the temperature 25 mm from the hot face.</p>
 \[\begin{aligned}T_x&=T_1+\frac{T_2-T_1}{\Delta x}\,\Delta x_1\\&=100+\frac{-80}{0.1}(0.025)\\&=\boxed{80\ ^\circ\mathrm C}\end{aligned}\]
 <p>The gradient is \(-800\u{K/m}\): the temperature falls 8 °C every centimetre.</p></div>
+<p class="cannow"><b>You can now:</b> list what the conduction rate depends on (and that mass is not one of them); find a temperature gradient; explain why steady conduction gives a straight-line profile; and find a temperature inside a layer by linear interpolation.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Thermal conductivity and the conduction law (slides 11–12)</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Thermal conductivity and the conduction law (slides 11–12)</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Back to the crowd. Make its front wider (a bigger area \(A\)) and more people pass the shove on side by side, so more heat gets through. Make it deeper (a bigger thickness \(L\)) and the shove has more rows to cross, so less gets through. Jostle harder at the hot side (a bigger temperature difference) and more gets through. Some crowds pass the shove on eagerly and some sluggishly: that eagerness is the conductivity \(k\).</p></div></details>
 <p>Slide 11 shows the classic experiment. A metal bar of cross-section area \(A\) and length \(L\) is wrapped in <b>lagging</b> (insulation, so no heat escapes from its sides). A <b>heater</b> at the left end keeps that end at \(T_1\); <b>cooling water</b> flowing through a <b>sink</b> at the right end keeps it at \(T_2\). The heat carried away by the water (from its flow rate and temperature rise) equals the heat rate through the bar.</p>
 <div id="fig-apparatus"></div>
 <p>Experiments like this show (slide 11):</p>
@@ -380,6 +438,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[q=\frac{Q}{t}=kA\,\frac{T_1-T_2}{L}=kA\,\frac{\Delta T}{L}\]
 \[Q''=\frac{q}{A}=k\,\frac{T_1-T_2}{L}\]
 <p class="word"><b>In words:</b> conduction heat rate = conductivity × area × (temperature difference ÷ thickness). Flux = conductivity × temperature drop per metre.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(q\)</dt><dd>the heat crossing the layer each second: how much of the shove gets through the crowd.</dd><dt>\(k\)</dt><dd>how readily the material passes heat on: an eager crowd (metal) or a sluggish one (foam, still air).</dd><dt>\(A\)</dt><dd>the width of the crowd's front: more people side by side carry more.</dd><dt>\(T_1-T_2\)</dt><dd>how much harder the hot side jostles than the cold side: what drives the flow.</dd><dt>\(\div L\)</dt><dd>the depth of the crowd: the same difference spread over more rows is a gentler gradient, so less heat.</dd></dl></div>
 <div class="box def"><span class="tag">Definition · thermal conductivity \(k\)</span>
 <p>The <b>thermal conductivity</b> \(k\) is a property of the material: the heat rate (W) through a 1 m² by 1 m thick block with a 1 K temperature difference across it. Unit: W/(m·K) = W/(m·°C). Large \(k\) (metals) = good conductor; small \(k\) (wood, foam, still air) = good <b>insulator</b>.</p></div>
 <div class="beyond box"><span class="tag">Beyond the handouts · the minus sign and typical values</span>
@@ -394,15 +453,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Slide 12 is a still from a video (link on the slide): two similar-looking dark blocks, each with a rubber ring on top to hold an ice cube, and a stopwatch reading 0.0. Both blocks are at room temperature.</p>
 <p class="flag">the video itself is not part of the handout; the description that follows is of the standard version of this demonstration (one aluminium block, one plastic block).</p>
 <p>The ice on the <b>aluminium</b> block melts in a minute or two; the ice on the <b>plastic</b> block hardly melts. Aluminium's high \(k\) lets heat from the whole block flow quickly into the ice; plastic's low \(k\) lets only a trickle through. The same idea explains why a metal block <i>feels</i> colder than a plastic one at the same temperature: it pulls heat out of your hand faster.</p>
+<p class="cannow"><b>You can now:</b> use \(q=kA\,\Delta T/L\) and its flux form; say what \(k\) means and which materials have a large or small \(k\); and explain why metals conduct faster than wood.</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Thermal resistance and the electrical analogy (slides 13–14)</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Thermal resistance and the electrical analogy (slides 13–14)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Thermal resistance answers one question: how many degrees of temperature difference does it take to push one watt through this layer? A thick layer, a poor conductor or a small area needs a big push, so its resistance is large. Written this way, heat flow obeys the same rule as current in a wire, push ÷ resistance, and everything you know about resistors works for walls.</p></div></details>
 <p>Rearranging the conduction law (slide 13):</p>
 \[k=\frac{q\,L}{A\,\Delta T}\quad\mathrm{W/(m\,K)}\]
 <div class="box thm"><span class="tag">Result · thermal resistance of a conducting layer</span>
 \[R=\frac{\Delta T}{q}=\frac{L}{kA}\quad(\mathrm{K/W})\]
 <p class="word"><b>In words:</b> thermal resistance = temperature difference needed per watt of heat flow = thickness ÷ (conductivity × area).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\Delta T/q\)</dt><dd>degrees of push needed for each watt that gets through.</dd><dt>\(L\) on top</dt><dd>a thicker layer: more crowd to cross, more resistance.</dd><dt>\(k\) below</dt><dd>a better conductor resists less.</dd><dt>\(A\) below</dt><dd>a wider layer gives the heat more room, so it resists less.</dd></dl></div>
 <div class="box def"><span class="tag">Definition · thermal resistance</span>
 <p>The <b>thermal resistance</b> \(R\) (or \(R_\text{th}\)) between two surfaces is the temperature difference between them that drives a heat rate of 1 W (slide 13). A thick layer (large \(L\)), a poor conductor (small \(k\)) or a small area all make \(R\) large, so less heat gets through for the same temperature difference. Unit: K/W, written °C/W in the handout (the same thing).</p></div>
 <p>Then \(q=\Delta T/R\), which has exactly the shape of <b>Ohm's law</b> for an electric circuit, \(I=V/R_\text{elect}\). Slide 14 draws a wire with a battery and a resistor beside a slab between two temperatures, and lists the matching quantities:</p>
@@ -418,10 +480,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>So everything you know from HKDSE Physics about resistors carries over: resistances <b>one after another</b> add (series); resistances <b>side by side</b> combine by reciprocals (parallel); the "voltage drop" across each resistor is (current) × (its resistance). A <b>node</b> (dot in the circuit) is a place with one temperature, such as a surface or an interface between layers.</p>
 <div class="box warn"><span class="tag">Watch</span>
 <p>\(R=L/(kA)\) has the area <b>inside</b>. Some handout examples quote "\(AR\)" (unit m²·K/W, the resistance of 1 m² of wall) instead. Keep track of which one you have: \(q=\Delta T/R\) but \(Q''=\Delta T/(AR)\).</p></div>
+<p class="cannow"><b>You can now:</b> compute \(R=L/(kA)\); use \(q=\Delta T/R\) like Ohm's law; and keep \(R\) (K/W) apart from \(AR\) (m²·K/W).</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Conduction through a composite slab (slides 15–18)</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Conduction through a composite slab (slides 15–18)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture water creeping slowly through a row of narrow pipes joined end to end. Every second the same amount of water passes through each pipe: it has nowhere else to go and cannot pile up at a joint. The pressure drops along the pipes add up to the total drop, and the narrowest pipe takes the biggest share. Layers of a wall do exactly this with heat: the same heat rate through each, temperature drops that add up, and the layer with the largest resistance takes the largest drop.</p></div></details>
 <div class="box def"><span class="tag">Definition · composite slab (composite wall)</span>
 <p>A <b>composite slab</b> is a wall made of several layers of different materials pressed together, such as brick + insulation + plaster. Heat crosses the layers one after another.</p></div>
 <p><b>Problem (slide 15).</b> Two layers, conductivities \(k_1,k_2\), thicknesses \(L_1,L_2\), the same area \(A\). The left face is at \(T_L\), the right face at \(T_R\) (\(T_L\gt T_R\)). Assume steady, one-dimensional heat flow. Find the heat rate \(q\), the temperature \(T_i\) at the <b>interface</b> (the contact plane between the layers), and the temperature \(T_x\) anywhere.</p>
@@ -434,14 +498,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[q=\frac{T_L-T_R}{R_\text{resultant}}=\frac{T_L-T_i}{R_1}=\frac{T_i-T_R}{R_2}\]
 \[R_1=\frac{L_1}{k_1A},\qquad R_2=\frac{L_2}{k_2A}\]
 \[R_\text{resultant}=R_1+R_2\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\dfrac{T_L-T_R}{R_\text{resultant}}\)</dt><dd>the whole wall: total temperature drop ÷ total resistance.</dd><dt>\(\dfrac{T_L-T_i}{R_1}\)</dt><dd>layer 1 on its own: its own drop ÷ its own resistance.</dd><dt>\(\dfrac{T_i-T_R}{R_2}\)</dt><dd>layer 2 on its own.</dd><dt>all equal to \(q\)</dt><dd>the same heat goes through each layer, like the same water through each pipe.</dd><dt>\(R_1+R_2\)</dt><dd>resistances in a row add, as the pressure drops along joined pipes add.</dd></dl></div>
 <div class="box thm"><span class="tag">Result · series layers</span>
 <p class="word"><b>In words:</b> the same heat rate goes through every layer in series; the total resistance is the sum; each layer's temperature drop is \(q\) times its own resistance, so the layer with the biggest \(R\) takes the biggest share of the temperature drop.</p></div>
 <details class="calc"><summary>the interface temperature \(T_i\)</summary><div>
-<p>1. Total resistance \(R_1+R_2\) and \(q=(T_L-T_R)/(R_1+R_2)\). <span class="why">Series resistances add.</span></p>
-<p>2. Walk from the left face through layer 1: \(T_i=T_L-qR_1\). <span class="why">Temperature drops by \(qR\) across a resistance, in the direction of flow.</span></p>
+<p>1. Total resistance \(R_1+R_2\) and \(q=(T_L-T_R)/(R_1+R_2)\). <span class="calcwhy">Series resistances add.</span></p>
+<p>2. Walk from the left face through layer 1: \(T_i=T_L-qR_1\). <span class="calcwhy">Temperature drops by \(qR\) across a resistance, in the direction of flow.</span></p>
 <p>3. Substitute \(q\):</p>
 \[\begin{aligned}T_i&=T_L-\frac{R_1}{R_1+R_2}(T_L-T_R)\\&=\frac{R_2T_L+R_1T_R}{R_1+R_2}.\end{aligned}\]
-<p>4. Check: if \(R_1=0\) (layer 1 a perfect conductor) then \(T_i=T_L\); if \(R_2=0\) then \(T_i=T_R\). <span class="why">The interface sits close to the face of the layer with the smaller resistance.</span></p>
+<p>4. Check: if \(R_1=0\) (layer 1 a perfect conductor) then \(T_i=T_L\); if \(R_2=0\) then \(T_i=T_R\). <span class="calcwhy">The interface sits close to the face of the layer with the smaller resistance.</span></p>
 </div></details>
 <h3>Temperature anywhere (slide 17)</h3>
 <p>Inside each layer the profile is a straight line (Section 3). Measuring \(x\) from the left face:</p>
@@ -466,10 +531,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </div>
 <div class="readout" id="out-wall"></div>
 <p class="cap">Starts as Example 2 (Section 8): insulation \(k=0.07\), 3 cm / brick \(k=0.7\), 10 cm / insulation 3 cm, faces at 150 °C and 10 °C, per 1 m². The \(k\) sliders are logarithmic (0.01 to 100 W/(m·K)). Make one layer a good conductor: its line goes almost flat, and the other layers take the whole temperature drop.</p></div>
+<p class="cannow"><b>You can now:</b> find the heat rate through a slab of two or more layers; find an interface temperature by walking through the layers; and write the temperature at any point inside a composite wall.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Series and parallel thermal resistances (slides 19–20)</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Series and parallel thermal resistances (slides 19–20)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Layers one after another are the row of pipes from Section 6: their resistances add. Now put materials side by side across the flow, like a metal bolt pushed through foam. Heat can take either route at once, each route carries its own share, and the shares add up. An extra route can only help the heat get through, so the combined resistance is smaller than that of any single route.</p></div></details>
 <div class="box thm"><span class="tag">Result · combining resistances (slide 19)</span>
 \[R_\text{series}=R_1+R_2+R_3+\cdots\]
 \[\frac{1}{R_\text{parallel}}=\frac{1}{R_1}+\frac{1}{R_2}+\frac{1}{R_3}+\cdots\]
@@ -490,17 +557,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>A 1 m² panel of insulation (\(k=0.04\u{W/(m\,K)}\), 5 cm thick) is held by steel bolts (\(k=45\)) whose total cross-section is 0.002 m² (0.2% of the area). The faces are at 20 °C and 0 °C. Find the heat rate with and without the bolts.</p>
 <ol class="steps">
 <li>Insulation path: \(A_1=1-0.002=0.998\u{m^2}\), \(R_1=\dfrac{0.05}{0.04(0.998)}=1.2525\u{K/W}\).</li>
-<li>Bolt path: \(R_2=\dfrac{0.05}{45(0.002)}=0.5556\u{K/W}\). The bolts, only 0.2% of the area, have a <i>smaller</i> resistance than all the insulation.</li>
-<li>Heat through each (same \(\Delta T=20\u{K}\) across both): \(q_1=20/1.2525=15.97\u{W}\), \(q_2=20/0.5556=36.0\u{W}\).</li>
+<li>Bolt path: \(R_2=\dfrac{0.05}{45(0.002)}=0.5556\u{K/W}\). The bolts, only 0.2% of the area, have a <i>smaller</i> resistance than all the insulation. <span class="why">Steel's \(k\) is over a thousand times the foam's, which far outweighs its tiny area.</span></li>
+<li>Heat through each (same \(\Delta T=20\u{K}\) across both): \(q_1=20/1.2525=15.97\u{W}\), \(q_2=20/0.5556=36.0\u{W}\). <span class="why">Both routes start on the same warm face and end on the same cold face.</span></li>
 <li>Total \(q=51.97\u{W}\) (or \(20/R_\text{par}\) with \(R_\text{par}=0.3849\u{K/W}\)). Without bolts: \(20/(0.05/0.04)=16.0\u{W}\).</li>
 </ol>
 <p>\(\boxed{q\approx52\u{W}\text{ with bolts, }16\u{W}\text{ without}}\): the bolts carry 69% of the heat. Engineers call such a path a <b>thermal bridge</b>.</p></div>
 <div class="beyond box"><span class="tag">Beyond the handouts · when is "parallel" exact?</span>
 <p>Treating side-by-side materials as parallel resistors assumes each one has the <b>same</b> temperature on its left face and the same on its right face (the nodes of the circuit). Really, heat also leaks sideways between a good and a poor conductor, so the answer is an approximation; it is the standard one, and it is what every exam question expects.</p></div>
+<p class="cannow"><b>You can now:</b> combine resistances in series and in parallel (product over sum for two); treat side-by-side materials as parallel paths, each with its own area; and explain a thermal bridge.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Handout examples 1–4: walls in series (slides 21–27)</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Handout examples 1–4: walls in series (slides 21–27)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Every example here is a row of layers: the pipes in a row of Section 6. The recipe never changes. Find each layer's resistance, add them, and divide the temperature difference by the total. To find a temperature inside the wall, walk through it and take off each layer's drop.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 1 · slide 21 · composite slab with three layers</span>
 <p>Three layers (green, pink, blue) of conductivities \(k_1,k_2,k_3\) and thicknesses \(\Delta x_1,\Delta x_2,\Delta x_3\), all of area \(A\), carry a known heat rate \(\dot Q\) from face \(A\) (temperature \(T_A\)) to face \(B\) (\(T_B\)). Find \(T_A-T_B\).</p>
 <div id="fig-ex1"></div>
@@ -518,7 +587,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div><div id="fig-ex2c"></div></div>
 </div>
 <ol class="steps">
-<li>Series: \(R_\text{resultant}=R_1+R_2+R_3\) with each \(R=L/(kA)\). The area is not given, so work per square metre with \(AR=L/k\).</li>
+<li>Series: \(R_\text{resultant}=R_1+R_2+R_3\) with each \(R=L/(kA)\). The area is not given, so work per square metre with \(AR=L/k\). <span class="why">Every layer has the same \(A\), so it cancels from the flux \(Q''=q/A\).</span></li>
 <li>\(AR_1=AR_3=\dfrac{0.03}{0.07}=0.4286\) and \(AR_2=\dfrac{0.1}{0.7}=0.1429\), both in m²·°C/W.</li>
 <li>Sum: \(AR=0.4286+0.1429+0.4286\), which is \(1.000\u{m^2\,{}^\circ C/W}\).</li>
 <li>Flux: \(Q''=\dfrac{T_1-T_4}{AR}=\dfrac{150-10}{1.000}\), so \(\boxed{Q''=140\u{W/m^2}}\).</li>
@@ -526,9 +595,9 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p class="flag">the handout rounds the three terms to 0.42 + 0.42 + 0.14 = 0.98 and gets 142 W/m². With unrounded values the sum is exactly 1.000 (0.03/0.07 = 3/7, 0.1/0.7 = 1/7, total 7/7), so 140 W/m² is the precise answer. Keep 3–4 significant figures in intermediate steps.</p>
 <details class="calc"><summary>the two interface temperatures (not asked, but good practice)</summary><div>
 <p>Walk along the flow, dropping \(Q''\times AR\) across each layer:</p>
-<p>\(T_2=150-140(0.4286)=90\)&nbsp;°C. <span class="why">Left insulation takes 60 °C.</span></p>
-<p>\(T_3=90-140(0.1429)=70\)&nbsp;°C. <span class="why">The brick takes only 20 °C: high \(k\), small \(R\).</span></p>
-<p>\(T_4=70-140(0.4286)=10\)&nbsp;°C ✓ <span class="why">Arrives at the given right-face temperature, so the arithmetic is right.</span></p>
+<p>\(T_2=150-140(0.4286)=90\)&nbsp;°C. <span class="calcwhy">Left insulation takes 60 °C.</span></p>
+<p>\(T_3=90-140(0.1429)=70\)&nbsp;°C. <span class="calcwhy">The brick takes only 20 °C: high \(k\), small \(R\).</span></p>
+<p>\(T_4=70-140(0.4286)=10\)&nbsp;°C ✓ <span class="calcwhy">Arrives at the given right-face temperature, so the arithmetic is right.</span></p>
 </div></details></div>
 
 <div class="box eg"><span class="tag">Worked example 3 · slides 24–25 · temperature at a point inside an oven wall</span>
@@ -538,7 +607,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <ol class="steps">
 <li>\(R_\text{th}=\dfrac{L}{kA}=\dfrac{0.5}{0.3\times1}=1.667\u{{}^\circ C/W}\).</li>
 <li>\(\dot Q=\dfrac{T_1-T_2}{R_\text{th}}=\dfrac{850-250}{1.667}=360\u{W}\).</li>
-<li>Linear profile, at \(x=0.2\u{m}\) from the inside:</li>
+<li>Linear profile, at \(x=0.2\u{m}\) from the inside: <span class="why">Steady state, one material and no heat made inside, so the temperature falls in a straight line (Section 3).</span></li>
 </ol>
 \[\begin{aligned}T_x&=T_1+\frac{T_2-T_1}{L}x\\&=850+\frac{250-850}{0.5}(0.2)\\&=850-240=610\ {}^\circ\mathrm C\end{aligned}\]
 \[\boxed{\begin{aligned}R_\text{th}&=1.667\u{{}^\circ C/W},\quad \dot Q=360\u{W}\\ T_{0.2}&=610\ {}^\circ\mathrm C\end{aligned}}\]
@@ -548,18 +617,20 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>A plane slab 60 cm thick, \(k=17.5\u{W/(m\,{}^\circ C)}\), absorbs a net radiant heat flux \(Q''=530\u{W/m^2}\) on its left face. The right face is held at \(T_2=38\)&nbsp;°C. Steady state, no heat generation. Find the temperature at the mid-plane (30 cm in) and the maximum temperature in the slab.</p>
 <div id="fig-ex4"></div>
 <ol class="steps">
-<li>Steady state: all the absorbed energy is conducted through the slab, so the conducted flux is 530 W/m².</li>
+<li>Steady state: all the absorbed energy is conducted through the slab, so the conducted flux is 530 W/m². <span class="why">Nothing can build up inside, so whatever arrives at the left face must leave by the right face.</span></li>
 <li>Conduction law in flux form, \(Q''=k(T_1-T_2)/L\):
 \[\begin{aligned}530&=\frac{17.5(T_1-38)}{0.6}\\T_1-38&=\frac{530(0.6)}{17.5}=18.17\\T_1&=56.2\ {}^\circ\mathrm C\end{aligned}\]</li>
-<li>Heat flows from left to right, so the left face is the hottest point: \(T_\text{max}=T_1=56.2\)&nbsp;°C.</li>
+<li>Heat flows from left to right, so the left face is the hottest point: \(T_\text{max}=T_1=56.2\)&nbsp;°C. <span class="why">Heat only flows downhill in temperature, and the straight-line profile has no bump in the middle.</span></li>
 <li>Mid-plane: \(T_x=56.17+\dfrac{38-56.17}{0.6}(0.3)=47.1\)&nbsp;°C (exactly halfway between, since 0.3 m is half of 0.6 m).</li>
 </ol>
 \[\boxed{T_\text{mid}=47.1\ {}^\circ\mathrm C,\quad T_\text{max}=56.2\ {}^\circ\mathrm C}\]
 <p>The maximum is on the left (heated) face.</p></div>
+<p class="cannow"><b>You can now:</b> solve a series wall for the heat rate or flux; find the temperature at an interface or at any point inside; and handle a given heat flux in place of a given face temperature.</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Insulation design: examples 5 and 6 (slides 28–31)</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Insulation design: examples 5 and 6 (slides 28–31)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Here you know how much heat you are willing to let through, and you design the wall to match. In the pipe picture: to cut the flow to a quarter with the same pressure difference, the row of pipes must resist four times as much in total. The new layer supplies the extra resistance.</p></div></details>
 <p>These two examples work "backwards": the heat rate or a target reduction is known and a property of one layer (its \(k\) or its thickness) is the unknown. This is exam type <a href="guide-T3.html#T3-4">T3.4</a>.</p>
 <div class="box eg"><span class="tag">Worked example 5 · slides 28–29 · finding the insulation's conductivity</span>
 <p>A house wall in a cold region has three layers: (a) 15 cm of outer brickwork, \(k=0.75\u{W/(m\,{}^\circ C)}\); (b) 1.25 cm of inner wooden panelling, \(k=0.2\); (c) a 7.5 cm intermediate layer of insulation, whose resistance is <b>twice</b> that of the brick. Inside surface 20 °C, outside surface −15 °C, area 1 m². Find the heat loss per unit area and the conductivity of the insulation.</p>
@@ -570,15 +641,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>Series: \(R_\text{total}=0.2+0.0625+0.4\), so \(R_\text{total}=0.6625\u{{}^\circ C/W}\).</li>
 <li>Heat loss per unit area:
 \[\begin{aligned}Q''&=\frac{T_\text{inner}-T_\text{outer}}{R_\text{total}A}\\&=\frac{20-(-15)}{0.6625(1)}=52.83\u{W/m^2}\end{aligned}\]</li>
-<li>From \(R=L/(kA)\), rearranged for \(k\):
+<li>From \(R=L/(kA)\), rearranged for \(k\): <span class="why">The layer's resistance and thickness are now known, so \(k\) is the only unknown.</span>
 \[\begin{aligned}k_\text{insul}&=\frac{L_\text{insul}}{R_\text{insul}A}=\frac{0.075}{0.4(1)}\\&=0.1875\u{W/(m\,{}^\circ C)}\end{aligned}\]</li>
 </ol>
 \[\boxed{\begin{aligned}Q''&=52.8\u{W/m^2}\\k_\text{insul}&=0.1875\u{W/(m\,{}^\circ C)}\end{aligned}}\]
 <details class="calc"><summary>the temperatures inside this wall</summary><div>
 <p>Walk from inside (20 °C) to outside along the flow:</p>
-<p>after the wood: \(20-52.83(0.0625)=16.70\)&nbsp;°C <span class="why">drop 3.30 °C</span></p>
-<p>after the insulation: \(16.70-52.83(0.4)=-4.43\)&nbsp;°C <span class="why">drop 21.13 °C: the biggest resistance takes the biggest drop</span></p>
-<p>after the brick: \(-4.43-52.83(0.2)=-15.00\)&nbsp;°C ✓ <span class="why">drop 10.57 °C, arriving at the outside temperature</span></p>
+<p>after the wood: \(20-52.83(0.0625)=16.70\)&nbsp;°C <span class="calcwhy">drop 3.30 °C</span></p>
+<p>after the insulation: \(16.70-52.83(0.4)=-4.43\)&nbsp;°C <span class="calcwhy">drop 21.13 °C: the biggest resistance takes the biggest drop</span></p>
+<p>after the brick: \(-4.43-52.83(0.2)=-15.00\)&nbsp;°C ✓ <span class="calcwhy">drop 10.57 °C, arriving at the outside temperature</span></p>
 </div></details></div>
 
 <div class="box eg"><span class="tag">Worked example 6 · slides 30–31 · insulation thickness for a 75% cut</span>
@@ -590,23 +661,30 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>"Reduced by 75%" means 25% is left: \(\dot Q_\text{with}=0.25\,\dot Q_\text{no wool}\), which is \(1.172\,\Delta T\).</li>
 <li>With wool, the same heat rate written with the new total resistance:
 \[\frac{\Delta T}{0.2133+15.38L_\text{wool}}=1.172\,\Delta T\]
-\(\Delta T\) cancels:</li>
+\(\Delta T\) cancels: <span class="why">Adding insulation does not change the inside and outside temperatures, so only the total resistance decides the heat rate.</span></li>
 </ol>
 \[0.2133+15.38\,L_\text{wool}=\frac{1}{1.172}=0.8533\]
 <p>\(\boxed{L_\text{wool}=\dfrac{0.64}{15.38}=0.0416\u{m}\approx4.2\u{cm}}\)</p>
 <p class="flag">the handout rounds \(1/0.2133\) to 4.70 and gets 0.042 m; the unrounded answer is 0.0416 m. Both round to 4.2 cm. (The last sentence of the slide 30 question, about a "radiant source", is copied from Example 4 and does not apply here.)</p>
 <div class="box ready"><span class="tag">Ready answer · the faster route for "reduce the heat by f"</span>
-<p>Same \(\Delta T\) before and after, so \(q\propto1/R_\text{total}\):</p>
+<ol class="steps proc">
+<li><b>Do:</b> Same \(\Delta T\) before and after, so \(q\propto1/R_\text{total}\):
 \[R_\text{new}=\frac{R_\text{old}}{1-f}\]
-<p>Then the added layer's resistance is \(R_\text{new}-R_\text{old}\), and \(L=kA(R_\text{new}-R_\text{old})\) or \(k=L/[A(R_\text{new}-R_\text{old})]\). For Example 6: \(R_\text{new}=0.2133/0.25=0.8533\), added \(0.64\u{{}^\circ C/W}\), \(L=0.065(1)(0.64)=0.0416\u{m}\).</p></div></div>
+<span class="why">With the same push, leaving only the fraction \(1-f\) of the flow needs the total resistance divided by that fraction.</span></li>
+<li><b>Do:</b> Then the added layer's resistance is \(R_\text{new}-R_\text{old}\). <span class="why">The old layers are still there; the new layer only has to supply the difference.</span></li>
+<li><b>Do:</b> \(L=kA(R_\text{new}-R_\text{old})\) or \(k=L/[A(R_\text{new}-R_\text{old})]\). <span class="why">This is \(R=L/(kA)\) solved for whichever property of the new layer is unknown.</span></li>
+</ol>
+<p>For Example 6: \(R_\text{new}=0.2133/0.25=0.8533\), added \(0.64\u{{}^\circ C/W}\), \(L=0.065(1)(0.64)=0.0416\u{m}\).</p></div></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>"Reduced <b>by</b> 75%" leaves 25% (multiply \(q\) by 0.25, so \(R\) by 4). "Reduced <b>to</b> 75%" leaves 75%. Writing \(R_\text{new}=R_\text{old}/0.75\) for "by 75%" gives a wool layer ten times too thin (4.6 mm).</p></div>
 <h3>Which layer should you thicken?</h3>
 <p>May 2021 Q1(d) asked, without calculation, which one layer of a wall to make 50% thicker to cut the heat loss most. Thickening a layer by 50% multiplies <b>its</b> \(R=L/(kA)\) by 1.5, so it adds half of that layer's resistance to the total. The biggest addition comes from the layer with the <b>largest</b> \(L/(kA)\): usually the low-\(k\) insulation (large \(L/k\), and check its area too if layers have different areas). A thin metal layer is the worst choice: its \(R\) is tiny, so 50% more of it changes almost nothing.</p>
+<p class="cannow"><b>You can now:</b> find an unknown conductivity or thickness from a target heat rate; turn "reduce by \(f\)" into \(R_\text{new}=R_\text{old}/(1-f)\); and pick the layer whose thickening cuts the heat most.</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Drawing the thermal circuit (slide 32)</h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Drawing the thermal circuit (slide 32)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A thermal circuit is a map of every route the heat can take from the hot side to the cold side. Whatever the heat must cross one after another sits in a row, like the pipes of Section 6; parts it can cross side by side sit in parallel. Follow the heat with your finger and draw what it meets.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 7 · slide 32</span>
 <p>A composite wall of area \(A\) between \(T_1\) (left) and \(T_2\) (right) has material \(E\) across the whole height, then a middle column split into \(F\) (top) and \(G\) (bottom) with equal thicknesses \(L_F=L_G\), then material \(H\) across the whole height. The top and bottom edges are insulated (shaded). Here \(\lambda_E,\lambda_F,\lambda_G,\lambda_H\) are the <b>thermal resistances</b> of the plates. Draw the circuit and write the resultant resistance.</p>
 <div class="pair">
@@ -615,28 +693,30 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </div>
 <ol class="steps">
 <li>Follow the heat from left to right. It must go through \(E\) first: \(\lambda_E\) in series.</li>
-<li>Then it can go through <b>either</b> \(F\) or \(G\): two side-by-side paths between the same two planes, so \(\lambda_F\parallel\lambda_G\).</li>
+<li>Then it can go through <b>either</b> \(F\) or \(G\): two side-by-side paths between the same two planes, so \(\lambda_F\parallel\lambda_G\). <span class="why">Heat that goes through \(F\) does not also go through \(G\): each carries part of the flow.</span></li>
 <li>Then through \(H\): \(\lambda_H\) in series.</li>
 </ol>
 \[R_\text{resultant}=\lambda_E+\Big(\frac{1}{\lambda_F}+\frac{1}{\lambda_G}\Big)^{-1}+\lambda_H\]
 <p class="flag">the symbol \(\lambda\) means a <b>resistance</b> in this example but a <b>conductivity</b> in Example 9 (slide 40). Always check which one a question means; in exam papers \(k\) is conductivity and resistances are \(R\).</p></div>
 <div class="box ready"><span class="tag">Ready answer · drawing any composite-wall circuit (exam type T3.2)</span>
-<ol class="steps">
-<li>Mark the heat-flow direction (hot side to cold side) and put a node at every temperature you know or are asked for: fluid temperatures, surfaces, interfaces.</li>
-<li>Fluid on a face: a convection resistance \(1/(hA)\) between \(T_\infty\) and the surface node (Section 12). If radiation also acts on that face, put \(1/(h_\text{rad}A)\) <b>in parallel</b> with it (Section 16).</li>
-<li>Each full-height layer: \(L/(kA)\) in series, with the whole area.</li>
-<li>A column split into parts stacked across the flow: one resistor per part, \(L/(k_iA_i)\) using <b>that part's own area</b>, all in parallel between the two planes of that column.</li>
-<li>Label every resistor (\(R_1\), \(R_\text{conv,o}\), …) and every node (\(T_{\infty,o}\), \(T_{s,o}\), …), and draw \(q\) with an arrow.</li>
+<ol class="steps proc">
+<li><b>Do:</b> Mark the heat-flow direction (hot side to cold side) and put a node at every temperature you know or are asked for: fluid temperatures, surfaces, interfaces. <span class="why">A node is a place with one temperature, so these are the points the circuit has to join up.</span></li>
+<li><b>Do:</b> Fluid on a face: a convection resistance \(1/(hA)\) between \(T_\infty\) and the surface node (Section 12). If radiation also acts on that face, put \(1/(h_\text{rad}A)\) <b>in parallel</b> with it (Section 16). <span class="why">Heat must cross the fluid film before the moving fluid carries it off; radiation leaves the same surface at the same time by a second route.</span></li>
+<li><b>Do:</b> Each full-height layer: \(L/(kA)\) in series, with the whole area. <span class="why">All of the heat must cross a full-height layer, so it is one more pipe in the row.</span></li>
+<li><b>Do:</b> A column split into parts stacked across the flow: one resistor per part, \(L/(k_iA_i)\) using <b>that part's own area</b>, all in parallel between the two planes of that column. <span class="why">Each part carries heat only through its own share of the area, and all the parts span the same two planes.</span></li>
+<li><b>Do:</b> Label every resistor (\(R_1\), \(R_\text{conv,o}\), …) and every node (\(T_{\infty,o}\), \(T_{s,o}\), …), and draw \(q\) with an arrow. <span class="why">You will walk through these labels later to find each temperature, and the arrow fixes which way every drop goes.</span></li>
 </ol></div>
 <p>The five-layer wall below has appeared, with new numbers, in May 2022, May 2023 and May 2025. Layer 3 is split into 3a and 3b; convection acts on both faces, and radiation joins convection on the right face.</p>
 <div class="pair">
 <div><div id="fig-s10-wall"></div><p class="sub">The exam's five-layer wall (layer widths not to scale).</p></div>
 <div><div id="fig-s10-circ"></div><p class="sub">Its circuit, heat flowing right to left.</p></div>
 </div>
+<p class="cannow"><b>You can now:</b> draw the thermal circuit for any composite wall, with split layers, fluid films and radiation; and give every resistor the right area.</p>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Convection and Newton's law of cooling (slides 33–36)</h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Convection and Newton's law of cooling (slides 33–36)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Blow across a bowl of hot soup and it cools faster. The air touching the soup warms up; your breath sweeps that warm air away and brings fresh cool air in to take its place. (Faster evaporation also helps, but set that aside.) That is convection: a moving fluid carries heat away from a surface. Blow harder and the warm air is swept away sooner, so heat leaves faster. Even if you do not blow, the warmed air rises by itself and cooler air moves in: that is free convection.</p></div></details>
 <div class="box def"><span class="tag">Definition · convection (slide 33)</span>
 <p><b>Heat convection</b> is heat transfer due to <b>fluid motion</b>: a liquid or gas flowing past a surface. Right at the surface the fluid is still and heat enters it by conduction; the moving fluid then carries the warmed (or cooled) fluid away and brings fresh fluid in.</p></div>
 <p>Slide 33 shows the two kinds:</p>
@@ -657,16 +737,19 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>\(T_s\): the <b>surface</b> temperature where convection takes place.</li>
 <li>\(T_\infty\): the <b>free-stream</b> temperature: the temperature of the bulk fluid, far enough from the surface not to be affected by it.</li>
 </ul></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(T_s-T_\infty\)</dt><dd>how much hotter the soup's surface is than the air further away: what drives the flow.</dd><dt>\(A\)</dt><dd>the surface the air sweeps over: a wide bowl loses heat faster.</dd><dt>\(h\)</dt><dd>how well the moving air carries heat off: larger when you blow harder, larger still for water.</dd><dt>\(q\)</dt><dd>the heat leaving the surface each second.</dd></dl></div>
 <div class="box def"><span class="tag">Definition · heat transfer coefficient \(h\)</span>
 <p>\(h\) is the heat rate per square metre of surface per degree of difference between surface and fluid. It is <b>not</b> a property of the fluid alone: it depends on the fluid (air, water, oil), how fast and in what pattern it flows (free or forced, slow or fast), and the shape of the surface. Faster flow sweeps warm fluid away sooner, so \(h\) is larger.</p></div>
 <div class="box eg"><span class="tag">Worked example 8 · slide 36</span>
 <p>A fluid flows over a plane surface 1 m by 1 m. The surface is at 50 °C, the fluid at 20 °C, and \(h=2000\u{W/(m^2\,{}^\circ C)}\). Find the convective heat transfer from the surface.</p>
 \[\begin{aligned}q&=hA\Delta T\\&=2000(1\times1)(50-20)\\&=60\,000\u{W}=\boxed{60\u{kW}}\end{aligned}\]
 <p class="flag">the slide calls the fluid "the colder air", but \(h=2000\) is typical of flowing water (Section 13), not air (10–100).</p></div>
+<p class="cannow"><b>You can now:</b> tell forced from free convection; use Newton's law of cooling \(q=hA(T_s-T_\infty)\); and say what \(h\) depends on.</p>
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Convection resistance; convection plus conduction (slides 37–40)</h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Convection resistance; convection plus conduction (slides 37–40)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Back to the soup. Right at its surface is a thin layer of air that the breeze cannot quite reach, and heat must cross that film before it is carried away. The film behaves like one more resistor, \(1/(hA)\): blowing harder (a bigger \(h\)) thins it and lowers its resistance. A wall with fluid on both sides is then a row of resistors: film, layers, film.</p></div></details>
 <p>Newton's law has the same shape as \(q=\Delta T/R\), so a fluid film also behaves like a resistor (slide 37):</p>
 <div class="box thm"><span class="tag">Result · convection resistance</span>
 \[R_\text{th,convection}=\frac{1}{hA}\]
@@ -686,6 +769,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\begin{aligned}R_\text{combine}&=R_\text{conv,1}+R_\text{wall,1}\\&\quad+R_\text{wall,2}+R_\text{conv,2}\\&=\frac{1}{h_1A}+\frac{L_1}{k_1A}+\frac{L_2}{k_2A}+\frac{1}{h_2A}\end{aligned}\]
 \[q=\frac{T_{\infty1}-T_{\infty2}}{R_\text{combine}}\]
 <p class="word"><b>In words:</b> fluid films are just more resistors in the series chain; the overall temperature difference is now fluid-to-fluid.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\dfrac{1}{h_1A}\)</dt><dd>the hot fluid's film on the left face.</dd><dt>\(\dfrac{L_1}{k_1A}+\dfrac{L_2}{k_2A}\)</dt><dd>the two solid layers.</dd><dt>\(\dfrac{1}{h_2A}\)</dt><dd>the cold fluid's film on the right face.</dd><dt>the sum</dt><dd>heat crosses all four one after another, so they add like pipes in a row.</dd><dt>\(T_{\infty1}-T_{\infty2}\)</dt><dd>the whole drop, from one bulk fluid to the other.</dd></dl></div>
 <div class="box eg"><span class="tag">Worked example 9 · slide 40 · three layers between two fluids</span>
 <p>Hot fluid (\(T_{\infty,1}\), \(h_1\)) flows up the left face of a wall made of segments \(A\), \(B\), \(C\) (conductivities \(\lambda_A,\lambda_B,\lambda_C\), thicknesses \(L_A,L_B,L_C\)); cold fluid (\(T_{\infty,4}\), \(h_4\)) flows up the right face. Cross-section area \(A\). Derive the overall thermal resistance.</p>
 <p>The picture shows the temperature falling from \(T_{\infty,1}\) to the surface temperature \(T_{s,1}\) through the hot film, then to \(T_2\), \(T_3\) and \(T_{s,4}\) through the three segments, then to \(T_{\infty,4}\) through the cold film. Five resistances in series:</p>
@@ -698,10 +782,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>\(R_\text{total}=0.1133\u{K/W}\); \(q=\dfrac{20-5}{0.1133}=\boxed{132\u{W}}\).</li>
 </ol>
 <p>Not 4500 W. The glass is only 3% of the total resistance; the two air films do almost all the insulating, and the glass surfaces are not at 20 °C and 5 °C but much closer together. That is why the boundary films must never be left out when the question gives \(h\).</p></div>
+<p class="cannow"><b>You can now:</b> write the convection resistance \(1/(hA)\); build the series chain for a wall with fluid on both sides; and explain why leaving out the films overestimates the heat rate.</p>
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Typical values of the heat transfer coefficient (slide 41)</h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Typical values of the heat transfer coefficient (slide 41)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The soup picture again: how good is the fluid at carrying heat off? Air is a poor carrier, so a gentle breeze takes little. Water carries far more. A boiling or condensing fluid takes up or gives out a large amount of latent heat right at the surface. So \(h\) climbs from gases to liquids to boiling and condensing, and rises with flow speed in each.</p></div></details>
 <div class="scroll"><table class="tbl">
 <tr><th>Flow type (as on slide 41)</th><th>\(h\) (W/(m²·K))</th></tr>
 <tr><td>Forced convection; low-speed flow of air over a surface</td><td>10</td></tr>
@@ -729,13 +815,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Reasons to quote: liquids conduct heat far better than gases and carry more heat per volume; faster flow thins the film of slow fluid at the surface; boiling and condensation absorb or release the large latent heat right at the surface.</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Convection depends on: the fluid's speed (and whether it is forced or free), the fluid itself and its temperature, the surface area and shape. It does <b>not</b> depend on the surface's emissivity (that is radiation) or on how efficient the fan's motor is (only the air speed it produces matters). This was May 2024 Q2.</p></div>
+<p class="cannow"><b>You can now:</b> rank heat transfer coefficients from free convection in a gas up to boiling and condensation, with reasons; and say what convection does and does not depend on.</p>
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="s14"><h2><span class="n">14</span>Radiation and the black body (slides 42–44)</h2>
+<section id="s14"><h2><span class="n">14</span><span class="h2t">Radiation and the black body (slides 42–44)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Sit across the room from a fire and your face feels warm, although no hot air reaches you and nothing touches you. The fire sends out infrared light, which crosses the room in a straight line and is absorbed by your skin. Everything above absolute zero does this, you included, and a hotter object does it far more strongly. Your face also radiates back towards the fire, much more weakly; what you feel is the difference.</p></div></details>
 <div class="box def"><span class="tag">Definition · thermal radiation (slide 42)</span>
 <p><b>Thermal radiation</b> is electromagnetic radiation emitted by <b>all</b> matter at a temperature above absolute zero, in the wavelength range 0.1 μm to 100 μm (from ultraviolet through visible light to infrared). At everyday temperatures it is mainly <b>infrared</b>. It is caused by the thermal agitation (random motion) of the molecules that make up the body: moving charges emit electromagnetic waves.</p></div>
 <p>Unlike conduction and convection, radiation needs no material in between, and it travels at the speed of light. Every body both emits radiation and absorbs radiation from its surroundings; the <b>net</b> heat transfer is the difference.</p>
+<details class="idea"><summary>What is this? (black body)</summary><div><p>A black body is the ideal case: a surface that soaks up all the radiation falling on it and, at its temperature, glows as strongly as anything can. Real surfaces fall short of it (Section 15).</p></div></details>
 <div class="box def"><span class="tag">Definition · black body; absolute temperature</span>
 <p>A <b>black body</b> is an ideal surface that absorbs all radiation falling on it (none is reflected or transmitted) and, at a given temperature, emits the most radiation possible. Its name comes from the fact that, absorbing all visible light, it would look black when cold.</p>
 <p>The <b>absolute temperature</b> is the temperature measured from absolute zero, in kelvin: \(T/\mathrm K=T/{}^\circ\mathrm C+273.15\).</p></div>
@@ -744,6 +833,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[q=\sigma\big(T_1^4-T_2^4\big)A\quad\text{(net, two bodies)}\]
 <p>with \(\sigma=5.6703\times10^{-8}\u{W/(m^2\,K^4)}\), the <b>Stefan–Boltzmann constant</b>; \(T\) the absolute temperature in K; \(A\) the surface area of the emitting body (m²).</p>
 <p class="word"><b>In words:</b> a black body radiates power proportional to its area and to the fourth power of its absolute temperature. The net exchange is "what body 1 emits minus what it receives back from body 2".</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\sigma T_1^4A\)</dt><dd>what the fire sends out: more for a bigger glowing surface.</dd><dt>\(T^4\), in kelvin</dt><dd>twice the absolute temperature gives sixteen times the glow; the count starts from absolute zero, where the glow stops.</dd><dt>\(-\,\sigma T_2^4A\)</dt><dd>what comes back from the cooler body (your face, the room).</dd><dt>\(\sigma\)</dt><dd>a fixed constant, the same for every black body.</dd></dl></div>
 <p>The two-body formula is for a body 1 (area \(A\)) that "sees" only body 2, such as a small object inside a large room or vessel whose walls are at \(T_2\): every exam question of this kind (a pipe or column in a large enclosure) is set up this way.</p>
 <div class="box eg"><span class="tag">Worked example 10 · slide 44 · radiation from the sun</span>
 <p>The sun's surface is at 5800 K. Treating the sun as a black body, find the radiation energy emitted per unit area.</p>
@@ -751,10 +841,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Every square metre of the sun gives out about 64 MW.</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Doubling the absolute temperature multiplies the emission by \(2^4=16\). Doubling a Celsius temperature means nothing here: 20 °C to 40 °C is only 293 K to 313 K, a 30% increase in emission. Always convert to kelvin <b>before</b> raising to the fourth power.</p></div>
+<p class="cannow"><b>You can now:</b> say what thermal radiation is and why it needs no material; and use \(q=\sigma T^4A\) and the net two-body formula with temperatures in kelvin.</p>
 </section>
 
 <!-- ============ 15 ============ -->
-<section id="s15"><h2><span class="n">15</span>Grey bodies and emissivity (slides 45–46)</h2>
+<section id="s15"><h2><span class="n">15</span><span class="h2t">Grey bodies and emissivity (slides 45–46)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Most real surfaces glow less than a black body at the same temperature. A polished metal reflects most of the radiation that falls on it and gives out very little of its own. A dull or non-metal surface, such as brick, cloth or water, gives out nearly as much as a black body. Emissivity is the fraction of the ideal glow that a surface actually manages.</p></div></details>
 <p>Real surfaces are not perfect absorbers. Of the radiation falling on a surface (the <b>incident radiation</b> or <b>irradiation</b>), part is <b>reflected</b>, part is <b>absorbed</b>, and (for a see-through material) part is <b>transmitted</b> through it (slide 45 picture).</p>
 <div id="fig-s15"></div>
 <div class="box def"><span class="tag">Definition · grey body; emissivity</span>
@@ -777,21 +869,25 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p><b>Shiny, polished, unoxidised metals: very low</b> (0.02–0.1). Oxidised or rough metals: higher (0.1–0.7). <b>Non-metals</b> (water, brick, asphalt, cloth, paint, skin): <b>high</b>, 0.75–0.96. From the table: aluminium (0.02–0.31) &lt; cast iron (0.6–0.7) &lt; cotton (0.77) &lt; brick and asphalt (0.93) &lt; water (0.95–0.96), the highest listed.</p></div>
 <div class="beyond box"><span class="tag">Beyond the handouts · good absorbers are good emitters</span>
 <p>For a grey surface the fraction it <b>absorbs</b> equals its emissivity (Kirchhoff's law). That is why shiny foil is used both to keep heat in (a polished surface emits little) and to keep radiant heat out (it reflects most of it). For a small grey body of area \(A\) inside large surroundings at \(T_\text{surr}\), the net radiation is \(q=\varepsilon\sigma(T_s^4-T_\text{surr}^4)A\): the handout's two-body formula with \(\varepsilon\) put in.</p></div>
+<p class="cannow"><b>You can now:</b> use \(q=\varepsilon\sigma T^4A\); rank surfaces by emissivity (shiny metals lowest, water highest in the table); and explain why good absorbers are good emitters.</p>
 </section>
 
 <!-- ============ 16 ============ -->
-<section id="s16"><h2><span class="n">16</span>Radiation as a resistance; convection and radiation together (slides 47–49)</h2>
+<section id="s16"><h2><span class="n">16</span><span class="h2t">Radiation as a resistance; convection and radiation together (slides 47–49)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Radiation is not proportional to the temperature difference, but we can still ask: at these two temperatures, how many watts per square metre does it carry for each degree of difference? That number is \(h_\text{rad}\). Once radiation is written like this, it is just one more resistor in the circuit.</p></div></details>
 <p>Radiation is not proportional to \(\Delta T\) (it goes as \(T^4\)), but to fit it into a circuit we write it in the same form as Newton's law of cooling (slide 47):</p>
 <div class="box thm"><span class="tag">Definition and result · radiant heat transfer coefficient</span>
 \[q=\frac{Q}{t}=h_\text{rad}A\,(T_s-T_\text{surr})\]
 \[R_\text{th,radiation}=\frac{1}{h_\text{rad}A}\]
 <p>\(T_s\): temperature of the emitting surface; \(T_\text{surr}\): temperature of the surroundings; \(h_\text{rad}\): the <b>coefficient of radiant heat transfer</b>, W/(m²·°C).</p>
 <p class="word"><b>In words:</b> \(h_\text{rad}\) is "the radiation heat rate per square metre per degree of difference", chosen so that radiation looks like convection. To find it, compute the real radiation \(q\) from Stefan–Boltzmann (kelvin!), then divide by \(A(T_s-T_\text{surr})\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(q\)</dt><dd>the real net radiation, always from Stefan–Boltzmann in kelvin.</dd><dt>\(T_s-T_\text{surr}\)</dt><dd>a plain difference, so °C or K give the same number here.</dd><dt>\(h_\text{rad}\)</dt><dd>the real \(q\) repackaged per square metre per degree; it holds only near these two temperatures.</dd></dl></div>
 <div class="beyond box"><span class="tag">Beyond the handouts · a formula for \(h_\text{rad}\)</span>
 <p>Factorising \(T_s^4-T_\text{surr}^4\) (difference of two squares, twice):</p>
 \[h_\text{rad}=\varepsilon\sigma\big(T_s^2+T_\text{surr}^2\big)\big(T_s+T_\text{surr}\big)\]
 <p>So \(h_\text{rad}\) grows roughly like \(T^3\): about \(4\sigma T^3\approx6\u{W/(m^2\,K)}\) for a black surface near room temperature (300 K), but over 100 at 1000 K. Radiation is comparable to free convection at room temperature and dominates in furnaces.</p></div>
 <h3>Convection and radiation from the same surface (slide 48)</h3>
+<details class="idea"><summary>What is this? (convection and radiation together)</summary><div><p>Think of the bowl of soup in a cool room. Its surface loses heat to the moving air and, at the same moment, glows towards the cooler walls. Two separate routes leave the same surface together, so they are in parallel, and their coefficients simply add.</p></div></details>
 <p>Slide 48: a solid's surface (area \(A_s\), temperature \(T_s\)) loses \(\dot Q\), which splits into \(\dot Q_\text{conv}\) to the air at \(T_\infty\) through \(R_\text{conv}\) and \(\dot Q_\text{rad}\) to the surroundings at \(T_\text{surr}\) through \(R_\text{rad}\). The two leave from the <b>same node</b> \(T_s\) and (when \(T_\infty=T_\text{surr}\)) arrive at the same temperature: they are in <b>parallel</b>.</p>
 <div class="pair">
 <div><div id="fig-s16"></div></div>
@@ -808,15 +904,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>Net radiation (temperatures already in K):</li>
 </ol>
 \[\begin{aligned}\dot Q&=\sigma(T_1^4-T_2^4)A\\&=5.6703\times10^{-8}(480^4-380^4)(1)\\&=1828\u{W}\end{aligned}\]
-<p>2. Same \(\dot Q\) written with \(h_\text{rad}\): \(1828=h_\text{rad}(1)(480-380)\), so \(h_\text{rad}=18.3\u{W/(m^2\,{}^\circ C)}\).</p>
+<p>2. Same \(\dot Q\) written with \(h_\text{rad}\): \(1828=h_\text{rad}(1)(480-380)\), so \(h_\text{rad}=18.3\u{W/(m^2\,{}^\circ C)}\). <span class="why">This makes radiation look like convection: the same heat rate, divided by area and by the plain temperature difference.</span></p>
 <p>3. \(h_\text{total}=h_\text{rad}+h_\text{conv}\): \(34.9=18.3+h_\text{conv}\).</p>
 <p>\(\boxed{h_\text{rad}=18.3,\quad h_\text{conv}=16.6\u{W/(m^2\,{}^\circ C)}}\)</p>
 <p class="muted">The handout rounds \(\dot Q\) to 1830 W; unrounded it is 1827.7 W. \(h\) values are the same to 3 significant figures.</p>
 <details class="calc"><summary>the fourth powers, step by step</summary><div>
-<p>\(480^4=(480^2)^2=230\,400^2\), which is \(5.3084\times10^{10}\) <span class="why">square twice; a calculator's \(x^y\) key also works</span></p>
+<p>\(480^4=(480^2)^2=230\,400^2\), which is \(5.3084\times10^{10}\) <span class="calcwhy">square twice; a calculator's \(x^y\) key also works</span></p>
 <p>\(380^4=144\,400^2=2.0851\times10^{10}\)</p>
-<p>Difference \(=3.2233\times10^{10}\u{K^4}\); times \(\sigma\): \(5.6703\times10^{-8}\times3.2233\times10^{10}\), which is \(1827.7\u{W/m^2}\). <span class="why">\(10^{-8}\times10^{10}=10^{2}\)</span></p>
-<p>Divide by \(A\,\Delta T=1\times100\): \(h_\text{rad}=18.28\). <span class="why">A temperature <i>difference</i> of 100 K = 100 °C, so the unit W/(m²·°C) is fine.</span></p>
+<p>Difference \(=3.2233\times10^{10}\u{K^4}\); times \(\sigma\): \(5.6703\times10^{-8}\times3.2233\times10^{10}\), which is \(1827.7\u{W/m^2}\). <span class="calcwhy">\(10^{-8}\times10^{10}=10^{2}\)</span></p>
+<p>Divide by \(A\,\Delta T=1\times100\): \(h_\text{rad}=18.28\). <span class="calcwhy">A temperature <i>difference</i> of 100 K = 100 °C, so the unit W/(m²·°C) is fine.</span></p>
 </div></details></div>
 <div class="figure" id="fig-hrad"><p class="ttl">Try it · convection versus radiation from a surface</p>
 <canvas class="plot" id="cv-hrad" style="height:260px"></canvas>
@@ -828,10 +924,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </div>
 <div class="readout" id="out-hrad"></div>
 <p class="cap">The blue curve is \(h_\text{rad}=\varepsilon\sigma(T_s^2+T_\text{surr}^2)(T_s+T_\text{surr})\) against surface temperature; the red line is a fixed \(h_\text{conv}\); the dot marks your \(T_s\). It starts at Example 11 (black pipe at 480 K in a 380 K enclosure: \(h_\text{rad}=18.3\), \(h_\text{conv}=16.6\)). Raise \(T_s\) to see radiation take over; lower \(\varepsilon\) (a polished metal) to see it vanish.</p></div>
+<p class="cannow"><b>You can now:</b> find \(h_\text{rad}\) from a Stefan–Boltzmann heat rate; combine convection and radiation from one surface as \(h_\text{conv}+h_\text{rad}\); and find one coefficient when the total is given.</p>
 </section>
 
 <!-- ============ 17 ============ -->
-<section id="s17"><h2><span class="n">17</span>Everything together: example 12 (slide 50)</h2>
+<section id="s17"><h2><span class="n">17</span><span class="h2t">Everything together: example 12 (slide 50)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Every picture at once. Heat leaves the liquid through its film, crosses the wall layers like water through pipes in a row, and on the air side leaves by two routes at the same time: carried off by the moving air and radiated to the surroundings. Draw that, combine the parallel pair, then add up the row.</p></div></details>
 <div class="box eg"><span class="tag">Worked example 12 · slide 50 · liquid, two-layer wall, air with radiation</span>
 <p>Heat flows from a liquid stream at \(T_y\) (coefficient \(h_y\)) through a composite wall (layer 1: \(k_1,\Delta x_1\); layer 2: \(k_2,\Delta x_2\); area \(A\)) to an air stream at \(T_z\) (coefficient \(h_z\)). The air side also exchanges radiation with surroundings at \(T_\text{surr}=T_z\). Write the heat flow.</p>
 <div id="fig-ex12"></div>
@@ -839,6 +937,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Follow the heat: liquid film, layer 1, layer 2 in series; then on the air side, convection and radiation in parallel (same surface, same far temperature):</p>
 \[\dot Q=\frac{T_y-T_z}{R_\text{conv,y}+R_\text{cond,1}+R_\text{cond,2}+R_{z}}\]
 \[R_z=\Big[\frac{1}{R_\text{conv,z}}+\frac{1}{R_\text{rad}}\Big]^{-1}\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(T_y-T_z\)</dt><dd>the whole drop, liquid to air.</dd><dt>\(R_\text{conv,y}\)</dt><dd>the liquid's film on the wall.</dd><dt>\(R_\text{cond,1}+R_\text{cond,2}\)</dt><dd>the two wall layers, one after another.</dd><dt>\(R_z\)</dt><dd>the air side: convection and radiation leave the same surface side by side, so they are combined first.</dd></dl></div>
 <p class="word"><b>In words:</b> heat rate = overall temperature difference ÷ (series sum, where the air-side pair is first combined in parallel). Slide 50 writes it in one line with braces and \((\ldots)^{-1}\) powers; it is the same thing.</p></div>
 <div class="box eg"><span class="tag">Example · written for these notes · example 12 with numbers</span>
 <p>Liquid at \(T_y=80\)&nbsp;°C, \(h_y=500\u{W/(m^2\,K)}\); layer 1 concrete, 10 cm, \(k_1=1.2\); layer 2 insulation, 5 cm, \(k_2=0.04\); air at \(T_z=20\)&nbsp;°C with \(h_\text{conv}=10\) and \(h_\text{rad}=6\u{W/(m^2\,K)}\); area 2 m². Find the heat rate, all the surface and interface temperatures, and how the heat leaving the air side is split between convection and radiation.</p>
@@ -846,32 +945,33 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>Liquid film: \(R_y=\dfrac{1}{500(2)}=0.0010\u{K/W}\).</li>
 <li>Concrete: \(R_1=\dfrac{0.10}{1.2(2)}=0.04167\u{K/W}\).</li>
 <li>Insulation: \(R_2=\dfrac{0.05}{0.04(2)}=0.625\u{K/W}\).</li>
-<li>Air side, parallel: \(R_z=\dfrac{1}{(10+6)(2)}=0.03125\u{K/W}\).</li>
+<li>Air side, parallel: \(R_z=\dfrac{1}{(10+6)(2)}=0.03125\u{K/W}\). <span class="why">On one face the coefficients add, so the pair is one resistor \(1/[(h_\text{conv}+h_\text{rad})A]\).</span></li>
 <li>Total: add the four, \(R=0.6989\u{K/W}\).</li>
 <li>\(q=\dfrac{80-20}{0.6989}=\boxed{85.9\u{W}}\).</li>
 </ol>
 <details class="calc"><summary>walking through the circuit for the temperatures</summary><div>
 <p>Start at 80 °C and subtract \(qR\) at each resistor, in the direction of the flow:</p>
-<p>liquid-side surface: \(80-85.85(0.0010)=79.91\)&nbsp;°C <span class="why">the liquid film barely matters: \(h\) is large</span></p>
+<p>liquid-side surface: \(80-85.85(0.0010)=79.91\)&nbsp;°C <span class="calcwhy">the liquid film barely matters: \(h\) is large</span></p>
 <p>concrete/insulation interface: \(79.91-85.85(0.04167)=76.34\)&nbsp;°C</p>
-<p>air-side surface: \(76.34-85.85(0.625)=22.68\)&nbsp;°C <span class="why">the insulation takes 53.7 °C, 89% of the total 60 °C</span></p>
-<p>air: \(22.68-85.85(0.03125)=20.00\)&nbsp;°C ✓ <span class="why">returns exactly to \(T_z\): the arithmetic checks</span></p>
+<p>air-side surface: \(76.34-85.85(0.625)=22.68\)&nbsp;°C <span class="calcwhy">the insulation takes 53.7 °C, 89% of the total 60 °C</span></p>
+<p>air: \(22.68-85.85(0.03125)=20.00\)&nbsp;°C ✓ <span class="calcwhy">returns exactly to \(T_z\): the arithmetic checks</span></p>
 <p>Split at the air side (both see 22.68 − 20 = 2.68 °C): \(q_\text{conv}=10(2)(2.68)=53.7\u{W}\), \(q_\text{rad}=6(2)(2.68)=32.2\u{W}\); sum 85.9 W ✓.</p>
 </div></details>
 <div id="fig-ex12p"></div>
 <p class="muted">The temperature profile: almost flat through the liquid film and concrete, a steep fall across the insulation, a small step at the air side.</p></div>
 <div class="box ready"><span class="tag">Ready answer · solving any circuit (exam type T3.3)</span>
-<ol class="steps">
-<li>Compute every resistance with its own area: \(L/(kA)\), \(1/(hA)\), \(1/(h_\text{rad}A)\).</li>
-<li>Combine each parallel group first (reciprocals), then add everything in series.</li>
-<li>\(q=(T_\text{hot}-T_\text{cold})/R_\text{total}\) using the two <b>known</b> end temperatures.</li>
-<li>For any inside temperature: start from a known end and subtract \(qR\) resistor by resistor; inside a layer, interpolate linearly (a point halfway through a layer is the average of its two faces).</li>
-<li>Check: walking to the far end must return the other known temperature.</li>
+<ol class="steps proc">
+<li><b>Do:</b> Compute every resistance with its own area: \(L/(kA)\), \(1/(hA)\), \(1/(h_\text{rad}A)\). <span class="why">Each resistor is one piece of the heat's route, and a piece carries heat only through its own area.</span></li>
+<li><b>Do:</b> Combine each parallel group first (reciprocals), then add everything in series. <span class="why">A parallel group acts as a single resistor in the row; once it is replaced, the circuit is a plain row of pipes that adds up.</span></li>
+<li><b>Do:</b> \(q=(T_\text{hot}-T_\text{cold})/R_\text{total}\) using the two <b>known</b> end temperatures. <span class="why">The total temperature difference drives the same heat through the whole row.</span></li>
+<li><b>Do:</b> For any inside temperature: start from a known end and subtract \(qR\) resistor by resistor; inside a layer, interpolate linearly (a point halfway through a layer is the average of its two faces). <span class="why">Each resistor takes its own share of the drop, as each pipe takes its own share of the pressure drop.</span></li>
+<li><b>Do:</b> Check: walking to the far end must return the other known temperature. <span class="why">The drops must add up to the total difference; if you miss the far end, an arithmetic slip is hiding.</span></li>
 </ol></div>
+<p class="cannow"><b>You can now:</b> solve a full wall with fluid films, layers and radiation: the heat rate, every surface and interface temperature, and the split between convection and radiation.</p>
 </section>
 
 <!-- ============ 18 ============ -->
-<section id="s18"><h2><span class="n">18</span>Summary</h2>
+<section id="s18"><h2><span class="n">18</span><span class="h2t">Summary</span> <span class="mins">~1 min</span></h2>
 <div class="scroll"><table>
 <tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
 <tr><td>Heat, rate, flux</td><td>\(q=Q/t\), \(Q''=q/A\)</td><td>J; J/s = W; W/m²</td></tr>
@@ -889,7 +989,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 19 ============ -->
-<section id="s19"><h2><span class="n">19</span>Common mistakes</h2>
+<section id="s19"><h2><span class="n">19</span><span class="h2t">Common mistakes</span> <span class="mins">~2 min</span></h2>
 <div class="mistake">
 <span class="x">✗</span><span>Putting °C into \(\sigma T^4\) or \(\sigma(T_1^4-T_2^4)\).</span>
 <span class="ok">✓</span><span>Add 273.15 first; only differences \(T_s-T_\text{surr}\) may stay in °C.</span>
@@ -911,7 +1011,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 20 ============ -->
-<section id="s20"><h2><span class="n">20</span>Find the mistake</h2>
+<section id="s20"><h2><span class="n">20</span><span class="h2t">Find the mistake</span> <span class="mins">~1 min</span></h2>
 <div class="q"><p class="qh">1 · A student's version of Example 11</p>
 <p>"Pipe at 207 °C, enclosure at 107 °C, black, 1 m². \(\dot Q=\sigma(207^4-107^4)(1)=96.7\u{W}\), so \(h_\text{rad}=96.7/100=0.97\u{W/(m^2\,{}^\circ C)}\)."</p>
 <details><summary>Hint</summary><div><p>What unit must the temperatures inside \(T^4\) be in?</p></div></details>
@@ -929,7 +1029,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 21 ============ -->
-<section id="s21"><h2><span class="n">21</span>Concept checks</h2>
+<section id="s21"><h2><span class="n">21</span><span class="h2t">Concept checks</span> <span class="mins">~2 min</span></h2>
 <p class="muted">Written for these notes.</p>
 <div class="q"><p class="qh">1 · Two layers in series</p><p>A wall is a thin copper sheet bonded to a thick layer of foam. In steady state, is the heat rate larger through the copper, through the foam, or the same? Where is the temperature drop larger?</p>
 <details><summary>Answer</summary><div><p>The <b>same</b> heat rate: in steady state heat cannot build up at the interface. The temperature drop is much larger across the foam (bigger \(R=L/(kA)\)); the copper's drop is tiny.</p></div></details></div>
@@ -947,7 +1047,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 22 ============ -->
-<section id="s22"><h2><span class="n">22</span>Exam taster</h2>
+<section id="s22"><h2><span class="n">22</span><span class="h2t">Exam taster</span> <span class="mins">~5 min</span></h2>
 <p>Real past-paper parts (ENGG1350, the predecessor of MECH1350; same Section A structure), one per main question type in this chapter. Full methods, every other sitting, and more practice: <a href="guide-T3.html">Exam guide · T3</a>.</p>
 
 <div class="q"><div class="src"><b>May 2025 Q6(a)</b><span>3 marks</span><span>same wall: May 2023 Q3, May 2022 Q6</span><a class="guide" href="guide-T3.html#T3-2">T3.2 drawing the circuit</a></div>
@@ -1509,5 +1609,13 @@ wall('fig-t1',wall25);
 circ('fig-t1a',{chain:['R_{conv,o}',{n:'T_{s,o}'},'R_1','R_2',{par:['R_{3a}','R_{3b}']},'R_4','R_5',{n:'T_{s,i}'},{par:['R_{conv,i}','R_{rad,i}']}],L:'T_{∞,o}',R:'T_{∞,i}',q:'q',dir:'left'});
 wall('fig-t2',{H:150,cols:[{w:80,label:'1',f:0},{w:52,parts:[{h:0.68,label:'2',f:2},{h:0.32,label:'3',f:1}]},{w:80,label:'4',f:3}]});
 
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </body></html>

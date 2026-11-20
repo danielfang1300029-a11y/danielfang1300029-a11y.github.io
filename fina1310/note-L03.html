@@ -222,6 +222,34 @@ p.tldr{font-size:15px;color:var(--muted);border-left:3px solid var(--accent);pad
 svg.tl text{paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round}
 .box svg.tl text{stroke:var(--card)}
 
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -251,7 +279,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <p class="lede">Valuing a stream of cash flows: add up present values, with shortcuts for level and growing streams, how interest rates are quoted, and how loans are repaid.</p>
 </header>
 
-<section id="s0"><h2><span class="n">0</span>Where this sits</h2>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this sits</span></h2>
 <p>Lecture 2 valued <b>one</b> cash flow. This lecture values <b>many</b>. Every later valuation (bonds L4, stocks L5, projects L7–L8) is this lecture plus a story about where the cash flows come from. Textbook: Chapter 6.</p>
 <div class="box thm"><span class="tag">Recap from L2 · one cash flow</span>
 \[FV_t=PV\,(1+r)^t\qquad PV=\frac{FV_t}{(1+r)^t}\]
@@ -260,8 +288,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Why it matters: the standard answer to “How do you value a company?” is <b>discounted cash flow (DCF)</b>: forecast the cash flows, discount each one, add them up. The value of any productive asset is the present value of the cash flows it generates. Real assets produce many flows (a mall built once, rent every year; a 30-year mortgage: one inflow, 360 monthly outflows), so we need to value streams.</p>
 </section>
 
-<section id="s1"><h2><span class="n">1</span>Many cash flows: move each one, then add</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Many cash flows: move each one, then add</span></h2>
 <p class="tldr">You can only add cash flows that sit at the same date. So move every flow to one date, then add.</p>
+<ol class="steps proc"><li><b>Do:</b> Draw a timeline and put every cash flow at its date, outflows with a minus sign. <span class="why">You can only add amounts that sit at the same date, so first see where each one sits.</span></li>
+<li><b>Do:</b> Pick one date to value everything at (usually today, \(t=0\)). <span class="why">Any date works, just as any currency works as the common unit; today is the date the decision is made.</span></li>
+<li><b>Do:</b> Move each flow to that date: multiply by \((1+r)\) once for each period forward, divide by \((1+r)\) once for each period back. A flow already at that date stays as it is. <span class="why">This turns every flow into the same &ldquo;currency&rdquo; of dollars at one date.</span></li>
+<li><b>Do:</b> Add the converted amounts. For NPV, the price paid today goes in with a minus sign. <span class="why">Once every amount sits at the same date they are like amounts, so adding is now allowed.</span></li>
+</ol>
 
 <h3>Future value of a stream</h3>
 <div class="box eg"><span class="tag">Example · two deposits</span><p>$100 today and $100 in one year at 10%. Value at \(t=2\)?</p>
@@ -293,14 +326,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box eg"><span class="tag">Example · deferred pension</span><p>Five annual payments of $25,000, the first in 40 years; 12% required.</p>
 \[\begin{aligned}PV&=\tfrac{25{,}000}{1.12^{40}}+\dots+\tfrac{25{,}000}{1.12^{44}}\\&=\$1{,}084.71\end{aligned}\]
 <p>$125,000 of payments is worth about $1,000 today: 40 years at 12% is a long way off. Five terms is fine to add by hand; 360 mortgage payments is not, hence the formulas below.</p></div>
+<p class="cannow"><b>You can now:</b> value any list of uneven cash flows at any date; compute an NPV and use its sign to accept or reject a deal.</p>
 </section>
 
-<section id="s2"><h2><span class="n">2</span>Annuities: the same cash flow every period</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Annuities: the same cash flow every period</span></h2>
 <div class="box def"><span class="tag">Definition · annuity</span><p>An <b>annuity</b> is a fixed number of equal cash flows \(C\), one per period.</p>
 <ul class="list"><li><b>Ordinary annuity</b>: first payment at the <b>end</b> of period 1 (\(t=1,\dots,t\)). Loan and mortgage payments, bond coupons, most pensions. “Annuity” alone means ordinary.</li>
 <li><b>Annuity due</b>: first payment <b>today</b> (\(t=0,\dots,t-1\)). Rent, insurance premiums, leases.</li></ul></div>
 <div class="tlw" id="tl4"></div>
 
+<details class="idea"><summary>What is this? (annuity factor)</summary><div><p>The annuity factor is a price tag for a standing order. It answers: what is a promise of $1 at the end of every period, for \(t\) periods, worth today? Each $1 is discounted on its own: the first is worth a little under $1, the next a little less, and so on. The factor is the total of those shrinking amounts. So it is always less than \(t\), and each extra year adds less than the one before.</p></div></details>
 <div class="box thm"><span class="tag">Result · annuity present value</span>
 \[PV=C\times\underbrace{\frac{1-\dfrac{1}{(1+r)^t}}{r}}_{AF(r,\,t)}\]
 <p class="word"><b>In words:</b> PV = payment × annuity factor. The annuity factor \(AF(r,t)\) is the PV of $1 a period for \(t\) periods.</p>
@@ -309,6 +344,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>(2) − (1): every middle term cancels, leaving \(r\,PV=C-\dfrac{C}{(1+r)^t}\). Divide by \(r\): \(PV=\dfrac{C}{r}\Big(1-\dfrac{1}{(1+r)^t}\Big)\).</p></div></details>
 <p>Check: $100 a year for 4 years at 10% by hand is \(90.91+82.64+75.13+68.30=\$316.99\); by formula \(AF(10\%,4)=3.1699\), and \(100\times3.1699=\$316.99\). ✓</p></div>
 
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(C\)</dt><dd>the payment each period, the same every time</dd><dt>\(\dfrac{1}{r}\)</dt><dd>what $1 a period <b>forever</b> is worth today (a perpetuity, section 3)</dd><dt>\(\dfrac{1}{(1+r)^t}\)</dt><dd>the discount factor of date \(t\); subtracting it from 1 cuts away the payments after the last one, which are worth that fraction of the perpetuity</dd><dt>\(AF(r,t)\)</dt><dd>the whole price tag: today's value of $1 a period for \(t\) periods</dd></dl></div>
 <p><b>Reading the formula.</b> \(C\uparrow\) → PV up proportionally. \(r\uparrow\) → PV down. \(t\uparrow\) → PV up, but each extra payment adds less. Four variables (PV, \(C\), \(r\), \(t\)): given three, find the fourth.</p>
 <div class="box ready"><span class="tag">Tools</span><p><b>Calculator:</b> N, I/Y, PMT, PV with FV = 0. <b>Excel:</b> <code>PV(rate, nper, pmt)</code>, <code>PMT(rate, nper, pv)</code>, <code>NPER(rate, pmt, pv)</code>, <code>RATE(nper, pmt, pv)</code>.</p></div>
 <div class="box warn"><span class="tag">Watch · where the answer lands</span><p>The formula gives the value <b>one period before the first payment</b>. Payments from age 65 → the formula values them at 64.</p></div>
@@ -328,7 +364,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Car loan at 1% a month, but you can afford only HK$2,500: \(t=-\ln(0.6)/\ln(1.01)=51.3\) → 52 payments, the last one smaller.</p>
 <p>If \(PV\cdot r/C\ge1\) there is no answer: the payment does not even cover the interest, so the loan never ends.</p></div>
 <div class="box thm"><span class="tag">Rate: trial and error</span><p>No formula exists for \(r\); the calculator and <code>RATE()</code> search, and so can you. Pay $10,000 now, get $1,000 a month for 12 months:</p>
-<ul class="list"><li>2%: \(1{,}000\,AF(2\%,12)=\$10{,}575\) → too high, raise \(r\).</li><li>3%: $9,954 → too low, lower \(r\).</li><li>2.92%: $10,002 → \(r\approx2.92\%\) a month.</li></ul>
+<ol class="steps proc"><li><b>Do:</b> 2%: \(1{,}000\,AF(2\%,12)=\$10{,}575\) → too high, raise \(r\). <span class="why">A higher rate shrinks every discounted payment, so the value moves down towards the $10,000 price.</span></li>
+<li><b>Do:</b> 3%: $9,954 → too low, lower \(r\). <span class="why">Value falls steadily as the rate rises, so the answer is now trapped between 2% and 3%.</span></li>
+<li><b>Do:</b> 2.92%: $10,002 → \(r\approx2.92\%\) a month. <span class="why">Once the value is within a few dollars of the price the rate is close enough; the calculator runs the same search to more decimal places.</span></li>
+</ol>
 <p>That is 35% a year as an APR, 41% as an EAR (section 5): “$1,000 a month for a year” is not modest.</p></div>
 
 <h3>Annuity future value and annuity due</h3>
@@ -345,9 +384,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\begin{aligned}PV_1&=1{,}500\,AF\!\left(\tfrac{11\%}{12},84\right)\\&=\$87{,}604.36\\PV_{2}\text{ at }84&=1{,}500\,AF\!\left(\tfrac{7\%}{12},96\right)\\&=\$110{,}021.35\\PV_{2}\text{ today}&=\tfrac{110{,}021.35}{(1+11\%/12)^{84}}\\&=\$51{,}120.33\end{aligned}\]
 <p>Total \(87{,}604.36+51{,}120.33=\boxed{\$138{,}724.68}\).</p></div>
 <div class="box warn"><span class="tag">Watch · discount each stage at the rates of the years it crosses</span><p>Stage 2 is valued at \(t=84\) using 7%. Moving it back from month 84 to today crosses the first seven years, so you discount at <b>11%</b>, not 7%. Using 7% gives $155,102, which is $16,378 too high.</p></div>
+<p class="cannow"><b>You can now:</b> value an annuity with the annuity factor; solve for the payment, the number of payments, or the rate by trial and error; handle annuities due and annuities whose rate changes partway.</p>
 </section>
 
-<section id="s3"><h2><span class="n">3</span>Perpetuities: level cash flows forever</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Perpetuities: level cash flows forever</span></h2>
 <div class="box thm"><span class="tag">Result · perpetuity</span>
 \[PV=\frac{C}{r}\qquad PV_{\text{due}}=\frac{C}{r}(1+r)\]
 <p class="word"><b>In words:</b> let \(t\to\infty\) in the annuity formula; \(1/(1+r)^t\to0\), leaving \(C/r\). There is no future value: the stream never ends.</p></div>
@@ -364,7 +404,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>The second perpetuity is valued at \(t\) (one period before its first payment) as \(C/r\), then discounted \(t\) periods. <b>Exam use:</b> build any odd stream from perpetuities and annuities that start and stop at the right dates.</p>
 </section>
 
-<section id="s4"><h2><span class="n">4</span>Growing streams</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Growing streams</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture the rent on a flat that rises by the same percentage every year and never stops. Growth pushes each payment up; discounting pushes its value today down. If the discount rate beats the growth rate, each later payment is worth a little less today than the one before, and the total settles at a finite number. If growth keeps up with the rate or beats it, the far-off payments never fade, and no finite price could pay for them all.</p></div></details>
 <p>Cash flows start at \(C\) at \(t=1\) and grow at a constant rate \(g\) a period: \(C,\ C(1+g),\ C(1+g)^2,\dots\). Each term is the previous one × \(\frac{1+g}{1+r}\): growth partly offsets discounting.</p>
 <div class="box thm"><span class="tag">Result · growing annuity and growing perpetuity (need g &lt; r)</span>
 \[PV_{\text{g. annuity}}=C\times\frac{1-\left(\frac{1+g}{1+r}\right)^{t}}{r-g}\]
@@ -374,6 +415,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>\(PV=\dfrac{C}{1+r}\Big[1+q+q^2+\dots+q^{t-1}\Big]\) with \(q=\dfrac{1+g}{1+r}\).</p>
 <p>The bracket sums to \(\dfrac{1-q^t}{1-q}\), and</p>\[\begin{aligned}\frac{1}{1+r}\cdot\frac{1}{1-q}&=\frac{1}{(1+r)-(1+g)}\\&=\frac{1}{r-g}\end{aligned}\]
 <p>So \(PV=C\,\dfrac{1-q^t}{r-g}\). As \(t\to\infty\), \(q^t\to0\) only if \(q\lt1\), i.e. \(g\lt r\).</p></div></details></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(C\)</dt><dd>the <b>first</b> payment, at \(t=1\), not the one just paid</dd><dt>\(r-g\)</dt><dd>the gap between discounting and growth; the smaller the gap, the more slowly later payments fade and the bigger the value</dd><dt>\(\left(\frac{1+g}{1+r}\right)^{t}\)</dt><dd>the share of the growing perpetuity's value that lies after date \(t\); subtracting it from 1 keeps only the first \(t\) payments</dd><dt>\(g\lt r\)</dt><dd>the condition for a finite value: later payments must fade</dd></dl></div>
 <div class="box eg"><span class="tag">Example · growing perpetuity (a stock)</span><p>Next year's dividend $1.30, growing 5% forever, required return 10%: \(PV=1.30/(0.10-0.05)=\$26.00\).</p>
 <p>If $1.30 is the dividend <b>just paid</b>, next year's is \(1.30\times1.05\): \(PV=1.365/0.05=\$27.30\).</p></div>
 <div class="box eg"><span class="tag">Example · growing annuity (a pension)</span><p>$20,000 next year, rising 3% a year for 40 years, at 10%:</p>\[\begin{aligned}PV&=20{,}000\times\tfrac{1-(1.03/1.10)^{40}}{0.07}\\&=\$265{,}122\end{aligned}\]<p>
@@ -386,9 +428,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 
 <div class="box ready"><span class="tag">Three formulas used again in L4–L5</span>
 <p>Perpetuity \(C/r\); annuity \(C\,AF(r,t)\); growing perpetuity (Gordon model) \(C/(r-g)\). Known, fixed \(C\) → bonds (L4). Uncertain \(C\) → stocks (L5).</p></div>
+<p class="cannow"><b>You can now:</b> value a growing annuity or growing perpetuity; check whether the first payment is next period or just paid; explain why the value explodes as \(g\) approaches \(r\).</p>
 </section>
 
-<section id="s5"><h2><span class="n">5</span>Quoting interest rates: APR and EAR</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Quoting interest rates: APR and EAR</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>An APR is a label; the EAR is what actually happens to your balance. Picture a loan that charges 1% every month. The lender quotes &ldquo;12% a year&rdquo; by simply adding up twelve 1%s. But each month's interest is added to what you owe, and next month's 1% is charged on that bigger amount too. So after a year you owe more than 12% extra (about 12.68%). The EAR counts that interest on interest; the APR does not.</p></div></details>
 <div class="box def"><span class="tag">Definitions</span>
 <ul class="list"><li><b>Period rate</b>: the rate actually applied each compounding period (e.g. 1% a month).</li>
 <li><b>APR</b> (annual percentage rate): period rate × \(m\), where \(m\) = periods per year. 12% APR monthly = 1% a month; quarterly = 3% a quarter; semi-annual = 6% per half-year. Period rate = APR / \(m\).</li>
@@ -403,9 +447,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p class="cap">Annual 10.00%, quarterly 10.38%, monthly 10.47%, weekly 10.51%, daily 10.52%. EAR levels off fast at the continuous limit \(e^{0.10}-1=10.517\%\).</p></div>
 <div class="box eg"><span class="tag">Example · which savings account?</span><p>5.25% APR daily vs 5.30% APR semi-annual. EARs: \((1+0.0525/365)^{365}-1=5.39\%\) vs \((1+0.053/2)^2-1=5.37\%\). $100 grows to $105.39 vs $105.37: the lower quoted rate wins.</p></div>
 <div class="box warn"><span class="tag">Watch</span><p>Compare EARs, never APRs with different compounding. Banks quote deposits as EAR (also called APY) and loans as APR, so each looks better. In any annuity calculation use the rate <b>per payment period</b>.</p></div>
+<p class="cannow"><b>You can now:</b> convert between APR, period rate and EAR; compare offers with different compounding by their EARs; pick the right per-period rate for an annuity.</p>
 </section>
 
-<section id="s6"><h2><span class="n">6</span>Loans and amortisation</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Loans and amortisation</span></h2>
 <p><b>Principal</b> = the amount borrowed. <b>Amortisation</b> = paying the principal off gradually. Three basic loan types:</p>
 <div class="tblw"><table class="fcard"><tr><th>Type</th><th>Each period</th><th>At the end</th><th>Example</th></tr>
 <tr><td>1. Pure discount</td><td>nothing</td><td>principal + all interest, one lump sum</td><td>Treasury bills, HK Exchange Fund Bills</td></tr>
@@ -445,7 +490,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p class="word"><b>In words:</b> the balance owed on any loan = PV of the remaining payments. After five years you still owe 92% of the principal: early payments are mostly interest.</p></div>
 </section>
 
-<section id="s7"><h2><span class="n">7</span>Summary and formula card</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Summary and formula card</span></h2>
 <ul class="list"><li>Many cash flows: move each to one date, add. PV and FV of a stream are linked by \((1+r)^t\).</li>
 <li>Annuity/perpetuity formulas, due versions, growing versions; given three of PV, \(C\), \(r\), \(t\), find the fourth.</li>
 <li>APR = period rate × \(m\); EAR = \((1+APR/m)^m-1\). Always match the rate to the payment period.</li>
@@ -459,7 +504,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <tr><td>Growing perpetuity</td><td>\(C/(r-g)\)</td><td>none</td></tr></table></div>
 </section>
 
-<section id="s8"><h2><span class="n">8</span>Common mistakes</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Common mistakes</span></h2>
 <ul class="list">
 <li><b>Annual rate with monthly payments.</b> Divide the APR by 12 and use months for \(t\).</li>
 <li><b>Forgetting where the formula lands.</b> Annuity PV sits one period before the first payment; annuity FV sits on the last payment. Deferred streams need an extra discount.</li>
@@ -469,7 +514,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li><b>Using \(C/(r-g)\) with \(g\ge r\)</b>: no finite value.</li></ul>
 </section>
 
-<section id="s9"><h2><span class="n">9</span>Practice</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Practice</span></h2>
 <p>The first two are the lecture's in-class quizzes, the last two are from the tutorials, and the rest are written for these notes.</p>
 <div class="q"><div class="src"><b>Lecture quiz</b><span>how much would you pay?</span></div>
 <p>An investment pays $1,000, $2,000 and $3,000 in 1, 2 and 3 years. You want 10% a year. The most you would pay today: A. $6,000 · B. $5,454.55 · C. $4,815.93 · D. $4,500</p>
@@ -800,5 +845,13 @@ function amort(){
 }
 redraws.push(amort);
 
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </body></html>

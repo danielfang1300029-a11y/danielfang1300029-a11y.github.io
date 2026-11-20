@@ -168,6 +168,7 @@ details.calc{border-left:3px solid var(--accent)}
 details.calc>summary{color:var(--accent);font-weight:500}
 details.calc>summary::before{content:"Show the calculation · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 details.calc .why{color:var(--muted);font-size:.9rem}
+details.calc .calcwhy{color:var(--muted);font-size:.9rem}
 table.tbl td,table.tbl th{padding:6px 8px}
 .circuit{width:100%;height:auto;display:block}
 .circuit .w{stroke:var(--ink);stroke-width:1.6;fill:none}
@@ -197,6 +198,34 @@ details.sol>summary::before{content:"Solution · ";font-family:var(--mono);font-
 .stats b{color:var(--ink);font-family:var(--display)}
 .small{font-size:.88rem}
 
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+ol.steps.proc{border-left:0}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -233,13 +262,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <span class="course">MECH1350 · Fluid dynamics · chapter 4 · beyond the handouts</span>
   <h1>Momentum, drag and losses (beyond the handouts)</h1>
   <p class="banner"><b>Beyond the handouts.</b> No 2026 handout covers these topics; they come from past Section C papers. They may or may not be examined this year — check Moodle.</p>
-  <p class="lede">The momentum equation for forces of flowing fluids (jets, bends, tanks), drag and lift, head loss and open channels, explained from scratch. No 2026 handout: written from past papers and a standard textbook.</p>
 </header>
 
 <!-- ============ 0 ============ -->
-<section id="s0"><h2><span class="n">0</span>Where this chapter sits</h2>
-<p>F2 conserved <b>mass</b> and F3 conserved <b>energy</b>; this chapter adds the third law the F2 handout announces, conservation of <b>momentum</b>, for the forces flowing fluids exert, plus drag, losses and open channels. It is the last chapter of the course.</p>
-<p><b>In the exam:</b> asked in 9 of 11 past sittings (Dec 2018 to May 2025), usually one 6–10 mark force question in Section C. See the <a href="guide-F4.html">F4 exam guide</a>.</p>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this chapter sits</span></h2>
+<p>F2 conserved <b>mass</b> and F3 conserved <b>energy</b>; this chapter adds the third law the F2 handout announces, conservation of <b>momentum</b>, for the forces flowing fluids exert, plus drag, losses and open channels. It is the last chapter of the course. Three pictures run through it: a fire hose kicking back, a jet of water hitting a plate, and your hand pushed back out of a car window.</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1</a> <b>A moving stream carries momentum with it, like a fire hose throwing water forward.</b> Momentum per second, \(\dot mV=\rho AV^2\), is measured in newtons.</li>
+<li><a href="#s2">§2</a> <b>Draw a box and keep a momentum account:</b> net force on the fluid = momentum out − momentum in, per second. <span class="pill">The recipe for every force question</span></li>
+<li><a href="#s3">§3</a> <b>A jet stopped dead by a square plate pushes with its whole momentum flux.</b></li>
+<li><a href="#s4">§4</a> <b>A tilted plate stops only the part of the jet aimed into it;</b> a vane that turns the jet right round pushes twice as hard.</li>
+<li><a href="#s5">§5</a> <b>An upward jet slows like a thrown ball,</b> so use its speed where it arrives.</li>
+<li><a href="#s6">§6</a> <b>In pipes the pressure forces usually beat the momentum terms.</b> A bend is pushed outwards, a nozzle forwards.</li>
+<li><a href="#s7">§7</a> <b>A scale under a tank also has to stop the falling jet.</b></li>
+<li><a href="#s8">§8</a> <b>Drag is the push back on your hand out of a car window; lift is the push across the wind.</b></li>
+<li><a href="#s9">§9</a> <b>Drag grows as \(V^2\), so the power to beat it grows as \(V^3\).</b></li>
+<li><a href="#s10">§10</a> <b>A wing lifts until the air can no longer follow its top surface: then it stalls.</b> Flaps let it fly slower.</li>
+<li><a href="#s11">§11</a> <b>Head loss is the energy friction turns into heat, written as a height.</b></li>
+<li><a href="#s12">§12</a> <b>A channel can carry the same flow deep and slow or shallow and fast.</b></li>
+</ol></div>
+<p><b>You need:</b> momentum and \(P=Fv\) from HKDSE Physics, continuity (F2) and Bernoulli (F3). <b>In the exam:</b> asked in 9 of 11 past sittings (Dec 2018 to May 2025), usually one 6–10 mark force question in Section C. Every section is beyond the 2026 handouts. See the <a href="guide-F4.html">F4 exam guide</a>.</p>
 <p class="muted small">Source: no 2026 handout; past ENGG1350 papers (cited as sitting and question) and Çengel &amp; Cimbala, <i>Fluid Mechanics</i> / Munson et al., <i>Fundamentals of Fluid Mechanics</i>; no slide numbers quoted.</p>
 
 <div class="box conv"><span class="tag">Sign convention for this chapter</span>
@@ -273,7 +316,8 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 1 ============ -->
-<section id="s1"><h2><span class="n">1</span>Momentum and momentum flux <span class="pill">Beyond</span></h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Momentum and momentum flux <span class="pill">Beyond</span></span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Turn on a fire hose and it shoves back in the firefighter's hands. Every second the hose throws a heavy stream of water forward, and to get water moving something has to push it; the water pushes back just as hard. <b>Momentum flux</b> measures how much forward motion the stream carries away each second. It is also the push a wall would feel if the stream hit it and stopped dead.</p></div></details>
 <p>From HKDSE Physics: the <b>momentum</b> of a body is mass × velocity, \(mV\), a vector. Newton's second law says the net force on a body equals its <b>rate of change of momentum</b>, \(F=\mathrm d(mV)/\mathrm dt\), which is \(ma\) when \(m\) is fixed. The F2 handout calls this "the linear momentum relation" and splits it into components, \(F_x=ma_x\), \(F_y=ma_y\), \(F_z=ma_z\).</p>
 <p>For a fluid we do not follow one lump of water. We watch a fixed region, the <b>control volume</b> (F2), and ask how much momentum flows in and out of it every second.</p>
 <div class="box beyond"><span class="tag">Definition · mass flow rate and momentum flux</span>
@@ -285,10 +329,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box beyond"><span class="tag">Result · momentum flux of a jet</span>
 \[\dot mV=\rho AV^2\]
 <p class="word"><b>In words:</b> momentum per second = (mass per second) × velocity = density × area × speed squared. Unit: (kg/s)(m/s) = kg·m/s² = N, the same as a force.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\rho AV\)</dt><dd>the kilograms of water leaving the hose each second, \(\dot m\).</dd>
+<dt>the second \(V\)</dt><dd>the momentum each of those kilograms carries away, per kilogram.</dd>
+<dt>\(V^2\)</dt><dd>faster water means more kilograms per second <i>and</i> more momentum in each one, hence the square.</dd>
+<dt>unit N</dt><dd>momentum per second is a force: the push needed to start the stream, or to stop it.</dd>
+</dl></div>
 <details class="calc"><summary>why the momentum flux is \(\rho AV^2\)</summary><div>
-<p>1. In a short time \(\Delta t\) the fluid crossing the section fills a cylinder of length \(V\Delta t\) and area \(A\). <span class="why">Every particle moves \(V\Delta t\).</span></p>
-<p>2. Its mass is \(\rho AV\Delta t\), so the mass per second is \(\rho AV\). <span class="why">This is \(\dot m\), as in F2's continuity equation.</span></p>
-<p>3. Each kilogram carries momentum \(V\), so the momentum crossing in \(\Delta t\) is \(\rho AV\Delta t\times V\). <span class="why">Momentum = mass × velocity.</span></p>
+<p>1. In a short time \(\Delta t\) the fluid crossing the section fills a cylinder of length \(V\Delta t\) and area \(A\). <span class="calcwhy">Every particle moves \(V\Delta t\).</span></p>
+<p>2. Its mass is \(\rho AV\Delta t\), so the mass per second is \(\rho AV\). <span class="calcwhy">This is \(\dot m\), as in F2's continuity equation.</span></p>
+<p>3. Each kilogram carries momentum \(V\), so the momentum crossing in \(\Delta t\) is \(\rho AV\Delta t\times V\). <span class="calcwhy">Momentum = mass × velocity.</span></p>
 <p>4. Divide by \(\Delta t\): momentum per second \(=\rho AV^2=\dot mV\).</p>
 </div></details>
 <p class="word"><b>Analogy:</b> a stream of tennis balls fired from a machine. If 10 balls of 0.06 kg leave each second at 20 m/s, the machine pushes out \(10\times0.06\times20=12\) kg·m/s of momentum every second. A wall that stops them all must push back with 12 N. A water jet is the same idea with a continuous stream instead of balls.</p>
@@ -301,10 +351,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </ol></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Momentum flux goes as \(V^2\): double the speed through the same nozzle and \(\dot m\) doubles <i>and</i> each kilogram carries twice the momentum, so the force from the jet is four times as large.</p></div>
+<p class="cannow"><b>You can now:</b> compute \(\dot m\) and the momentum flux \(\rho AV^2\) of a jet, in newtons; explain why the force of a jet goes as \(V^2\).</p>
 </section>
 
 <!-- ============ 2 ============ -->
-<section id="s2"><h2><span class="n">2</span>The control-volume momentum equation <span class="pill">Beyond</span></h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">The control-volume momentum equation <span class="pill">Beyond</span></span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Draw an imaginary box round the fire hose nozzle and keep a momentum account, like a bank account. Water carrying momentum comes in through one side (a deposit) and goes out through another (a withdrawal). In steady flow the balance inside the box never changes, so the forces on the water in the box must pay for exactly the difference, out minus in, every second.</p></div></details>
 <p>For a <b>steady</b> flow the momentum inside a fixed control volume (CV) does not change with time. So the net force on the fluid in the CV only has to account for the difference between the momentum that flows out each second and the momentum that flows in.</p>
 <div class="box beyond"><span class="tag">Law · linear momentum equation for a steady control volume</span>
 \[\sum\vec F=\sum_\text{out}\dot m\vec V-\sum_\text{in}\dot m\vec V\]
@@ -312,14 +364,22 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 \[\sum F_x=\sum_\text{out}\dot mV_x-\sum_\text{in}\dot mV_x\]
 \[\sum F_y=\sum_\text{out}\dot mV_y-\sum_\text{in}\dot mV_y\]
 <p class="word"><b>In words:</b> net force on the fluid in the CV = momentum flowing out per second − momentum flowing in per second, worked out separately in \(x\) and in \(y\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\sum\vec F\)</dt><dd>every real push on the water inside the box: pressure at the cuts, weight, and the support holding the device.</dd>
+<dt>\(\sum_\text{out}\dot m\vec V\)</dt><dd>momentum carried out of the box each second: the withdrawals.</dd>
+<dt>\(\sum_\text{in}\dot m\vec V\)</dt><dd>momentum carried in each second: the deposits.</dd>
+<dt>out − in</dt><dd>steady flow keeps the balance in the box fixed, so the forces must supply exactly the difference.</dd>
+<dt>one equation per axis</dt><dd>each direction has its own account: sideways momentum can never pay for forward momentum.</dd>
+</dl></div>
 <details class="calc"><summary>where this comes from (Newton's second law for a moving lump of fluid)</summary><div>
-<p>1. Take the lump of fluid that is inside the CV at time \(t\). Newton's second law applies to it: net force = rate of change of <i>its</i> momentum. <span class="why">The lump is a fixed set of particles, a "system" in F2's language.</span></p>
+<p>1. Take the lump of fluid that is inside the CV at time \(t\). Newton's second law applies to it: net force = rate of change of <i>its</i> momentum. <span class="calcwhy">The lump is a fixed set of particles, a "system" in F2's language.</span></p>
 <p>2. A moment \(\Delta t\) later the lump has shifted: a little of it has left through the outlets, and new fluid (not part of the lump) has entered through the inlets.</p>
-<p>3. Lump's momentum at \(t+\Delta t\) = (momentum inside the CV) + (momentum of the bit that left) − (momentum of the new bit that entered). <span class="why">Book-keeping: the CV now holds new fluid that is not part of the lump.</span></p>
+<p>3. Lump's momentum at \(t+\Delta t\) = (momentum inside the CV) + (momentum of the bit that left) − (momentum of the new bit that entered). <span class="calcwhy">Book-keeping: the CV now holds new fluid that is not part of the lump.</span></p>
 <p>4. Steady flow: momentum inside the CV is the same at both times. So the change of the lump's momentum is (left) − (entered) \(=\sum_\text{out}\dot m\vec V\Delta t-\sum_\text{in}\dot m\vec V\Delta t\).</p>
-<p>5. Divide by \(\Delta t\): \(\sum\vec F=\sum_\text{out}\dot m\vec V-\sum_\text{in}\dot m\vec V\). <span class="why">This is the same "budget" idea as the continuity equation, with momentum instead of mass.</span></p>
+<p>5. Divide by \(\Delta t\): \(\sum\vec F=\sum_\text{out}\dot m\vec V-\sum_\text{in}\dot m\vec V\). <span class="calcwhy">This is the same "budget" idea as the continuity equation, with momentum instead of mass.</span></p>
 </div></details>
 <h3>Which forces go into \(\sum F\)?</h3>
+<details class="idea"><summary>What is this? (the forces)</summary><div><p>These are the real pushes on the water in the box, as on any free-body diagram: the hand or bolts holding the nozzle, the water pressure at each cut, and gravity. The momentum carried through the cuts is not a push; it goes on the other side of the account.</p></div></details>
 <p>Draw the CV boundary and list every force that acts on the fluid inside it, exactly as in a free-body diagram:</p>
 <ol class="steps">
 <li><b>Pressure forces</b> \(pA\) at each inlet and outlet where the pressure is not atmospheric, pointing <b>into</b> the CV. Free jets: \(p=0\) gauge, no force.</li>
@@ -330,29 +390,31 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-cv"></div>
 <p class="muted">A general control volume, drawn for these notes. Inflow at section 1, outflow at section 2. The momentum fluxes (teal) are not forces, but they enter the equation like forces: "out minus in". The forces (orange pressures, purple weight, red support) act on the fluid inside the dashed boundary.</p>
 <div class="box ready"><span class="tag">Ready answer · the momentum recipe (every F4.1 and F4.2 question)</span>
-<ol class="steps">
-<li>Sketch the device, choose the CV (cut <b>perpendicular</b> to the flow at each inlet and outlet; enclose the plate, bend or tank), draw axes.</li>
-<li>Continuity first: \(\dot m=\rho A_1V_1=\rho A_2V_2\) (or the sum of outlets = inlet). Bernoulli (F3) if a pressure or speed is missing.</li>
-<li>FBD of the CV: pressure forces \(pA\) into the CV, weight, unknown support force \(R_x,R_y\).</li>
-<li>Write \(\sum F_x=\sum_\text{out}\dot mV_x-\sum_\text{in}\dot mV_x\) and the same for \(y\); keep signs of velocity components.</li>
-<li>Solve for \(R_x,R_y\); give size \(\sqrt{R_x^2+R_y^2}\) and direction. State whether it is the force <b>on the fluid</b> or <b>on the device</b> (opposite).</li>
+<ol class="steps proc">
+<li><b>Do:</b> Sketch the device, choose the CV (cut <b>perpendicular</b> to the flow at each inlet and outlet; enclose the plate, bend or tank), draw axes. <span class="why">Cutting square to the flow gives each crossing one speed and one pressure, so each deposit or withdrawal is a single \(\dot mV\) and each pressure force a single \(pA\).</span></li>
+<li><b>Do:</b> Continuity first: \(\dot m=\rho A_1V_1=\rho A_2V_2\) (or the sum of outlets = inlet). Bernoulli (F3) if a pressure or speed is missing. <span class="why">Every momentum term needs \(\dot m\) and a speed, and every pressure force needs a pressure, so find them before the account can be written.</span></li>
+<li><b>Do:</b> FBD of the CV: pressure forces \(pA\) into the CV, weight, unknown support force \(R_x,R_y\). <span class="why">These are the only real pushes on the water in the box: one side of the account.</span></li>
+<li><b>Do:</b> Write \(\sum F_x=\sum_\text{out}\dot mV_x-\sum_\text{in}\dot mV_x\) and the same for \(y\); keep signs of velocity components. <span class="why">Each axis is its own account, and the sign of a component says whether that momentum leaves going forwards or backwards.</span></li>
+<li><b>Do:</b> Solve for \(R_x,R_y\); give size \(\sqrt{R_x^2+R_y^2}\) and direction. State whether it is the force <b>on the fluid</b> or <b>on the device</b> (opposite). <span class="why">The equation gives the push on the water; by Newton's third law the device feels the same push the other way, and the question may want either.</span></li>
 </ol></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>The "out minus in" side is not a force on anything: never draw \(\dot mV\) arrows on an FBD and then add them as forces as well. Put forces on one side and momentum fluxes on the other.</p></div>
+<p class="cannow"><b>You can now:</b> write the steady momentum equation for each axis, with signed velocity components; list every force on the fluid in a control volume; apply the five-step recipe to any jet, bend or tank question.</p>
 </section>
 
 <!-- ============ 3 ============ -->
-<section id="s3"><h2><span class="n">3</span>Jets on flat plates <span class="pill">Beyond</span></h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Jets on flat plates <span class="pill">Beyond</span></span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Aim a hose square at a wall. The water arrives fast, splashes out sideways along the wall and leaves with no forward motion at all. Every second the wall destroys the jet's whole forward momentum, so it must push the water back with a force equal to the momentum flux. The water pushes the wall forward just as hard.</p></div></details>
 <div class="box beyond"><span class="tag">Definition · free jet</span>
 <p>A <b>free jet</b> is a stream of fluid moving through open air (or a liquid jet in air) with nothing around it. Its pressure is atmospheric, so its <b>gauge pressure is zero</b> everywhere along it. That is why jets in these questions have no \(pA\) forces.</p></div>
 <h3>A jet hitting a plate square-on</h3>
 <p>A horizontal jet (area \(A\), speed \(V\)) strikes a flat plate held at right angles to it. The water spreads out sideways along the plate and leaves the edges parallel to the plate. Choose a CV that encloses the plate and cuts the jet upstream and the sheet of water at the edges.</p>
 <div id="fig-normal"></div>
 <p class="muted">Left: the jet, the plate and the CV. Right: the free-body sketch of the CV. Only the support force \(R_x\) acts in \(x\): the jet and the outgoing sheets are at atmospheric pressure, and weight acts in \(y\) only.</p>
-<ol class="steps">
-<li>In: momentum flux \(\dot mV\) in the \(+x\) direction. Out: the sheets move along the plate (\(\pm y\)), so their \(x\)-velocity is zero.</li>
-<li>\(\sum F_x=R_x=(\text{out})-(\text{in})=0-\dot mV\).</li>
-<li>So \(R_x=-\dot mV\): the plate pushes the fluid backwards (to the left) with \(\dot mV\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> In: momentum flux \(\dot mV\) in the \(+x\) direction. Out: the sheets move along the plate (\(\pm y\)), so their \(x\)-velocity is zero. <span class="why">The water is only steered sideways, so by the time it leaves all its forward momentum is gone.</span></li>
+<li><b>Do:</b> \(\sum F_x=R_x=(\text{out})-(\text{in})=0-\dot mV\). <span class="why">The jet and sheets are free jets with no pressure force, and weight acts in \(y\), so the support is the only push in \(x\).</span></li>
+<li><b>Do:</b> So \(R_x=-\dot mV\): the plate pushes the fluid backwards (to the left) with \(\dot mV\). <span class="why">The minus sign means upstream: the plate holds the water back, and the water pushes the plate downstream just as hard.</span></li>
 </ol>
 <div class="box beyond"><span class="tag">Result · jet striking a stationary plate normally</span>
 \[F=\dot mV=\rho AV^2\]
@@ -367,12 +429,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box beyond"><span class="tag">Fact · the speed along a smooth plate does not change</span>
 <p>Follow a streamline from the jet onto the plate and out to the edge. The pressure is atmospheric at both ends, and the height hardly changes, so Bernoulli (F3) gives the <b>same speed</b> \(V\) leaving as arriving (if friction is ignored). Past papers state this as "the velocity magnitude remains constant as the air flows over the plate" (May 2025). Only the <b>direction</b> of the velocity changes, and that is what needs a force.</p></div>
 <h3>A plate with a hole: part of the jet passes through</h3>
+<details class="idea"><summary>What is this? (a plate with a hole)</summary><div><p>Now drill a hole in the wall. The middle of the jet passes straight through and keeps its forward momentum, so the wall does not have to stop it. Only the ring of the jet that is splashed sideways pushes on the plate.</p></div></details>
 <p>If the plate has a hole in the middle, a smaller jet (area \(A_2\)) carries on through it at the same speed. Only the part of the jet that is turned sideways loses its forward momentum.</p>
 <div id="fig-hole"></div>
-<ol class="steps">
-<li>Continuity: \(\dot m_1=\dot m_2+\dot m_\text{side}\), with \(\dot m_1=\rho A_1V\), \(\dot m_2=\rho A_2V\).</li>
-<li>\(x\)-momentum: \(R_x=\dot m_2V-\dot m_1V\) (the sideways sheets have no \(x\)-velocity).</li>
-<li>So the force on the plate is \(\dot m_1V-\dot m_2V=\rho V^2(A_1-A_2)\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> Continuity: \(\dot m_1=\dot m_2+\dot m_\text{side}\), with \(\dot m_1=\rho A_1V\), \(\dot m_2=\rho A_2V\). <span class="why">Only the water turned sideways is stopped, so split the flow first.</span></li>
+<li><b>Do:</b> \(x\)-momentum: \(R_x=\dot m_2V-\dot m_1V\) (the sideways sheets have no \(x\)-velocity). <span class="why">The jet through the hole leaves with all its forward momentum, so it costs the plate nothing.</span></li>
+<li><b>Do:</b> So the force on the plate is \(\dot m_1V-\dot m_2V=\rho V^2(A_1-A_2)\). <span class="why">Only the blocked part of the jet, area \(A_1-A_2\), pushes on the plate.</span></li>
 </ol>
 <div class="box eg"><span class="tag">Example · written for these notes</span>
 <p>A 60 mm water jet at 15 m/s hits a plate square-on; a 20 mm hole in the plate lets a 20 mm jet through at 15 m/s. Find the horizontal force to hold the plate.</p>
@@ -380,11 +443,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Dec 2018 Q2 (8 marks) is this question with an air jet: see the exam guide, <a href="guide-F4.html#F4-1">F4.1</a>.</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Use the jet's own area for \(\dot m\), not the plate's area. And \(\rho\) is the density of the <b>jet fluid</b>: an air jet (1.23 kg/m³) gives forces about 800 times smaller than a water jet of the same size and speed.</p></div>
+<p class="cannow"><b>You can now:</b> find the force of a jet on a square plate, with or without a hole; explain why a free jet has no pressure force and why the speed along a smooth plate does not change.</p>
 </section>
 
 <!-- ============ 4 ============ -->
-<section id="s4"><h2><span class="n">4</span>Inclined plates and curved vanes <span class="pill">Beyond</span></h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Inclined plates and curved vanes <span class="pill">Beyond</span></span> <span class="mins">~6 min</span></h2>
 <h3>A jet on an inclined plate</h3>
+<details class="idea"><summary>What is this?</summary><div><p>Spray a hose at a tilted window. The water is not stopped; it slides off along the glass, and most of it carries on the way the jet was heading. Split the jet's motion into a part aimed into the glass and a part along it. A smooth plate can only push straight out of its surface, so it stops only the first part; the second part has to leave in the two streams.</p></div></details>
 <p>Now the plate makes an angle \(\theta\) with the jet. The jet divides: a mass flow \(\dot m_2\) runs one way along the plate and \(\dot m_3\) the other way. The plate is smooth, so both leave at the jet speed \(V\). The trick is to use axes <b>along</b> the plate (\(s\)) and <b>normal</b> to it (\(n\)).</p>
 <div class="figure" id="fig-incl-wrap"><p class="ttl">Try it · a jet on an inclined plate</p>
 <div id="fig-incl"></div>
@@ -396,21 +461,27 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </div>
 <div class="readout" id="out-incl"></div>
 <p class="cap">Starts at the May 2025 Q6 numbers (air, 30 mm, 40 m/s, 30°). The arrow widths along the plate show the split \(\dot m_2:\dot m_3\). At \(\theta=90°\) the plate is square to the jet: equal split, \(F_A=\dot mV\).</p></div>
-<ol class="steps">
-<li><b>Along the plate (\(s\)).</b> A smooth plate cannot push along itself, so \(\sum F_s=0\). The jet brings in \(\dot mV\cos\theta\) along \(+s\); \(\dot m_2\) leaves with \(+V\), \(\dot m_3\) with \(-V\):
-\[0=\dot m_2V-\dot m_3V-\dot mV\cos\theta\]</li>
-<li><b>Continuity:</b> \(\dot m_2+\dot m_3=\dot m\).</li>
-<li><b>Normal to the plate (\(n\)).</b> Only the support pushes along \(n\). The outflows have no \(n\)-velocity; the jet brings \(\dot mV\sin\theta\) into the plate. So the plate must push back with \(\dot mV\sin\theta\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> <b>Along the plate (\(s\)).</b> A smooth plate cannot push along itself, so \(\sum F_s=0\). The jet brings in \(\dot mV\cos\theta\) along \(+s\); \(\dot m_2\) leaves with \(+V\), \(\dot m_3\) with \(-V\):
+\[0=\dot m_2V-\dot m_3V-\dot mV\cos\theta\] <span class="why">The smooth plate cannot grip the water, so the jet's along-plate momentum must leave in the two streams, and more water goes the way the jet leans.</span></li>
+<li><b>Do:</b> <b>Continuity:</b> \(\dot m_2+\dot m_3=\dot m\). <span class="why">Two unknown flows need a second equation: no water is lost.</span></li>
+<li><b>Do:</b> <b>Normal to the plate (\(n\)).</b> Only the support pushes along \(n\). The outflows have no \(n\)-velocity; the jet brings \(\dot mV\sin\theta\) into the plate. So the plate must push back with \(\dot mV\sin\theta\). <span class="why">The part of the jet aimed into the plate is destroyed, as on the square plate of Section 3; that is all the plate has to stop.</span></li>
 </ol>
 <div class="box beyond"><span class="tag">Result · smooth inclined plate (angle \(\theta\) between jet and plate)</span>
 \[F_A=\dot mV\sin\theta\quad\text{(normal to the plate)}\]
 \[\frac{\dot m_2}{\dot m}=\frac{1+\cos\theta}{2},\qquad\frac{\dot m_3}{\dot m}=\frac{1-\cos\theta}{2}\]
 <p class="word"><b>In words:</b> the plate only has to cancel the part of the jet's momentum that points into it, \(\dot mV\sin\theta\). The flow along the plate splits so that the "forward" share (\(\dot m_2\), the side the jet leans towards) is bigger: their difference carries exactly the jet's along-plate momentum \(\dot mV\cos\theta\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\dot mV\sin\theta\)</dt><dd>the part of the jet's momentum flux aimed straight into the plate: the only part the plate stops.</dd>
+<dt>\(\dfrac{1+\cos\theta}{2}\)</dt><dd>the share of the water that runs on the way the jet leans (\(\dot m_2\)).</dd>
+<dt>\(\dfrac{1-\cos\theta}{2}\)</dt><dd>the share sent back the other way (\(\dot m_3\)).</dd>
+<dt>\(\theta=90°\)</dt><dd>a square plate: nothing to lean towards, so the split is half and half and the force is the whole \(\dot mV\).</dd>
+</dl></div>
 <details class="calc"><summary>solving for the split, step by step</summary><div>
-<p>1. From step 1, divide by \(V\): \(\dot m_2-\dot m_3=\dot m\cos\theta\). <span class="why">Same speed \(V\) everywhere cancels.</span></p>
-<p>2. Add continuity \(\dot m_2+\dot m_3=\dot m\): \(2\dot m_2=\dot m(1+\cos\theta)\). <span class="why">Two equations, two unknowns.</span></p>
+<p>1. From step 1, divide by \(V\): \(\dot m_2-\dot m_3=\dot m\cos\theta\). <span class="calcwhy">Same speed \(V\) everywhere cancels.</span></p>
+<p>2. Add continuity \(\dot m_2+\dot m_3=\dot m\): \(2\dot m_2=\dot m(1+\cos\theta)\). <span class="calcwhy">Two equations, two unknowns.</span></p>
 <p>3. Subtract instead: \(2\dot m_3=\dot m(1-\cos\theta)\).</p>
-<p>4. Check: \(\theta=90°\) gives \(\tfrac12,\tfrac12\) (square-on plate, equal split); \(\theta\to0\) gives \(1,0\) (the jet just slides along the plate, no force). <span class="why">Limits match common sense.</span></p>
+<p>4. Check: \(\theta=90°\) gives \(\tfrac12,\tfrac12\) (square-on plate, equal split); \(\theta\to0\) gives \(1,0\) (the jet just slides along the plate, no force). <span class="calcwhy">Limits match common sense.</span></p>
 </div></details>
 <div class="box eg"><span class="tag">Example · written for these notes</span>
 <p>A 25 mm water jet at 12 m/s strikes a smooth flat plate inclined at 60° to the jet. Find the normal force needed to hold the plate and how the flow divides.</p>
@@ -421,12 +492,13 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </ol>
 <p>If the question wants horizontal and vertical components, resolve: with the jet along \(x\), \(F_x=F_A\sin\theta=53.0\u{N}\) and \(F_y=F_A\cos\theta=30.6\u{N}\).</p></div>
 <h3>A curved vane that turns the jet</h3>
+<details class="idea"><summary>What is this? (a curved vane)</summary><div><p>A curved vane does more than stop the jet: it can send it back the way it came. Think of a ball that bounces straight back off a wall: it pushes the wall twice as hard as a lump of clay that sticks. A vane that turns the jet right round pushes twice as hard as a flat plate.</p></div></details>
 <p>A <b>vane</b> is a curved blade (as in a turbine) that turns a jet through an angle \(\beta\) without stopping it. On a smooth vane the speed stays \(V\). Jet in along \(+x\); out at angle \(\beta\) measured from the \(+x\) direction.</p>
 <div id="fig-vane"></div>
-<ol class="steps">
-<li>Out velocity components: \(V\cos\beta\) and \(V\sin\beta\). In: \(V\) and 0.</li>
-<li>\(R_x=\dot mV\cos\beta-\dot mV\) \(=-\dot mV(1-\cos\beta)\).</li>
-<li>\(R_y=\dot mV\sin\beta-0=\dot mV\sin\beta\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> Out velocity components: \(V\cos\beta\) and \(V\sin\beta\). In: \(V\) and 0. <span class="why">A smooth vane changes only the direction of the water, so only the components change, not the speed.</span></li>
+<li><b>Do:</b> \(R_x=\dot mV\cos\beta-\dot mV\) \(=-\dot mV(1-\cos\beta)\). <span class="why">This is the forward momentum the jet loses each second; at \(\beta=180°\) it leaves backwards and loses twice its forward momentum, like the bouncing ball.</span></li>
+<li><b>Do:</b> \(R_y=\dot mV\sin\beta-0=\dot mV\sin\beta\). <span class="why">The jet leaves with sideways momentum it did not have, so the vane must push it sideways, and the vane is pushed the opposite way.</span></li>
 </ol>
 <div class="box beyond"><span class="tag">Result · force of a jet on a fixed smooth vane (deflection \(\beta\))</span>
 \[F_x=\dot mV(1-\cos\beta),\qquad F_y=\dot mV\sin\beta\]
@@ -437,10 +509,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>\(F_y\) points opposite to the sideways velocity given to the jet.</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Check which angle the question gives. "Plate inclined at 30° to the horizontal" with a horizontal jet means \(\theta=30°\) between jet and plate, so \(F_A=\dot mV\sin30°\). "Vane deflects the jet by 30°" means \(\beta=30°\), so \(F_x=\dot mV(1-\cos30°)\). Draw it.</p></div>
+<p class="cannow"><b>You can now:</b> find the normal force and the flow split for a jet on a smooth inclined plate; find both force components on a vane that turns a jet through \(\beta\); tell the plate angle \(\theta\) from the deflection \(\beta\).</p>
 </section>
 
 <!-- ============ 5 ============ -->
-<section id="s5"><h2><span class="n">5</span>Vertical jets: gravity changes the speed <span class="pill">Beyond</span></h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Vertical jets: gravity changes the speed <span class="pill">Beyond</span></span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Point the hose straight up. The water slows as it rises, exactly like a ball thrown upward. A plate held above meets the same kilograms per second as leave the nozzle, but each one arrives slower, so the push is smaller than it would be at the nozzle. Use the speed the water has when it arrives.</p></div></details>
 <p>A jet pointing <b>up</b> slows down as it rises, like a ball thrown upward. Its pressure stays atmospheric, so Bernoulli (F3) between the nozzle (speed \(V_0\)) and height \(h\) gives</p>
 \[\frac{V_0^2}{2g}=\frac{V^2}{2g}+h\quad\Longrightarrow\quad V^2=V_0^2-2gh\]
 <p class="word"><b>In words:</b> the jet loses speed exactly as a thrown stone would (the HKDSE equation \(v^2=u^2-2as\)). Continuity, \(A_0V_0=AV\), then says the jet gets <b>wider</b> as it slows.</p>
@@ -453,17 +527,18 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <ol class="steps">
 <li>\(\dot m=1000\cdot\tfrac\pi4(0.02)^2(8)=2.513\u{kg/s}\).</li>
 <li>Speed at the plate: \(V=\sqrt{8^2-2(9.81)(2)}\) \(=\sqrt{24.76}=4.976\u{m/s}\).</li>
-<li>Small CV round the plate, \(y\) up: \(\sum F_y=R_y=0-\dot mV\), so the plate pushes down on the water with \(\dot mV\).</li>
+<li>Small CV round the plate, \(y\) up: \(\sum F_y=R_y=0-\dot mV\), so the plate pushes down on the water with \(\dot mV\). <span class="why">The water leaves the plate horizontally, so the vertical momentum going out is zero.</span></li>
 <li>Force of the jet on the plate (upward): \(\dot mV=2.513\times4.976=\boxed{12.5\u{N}}\).</li>
 </ol>
 <details class="calc"><summary>the large CV gives the same answer once the jet's weight is included</summary><div>
-<p>1. Large CV from the nozzle to the plate: \(-F-W_\text{jet}=0-\dot mV_0\), so \(F=\dot mV_0-W_\text{jet}\). <span class="why">The plate pushes down (\(-F\)); weight acts down.</span></p>
-<p>2. Weight of the rising column: \(W_\text{jet}=\rho g\int_0^hA\,\mathrm dz\) with \(A=Q/V(z)\). <span class="why">The jet is wider where it is slower.</span></p>
+<p>1. Large CV from the nozzle to the plate: \(-F-W_\text{jet}=0-\dot mV_0\), so \(F=\dot mV_0-W_\text{jet}\). <span class="calcwhy">The plate pushes down (\(-F\)); weight acts down.</span></p>
+<p>2. Weight of the rising column: \(W_\text{jet}=\rho g\int_0^hA\,\mathrm dz\) with \(A=Q/V(z)\). <span class="calcwhy">The jet is wider where it is slower.</span></p>
 <p>3. \(\int_0^h\mathrm dz/V\) is the time a water particle takes to rise \(h\), which is \((V_0-V)/g\) (constant deceleration \(g\)). So \(W_\text{jet}=\rho gQ(V_0-V)/g=\dot m(V_0-V)\).</p>
-<p>4. Then \(F=\dot mV_0-\dot m(V_0-V)=\dot mV\). <span class="why">Same as the small CV.</span></p>
+<p>4. Then \(F=\dot mV_0-\dot m(V_0-V)=\dot mV\). <span class="calcwhy">Same as the small CV.</span></p>
 <p>5. Numbers: \(W_\text{jet}=2.513(8-4.976)=7.60\u{N}\); \(F=2.513(8)-7.60=12.5\u{N}\) ✓.</p>
 </div></details></div>
 <h3>A cup held up by a jet</h3>
+<details class="idea"><summary>What is this? (a cup on a jet)</summary><div><p>Turn the plate into an upside-down cup and the water is sent back down instead of out sideways: the bouncing ball of Section 4 again, so the push doubles. If the cup hovers still, that push equals its weight.</p></div></details>
 <p>A hollow hemisphere (a cup, open side down) held up by a vertical jet turns the water through 180°: it arrives going up at \(V\) and leaves going down at \(V\) (smooth surface, same height). The force on the cup is \(2\dot mV\) (Section 4 with \(\beta=180°\)). If the cup floats still, this force equals its weight.</p>
 <div id="fig-cup"></div>
 <div class="box eg"><span class="tag">Example · written for these notes</span>
@@ -477,10 +552,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>May 2021 Q3 (8 marks) is this question with its own numbers: see the exam guide, <a href="guide-F4.html#F4-1">F4.1</a>.</p></div>
 <div class="box beyond"><span class="tag">Past papers · a jet under a plate with a piezometer (May 2019 Q3)</span>
 <p>May 2019 Q3 joins three chapters: an upward jet from a 0.01 m pipe hits a 0.1 m plate 0.2 m above and leaves the plate edge as a 0.4 mm sheet. Parts (a)–(c) use continuity (F2) and Bernoulli (F3) to get \(V_1\), \(V_2\), \(Q\) and the piezometer reading; part (d), "find the impact force on the plate", is this section: force = \(\rho Q\times\) (speed of the jet where it reaches the plate). The full solution is in the exam guide.</p></div>
+<p class="cannow"><b>You can now:</b> find the speed of a vertical jet at a height with \(V^2=V_0^2-2gh\); find the force on a plate above the nozzle, or the weight of a cup the jet holds up; explain why the large CV needs the weight of the jet.</p>
 </section>
 
 <!-- ============ 6 ============ -->
-<section id="s6"><h2><span class="n">6</span>Pipe bends, nozzles and reducers <span class="pill">Beyond</span></h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Pipe bends, nozzles and reducers <span class="pill">Beyond</span></span> <span class="mins">~9 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Lay a fire hose in a loop and start the pump: the loop tries to straighten. Two things push a bend outwards. The water at high pressure pushes on its walls, and the bend has to turn the water's momentum round the corner. In a pipe the pressure part is usually much the bigger, and the bolts holding a bend must resist both.</p></div></details>
 <p>Inside a pipe the water is usually at a pressure well above atmospheric, so the <b>pressure forces</b> \(pA\) at the cut sections are often much bigger than the momentum fluxes. A bend, nozzle or reducing section is held by flanges and bolts (or a support); the momentum equation gives the force those bolts must carry.</p>
 <div class="box beyond"><span class="tag">Definition · bend, reducer, nozzle, elbow</span>
 <p>A <b>bend</b> (or <b>elbow</b>) changes the direction of a pipe; a <b>reducer</b> (contraction, "convergent section") makes it narrower; a <b>reducing elbow</b> does both; a <b>nozzle</b> is a reducer at the end of a pipe that makes a fast free jet. A <b>flange</b> is the bolted ring joining two pipe pieces.</p></div>
@@ -496,16 +573,22 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </div>
 <div class="readout" id="out-bend"></div>
 <p class="cap">\(p_2\) is found from Bernoulli (no losses, no height change); if it comes out negative the bend would need a suction outlet, which the readout points out. The red arrow is the force the support must apply to hold the bend; it equals \(\vec R\), because the water pushes the bend with \(-\vec R\) and the support has to cancel that. It starts at the May 2024 Q3 elbow with the frictionless inlet pressure 120 kPa (outlet to the atmosphere, \(p_2=0\)). Set \(\theta=0\): a straight reducer, pushed downstream.</p></div>
-<ol class="steps">
-<li>Forces on the water in the CV: \(p_1A_1\) pushing in at section 1 (along \(+x\)); \(p_2A_2\) pushing in at section 2 (opposite to the outflow direction); \(\vec R\) from the bend; weight in the vertical direction only (not in this horizontal plane).</li>
-<li>Outflow direction at 2: \((\cos\theta,-\sin\theta)\).</li>
-<li>\(x\): \(p_1A_1-p_2A_2\cos\theta+R_x\) \(=\dot m(V_2\cos\theta-V_1)\).</li>
-<li>\(y\): \(p_2A_2\sin\theta+R_y=\dot m(-V_2\sin\theta)\).</li>
+<ol class="steps proc">
+<li><b>Do:</b> Forces on the water in the CV: \(p_1A_1\) pushing in at section 1 (along \(+x\)); \(p_2A_2\) pushing in at section 2 (opposite to the outflow direction); \(\vec R\) from the bend; weight in the vertical direction only (not in this horizontal plane). <span class="why">These are the real pushes on the water in the box; in a pipe the two pressure forces are usually the largest.</span></li>
+<li><b>Do:</b> Outflow direction at 2: \((\cos\theta,-\sin\theta)\). <span class="why">This gives the signs of the outgoing velocity components, and the outlet pressure force points the opposite way.</span></li>
+<li><b>Do:</b> \(x\): \(p_1A_1-p_2A_2\cos\theta+R_x\) \(=\dot m(V_2\cos\theta-V_1)\). <span class="why">Forces on the left, momentum out minus in on the right, for the \(x\) account only.</span></li>
+<li><b>Do:</b> \(y\): \(p_2A_2\sin\theta+R_y=\dot m(-V_2\sin\theta)\). <span class="why">The water arrives with no \(y\)-momentum and leaves with \(-\dot mV_2\sin\theta\), so the bend must push it towards \(-y\).</span></li>
 </ol>
 <div class="box beyond"><span class="tag">Result · force of a horizontal bend on the water</span>
 \[\begin{aligned}R_x&=\dot m(V_2\cos\theta-V_1)\\&\quad-p_1A_1+p_2A_2\cos\theta\end{aligned}\]
 \[R_y=-\dot mV_2\sin\theta-p_2A_2\sin\theta\]
 <p class="word"><b>In words:</b> support force on the water = (momentum out − momentum in) − (pressure forces). The water pushes the bend with \(-\vec R\): <b>outwards</b>, away from the inside of the turn and along the incoming flow. The support must push the bend with \(+\vec R\) to hold it.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\dot m(V_2\cos\theta-V_1)\), \(-\dot mV_2\sin\theta\)</dt><dd>momentum out minus momentum in: what it takes to turn the water round the corner (and speed it up in a reducer).</dd>
+<dt>\(-p_1A_1\)</dt><dd>the inlet pressure already pushes the water forward along \(+x\); the bend does not have to supply that part, so it is subtracted.</dd>
+<dt>\(+p_2A_2\cos\theta\), \(-p_2A_2\sin\theta\)</dt><dd>the outlet pressure pushes back into the box, against the outflow; the bend has to make up for it.</dd>
+<dt>\(\vec R\)</dt><dd>the push of the bend on the water. The water pushes the bend with \(-\vec R\), outwards: why the looped hose tries to straighten.</dd>
+</dl></div>
 <div class="box eg"><span class="tag">Example · written for these notes · a 90° bend</span>
 <p>Water flows at 0.05 m³/s through a horizontal 90° bend in a 150 mm pipe. The gauge pressure is 100 kPa at both ends (losses ignored). Find the force needed to hold the bend.</p>
 <div id="fig-bend90"></div>
@@ -517,15 +600,16 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </ol>
 <p>The pressure terms (1767 N each) are twelve times the momentum terms (141.5 N): forgetting \(pA\) is the commonest way to lose these marks.</p></div>
 <h3>A nozzle (or convergent duct): pushed downstream</h3>
+<details class="idea"><summary>What is this? (a nozzle)</summary><div><p>A nozzle speeds the water up, so you might expect it to be pulled backwards. But the water reaching it from the hose is at high pressure, and that pressure pushes forward on the narrowing walls more than enough to speed the water up. So the nozzle is pushed forward, off the hose, and the coupling must hold it on. The firefighter still feels a kick back: the hose wall behind the nozzle is stretched by the same pressure and pulls back harder, so hose and nozzle together are pushed back by the momentum the water gains.</p></div></details>
 <p>A nozzle on the end of a hose (or a convergent section ending in a free jet) speeds the flow up, so the water gains forward momentum. Yet the nozzle is pushed <b>off</b> the hose, downstream. The reason is the inlet pressure.</p>
 <div class="box eg"><span class="tag">Example · written for these notes · a hose nozzle</span>
 <p>A horizontal nozzle reduces a 60 mm hose to a 20 mm free jet. The flow is 6 L/s of water. Ignoring losses, find the force on the nozzle and say what holds it.</p>
 <div id="fig-nozzle"></div>
 <ol class="steps">
 <li>\(A_1=2.827\times10^{-3}\), \(A_2=3.142\times10^{-4}\u{m^2}\); \(V_1=Q/A_1=2.122\), \(V_2=19.10\u{m/s}\); \(\dot m=6\u{kg/s}\).</li>
-<li>Bernoulli, jet at \(p_2=0\): \(p_1=\tfrac12\rho(V_2^2-V_1^2)=180.1\u{kPa}\); \(p_1A_1=509.3\u{N}\).</li>
+<li>Bernoulli, jet at \(p_2=0\): \(p_1=\tfrac12\rho(V_2^2-V_1^2)=180.1\u{kPa}\); \(p_1A_1=509.3\u{N}\). <span class="why">The jet is in open air, so its gauge pressure is zero; Bernoulli then turns the speed gain into the inlet pressure.</span></li>
 <li>\(x\)-momentum: \(p_1A_1+R_x=\dot m(V_2-V_1)\).</li>
-<li>\(R_x=6(16.98)-509.3=-407.5\u{N}\): the nozzle pushes the water <b>backwards</b>.</li>
+<li>\(R_x=6(16.98)-509.3=-407.5\u{N}\): the nozzle pushes the water <b>backwards</b>. <span class="why">The inlet pressure pushes forward with 509 N, but speeding the water up needs only 102 N, so the nozzle must hold back the rest.</span></li>
 <li>So the water pushes the nozzle <b>forwards</b> (downstream) with \(\boxed{408\u{N}}\): the coupling to the hose must hold it on, in tension.</li>
 </ol>
 <p>Dec 2024 (Section B Q4(e), 5 marks) asked for the force of air on the convergent end of a duct: the same calculation, after finding \(p_1\) and the speeds from a manometer (see the exam guide, <a href="guide-F4.html#F4-2">F4.2</a>).</p></div>
@@ -536,35 +620,44 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>If the bend is in a vertical plane, add the weight of the water (and the bend, if given) in \(y\).</li>
 <li>Give the answer as asked: "force required to hold the bend" is the force <b>on the bend</b> from the support, equal to \(\vec R\) (support on water = support's push transmitted through the bend). Say its direction in words or as an angle.</li>
 </ul></div>
+<p class="cannow"><b>You can now:</b> find the force needed to hold a bend, reducer or nozzle, with the pressure forces at the cuts included; say which way a nozzle is pushed and why; give the answer as the force on the device.</p>
 </section>
 
 <!-- ============ 7 ============ -->
-<section id="s7"><h2><span class="n">7</span>Tanks on scales <span class="pill">Beyond</span></h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Tanks on scales <span class="pill">Beyond</span></span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Put a jug on a kitchen scale and run a tap into it. While the stream is falling in, the scale reads more than the weight of the jug and the water inside. On top of holding up the weight, the scale has to stop the falling stream's downward momentum every second. Water leaving sideways does not change the reading, because it carries no up-or-down momentum.</p></div></details>
 <p>A tank sits on a scale while water pours in from above and runs out of side openings. The scale reads the upward force \(N\) it must supply. It is <b>more</b> than the weight of the tank and the water: the scale also has to stop the downward momentum of the incoming jet.</p>
 <div id="fig-tank"></div>
 <p class="muted">The CV surrounds the tank and all the water in it, cutting the jets at the openings. Forces: the scale's push \(N\) (up), the weights of tank and water (down). Momentum: in at the top going down; out at the sides going sideways.</p>
-<ol class="steps">
-<li>Axes: \(y\) up. In: \(\dot m_1\) with \(V_y=-V_1\) (downward). Out: \(\dot m_2,\dot m_3\) horizontal, \(V_y=0\).</li>
-<li>\(y\)-momentum: \(N-W_\text{tank}-W_\text{water}\) \(=0-\dot m_1(-V_1)=\dot m_1V_1\).</li>
-<li>Free jets: no pressure forces at the openings.</li>
+<ol class="steps proc">
+<li><b>Do:</b> Axes: \(y\) up. In: \(\dot m_1\) with \(V_y=-V_1\) (downward). Out: \(\dot m_2,\dot m_3\) horizontal, \(V_y=0\). <span class="why">Only vertical momentum affects what the scale reads.</span></li>
+<li><b>Do:</b> \(y\)-momentum: \(N-W_\text{tank}-W_\text{water}\) \(=0-\dot m_1(-V_1)=\dot m_1V_1\). <span class="why">Stopping the falling jet needs an extra upward push each second, and only the scale can give it.</span></li>
+<li><b>Do:</b> Free jets: no pressure forces at the openings. <span class="why">Every opening is at atmospheric pressure, so no \(pA\) term enters.</span></li>
 </ol>
 <div class="box beyond"><span class="tag">Result · tank on a scale, jet in from above, outflow sideways</span>
 \[N=W_\text{tank}+W_\text{water}+\dot m_1V_1\]
 <p class="word"><b>In words:</b> scale reading = weight of the tank + weight of the water inside + the momentum flux of the jet arriving from above. Equal and opposite side jets cancel in \(x\); an outflow going <b>down</b> would <b>reduce</b> the reading by its own \(\dot mV\), like a small rocket.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(W_\text{tank}+W_\text{water}\)</dt><dd>what the scale would read with the tap off and the water still.</dd>
+<dt>\(\dot m_1V_1\)</dt><dd>the extra push needed every second to stop the downward momentum of the jet arriving from above.</dd>
+<dt>side outflows</dt><dd>they move horizontally, so they carry no vertical momentum and add nothing to the reading.</dd>
+</dl></div>
 <div class="box eg"><span class="tag">Example · written for these notes</span>
 <p>A tank weighing 50 N when empty stands on a scale. Its inside cross-section is 0.2 m² and the water depth stays at 0.5 m. Water enters through the top as a vertical jet of area 0.005 m² at 4 m/s and leaves through a horizontal side pipe. Find the scale reading (\(g=9.81\)).</p>
 <ol class="steps">
-<li>Water: \(W=\rho gV\) \(=1000(9.81)(0.2\times0.5)=981\u{N}\).</li>
+<li>Water: \(W=\rho gV\) \(=1000(9.81)(0.2\times0.5)=981\u{N}\). <span class="why">Here \(V\) is the volume of water in the tank, inside area × depth, not a speed.</span></li>
 <li>Jet: \(\dot m_1=\rho A_1V_1\) \(=1000(0.005)(4)=20\u{kg/s}\); \(\dot m_1V_1=80\u{N}\).</li>
 <li>\(N=50+981+80=\boxed{1111\u{N}}\).</li>
 </ol>
 <p>In steady flow the side pipe carries 20 kg/s out horizontally; it adds a horizontal force (which friction between tank and scale must resist) but nothing to the reading. May 2023 Q3 (10 marks) is this set-up with two side openings: see the exam guide, <a href="guide-F4.html#F4-2">F4.2</a>.</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>The water in the tank is "the water inside the CV": its weight counts. The jet above the tank is not inside the CV (cut it at the opening). Use the depth and the tank's <b>inside</b> area for the water volume.</p></div>
+<p class="cannow"><b>You can now:</b> find the scale reading under a tank with jets in and out; explain why a jet from above raises the reading and a downward outflow lowers it.</p>
 </section>
 
 <!-- ============ 8 ============ -->
-<section id="s8"><h2><span class="n">8</span>Drag and lift <span class="pill">Beyond</span></h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Drag and lift <span class="pill">Beyond</span></span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Hold your hand out of a car window. With your palm facing forward the wind shoves it back hard; turn it edge-on and the push almost disappears. Tilt its front edge up a little and your hand rises. The push back, along the wind, is <b>drag</b>; the push across the wind is <b>lift</b>. Both come from the air pressing and rubbing on the surface of your hand.</p></div></details>
 <p>When air or water flows past a body (or the body moves through it, which is the same thing seen from the body), the fluid pushes on every bit of the body's surface. Adding all those pushes gives one <b>resultant force</b>. We split it into two parts relative to the oncoming flow.</p>
 <div class="box beyond"><span class="tag">Definition · drag and lift (May 2019 Q1(h), (i))</span>
 <ul class="list">
@@ -574,21 +667,30 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-dl"></div>
 <p class="muted">The fluid's pressure and friction on the surface add up to one resultant force; drag is its part along the flow and lift its part across it. Lift does not have to be "upward": it is defined by the flow direction, not by gravity.</p>
 <h3>Where drag comes from</h3>
+<details class="idea"><summary>What is this? (friction and pressure drag)</summary><div><p>Edge-on, your hand feels mainly the air rubbing along its skin: friction drag. Palm forward, the air piles up against your palm at high pressure while a low-pressure swirl forms behind it. That pressure difference is pressure drag, and it is far bigger.</p></div></details>
 <div class="box beyond"><span class="tag">Definition · friction drag and pressure drag</span>
 <ul class="list">
 <li><b>Friction (skin-friction) drag</b>: viscous shear stress of the fluid dragging along the surface. Because of the <b>no-slip condition</b> (F1: fluid touching a wall has the wall's velocity) a thin <b>boundary layer</b> forms, in which the speed rises from zero at the surface to the outside speed. The shear in it pulls the body backwards. It is large for long, thin bodies with much surface area (a flat plate along the flow, a ship's hull) and is reduced by a <b>smooth</b> surface.</li>
 <li><b>Pressure (form) drag</b>: the pressure on the front of the body is high (near the stagnation point, F3) but the pressure behind it is low. The difference, acting on the frontal area, pushes the body back. It is large for <b>bluff</b> (blunt) bodies.</li>
 </ul></div>
+<details class="idea"><summary>What is this? (separation and wake)</summary><div><p>Behind your palm the air cannot curl neatly round to fill the space. It breaks away at the edges and leaves a swirling, low-pressure pocket, like the swirl behind a rock in a stream. The wider that pocket, the harder the push back.</p></div></details>
 <div class="box beyond"><span class="tag">Definition · flow separation, wake and vortex shedding</span>
 <p>Around the back of a blunt body the flow would have to slow down against rising pressure. The slow fluid in the boundary layer cannot do this: it stops and <b>separates</b> from the surface. Behind the separation points is a <b>wake</b>: a region of swirling eddies at low pressure. A wide wake means large pressure drag. Behind a cylinder the eddies peel off alternately from the top and bottom, a pattern called <b>vortex shedding</b> (a "Kármán vortex street"). It makes the force on the body fluctuate (wires "sing" in the wind; chimneys and bridges can vibrate) and adds drag.</p></div>
 <div id="fig-bodies"></div>
 <p class="muted">Top: a <b>streamlined</b> body (long tapering tail) lets the flow follow its surface almost to the end: thin wake, mostly friction drag. Bottom: a <b>bluff</b> body (cylinder, flat plate across the flow) makes the flow separate early: wide wake with shed vortices, mostly pressure drag.</p>
 <h3>Drag and lift coefficients</h3>
+<details class="idea"><summary>What is this? (drag coefficient)</summary><div><p>Drive twice as fast and the push on your hand becomes about four times as strong. A bigger hand feels more, and a palm feels more than an edge. The drag equation writes this as three factors: the strength of the wind, the area facing it, and a number for the shape.</p></div></details>
 <p>Experiments show that both forces grow with the <b>dynamic pressure</b> \(\tfrac12\rho V^2\) of F3 and with the size of the body. Engineers therefore write:</p>
 <div class="box beyond"><span class="tag">Result · drag and lift equations</span>
 \[F_D=C_D\cdot\tfrac12\rho V^2\cdot A\]
 \[F_L=C_L\cdot\tfrac12\rho V^2\cdot A\]
 <p class="word"><b>In words:</b> force = (a dimensionless coefficient for the shape) × (dynamic pressure of the oncoming flow) × (a reference area). \(V\) is the speed of the body relative to the fluid.</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(\tfrac12\rho V^2\)</dt><dd>the dynamic pressure (F3): how hard the wind presses on a palm that brings it to rest.</dd>
+<dt>\(A\)</dt><dd>how much of the body meets the wind: the reference area that goes with the quoted coefficient.</dd>
+<dt>\(C_D\), \(C_L\)</dt><dd>a shape score, found by experiment: high for a palm facing the wind, low for an edge or a fish shape.</dd>
+<dt>\(V\)</dt><dd>speed relative to the air, squared: twice as fast, four times the force.</dd>
+</dl></div>
 <div class="box beyond"><span class="tag">Definition · drag coefficient and reference area</span>
 <p>The <b>drag coefficient</b> \(C_D\) (no units) measures how "draggy" a shape is, found by experiment. It is always quoted with a <b>reference area</b>: for blunt bodies, cars, balls and airships the <b>frontal area</b> (the area of the shadow the body would cast on a screen facing the flow; for a round body of maximum diameter \(D\), \(A=\pi D^2/4\)); for wings, the <b>planform area</b> (wing area seen from above).</p></div>
 <div class="scroll"><table class="tbl">
@@ -602,10 +704,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <tr><td>Streamlined body (airship, fish shape)</td><td>0.04–0.1</td></tr>
 </table></div>
 <p class="muted">Standard textbook values (Çengel &amp; Cimbala, Munson) at high Reynolds number; exam questions always give \(C_D\).</p>
+<p class="cannow"><b>You can now:</b> define drag and lift relative to the oncoming flow; explain friction drag, pressure drag, separation, wake and vortex shedding; use \(F_D=C_D\tfrac12\rho V^2A\) with the right reference area.</p>
 </section>
 
 <!-- ============ 9 ============ -->
-<section id="s9"><h2><span class="n">9</span>Drag force and propulsion power <span class="pill">Beyond</span></h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Drag force and propulsion power <span class="pill">Beyond</span></span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>To keep your hand still out of the window, your arm must keep pushing it forward against the wind, and the car carries that push forward through the air. Pushing a force through a distance every second costs power. Drive twice as fast and the push is four times as large while it travels twice as far each second: eight times the power.</p></div></details>
 <p>To move a body steadily through a fluid, the engine must push it forward with a thrust equal to the drag. Power is force × speed (HKDSE: \(P=Fv\)).</p>
 <div class="box beyond"><span class="tag">Result · power to overcome drag</span>
 \[P=F_DV=C_D\cdot\tfrac12\rho A\cdot V^3\]
@@ -616,7 +720,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>Convert: \(100\u{km/h}=100/3.6=27.78\u{m/s}\).</li>
 <li>\(F_D=0.30(\tfrac12)(1.23)(27.78^2)(2.2)\) \(=313\u{N}\).</li>
 <li>\(P=F_DV=313\times27.78=8.70\u{kW}\).</li>
-<li>At 120 km/h: \(P\) scales with \(V^3\): \(8.70(120/100)^3=\boxed{15.0\u{kW}}\) (and \(F_D=451\u{N}\)).</li>
+<li>At 120 km/h: \(P\) scales with \(V^3\): \(8.70(120/100)^3=\boxed{15.0\u{kW}}\) (and \(F_D=451\u{N}\)). <span class="why">\(C_D\), \(\rho\) and \(A\) are unchanged, so only the speed ratio matters; scaling saves recomputing.</span></li>
 </ol>
 <p>Driving 20% faster costs 73% more power against air drag.</p></div>
 <div class="figure" id="fig-drag-wrap"><p class="ttl">Try it · drag power against speed</p>
@@ -634,10 +738,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>Use the reference area the \(C_D\) was quoted with. "Based on the frontal area" for a body of maximum diameter \(D\) means \(A=\pi D^2/4\), not length × diameter.</li>
 <li>\(\rho\) is the fluid's density (air 1.23 kg/m³ in the papers), not the body's.</li>
 </ul></div>
+<p class="cannow"><b>You can now:</b> find the drag force and the propulsion power \(P=F_DV\), converting km/h to m/s first; scale power between speeds with \(V^3\).</p>
 </section>
 
 <!-- ============ 10 ============ -->
-<section id="s10"><h2><span class="n">10</span>Aerofoils: lift, stall and flaps <span class="pill">Beyond</span></h2>
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Aerofoils: lift, stall and flaps <span class="pill">Beyond</span></span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Your tilted hand out of the car window is a crude wing: tilt its front edge up, the air is thrown downward off it, and your hand is pushed up. A real wing does the same job far better. Its rounded front and sharp back let the air follow both surfaces smoothly, so it makes a large lift for a small drag.</p></div></details>
 <div class="box beyond"><span class="tag">Definition · aerofoil words</span>
 <ul class="list">
 <li><b>Aerofoil</b> (airfoil): the cross-section shape of a wing, rounded at the front and sharp at the back.</li>
@@ -652,6 +758,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div id="fig-cl"></div>
 <p class="muted">Typical shape of \(C_L\) and \(C_D\) against angle of attack for a wing section, sketched for these notes (not data for a particular aerofoil).</p>
 <h3>Stall (Dec 2018 Q3(b))</h3>
+<details class="idea"><summary>What is this? (stall)</summary><div><p>Tilt your hand further and further. At first it rises harder; then the upward pull suddenly fades, your hand shakes and the wind just shoves it back. The air can no longer follow the curve of the top surface and breaks away from it. A wing tipped beyond its stall angle does the same.</p></div></details>
 <div class="box beyond"><span class="tag">Definition · stall</span>
 <p>An aerofoil <b>stalls</b> when the angle of attack is too large: the air flowing over the upper surface can no longer follow its curve, and the flow <b>separates</b> from the upper surface near the leading edge. A wide turbulent wake of eddies covers the upper surface, so the low pressure there (the "suction" that gives most of the lift) is lost.</p></div>
 <div id="fig-stall"></div>
@@ -664,6 +771,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li><b>Recovery:</b> reduce the angle of attack (nose down) and gain speed so the flow re-attaches.</li>
 </ol></div>
 <h3>Flaps (Dec 2018 Q3(c))</h3>
+<details class="idea"><summary>What is this? (flaps)</summary><div><p>Curl your fingertips down at the back of your hand and it gives more lift at the same speed. Flaps do this to a wing: they make it more curved, so it can hold the aircraft up at a lower speed without stalling.</p></div></details>
 <div class="box beyond"><span class="tag">Definition · flaps</span>
 <p><b>Flaps</b> are hinged sections at the trailing edge of a wing that can be lowered (and often slid backwards). Lowering them <b>increases the camber</b> (and with sliding flaps the wing area), so the wing gives <b>more lift at the same speed</b> and a higher \(C_{L,\max}\). The aircraft can then fly slowly without stalling: lower take-off and landing speeds and shorter runways. Flaps also add drag, which helps the aircraft slow down and descend steeply on approach. In cruise they are retracted to keep drag low. (Slats at the leading edge do a similar job.)</p></div>
 <div id="fig-flaps"></div>
@@ -671,23 +779,31 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>A light aircraft of mass 1000 kg has a wing area of 15 m². \(C_{L,\max}=1.5\) with flaps up and 2.4 with flaps down. Find the stall speed (the lowest speed at which lift can still equal weight) both ways, in air of 1.23 kg/m³.</p>
 <ol class="steps">
 <li>Level flight at the slowest speed: \(W=C_{L,\max}\tfrac12\rho V^2A\).</li>
-<li>So \(V_\text{stall}=\sqrt{\dfrac{2W}{\rho AC_{L,\max}}}\), with \(W=9810\u{N}\).</li>
+<li>So \(V_\text{stall}=\sqrt{\dfrac{2W}{\rho AC_{L,\max}}}\), with \(W=9810\u{N}\). <span class="why">Below this speed even the largest lift coefficient the wing can reach gives less lift than the weight.</span></li>
 <li>Flaps up: \(\sqrt{19620/(1.23\cdot15\cdot1.5)}=26.6\u{m/s}\) (96 km/h).</li>
 <li>Flaps down: \(\sqrt{19620/(1.23\cdot15\cdot2.4)}=\boxed{21.0\u{m/s}}\) (76 km/h).</li>
 </ol>
 <p>The landing run needed grows roughly as \(V^2\), so flaps cut it by about 37.5% (the ratio \(1.5/2.4=0.625\)).</p></div>
 <div class="box beyond"><span class="tag">Past papers · which conditions suit flight? (May 2022 Q6, multiple choice)</span>
 <p>Options were vortex shedding, smooth surface, high drag, high lift. A plane wants <b>high lift</b> and <b>low drag</b>; a <b>smooth surface</b> keeps friction drag low; vortex shedding means separated, unsteady flow (more drag, vibration). So (b) and (d).</p></div>
+<p class="cannow"><b>You can now:</b> name the parts of an aerofoil and the angle of attack; explain lift, stall and flaps in exam words, with a sketch of attached and separated flow; find a stall speed from \(C_{L,\max}\).</p>
 </section>
 
 <!-- ============ 11 ============ -->
-<section id="s11"><h2><span class="n">11</span>Head loss: energy lost in real flows <span class="pill">Beyond</span></h2>
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Head loss: energy lost in real flows <span class="pill">Beyond</span></span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture a child on a playground slide. Without friction she would reach the bottom at the speed her height allows; with friction she arrives slower, and the missing energy has warmed the slide and her clothes. Water in a pipe is the same: friction and eddies turn some of its energy into a tiny warming of the water. <b>Head loss</b> is that lost energy, written as the height of water it is worth.</p></div></details>
 <p>F3's Bernoulli equation assumes an ideal (frictionless) fluid: the total head \(\tfrac{p}{\rho g}+\tfrac{V^2}{2g}+z\) stays the same along a streamline. In a real fluid, viscosity causes friction at the walls (the no-slip condition, F1) and turbulent eddies inside the flow. Some <b>mechanical energy</b> (pressure, kinetic and potential energy) is turned into <b>heat</b> (internal energy, a tiny temperature rise) and cannot be got back as pressure, speed or height. The F1 handout puts it this way: in internal flows such as pipes "viscous effects cause substantial 'losses'". The F3 handout allows for them with a discharge coefficient \(C_d\) and a velocity coefficient \(C_v\).</p>
 <div class="box beyond"><span class="tag">Definition · head loss (May 2019 Q1(g))</span>
 <p>The <b>head loss</b> \(h_L\) between two sections of a flow is the mechanical energy per unit weight of fluid that is converted into heat by friction (viscous and turbulent effects) between them. It is a length, in metres: the drop in total head from the upstream to the downstream section.</p></div>
 <div class="box beyond"><span class="tag">Result · energy equation with losses (from section 1 to section 2, downstream)</span>
 \[\frac{p_1}{\rho g}+\frac{V_1^2}{2g}+z_1=\frac{p_2}{\rho g}+\frac{V_2^2}{2g}+z_2+h_L\]
 <p class="word"><b>In words:</b> total head upstream = total head downstream + the head lost to friction in between. With \(h_L=0\) it is Bernoulli. The power lost is \(\rho gQh_L\) (weight flow per second × head lost).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>left side</dt><dd>the total head at section 1: pressure, speed and height energy per unit weight of water, in metres.</dd>
+<dt>first three terms on the right</dt><dd>the same total head at section 2, downstream.</dd>
+<dt>\(h_L\)</dt><dd>the head friction turned into heat between 1 and 2: the height the child on the slide lost without gaining speed for it.</dd>
+<dt>\(h_L=0\)</dt><dd>no friction: Bernoulli (F3).</dd>
+</dl></div>
 <div id="fig-egl"></div>
 <p class="muted">A tank drains through a pipe to a free jet. The <b>energy line</b> (total head, teal) would be level for ideal flow; in a real pipe it slopes down along the pipe and drops a little at the entrance. The fall in the line is the head loss.</p>
 <div class="box eg"><span class="tag">Example · written for these notes</span>
@@ -700,10 +816,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </ol></div>
 <div class="box beyond"><span class="tag">Beyond the past papers · what head loss depends on (for reference)</span>
 <p>Textbooks split it into <b>major losses</b>, friction along straight pipe, \(h_L=f\,\dfrac{L}{D}\,\dfrac{V^2}{2g}\) (Darcy–Weisbach; \(f\) is a friction factor from a chart), and <b>minor losses</b> at bends, valves, entrances and sudden expansions, \(h_L=K\,V^2/(2g)\). Both grow roughly with \(V^2\). No past MECH1350/ENGG1350 paper has asked for these formulas; know the definition and the energy equation.</p></div>
+<p class="cannow"><b>You can now:</b> define head loss in exam words; use the energy equation with \(h_L\) between two sections; find the power lost, \(\rho gQh_L\).</p>
 </section>
 
 <!-- ============ 12 ============ -->
-<section id="s12"><h2><span class="n">12</span>Open-channel flow: specific energy and critical depth <span class="pill">Beyond</span></h2>
+<section id="s12"><h2><span class="n">12</span><span class="h2t">Open-channel flow: specific energy and critical depth <span class="pill">Beyond</span></span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Watch a river run under a sluice gate. Upstream it is deep and slow; just after the gate it is shallow and fast, yet the same water passes each second with almost the same energy. Open-channel flow is about this trade between depth and speed. A dropped pebble tells the two kinds apart: on the slow side its ripples spread upstream, on the fast side they are all swept downstream.</p></div></details>
 <div class="box beyond"><span class="tag">Definition · open channel</span>
 <p>An <b>open channel</b> carries liquid with a <b>free surface</b> open to the atmosphere: rivers, canals, drains, gutters, spillways. Gravity drives the flow (a pipe flowing full is driven by pressure instead). For a rectangular channel of width \(b\) with water depth \(y\) and flow rate \(Q\), continuity gives the mean speed</p>
 \[V=\frac{Q}{by}.\]</div>
@@ -713,14 +831,20 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>The <b>specific energy</b> \(E_s\) is the total head measured from the <b>channel bed</b>: depth (the pressure head plus height of the surface above the bed) plus velocity head.</p>
 \[E_s=y+\frac{V^2}{2g}=y+\frac{Q^2}{2gb^2y^2}\]
 <p class="word"><b>In words:</b> specific energy = depth + velocity head, in metres. For a given flow rate, a deep slow flow and a shallow fast flow can have the same \(E_s\).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map">
+<dt>\(y\)</dt><dd>the depth: energy stored as the height of the surface above the bed.</dd>
+<dt>\(\dfrac{V^2}{2g}\)</dt><dd>energy stored as speed (velocity head).</dd>
+<dt>\(\dfrac{Q^2}{2gb^2y^2}\)</dt><dd>the same velocity head written with the depth: shallower water must run faster to carry the same \(Q\), so this term grows.</dd>
+</dl></div>
 <p>Plot \(E_s\) against \(y\) for a fixed \(Q\): very deep flow is slow, so \(E_s\approx y\); very shallow flow is fast, so the velocity head blows up. In between, \(E_s\) has a <b>minimum</b>. Every larger value of \(E_s\) is reached at two depths, the <b>alternate depths</b>.</p>
+<details class="idea"><summary>What is this? (critical depth)</summary><div><p>Lower the river's energy and its deep slow depth and its shallow fast depth move towards each other. At the lowest energy that can still carry the flow they meet: that single depth is the critical depth. It is also the depth at which a ripple just stands still against the flow.</p></div></details>
 <div class="box beyond"><span class="tag">Result · critical depth (rectangular channel)</span>
 \[y_c=\left(\frac{Q^2}{gb^2}\right)^{1/3},\qquad E_{s,\min}=\tfrac32y_c\]
 <p class="word"><b>In words:</b> the critical depth is the depth at which a given flow has the least specific energy. Past papers print this formula (Dec 2021).</p></div>
 <details class="calc"><summary>where \(y_c\) and \(E_{s,\min}\) come from</summary><div>
-<p>1. Minimum of \(E_s(y)\): set \(\dfrac{\mathrm dE_s}{\mathrm dy}=1-\dfrac{Q^2}{gb^2y^3}=0\). <span class="why">Differentiate \(y+\tfrac{Q^2}{2gb^2}y^{-2}\).</span></p>
+<p>1. Minimum of \(E_s(y)\): set \(\dfrac{\mathrm dE_s}{\mathrm dy}=1-\dfrac{Q^2}{gb^2y^3}=0\). <span class="calcwhy">Differentiate \(y+\tfrac{Q^2}{2gb^2}y^{-2}\).</span></p>
 <p>2. So \(y^3=\dfrac{Q^2}{gb^2}\), i.e. \(y_c=(Q^2/gb^2)^{1/3}\).</p>
-<p>3. At \(y_c\): \(\dfrac{Q^2}{2gb^2y_c^2}=\dfrac{y_c^3}{2y_c^2}=\dfrac{y_c}{2}\), so \(E_{s,\min}=y_c+\tfrac12y_c=\tfrac32y_c\). <span class="why">Use \(Q^2/(gb^2)=y_c^3\).</span></p>
+<p>3. At \(y_c\): \(\dfrac{Q^2}{2gb^2y_c^2}=\dfrac{y_c^3}{2y_c^2}=\dfrac{y_c}{2}\), so \(E_{s,\min}=y_c+\tfrac12y_c=\tfrac32y_c\). <span class="calcwhy">Use \(Q^2/(gb^2)=y_c^3\).</span></p>
 <p>4. Also \(V_c^2=Q^2/(b^2y_c^2)=gy_c\), so at critical depth \(V_c=\sqrt{gy_c}\): the Froude number below equals 1.</p>
 </div></details>
 <div class="box beyond"><span class="tag">Definition · Froude number; subcritical and supercritical flow</span>
@@ -750,22 +874,23 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>\(V=\dfrac{3}{2(1.2)}=1.25\u{m/s}\); \(\mathrm{Fr}=\dfrac{1.25}{\sqrt{9.81(1.2)}}=0.364\).</li>
 <li>\(y_c=\left(\dfrac{3^2}{9.81(2^2)}\right)^{1/3}=0.612\u{m}\). Since \(y=1.2\gt y_c\) (and \(\mathrm{Fr}\lt1\)): <b>subcritical</b>.</li>
 <li>\(E_s=1.2+\dfrac{1.25^2}{2(9.81)}\) \(=1.2+0.0796=1.280\u{m}\).</li>
-<li>Alternate depth: solve \(y+\dfrac{0.1147}{y^2}=1.280\) for \(y\lt0.612\):</li>
+<li>Alternate depth: solve \(y+\dfrac{0.1147}{y^2}=1.280\) for \(y\lt0.612\): <span class="why">The alternate depth is on the other side of \(y_c\) from the 1.2 m we started with.</span></li>
 </ol>
 <details class="calc"><summary>trial values for the alternate depth</summary><div>
 <p>\(Q^2/(2gb^2)\) \(=9/(2\cdot9.81\cdot4)=0.1147\u{m^3}\).</p>
-<p>\(y=0.30\): \(0.30+0.1147/0.09=1.574\) <span class="why">too big: go deeper</span></p>
-<p>\(y=0.35\): \(0.35+0.1147/0.1225=1.286\) <span class="why">slightly too big</span></p>
-<p>\(y=0.352\): \(0.352+0.1147/0.1239=1.278\) <span class="why">slightly too small: the root is between</span></p>
+<p>\(y=0.30\): \(0.30+0.1147/0.09=1.574\) <span class="calcwhy">too big: go deeper</span></p>
+<p>\(y=0.35\): \(0.35+0.1147/0.1225=1.286\) <span class="calcwhy">slightly too big</span></p>
+<p>\(y=0.352\): \(0.352+0.1147/0.1239=1.278\) <span class="calcwhy">slightly too small: the root is between</span></p>
 <p>Root: \(y=0.3515\u{m}\) (a calculator's solver gives 0.35151).</p>
 </div></details>
 <p>\(\boxed{y_\text{alt}\approx0.352\u{m}}\), supercritical: \(V=3/(2\times0.3515)=4.27\u{m/s}\), \(\mathrm{Fr}=2.30\).</p></div>
 <div class="box warn"><span class="tag">Watch</span>
 <p>Use the flow rate \(Q\) (m³/s) and the full width \(b\) in \(y_c\). Compare \(y\) with \(y_c\) to classify the flow and quote \(\mathrm{Fr}\) as a check; both must agree. The alternate depth is on the other side of \(y_c\).</p></div>
+<p class="cannow"><b>You can now:</b> find the speed and specific energy of a rectangular channel flow; classify it with \(y_c\) or \(\mathrm{Fr}\); find the alternate depth with the same \(E_s\).</p>
 </section>
 
 <!-- ============ 13 ============ -->
-<section id="s13"><h2><span class="n">13</span>Summary</h2>
+<section id="s13"><h2><span class="n">13</span><span class="h2t">Summary</span></h2>
 <div class="scroll"><table>
 <tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
 <tr><td>Momentum flux</td><td>\(\dot mV=\rho AV^2\)</td><td>momentum carried through a section per second (N)</td></tr>
@@ -790,7 +915,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 14 ============ -->
-<section id="s14"><h2><span class="n">14</span>Common mistakes</h2>
+<section id="s14"><h2><span class="n">14</span><span class="h2t">Common mistakes</span></h2>
 <div class="mistake">
 <span class="x">✗</span><span>Leaving out the pressure forces \(pA\) at the inlet of a bend or nozzle.</span>
 <span class="ok">✓</span><span>Inside a pipe the gauge pressure is not zero: \(p_1A_1\) pushes into the CV and is often ten times the momentum terms.</span>
@@ -816,7 +941,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 15 ============ -->
-<section id="s15"><h2><span class="n">15</span>Find the mistake</h2>
+<section id="s15"><h2><span class="n">15</span><span class="h2t">Find the mistake</span></h2>
 <div class="q"><p class="qh">1 · A student's nozzle</p>
 <p>"Nozzle from 60 mm to a 20 mm free jet, 6 L/s of water. \(\sum F_x=\dot m(V_2-V_1)\) \(=6(19.10-2.12)=102\u{N}\), so the force on the nozzle is 102 N, pushing it upstream."</p>
 <details><summary>Hint</summary><div><p>What is the gauge pressure at the inlet of the nozzle? What forces are in \(\sum F_x\)?</p></div></details>
@@ -832,7 +957,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 16 ============ -->
-<section id="s16"><h2><span class="n">16</span>Concept checks</h2>
+<section id="s16"><h2><span class="n">16</span><span class="h2t">Concept checks</span></h2>
 <p class="muted">Written for these notes.</p>
 <div class="q"><p class="qh">1 · Flat plate or cup?</p><p>The same jet hits (i) a flat plate square-on and (ii) a smooth cup that turns it right round. Compare the forces.</p>
 <details><summary>Answer</summary><div><p>(i) \(\dot mV\); (ii) \(2\dot mV\). The cup sends the water back at \(V\), so the momentum change is \(\dot mV-(-\dot mV)=2\dot mV\): twice as much.</p></div></details></div>
@@ -852,7 +977,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 </section>
 
 <!-- ============ 17 ============ -->
-<section id="s17"><h2><span class="n">17</span>Exam taster</h2>
+<section id="s17"><h2><span class="n">17</span><span class="h2t">Exam taster</span></h2>
 <p>Real past-paper parts (ENGG1350, the predecessor of MECH1350; Section C), one per question type of this chapter. None of these topics is in a 2026 handout, so check Moodle before revising them heavily. Full methods, every other sitting, and more practice: <a href="guide-F4.html">Exam guide · F4</a>.</p>
 
 <div class="q"><div class="src"><b>May 2025 Q6</b><span>4 + 5 marks</span><span>similar: Dec 2018 Q2, May 2021 Q3</span><a class="guide" href="guide-F4.html#F4-1">F4.1 jets on plates &amp; vanes</a></div>
@@ -1553,5 +1678,13 @@ reg(function(){const svg=svgIn('fig-t4',400,200,'Dec 2021 Q3: rectangular open c
   ld(g,ox+b+60,oy-h+dy/2-40,ox+b+130,oy-h+dy/2-40-21,FLOW,'0.2 m³/s',0,-14);
 });
 
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </body></html>

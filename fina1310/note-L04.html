@@ -222,6 +222,34 @@ p.tldr{font-size:15px;color:var(--muted);border-left:3px solid var(--accent);pad
 svg.tl text{paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round}
 .box svg.tl text{stroke:var(--card)}
 
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
@@ -251,7 +279,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
   <p class="lede">A bond is an annuity of coupons plus one lump sum. Its price, its yield, why the price moves when rates move, inflation, and why yields differ by maturity.</p>
 </header>
 
-<section id="s0"><h2><span class="n">0</span>Where this sits</h2>
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this sits</span></h2>
 <p>L3's <a href="note-L03.html#s6">interest-only loan</a> ($10,000 at 5% for 10 years: $500 a year, $10,500 in year 10) <b>is</b> a bond. Pricing it needs only two L3 tools. Textbook: Chapter 7 (7.1, 7.6, 7.7 in full; 7.2–7.5 for vocabulary).</p>
 <div class="box thm"><span class="tag">Recap from L2–L3 · the two formulas</span>
 \[C\times AF(r,t)=C\times\frac{1-\frac{1}{(1+r)^t}}{r}\]
@@ -260,7 +288,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <div class="box conv"><span class="tag">Sign convention</span><p>Received <b>+</b>, paid <b>−</b>. Buying a bond: the price is −, coupons and face value are +. Excel/calculator: PV has the opposite sign to PMT and FV. \(t=0\) is today.</p></div>
 </section>
 
-<section id="s1"><h2><span class="n">1</span>Bonds and their cash flows</h2>
+<section id="s1"><h2><span class="n">1</span><span class="h2t">Bonds and their cash flows</span></h2>
 <p class="tldr">A bond is a loan cut into pieces: the contract fixes the payments, the market sets the price.</p>
 <ul class="list"><li><b>Bond</b>: the issuer borrows from many investors at once and promises fixed payments. A firm needing $5 million sells 5,000 bonds of $1,000 each.</li>
 <li><b>Issuers</b> (borrowers): governments, corporations. <b>Investors</b> (lenders, creditors): hold a fixed claim, are paid before shareholders, have no votes.</li></ul>
@@ -277,13 +305,21 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p><b>Market size</b> (end-2025, US$ trillion): world bonds 161 vs stocks 158 (bonds 50%); US 61 vs 69 (47%); mainland China 28 vs 16 (64%); Hong Kong 1.2 vs 6.1 (16%). Globally the bond market is as large as the stock market; Hong Kong is the exception.</p>
 </section>
 
-<section id="s2"><h2><span class="n">2</span>Bond price</h2>
+<section id="s2"><h2><span class="n">2</span><span class="h2t">Bond price</span></h2>
 <p class="tldr">Price = PV of the coupons (an annuity) + PV of the face value (a lump sum), both at the yield.</p>
 <div class="pair"><div><p class="sub">coupons: an annuity, \(C\times AF(r,t)\)</p><div class="tlw" id="tl2a"></div></div><div><p class="sub">face value: a lump sum, \(F/(1+r)^t\)</p><div class="tlw" id="tl2b"></div></div></div>
 <div class="box thm"><span class="tag">Result · bond price</span>
 \[\text{Price}=C\times\frac{1-\frac{1}{(1+r)^t}}{r}+\frac{F}{(1+r)^t}\]
 <p>\(C\) = coupon per period, \(F\) = face value, \(r\) = yield per period, \(t\) = periods to maturity.</p>
 <p class="word"><b>In words:</b> price = PV of the coupons + PV of the face value. For now payments are certain (no default).</p></div>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(C\times\dfrac{1-\frac{1}{(1+r)^t}}{r}\)</dt><dd>the coupons: equal payments every period, so an ordinary annuity (L3)</dd><dt>\(\dfrac{F}{(1+r)^t}\)</dt><dd>the face value: one lump sum at maturity, discounted like any single cash flow</dd><dt>\(r\)</dt><dd>the yield, the return the market requires per period; it sets the price, the coupon rate does not</dd><dt>\(t\)</dt><dd>periods left to maturity, counted from today</dd></dl></div>
+<p class="sub">How to price a bond</p>
+<ol class="steps proc"><li><b>Do:</b> Read the cash flows off the contract: coupon \(C\) = coupon rate × face value (per period), plus \(F\) at maturity. <span class="why">The contract fixes what you will receive; the only question is what that is worth today.</span></li>
+<li><b>Do:</b> Match the periods: for semi-annual coupons, halve the coupon and the yield and double the number of periods. <span class="why">The rate must be per period, the same &ldquo;exchange rate&rdquo; rule as in L2.</span></li>
+<li><b>Do:</b> Value the coupons as an annuity at the yield, \(C\times AF(r,t)\). <span class="why">Equal payments at equal intervals are exactly an ordinary annuity.</span></li>
+<li><b>Do:</b> Value the face value as a lump sum, \(F/(1+r)^t\), at the same yield, and add the two. <span class="why">The face value is one payment at maturity; both parts are paid by the same issuer, so they get the same rate.</span></li>
+<li><b>Do:</b> Sense-check: yield above the coupon rate → price below \(F\); yield below → price above \(F\). <span class="why">If the market wants more than the coupon pays, the only way to give buyers that return is a lower price.</span></li>
+</ol>
 <div class="box ready"><span class="tag">Tools</span><p><b>Excel:</b> <code>PV(rate, nper, pmt, fv)</code> with pmt = coupon, fv = face value. <b>Calculator:</b> N, I/Y, PMT, FV, solve for PV.</p></div>
 
 <div class="box eg"><span class="tag">Example · 8% annual-coupon bond, 10 years, at issue; market requires 8%</span>
@@ -323,13 +359,15 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>\(C=\$40\), \(r=5\%\) per half-year, \(t=18\).</p>
 \[\begin{aligned}\text{Price}&=40\,AF(5\%,18)+\tfrac{1{,}000}{1.05^{18}}\\&=467.58+415.52=\$883.10\end{aligned}\]
 <p>(vs $884.82 with annual coupons). Quoted YTM \(=5\%\times2=10\%\); effective annual yield \(=1.05^2-1=10.25\%\).</p></div>
+<p class="cannow"><b>You can now:</b> price a bond with annual or semi-annual coupons; say whether it trades at par, a discount or a premium; use the coupon-gap shortcut.</p>
 </section>
 
-<section id="s3"><h2><span class="n">3</span>Yields and returns</h2>
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Yields and returns</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The yield to maturity is the price translated into a rate. Think of a bond as a fixed bundle of promised payments. The contract never changes them, so the only way the market can make the deal better or worse is through the price: pay less for the same payments and you earn more. The YTM is the one discount rate that makes those fixed payments worth exactly today's price. That is why price and yield always move in opposite directions: they are two ways of saying the same thing.</p></div></details>
 <p class="tldr">In the market you see the price; the yield is the rate that makes the PV of the promised cash flows equal to it.</p>
 <div class="box def"><span class="tag">Definition · yield to maturity</span><p>The \(r\) that solves Price \(=C\,AF(r,t)+F/(1+r)^t\) for the observed price. No closed form: trial and error, as for an annuity's rate in L3, or Excel <code>RATE()</code> / calculator I/Y. Quoted as an APR (semi-annual bond: twice the six-month rate).</p>
 <p>It is also the return you earn if you buy at this price, hold to maturity and collect every payment.</p></div>
-<div class="box eg"><span class="tag">Example · trial and error</span><p>8% annual coupon, $1,000 face, 6 years left, price $955.14. Below par, so the yield is above 8%.</p>
+<div class="box eg"><span class="tag">Example · trial and error</span><p>8% annual coupon, $1,000 face, 6 years left, price $955.14. Below par, so the yield is above 8%.<span class="why">A lower price for the same payments needs a higher discount rate to match it, so the first guess goes above the coupon rate.</span></p>
 <ul class="list"><li>Try 10%: \(348.42+564.47=\$912.89\), below the price → guess too high.</li>
 <li>Try 9%: \(358.87+596.27=\$955.14\) = the price → <b>YTM = 9%</b>.</li></ul>
 <p>Rule: value below the price → guess too high; above → too low. Excel: <code>RATE(6, 80, −955.14, 1000)</code> = 9.00%.</p></div>
@@ -351,9 +389,11 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <tr><td>10% (up)</td><td>$936.60</td><td>8.00%</td><td>lower</td></tr>
 <tr><td>8% (down)</td><td>$1,000.00</td><td>10.02%</td><td>higher</td></tr></table></div>
 <p>Rising rates hurt anyone who must sell before maturity: that is section 4.</p></div>
+<p class="cannow"><b>You can now:</b> find a YTM by trial and error or with RATE(); split a one-year return into current yield and capital-gain yield; work out a holding-period return when you sell early.</p>
 </section>
 
-<section id="s4"><h2><span class="n">4</span>Interest-rate risk</h2>
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Interest-rate risk</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>You own a bond paying 8%, and next week new bonds of the same kind pay 10%. Nobody will pay full price for your 8% bond when 10% is on offer, so its price falls until a buyer would earn 10% on it too. The longer you are stuck with the low coupon, the more years of missing interest the buyer must be paid for, so the bigger the fall. If rates fall instead, your bond becomes the attractive one and its price rises.</p></div></details>
 <p class="tldr">Hold to maturity and your return is locked at the YTM; sell early and you are exposed to whatever yields are then.</p>
 <div class="box def"><span class="tag">Definition · interest-rate risk</span><p>The risk that a bond's price changes because market rates change. It hits even default-free government bonds.</p></div>
 <p><b>Rates move a lot.</b> 10-year US Treasury yields fell from about 8–9% in 1990 to under 1% in 2020, then jumped to about 4–5% from 2022; Hong Kong 10-year yields track them closely.</p>
@@ -380,9 +420,10 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <tr><td>Fri 10 Mar</td><td>California regulator closes the bank; FDIC takes over as receiver. Second-largest US bank failure at the time</td></tr>
 <tr><td>Sun 12 Mar</td><td>Treasury, Fed and FDIC guarantee every deposit, insured or not; the Fed lends to banks against bonds at face value</td></tr></table></div>
 <div class="box warn"><span class="tag">The feedback loop</span><p>Rates rise → bonds lose value → depositors fear for uninsured money and withdraw → the bank sells bonds to pay them (forced sale) → paper losses become real, equity shrinks → bad news travels → more withdrawals → … Rising rates start it; withdrawals and forced sales keep it going. Holding to maturity only protects you if no one forces you to sell.</p></div>
+<p class="cannow"><b>You can now:</b> explain why bond prices fall when yields rise; say which bonds carry more interest-rate risk (longer maturity, lower coupon); explain how rising rates and forced sales brought down SVB.</p>
 </section>
 
-<section id="s5"><h2><span class="n">5</span>Inflation and real rates</h2>
+<section id="s5"><h2><span class="n">5</span><span class="h2t">Inflation and real rates</span></h2>
 <p class="tldr">The nominal rate grows your money; the real rate grows what your money buys.</p>
 <p><b>Hong Kong inflation</b> (consumer prices, change on the year): about 9–11% in the early 1980s and early 1990s; prices <b>fell</b> for six years after 1998 (1999–2004, down to about −4%); since 2005 mostly 0–5%.</p>
 <div class="box thm"><span class="tag">Result · the Fisher effect</span>
@@ -413,7 +454,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li>Compare: a 2-year Exchange Fund Note yielded about 3.2% in Aug 2026.</li></ul>
 </section>
 
-<section id="s6"><h2><span class="n">6</span>Term structure</h2>
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Term structure</span></h2>
 <p class="tldr">Default-free loans of different lengths carry different rates; corporate yields add premia on top.</p>
 <div class="box def"><span class="tag">Definition · term structure of interest rates</span><p>The yields of default-free <b>pure-discount</b> bonds (one payment at maturity, no coupons) across maturities: the pure time value of money by horizon. In practice: the US Treasury yield curve; in Hong Kong, Exchange Fund Bills and Government Bonds (nearly default-free and liquid).</p>
 <p>Shape: usually <b>upward</b> sloping; occasionally <b>downward</b> sloping (an <b>inverted</b> yield curve); occasionally <b>humped</b>.</p></div>
@@ -434,7 +475,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <p>Evergrande's US-dollar bonds traded at yields far above 20% through 2021, months before its December default: the default-risk premium in plain sight.</p></div>
 </section>
 
-<section id="s7"><h2><span class="n">7</span>Summary and formula card</h2>
+<section id="s7"><h2><span class="n">7</span><span class="h2t">Summary and formula card</span></h2>
 <ul class="list"><li>Price = PV of coupons (annuity) + PV of face value. Par, discount or premium as the yield equals, exceeds or falls short of the coupon rate; prices pull to par over time.</li>
 <li>Semi-annual: halve coupon and yield, double the periods.</li>
 <li>YTM solves the price equation (trial and error); current yield = coupon / price; holding-period return if you sell early.</li>
@@ -452,7 +493,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <tr><td>Fisher</td><td>\(1+R=(1+r)(1+h)\); \(r\approx R-h\)</td></tr></table></div>
 </section>
 
-<section id="s8"><h2><span class="n">8</span>Common mistakes</h2>
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Common mistakes</span></h2>
 <ul class="list">
 <li><b>Discounting at the coupon rate.</b> The coupon rate sets \(C\); the yield is the discount rate.</li>
 <li><b>Forgetting the face value</b>, or adding it with no discounting.</li>
@@ -463,7 +504,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
 <li><b>Using \(R\approx r+h\) when rates are large.</b> Use the exact Fisher equation.</li></ul>
 </section>
 
-<section id="s9"><h2><span class="n">9</span>Practice</h2>
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Practice</span></h2>
 <p>The first four are the lecture's in-class quizzes, the last two are from the tutorials, and the rest are written for these notes.</p>
 <div class="q"><div class="src"><b>Lecture quiz</b><span>what is this bond worth?</span></div>
 <p>Last year a firm issued a bond paying $80 a year for 10 years and $1,000 at the end of year 10. Investors now require 9% on bonds like it. Its value today: A. exactly $1,000 · B. more than $1,000 · C. less than $1,000 · D. depends on the firm's profits</p>
@@ -796,5 +837,13 @@ function irdraw(){
 }
 $('y').addEventListener('input',irdraw);$('cp').addEventListener('change',irdraw);redraws.push(irdraw);
 
+</script>
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
 </script>
 </body></html>
