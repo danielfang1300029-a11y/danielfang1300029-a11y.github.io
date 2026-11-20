@@ -1,0 +1,1749 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH2413 C2 · How Do We Design a Controller?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH2413 house style (from MATH1851): 46rem reading column, sticky contents rail, dark mode via CSS variables. */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee; --axis:#8a96a3;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4;
+  --warm:#c2551b; --warm-soft:#fbeadf;
+  --c2:#c23a4e; --c3:#1f7a4d; --c4:#c2551b;
+  --warn:#a3321f; --warn-soft:#fbe5e1;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b; --axis:#6f7d8a;
+  --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+  --c2:#ff8596; --c3:#5fd39a; --c4:#f0935c; --warn:#ff9c8a; --warn-soft:#3a1d1a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
+.wrap{display:grid;grid-template-columns:1fr;gap:40px;max-width:1120px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+@media (min-width:1000px){.wrap{grid-template-columns:220px minmax(0,46rem)}}
+nav.toc{display:none}
+@media (min-width:1000px){nav.toc{display:block;position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;font-size:13.5px}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--muted);text-decoration:none;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+nav.toc .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main{min-width:0;max-width:46rem}
+header.top{display:grid;gap:8px;margin-bottom:24px}
+header.top .course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2.1rem;line-height:1.15;margin:0}
+h2{font-size:1.35rem;line-height:1.25;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);font-size:.85rem;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:22px 0 8px}
+h4{font-size:.98rem;margin:26px 0 4px;color:var(--muted)}
+section{padding:24px 0 20px;border-top:1px solid var(--line);margin-top:12px}
+p{margin:10px 0}
+a{color:var(--accent)}
+b,strong{font-weight:600}
+.lede{color:var(--muted);font-size:1.05rem;max-width:65ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0}
+.box>.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--muted)}
+.def{border-left:4px solid var(--accent)} .def>.tag{color:var(--accent)}
+.thm{background:var(--accent-soft);border-color:transparent} .thm>.tag{color:var(--accent)}
+.eg{border-left:4px solid var(--line)} .eg>.tag{color:var(--ink)}
+.warn{background:var(--warn-soft);border-color:transparent} .warn>.tag{color:var(--warn)}
+.beyond{background:var(--warm-soft);border-color:transparent;font-size:.95rem} .beyond>.tag{color:var(--warm)}
+.word{font-size:.93rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin-top:10px}
+.word b{color:var(--ink);font-weight:500}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:1px 8px;border-radius:99px;background:var(--warm-soft);color:var(--warm);vertical-align:1px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted)}
+ol.steps,ul.list{padding-left:1.3rem;margin:8px 0}
+ol.steps li,ul.list li{margin:6px 0}
+.figure{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin:16px 0}
+.figure .cap{font-size:.88rem;color:var(--muted);margin:8px 2px 0}
+.figure .ttl{font-size:.82rem;font-weight:600;margin:0 2px 8px}
+canvas.plot{width:100%;display:block;border-radius:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 2px 4px;font-size:.92rem}
+.ctrl label{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;min-width:0}
+.ctrl input[type=range]{width:170px;max-width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:.9rem;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.readout{font-family:var(--mono);font-size:.82rem;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;font-variant-numeric:tabular-nums}
+.readout b{font-weight:500;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.82rem;color:var(--muted);margin:6px 2px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px;background:var(--k)}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:8px 0;padding:0 14px}
+details>summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:.93rem;color:var(--accent)}
+details[open]>summary{border-bottom:1px solid var(--line);margin-bottom:6px}
+details>div{padding-bottom:10px}
+.q{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 16px;margin:14px 0}
+.q .qh{font-weight:600;margin-bottom:4px}
+.q .src{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;margin:0 0 6px}
+.q .src b{color:var(--ink);font-weight:500}
+a.guide{font-family:var(--mono);font-size:11px;letter-spacing:.02em;text-decoration:none;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+a.guide:hover{text-decoration:underline}
+.older{font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.handwork{background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:10px 14px;overflow-x:auto}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+mjx-container:not([display="true"]){display:inline-block;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:1px 0}
+.mistake{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:baseline}
+.mistake .x{color:var(--c2);font-weight:700}
+.mistake .ok{color:var(--c3);font-weight:700}
+.cases{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:10px 0}
+.cases>div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0;font-size:.95rem}
+.cases b{display:block;margin-bottom:2px}
+@media (max-width:480px){h1{font-size:1.7rem} body{font-size:15px}}
+
+/* ---- MECH2413 additions ---- */
+.topbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-family:var(--mono);font-size:12px;margin-bottom:6px}
+.topbar a{text-decoration:none;color:var(--muted);padding:2px 9px;border:1px solid var(--line);border-radius:99px}
+.topbar a:hover{color:var(--accent);border-color:var(--accent)}
+.muted{color:var(--muted)}
+.flag{font-size:.88rem;color:var(--muted);background:var(--paper);border:1px dashed var(--axis);border-radius:6px;padding:6px 10px;margin:8px 0}
+.flag::before{content:"Reading used · ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.conv{border-left:4px solid var(--c3)} .conv>.tag{color:var(--c3)}
+.ready{border:2px solid var(--accent);background:var(--card)} .ready>.tag{color:var(--accent)}
+.lowpri{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;background:var(--grid);color:var(--muted);vertical-align:1px}
+/* guide cards: Looks like / Do / Watch */
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0}
+.card .ch{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:6px}
+.card .ch b{font-family:var(--display);font-size:1rem}
+.card .ch .code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.card .ch .freq{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0}
+.card dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0;font-size:.95rem}
+/* free-body diagrams (SVG drawn by FBD.draw) */
+.fbd{width:100%;height:auto;display:block;overflow:visible}
+.fbd .ink{stroke:var(--ink);fill:none;stroke-width:1.6}
+.fbd .member{fill:var(--grid);stroke:var(--ink);stroke-width:1.4}
+.fbd .member2{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.fbd .hatch{stroke:var(--axis);stroke-width:1.1}
+.fbd .ground{stroke:var(--ink);stroke-width:1.6}
+.fbd .sup{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.fbd .force{stroke:var(--c2);fill:var(--c2)}
+.fbd .react{stroke:var(--accent);fill:var(--accent)}
+.fbd .load{stroke:var(--warm);fill:var(--warm)}
+.fbd .loadfill{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.2}
+.fbd .good{stroke:var(--c3);fill:var(--c3)}
+.fbd .dim{stroke:var(--muted);fill:var(--muted);stroke-width:1}
+.fbd .cut{stroke:var(--c3);stroke-width:1.5;stroke-dasharray:6 4;fill:none}
+.fbd .faint{stroke:var(--axis);stroke-width:1;stroke-dasharray:4 4;fill:none}
+.fbd text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.fbd text.lbl-force{fill:var(--c2);font-weight:600}
+.fbd text.lbl-react{fill:var(--accent);font-weight:600}
+.fbd text.lbl-load{fill:var(--warm);font-weight:600}
+.fbd text.lbl-good{fill:var(--c3);font-weight:600}
+.fbd text.lbl-dim{fill:var(--muted);font-size:12px}
+.fbd text.it{font-style:italic}
+.pair{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+.pair>div{min-width:0}
+.pair .sub{font-size:.82rem;color:var(--muted);text-align:center;margin-top:2px}
+nav.toc a[aria-current]{background:var(--accent-soft);color:var(--ink);border-left-color:var(--accent)}
+
+
+
+/* s15 intuition-first components */
+.box.idea{border-left:4px solid var(--accent)} .box.idea>.tag{color:var(--accent)}
+.box.link>.tag{color:var(--accent)}
+dl.map{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 14px;margin:6px 0}
+dl.map dt{font-weight:600;min-width:0;overflow-x:auto} dl.map dd{margin:0;min-width:0}
+@media (max-width:560px){dl.map{grid-template-columns:1fr} dl.map dd{padding-left:12px;margin-bottom:6px}}
+ol.proc>li{margin-bottom:8px} .why{display:block;color:var(--muted);font-size:.93em;margin-top:2px;padding-left:10px;border-left:2px solid var(--line)}
+.why::before{content:"Why: ";font-weight:600;color:var(--accent)}
+p.cannow{border-top:1px dashed var(--line);padding-top:8px;margin-top:18px;color:var(--muted)} p.cannow b{color:var(--ink)}
+h2 .mins{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:middle;white-space:nowrap}
+.box.onepage ol{margin:6px 0 0;padding-left:1.3em} .box.onepage li{margin-bottom:6px}
+.pill.skip{background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* responsive display maths (s15): joined version on wide screens, split version on phones */
+.eqw,.eqn{display:block}
+@media (max-width:759px){.eqw{display:none}}
+@media (min-width:760px){.eqn{display:none}}
+
+/* s15: What-is-this collapsed */
+details.idea{border-left:4px solid var(--accent)}
+details.idea>summary::after{content:" (tap to open)";font-weight:400;color:var(--muted);font-size:.85em}
+details.idea[open]>summary::after{content:""}
+
+/* s15: Why lines collapsed behind a small toggle */
+button.whyb{font:inherit;font-size:.78em;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:0 9px;margin-left:6px;cursor:pointer;vertical-align:1px;line-height:1.6}
+button.whyb[aria-expanded="true"]{background:transparent;border-color:var(--line)}
+.js .why.shut{display:none}
+
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],
+  macros:{u:['\\,\\mathrm{#1}',1], vb:['\\mathbf{#1}',1], e:['\\mathbf{e}_{#1}',1]}},
+  svg:{fontCache:'global'}};
+</script>
+<script src="mathjax/tex-svg.js"></script>
+</head><body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p class="h">Control · C2</p>
+  <ol>
+    <li><a href="#s0">0 · Where this sits</a></li>
+    <li><a href="#s1">1 · Task and apparatus</a></li>
+    <li><a href="#s2">2 · State and LTI model</a></li>
+    <li><a href="#s3">3 · Equilibrium force</a></li>
+    <li><a href="#s4">4 · Complex numbers</a></li>
+    <li><a href="#s5">5 · Laplace transform</a></li>
+    <li><a href="#s6">6 · Transfer function</a></li>
+    <li><a href="#s7">7 · Inverse transform</a></li>
+    <li><a href="#s8">8 · Poles and modes</a></li>
+    <li><a href="#s9">9 · ωn, ζ, damping cases</a></li>
+    <li><a href="#s10">10 · Specifications</a></li>
+    <li><a href="#s11">11 · Zeros, DC gain, FVT</a></li>
+    <li><a href="#s12">12 · Feedback loop, L, S, G_d</a></li>
+    <li><a href="#s13">13 · P: stiffness, root locus</a></li>
+    <li><a href="#s14">14 · D: damping</a></li>
+    <li><a href="#s15">15 · PI: stored force</a></li>
+    <li><a href="#s16">16 · PID polynomial</a></li>
+    <li><a href="#s17">17 · Stability</a></li>
+    <li><a href="#s18">18 · Routh–Hurwitz</a></li>
+    <li><a href="#s19">19 · Pole placement</a></li>
+    <li><a href="#s20">20 · Verifying the design</a></li>
+    <li><a href="#s21">21 · Controller vs G_d zeros</a></li>
+    <li><a href="#s22">22 · Frequency response, Bode</a></li>
+    <li><a href="#s23">23 · Nyquist</a></li>
+    <li><a href="#s24">24 · Gain and phase margins</a></li>
+    <li><a href="#s25">25 · Heavier mass</a></li>
+    <li><a href="#s26">26 · Summary</a></li>
+    <li><a href="#s27">27 · Common mistakes</a></li>
+    <li><a href="#s28">28 · Find the mistake</a></li>
+    <li><a href="#s29">29 · Group work</a></li>
+    <li><a href="#s30">30 · Concept checks</a></li>
+    <li><a href="#s31">31 · Exam taster</a></li>
+  </ol>
+</nav>
+<main>
+<header class="top">
+  <nav class="topbar" aria-label="Bundle"><a href="index.html">← Start here</a><a href="guide-C2a.html">Exam guide · C2a</a><a href="guide-C2b.html">C2b</a><a href="note-C1.html">← C1</a></nav>
+  <span class="course">MECH2413 · Engineering Mechanics · Control</span>
+  <h1>How Do We Design a Controller?</h1>
+  <p class="lede">Disturbance rejection with a spring–mass–damper: model the task, choose the PID gains, and verify the actual response.</p>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="s0"><h2><span class="n">0</span><span class="h2t">Where this chapter sits</span></h2>
+<p>C1 introduced the PID law and tuned it by feel on a water tank. This chapter (the second control handout, 42 slides; its printed slide numbers are the PDF page numbers, and "slide n" below means that page) uses the <b>same PID law</b> but chooses the gains <b>with mathematics</b>: model the plant, predict its motion, place its poles, check stability, then verify the design against a written specification. One task runs through every slide: a <b>spring–mass–damper</b> (\(m=1\u{kg}\), \(c=2\u{N\,s/m}\), \(k=4\u{N/m}\)) is hit by a constant load \(d=0.12\u{N}\), and the actuator must bring it back to its target \(x=0\).</p>
+<div class="box onepage"><span class="tag">Chapter on one page</span>
+<ol>
+<li><a href="#s1">§1–3</a> <b>The task:</b> a mass on a spring and damper, pushed by a 0.12 N load; the actuator must hold it at \(x=0\), so at rest it must supply −0.12 N.</li>
+<li><a href="#s4">§4–7</a> <b>The Laplace transform turns the motion equation into algebra:</b> \(X(s)=G(s)\,[F(s)+D(s)]\); partial fractions bring back \(x(t)\). Uncontrolled: a 30 mm offset.</li>
+<li><a href="#s8">§8–9</a> <b>Poles set the motion:</b> real part = decay rate, imaginary part = oscillation frequency; \(\omega_n\) and \(\zeta\) classify the damping. <span class="pill">Likely exam calculation</span></li>
+<li><a href="#s10">§10–11</a> <b>Specifications and the final-value theorem:</b> peak below 5 mm, back within ±0.5 mm by 2.5 s, force below 0.15 N; final error from \(\lim_{s\to0}sX(s)\).</li>
+<li><a href="#s12">§12</a> <b>Feedback:</b> \(L=CG\), \(S=1/(1+L)\), and the load map \(G_d=G/(1+CG)\).</li>
+<li><a href="#s13">§13–16</a> <b>P adds stiffness, D adds damping, I stores the steady force;</b> PID gives a third-order characteristic polynomial.</li>
+<li><a href="#s17">§17–18</a> <b>Stability and Routh–Hurwitz:</b> the cubic is stable when all coefficients are positive and \((c+K_d)(k+K_p)\gt mK_i\). <span class="pill">Likely exam calculation</span></li>
+<li><a href="#s19">§19–21</a> <b>Pole placement:</b> match coefficients to chosen poles (\(K_p=22\), \(K_i=24\), \(K_d=7\)), then verify peak, recovery and force by inverse transform. <span class="pill">Likely exam calculation</span></li>
+<li><a href="#s22">§22–24</a> <b>Frequency response:</b> Bode plots, the Nyquist plot and criterion \(Z=P+N\), gain and phase margins.</li>
+<li><a href="#s25">§25</a> <b>Heavier mass:</b> the same method gives new gains (\(48, 48, 16\)) that meet the same specification.</li>
+</ol></div>
+<p><b>You need:</b> C1 (the PID law), complex numbers, and second-order linear ODEs from MATH1851; Laplace transforms, block diagrams and stability tests are taught here from scratch. <b>In the exam:</b> control is new in MECH2413, so there are no MECH2413 control papers; practice comes from related HKU courses (MECH2004 Control and ELEC2245 Control Systems I), which also use the orange "Beyond" topics. See the exam guides <a href="guide-C2a.html">C2a (models and responses)</a> and <a href="guide-C2b.html">C2b (stability and design)</a>.</p>
+<div class="box conv"><span class="tag">Sign convention and units for this chapter</span>
+<ul class="list">
+<li><b>Position</b> \(x\) positive to the right, measured from the target; <b>forces</b> positive to the right. Spring force \(-kx\), damper force \(-c\dot x\).</li>
+<li><b>Error</b> \(e=r-x\) with fixed target \(r=0\), so \(e=-x\). Negative feedback: the measurement enters the summing junction with a minus sign.</li>
+<li><b>s-plane:</b> \(s=\sigma+j\omega\); real part \(\sigma\) (s⁻¹) on the horizontal axis, imaginary part \(\omega\) (rad/s) on the vertical. Left half-plane (\(\sigma\lt0\)) = decaying = stable.</li>
+<li>SI units in every calculation (m, N, s); displacements are quoted in mm only at the end. Gains: \(K_p\) in N/m, \(K_i\) in N/(m·s), \(K_d\) in N·s/m. (The slides write the gains as \(K_p\), \(K_i\), \(K_d\); C1 wrote \(K_{\rm p}\) etc. They are the same.)</li>
+</ul></div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="s1"><h2><span class="n">1</span><span class="h2t">The task and the apparatus (slides 1–3)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Picture a shopping trolley tied to a wall by an elastic cord, with a shock absorber alongside. Someone leans on it with a steady push. The cord stretches until it holds the push, so the trolley ends up a little away from where it started. Your job is to stand by it with your hand on it and push back so cleverly that it hardly moves and quickly returns to its mark. Your hand is the actuator; your eyes on the mark are the sensor; the rule you use to push is the controller.</p></div></details>
+<p>The handout's three aims (slide 1): <b>limit the displacement</b> after a constant external load, <b>return to the fixed target quickly</b>, and <b>design and verify</b> a basic PID controller. This is <b>disturbance rejection</b>: limiting the effect of an outside influence while the target stays fixed (slide 2). (C1's "tracking" was the other job: following a changing target.)</p>
+<div class="figure"><div id="fig-app"></div><p class="cap">Left: the apparatus (slide 3). Spring \(k\) and damper \(c\) tie the mass to a fixed wall; the actuator force \(F\) and the external load \(d\) both act on the mass; a sensor measures \(x\) relative to the target \(r=0\). Right: the free-body diagram of the mass, drawn for \(x\gt0\), \(v\gt0\): spring force \(kx\) and damper force \(cv\) pull to the left (they are \(-kx\) and \(-cv\) in the positive-right convention); \(F\) and \(d\) are drawn positive to the right.</p></div>
+<div class="box def"><span class="tag">Definitions · the quantities (slide 3)</span>
+<ul class="list">
+<li><b>Disturbance \(d\)</b>: an external force we do not choose (here a step of 0.12 N). It enters independently of the controller.</li>
+<li><b>Actuator force \(F\)</b>: the controller's output, the only thing we can choose.</li>
+<li><b>Displacement \(x\)</b>: the deviation from the fixed target; the controller reads it.</li>
+<li><b>Baseline parameters</b>: \(m=1\u{kg}\), \(c=2\u{N\,s/m}\), \(k=4\u{N/m}\); load step \(d=0.12\u{N}\).</li>
+</ul></div>
+<div class="figure"><p class="ttl">The one test used throughout (slide 2): rest at the target, then a 0.12 N load step at \(t=0\), controller off (\(F=0\))</p>
+<canvas class="plot" id="cv-load" style="height:90px"></canvas>
+<canvas class="plot" id="cv-unc" style="height:200px"></canvas>
+<p class="cap">Top: the load. Bottom: without a controller the mass swings to a peak of 34.89 mm at 1.81 s and settles at 30 mm. It settles, but not at the target \(x=0\). This uncontrolled curve is the starting comparison for every design.</p></div>
+<p class="word"><b>Key idea (slide 2):</b> every time-response comparison in the chapter uses the <b>same</b> load step, the same target and the same initial state (rest at \(x=0\)). Only the controller changes, so differences in the curves come from the controller alone.</p>
+<p class="cannow"><b>You can now:</b> state the disturbance-rejection task; name \(d\), \(F\), \(x\) and \(r\) on the apparatus; and draw the free-body diagram of the mass with the spring force \(-kx\), damper force \(-cv\), actuator \(F\) and load \(d\).</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2"><h2><span class="n">2</span><span class="h2t">State, order and the linear time-invariant model (slides 4–5)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>To predict where a thrown ball goes next, a photo of where it is now is not enough: you also need how fast it is moving. Position plus speed is enough; nothing else about the past matters. That minimum list is the <b>state</b>. A mass on a spring needs exactly two numbers, so it is a "second-order" system.</p></div></details>
+<div class="box def"><span class="tag">Definitions · state and order (slide 4)</span>
+<ul class="list">
+<li><b>State</b>: a sufficient set of variables for predicting the future motion from the known inputs.</li>
+<li><b>System order</b>: the number of independent state variables.</li>
+</ul></div>
+<p>For the mass: \(x_1=x\) (position) and \(x_2=v=\dot x\) (velocity). Position sets the spring force; velocity sets the damper force and the rate of change of position. So two states, order 2 (slide 4):</p>
+\[\begin{aligned}\dot x_1&=x_2,\\ \dot x_2&=\frac{F+d-cx_2-kx_1}{m}.\end{aligned}\]
+<p class="word"><b>In words:</b> position changes at the velocity; velocity changes at (net force)/(mass). The test starts from \(x=0\), \(v=0\): the load changes the <b>acceleration</b> first, then velocity, then position.</p>
+<h3>The motion equation (slide 5)</h3>
+<p>Newton's second law on the free-body diagram of Section 1 (sum of forces to the right = \(m\ddot x\)):</p>
+<div class="box thm"><span class="tag">Result · the plant model (slide 5)</span>
+\[\begin{aligned}m\ddot x&=F+d-c\dot x-kx\\ \Rightarrow\ m\ddot x+c\dot x+kx&=F+d.\end{aligned}\]
+<p>With the baseline values in SI units: \(\ddot x+2\dot x+4x=F+d\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(m\ddot x\)</dt><dd>mass × acceleration: what the net force produces.</dd><dt>\(c\dot x\)</dt><dd>the damper's resistance, growing with speed (like pushing a spoon through honey).</dd><dt>\(kx\)</dt><dd>the spring's pull back, growing with stretch.</dd><dt>\(F+d\)</dt><dd>the two outside pushes: ours (actuator) and the world's (load).</dd></dl></div>
+<p class="word"><b>In words:</b> mass × acceleration + damping force + spring force = actuator force + load. Units: kg·m/s² = N·s/m·m/s = N/m·m = N ✓.</p></div>
+<div class="box def"><span class="tag">Definitions · linear and time-invariant (slide 5)</span>
+<ul class="list">
+<li><b>Linear</b>: responses obey <b>scaling and addition</b>. Starting from rest, doubling the load doubles the response, and the responses to two separate inputs add. Here every state and input appears to the first power (no \(x^2\), no \(\sin x\)).</li>
+<li><b>Time-invariant</b>: shifting an input in time shifts its response by the same amount. Here \(m\), \(c\), \(k\) stay constant during a test, so the same experiment run later gives the same curve, just later.</li>
+<li><b>LTI</b> = linear and time-invariant. Everything in this chapter (Laplace transforms, transfer functions, poles) relies on it.</li>
+</ul></div>
+<p>The question for the rest of the chapter (slide 5): predict \(x(t)\) after the load appears, first with \(F=0\), then with feedback.</p>
+<p class="cannow"><b>You can now:</b> define state and order and say why the mass has two states; write \(m\ddot x+c\dot x+kx=F+d\) from the free-body diagram; and explain linearity and time invariance with an example.</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3"><h2><span class="n">3</span><span class="h2t">Initial state and the equilibrium force balance (slide 6)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>If someone leans on the trolley with a steady 0.12 N and you want it to stay exactly on its mark, the elastic cord is not stretched and the shock absorber is not moving, so neither helps. Your hand must push back with exactly 0.12 N, for as long as they lean. "Back on the mark" therefore needs a <b>permanent</b> push from you, not just a quick correction.</p></div></details>
+<div class="box def"><span class="tag">Definitions · initial condition and equilibrium (slide 6)</span>
+<ul class="list">
+<li><b>Initial condition</b>: the starting state. Here, before the load appears: \(x(0)=\dot x(0)=0\), and \(d(0^-)=F(0^-)=0\) (\(0^-\) = just before \(t=0\)).</li>
+<li><b>Equilibrium</b>: a state where the state variables are constant, so their derivatives are zero.</li>
+</ul></div>
+<p>At equilibrium \(\ddot x=\dot x=0\), so the motion equation becomes a force balance:</p>
+<div class="box thm"><span class="tag">Result · equilibrium force balance (slide 6)</span>
+\[kx_{\rm eq}=F_{\rm eq}+d_0.\]
+<p>For the fixed zero target, \(x_{\rm eq}=0\), so</p>
+\[F_{\rm eq}=-d_0=-0.12\u{N}.\]
+<p class="word"><b>In words:</b> at rest the damper gives no force; on the target the spring gives no force; so the actuator alone must cancel the load, for ever.</p></div>
+<ul class="list">
+<li>A mass at rest has zero damping force; to stay at the original target its spring force is also zero (slide 6).</li>
+<li>So the actuator must supply a <b>persistent −0.12 N</b>. The chapter then tests which controller structures can provide that force <b>at zero position error</b>.</li>
+</ul>
+<p class="word"><b>Key idea (slide 6):</b> returning to the target needs the correct <b>steady force</b> as well as stable transient motion. Keep this in mind: it is why P alone fails and I succeeds (Sections 13–15).</p>
+<p class="cannow"><b>You can now:</b> write the zero initial state; use the equilibrium force balance \(kx_{\rm eq}=F_{\rm eq}+d_0\); and explain why holding \(x=0\) against a constant load needs a constant actuator force of −0.12 N.</p>
+</section>
+<!-- ============ 4 ============ -->
+<section id="s4"><h2><span class="n">4</span><span class="h2t">Complex numbers and exponential motion (slide 7)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A plucked guitar string does two things at once: it vibrates (a pitch) and it fades (gets quieter). One complex number \(s=\sigma+j\omega\) stores both facts: \(\omega\) is how fast it vibrates, \(\sigma\) is how fast it fades (negative) or grows (positive). Then \(e^{st}\) is the whole sound in one symbol.</p></div></details>
+<div class="box def"><span class="tag">Definitions · complex numbers (slide 7)</span>
+<ul class="list">
+<li>A <b>complex number</b> \(s=\sigma+j\omega\) has a <b>real part</b> \(\sigma\) and an <b>imaginary part</b> \(\omega\), with \(j^2=-1\). (Engineers write \(j\), not \(i\), because \(i\) is used for current.)</li>
+<li><b>Conjugates</b> share the real part and have opposite imaginary parts: \(\sigma+j\omega\) and \(\sigma-j\omega\).</li>
+<li>The <b>s-plane</b> is the plane with \(\sigma\) across and \(\omega\) up; each complex number is a point.</li>
+</ul></div>
+<div class="box thm"><span class="tag">Result · exponential of a complex number (slide 7, Euler's formula)</span>
+\[e^{(\sigma+j\omega)t}=e^{\sigma t}\left[\cos(\omega t)+j\sin(\omega t)\right].\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(e^{\sigma t}\)</dt><dd>the envelope: decays if \(\sigma\lt0\), grows if \(\sigma\gt0\), constant if \(\sigma=0\).</dd><dt>\(\cos\omega t+j\sin\omega t\)</dt><dd>a point going round the unit circle at \(\omega\) rad/s: the oscillation.</dd><dt>\(\sigma\) (s⁻¹)</dt><dd>exponential growth or decay rate.</dd><dt>\(\omega\) (rad/s)</dt><dd>angular frequency.</dd></dl></div>
+<p class="word"><b>In words:</b> the real coordinate controls growth or decay; the imaginary coordinate sets the angular frequency.</p></div>
+<div class="figure"><div class="pair"><div><canvas class="plot" id="cv-cpair" style="height:220px"></canvas><p class="sub">A conjugate pair \(-1\pm j\sqrt3\) in the s-plane</p></div><div><canvas class="plot" id="cv-cdecay" style="height:220px"></canvas><p class="sub">\(e^{-t}\cos(\sqrt3\,t)\) inside its envelope \(\pm e^{-t}\)</p></div></div>
+<p class="cap">Slide 7's example, \(\sigma=-1\), \(\omega=\sqrt3\): the real signal oscillates inside a decaying envelope (dashed). \(\sigma=-1\) gives the decay, \(|\omega|=\sqrt3\) the oscillation rate.</p></div>
+<p>Why conjugate pairs matter: a real motion cannot have an imaginary part. Adding the two conjugate exponentials cancels the imaginary parts:</p>
+\[\begin{aligned}&\tfrac12\left(e^{(\sigma+j\omega)t}+e^{(\sigma-j\omega)t}\right)\\ &\quad=e^{\sigma t}\cos\omega t.\end{aligned}\]
+<p class="word"><b>In words:</b> a conjugate pair combines into one real decaying (or growing) oscillation. These exponential pieces will describe the transient part of the load response (slide 7).</p>
+<p class="cannow"><b>You can now:</b> read \(\sigma\) and \(\omega\) off a point in the s-plane; expand \(e^{(\sigma+j\omega)t}\) with Euler's formula; and explain how a conjugate pair gives a real decaying oscillation.</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5"><h2><span class="n">5</span><span class="h2t">The Laplace transform, transform pairs and linearity (slides 8–9)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Logarithms turned multiplication into addition, so people multiplied big numbers by looking up logs, adding, and looking back. The Laplace transform does the same trick for differential equations: look up the transform of each term in a table, solve the resulting <b>algebra</b>, and look the answer back up to get the motion in time.</p></div></details>
+<div class="box def"><span class="tag">Definition · one-sided Laplace transform (slide 8)</span>
+\[\begin{aligned}\mathcal L\{f(t)\}&=F(s)\\ &=\int_0^\infty f(t)\,e^{-st}\,\mathrm dt,\\ s&=\sigma+j\omega.\end{aligned}\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\int_0^\infty\)</dt><dd>"one-sided": only \(t\ge0\) counts; what happened before the experiment is carried by the initial conditions.</dd><dt>\(e^{-st}\)</dt><dd>an exponential weight that makes late times count less, so the integral can converge.</dd><dt>\(F(s)\)</dt><dd>a function of the complex variable \(s\), not of time.</dd></dl></div>
+<p class="word"><b>In words:</b> weight the signal by \(e^{-st}\) and add up over all positive time; the answer depends on \(s\). It exists where that weighting makes the integral converge.</p></div>
+<div class="box eg"><span class="tag">Worked example · the load's transform (slide 8)</span>
+<p>The load is \(d(t)=0.12\u{N}\) for \(t\ge0\). Then</p>
+\[\begin{aligned}D(s)&=\int_0^\infty0.12\,e^{-st}\,\mathrm dt\\ &=0.12\left[\frac{e^{-st}}{-s}\right]_0^\infty=\frac{0.12}{s},\end{aligned}\]
+<p>valid for \({\rm Re}(s)\gt0\). <span class="why">\(e^{-st}\to0\) as \(t\to\infty\) only if the real part of \(s\) is positive; that is the region where the integral converges.</span> Units: N·s (the transform of a force carries an extra second).</p></div>
+<p class="word"><b>Key idea (slide 8):</b> \(s\) belongs to the transformed description; time \(t\) remains the variable of the physical motion. The derivative rules (Section 6) turn the motion equation into algebra, and the inverse transform (Section 7) recovers \(x(t)\).</p>
+<h3>Transform pairs and linearity (slide 9)</h3>
+<div class="box ready"><span class="tag">Ready table · the transform pairs used in this chapter (slide 9)</span>
+<div class="scroll"><table>
+<tr><th>Time signal \(f(t)\), \(t\ge0\)</th><th>Transform \(F(s)\)</th><th>Where it appears</th></tr>
+<tr><td>\(1\) (unit step)</td><td>\(\dfrac1s\)</td><td>the constant load, the final offset</td></tr>
+<tr><td>\(e^{-bt}\)</td><td>\(\dfrac{1}{s+b}\)</td><td>a real pole at \(-b\)</td></tr>
+<tr><td>\(e^{-bt}\cos\omega t\)</td><td>\(\dfrac{s+b}{(s+b)^2+\omega^2}\)</td><td>damped cosine (complex pole pair)</td></tr>
+<tr><td>\(e^{-bt}\sin\omega t\)</td><td>\(\dfrac{\omega}{(s+b)^2+\omega^2}\)</td><td>damped sine (complex pole pair)</td></tr>
+</table></div>
+<p class="word"><b>In words:</b> read left to right to transform a signal; read right to left to recover it (slide 9).</p></div>
+<details><summary>Show the calculation: the pair \(e^{-bt}\leftrightarrow 1/(s+b)\) and the damped cosine</summary><div>
+<ol class="steps">
+<li>\(\int_0^\infty e^{-bt}e^{-st}\,\mathrm dt=\int_0^\infty e^{-(s+b)t}\,\mathrm dt\). <span class="why">The two exponentials multiply by adding their exponents.</span></li>
+<li>\(=\left[\dfrac{e^{-(s+b)t}}{-(s+b)}\right]_0^\infty=\dfrac{1}{s+b}\) for \({\rm Re}(s)\gt-b\). <span class="why">Same integral as the step, with \(s\) replaced by \(s+b\).</span></li>
+<li>Write \(\cos\omega t=\tfrac12(e^{j\omega t}+e^{-j\omega t})\), so \(e^{-bt}\cos\omega t=\tfrac12\left(e^{-(b-j\omega)t}+e^{-(b+j\omega)t}\right)\). <span class="why">Euler's formula (Section 4) splits the cosine into two complex exponentials.</span></li>
+<li>Use step 2 twice: \(\tfrac12\left(\dfrac{1}{s+b-j\omega}+\dfrac{1}{s+b+j\omega}\right)\). <span class="why">Each piece is an exponential with "\(b\)" replaced by \(b\mp j\omega\).</span></li>
+<li>Common denominator: \(\dfrac{(s+b)}{(s+b)^2+\omega^2}\). <span class="why">\((s+b-j\omega)(s+b+j\omega)=(s+b)^2+\omega^2\); the numerators add to \(2(s+b)\).</span></li>
+<li>The sine pair follows the same way with \(\sin\omega t=\tfrac1{2j}(e^{j\omega t}-e^{-j\omega t})\), giving \(\omega/[(s+b)^2+\omega^2]\).</li>
+</ol></div></details>
+<div class="box thm"><span class="tag">Result · linearity of the transform (slide 9)</span>
+\[\mathcal L\{a f+b g\}=aF(s)+bG(s).\]
+<p class="word"><b>In words:</b> the transform of a weighted sum is the same weighted sum of the transforms. Scaling the load scales its transform; the transform of a sum is the sum of the transforms.</p></div>
+<div class="box eg"><span class="tag">Worked example · written for these notes</span>
+<p>Transform \(f(t)=3-2e^{-4t}\). By linearity and the first two pairs: \(F(s)=\dfrac3s-\dfrac{2}{s+4}\). Check at \(s=1\): \(3-0.4=2.6\), and the integral \(\int_0^\infty(3-2e^{-4t})e^{-t}\mathrm dt=3-2/5=2.6\) ✓.</p></div>
+<p class="cannow"><b>You can now:</b> state the definition of the Laplace transform; find \(D(s)=0.12/s\); use the four pairs in either direction; and apply linearity.</p>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6"><h2><span class="n">6</span><span class="h2t">Derivative rules and the transfer function (slides 10–11)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>In the transformed world, "take the derivative" becomes "multiply by \(s\)" (plus a correction for how things started). So the motion equation, full of dots, becomes a plain multiplication. A <b>transfer function</b> is then just the exchange rate between what goes in and what comes out: so many metres of displacement per newton of force, at each \(s\).</p></div></details>
+<div class="box thm"><span class="tag">Result · derivative rules (slide 10)</span>
+\[\begin{aligned}\mathcal L\{\dot x\}&=sX(s)-x_0,\\ \mathcal L\{\ddot x\}&=s^2X(s)-sx_0-v_0.\end{aligned}\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(sX(s)\)</dt><dd>differentiating in time = multiplying by \(s\) in the transform.</dd><dt>\(x_0,\ v_0\)</dt><dd>initial position and velocity: the rule keeps a memory of the starting state.</dd></dl></div>
+<p class="word"><b>In words:</b> each derivative multiplies by \(s\) and subtracts the starting value of what was differentiated.</p></div>
+<details><summary>Show the calculation: why \(\mathcal L\{\dot x\}=sX-x_0\)</summary><div>
+<ol class="steps">
+<li>\(\mathcal L\{\dot x\}=\int_0^\infty \dot x\,e^{-st}\,\mathrm dt\). <span class="why">Definition.</span></li>
+<li>Integrate by parts with \(u=e^{-st}\), \(\mathrm dv=\dot x\,\mathrm dt\): \(=\left[x\,e^{-st}\right]_0^\infty+s\int_0^\infty x\,e^{-st}\,\mathrm dt\). <span class="why">\(\mathrm du=-se^{-st}\mathrm dt\), so the minus signs combine to \(+s\).</span></li>
+<li>\(=(0-x_0)+sX(s)\). <span class="why">\(e^{-st}\) kills the upper limit where the transform converges; the lower limit gives \(x(0)\).</span></li>
+<li>Apply the rule to \(\dot x\) itself: \(\mathcal L\{\ddot x\}=s\,\mathcal L\{\dot x\}-v_0=s(sX-x_0)-v_0\). <span class="why">\(\ddot x\) is the derivative of \(\dot x\), whose starting value is \(v_0\).</span></li>
+</ol></div></details>
+<p>Our test starts at rest on the target, \(x_0=v_0=0\), so the initial-state terms vanish (slide 10). Transforming \(m\ddot x+c\dot x+kx=F+d\) term by term (linearity):</p>
+\[(ms^2+cs+k)\,X(s)=F(s)+D(s).\]
+<p class="word"><b>In words:</b> the differential equation has become algebra containing the known load \(D\), the actuator output \(F\) and the displacement \(X\) we want to predict. Zero initial conditions are used in every transfer-function calculation and every plotted load test (slide 10).</p>
+<div class="box def"><span class="tag">Definition · transfer function (slide 11)</span>
+<p>The <b>transfer function</b> of an LTI system is the ratio of the transformed output to the transformed input, <b>with zero initial state</b>.</p>
+<p>For the mass, the input is the net applied force \(u(t)=F(t)+d(t)\), \(U(s)=F(s)+D(s)\); the output is \(x\):</p>
+\[\begin{aligned}G(s)&=\frac{X(s)}{U(s)}=\frac{1}{ms^2+cs+k}\\ &=\frac{1}{s^2+2s+4}.\end{aligned}\]
+<p class="word"><b>In words:</b> \(G\) is the plant's rule for turning net force into displacement (m/N). It belongs to the mechanics and does not change when we add a controller.</p></div>
+<div class="figure"><div id="fig-plant"></div><p class="cap">Block-diagram reading of slide 11. A <b>block</b> multiplies its input by its transfer function; a <b>summing junction</b> (Σ) adds its inputs with the signs shown. With the controller off (\(F=0\)): \(X/D=G(s)\).</p></div>
+<ul class="list">
+<li><b>Controller off</b>: \(F=0\Rightarrow X/D=G(s)=1/(s^2+2s+4)\). The disturbance alone produces the uncontrolled motion (slide 11).</li>
+<li><b>Feedback</b> will choose \(F\) from the measured position. The mechanical transfer function \(G\) stays the same, while the <b>disturbance response</b> changes (Section 12).</li>
+<li>A transfer function always names an input–output pair and assumes zero initial state (slide 11).</li>
+</ul>
+<p class="cannow"><b>You can now:</b> apply the derivative rules with initial conditions; transform the motion equation to \((ms^2+cs+k)X=F+D\); and define and write the plant transfer function \(G(s)\).</p>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7"><h2><span class="n">7</span><span class="h2t">The inverse transform: the uncontrolled 30 mm offset (slide 12)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>The transformed answer \(X(s)\) is like a parcel of mixed goods. <b>Partial fractions</b> unpack it into standard items, each of which is in the table; then each item is translated back into time and the pieces are added. A constant piece is the final offset; the decaying oscillating pieces are the wobble that dies away.</p></div></details>
+<div class="box def"><span class="tag">Definitions (slide 12)</span>
+<ul class="list">
+<li><b>Inverse Laplace transform</b>: recovers the time signal from its transformed expression.</li>
+<li><b>Partial fractions</b>: rewriting a ratio of polynomials as a sum of simple fractions that match the transform pairs.</li>
+</ul></div>
+<div class="box eg"><span class="tag">Worked example · uncontrolled response to the 0.12 N step (slide 12)</span>
+<p><b>Given</b> \(F=0\), \(D=0.12/s\), \(G=1/(s^2+2s+4)\), zero initial state. <b>Find</b> \(x(t)\) and its final value.</p>
+<ol class="steps proc">
+<li><b>Do:</b> multiply: \(X(s)=G(s)D(s)=\dfrac{0.12}{s(s^2+2s+4)}\). <span class="why">Output transform = transfer function × input transform.</span></li>
+<li><b>Do:</b> complete the square: \(s^2+2s+4=(s+1)^2+3\). <span class="why">That puts the quadratic in the form \((s+b)^2+\omega^2\) of the damped pairs, with \(b=1\), \(\omega=\sqrt3\).</span></li>
+<li><b>Do:</b> partial fractions:
+\[\begin{aligned}X(s)&=\frac{0.03}{s}-0.03\,\frac{s+1}{(s+1)^2+3}\\ &\quad-0.03\,\frac{1}{(s+1)^2+3}.\end{aligned}\]
+<span class="why">Each term now matches a pair: step, damped cosine, damped sine (needs the factor \(\sqrt3\) on top).</span></li>
+<li><b>Do:</b> invert term by term:
+\[\begin{aligned}x(t)&=0.03\Big[1-e^{-t}\Big(\cos\sqrt3\,t\\ &\qquad+\frac{\sin\sqrt3\,t}{\sqrt3}\Big)\Big]\ {\rm m}.\end{aligned}\]
+<span class="why">\(\dfrac{1}{(s+1)^2+3}=\dfrac{1}{\sqrt3}\cdot\dfrac{\sqrt3}{(s+1)^2+3}\leftrightarrow\dfrac{1}{\sqrt3}e^{-t}\sin\sqrt3\,t\).</span></li>
+<li><b>Do:</b> check: \(x(0)=0.03[1-1]=0\) ✓ (starts on target); as \(t\to\infty\), \(e^{-t}\to0\) so \(x\to0.03\u{m}=\boxed{30\u{mm}}\). <span class="why">The constant term is the final offset; the damped sine and cosine are the transient.</span></li>
+</ol></div>
+<details><summary>Show the calculation: the partial-fraction coefficients</summary><div>
+<ol class="steps">
+<li>Write \(\dfrac{0.12}{s(s^2+2s+4)}=\dfrac{A}{s}+\dfrac{Bs+C}{s^2+2s+4}\). <span class="why">A simple factor \(s\) gets a constant on top; an irreducible quadratic gets a linear numerator.</span></li>
+<li>Multiply through: \(0.12=A(s^2+2s+4)+(Bs+C)s\).</li>
+<li>Put \(s=0\): \(0.12=4A\Rightarrow A=0.03\). <span class="why">The second term vanishes at \(s=0\) (the "cover-up" trick).</span></li>
+<li>Compare \(s^2\): \(0=A+B\Rightarrow B=-0.03\). Compare \(s^1\): \(0=2A+C\Rightarrow C=-0.06\).</li>
+<li>Split \(Bs+C=-0.03s-0.06=-0.03(s+1)-0.03\). <span class="why">To match the pairs, the numerator must be written in powers of \((s+1)\), the shifted variable.</span></li>
+<li>So \(X=\dfrac{0.03}{s}-0.03\dfrac{s+1}{(s+1)^2+3}-0.03\dfrac{1}{(s+1)^2+3}\) ✓.</li>
+</ol></div></details>
+<p class="word"><b>Key idea (slide 12):</b> at \(t=0\) the displacement is zero; later the transient decays, but the mass stays 30 mm from its zero target. The uncontrolled system is <b>stable</b>, but its final position does not satisfy the control objective. (The curve is the one plotted in Section 1.)</p>
+<p class="cannow"><b>You can now:</b> multiply a transfer function by \(D(s)=0.12/s\); split the result into partial fractions by completing the square; invert with the pairs table; and read the final offset from the constant term.</p>
+</section>
+<!-- ============ 8 ============ -->
+<section id="s8"><h2><span class="n">8</span><span class="h2t">Poles and natural modes (slide 13)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Tap a wine glass and it rings at its own note, whatever you tapped it with. That "own way of moving" is a <b>natural mode</b>, and its pitch and fade rate are fixed by the glass. The <b>poles</b> are where that information lives: each pole is the \(s\) of one mode \(e^{st}\). The tap (here, the load) only decides how loud each mode is.</p></div></details>
+<div class="box def"><span class="tag">Definitions · pole and natural mode (slide 13)</span>
+<ul class="list">
+<li><b>Pole</b>: a root of the denominator of a <b>reduced</b> transfer function (common factors of top and bottom cancelled first). At a pole the transfer function becomes infinite.</li>
+<li><b>Natural mode</b>: a component of the homogeneous response (the motion with no input) associated with a pole \(p\): \(e^{pt}\).</li>
+</ul></div>
+<p>The uncontrolled disturbance map \(G_d(s)=X/D=1/(s^2+2s+4)\) has denominator roots</p>
+\[p_{1,2}=-1\pm j\sqrt3,\]
+<p>so the modes in the load response are</p>
+\[\begin{aligned}e^{p_{1,2}t}&=e^{-t}\left[\cos(\sqrt3\,t)\right.\\ &\qquad\left.\pm j\sin(\sqrt3\,t)\right].\end{aligned}\]
+<div class="figure"><canvas class="plot" id="cv-poles0" style="height:220px"></canvas><p class="cap">Poles of the uncontrolled map (dots). Distance to the left of the imaginary axis (1 s⁻¹) = decay rate; height (\(\sqrt3\) rad/s) = oscillation frequency.</p></div>
+<ul class="list">
+<li>The <b>negative real part</b> gives decay; the <b>imaginary part</b> gives the oscillation frequency of the transient after the load appears (slide 13).</li>
+<li>The load amplitude and the zero initial state fix the <b>coefficients</b> of these terms (the 0.03's of Section 7); the poles fix their <b>shapes</b>.</li>
+</ul>
+<p class="word"><b>Key idea (slide 13):</b> poles govern the motion modes. Stable poles alone do not guarantee zero position error: these poles are stable, yet the offset is 30 mm.</p>
+<p class="cannow"><b>You can now:</b> find the poles of a transfer function; write the natural mode of each pole; and read decay rate and oscillation frequency from a pole's position.</p>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9"><h2><span class="n">9</span><span class="h2t">Natural frequency, damping ratio and the four damping cases (slides 14–15)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A car's suspension. With worn-out shock absorbers the car bounces several times after a bump (underdamped). With very stiff ones it creeps back slowly with no bounce (overdamped). The best setting returns quickly with at most a small bounce. Two numbers describe every such system: how fast it would bounce with no damping at all (\(\omega_n\)) and how much damping it has compared with "just enough to stop bouncing" (\(\zeta\)).</p></div></details>
+<div class="box def"><span class="tag">Definitions · natural frequency and damping ratio (slide 14)</span>
+<ul class="list">
+<li><b>Natural frequency</b> \(\omega_n=\sqrt{k/m}\): stiffness relative to mass; the oscillation frequency with no damping.</li>
+<li><b>Critical damping</b> \(c_{\rm cr}=2\sqrt{km}\): the threshold between oscillatory and non-oscillatory natural modes.</li>
+<li><b>Damping ratio</b> \(\zeta=c/c_{\rm cr}=c/(2\sqrt{km})\): how much damping there is compared with critical.</li>
+<li><b>Damped frequency</b> (underdamped only) \(\omega_d=\omega_n\sqrt{1-\zeta^2}\): the frequency the system actually oscillates at.</li>
+</ul></div>
+<div class="box thm"><span class="tag">Result · the standard second-order denominator (slide 14)</span>
+\[ms^2+cs+k=m\left(s^2+2\zeta\omega_n s+\omega_n^2\right).\]
+<p>Baseline: \(\omega_n=\sqrt{4/1}=2\u{rad/s}\), \(\zeta=2/(2\sqrt{4})=0.5\), \(\omega_d=2\sqrt{0.75}=\sqrt3\u{rad/s}\).</p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(\omega_n^2=k/m\)</dt><dd>the constant term (after dividing by \(m\)).</dd><dt>\(2\zeta\omega_n=c/m\)</dt><dd>the \(s\) coefficient: damping per unit mass.</dd><dt>poles</dt><dd>\(-\zeta\omega_n\pm j\omega_d\) when \(\zeta\lt1\): decay rate \(\zeta\omega_n\), frequency \(\omega_d\).</dd></dl></div>
+<p class="word"><b>In words:</b> divide the denominator by \(m\); the constant term is \(\omega_n^2\), the middle coefficient is \(2\zeta\omega_n\). Two different frequencies: \(\omega_n\) (undamped) and \(\omega_d\) (what you see).</p></div>
+<p>Check with Section 8: \(-\zeta\omega_n\pm j\omega_d=-1\pm j\sqrt3\) ✓. These describe the same load-response transient (slide 14).</p>
+<h3>Four damping cases (slide 15)</h3>
+<div class="cases">
+<div><b>\(\zeta=0\): undamped</b>poles \(\pm j\omega_n\) on the imaginary axis; sustained oscillation around the static equilibrium.</div>
+<div><b>\(0\lt\zeta\lt1\): underdamped</b>complex pair in the left half-plane; decaying oscillation, overshoot.</div>
+<div><b>\(\zeta=1\): critical</b>a repeated real pole \(-\omega_n\); fastest return with no overshoot.</div>
+<div><b>\(\zeta\gt1\): overdamped</b>two distinct real poles; slow creep, no overshoot.</div>
+</div>
+<div class="figure"><p class="ttl">Try it · change only the damper \(c\) (mass, stiffness, load, initial state fixed; controller off)</p>
+<div class="ctrl"><label>\(c\) (N·s/m) <input type="range" id="cslide" min="0" max="8" step="0.1" value="2"></label><span>Slide 15's values:</span><button type="button" data-c="0">0</button><button type="button" data-c="2">2</button><button type="button" data-c="4">4</button><button type="button" data-c="6">6</button></div>
+<div class="pair"><div><canvas class="plot" id="cv-damp" style="height:220px"></canvas></div><div><canvas class="plot" id="cv-damp-p" style="height:220px"></canvas></div></div>
+<div class="readout" id="damp-out"></div>
+<p class="cap">Left: displacement after the 0.12 N step (grey: slide 15's four curves, \(c=0,2,4,6\)). Right: the two poles. For \(c=0\) the mass swings between 0 and 60 mm for ever; for every \(c\gt0\) it settles at 30 mm. Damping changes the transient, never the final offset.</p></div>
+<p class="word"><b>Key idea (slide 15):</b> mechanical damping changes the transient. With the actuator off, the final offset remains 30 mm whenever the response settles. Returning to the zero target still requires control.</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · second-order step-response formulas</span>
+<p>For an underdamped system \(\omega_n^2/(s^2+2\zeta\omega_ns+\omega_n^2)\) given a step, textbooks (and the related-course papers) use:</p>
+\[\begin{aligned}M_p&=e^{-\pi\zeta/\sqrt{1-\zeta^2}},\\ t_p&=\frac{\pi}{\omega_d},\quad t_r\approx\frac{1.8}{\omega_n},\\ t_s&\approx\frac{4.6}{\zeta\omega_n}\ (1\%).\end{aligned}\]
+<p class="word"><b>In words:</b> overshoot (as a fraction of the final change) depends on \(\zeta\) only; peak time is half a damped period; rise time (10–90%) shrinks with \(\omega_n\); settling time is about 4.6 time constants of the envelope \(e^{-\zeta\omega_nt}\) (use 4 for a 2% band).</p>
+<p><b>Reading \(\zeta\) from overshoot:</b> \(\zeta=\dfrac{-\ln M_p}{\sqrt{\pi^2+\ln^2M_p}}\). E.g. 10% overshoot → \(\zeta=0.591\).</p>
+<div class="box eg"><span class="tag">Worked example · written for these notes</span>
+<p>The uncontrolled mass has \(\zeta=0.5\): \(M_p=e^{-\pi(0.5)/\sqrt{0.75}}=0.163\). Peak \(=30\u{mm}\times1.163=34.89\u{mm}\) at \(t_p=\pi/\sqrt3=1.81\u{s}\) — exactly the peak in Section 1 ✓. (Section 13 repeats this for P control.)</p></div></div>
+<p class="cannow"><b>You can now:</b> compute \(\omega_n\), \(\zeta\), \(\omega_d\) from \(m\), \(c\), \(k\); classify the four damping cases and sketch each response; and (Beyond) use \(M_p\), \(t_p\), \(t_r\), \(t_s\) formulas.</p>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10"><h2><span class="n">10</span><span class="h2t">Measuring success: peak, recovery band and actuator force (slide 16)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A goalkeeper is judged by how far the ball gets past them (peak), how soon they are back in position (recovery), and how much effort it costs (force). A specification writes those three judgements as numbers before any design starts, so that "good" can be checked, not argued.</p></div></details>
+<div class="box def"><span class="tag">Definitions · performance measures (slide 16)</span>
+\[\begin{aligned}x_{\rm peak}&=\max_{t\ge0}|x(t)|,\\ |x(t)|&\le\varepsilon\ \ \text{for all}\ t\ge t_{\rm rec},\\ e_{\rm ss}&=-\lim_{t\to\infty}x(t),\\ F_{\rm peak}&=\max_{t\ge0}|F(t)|.\end{aligned}\]
+<ul class="list">
+<li><b>Peak displacement</b>: the largest deviation from the target.</li>
+<li><b>Recovery time</b> \(t_{\rm rec}\): the <b>final</b> entry into a band \(\pm\varepsilon\) around the target (after which the mass stays inside). Here \(\varepsilon=0.5\u{mm}\), an <b>absolute</b> band (not a percentage).</li>
+<li><b>Steady-state error</b> \(e_{\rm ss}\): with \(r=0\), \(e=-x\), so \(e_{\rm ss}=-x_\infty\).</li>
+<li><b>Actuator effort</b>: the largest force magnitude the actuator must deliver.</li>
+</ul>
+<p class="word"><b>In words:</b> how far it goes, when it comes back for good, where it ends up, and how hard the actuator pushes.</p></div>
+<div class="box ready"><span class="tag">The design brief for this chapter (slide 16)</span>
+<ul class="list"><li>peak displacement <b>below 5 mm</b>;</li><li>recovery into <b>±0.5 mm within 2.5 s</b>;</li><li>peak actuator force <b>below 0.15 N</b> (an illustrative limit).</li></ul></div>
+<p>The uncontrolled response never recovers to the band: it settles at 30 mm. A curve settling around a nonzero offset does not complete the task, however smooth it looks (slide 16). Use the same absolute band and the same load test for every controller comparison.</p>
+<p class="cannow"><b>You can now:</b> define peak displacement, recovery time, steady-state error and peak force; and state the three numbers of the design brief.</p>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11"><h2><span class="n">11</span><span class="h2t">Zeros, DC gain, the final-value theorem and steady-state error (slides 17–18)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Poles say how a system moves; <b>zeros</b> say which inputs it blocks. A zero at \(s=0\) means "a constant input gets through as nothing", like a capacitor blocking direct current. And the <b>DC gain</b> is the answer to the simplest question of all: if I push steadily, how far does it end up? The final-value theorem lets you read that answer straight from the transform, without solving for \(x(t)\).</p></div></details>
+<div class="box def"><span class="tag">Definition · finite zero (slide 17)</span>
+<p>A <b>finite zero</b> is a root of the numerator of a reduced transfer function, for a <b>specified</b> input and output. Write \(G_d(s)=X(s)/D(s)=N_d(s)/Q_d(s)\).</p></div>
+<p>Controller off: \(G_d=\dfrac{1}{s^2+2s+4}\), \(N_d(s)=1\), a nonzero constant, so <b>no finite zeros</b>. Its zero-frequency load gain is \(G_d(0)=1/4\u{m/N}\): a constant load leaves a static offset (slide 17). After adding integral feedback we will return to this same input–output map and find a zero at the origin (Section 15). Always keep the input \(d\) and output \(x\) fixed when comparing zeros before and after feedback.</p>
+<div class="box def"><span class="tag">Definitions · DC gain and steady-state error (slide 18)</span>
+<ul class="list"><li><b>DC gain</b>: the transfer function at zero frequency, \(G(0)\). ("DC", direct current, means a constant signal.)</li>
+<li><b>Steady-state error</b>: the limiting difference between target and output, \(e_{\rm ss}=\lim_{t\to\infty}[r-x(t)]\).</li></ul></div>
+<div class="box thm"><span class="tag">Result · final-value theorem (slide 18)</span>
+\[x_\infty=\lim_{t\to\infty}x(t)=\lim_{s\to0}sX(s),\]
+<p><b>provided every pole of \(sX(s)\) lies strictly in the left half-plane.</b></p>
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(sX(s)\)</dt><dd>multiply the output transform by \(s\) first (this cancels the \(1/s\) of a step).</dd><dt>\(s\to0\)</dt><dd>zero frequency: the long-time, steady behaviour.</dd><dt>condition</dt><dd>the theorem only works if \(x(t)\) actually settles. A pole on the imaginary axis (oscillation forever) or in the right half-plane (growth) gives a wrong answer.</dd></dl></div>
+<p class="word"><b>In words:</b> if the response settles, its final value is \(s\) × transform, evaluated at \(s=0\). For a step load of size \(d_0\): \(x_\infty=d_0\,G_d(0)\), the DC gain times the step.</p></div>
+<div class="box eg"><span class="tag">Worked example · uncontrolled final offset (slide 18)</span>
+\[\begin{aligned}x_\infty&=\lim_{s\to0}s\cdot G_d(s)\frac{0.12}{s}\\ &=0.12\,G_d(0)=0.12\times\tfrac14\\ &=0.03\u{m}.\end{aligned}\]
+<p>Condition: \(sX=0.12/(s^2+2s+4)\) has poles \(-1\pm j\sqrt3\), both in the left half-plane ✓. Error at the fixed target: \(r=0\), \(e(t)=-x(t)\), \(\boxed{e_{\rm ss}=-0.03\u{m}}\) — it matches the constant term in Section 7.</p></div>
+<div class="box warn"><span class="tag">Watch · the condition matters</span><p>With \(c=0\) (Section 9) the formula still gives 0.03 m, but the mass oscillates between 0 and 60 mm for ever and never settles. \(sX=0.12/(s^2+4)\) has poles \(\pm2j\) on the axis, so the theorem does not apply.</p></div>
+<p class="word"><b>Key idea (slide 18):</b> the desired final value is always \(x=0\); the uncontrolled final value is an error. With feedback, a zero final error requires <b>zero DC gain</b> from load to displacement, while the actuator must still supply −0.12 N.</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · system type and error constants</span>
+<p>Related-course questions apply the final-value theorem to a <b>reference</b> (not a load) in a unity-feedback loop \(E=R/(1+G)\). The number of pure integrators (\(1/s\) factors) in \(G\) is the <b>system type</b>. Define</p>
+\[\begin{aligned}K_{\rm pos}&=\lim_{s\to0}G(s),\\ K_{\rm vel}&=\lim_{s\to0}sG(s),\\ K_{\rm acc}&=\lim_{s\to0}s^2G(s).\end{aligned}\]
+<p>Textbooks call these \(K_p,K_v,K_a\); do not confuse \(K_p\) here with the proportional gain.</p>
+<div class="scroll"><table><tr><th>Reference</th><th>\(e_{\rm ss}\)</th><th>Type 0</th><th>Type 1</th><th>Type 2</th></tr>
+<tr><td>step \(1/s\)</td><td>\(1/(1+K_{\rm pos})\)</td><td>finite</td><td>0</td><td>0</td></tr>
+<tr><td>ramp \(1/s^2\)</td><td>\(1/K_{\rm vel}\)</td><td>∞</td><td>finite</td><td>0</td></tr>
+<tr><td>parabola \(1/s^3\)</td><td>\(1/K_{\rm acc}\)</td><td>∞</td><td>∞</td><td>finite</td></tr></table></div>
+<p class="word"><b>In words:</b> each integrator in the loop removes the error for one more "level" of reference (step, ramp, parabola). Check closed-loop stability first, or the theorem is invalid.</p>
+<div class="box eg"><span class="tag">Worked example · written for these notes</span>
+<p>\(G=\dfrac{10}{s(s+2)}\), unity feedback. Type 1. Closed loop \(s^2+2s+10\): stable ✓. Step: \(e_{\rm ss}=0\). Ramp: \(K_{\rm vel}=10/2=5\), \(e_{\rm ss}=1/5=\boxed{0.2}\). Parabola: \(K_{\rm acc}=0\), \(e_{\rm ss}=\infty\).</p></div></div>
+<p class="cannow"><b>You can now:</b> find zeros and the DC gain of a transfer function; apply the final-value theorem with its condition; compute the uncontrolled \(e_{\rm ss}=-0.03\u{m}\); and (Beyond) use system type and error constants.</p>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12"><h2><span class="n">12</span><span class="h2t">The feedback loop: \(L=CG\), sensitivity and the disturbance map (slides 19–20)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Your hand on the trolley: you watch how far it has moved and push back accordingly. The push goes through the trolley's own mechanics, which changes the motion, which changes what you see, which changes your push — a loop. The algebra of the loop tells you, in one formula, how much of the original shove still reaches the trolley's position once you are helping.</p></div></details>
+<p><b>Negative feedback</b> uses the error \(e=r-x\) to oppose deviation from the target. Here \(r\) is fixed at zero, so \(e=-x\) (slide 19). The controller \(C(s)\) senses \(x\) and produces an opposing force; the disturbance pushes on the mass at a second summing point.</p>
+<div class="figure"><div id="fig-loop"></div><p class="cap">The disturbance-rejection loop (slide 19). The task input is \(d\), the measured response is \(x\), the controller output is \(F\). The measured displacement returns to the negative input of the first summing junction.</p></div>
+<div class="box eg"><span class="tag">Derivation · the disturbance map (slide 20)</span>
+<ol class="steps proc">
+<li><b>Do:</b> fixed target and control force: \(r=0\), \(E=-X\), \(F=CE=-CX\). <span class="why">Read the diagram from the left: the error is target minus measurement, and the controller multiplies it by \(C\).</span></li>
+<li><b>Do:</b> substitute into the plant: \(X=G(F+D)=G(-CX+D)\). <span class="why">The plant sees the sum of both forces (second Σ).</span></li>
+<li><b>Do:</b> collect \(X\): \((1+CG)X=GD\). <span class="why">\(X\) appears on both sides because of the loop; move it to one side.</span></li>
+<li><b>Do:</b> divide:
+\[G_d=\frac XD=\frac{G}{1+CG}=GS.\] <span class="why">This one map describes displacement caused by the same external load, with feedback active.</span></li>
+</ol></div>
+<div class="box def"><span class="tag">Definitions · loop transfer and sensitivity (slide 20)</span>
+<ul class="list">
+<li><b>Loop transfer</b> \(L=CG\): what a signal is multiplied by on one trip round the loop.</li>
+<li><b>Sensitivity</b> \(S=\dfrac{1}{1+L}\): the factor by which feedback changes the plant's disturbance response, \(G_d=GS\).</li>
+<li><b>Closed-loop poles</b>: the roots of \(1+CG=0\) after clearing denominators. The physical plant \(G\) stays unchanged.</li>
+</ul>
+<p class="word"><b>In words:</b> with feedback the load's effect is the open-loop effect \(G\) divided by \(1+L\). Where \(|L|\) is large, \(|S|\) is small and the load is strongly rejected.</p></div>
+<p class="word"><b>Key idea (slide 20):</b> use \(G_d\) to predict the load response; use \(L\) to examine feedback stability (Sections 22–24).</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · block-diagram reduction rules</span>
+<p>Related-course papers ask you to reduce a diagram to one transfer function. Four rules cover almost everything:</p>
+<ul class="list">
+<li><b>Series</b> (one block feeds the next): multiply, \(G_1G_2\).</li>
+<li><b>Parallel</b> (two blocks share an input, outputs added): add, \(G_1\pm G_2\).</li>
+<li><b>Feedback loop</b> (forward \(G\), return path \(H\), negative feedback): \(\dfrac{G}{1+GH}\). Positive feedback: \(\dfrac{G}{1-GH}\).</li>
+<li><b>Moving a summing point</b> past a block \(G\) (downstream): multiply the side input by \(G\); moving it upstream: divide by \(G\). Moving a pickoff point downstream: divide the branch by \(G\); upstream: multiply.</li>
+</ul>
+<p class="word"><b>In words:</b> forward path over (1 + loop) is the master rule; the others just rearrange the diagram until that rule applies. Slide 20's \(G/(1+CG)\) is this rule with forward path \(G\) (from \(d\)) and loop \(CG\).</p>
+<div class="box eg"><span class="tag">Worked example · written for these notes</span>
+<p>\(G_1=\dfrac1{s+1}\) and \(G_2=\dfrac2{s+3}\) in series, with unity negative feedback. Series: \(G=\dfrac{2}{(s+1)(s+3)}\). Loop: \(T=\dfrac{G}{1+G}=\dfrac{2}{(s+1)(s+3)+2}=\boxed{\dfrac{2}{s^2+4s+5}}\). DC gain \(2/5=0.4\).</p>
+<div id="fig-bdred"></div></div></div>
+<p class="cannow"><b>You can now:</b> draw the disturbance-rejection loop; derive \(G_d=G/(1+CG)\) step by step; define \(L\) and \(S\); and say what \(1+CG=0\) gives. (Beyond) reduce series, parallel and feedback blocks.</p>
+</section>
+<!-- ============ 13 ============ -->
+<section id="s13"><h2><span class="n">13</span><span class="h2t">P control: added stiffness and the root locus (slide 21)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A P controller pushes back in proportion to how far the mass has moved: that is exactly what a spring does. So P control is an <b>extra, invisible spring</b>. A stiffer spring lets the load push the mass less far (smaller offset) and makes it bounce faster, but it adds no damping, so the bounce dies away no faster than before.</p></div></details>
+<p>With \(C=K_p\): \(F=K_pe=-K_px\). Put this in \(m\ddot x+c\dot x+kx=F+d\) (slide 21):</p>
+<div class="box thm"><span class="tag">Result · P control on the mass (slide 21)</span>
+\[\begin{aligned}\ddot x+2\dot x+(4+K_p)x&=d,\\ p&=-1\pm j\sqrt{3+K_p},\\ x_\infty&=\frac{0.12}{4+K_p}\ {\rm m}.\end{aligned}\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(4+K_p\)</dt><dd>effective stiffness: the real spring plus the controller's "spring".</dd><dt>real part \(-1\)</dt><dd>\(-c/(2m)\): unchanged by \(K_p\), so the decay rate stays the same.</dd><dt>\(\sqrt{3+K_p}\)</dt><dd>the oscillation gets faster as \(K_p\) grows.</dd><dt>\(x_\infty\)</dt><dd>load ÷ total stiffness: smaller, never zero.</dd></dl></div>
+<p class="word"><b>In words:</b> proportional feedback increases the effective stiffness, which shrinks the offset and speeds up the oscillation, but leaves the exponential decay rate alone.</p></div>
+<div class="figure"><div class="pair"><div><canvas class="plot" id="cv-rlP" style="height:230px"></canvas><p class="sub">Root locus as \(K_p\) goes 0 → 12 N/m; dots at \(K_p=0,4,8\)</p></div><div><canvas class="plot" id="cv-P" style="height:230px"></canvas><p class="sub">Load-step displacement for \(K_p=0,4,8\)</p></div></div>
+<div class="legend"><span style="--k:var(--c4)">\(K_p=0\)</span><span style="--k:var(--c3)">\(K_p=4\)</span><span style="--k:var(--accent)">\(K_p=8\)</span></div>
+<p class="cap">Offsets 30, 15 and 10 mm (slide 21). The pole pair moves straight up the line \(\sigma=-1\): oscillations become faster, the decay rate does not change. Peaks: 34.89, 19.58 and 13.88 mm.</p></div>
+<div class="box def"><span class="tag">Definition · root locus (slide 21)</span>
+<p>A <b>root locus</b> is the set of closed-loop pole locations traced as one chosen scalar gain varies (here \(K_p\) from 0 upward).</p></div>
+<div class="box eg"><span class="tag">Worked example · \(K_p=8\) (slide 21)</span>
+<p>Poles \(-1\pm j\sqrt{11}=-1\pm j3.317\u{s^{-1}}\). Offset \(x_\infty=0.12/12=0.01\u{m}=\boxed{10\u{mm}}\). Final-value check: \(sX=0.12/(s^2+2s+12)\), poles in the LHP ✓.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · root-locus sketching rules</span>
+<p>For \(1+KL_0(s)=0\) with \(K\) from 0 to ∞, \(n\) open-loop poles and \(m\) open-loop zeros:</p>
+<ol class="steps proc">
+<li><b>Do:</b> branches start at the open-loop poles (\(K=0\)) and end at the zeros or go to infinity (\(K\to\infty\)). <span class="why">\(1+KL_0=0\) means \(L_0=-1/K\): infinite at poles when \(K\to0\), zero at zeros when \(K\to\infty\).</span></li>
+<li><b>Do:</b> real-axis segments: a point on the real axis is on the locus if the number of real poles plus zeros to its right is <b>odd</b>. <span class="why">Only then do the angles add up to 180°.</span></li>
+<li><b>Do:</b> \(n-m\) asymptotes at angles \(\dfrac{(2q+1)180°}{n-m}\), meeting the real axis at the centroid \(\sigma_a=\dfrac{\sum p-\sum z}{n-m}\).</li>
+<li><b>Do:</b> breakaway points: solve \(\mathrm dK/\mathrm ds=0\) with \(K=-1/L_0(s)\), keep roots that lie on a real-axis segment.</li>
+<li><b>Do:</b> imaginary-axis crossing: the gain that makes a Routh row zero (Section 18), and \(\omega\) from the auxiliary equation.</li>
+<li><b>Do:</b> departure angle from a complex pole: \(180°-\sum(\text{angles from other poles})+\sum(\text{angles from zeros})\).</li>
+</ol>
+<div class="box eg"><span class="tag">Worked example · written for these notes</span>
+<p>\(L=\dfrac{K}{s(s+2)(s+4)}\). Real-axis segments: \([-2,0]\) and \((-\infty,-4]\). Three asymptotes at ±60°, 180° from \(\sigma_a=(0-2-4)/3=-2\). Breakaway: \(K=-(s^3+6s^2+8s)\), \(\mathrm dK/\mathrm ds=-(3s^2+12s+8)=0\Rightarrow s=-0.845\) (the other root \(-3.15\) is not on a segment), at \(K=3.08\). Routh on \(s^3+6s^2+8s+K\): crossing when \(6\cdot8=K\Rightarrow K=48\), auxiliary \(6s^2+48=0\Rightarrow s=\pm j2.83\). Departure example: for \(K(s+3)/(s^2+2s+4)\), from the pole \(-1+j\sqrt3\): \(180°-90°+\arctan(\sqrt3/2)=130.9°\).</p>
+<div class="figure"><canvas class="plot" id="cv-rlB" style="height:230px"></canvas>
+<p class="cap">Root locus of \(K/[s(s+2)(s+4)]\): computed pole paths, open-loop poles (open circles), centroid and asymptotes (dashed), breakaway at −0.845, crossing at ±j2.83 for \(K=48\).</p></div></div>
+<p class="word"><b>In words:</b> start at poles, end at zeros or infinity, fill odd real segments, follow the asymptotes, and use Routh to find where the locus crosses into instability.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · the P loop by the second-order formulas</span>
+<p>\(s^2+2s+12\): \(\omega_n=\sqrt{12}=3.464\u{rad/s}\), \(\zeta=2/(2\times3.464)=0.289\). \(M_p=e^{-\pi(0.289)/\sqrt{1-0.0833}}=0.388\), so peak \(=10\u{mm}\times1.388=13.88\u{mm}\) at \(t_p=\pi/\sqrt{11}=0.947\u{s}\) — matching the computed curve ✓. \(t_r\approx1.8/3.464=0.52\u{s}\); \(t_s\approx4.6/(\zeta\omega_n)=4.6\u{s}\) (since \(\zeta\omega_n=1\), unchanged by \(K_p\)).</p></div>
+<p class="cannow"><b>You can now:</b> write the P-controlled motion equation and its poles; explain P as added stiffness (smaller offset, faster oscillation, same decay); define a root locus; and (Beyond) sketch a root locus from the rules.</p>
+</section>
+
+<!-- ============ 14 ============ -->
+<section id="s14"><h2><span class="n">14</span><span class="h2t">D control: added damping (slide 22)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A D controller pushes back in proportion to how fast the mass is moving: that is what a shock absorber does. So D is an <b>extra, invisible damper</b>. It brakes the mass as it rushes outward, so the first swing is smaller. But once the mass stops moving, a damper does nothing, so D cannot change where the mass finally rests.</p></div></details>
+<p>Derivative action applies a force proportional to the rate of error. With a fixed target \(e=-x\), so \(\dot e=-v\) (slide 22). PD: \(F=K_pe+K_d\dot e=-K_px-K_d\dot x\):</p>
+<div class="box thm"><span class="tag">Result · PD control (slide 22, \(K_p=8\))</span>
+\[\ddot x+(2+K_d)\dot x+12x=d.\]
+<p class="word"><b>In words:</b> \(K_d\) adds to the damping coefficient \(c\); \(K_p\) adds to the stiffness \(k\).</p></div>
+<div class="figure"><div class="pair"><div><canvas class="plot" id="cv-plPD" style="height:220px"></canvas><p class="sub">Poles: P \(-1\pm j3.317\); PD \(-2.5\pm j1.936\)</p></div><div><canvas class="plot" id="cv-PD" style="height:220px"></canvas><p class="sub">Load-step displacement, \(K_p=8\)</p></div></div>
+<div class="legend"><span style="--k:var(--accent)">P: \(K_d=0\)</span><span style="--k:var(--c3)">PD: \(K_d=3\)</span></div>
+<p class="cap">Adding \(K_d=3\u{N\,s/m}\) moves the poles left (faster decay) and reduces the first excursion from 13.88 to 10.38 mm. Both settle at 10 mm.</p></div>
+<ul class="list">
+<li>\(K_d=3\) increases damping: \(\zeta\) goes from 0.289 to \(5/(2\sqrt{12})=0.72\).</li>
+<li>Once the velocity reaches zero, D contributes no force; both equilibria are 10 mm from the target (slide 22).</li>
+<li>Velocity feedback can exert a braking force at the instant the mass passes through zero position, where P exerts none.</li>
+</ul>
+<p class="cannow"><b>You can now:</b> write the PD motion equation; explain D as added damping; and explain why PD keeps the 10 mm offset.</p>
+</section>
+
+<!-- ============ 15 ============ -->
+<section id="s15"><h2><span class="n">15</span><span class="h2t">PI control stores the steady force (slide 23)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Back to your hand on the trolley. If it has been off its mark for a while, you lean in a bit more, and a bit more, and you <b>keep</b> leaning. When it is finally back on its mark you are still leaning with exactly the force needed to cancel the shove. That memory is the integral: it stores the steady force that P could only provide by leaving an error.</p></div></details>
+<div class="box def"><span class="tag">Definition · integral action (slide 23)</span>
+<p><b>Integral action</b> accumulates error over time. PI control adds this stored contribution to the proportional force. Slide 23's PI law (\(K_p=8\), \(K_i=12\)):</p>
+\[F=8e+I,\qquad \dot I=12e.\]
+<p class="word"><b>In words:</b> the force is the proportional part plus a stored part \(I\) that grows at a rate proportional to the error.</p></div>
+<ul class="list">
+<li><b>Why the offset can vanish:</b> at zero error the proportional force is zero, but the stored integral force can stay nonzero and balance the constant load (slide 23).</li>
+<li><b>An extra state:</b> the integral of the error is a third state variable (\(x\), \(v\), and \(\int e\)). For a stable PI loop its steady value supplies −0.12 N and the displacement returns to zero.</li>
+</ul>
+<div class="box eg"><span class="tag">Worked example · the PI disturbance map (slides 17, 23)</span>
+<p>\(C=K_p+K_i/s=(8s+12)/s\). Then</p>
+\[\begin{aligned}G_d&=\frac{G}{1+CG}=\frac{1}{s^2+2s+4+\frac{8s+12}{s}}\\ &=\frac{s}{s^3+2s^2+12s+12}.\end{aligned}\]
+<p>The numerator is now \(s\): a <b>zero at the origin</b>, so \(G_d(0)=0\) and \(x_\infty=0.12\,G_d(0)=0\) (the loop is stable, see Section 18). <span class="why">Multiplying top and bottom by \(s\) to clear the \(1/s\) of the integrator puts the factor \(s\) on top.</span> Closed-loop poles: \(s^3+2s^2+12s+12=0\Rightarrow s=-1.090\) (the added real pole) and \(-0.455\pm j3.287\).</p></div>
+<div class="figure"><div class="pair"><div><canvas class="plot" id="cv-plPI" style="height:220px"></canvas><p class="sub">Poles: P (2) and PI (3, including the added real pole)</p></div><div><canvas class="plot" id="cv-PI" style="height:220px"></canvas><p class="sub">Load-step displacement, 0–15 s</p></div></div>
+<div class="legend"><span style="--k:var(--accent)">P: \(K_i=0\)</span><span style="--k:var(--c2)">PI: \(K_i=12\)</span></div>
+<p class="cap">Final offset: P 10 mm, PI 0 mm. The price: the PI poles sit closer to the imaginary axis, so PI oscillates longer (peak 11.67 mm, then a slowly decaying swing through zero).</p></div>
+<p class="word"><b>Key idea (slide 23):</b> for this load test, integral action removes the static offset while changing the transient motion.</p>
+<p class="cannow"><b>You can now:</b> write the PI law; explain how a stored force removes the offset; show that I puts a zero at the origin of \(G_d\); and explain the extra state.</p>
+</section>
+
+<!-- ============ 16 ============ -->
+<section id="s16"><h2><span class="n">16</span><span class="h2t">PID, its characteristic polynomial, and four controllers compared (slides 24–25)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Combine all three: a spring (P), a damper (D) and a memory (I), all made by the actuator. The <b>characteristic polynomial</b> is the one equation whose roots are all the closed-loop poles: everything about stability and the shape of the response is in it.</p></div></details>
+<div class="box thm"><span class="tag">Result · parallel PID and the closed-loop polynomial (slide 24)</span>
+<span class="eqw">\[F(t)=K_pe(t)+K_i\int_0^te(\tau)\,\mathrm d\tau+K_d\dot e(t)\]</span>
+<span class="eqn">\[\begin{aligned}F(t)&=K_pe(t)+K_i\int_0^te(\tau)\,\mathrm d\tau\\ &\quad+K_d\dot e(t)\end{aligned}\]</span>
+\[C(s)=K_p+\frac{K_i}{s}+K_ds,\]
+\[\begin{aligned}D_{\rm cl}&=ms^3+(c+K_d)s^2\\ &\quad+(k+K_p)s+K_i.\end{aligned}\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(ms^3\)</dt><dd>third order: two plant states plus one integral state.</dd><dt>\(c+K_d\)</dt><dd>total damping (real damper + D).</dd><dt>\(k+K_p\)</dt><dd>total stiffness (real spring + P).</dd><dt>\(K_i\)</dt><dd>the integral's contribution: the constant term.</dd></dl></div>
+<p class="word"><b>In words:</b> the closed-loop poles are the roots of: mass·s³ + (total damping)·s² + (total stiffness)·s + integral gain.</p></div>
+<details><summary>Show the calculation: \(D_{\rm cl}\) from \(1+CG=0\)</summary><div>
+<ol class="steps">
+<li>\(1+CG=1+\dfrac{K_ds^2+K_ps+K_i}{s}\cdot\dfrac{1}{ms^2+cs+k}=0\). <span class="why">Write \(C\) over a common denominator \(s\).</span></li>
+<li>Multiply by \(s(ms^2+cs+k)\): \(s(ms^2+cs+k)+K_ds^2+K_ps+K_i=0\). <span class="why">"Clearing denominators" (slide 20).</span></li>
+<li>Collect powers of \(s\): \(ms^3+(c+K_d)s^2+(k+K_p)s+K_i=0\).</li>
+<li>Also \(G_d=G/(1+CG)=s/D_{\rm cl}\). <span class="why">Same multiplication; the extra \(s\) ends up on top, the zero at the origin from integral action.</span></li>
+</ol></div></details>
+<div class="box eg"><span class="tag">Worked example · the baseline PID (slide 24)</span>
+<p>\(K_p=8\), \(K_i=12\), \(K_d=3\):</p>
+\[\begin{aligned}D_{\rm cl}&=s^3+5s^2+12s+12\\ &=(s+2)(s^2+3s+6).\end{aligned}\]
+<p>Poles: \(-2\) and \(-1.5\pm j1.9365\u{s^{-1}}\). <span class="why">\(s^2+3s+6\): \(s=-1.5\pm j\sqrt{6-2.25}=-1.5\pm j\sqrt{3.75}\).</span> All in the left half-plane.</p></div>
+<p>The integral state raises the closed-loop order to three. Use a fixed reference and a load step for each comparison, so the test stays the same while the controller terms change (slide 24).</p>
+<h3>P, PI, PD and PID under the same load (slide 25)</h3>
+<div class="figure"><p class="ttl">Each run starts from rest at zero and receives the 0.12 N step (\(K_p=8\); \(K_d=3\) where used; \(K_i=12\) where used)</p>
+<canvas class="plot" id="cv-all4" style="height:250px"></canvas>
+<div class="legend"><span style="--k:var(--accent)">P</span><span style="--k:var(--c4)">PD</span><span style="--k:var(--c2)">PI</span><span style="--k:var(--c3)">PID</span></div>
+<div class="scroll"><table><tr><th>Controller</th><th>Peak</th><th>Final</th><th>What it shows</th></tr>
+<tr><td>P</td><td>13.88 mm</td><td>10 mm</td><td>stiffness: smaller offset than 30 mm</td></tr>
+<tr><td>PD</td><td>10.38 mm</td><td>10 mm</td><td>D reduces the largest displacement</td></tr>
+<tr><td>PI</td><td>11.67 mm</td><td>0</td><td>I cancels the static offset, long swing</td></tr>
+<tr><td>PID</td><td>8.28 mm</td><td>0</td><td>with these gains, D reduces PI's peak</td></tr></table></div>
+<p class="cap">P and PD retain a 10 mm error. PI and PID can return to zero when the closed loop is stable (slide 25).</p></div>
+<p class="cannow"><b>You can now:</b> write \(C(s)\) for PID; derive \(D_{\rm cl}=ms^3+(c+K_d)s^2+(k+K_p)s+K_i\); factor the baseline polynomial; and compare P, PI, PD, PID on peak and final error.</p>
+</section>
+
+<!-- ============ 17 ============ -->
+<section id="s17"><h2><span class="n">17</span><span class="h2t">Asymptotic and BIBO stability (slide 26)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A marble in a bowl: nudge it and it rolls back to the bottom (stable). A marble on an upturned bowl: nudge it and it rolls away (unstable). A marble on a flat table just stays where you nudge it, or keeps rolling (on the boundary). Two questions are asked: does it come back after a nudge, and does a bounded push always give a bounded motion?</p></div></details>
+<div class="box def"><span class="tag">Definitions · two kinds of stability (slide 26)</span>
+<ul class="list">
+<li><b>Asymptotic stability</b>: nearby initial states converge to the equilibrium.</li>
+<li><b>BIBO stability</b> (bounded-input, bounded-output): every bounded input gives a bounded zero-state output.</li>
+</ul>
+<p class="word"><b>In words:</b> asymptotic = "returns to rest after a nudge"; BIBO = "never runs away under any limited push". For the LTI models here both hold exactly when every closed-loop pole has a negative real part.</p></div>
+<div class="figure"><div class="pair"><div><canvas class="plot" id="cv-stab" style="height:220px"></canvas><p class="sub">Displacement after the load, \(F=0\)</p></div><div><canvas class="plot" id="cv-stab-p" style="height:220px"></canvas><p class="sub">Poles (shaded: right half-plane)</p></div></div>
+<div class="legend"><span style="--k:var(--c3)">\(c=2\): \(-1\pm j1.732\)</span><span style="--k:var(--accent)">\(c=0\): \(\pm j2\)</span><span style="--k:var(--c2)">\(c=-0.4\): \(0.2\pm j1.990\)</span></div>
+<p class="cap">Slide 26. Negative damping (\(c=-0.4\)) is a mathematical unstable example (a "damper" that feeds energy in). Positive real part → growing modes. Poles on the axis → oscillation that neither grows nor decays (marginal: bounded after a nudge, but not asymptotically stable).</p></div>
+<ul class="list">
+<li>The uncontrolled plant is stable but settles at 30 mm: stable, yet it misses the zero target.</li>
+<li>Growing motion is unstable and also fails the task.</li>
+</ul>
+<p class="word"><b>Key idea (slide 26):</b> first require stability; then check peak displacement, recovery and steady error.</p>
+<p class="cannow"><b>You can now:</b> define asymptotic and BIBO stability; classify a system as stable, marginal or unstable from its pole positions; and explain why stability is necessary but not sufficient for the task.</p>
+</section>
+
+<!-- ============ 18 ============ -->
+<section id="s18"><h2><span class="n">18</span><span class="h2t">The Routh–Hurwitz test and the marginal case (slides 27–28)</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Solving a cubic exactly is a chore, and you only want a yes/no answer: are all the roots on the safe side? The Routh–Hurwitz test is a short arithmetic table built from the coefficients that answers exactly that, like checking a cheque's total without itemising every purchase.</p></div></details>
+<div class="box def"><span class="tag">Definition · Routh–Hurwitz test (slide 27)</span>
+<p>A test that decides from the coefficients alone whether every root of a polynomial lies strictly in the left half-plane, without solving for the roots. Build the <b>Routh array</b>; the number of sign changes down its <b>first column</b> equals the number of roots in the right half-plane.</p></div>
+<div class="box thm"><span class="tag">Result · the cubic \(s^3+a_2s^2+a_1s+a_0\) (slide 27)</span>
+<div class="scroll"><table><tr><th>row</th><th>first column</th><th>second column</th></tr>
+<tr><td>\(s^3\)</td><td>\(1\)</td><td>\(a_1\)</td></tr><tr><td>\(s^2\)</td><td>\(a_2\)</td><td>\(a_0\)</td></tr>
+<tr><td>\(s^1\)</td><td>\(\dfrac{a_2a_1-a_0}{a_2}\)</td><td>0</td></tr><tr><td>\(s^0\)</td><td>\(a_0\)</td><td></td></tr></table></div>
+<p>All first-column entries positive ⇔ all roots in the left half-plane. For a positive-coefficient cubic this reduces to</p>
+\[a_2a_1\gt a_0.\]
+<p class="word"><b>In words:</b> a cubic with positive coefficients is stable when (middle two coefficients multiplied) beat (first × last).</p></div>
+<details><summary>Show the calculation: how the \(s^1\) entry is built</summary><div>
+<ol class="steps">
+<li>The first two rows are the coefficients taken alternately: \(1, a_1\) and \(a_2, a_0\).</li>
+<li>Each new entry is \(-\dfrac{1}{(\text{pivot})}\det\begin{bmatrix}\text{upper left}&\text{upper right}\\ \text{lower left}&\text{lower right}\end{bmatrix}\) using the two rows above: \(-\dfrac{1}{a_2}(1\cdot a_0-a_1a_2)=\dfrac{a_2a_1-a_0}{a_2}\). <span class="why">The pivot is the first entry of the row just above.</span></li>
+<li>The \(s^0\) row: \(-\dfrac{1}{b_1}(a_2\cdot0-a_0b_1)=a_0\). <span class="why">\(b_1\) is the \(s^1\) entry; the missing second entry counts as 0.</span></li>
+<li>With \(a_2\gt0\) and \(a_0\gt0\), the only entry that can be negative is \(b_1\), which is positive exactly when \(a_2a_1\gt a_0\).</li>
+</ol></div></details>
+<div class="box thm"><span class="tag">Result · PID on the mass (slide 27)</span>
+<p>Divide \(D_{\rm cl}\) by \(m\): \(a_2=(c+K_d)/m\), \(a_1=(k+K_p)/m\), \(a_0=K_i/m\). Stability needs positive coefficients and</p>
+\[(c+K_d)(k+K_p)\gt mK_i.\]
+<p>Baseline oscillator, \(K_p=8\), \(K_d=3\): \(0\lt K_i\lt(2+3)(4+8)=60\).</p>
+<p class="word"><b>In words:</b> total damping × total stiffness must beat mass × integral gain. Too much integral action destabilises; more damping or stiffness raises the limit. The strict upper bound changes when \(m\), \(c\), \(k\) or the other gains change (slide 27).</p></div>
+<div class="box eg"><span class="tag">Worked example · baseline \(K_i=12\)</span>
+<p>First column of \(s^3+5s^2+12s+12\): \(1,\ 5,\ (5\cdot12-12)/5=9.6,\ 12\). All positive → stable ✓ (poles \(-2\), \(-1.5\pm j1.94\)).</p></div>
+<h3>The pair that crosses the boundary (slide 28)</h3>
+<p>Keep \(K_p=8\), \(K_d=3\) and change only \(K_i\):</p>
+<div class="figure"><div class="pair"><div><canvas class="plot" id="cv-ki" style="height:220px"></canvas><p class="sub">Displacement after the load</p></div><div><canvas class="plot" id="cv-ki-p" style="height:220px"></canvas><p class="sub">Closed-loop poles</p></div></div>
+<div class="legend"><span style="--k:var(--c3)">\(K_i=12\): \(-2,\ -1.5\pm j1.936\)</span><span style="--k:var(--c4)">\(K_i=60\): \(-5,\ \pm j3.464\)</span><span style="--k:var(--c2)">\(K_i=90\): \(-5.678,\ 0.339\pm j3.967\)</span></div>
+<p class="cap">Increasing integral gain moves a pole pair into the right half-plane. At \(K_i=60\) the pair sits on the axis at \(\pm j\sqrt{12}\) (sustained oscillation); at \(K_i=90\) it is in the RHP and the oscillation grows after a small disturbance.</p></div>
+<div class="box eg"><span class="tag">Worked example · the marginal case \(K_i=60\) (slide 28)</span>
+\[\begin{aligned}&s^3+5s^2+12s+60\\ &\quad=s^2(s+5)+12(s+5)\\ &\quad=(s+5)(s^2+12).\end{aligned}\]
+<p>Poles \(-5\) and \(\pm j\sqrt{12}=\pm j3.464\u{rad/s}\). Period of the marginal pair: \(T=2\pi/\sqrt{12}=\boxed{1.81\u{s}}\). <span class="why">At the boundary the Routh \(s^1\) entry is zero, and the \(s^2\) row gives the auxiliary equation \(5s^2+60=0\), i.e. \(s^2=-12\).</span></p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · Routh special cases and relative stability</span>
+<ul class="list">
+<li><b>Zero in the first column</b> (rest of the row not all zero): replace the 0 by a small \(\varepsilon\gt0\), continue, and count sign changes as \(\varepsilon\to0^+\).</li>
+<li><b>Whole row of zeros</b>: the roots include a symmetric set (e.g. \(\pm j\omega\)). Form the <b>auxiliary polynomial</b> from the row above, replace the zero row by its derivative's coefficients, and continue. The auxiliary polynomial's roots are those symmetric roots.</li>
+<li><b>Relative stability</b>: to test whether all roots lie left of \(s=-a\), substitute \(s=z-a\) and apply Routh to the polynomial in \(z\).</li>
+</ul>
+<div class="box eg"><span class="tag">Worked examples · written for these notes</span>
+<p>(a) \(s^4+s^3+2s^2+2s+3\): rows \(1,2,3\); \(1,2\); then \(2-2=0\to\varepsilon\), 3; then \((2\varepsilon-3)/\varepsilon\to-\infty\); then 3. Signs \(+,+,+,-,+\): <b>two</b> changes → 2 RHP roots.</p>
+<p>(b) \(s^3+2s^2+4s+8\): \(s^1\) entry \((8-8)/2=0\), a zero row. Auxiliary \(2s^2+8=0\Rightarrow s=\pm j2\); indeed \((s+2)(s^2+4)\). Marginal.</p>
+<p>(c) Are the baseline PID poles all left of \(-1\)? \(s=z-1\) in \(s^3+5s^2+12s+12\) gives \(z^3+2z^2+5z+4\); \(2\cdot5=10\gt4\) ✓, so yes (they are \(-2\), \(-1.5\pm j1.94\)).</p></div></div>
+<p class="cannow"><b>You can now:</b> build a Routh array for a cubic; use \(a_2a_1\gt a_0\) and the PID condition \((c+K_d)(k+K_p)\gt mK_i\); find the marginal gain and oscillation frequency; and (Beyond) handle a zero in the first column, a zero row, and a shifted axis.</p>
+</section>
+<!-- ============ 19 ============ -->
+<section id="s19"><h2><span class="n">19</span><span class="h2t">Pole placement: PD and PID by matching coefficients (slides 29–30)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Instead of twiddling knobs and watching, decide first where the poles should be (how fast each mode should die away), write down the polynomial with those roots, and choose the gains so that the actual polynomial is the same one. It is like ordering a suit to measurements rather than trying on suits until one fits.</p></div></details>
+<div class="box def"><span class="tag">Definition · pole placement (slide 29)</span>
+<p><b>Pole placement</b> chooses controller parameters so that the closed-loop characteristic polynomial has specified roots.</p></div>
+<ol class="steps proc">
+<li><b>Do:</b> write the actual closed-loop polynomial with the gains as unknowns. <span class="why">Its roots are the closed-loop poles (Section 16).</span></li>
+<li><b>Do:</b> choose the desired poles and multiply out the desired polynomial, with the same leading coefficient. <span class="why">Two polynomials with the same leading coefficient have the same roots only if all coefficients match.</span></li>
+<li><b>Do:</b> match coefficients of equal powers of \(s\) and solve for the gains. <span class="why">One equation per unknown gain.</span></li>
+<li><b>Do:</b> verify the result against the specification by the actual load test. <span class="why">Pole locations are a design choice; they do not guarantee the peak, recovery or force limits (slide 30).</span></li>
+</ol>
+<div class="box eg"><span class="tag">Worked example · two-pole design with PD (slide 29)</span>
+<p><b>Given</b> the mass with PD control; desired poles \(-3\) and \(-4\). <b>Find</b> \(K_p\), \(K_d\).</p>
+\[\begin{aligned}D_{\rm PD}&=s^2+(2+K_d)s\\ &\quad+(4+K_p),\\ (s+3)(s+4)&=s^2+7s+12.\end{aligned}\]
+<p>Match: \(2+K_d=7\Rightarrow K_d=5\u{N\,s/m}\); \(4+K_p=12\Rightarrow K_p=8\u{N/m}\).</p>
+<p>\(\boxed{K_p=8\u{N/m},\ K_d=5\u{N\,s/m}}\). This changes the transient (two real poles: no overshoot), but PD still leaves a 10 mm static offset (\(0.12/12\)). It illustrates two-pole placement; integral action is needed to complete the zero-error task.</p></div>
+<div class="box eg"><span class="tag">Worked example · PID for three desired poles (slide 30)</span>
+<p><b>Given</b> the mass with PID; desired stable poles \(-2\), \(-3\), \(-4\u{s^{-1}}\). <b>Find</b> \(K_p\), \(K_i\), \(K_d\).</p>
+\[\begin{aligned}D_*&=(s+2)(s+3)(s+4)\\ &=s^3+9s^2+26s+24.\end{aligned}\]
+<p>Match to \(s^3+(2+K_d)s^2+(4+K_p)s+K_i\):</p>
+\[2+K_d=9,\quad 4+K_p=26,\quad K_i=24.\]
+<p>\(\boxed{K_p=22\u{N/m},\ K_i=24\u{N/(m\,s)},\ K_d=7\u{N\,s/m}}\). The loop is stable (by construction) and includes integral action. Routh check: \(9\times26=234\gt24\) ✓.</p></div>
+<div class="figure"><canvas class="plot" id="cv-place" style="height:220px"></canvas>
+<div class="legend"><span style="--k:var(--muted)">baseline PID poles</span><span style="--k:var(--c4)">PD design \(-3,-4\)</span><span style="--k:var(--c3)">PID design \(-2,-3,-4\)</span></div>
+<p class="cap">The designs put all poles on the negative real axis: fast, non-oscillating modes. The baseline PID (open circles) has a complex pair.</p></div>
+<p class="word"><b>Key idea (slide 30):</b> pole placement <b>proposes</b> a controller; the original load test decides whether it meets the task.</p>
+<p class="cannow"><b>You can now:</b> design PD and PID gains by matching coefficients to chosen poles; and explain why the result must still be verified.</p>
+</section>
+
+<!-- ============ 20 ============ -->
+<section id="s20"><h2><span class="n">20</span><span class="h2t">Verifying the design: inverse transform, recovery and force (slides 31–33)</span> <span class="mins">~7 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A bridge designed on paper is still load-tested before it opens. Here the "load test" is the same 0.12 N push; because the poles are simple real numbers, the response can be worked out exactly by hand and compared with the three numbers in the brief.</p></div></details>
+<div class="box eg"><span class="tag">Worked example · the designed PID under the 0.12 N step (slide 31)</span>
+<ol class="steps proc">
+<li><b>Do:</b> the load-to-displacement map: \(\dfrac{X(s)}{D(s)}=\dfrac{s}{(s+2)(s+3)(s+4)}\). <span class="why">\(G_d=s/D_{\rm cl}\) (Section 16) with the placed poles.</span></li>
+<li><b>Do:</b> apply the step: \(X(s)=\dfrac{0.12}{(s+2)(s+3)(s+4)}\). <span class="why">The \(s\) on top cancels the \(1/s\) of the step: the zero at the origin.</span></li>
+<li><b>Do:</b> partial fractions (cover-up): \(X=\dfrac{0.06}{s+2}-\dfrac{0.12}{s+3}+\dfrac{0.06}{s+4}\). <span class="why">Each coefficient is \(0.12\) divided by the other two factors at that pole, e.g. at \(-2\): \(0.12/(1\cdot2)\).</span></li>
+<li><b>Do:</b> invert:
+\[\begin{aligned}x(t)&=0.06\left(e^{-2t}-2e^{-3t}+e^{-4t}\right)\\ &=0.06\,e^{-2t}\left(1-e^{-t}\right)^2\ {\rm m}.\end{aligned}\]
+<span class="why">Factor out \(e^{-2t}\): \(1-2e^{-t}+e^{-2t}=(1-e^{-t})^2\).</span></li>
+<li><b>Do:</b> find the maximum: set \(y=e^{-t}\), so \(x=0.06\,[y(1-y)]^2\), which peaks where \(y(1-y)\) peaks: \(y=0.5\). <span class="why">A square is largest where its (positive) base is largest; \(y(1-y)\) is a parabola with its top at \(y=\tfrac12\).</span></li>
+<li><b>Do:</b> \(t=\ln2=0.693\u{s}\), \(x_{\rm peak}=0.06\times(0.25)^2=0.00375\u{m}=\boxed{3.75\u{mm}}\).</li>
+<li><b>Do:</b> final value: \(x\to0\) as \(t\to\infty\). <span class="why">The load-to-displacement zero at the origin accounts for the zero final offset (slide 31).</span></li>
+</ol></div>
+<details><summary>Show the calculation: the cover-up coefficients</summary><div>
+<ol class="steps">
+<li>\(A=\left.\dfrac{0.12}{(s+3)(s+4)}\right|_{s=-2}=\dfrac{0.12}{(1)(2)}=0.06\). <span class="why">Multiply \(X\) by \((s+2)\) and set \(s=-2\); the other terms vanish.</span></li>
+<li>\(B=\left.\dfrac{0.12}{(s+2)(s+4)}\right|_{s=-3}=\dfrac{0.12}{(-1)(1)}=-0.12\).</li>
+<li>\(C=\left.\dfrac{0.12}{(s+2)(s+3)}\right|_{s=-4}=\dfrac{0.12}{(-2)(-1)}=0.06\).</li>
+<li>Check: \(A+B+C=0\) ✓ (needed because \(X\sim0.12/s^3\) for large \(s\), with no \(1/s\) term), and \(x(0)=0\) ✓.</li>
+</ol></div></details>
+<h3>Peak and recovery together (slide 32)</h3>
+<div class="figure"><canvas class="plot" id="cv-ver" style="height:240px"></canvas>
+<div class="legend"><span style="--k:var(--accent)">baseline PID (8, 12, 3)</span><span style="--k:var(--c3)">pole-placed PID (22, 24, 7)</span><span style="--k:var(--muted)">±0.5 mm band</span></div>
+<p class="cap">Baseline: peak 8.28 mm, recovery 2.230 s. Designed: peak 3.75 mm at 0.693 s, recovery 2.287 s (dotted lines). Recovery is the final entry into the band, after which the curve stays inside.</p></div>
+<ul class="list">
+<li>The designed PID reduces the peak from 8.278 to 3.750 mm: it meets the 5 mm limit.</li>
+<li>Recovery into ±0.5 mm takes 2.287 s, compared with 2.230 s for the baseline. Peak reduction comes with slightly longer recovery in this test. Both are within 2.5 s.</li>
+</ul>
+<details><summary>Show the calculation: the recovery time 2.287 s</summary><div>
+<ol class="steps">
+<li>After the peak \(x\) falls monotonically, so solve \(0.06\,e^{-2t}(1-e^{-t})^2=0.0005\). <span class="why">The final entry into the band is the time the decaying tail crosses 0.5 mm.</span></li>
+<li>Take square roots with \(y=e^{-t}\): \(y(1-y)=\sqrt{0.0005/0.06}=0.09129\). <span class="why">Both sides positive.</span></li>
+<li>\(y^2-y+0.09129=0\Rightarrow y=\tfrac12\left(1-\sqrt{1-0.36515}\right)=0.10161\). <span class="why">Take the smaller root: late times have small \(y\).</span></li>
+<li>\(t=-\ln(0.10161)=\boxed{2.287\u{s}}\).</li>
+</ol></div></details>
+<h3>The actuator force (slide 33)</h3>
+<p>The force follows from the controller: \(F=-\left(K_px+K_i\int_0^tx\,\mathrm d\tau+K_d\dot x\right)\). For the designed PID this works out to</p>
+\[\begin{aligned}F(t)&=-0.12+0.24e^{-2t}\\ &\quad-0.84e^{-3t}+0.72e^{-4t}\ {\rm N}.\end{aligned}\]
+<details><summary>Show the calculation: \(F(s)\) and \(F(t)\)</summary><div>
+<ol class="steps">
+<li>\(F=-CX=-\dfrac{7s^2+22s+24}{s}\cdot\dfrac{0.12}{(s+2)(s+3)(s+4)}\). <span class="why">\(F=CE\) and \(E=-X\).</span></li>
+<li>Partial fractions: \(\dfrac{-0.12}{s}+\dfrac{0.24}{s+2}-\dfrac{0.84}{s+3}+\dfrac{0.72}{s+4}\). <span class="why">Cover-up at \(s=0\): \(-24\cdot0.12/24=-0.12\); at \(-2\): \(-(28-44+24)(0.12)/[(-2)(1)(2)]=0.24\); at \(-3\): \(-(63-66+24)(0.12)/[(-3)(-1)(1)]=-0.84\); at \(-4\): \(-(112-88+24)(0.12)/[(-4)(-2)(-1)]=0.72\).</span></li>
+<li>Invert term by term. Checks: \(F(0)=-0.12+0.24-0.84+0.72=0\) ✓ (no jump, since \(\dot x(0)=0\)); \(F(\infty)=-0.12\u{N}\) ✓ (Section 3).</li>
+<li>Numerically the largest magnitude is \(|F|_{\max}=0.1217\u{N}\) at \(t\approx0.52\u{s}\), where \(F\) overshoots slightly beyond −0.12 N before settling back.</li>
+</ol></div></details>
+<div class="figure"><canvas class="plot" id="cv-verx" style="height:160px"></canvas><canvas class="plot" id="cv-verF" style="height:180px"></canvas>
+<div class="legend"><span style="--k:var(--accent)">baseline PID</span><span style="--k:var(--c3)">pole-placed PID</span></div>
+<p class="cap">Top: position (mm). Bottom: actuator force (N). Designed peak force magnitude 0.1217 N, below the illustrative 0.15 N limit; baseline 0.1201 N. Both eventually apply −0.12 N: the stored integral force balances the persistent load while the displacement stays zero (slide 33).</p></div>
+<div class="box ready"><span class="tag">Design check (slides 31–33)</span>
+<div class="scroll"><table><tr><th>Measure</th><th>Limit</th><th>Baseline PID</th><th>Designed PID</th></tr>
+<tr><td>peak displacement</td><td>below 5 mm</td><td>8.278 mm ✗</td><td>3.750 mm ✓</td></tr>
+<tr><td>recovery into ±0.5 mm</td><td>within 2.5 s</td><td>2.230 s ✓</td><td>2.287 s ✓</td></tr>
+<tr><td>peak force</td><td>below 0.15 N</td><td>0.1201 N ✓</td><td>0.1217 N ✓</td></tr>
+<tr><td>final offset</td><td>0</td><td>0 ✓</td><td>0 ✓</td></tr></table></div>
+<p class="word"><b>In words:</b> a useful controller must meet the motion requirements with an acceptable actuator force.</p></div>
+<p class="cannow"><b>You can now:</b> invert \(X(s)\) for the designed PID; find the peak by the substitution \(y=e^{-t}\); compute the recovery time and the actuator force; and tick the three specifications.</p>
+</section>
+
+<!-- ============ 21 ============ -->
+<section id="s21"><h2><span class="n">21</span><span class="h2t">Controller zeros versus disturbance-map zeros (slide 34)</span> <span class="mins">~3 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>"Zero" only means something once you say <b>which</b> transfer function. The controller has its own zeros (they shape how it reacts), and the load-to-position map has different ones (they decide what load signals are blocked). Mixing them up is like confusing a person's height with the height of the house they live in.</p></div></details>
+<div class="box eg"><span class="tag">Worked example · baseline PID (slide 34)</span>
+\[C(s)=\frac{3s^2+8s+12}{s},\]
+<p>controller zeros \(z_C=\dfrac{-8\pm\sqrt{64-144}}{6}=-1.333\pm j1.491\).</p>
+\[G_d(s)=\frac{s}{s^3+5s^2+12s+12},\quad z_d=0.\]
+<p>Constant-load rejection: \(G_d(0)=0\Rightarrow x_\infty=0.12\,G_d(0)=0\).</p></div>
+<ul class="list">
+<li><b>Controller zeros</b> belong to \(C\) and influence the loop \(L=CG\). They help shape the feedback dynamics, but they are <b>not</b> the zeros of \(G_d\) (slide 34).</li>
+<li><b>The disturbance-map zero at the origin</b> comes from integral action. For a stable PID loop it gives zero DC gain from load to displacement, which removes the constant-load position offset.</li>
+<li>PID gains couple the loop zeros and the closed-loop poles: changing one gain moves both.</li>
+</ul>
+<div class="figure"><canvas class="plot" id="cv-zeros" style="height:220px"></canvas><p class="cap">Baseline PID in one s-plane: the controller zeros \(-1.333\pm j1.491\) (open circles, orange), the closed-loop poles of \(G_d\) (filled dots, \(-2\) and \(-1.5\pm j1.936\)) and the zero of \(G_d\) at the origin (open circle, green). Different transfer functions, different zeros.</p></div>
+<p class="cannow"><b>You can now:</b> find the zeros of \(C\) and of \(G_d\) separately; and explain which zero removes the offset and why.</p>
+</section>
+
+<!-- ============ 22 ============ -->
+<section id="s22"><h2><span class="n">22</span><span class="h2t">Frequency response and Bode plots (slides 35–36)</span> <span class="mins">~6 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Push the mass back and forth sinusoidally. A slow push it simply follows; a very fast push it cannot follow at all (its inertia filters it out); near its natural frequency it may swing more than you push. A frequency response is that "how much gets through, and how late" answer, for every frequency at once. A Bode plot is its graph, drawn on log scales so that a huge range fits on one page.</p></div></details>
+<div class="box def"><span class="tag">Definition · frequency response (slide 35)</span>
+<p>The <b>frequency response</b> of a transfer function is \(G(j\omega)\): the transfer function evaluated at \(s=j\omega\). For a sinusoidal input of angular frequency \(\omega\), a stable LTI system eventually responds with the same frequency, amplitude multiplied by \(|G(j\omega)|\) and shifted by the phase \(\angle G(j\omega)\).</p></div>
+<div class="figure"><p class="ttl">\(|G_d(j\omega)|\), load-to-position gain in m/N, \(G_d=G/[1+C(s)G(s)]\), fixed target \(r=0\); active gains \(K_p=8\), \(K_i=12\), \(K_d=3\)</p>
+<canvas class="plot" id="cv-gdbode" style="height:250px"></canvas>
+<div class="legend"><span style="--k:var(--accent)">P</span><span style="--k:var(--c4)">PD</span><span style="--k:var(--c2)">PI</span><span style="--k:var(--c3)">PID</span></div>
+<p class="cap">Log–log axes. P and PD keep a nonzero DC load gain (1/12 m/N, flat at low frequency); PI and PID fall towards zero as \(\omega\to0\) (slope +1 decade per decade, from the zero at the origin): they reject slowly varying loads. All curves meet at high frequency, \(|G_d|\approx1/(m\omega^2)\): the mass's inertia filters fast loads whatever the controller.</p></div>
+<ul class="list">
+<li>\(|G_d(j\omega)|\) measures displacement per unit external force at each frequency. Low-frequency behaviour reveals the response to slowly varying loads (slide 35).</li>
+<li>Frequency plots analyse this same loop; every time-response comparison still uses the same 0.12 N step.</li>
+</ul>
+<h3>Bode plots (slide 36)</h3>
+<div class="box def"><span class="tag">Definition · Bode plot (slide 36)</span>
+<p>A <b>Bode plot</b> shows magnitude in decibels, \(20\log_{10}|L(j\omega)|\), and phase in degrees, both against angular frequency on a logarithmic axis.</p>
+<p class="word"><b>In words:</b> 0 dB means a magnitude of 1 (unit amplitude ratio); +6.02 dB means ×2; −20 dB means ×0.1. Each factor of 10 in magnitude is 20 dB.</p></div>
+<div class="box eg"><span class="tag">Worked example · the P loop at 2 rad/s (slide 36)</span>
+<p>\(L(s)=\dfrac{8}{s^2+2s+4}\) (\(K_p=8\)). At \(s=j2\):</p>
+\[\begin{aligned}L(j2)&=\frac{8}{-4+4j+4}=\frac{8}{4j}\\ &=-2j.\end{aligned}\]
+<p>Magnitude 2 → \(20\log_{10}2=\boxed{6.02\u{dB}}\); phase \(\boxed{-90°}\) (pointing straight down in the complex plane).</p></div>
+<div class="figure"><canvas class="plot" id="cv-bodeP-m" style="height:180px"></canvas><canvas class="plot" id="cv-bodeP-p" style="height:180px"></canvas>
+<p class="cap">Bode plot of the P loop: the dot marks 2 rad/s (6.02 dB, −90°). At low frequency \(|L|=8/4=2\) (6.02 dB, phase 0°); at high frequency the magnitude falls 40 dB per decade and the phase tends to −180°. These are properties of the existing feedback connection (slide 36).</p></div>
+<p class="word"><b>Key idea (slide 36):</b> \(G_d\) describes the disturbance response; the loop \(L\) supports Nyquist and stability-margin analysis.</p>
+<p class="cannow"><b>You can now:</b> evaluate a transfer function at \(s=j\omega\); convert magnitudes to dB; read a Bode plot; and explain why \(|G_d(j0)|=0\) for PI/PID means constant loads are rejected.</p>
+</section>
+<!-- ============ 23 ============ -->
+<section id="s23"><h2><span class="n">23</span><span class="h2t">The Nyquist plot and the Nyquist criterion (slides 37–39)</span> <span class="mins">~8 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Walk a dog on a long lead around a lamp post. Whether the lead ends up wrapped round the post depends only on how many times the dog circled it. The Nyquist criterion does the same counting: trace the loop's frequency response as a curve in the complex plane, and count how many times it winds round the "lamp post" \(-1\). Each wrap tells you about an unstable closed-loop pole, without ever solving for the poles.</p></div></details>
+<div class="box def"><span class="tag">Definition · Nyquist plot (slide 37)</span>
+<p>A <b>Nyquist plot</b> traces the complex values of \(L(j\omega)\) (real part across, imaginary part up) as the frequency runs through the negative and positive ranges, \(-\infty\lt\omega\lt\infty\). The negative-frequency half is the mirror image (in the real axis) of the positive half, because \(L(-j\omega)\) is the conjugate of \(L(j\omega)\).</p></div>
+<div class="box eg"><span class="tag">Worked example · the P-controlled oscillator (slide 37)</span>
+<p>\(K_p=8\): \(L=\dfrac{8}{s^2+2s+4}\). At \(\omega=2\u{rad/s}\), \(L(j2)=-2j\) (Section 22): magnitude 2, phase −90°. Two more points students can calculate: \(\omega=0\): \(L=2\) (on the positive real axis); \(\omega\to\infty\): \(L\approx-8/\omega^2\to0\), arriving from the left (phase → −180°).</p></div>
+<div class="figure"><canvas class="plot" id="cv-nyqP" style="height:280px"></canvas>
+<div class="legend"><span style="--k:var(--accent)">positive frequency</span><span style="--k:var(--c3)">negative frequency (mirror)</span></div>
+<p class="cap">Nyquist plot of \(8/(s^2+2s+4)\). The dot is \(L(j2)=-2j\); the cross is the critical point \(-1\). Arrows show increasing \(\omega\). Sweeping frequency traces the loop curve used to assess the fixed-target controller (slide 37). The curve never reaches the negative real axis, so it cannot wrap round \(-1\).</p></div>
+<h3>The Nyquist stability criterion (slide 38)</h3>
+<div class="box thm"><span class="tag">Result · Nyquist criterion (slide 38)</span>
+\[Z=P_r+N\]
+<div class="box link"><span class="tag">Reading the formula</span><dl class="map"><dt>\(P_r\)</dt><dd>number of open-loop poles (poles of \(L\)) inside the right half-plane.</dd><dt>\(N\)</dt><dd>net number of <b>clockwise</b> encirclements of \(-1\) by the complete mapped contour (anticlockwise counts negative).</dd><dt>\(Z\)</dt><dd>number of unstable closed-loop poles (roots of \(1+L=0\) in the RHP). Stable needs \(Z=0\).</dd></dl></div>
+<p class="word"><b>In words:</b> unstable closed-loop poles = unstable open-loop poles + clockwise wraps of the curve round −1. Check separately for poles on the imaginary axis (the curve passing <b>through</b> −1).</p></div>
+<div class="figure"><div class="pair"><div><canvas class="plot" id="cv-ncont" style="height:240px"></canvas><p class="sub">The Nyquist contour in the s-plane</p></div><div><canvas class="plot" id="cv-ndetour" style="height:240px"></canvas><p class="sub">What the detour maps to, for \(L\) with \(1/s\)</p></div></div>
+<p class="cap">Left: the contour runs up the imaginary axis and round a huge semicircle, enclosing the whole right half-plane clockwise. An open-loop pole on the axis (the PID integrator at \(s=0\)) must not lie on the path, so the contour takes a small <b>detour to the right of the origin pole</b>. Right: on the detour \(L\approx K_i/(4s)\) is huge, so the tiny half-circle maps to a huge clockwise half-circle through the right side; that mapped arc belongs in the count (slide 38).</p></div>
+<details><summary>Show the calculation: where the detour arc goes</summary><div>
+<ol class="steps">
+<li>On the detour, \(s=\varepsilon e^{j\theta}\) with \(\theta\) from −90° to +90° and \(\varepsilon\) tiny. <span class="why">A small half-circle round the origin, on the right side.</span></li>
+<li>Near \(s=0\), \(L=\dfrac{K_ds^2+K_ps+K_i}{s(s^2+2s+4)}\approx\dfrac{K_i}{4s}=\dfrac{K_i}{4\varepsilon}e^{-j\theta}\). <span class="why">Every other factor tends to its value at \(s=0\).</span></li>
+<li>So \(|L|=K_i/(4\varepsilon)\to\infty\) and \(\angle L=-\theta\) runs from +90° to −90°: a huge half-circle swept <b>clockwise</b> through the positive real axis. <span class="why">The angle decreases.</span></li>
+<li>It passes on the far right, so it never crosses the negative real axis left of −1; it only joins the two halves of the plot.</li>
+</ol></div></details>
+<div class="box ready"><span class="tag">Counting rule (practical)</span>
+<p>Draw a ray from \(-1\) to the left along the real axis. Each time the complete curve crosses it going <b>upward</b> (from below to above) count +1 (clockwise); going downward count −1. The total is \(N\). A curve that never crosses the real axis left of −1 has \(N=0\).</p></div>
+<h3>Nyquist and pole calculations give the same boundary (slide 39)</h3>
+<p>Return to \(K_p=8\), \(K_d=3\) and vary \(K_i\) exactly as in the Routh test (Section 18): \(L=\dfrac{3s^2+8s+K_i}{s(s^2+2s+4)}\). Open-loop poles \(0\) (detoured) and \(-1\pm j\sqrt3\): <b>no open-loop RHP poles</b>, \(P_r=0\).</p>
+<div class="figure"><div class="pair"><div><canvas class="plot" id="cv-nyqKi" style="height:260px"></canvas><p class="sub">Close-up of the Nyquist plots near −1</p></div><div><canvas class="plot" id="cv-nyqKi-p" style="height:260px"></canvas><p class="sub">Closed-loop poles</p></div></div>
+<div class="legend"><span style="--k:var(--c3)">\(K_i=12\)</span><span style="--k:var(--c4)">\(K_i=60\)</span><span style="--k:var(--c2)">\(K_i=90\)</span><span style="--k:var(--muted)">dashed: negative frequency</span></div>
+<p class="cap">The plot is a close-up: the curves leave the window towards \(\mp j\infty\) at low frequency and are joined there by the detour arc. \(K_i=12\): the curve stays right of −1 (it never crosses the negative real axis). \(K_i=60\): the curve passes through −1 (at \(\omega=\sqrt{12}\)), the marginal case. \(K_i=90\): −1 is enclosed.</p></div>
+<div class="box eg"><span class="tag">Worked example · counting for each \(K_i\) (slide 39)</span>
+<ul class="list">
+<li>\(K_i=12\): no crossing of the real axis for \(\omega\gt0\) (or its mirror); the detour arc is far right. \(N=0\), \(Z=0+0=0\): stable ✓ (Routh: \(12\lt60\)).</li>
+<li>\(K_i=60\): \(L(j\sqrt{12})=-1\) exactly, so \(1+L=0\) at \(s=j\sqrt{12}\): closed-loop poles \(\pm j\sqrt{12}\) on the axis, the marginal case found by Routh. (The curve also crosses at −3 when \(\omega=2.58\).)</li>
+<li>\(K_i=90\): the positive-frequency branch crosses the real axis at −7.34 (\(\omega=2.26\), upward) and at −0.41 (\(\omega=4.86\)). Only the −7.34 crossing is on the ray left of −1: +1. The mirror branch, traversed from \(\omega=-\infty\) to \(0^-\), crosses the same point upward too: +1. \(N=2\), so \(Z=0+2=2\) unstable poles — the pair \(0.339\pm j3.967\) ✓.</li>
+</ul></div>
+<p class="word"><b>Key idea (slide 39):</b> at \(K_p=8\), \(K_d=3\), \(K_i=60\) is the shared Routh and Nyquist stability boundary. Two different methods, one answer.</p>
+<div class="beyond box"><span class="tag">Beyond the handouts · Nyquist plot of a type-1 plant, \(K/[s(s+1)]\)</span>
+<p>Related-course questions often ask you to sketch this shape. With \(s=j\omega\):</p>
+\[\begin{aligned}L(j\omega)&=\frac{K}{j\omega(1+j\omega)}\\ &=\frac{-K}{1+\omega^2}-j\,\frac{K}{\omega(1+\omega^2)}.\end{aligned}\]
+<ol class="steps proc">
+<li><b>Do:</b> low frequency: real part \(\to-K\), imaginary part \(\to-\infty\): the curve comes up from \(-j\infty\) along the vertical asymptote \({\rm Re}=-K\). <span class="why">The integrator \(1/s\) makes \(|L|\) blow up; the \(1/(1+j\omega)\) factor shifts it left by \(K\).</span></li>
+<li><b>Do:</b> phase \(=-90°-\arctan\omega\), between −90° and −180°: the curve stays in the third quadrant and reaches the origin from the direction −180° as \(\omega\to\infty\). <span class="why">It never crosses the negative real axis, so it can never wrap round −1.</span></li>
+<li><b>Do:</b> the detour round the origin pole maps to a huge clockwise half-circle on the right, joining the two mirror halves.</li>
+<li><b>Do:</b> \(P_r=0\), \(N=0\Rightarrow Z=0\): stable for every \(K\gt0\). Check: \(s^2+s+K\) has positive coefficients ✓.</li>
+</ol>
+<div class="figure"><canvas class="plot" id="cv-nyqT1" style="height:240px"></canvas>
+<p class="cap">\(K=2\): solid \(\omega\gt0\), dashed \(\omega\lt0\); dotted line: the asymptote \({\rm Re}=-2\). The infinite detour arc on the right is not drawn.</p></div></div>
+<p class="cannow"><b>You can now:</b> sketch a Nyquist plot from a few computed points; state \(Z=P_r+N\) and its terms; handle the detour round an integrator; count encirclements with a ray; and confirm the \(K_i=60\) boundary by Nyquist. (Beyond) sketch \(K/[s(s+1)]\).</p>
+</section>
+
+<!-- ============ 24 ============ -->
+<section id="s24"><h2><span class="n">24</span><span class="h2t">Gain and phase margins (slide 40)</span> <span class="mins">~5 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>A lorry passing under a bridge: it fits, but by how much? The margins answer "how far is this loop from instability?". The gain margin says how many times stronger the loop could be made before it hits −1; the phase margin says how much extra delay (phase lag) it could take before it hits −1.</p></div></details>
+<div class="box def"><span class="tag">Definitions · margins (slide 40)</span>
+<ul class="list">
+<li><b>Gain crossover</b> \(\omega_{\rm gc}\): where \(|L|=1\) (0 dB). <b>Phase margin</b>: the extra phase lag needed there to reach the critical point,
+\[{\rm PM}=180°+\angle L(j\omega_{\rm gc}).\]</li>
+<li><b>Phase crossover</b> \(\omega_{\rm pc}\): where \(\angle L=-180°\) (on the relevant continuous branch). <b>Gain margin</b>: the gain multiplier that would bring \(|L|\) to 1 there,
+\[{\rm GM}=\frac{1}{|L(j\omega_{\rm pc})|}.\]</li>
+</ul>
+<p class="word"><b>In words:</b> PM = how many more degrees of lag at the 0 dB frequency; GM = how many times more gain at the −180° frequency (in dB: \(-20\log_{10}|L(j\omega_{\rm pc})|\)).</p></div>
+<div class="box eg"><span class="tag">Worked example · baseline PID (slide 40)</span>
+<p>\(L=\dfrac{3s^2+8s+12}{s(s^2+2s+4)}\). At \(\omega=\sqrt{12}=3.464\u{rad/s}\):</p>
+\[\begin{aligned}|N|&=|-24+j27.71|=36.66,\\ |D|&=3.464\times|-8+j6.93|=36.66,\end{aligned}\]
+<p>so \(|L|=1\): \(\omega_{\rm gc}=3.464\u{rad/s}\). Phase: \(\angle N-\angle D=130.9°-229.1°=-98.2°\). <span class="why">\(\angle N=180°-\arctan(27.71/24)\); \(\angle D=90°+[180°-\arctan(6.93/8)]\).</span></p>
+<p>\(\boxed{{\rm PM}=180°-98.2°=81.8°}\). The phase of this ideal loop stays between about −98° and −82° for all \(\omega\gt0\): there is no finite −180° crossing, so \(\boxed{{\rm GM}=\infty}\).</p></div>
+<div class="figure"><canvas class="plot" id="cv-marg-m" style="height:170px"></canvas><canvas class="plot" id="cv-marg-p" style="height:170px"></canvas>
+<p class="cap">Bode plot of the baseline PID loop (\(K_p=8\), \(K_i=12\), \(K_d=3\)). 0 dB at 3.464 rad/s, where the phase is −98.2°: PM = 81.8° (orange arrow). The phase never reaches the −180° line: no finite phase crossover, infinite gain margin in this ideal model.</p></div>
+<div class="box warn"><span class="tag">Watch (slide 40)</span><p>An infinite gain margin does not imply unlimited tolerance to <b>delay</b> or <b>model changes</b>: a time delay adds phase lag that grows with frequency, and an unmodelled resonance can change the curve.</p></div>
+<div class="beyond box"><span class="tag">Beyond the handouts · reading GM and PM off a given Bode plot</span>
+<ol class="steps proc">
+<li><b>Do:</b> on the magnitude plot find where the curve crosses 0 dB: that is \(\omega_{\rm gc}\). Drop down to the phase plot and read \(\angle L\); PM = 180° + that phase. <span class="why">PM is measured at unit magnitude.</span></li>
+<li><b>Do:</b> on the phase plot find where the curve crosses −180°: \(\omega_{\rm pc}\). Go up to the magnitude plot and read \(|L|\) in dB; GM (dB) = −(that value). <span class="why">GM is measured at −180° phase.</span></li>
+<li><b>Do:</b> both positive (PM \(\gt0\), GM \(\gt0\) dB) ⇒ stable, for an open-loop-stable \(L\) with a single crossover each.</li>
+</ol>
+<div class="box eg"><span class="tag">Worked example · written for these notes</span>
+<p>\(L=\dfrac{2}{s(s+1)(s+2)}\). Phase \(-90°-\arctan\omega-\arctan(\omega/2)=-180°\) at \(\omega_{\rm pc}=\sqrt2\) (then \(\arctan\omega+\arctan(\omega/2)=90°\), i.e. \(\omega\cdot\omega/2=1\)). \(|L(j\sqrt2)|=2/(\sqrt2\sqrt3\sqrt6)=1/3\) ⇒ GM = 3 = <b>9.54 dB</b>. \(|L|=1\) at \(\omega_{\rm gc}=0.749\u{rad/s}\), phase \(-147.4°\) ⇒ <b>PM = 32.6°</b>. Routh check: \(s^3+3s^2+2s+2g\) is stable for \(g\lt3\) ✓ (gain may be tripled).</p>
+<div class="figure"><canvas class="plot" id="cv-bB-m" style="height:160px"></canvas><canvas class="plot" id="cv-bB-p" style="height:160px"></canvas>
+<p class="cap">Dotted lines: \(\omega_{\rm gc}=0.749\) and \(\omega_{\rm pc}=1.414\) rad/s. GM is the gap below 0 dB at \(\omega_{\rm pc}\); PM is the gap above −180° at \(\omega_{\rm gc}\).</p></div></div></div>
+<p class="cannow"><b>You can now:</b> define gain and phase crossover; compute PM and GM; show the baseline PID has PM ≈ 81.8° and infinite GM; and explain what margins do not guarantee. (Beyond) read both margins off a Bode plot.</p>
+</section>
+
+<!-- ============ 25 ============ -->
+<section id="s25"><h2><span class="n">25</span><span class="h2t">The same goal with a heavier mass (slides 41–42)</span> <span class="mins">~4 min</span></h2>
+<details class="idea"><summary>What is this?</summary><div><p>Load the trolley with shopping so it weighs twice as much. The same hand-pushing rule would now give a different, more sluggish motion. The design method does not change, though: write the new polynomial, match it to the same chosen poles, and check the same three numbers.</p></div></details>
+<div class="box eg"><span class="tag">Worked example · redesign for \(m=2\u{kg}\) (slides 41–42)</span>
+<p><b>What changes:</b> \(m: 1\u{kg}\to2\u{kg}\). <b>What stays:</b> spring, damper, the 0.12 N load step, the zero target, and the desired poles \(-2,-3,-4\u{s^{-1}}\). <b>Find</b> new continuous-time PID gains and check the 5 mm peak, ±0.5 mm recovery within 2.5 s and 0.15 N force requirements.</p>
+<ol class="steps proc">
+<li><b>Do:</b> actual polynomial: \(2s^3+(2+K_d)s^2+(4+K_p)s+K_i\). <span class="why">With \(m=2\) the leading coefficient doubles (slide 42).</span></li>
+<li><b>Do:</b> desired polynomial with the same leading coefficient: \(2D_*=2s^3+18s^2+52s+48\). <span class="why">Matching needs equal leading coefficients, so double \(D_*\), not just copy it.</span></li>
+<li><b>Do:</b> match: \(2+K_d=18\), \(4+K_p=52\), \(K_i=48\) ⇒ \(\boxed{K_p=48,\ K_i=48,\ K_d=16}\) (N/m, N/(m·s), N·s/m).</li>
+<li><b>Do:</b> response: \(X=\dfrac{0.12\,s}{2D_*}\cdot\dfrac1s=\dfrac{0.06}{(s+2)(s+3)(s+4)}\), so \(x(t)=0.03\,e^{-2t}(1-e^{-t})^2\): exactly half the \(m=1\) design. <span class="why">Same poles, half the numerator.</span></li>
+<li><b>Do:</b> check: \(x_{\max}=3.75/2=\boxed{1.875\u{mm}}\) at \(\ln2\) s; recovery (stays within ±0.5 mm) after \(\boxed{1.882\u{s}}\); \(|F|_{\max}=\boxed{0.1325\u{N}}\); zero final offset.</li>
+</ol>
+<p>All three specifications are met with the same chosen poles (slide 42).</p></div>
+<div class="figure"><canvas class="plot" id="cv-heavyx" style="height:170px"></canvas><canvas class="plot" id="cv-heavyF" style="height:170px"></canvas>
+<div class="legend"><span style="--k:var(--c3)">\(m=1\), gains (22, 24, 7)</span><span style="--k:var(--c2)">\(m=2\), gains (48, 48, 16)</span><span style="--k:var(--muted)">limits</span></div>
+<p class="cap">Top: displacement (mm) with the ±0.5 mm band and 5 mm limit. Bottom: actuator force (N) with the −0.15 N limit. The heavier design moves half as far and recovers sooner (1.882 s), at a slightly larger peak force (0.1325 N, at 0.46 s).</p></div>
+<p class="word"><b>Key idea (slides 41–42):</b> the physical parameter changes; the control objective and the assessment criteria stay the same. <b>How do we design a controller?</b> Model the same task, choose gains, and verify the actual response.</p>
+<p class="cannow"><b>You can now:</b> redo a pole-placement design when a plant parameter changes, keeping the leading coefficient consistent; and verify the new design against the same specification.</p>
+</section>
+<!-- ============ 26 ============ -->
+<section id="s26"><h2><span class="n">26</span><span class="h2t">Summary</span></h2>
+<div class="scroll"><table>
+<tr><th>Idea</th><th>Key result</th><th>In words</th></tr>
+<tr><td>Plant model</td><td>\(m\ddot x+c\dot x+kx=F+d\)</td><td>Newton's law on the free-body diagram; 2 states \(x,v\)</td></tr>
+<tr><td>Equilibrium on target</td><td>\(F_{\rm eq}=-d_0=-0.12\u{N}\)</td><td>the actuator must hold the load for ever</td></tr>
+<tr><td>Laplace</td><td>\(\mathcal L\{\dot x\}=sX-x_0\), \(\mathcal L\{1\}=1/s\)</td><td>derivatives become multiplication by \(s\)</td></tr>
+<tr><td>Transfer function</td><td>\(G=1/(ms^2+cs+k)\)</td><td>output/input transforms, zero initial state</td></tr>
+<tr><td>Uncontrolled</td><td>\(x=0.03[1-e^{-t}(\cos\sqrt3t+\tfrac{\sin\sqrt3t}{\sqrt3})]\)</td><td>stable, but 30 mm offset</td></tr>
+<tr><td>Poles</td><td>\(-\zeta\omega_n\pm j\omega_d\)</td><td>real part = decay, imaginary = frequency</td></tr>
+<tr><td>\(\omega_n,\zeta\)</td><td>\(\sqrt{k/m}\), \(c/(2\sqrt{km})\)</td><td>2 rad/s, 0.5 for the baseline</td></tr>
+<tr><td>Final value</td><td>\(x_\infty=\lim_{s\to0}sX(s)\) if \(sX\) stable</td><td>DC gain × step</td></tr>
+<tr><td>Feedback</td><td>\(G_d=G/(1+CG)\), \(L=CG\), \(S=1/(1+L)\)</td><td>forward over (1 + loop)</td></tr>
+<tr><td>P / D / I</td><td>stiffness \(k+K_p\) / damping \(c+K_d\) / zero of \(G_d\) at 0</td><td>offset smaller / swing smaller / offset gone</td></tr>
+<tr><td>PID polynomial</td><td>\(ms^3+(c+K_d)s^2+(k+K_p)s+K_i\)</td><td>third order</td></tr>
+<tr><td>Routh (cubic)</td><td>\((c+K_d)(k+K_p)\gt mK_i\), all coefficients \(\gt0\)</td><td>\(K_i\lt60\) for \(K_p=8,K_d=3\)</td></tr>
+<tr><td>Pole placement</td><td>match to \((s+2)(s+3)(s+4)\)</td><td>\(K_p=22,K_i=24,K_d=7\)</td></tr>
+<tr><td>Verification</td><td>\(x=0.06e^{-2t}(1-e^{-t})^2\)</td><td>3.75 mm, 2.287 s, 0.1217 N ✓</td></tr>
+<tr><td>Nyquist</td><td>\(Z=P_r+N\)</td><td>count clockwise wraps of −1, detour round \(s=0\)</td></tr>
+<tr><td>Margins</td><td>PM \(=180°+\angle L(j\omega_{\rm gc})\), GM \(=1/|L(j\omega_{\rm pc})|\)</td><td>baseline: 81.8°, ∞</td></tr>
+<tr><td>Heavier mass</td><td>match \(2D_*\): \(48,48,16\)</td><td>1.875 mm, 1.882 s, 0.1325 N ✓</td></tr>
+</table></div>
+</section>
+
+<!-- ============ 27 ============ -->
+<section id="s27"><h2><span class="n">27</span><span class="h2t">Common mistakes</span></h2>
+<div class="mistake">
+<span class="x">✗</span><span>Using the final-value theorem without checking that \(sX(s)\) is stable.</span>
+<span class="ok">✓</span><span>Check the poles of \(sX\) first: with \(c=0\) or \(K_i\ge60\) the "final value" does not exist.</span>
+<span class="x">✗</span><span>Expecting P or D to remove the offset under a constant load.</span>
+<span class="ok">✓</span><span>P only adds stiffness (offset \(0.12/(4+K_p)\)); D is zero at rest. Only I stores the −0.12 N.</span>
+<span class="x">✗</span><span>Dropping \(m\) in the characteristic polynomial (or in pole placement with \(m\ne1\)).</span>
+<span class="ok">✓</span><span>Match \(ms^3+\dots\) to \(m\,D_*\), with equal leading coefficients (slide 42).</span>
+<span class="x">✗</span><span>Writing the Routh condition as \(a_2a_1\gt a_0\) without dividing by \(m\), or forgetting "all coefficients positive".</span>
+<span class="ok">✓</span><span>\((c+K_d)(k+K_p)\gt mK_i\) <b>and</b> \(c+K_d\gt0\), \(k+K_p\gt0\), \(K_i\gt0\).</span>
+<span class="x">✗</span><span>Calling the controller's zeros "the zeros of the system".</span>
+<span class="ok">✓</span><span>Always name the transfer function: zeros of \(C\) differ from zeros of \(G_d\) (slide 34).</span>
+<span class="x">✗</span><span>Defining recovery as the first time \(|x|\) drops below 0.5 mm.</span>
+<span class="ok">✓</span><span>It is the <b>final</b> entry: after it, \(x\) stays inside the band.</span>
+<span class="x">✗</span><span>In a Nyquist count, ignoring the detour round the integrator pole, or counting anticlockwise turns as positive.</span>
+<span class="ok">✓</span><span>Include the mapped detour arc; \(N\) counts net <b>clockwise</b> encirclements.</span>
+<span class="x">✗</span><span>Reading GM at the 0 dB frequency, PM at the −180° frequency.</span>
+<span class="ok">✓</span><span>PM at \(|L|=1\); GM at \(\angle L=-180°\).</span>
+<span class="x">✗</span><span>Partial fractions with the quadratic left as \(s^2+2s+4\).</span>
+<span class="ok">✓</span><span>Complete the square, \((s+1)^2+3\), and write the numerator in powers of \(s+1\) to match the damped pairs.</span>
+</div>
+</section>
+
+<!-- ============ 28 ============ -->
+<section id="s28"><h2><span class="n">28</span><span class="h2t">Find the mistake</span></h2>
+<div class="q"><p class="qh">1 · A student's stability limit</p>
+<p>"Mass with PID, \(K_p=8\), \(K_d=3\). The closed loop is \(s^3+(c+K_d)s^2+(k+K_p)s+K_i\). By Routh, stable if \(ck\gt K_i\), so \(K_i\lt8\)."</p>
+<details><summary>Hint</summary><div><p>Which coefficients appear in the \(s^1\) entry of the Routh array?</p></div></details>
+<details><summary>Answer</summary><div><p>The condition uses the <b>closed-loop</b> coefficients, \((c+K_d)(k+K_p)\gt mK_i\): \(5\times12=60\), so \(0\lt K_i\lt60\). The student used the plant's \(c\) and \(k\) alone (\(2\times4=8\)).</p></div></details></div>
+<div class="q"><p class="qh">2 · A student's pole placement for \(m=2\)</p>
+<p>"Desired \((s+2)(s+3)(s+4)=s^3+9s^2+26s+24\). Match to \(2s^3+(2+K_d)s^2+(4+K_p)s+K_i\): \(K_d=7\), \(K_p=22\), \(K_i=24\) — the same gains as before."</p>
+<details><summary>Hint</summary><div><p>Do the two polynomials have the same leading coefficient?</p></div></details>
+<details><summary>Answer</summary><div><p>Coefficients can only be matched when the leading coefficients agree. Match to \(2D_*=2s^3+18s^2+52s+48\): \(K_d=16\), \(K_p=48\), \(K_i=48\) (slide 42). With the old gains the poles move to \(-1.380\) and \(-1.560\pm j2.502\), not the chosen \(-2,-3,-4\).</p></div></details></div>
+<div class="q"><p class="qh">3 · A student's final value</p>
+<p>"With \(c=0\) and \(F=0\): \(x_\infty=\lim_{s\to0}s\cdot\dfrac{0.12}{s(s^2+4)}=0.03\u{m}\), so the mass settles at 30 mm."</p>
+<details><summary>Answer</summary><div><p>\(sX=0.12/(s^2+4)\) has poles \(\pm2j\) on the imaginary axis, so the final-value theorem does not apply. The mass oscillates between 0 and 60 mm for ever (Section 9); 30 mm is only the centre of the swing.</p></div></details></div>
+</section>
+
+<!-- ============ 29 ============ -->
+<section id="s29"><h2><span class="n">29</span><span class="h2t">Group work: the heavier-mass design task (slide 41)</span></h2>
+<p class="muted">The handout's own design task. Try it as a group before opening the hint.</p>
+<div class="q"><p class="qh">Design task (slide 41)</p>
+<p>Double the mass to \(m=2\u{kg}\) while keeping the spring (\(k=4\u{N/m}\)), the damper (\(c=2\u{N\,s/m}\)), the 0.12 N step load and the zero target unchanged. Retain the desired closed-loop poles \(-2\), \(-3\) and \(-4\u{s^{-1}}\).</p>
+<p>(a) Find new continuous-time PID gains. (b) Find \(x(t)\) and check the 5 mm peak limit. (c) Check recovery into ±0.5 mm within 2.5 s. (d) Check the 0.15 N force limit. (e) Would the old gains (22, 24, 7) have done?</p>
+<div class="figure"><div id="fig-gw"></div><p class="cap">The heavier mass and its free-body diagram: same spring, damper and load; the actuator now drives 2 kg.</p></div>
+<details><summary>Hint</summary><div><p>(a) Write \(ms^3+(c+K_d)s^2+(k+K_p)s+K_i\) with \(m=2\) and match it to <b>twice</b> the desired polynomial. (b) \(G_d=s/D_{\rm cl}\); the step's \(1/s\) cancels. Compare with the \(m=1\) result of Section 20. (d) \(F=-CX\); partial fractions with a pole at 0. (e) Put the old gains in the new polynomial and test the specs.</p></div></details>
+<details><summary>Answer</summary><div>
+<p>(a) \(2s^3+(2+K_d)s^2+(4+K_p)s+K_i=2s^3+18s^2+52s+48\Rightarrow\boxed{K_p=48\u{N/m},\ K_i=48\u{N/(m\,s)},\ K_d=16\u{N\,s/m}}\).</p>
+<p>(b) \(X=\dfrac{0.12}{2(s+2)(s+3)(s+4)}=\dfrac{0.03}{s+2}-\dfrac{0.06}{s+3}+\dfrac{0.03}{s+4}\), so \(x(t)=0.03\,e^{-2t}(1-e^{-t})^2\). Peak at \(y=e^{-t}=\tfrac12\): \(0.03/16=\boxed{1.875\u{mm}}\) at \(t=\ln2=0.693\u{s}\) ✓ (below 5 mm).</p>
+<p>(c) \(y(1-y)=\sqrt{0.0005/0.03}=0.1291\Rightarrow y=0.1523\Rightarrow t=\boxed{1.882\u{s}}\) ✓ (within 2.5 s).</p>
+<p>(d) \(F=-\dfrac{16s^2+48s+48}{s}X=-\dfrac{0.12}{s}+\dfrac{0.24}{s+2}-\dfrac{0.96}{s+3}+\dfrac{0.84}{s+4}\), so \(F(t)=-0.12+0.24e^{-2t}-0.96e^{-3t}+0.84e^{-4t}\u{N}\). Largest magnitude \(\boxed{0.1325\u{N}}\) at 0.46 s ✓ (below 0.15 N); final −0.12 N.</p>
+<p>(e) Old gains: \(2s^3+9s^2+26s+24\); Routh \(9\times26=234\gt2\times24\): stable, poles \(-1.380\), \(-1.560\pm j2.502\). By simulation: peak 4.13 mm, recovery 2.006 s, force 0.1382 N — it would pass this brief, but the poles are no longer the ones chosen and the margins to the limits shrink. The method, not luck, is the point: model, choose, verify.</p></div></details></div>
+</section>
+
+<!-- ============ 30 ============ -->
+<section id="s30"><h2><span class="n">30</span><span class="h2t">Concept checks</span></h2>
+<p class="muted">Written for these notes.</p>
+<div class="q"><p class="qh">1 · Bigger P</p><p>With P control only, what \(K_p\) brings the steady offset down to 5 mm? Does the decay rate change?</p>
+<details><summary>Answer</summary><div><p>\(0.12/(4+K_p)=0.005\Rightarrow K_p=20\u{N/m}\). No: the poles are \(-1\pm j\sqrt{3+K_p}\), real part −1 whatever \(K_p\) (Section 13).</p></div></details></div>
+<div class="q"><p class="qh">2 · Critical damping by D</p><p>With \(K_p=8\), what \(K_d\) makes the PD loop critically damped?</p>
+<details><summary>Answer</summary><div><p>\(s^2+(2+K_d)s+12\): \(\zeta=1\) needs \(2+K_d=2\sqrt{12}=6.93\), so \(K_d=4.93\u{N\,s/m}\). (Slide 29's \(K_d=5\) is just past critical: two real poles −3 and −4.)</p></div></details></div>
+<div class="q"><p class="qh">3 · Which zero?</p><p>Why does the PID loop end with \(x_\infty=0\) under a constant load, while the PD loop does not? Answer in terms of \(G_d\).</p>
+<details><summary>Answer</summary><div><p>With I, \(G_d=s/D_{\rm cl}\) has a zero at the origin, so \(G_d(0)=0\) and \(x_\infty=0.12\,G_d(0)=0\) (stable loop). PD has \(G_d=1/(s^2+(2+K_d)s+12)\), \(G_d(0)=1/12\u{m/N}\), so \(x_\infty=10\u{mm}\).</p></div></details></div>
+<div class="q"><p class="qh">4 · Halfway to the boundary</p><p>With \(K_p=8\), \(K_d=3\), is \(K_i=30\) stable? What happens if \(K_d\) is raised to 5 with \(K_i=90\)?</p>
+<details><summary>Answer</summary><div><p>\(K_i=30\lt60\): stable. With \(K_d=5\): bound \((2+5)(4+8)=84\lt90\): still unstable. (Raising \(K_d\) to 6 gives bound 96, and 90 would then be stable.)</p></div></details></div>
+<div class="q"><p class="qh">5 · Decibels</p><p>\(|G_d(j\omega)|\) of a design is 0.1 m/N at some frequency. Express this in dB and say what it means for a 0.2 N sinusoidal load at that frequency.</p>
+<details><summary>Answer</summary><div><p>\(20\log_{10}0.1=-20\u{dB}\). The steady oscillation has amplitude \(0.1\times0.2=0.02\u{m}=20\u{mm}\).</p></div></details></div>
+<div class="q"><p class="qh">6 · Nyquist count</p><p>An open-loop-stable loop's Nyquist plot encircles −1 once anticlockwise. How many unstable closed-loop poles? Is that possible?</p>
+<details><summary>Answer</summary><div><p>\(Z=P_r+N=0+(-1)=-1\), impossible (\(Z\) counts poles). So the count is wrong: either a branch or the detour arc was missed, or \(P_r\ne0\). With \(P_r=0\), only \(N\ge0\) can occur.</p></div></details></div>
+</section>
+
+<!-- ============ 31 ============ -->
+<section id="s31"><h2><span class="n">31</span><span class="h2t">Exam taster</span></h2>
+<p><b>No MECH2413 control paper exists.</b> Control is new in MECH2413 for 2026/27, so there are no past MECH2413 control questions. The parts below are real exam parts from two related HKU courses, MECH2004 Control (2005–2011) and ELEC2245 Control Systems I (2022–2024). They were chosen because the C2 slides alone are enough to answer them; part 5 also uses the rise-time estimate from the Beyond box in Section 9. There is one part for each main question type, newest first. Every related-course part, including the other parts of these questions, is solved on <a href="guide-C2a.html">Exam guide · C2a</a> and <a href="guide-C2b.html">Exam guide · C2b</a>.</p>
+
+<div class="q"><div class="src"><b>ELEC2245 Dec 2024 Q1(c)</b><span>6 marks</span><span class="older">Related course</span><a class="guide" href="guide-C2a.html#C2-3">C2.3 · step response by partial fractions</a></div>
+<p><b>Q1. (b)</b> Consider the following closed-loop system. Suppose \(D_c(s)=1\), and \(G(s)=\dfrac{3s+5}{s^2+s-2}\).</p>
+<div class="figure"><div id="tst-bd1"></div><p class="cap">Fig. 1 (redrawn): unity negative feedback around \(D_c(s)G(s)\).</p></div>
+<p><b>(c)</b> Let the input be \(r(t)=1(t)\). Please find the time-domain solution of the system output \(y(t)\) with zero initial conditions. What is the steady-state value of \(y(t)\)?</p>
+<p class="flag">\(1(t)\) is the unit step: 0 for \(t\lt0\), 1 for \(t\ge0\); its transform is \(1/s\).</p>
+<details><summary>Hint</summary><div><p>Close the loop first: \(T=G/(1+G)\). Its denominator factors into two real roots, so \(Y=T/s\) splits by the cover-up rule (Section 7). The steady value is \(T(0)\) if the loop is stable (Section 11).</p></div></details>
+<details><summary>Answer</summary><div>
+<ol class="steps">
+<li>Closed loop: \[\begin{aligned}T&=\frac{G}{1+G}=\frac{3s+5}{s^2+s-2+3s+5}\\&=\frac{3s+5}{(s+1)(s+3)}.\end{aligned}\]</li>
+<li>Unit step \(R=1/s\): \(Y(s)=\dfrac{3s+5}{s(s+1)(s+3)}\).</li>
+<li>Cover-up: \(s=0\): \(\frac{5}{1\cdot3}=\frac53\); \(s=-1\): \(\frac{2}{(-1)(2)}=-1\); \(s=-3\): \(\frac{-4}{(-3)(-2)}=-\frac23\).</li>
+<li>Invert term by term; check \(y(0)=\frac53-1-\frac23=0\) ✓.</li>
+<li>Poles \(-1,-3\) are in the left half-plane, so the final-value theorem applies: \(y_{ss}=\lim_{s\to0}sY=T(0)=\frac53\).</li></ol>
+\[\boxed{\begin{aligned}y(t)&=\tfrac53-e^{-t}-\tfrac23e^{-3t},\ t\ge0\\ y_{ss}&=\tfrac53\end{aligned}}\]
+</div></details></div>
+
+<div class="q"><div class="src"><b>ELEC2245 May 2024 Q4(a)</b><span>5 marks</span><span class="older">Related course</span><a class="guide" href="guide-C2b.html#C2-6">C2.6 · Routh range of gains</a></div>
+<p><b>Q4.</b> Consider a control plant \(G(s)\) with a PI controller \(D_c(s)\) under the feedback control framework, as shown in Fig. 3.</p>
+<div class="figure"><div id="tst-bd2"></div><p class="cap">Fig. 3 (redrawn): \(D_c(s)\) and \(G(s)\) in the forward path, \(H(s)\) in the feedback path.</p></div>
+<p>Suppose \(G(s)\) and \(D_c(s)\) are given as follows \[G(s)=\frac{1}{(s+1)(s+3)},\]\[D_c(s)=\frac{k_ps+k_I}{s}.\]</p>
+<p><b>(a)</b> Let \(H(s)=1\). Find the range of \(k_p\) and \(k_I\) such that the closed-loop system is stable (Hint: using Routh array).</p>
+<details><summary>Hint</summary><div><p>Characteristic polynomial from \(1+D_cG=0\) (Section 16), then the Routh array for a cubic (Section 18). Two gains, so the answer is a region in the \((k_p,k_I)\) plane, not one interval.</p></div></details>
+<details><summary>Answer</summary><div>
+<ol class="steps">
+<li>Multiply \(1+D_cG=0\) by \(s(s+1)(s+3)\): \[\begin{aligned}&s(s+1)(s+3)+k_ps+k_I\\&=s^3+4s^2+(3+k_p)s+k_I=0.\end{aligned}\]</li>
+<li>Routh first column: \(1,\ 4,\ \dfrac{4(3+k_p)-k_I}{4},\ k_I\).</li>
+<li>All positive: \(k_I\gt0\) and \(4(3+k_p)\gt k_I\). On the boundary \(k_I=4(k_p+3)\) the poles \(\pm j\sqrt{k_p+3}\) sit on the imaginary axis (e.g. \(k_p=2\), \(k_I=20\): \(\pm j\sqrt5\u{rad/s}\)).</li></ol>
+\[\boxed{\begin{aligned}&0\lt k_I\lt4(k_p+3),\\&\text{i.e. } k_I\gt0,\ k_p\gt\tfrac{k_I}{4}-3\end{aligned}}\]
+</div></details></div>
+
+<div class="q"><div class="src"><b>ELEC2245 May 2024 Q6(b)</b><span>5 marks</span><span class="older">Related course</span><a class="guide" href="guide-C2b.html#C2-10">C2.10 · margins from a Bode plot</a></div>
+<p><b>Q6.</b> Consider the system in Fig. 4. Suppose the transfer function of the plant to be controlled is</p>
+\[G(s)=\frac{1}{(s/0.5+1)(s+1)(s/2+1)}.\]
+<div class="figure"><div id="tst-bd3"></div><p class="cap">Fig. 4 (redrawn): unity negative feedback around \(D_c(s)G(s)\).</p></div>
+<p><b>(a)</b> Suppose \(D_c(s)=K\). Fig. 5 shows the Bode plot of \(L(s)=KD_c(s)G(s)\) with \(K=10\). [Part (a) asks for the breakpoints, bandwidth, crossover frequency and the \(K\) for neutral stability; solved on the guide.]</p>
+<p><b>(b)</b> Based on Fig. 5, determine the values of \(K\) such that the system has a gain margin equal to 5 (i.e., GM = 5) and a phase margin approximately equal to 45° (i.e., PM ≈ 45°), respectively. Provide the details of how you got the results.</p>
+<div class="figure"><p class="ttl">Fig. 5 data tips (\(K=10\)), as printed on the plot</p>
+<div class="scroll"><table style="width:auto;min-width:17rem">
+<thead><tr><th>tip</th><th>\(\omega\) (rad/s)</th><th>\(|L|\)</th><th>\(\omega\) (rad/s)</th><th>phase</th></tr></thead><tbody>
+<tr><td>1</td><td>0.176</td><td>9.246</td><td>0.176</td><td>−34.5°</td></tr>
+<tr><td>2</td><td>0.402</td><td>7.071</td><td>0.403</td><td>−72.2°</td></tr>
+<tr><td>3</td><td>0.996</td><td>2.837</td><td>0.998</td><td>−134.9°</td></tr>
+<tr><td>4</td><td>1.764</td><td>1.007</td><td>1.756</td><td>−175.7°</td></tr>
+<tr><td>5</td><td>1.872</td><td>0.8850</td><td>1.874</td><td>−180.0°</td></tr>
+</tbody></table></div>
+<p class="cap">The magnitude plot (left pair of columns) and the phase plot (right pair) carry their own tips at almost the same frequencies. The plot itself runs from 0.01 to 100 rad/s: \(|L|\) flat at 10, then falling; phase from 0° to −270°.</p></div>
+<p class="flag">“\(L=KD_c(s)G(s)\) with \(D_c=K\)” would count \(K\) twice; the plot (flat at 10 for \(K=10\)) shows \(L=KG\), so \(K\) is counted once.</p>
+<details><summary>Hint</summary><div><p>Changing \(K\) scales \(|L|\) at every frequency but leaves the phase alone (Section 24). GM: use the tip where the phase is −180°. PM = 45°: find the tip where the phase is \(-180^\circ+45^\circ=-135^\circ\) and choose \(K\) so that \(|L|=1\) there.</p></div></details>
+<details><summary>Answer</summary><div>
+<ol class="steps">
+<li>GM at \(K=10\): tip 5, phase −180° at \(\omega\approx1.87\u{rad/s}\), \(|L|=0.885\), so \(\mathrm{GM}_{10}=1/0.885=1.13\).</li>
+<li>GM is proportional to \(1/K\). For GM \(=5\): \[\begin{aligned}K=\frac{10\times1.13}{5}\approx2.26.\end{aligned}\] (Exact: neutral \(K=11.25\), so \(K=11.25/5=2.25\).)</li>
+<li>PM \(\approx45^\circ\): tip 3, phase −134.9° at \(\omega\approx1.0\u{rad/s}\), \(|L|=2.837\). Make that frequency the crossover: \[\begin{aligned}K=\frac{10}{2.837}\approx3.5\ \text{(exact 3.54)}.\end{aligned}\]</li></ol>
+\[\boxed{\begin{aligned}\text{GM}=5:&\ K\approx2.25\\ \text{PM}\approx45^\circ:&\ K\approx3.5\end{aligned}}\]
+</div></details></div>
+
+<div class="q"><div class="src"><b>ELEC2245 Dec 2024 Q5(b)</b><span>5 marks</span><span class="older">Related course</span><a class="guide" href="guide-C2a.html#C2-5">C2.5 · steady-state error</a></div>
+<p><b>Q5.</b> Consider the two feedback systems shown in Fig. 6. [System (b), with a prefilter \(K_2\) and gain \(K_3\), is needed only for parts (a) and (c), solved on the guide.]</p>
+<div class="figure"><div id="tst-bd4"></div><p class="cap">Fig. 6a (redrawn): integral controller \(K_1/s\) and plant \(K_0/(4s+1)\), unity negative feedback.</p></div>
+<p><b>(a)</b> Let \(K_0=1\). Determine values of \(K_1\), \(K_2\), and \(K_3\) such that both systems have zero steady-state error to step inputs (i.e., both are type I systems) and such that \(K_v=1\) in both cases. [Answer on the guide: \(K_1=1\).]</p>
+<p><b>(b)</b> Suppose \(K_0\) changes to \(K_0=K_0+\delta K_0\) (where \(\delta K_0\) is a small change in the nominal value of gain \(K_0\)). Prove that the system in Fig. 6a is still a type I system in spite of the perturbation in \(K_0\). (Hint: Using the final value theorem).</p>
+<p class="flag">“Type I” is used here to mean zero steady-state error to a step (Section 11’s Beyond box gives the full definition).</p>
+<details><summary>Hint</summary><div><p>Write \(E/R=1/(1+L)\) with the changed gain. Check the loop is still stable before using the final-value theorem (Section 11), then look for the factor \(s\) in the numerator: where does it come from (Section 15)?</p></div></details>
+<details><summary>Answer</summary><div>
+<ol class="steps">
+<li>With \(K_0\to K_0+\delta K_0\): \(L=\dfrac{K_1(K_0+\delta K_0)}{s(4s+1)}\), so \[\begin{aligned}\frac ER&=\frac{1}{1+L}\\&=\frac{s(4s+1)}{s(4s+1)+K_1(K_0+\delta K_0)}.\end{aligned}\]</li>
+<li>Stability: \(4s^2+s+K_1(K_0+\delta K_0)\) has all coefficients positive while \(K_1(K_0+\delta K_0)\gt0\), true for a small \(\delta K_0\). So the FVT applies.</li>
+<li>Unit step: \[\begin{aligned}e_{ss}&=\lim_{s\to0}s\cdot\frac ER\cdot\frac1s\\&=\frac{0}{K_1(K_0+\delta K_0)}=0.\end{aligned}\] Only \(K_v\) changes, to \(K_1(K_0+\delta K_0)\).</li>
+<li>Why: the \(s\) in the numerator comes from the integrator \(K_1/s\), not from a gain value, so no change of \(K_0\) can remove it. (System (b) relied on \(K_2K_3=1+K_3K_0\) holding exactly: with \(\delta K_0=0.1\) its step error becomes \(-0.023\).)</li></ol>
+\[\boxed{e_{ss,\text{step}}=0\ \text{for any small }\delta K_0}\]
+</div></details></div>
+
+<div class="q"><div class="src"><b>MECH2004 Aug 2010 (special exam) Q2(a)–(b)</b><span>6 + 14 marks</span><span class="older">Related course</span><span class="pill">Beyond the slides</span><a class="guide" href="guide-C2a.html#C2-2">C2.2 · transfer functions</a><a class="guide" href="guide-C2b.html#C2-7">C2.7 · pole placement</a></div>
+<p><b>2.</b> The following block diagram represents simplified tracking control of a computer disk drive.</p>
+<div class="figure"><div id="tst-bd5"></div><p class="cap">Figure Q2 (redrawn): PID controller; disturbance \(D(s)\) added before the plant \(8/s^2\); unity negative feedback.</p></div>
+<p><b>(a)</b> Find the output due to the reference input \(R(s)\) and disturbance \(D(s)\), respectively. (You need to use the typical representation for a PID controller in this part.)</p>
+<p><b>(b)</b> Design a controller that is able to provide a damping ratio of no less than 0.8 and a rise time less than 0.6 seconds for the closed-loop system and at the same time able to reject any step disturbance.</p>
+<p class="flag">The signs at the first junction are not legible on the scan; read as “+” on \(R\) and “−” on the fed-back \(Y\). “Rise time” is read as the 10–90% rise time, \(t_r\approx1.8/\omega_n\) (Section 9, Beyond box). (b) is open-ended: the answer shown is one valid design.</p>
+<details><summary>Hint</summary><div><p>(a) Write the PID as one fraction over \(s\); \(D\) enters before the plant, so its numerator is the plant alone (Section 12). (b) “Reject any step disturbance” decides the controller type (Section 15). The closed loop is third order, so place a dominant pair from \(\zeta\) and \(t_r\) plus a fast third pole, then match coefficients (Section 19).</p></div></details>
+<details><summary>Answer</summary><div>
+<ol class="steps">
+<li>(a) \(D_c=K_P+\dfrac{K_I}{s}+K_Ds=\dfrac{K_Ds^2+K_Ps+K_I}{s}\); \(L=D_c\dfrac{8}{s^2}\). Every closed-loop TF has denominator \(\Delta(s)=s^3(1+L)\).</li>
+<li>From \(R\): \(Y/R=L/(1+L)\). From \(D\): \(Y/D=(8/s^2)/(1+L)\), numerator \(8s\). Superposition: \(Y=Y_R+Y_D\).</li>
+<li>(b) Type: with PD, a unit step \(D\) leaves \(y_{ss}=1/K_P\ne0\). With PID, \(Y/D\) has the factor \(s\), so \(y_{ss}=\lim_{s\to0}s\cdot\frac{8s}{\Delta}\cdot\frac1s=0\) (stable loop). Use <b>PID</b>.</li>
+<li>Specs: \(\zeta\ge0.8\); \(t_r\approx1.8/\omega_n\lt0.6\u{s}\Rightarrow\omega_n\gt3\u{rad/s}\). Choose \(\zeta=0.8\), \(\omega_n=4\u{rad/s}\): pair \(-3.2\pm j2.4\); third pole at \(5\times3.2\): \(s=-16\).</li>
+<li>Desired: \[\begin{aligned}&(s^2+6.4s+16)(s+16)\\&=s^3+22.4s^2+118.4s+256.\end{aligned}\] Match with \(\Delta\): \(8K_D=22.4\), \(8K_P=118.4\), \(8K_I=256\).</li>
+<li>Check: Routh \(22.4\times118.4=2652\gt256\) ✓. Simulated: rise time about 0.07 s (\(\lt0.6\) ✓); overshoot 16.5% from the PID zeros; a unit disturbance step peaks at 0.051 at 0.34 s and returns to 0 ✓.</li></ol>
+\[\boxed{\begin{aligned}Y_R&=\frac{8(K_Ds^2+K_Ps+K_I)}{\Delta(s)}R(s)\\ Y_D&=\frac{8s}{\Delta(s)}D(s)\\ \Delta(s)&=s^3+8K_Ds^2\\&\quad+8K_Ps+8K_I\end{aligned}}\]
+\[\boxed{\begin{aligned}&\text{PID: }K_P=14.8,\ K_I=32,\\&K_D=2.8;\ \text{poles }-3.2\pm j2.4,\\&\text{and }-16\end{aligned}}\]
+</div></details></div>
+</section>
+</main>
+</div>
+
+<script>
+/* MECH2413 shared helpers (frozen with TEMPLATE.html).
+   css(v)            read a CSS variable (colours follow light/dark mode)
+   plot(canvas,o)    line graphs (curves, segments, points) — same API as MATH1851
+   FBD.draw(el,o,items)  free-body diagrams and structure sketches as inline SVG
+   redraws[]         functions re-run on resize and on colour-scheme change */
+const root=document.documentElement;
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+const redraws=[];
+const $=id=>document.getElementById(id);
+function range(a,b,s){const r=[];for(let v=a;v<=b+1e-9;v+=s)r.push(+v.toFixed(6));return r;}
+const fmt=(v,d=3)=>{if(!isFinite(v))return '∞';let s=v.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s.replace('-','−');};
+
+function plot(cv,o){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  if(!W||!H) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=css('--card'); g.fillRect(0,0,W,H);
+  const pl=o.pl||34,pr=12,pt=12,pb=26;
+  const X=x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr);
+  const Y=y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb);
+  const font='11px Inter, system-ui, sans-serif';
+  g.font=font; g.lineWidth=1;
+  const xt=o.xticks||range(Math.ceil(o.xmin/(o.xstep||1))*(o.xstep||1),o.xmax,o.xstep||1).map(v=>[v,fmt(v,2)]);
+  const yt=o.yticks||range(Math.ceil(o.ymin/(o.ystep||1))*(o.ystep||1),o.ymax,o.ystep||1).map(v=>[v,fmt(v,2)]);
+  g.strokeStyle=css('--grid');
+  xt.forEach(([v])=>{g.beginPath();g.moveTo(X(v),pt);g.lineTo(X(v),H-pb);g.stroke();});
+  yt.forEach(([v])=>{g.beginPath();g.moveTo(pl,Y(v));g.lineTo(W-pr,Y(v));g.stroke();});
+  g.strokeStyle=css('--axis'); g.lineWidth=1.2;
+  if(o.ymin<=0&&o.ymax>=0){g.beginPath();g.moveTo(pl,Y(0));g.lineTo(W-pr,Y(0));g.stroke();}
+  if(o.xmin<=0&&o.xmax>=0){g.beginPath();g.moveTo(X(0),pt);g.lineTo(X(0),H-pb);g.stroke();}
+  g.fillStyle=css('--muted'); g.textAlign='center'; g.textBaseline='top';
+  xt.forEach(([v,l])=>{ if(l!=='0'||!(o.xmin<0)) g.fillText(l,X(v),H-pb+6);});
+  g.textAlign='right'; g.textBaseline='middle';
+  yt.forEach(([v,l])=>{ if(l!=='0') g.fillText(l,pl-6,Y(v));});
+  if(o.xlabel){g.textAlign='right';g.textBaseline='bottom';g.fillText(o.xlabel,W-pr,H-pb-3);}
+  if(o.ylabel){g.textAlign='left';g.textBaseline='top';g.fillText(o.ylabel,pl+4,pt+2);}
+  g.save(); g.beginPath(); g.rect(pl,pt,W-pl-pr,H-pt-pb); g.clip();
+  const span=o.ymax-o.ymin;
+  (o.fills||[]).forEach(c=>{const N=300;g.fillStyle=c.color;g.globalAlpha=c.alpha||.25;g.beginPath();g.moveTo(X(c.from),Y(0));
+    for(let i=0;i<=N;i++){const x=c.from+(c.to-c.from)*i/N;g.lineTo(X(x),Y(c.f(x)));}g.lineTo(X(c.to),Y(0));g.closePath();g.fill();g.globalAlpha=1;});
+  (o.curves||[]).forEach(c=>{
+    const a=c.from!==undefined?c.from:o.xmin, b=c.to!==undefined?c.to:o.xmax, N=c.n||700;
+    g.strokeStyle=c.color; g.lineWidth=c.width||2.4; g.setLineDash(c.dash||[]); g.globalAlpha=c.alpha||1;
+    g.beginPath(); let pen=false, py=null;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=c.f(x);
+      if(!isFinite(y)||Math.abs(y)>span*20){pen=false;py=null;continue;}
+      if(pen&&py!==null&&Math.abs(y-py)>span*0.5&&!c.jumps){pen=false;}
+      if(!pen){g.moveTo(X(x),Y(y));pen=true;} else g.lineTo(X(x),Y(y));
+      py=y;
+    }
+    g.stroke(); g.setLineDash([]); g.globalAlpha=1;
+  });
+  (o.segs||[]).forEach(s=>{g.strokeStyle=s.color;g.lineWidth=s.width||2;g.setLineDash(s.dash||[]);g.beginPath();g.moveTo(X(s.x1),Y(s.y1));g.lineTo(X(s.x2),Y(s.y2));g.stroke();g.setLineDash([]);});
+  g.restore();
+  (o.pts||[]).forEach(p=>{
+    g.beginPath(); g.arc(X(p.x),Y(p.y),p.r||5,0,7);
+    if(p.open){g.fillStyle=css('--card');g.fill();g.strokeStyle=p.color;g.lineWidth=2;g.stroke();}
+    else{g.fillStyle=p.color;g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();}
+    if(p.label){g.font='600 12px Inter, system-ui, sans-serif';g.fillStyle=p.color;g.textAlign=p.align||'left';g.textBaseline='bottom';g.fillText(p.label,X(p.x)+(p.align==='right'?-8:8),Y(p.y)-6);g.font=font;}
+  });
+}
+
+/* ---------------- FBD: free-body diagrams as SVG ----------------
+ FBD.draw(el,{x0,x1,y0,y1,px,pad},items) — world units, y up; px = pixels per unit.
+ Item types (t):
+  beam{x1,x2,y,h(px,10),cls}      rect{x,y,w,h,cls}    poly{pts,cls}     member{p:[[x,y],[x,y]],w(px,9)}
+  pin{x,y,rot}  roller{x,y,rot}  fixed{x,y,side,len}  guide{x,y,side}  hinge{x,y}  sleeve{x,y,side}
+  force{x,y,ang,len,lbl,k,at:'tip'|'tail'}   moment{x,y,r,sense:'ccw'|'cw',lbl,k,start}
+  dist{x1,x2,y,q1,q2,lbl,n,k,h}   dim{x1,x2,y,lbl}  vdim{y1,y2,x,lbl}   text{x,y,s,cls,anchor,dx,dy}
+  dot{x,y,r,k}  circle{x,y,r(units),cls}  cg{x,y,lbl}  line{p,cls}  cut{p}  axes{x,y,len,lx,ly}
+ k (colour role): force = applied load (red), react = support reaction (teal), load = distributed (orange), good = cut/internal (green)
+ rot (deg, clockwise) turns a support: 0 = ground below, 90 = ground on the left, 180 = above, 270 = right.
+ side for walls: 'left' | 'right' | 'top' | 'bottom' = where the wall is. */
+const FBD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)if(attrs[k]!==undefined)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function label(parent,x,y,s,cls,anchor,base){
+    const t=el('text',{x:x,y:y,'text-anchor':anchor||'middle','dominant-baseline':base||'middle',class:cls||''},parent);
+    const sym=/^[A-Za-zα-ωΑ-Ω](['′]*)(_[A-Za-z0-9,]+)?$/.test(s)||/^[A-Za-zα-ω]_?[A-Za-z0-9]*\s*=/.test(s);
+    if(sym) t.classList.add('it');
+    const m=/^([^_]*)_(\{[^}]*\}|[A-Za-z0-9,]+)(.*)$/.exec(s);
+    if(m){t.appendChild(document.createTextNode(m[1]));const sub=el('tspan',{dy:4,'font-size':'10'},t);sub.textContent=m[2].replace(/[{}]/g,'');
+      if(m[3]){const r=el('tspan',{dy:-4},t);r.textContent=m[3];}}
+    else t.textContent=s;
+    return t;
+  }
+  function head(g,tx,ty,ux,uy,cls,L=10,W=8){const bx=tx-ux*L,by=ty-uy*L,nx=-uy,ny=ux;
+    el('polygon',{points:`${tx},${ty} ${bx+nx*W/2},${by+ny*W/2} ${bx-nx*W/2},${by-ny*W/2}`,class:cls,'stroke-width':1},g);}
+  function hatchLine(g,x1,y1,x2,y2,side){ // ground line with hatch on 'side' (+1: below/left in local frame)
+    el('line',{x1,y1,x2,y2,class:'ground'},g);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,nx=-uy*side,ny=ux*side;
+    for(let s=4;s<L;s+=7){const px=x1+ux*s,py=y1+uy*s;el('line',{x1:px,y1:py,x2:px+nx*7-ux*6,y2:py+ny*7-uy*6,class:'hatch'},g);}
+  }
+  const rotOfSide={bottom:0,left:90,top:180,right:270};
+  function draw(target,o,items){
+    const px=o.px||40,pad=o.pad||30;
+    const W=(o.x1-o.x0)*px+2*pad,H=(o.y1-o.y0)*px+2*pad;
+    const X=x=>pad+(x-o.x0)*px,Y=y=>pad+(o.y1-y)*px;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,class:'fbd',role:'img','aria-label':o.alt||'diagram'});
+    svg.style.maxWidth=(o.maxw||W)+'px'; // never upscale beyond natural size
+    svg.style.margin='0 auto';
+    const g0=el('g',{},svg);
+    items.forEach(it=>{
+      const k=it.k||'force';
+      switch(it.t){
+      case 'beam':{const h=it.h||10;el('rect',{x:X(it.x1),y:Y(it.y)-h/2,width:(it.x2-it.x1)*px,height:h,class:it.cls||'member',rx:1.5},g0);break;}
+      case 'rect':{el('rect',{x:X(it.x),y:Y(it.y+it.h),width:it.w*px,height:it.h*px,class:it.cls||'member'},g0);break;}
+      case 'poly':{el('polygon',{points:it.pts.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'member'},g0);break;}
+      case 'line':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:it.cls||'ink'},g0);break;}
+      case 'cut':{el('polyline',{points:it.p.map(p=>X(p[0])+','+Y(p[1])).join(' '),class:'cut'},g0);break;}
+      case 'member':{const w=it.w||9,pts=it.p.map(p=>X(p[0])+','+Y(p[1])).join(' ');
+        el('polyline',{points:pts,style:`stroke:var(--ink);stroke-width:${w+2.4};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);
+        el('polyline',{points:pts,style:`stroke:var(--grid);stroke-width:${w};fill:none;stroke-linecap:round;stroke-linejoin:round`},g0);break;}
+      case 'pin':case 'roller':{const g=el('g',{transform:`rotate(${it.rot||0} ${X(it.x)} ${Y(it.y)})`},g0);const cx=X(it.x),cy=Y(it.y);
+        el('polygon',{points:`${cx},${cy} ${cx-11},${cy+17} ${cx+11},${cy+17}`,class:'sup'},g);
+        let gy=cy+17;
+        if(it.t==='roller'){el('circle',{cx:cx-6,cy:gy+4,r:3.6,class:'sup'},g);el('circle',{cx:cx+6,cy:gy+4,r:3.6,class:'sup'},g);gy+=8;}
+        hatchLine(g,cx-17,gy,cx+17,gy,1);el('circle',{cx,cy,r:3.4,class:'sup'},g);break;}
+      case 'circle':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r*px,class:it.cls||'member'},g0);break;}
+      case 'hinge':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||4.5,class:'sup'},g0);break;}
+      case 'fixed':{const len=it.len||56,cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);hatchLine(g,cx-len/2,cy,cx+len/2,cy,1);break;}
+      case 'guide':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0);
+        hatchLine(g,cx-28,cy+13,cx+28,cy+13,1);el('line',{x1:cx-17,y1:cy+1,x2:cx+17,y2:cy+1,class:'ink','stroke-width':3},g);
+        [-11,0,11].forEach(d=>el('circle',{cx:cx+d,cy:cy+7,r:3.4,class:'sup'},g));break;}
+      case 'sleeve':{const cx=X(it.x),cy=Y(it.y),rot=rotOfSide[it.side||'left'];
+        const g=el('g',{transform:`rotate(${rot} ${cx} ${cy})`},g0); // local frame: wall below, sleeve standing on it
+        hatchLine(g,cx-24,cy+22,cx+24,cy+22,1);
+        el('rect',{x:cx-9,y:cy-6,width:18,height:28,class:'sup'},g);break;}
+      case 'force':{const L=it.len||48,a=(it.ang||0)*Math.PI/180,ux=Math.cos(a),uy=-Math.sin(a);
+        let tx=X(it.x),ty=Y(it.y); if(it.at==='tail'){tx+=ux*L;ty+=uy*L;}
+        const sx=tx-ux*L,sy=ty-uy*L,g=el('g',{},g0);
+        el('line',{x1:sx,y1:sy,x2:tx-ux*8,y2:ty-uy*8,class:k,'stroke-width':it.w||2.2},g);head(g,tx,ty,ux,uy,k);
+        if(it.lbl){const far=it.at==='tail'?[tx+ux*12,ty+uy*12]:[sx-ux*12,sy-uy*12];
+          label(g0,far[0]+(it.dx||0),far[1]+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'moment':{const r=it.r||20,cx=X(it.x),cy=Y(it.y),ccw=(it.sense||'ccw')==='ccw',st=(it.start!==undefined?it.start:(ccw?-120:300))*Math.PI/180,sw=1.5*Math.PI*(ccw?1:-1);
+        const pts=[];for(let i=0;i<=40;i++){const th=st+sw*i/40;pts.push([cx+r*Math.cos(th),cy-r*Math.sin(th)]);}
+        const g=el('g',{},g0);el('polyline',{points:pts.slice(0,-3).map(p=>p.join(',')).join(' '),class:k,style:'fill:none','stroke-width':2.2},g);
+        const th=st+sw,ux=ccw?-Math.sin(th):Math.sin(th),uy=ccw?-Math.cos(th):Math.cos(th);head(g,pts[40][0],pts[40][1],ux,uy,k,9,8);
+        if(it.lbl){const la=st+sw/2;label(g0,cx+(r+14)*Math.cos(la)+(it.dx||0),cy-(r+14)*Math.sin(la)+(it.dy||0),it.lbl,'lbl-'+k);}break;}
+      case 'dist':{const h=it.h||10,yb=Y(it.y)-h/2-1,x1=X(it.x1),x2=X(it.x2),q1=it.q1,q2=it.q2,kk=it.k||'load';
+        el('polygon',{points:`${x1},${yb-q1} ${x2},${yb-q2} ${x2},${yb} ${x1},${yb}`,class:'loadfill','fill-opacity':.8},g0);
+        const n=it.n||Math.max(3,Math.round((x2-x1)/26));
+        for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,q=q1+(q2-q1)*i/n;if(q<9)continue;
+          el('line',{x1:x,y1:yb-q,x2:x,y2:yb-7,class:kk,'stroke-width':1.4},g0);head(g0,x,yb,0,1,kk,7,6);}
+        if(it.lbl){const lx=it.lx!==undefined?X(it.lx):(q2>=q1?x2:x1),ly=yb-Math.max(q1,q2)-10;label(g0,lx+(it.dx||0),ly+(it.dy||0),it.lbl,'lbl-'+kk);}break;}
+      case 'dim':{const y=Y(it.y),x1=X(it.x1),x2=X(it.x2);const g=el('g',{},g0);
+        el('line',{x1,y1:y,x2,y2:y,class:'dim'},g);[x1,x2].forEach(x=>el('line',{x1:x,y1:y-5,x2:x,y2:y+5,class:'dim'},g));
+        head(g,x1,y,-1,0,'dim',7,5);head(g,x2,y,1,0,'dim',7,5);
+        if(it.lbl)label(g0,(x1+x2)/2,y+(it.below?11:-9),it.lbl,'lbl-dim');break;}
+      case 'vdim':{const x=X(it.x),y1=Y(it.y1),y2=Y(it.y2);const g=el('g',{},g0);
+        el('line',{x1:x,y1,x2:x,y2,class:'dim'},g);[y1,y2].forEach(y=>el('line',{x1:x-5,y1:y,x2:x+5,y2:y,class:'dim'},g));
+        head(g,x,y1,0,1,'dim',7,5);head(g,x,y2,0,-1,'dim',7,5);
+        if(it.lbl)label(g0,x+(it.left?-8:8),(y1+y2)/2,it.lbl,'lbl-dim',it.left?'end':'start');break;}
+      case 'text':{label(g0,X(it.x)+(it.dx||0),Y(it.y)+(it.dy||0),it.s,it.cls||'',it.anchor);break;}
+      case 'dot':{el('circle',{cx:X(it.x),cy:Y(it.y),r:it.r||3.5,class:it.k||'react'},g0);break;}
+      case 'cg':{const cx=X(it.x),cy=Y(it.y),r=7;el('circle',{cx,cy,r,style:'fill:var(--card);stroke:var(--ink);stroke-width:1.4'},g0);
+        el('path',{d:`M${cx},${cy} L${cx+r},${cy} A${r},${r} 0 0 0 ${cx},${cy-r} Z M${cx},${cy} L${cx-r},${cy} A${r},${r} 0 0 0 ${cx},${cy+r} Z`,style:'fill:var(--ink)'},g0);
+        if(it.lbl)label(g0,cx+12,cy-11,it.lbl,'lbl-good','start');break;}
+      case 'axes':{const L=it.len||34,cx=X(it.x),cy=Y(it.y),g=el('g',{},g0);
+        el('line',{x1:cx,y1:cy,x2:cx+L-6,y2:cy,class:'dim'},g);head(g,cx+L,cy,1,0,'dim',7,5);
+        el('line',{x1:cx,y1:cy,x2:cx,y2:cy-L+6,class:'dim'},g);head(g,cx,cy-L,0,-1,'dim',7,5);
+        label(g0,cx+L+8,cy,it.lx||'x','lbl-dim it');label(g0,cx,cy-L-9,it.ly||'y','lbl-dim it');break;}
+      }
+    });
+    if(typeof target==='string')target=document.getElementById(target);
+    target.innerHTML='';target.appendChild(svg);return svg;
+  }
+  /* panels(id,[{o,items,cap},...]) — several small diagrams side by side (wrap on phones) */
+  function panels(id,list){const host=typeof id==='string'?document.getElementById(id):id;host.innerHTML='';const wrap=document.createElement('div');wrap.className='pair';host.appendChild(wrap);
+    list.forEach(p=>{const d=document.createElement('div');wrap.appendChild(d);const s=document.createElement('div');d.appendChild(s);draw(s,p.o,p.items);
+      if(p.cap){const c=document.createElement('p');c.className='sub';c.innerHTML=p.cap;d.appendChild(c);}});}
+  return {draw,panels};
+})();
+
+/* ---------------- page furniture ---------------- */
+(function(){
+  let t=null;
+  const rerun=()=>redraws.forEach(f=>{try{f();}catch(e){console.error(e);}});
+  addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(rerun,120);});
+  if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',rerun);
+  addEventListener('load',rerun);
+  // highlight the contents entry of the section being read
+  const links=[...document.querySelectorAll('nav.toc a[href^="#"]')];
+  if('IntersectionObserver' in window&&links.length){
+    const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.removeAttribute('aria-current'));const a=map.get(e.target.id);if(a)a.setAttribute('aria-current','true');}}),{rootMargin:'0px 0px -70% 0px'});
+    map.forEach((a,id)=>{const s=document.getElementById(id);if(s)io.observe(s);});
+  }
+})();
+
+
+</script>
+<script>
+/* note-C2 figures. Page-level helpers only (shared helpers above are frozen).
+   BD.draw(id,{w,h,alt},items): block diagrams as inline SVG (copied from note-C1).
+   SIM: RK4 integration of m x'' + c x' + k x = F + d with PID F = -(Kp x + Ki ∫x + Kd x').
+   overlay(): parametric paths, crosses and labels drawn on a plot() canvas with the same axes. */
+const BD=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)if(a[k]!==undefined)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function txt(g,x,y,s,cls,a,size){const t=el('text',{x,y,'text-anchor':a||'middle','dominant-baseline':'middle',class:cls||''},g);if(size)t.setAttribute('font-size',size);t.textContent=s;return t;}
+  function draw(id,o,items){
+    const svg=el('svg',{viewBox:`0 0 ${o.w} ${o.h}`,class:'fbd',role:'img','aria-label':o.alt||'block diagram'});
+    svg.style.maxWidth=(o.maxw||o.w)+'px';svg.style.margin='0 auto';
+    items.forEach(it=>{
+      if(it.t==='box'){el('rect',{x:it.x,y:it.y,width:it.w,height:it.h,rx:5,class:it.k==='plain'?'member':'member2'},svg);
+        txt(svg,it.x+it.w/2,it.y+it.h/2-(it.sub?7:0),it.s,'',null,it.fs||14);
+        if(it.sub)txt(svg,it.x+it.w/2,it.y+it.h/2+10,it.sub,'lbl-dim',null,11);}
+      else if(it.t==='sum'){el('circle',{cx:it.x,cy:it.y,r:11,class:'sup'},svg);txt(svg,it.x,it.y+1,'Σ','',null,13);
+        const s=it.signs||{};if(s.l)txt(svg,it.x-17,it.y-11,s.l,'lbl-dim',null,13);if(s.b)txt(svg,it.x-12,it.y+20,s.b,'lbl-dim',null,14);if(s.t)txt(svg,it.x-12,it.y-20,s.t,'lbl-dim',null,13);}
+      else if(it.t==='arr'){const cls=it.k==='fb'?'react':it.k==='good'?'good':it.k==='load'?'load':'ink';
+        const p=it.p,n=p.length,[x1,y1]=p[n-2],[x2,y2]=p[n-1],L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;
+        const pts=p.slice(0,-1).concat([[x2-ux*8,y2-uy*8]]);
+        el('polyline',{points:pts.map(q=>q.join(',')).join(' '),style:`fill:none;stroke-width:1.7;${it.dash?'stroke-dasharray:5 4;':''}`,class:cls},svg);
+        if(!it.nohead){const bx=x2-ux*9,by=y2-uy*9,nx=-uy,ny=ux;el('polygon',{points:`${x2},${y2} ${bx+nx*4},${by+ny*4} ${bx-nx*4},${by-ny*4}`,class:cls==='ink'?'':cls,style:cls==='ink'?'fill:var(--ink)':''},svg);}
+        if(it.lbl)txt(svg,it.lx,it.ly,it.lbl,it.k==='fb'?'lbl-react':it.k==='load'?'lbl-load':(it.lc||'lbl-dim'),it.a,12);}
+      else if(it.t==='txt'){txt(svg,it.x,it.y,it.s,it.cls,it.a,it.fs);}
+      else if(it.t==='rect'){el('rect',{x:it.x,y:it.y,width:it.w,height:it.h,class:it.cls||'member',style:it.style||''},svg);}
+      else if(it.t==='line'){el('polyline',{points:it.p.map(q=>q.join(',')).join(' '),class:it.cls||'ink',style:it.style||''},svg);}
+      else if(it.t==='circ'){el('circle',{cx:it.x,cy:it.y,r:it.r,class:it.cls||'sup'},svg);}
+    });
+    const host=$(id);host.innerHTML='';host.appendChild(svg);return svg;}
+  return {draw};
+})();
+
+/* ---------- small complex arithmetic and polynomials (coefficients highest power first) ---------- */
+const Cx={add:(a,b)=>[a[0]+b[0],a[1]+b[1]],sub:(a,b)=>[a[0]-b[0],a[1]-b[1]],mul:(a,b)=>[a[0]*b[0]-a[1]*b[1],a[0]*b[1]+a[1]*b[0]],
+  div:(a,b)=>{const d=b[0]*b[0]+b[1]*b[1];return[(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d];},abs:a=>Math.hypot(a[0],a[1]),arg:a=>Math.atan2(a[1],a[0])};
+function pval(c,s){let r=[0,0];c.forEach(a=>{r=Cx.add(Cx.mul(r,s),[a,0]);});return r;}
+function rat(num,den){return s=>Cx.div(pval(num,s),pval(den,s));}
+function roots(c){ // Durand–Kerner
+  const n=c.length-1,a=c.map(v=>v/c[0]);let z=[];for(let i=0;i<n;i++)z.push([Math.cos(2*Math.PI*i/n+0.4)*0.9,Math.sin(2*Math.PI*i/n+0.4)*0.9]);
+  for(let it=0;it<500;it++){z=z.map((zi,i)=>{let den=[1,0];z.forEach((zj,j)=>{if(j!==i)den=Cx.mul(den,Cx.sub(zi,zj));});return Cx.sub(zi,Cx.div(pval(a,zi),den));});}
+  return z.map(v=>[Math.abs(v[0])<1e-9?0:v[0],Math.abs(v[1])<1e-9?0:v[1]]);}
+
+/* ---------- time simulation ---------- */
+function sim(o){
+  const m=o.m||1,c=o.c===undefined?2:o.c,k=o.k===undefined?4:o.k,Kp=o.Kp||0,Ki=o.Ki||0,Kd=o.Kd||0,d=o.d===undefined?0.12:o.d,T=o.T||10,h=0.002;
+  let x=0,v=0,z=0;const out={h,x:[],F:[]};
+  const f=(x,v,z)=>{const F=-(Kp*x+Ki*z+Kd*v);return [v,(F+d-c*v-k*x)/m,x,F];};
+  for(let i=0;i*h<=T+1e-9;i++){
+    const a=f(x,v,z);out.x.push(x);out.F.push(a[3]);
+    const b=f(x+h/2*a[0],v+h/2*a[1],z+h/2*a[2]),cc=f(x+h/2*b[0],v+h/2*b[1],z+h/2*b[2]),e=f(x+h*cc[0],v+h*cc[1],z+h*cc[2]);
+    x+=h/6*(a[0]+2*b[0]+2*cc[0]+e[0]);v+=h/6*(a[1]+2*b[1]+2*cc[1]+e[1]);z+=h/6*(a[2]+2*b[2]+2*cc[2]+e[2]);
+  }
+  out.fx=t=>1000*out.x[Math.max(0,Math.min(out.x.length-1,Math.round(t/h)))];
+  out.fF=t=>out.F[Math.max(0,Math.min(out.F.length-1,Math.round(t/h)))];
+  out.peak=Math.max(...out.x.map(Math.abs))*1000;
+  let last=0;for(let i=out.x.length-1;i>=0;i--){if(Math.abs(out.x[i])>0.0005){last=(i+1)*h;break;}} out.rec=last;
+  return out;}
+
+/* ---------- overlay: paths drawn in plot() coordinates ---------- */
+function frame(cv,o){const W=cv.clientWidth,H=cv.clientHeight,pl=o.pl||34,pr=12,pt=12,pb=26;
+  return {X:x=>pl+(x-o.xmin)/(o.xmax-o.xmin)*(W-pl-pr),Y:y=>pt+(o.ymax-y)/(o.ymax-o.ymin)*(H-pt-pb),pl,pr,pt,pb,W,H};}
+function overlay(cv,o,items){
+  const g=cv.getContext('2d'),F=frame(cv,o);g.save();g.beginPath();g.rect(F.pl,F.pt,F.W-F.pl-F.pr,F.H-F.pt-F.pb);g.clip();
+  const cl=v=>Math.max(-1e4,Math.min(1e4,v));
+  (items||[]).forEach(it=>{
+    if(it.path){g.strokeStyle=it.color;g.lineWidth=it.width||2.2;g.setLineDash(it.dash||[]);g.beginPath();
+      it.path.forEach((p,i)=>{const X=cl(F.X(p[0])),Y=cl(F.Y(p[1]));i?g.lineTo(X,Y):g.moveTo(X,Y);});g.stroke();g.setLineDash([]);
+      (it.arrows||[]).forEach(i=>{const n=it.path.length,end=i>=n-1,p=end?it.path[n-2]:it.path[i],q=end?it.path[n-1]:it.path[i+1];
+        const ax=F.X(p[0]),ay=F.Y(p[1]),bx=F.X(q[0]),by=F.Y(q[1]),L=Math.hypot(bx-ax,by-ay)||1,ux=(bx-ax)/L,uy=(by-ay)/L;
+        const tx=end?bx:ax+ux*6,ty=end?by:ay+uy*6;g.fillStyle=it.color;g.beginPath();g.moveTo(tx,ty);g.lineTo(tx-ux*11-uy*5,ty-uy*11+ux*5);g.lineTo(tx-ux*11+uy*5,ty-uy*11-ux*5);g.closePath();g.fill();});}
+    if(it.cross){const X=F.X(it.cross[0]),Y=F.Y(it.cross[1]),r=it.r||5;g.strokeStyle=it.color;g.lineWidth=2.2;g.beginPath();g.moveTo(X-r,Y-r);g.lineTo(X+r,Y+r);g.moveTo(X-r,Y+r);g.lineTo(X+r,Y-r);g.stroke();}
+    if(it.dots){g.fillStyle=it.color;it.dots.forEach(p=>{g.beginPath();g.arc(F.X(p[0]),F.Y(p[1]),it.r||1.6,0,7);g.fill();});}
+    if(it.shade){g.fillStyle=it.color;g.globalAlpha=.12;const x0=F.X(it.shade[0]),x1=F.X(it.shade[1]);g.fillRect(x0,F.pt,x1-x0,F.H-F.pt-F.pb);g.globalAlpha=1;}
+  });
+  g.restore();
+  (items||[]).forEach(it=>{if(it.text){g.font=(it.bold?'600 ':'')+'11px Inter, system-ui, sans-serif';g.fillStyle=it.color||css('--muted');g.textAlign=it.align||'left';g.textBaseline='middle';g.fillText(it.text,F.X(it.at[0]),F.Y(it.at[1]));}});
+}
+/* pole map: sets [{p:[[re,im],...],col,open,label}] */
+function poleMap(id,o,sets,extra){
+  const d=()=>{const pts=[];sets.forEach(S=>S.p.forEach(p=>pts.push({x:p[0],y:p[1],color:css(S.col),open:!!S.open,r:S.r||5})));
+    const oo=Object.assign({xlabel:'σ (s⁻¹)',ylabel:'jω (rad/s)',pl:30},o,{pts});plot($(id),oo);if(extra)overlay($(id),oo,extra());};
+  redraws.push(d);d();}
+/* time plot from sim results */
+function tplot(id,o,runs,key){
+  const d=()=>{const curves=runs.map(R=>({f:key==='F'?R.r.fF:R.r.fx,color:css(R.col),width:R.w||2.2,dash:R.dash}));
+    (o.hl||[]).forEach(v=>curves.push({f:x=>v,color:css('--muted'),dash:[4,4],width:1.2}));
+    const oo=Object.assign({xlabel:'time after load / s',ylabel:key==='F'?'F / N':'x / mm',curves,pl:40},o);plot($(id),oo);if(o.extra)overlay($(id),oo,o.extra());};
+  redraws.push(d);d();}
+const logw=(a,b,n)=>{const r=[];for(let i=0;i<=n;i++)r.push(Math.pow(10,a+(b-a)*i/n));return r;};
+const decTicks=(a,b)=>{const r=[];for(let e=a;e<=b;e++)r.push([e,e<0?String(Math.pow(10,e).toFixed(-e)):String(Math.pow(10,e))]);return r;};
+
+/* ---------- s1: apparatus and FBD ---------- */
+function apparatus(id,mlabel){
+  FBD.panels(id,[
+   {o:{x0:-0.4,x1:7.6,y0:-0.9,y1:3.3,px:40,pad:16,alt:'spring-mass-damper with actuator and load'},cap:'apparatus',items:[
+    {t:'fixed',x:0,y:1.5,side:'left',len:110},
+    {t:'line',p:[[0,2.2],[0.5,2.2],[0.7,2.5],[1.0,1.9],[1.3,2.5],[1.6,1.9],[1.9,2.5],[2.2,1.9],[2.4,2.2],[3,2.2]]},
+    {t:'text',x:1.5,y:2.85,s:'spring k',cls:'lbl-dim'},
+    {t:'line',p:[[0,0.8],[1.2,0.8]]},{t:'line',p:[[1.2,0.5],[1.2,1.1]]},{t:'line',p:[[0.9,0.4],[2.0,0.4],[2.0,1.2],[0.9,1.2]]},{t:'line',p:[[2.0,0.8],[3,0.8]]},
+    {t:'text',x:1.5,y:0.05,s:'damper c',cls:'lbl-dim'},
+    {t:'rect',x:3,y:0.2,w:1.6,h:2.6,cls:'member2'},{t:'text',x:3.8,y:1.75,s:'mass'},{t:'text',x:3.8,y:1.25,s:mlabel},
+    {t:'force',x:4.6,y:2.3,ang:0,len:72,at:'tail',lbl:'F',k:'force'},{t:'force',x:4.6,y:0.9,ang:0,len:72,at:'tail',lbl:'d',k:'load'},
+    {t:'line',p:[[3,-0.45],[5.2,-0.45]],cls:'dim'},{t:'force',x:5.4,y:-0.45,ang:0,len:20,k:'good'},{t:'text',x:5.9,y:-0.45,s:'x',cls:'lbl-good it'},
+    {t:'text',x:3,y:-0.75,s:'x = 0 (target r = 0)',cls:'lbl-dim',anchor:'middle'}]},
+   {o:{x0:-0.2,x1:5.6,y0:-0.9,y1:3.3,px:40,pad:16,alt:'free-body diagram of the mass'},cap:'free-body diagram (x, v &gt; 0)',items:[
+    {t:'rect',x:1.9,y:0.3,w:1.6,h:2.4,cls:'member2'},{t:'text',x:2.7,y:1.5,s:mlabel},
+    {t:'force',x:1.9,y:2.2,ang:180,len:60,at:'tail',lbl:'kx',k:'react'},{t:'force',x:1.9,y:0.8,ang:180,len:60,at:'tail',lbl:'cv',k:'react'},
+    {t:'force',x:3.5,y:2.2,ang:0,len:60,at:'tail',lbl:'F',k:'force'},{t:'force',x:3.5,y:0.8,ang:0,len:60,at:'tail',lbl:'d',k:'load'},
+    {t:'force',x:0.9,y:-0.25,ang:0,len:28,at:'tail',k:'good'},{t:'text',x:0.55,y:-0.25,s:'+x',cls:'lbl-good'},{t:'text',x:2.7,y:-0.75,s:'m ẍ = F + d − c ẋ − k x',cls:'lbl-dim'}]}]);
+}
+apparatus('fig-app','m = 1 kg');apparatus('fig-gw','m = 2 kg');
+
+const U=sim({T:10});
+(function(){const d=()=>{plot($('cv-load'),{xmin:-1,xmax:8,ymin:0,ymax:0.16,xstep:1,ystep:0.12,ylabel:'d / N',pl:40,curves:[{f:t=>t<0?0:0.12,color:css('--warm'),jumps:true}]});};redraws.push(d);d();})();
+tplot('cv-unc',{xmin:-1,xmax:8,ymin:-6,ymax:40,xstep:1,ystep:10,hl:[30],extra:()=>[{text:'peak 34.89 mm',at:[2.1,38],color:css('--c2')},{text:'final offset 30 mm',at:[5,26],color:css('--muted')},{text:'target r = 0',at:[5,3],color:css('--c3')}]},[{r:{fx:t=>t<0?0:U.fx(t)},col:'--accent'}]);
+(function(){const d=()=>{const o={xmin:-1,xmax:8,ymin:-6,ymax:40,pl:40};overlay($('cv-unc'),o,[{path:[[-1,0],[8,0]],color:css('--c3'),dash:[5,4],width:1.4}]);};redraws.push(d);d();})();
+
+/* ---------- s4: complex pair and decaying oscillation ---------- */
+poleMap('cv-cpair',{xmin:-2.5,xmax:1,ymin:-2.5,ymax:2.5,xstep:0.5,ystep:1},[{p:[[-1,Math.sqrt(3)],[-1,-Math.sqrt(3)]],col:'--accent'}],
+  ()=>[{path:[[-1,-1.732],[-1,1.732]],color:css('--accent'),dash:[2,3],width:1},{text:'−1 + j√3',at:[-0.9,2.0],color:css('--accent'),bold:true},{text:'−1 − j√3',at:[-0.9,-2.05],color:css('--accent'),bold:true},{text:'σ = −1: decay',at:[-2.4,-0.4]}]);
+(function(){const d=()=>plot($('cv-cdecay'),{xmin:0,xmax:6,ymin:-1,ymax:1,xstep:1,ystep:0.5,xlabel:'t / s',pl:34,curves:[{f:t=>Math.exp(-t)*Math.cos(Math.sqrt(3)*t),color:css('--accent')},{f:t=>Math.exp(-t),color:css('--c3'),dash:[5,4],width:1.4},{f:t=>-Math.exp(-t),color:css('--c3'),dash:[5,4],width:1.4}]});redraws.push(d);d();})();
+
+/* ---------- s6: plant block ---------- */
+BD.draw('fig-plant',{w:440,h:110,alt:'net force into plant G'},[
+  {t:'arr',p:[[6,55],[94,55]],lbl:'F (actuator)',lx:50,ly:42},{t:'sum',x:106,y:55,signs:{l:'+',t:'+'}},
+  {t:'arr',k:'load',p:[[106,6],[106,44]],lbl:'d (load)',lx:150,ly:14},
+  {t:'arr',p:[[117,55],[200,55]],lbl:'U = F + D',lx:158,ly:42},{t:'box',x:200,y:30,w:150,h:50,s:'G(s)',sub:'1/(ms² + cs + k)'},
+  {t:'arr',p:[[350,55],[430,55]],lbl:'X',lx:390,ly:42}]);
+
+/* ---------- s8: uncontrolled poles ---------- */
+poleMap('cv-poles0',{xmin:-3,xmax:1,ymin:-2.5,ymax:2.5,xstep:1,ystep:1},[{p:[[-1,1.732],[-1,-1.732]],col:'--accent'}],
+  ()=>[{text:'−1 ± j√3',at:[-0.85,1.75],color:css('--accent'),bold:true},{text:'left half-plane: stable',at:[-2.9,-2.2]},{text:'decay rate 1 s⁻¹',at:[-2.9,0.35]}]);
+
+/* ---------- s9: damping slider ---------- */
+(function(){
+  const base=[0,2,4,6].map(c=>sim({c,T:10}));
+  function run(){
+    const c=+$('cslide').value,R=sim({c,T:10}),z=c/4;
+    const curves=base.map(B=>({f:B.fx,color:css('--axis'),width:1.2}));curves.push({f:R.fx,color:css('--accent'),width:2.6});
+    plot($('cv-damp'),{xmin:0,xmax:10,ymin:0,ymax:62,xstep:2,ystep:15,xlabel:'t / s',ylabel:'x / mm',pl:34,curves});
+    const r=roots([1,c,4]);
+    plot($('cv-damp-p'),{xmin:-8,xmax:1,ymin:-3,ymax:3,xstep:2,ystep:1,xlabel:'σ',ylabel:'jω',pl:30,curves:[],pts:r.map(p=>({x:p[0],y:p[1],color:css('--accent')}))});
+    const kind=c===0?'undamped':z<1?'underdamped':Math.abs(z-1)<1e-9?'critically damped':'overdamped';
+    const ps=r.map(p=>fmt(p[0],3)+(p[1]?(p[1]>0?' + ':' − ')+'j'+fmt(Math.abs(p[1]),3):'')).join(', ');
+    $('damp-out').innerHTML=`c = <b>${fmt(c,1)}</b> N·s/m · ζ = c/(2√(km)) = <b>${fmt(z,3)}</b> (${kind}) · poles ${ps}<br>`+
+      `peak <b>${fmt(R.peak,2)} mm</b> · final value ${c>0?'<b>30 mm</b>':'none (oscillates 0–60 mm)'}`+(z<1&&c>0?` · ω<sub>d</sub> = <b>${fmt(2*Math.sqrt(1-z*z),3)}</b> rad/s`:'');
+  }
+  $('cslide').addEventListener('input',run);
+  document.querySelectorAll('[data-c]').forEach(b=>b.addEventListener('click',()=>{$('cslide').value=b.dataset.c;run();}));
+  redraws.push(run);run();
+})();
+
+/* ---------- s12: loop and reduction example ---------- */
+BD.draw('fig-loop',{w:560,h:160,alt:'disturbance rejection loop'},[
+  {t:'arr',p:[[4,70],[54,70]],lbl:'r = 0',lx:26,ly:56},{t:'sum',x:66,y:70,signs:{l:'+',b:'−'}},
+  {t:'arr',p:[[77,70],[140,70]],lbl:'e = −x',lx:108,ly:57,lc:'lbl-good'},{t:'box',x:140,y:48,w:90,h:44,s:'C(s)',sub:'controller'},
+  {t:'arr',p:[[230,70],[294,70]],lbl:'F',lx:262,ly:57},{t:'sum',x:306,y:70,signs:{l:'+',t:'+'}},
+  {t:'arr',k:'load',p:[[306,10],[306,59]],lbl:'load d = 0.12 N',lx:380,ly:18},
+  {t:'arr',p:[[317,70],[380,70]]},{t:'box',x:380,y:48,w:90,h:44,s:'G(s)',sub:'mass'},
+  {t:'arr',p:[[470,70],[556,70]],lbl:'x',lx:535,ly:57},
+  {t:'line',p:[[515,70],[515,140],[66,140]],cls:'react',style:'fill:none;stroke-width:1.7'},{t:'arr',k:'fb',p:[[66,140],[66,82]]},
+  {t:'txt',x:290,y:152,s:'measured displacement (sensor)',cls:'lbl-react',fs:11}]);
+BD.draw('fig-bdred',{w:520,h:120,alt:'series blocks with unity feedback'},[
+  {t:'arr',p:[[4,45],[44,45]],lbl:'R',lx:22,ly:32},{t:'sum',x:56,y:45,signs:{l:'+',b:'−'}},
+  {t:'arr',p:[[67,45],[120,45]]},{t:'box',x:120,y:25,w:110,h:40,s:'1/(s+1)'},{t:'arr',p:[[230,45],[280,45]]},
+  {t:'box',x:280,y:25,w:110,h:40,s:'2/(s+3)'},{t:'arr',p:[[390,45],[512,45]],lbl:'Y',lx:470,ly:32},
+  {t:'line',p:[[440,45],[440,100],[56,100]],cls:'react',style:'fill:none;stroke-width:1.7'},{t:'arr',k:'fb',p:[[56,100],[56,57]]},
+  {t:'txt',x:250,y:112,s:'⇒  Y/R = 2/(s² + 4s + 5)',cls:'lbl-good',fs:12}]);
+
+/* ---------- s13: P control ---------- */
+const RP={0:U,4:sim({Kp:4,T:10}),8:sim({Kp:8,T:10})};
+poleMap('cv-rlP',{xmin:-3,xmax:1,ymin:-4.2,ymax:4.2,xstep:1,ystep:2},[{p:[[-1,1.732],[-1,-1.732]],col:'--c4'},{p:[[-1,2.646],[-1,-2.646]],col:'--c3'},{p:[[-1,3.317],[-1,-3.317]],col:'--accent'}],
+  ()=>[{path:[[-1,-3.873],[-1,3.873]],color:css('--muted'),width:1.4},{path:[[-1,3.3],[-1,3.873]],color:css('--muted'),arrows:[0]},{path:[[-1,-3.3],[-1,-3.873]],color:css('--muted'),arrows:[0]},{text:'p = −1 ± j√(3 + Kp)',at:[-2.95,0.4]}]);
+tplot('cv-P',{xmin:0,xmax:8,ymin:0,ymax:36,xstep:2,ystep:10,hl:[30,15,10]},[{r:RP[0],col:'--c4'},{r:RP[4],col:'--c3'},{r:RP[8],col:'--accent'}]);
+/* Beyond root locus K/(s(s+2)(s+4)) */
+(function(){
+  const pts=[];for(let i=0;i<=1200;i++){const K=Math.pow(10,-2+i*4.4/1200);roots([1,6,8,K]).forEach(r=>pts.push({x:r[0],y:r[1],r:2}));}
+  const d=()=>{const col=css('--accent');const o={xmin:-7,xmax:2,ymin:-5,ymax:5,xstep:1,ystep:1,xlabel:'σ',ylabel:'jω',pl:30};
+    plot($('cv-rlB'),Object.assign({},o,{pts:([{x:0,y:0,open:true,color:css('--c2')},{x:-2,y:0,open:true,color:css('--c2')},{x:-4,y:0,open:true,color:css('--c2')},{x:-0.845,y:0,color:css('--c3'),r:4},{x:0,y:2.828,color:css('--c4'),r:4},{x:0,y:-2.828,color:css('--c4'),r:4}])}));
+    const a=Math.PI/3;overlay($('cv-rlB'),o,[{dots:pts.map(p=>[p.x,p.y]),color:col,r:1.6},{path:[[-2,0],[-2+6*Math.cos(a),6*Math.sin(a)]],color:css('--muted'),dash:[4,4],width:1.2},{path:[[-2,0],[-2+6*Math.cos(a),-6*Math.sin(a)]],color:css('--muted'),dash:[4,4],width:1.2},
+      {text:'breakaway −0.845',at:[-1.6,-0.5],color:css('--c3')},{text:'K = 48: ±j2.83',at:[0.15,3.2],color:css('--c4')},{text:'centroid −2',at:[-3.4,0.45]}]);};
+  redraws.push(d);d();})();
+
+/* ---------- s14 PD ---------- */
+const RPD=sim({Kp:8,Kd:3,T:10});
+poleMap('cv-plPD',{xmin:-3.5,xmax:0.5,ymin:-4,ymax:4,xstep:1,ystep:2},[{p:[[-1,3.317],[-1,-3.317]],col:'--accent'},{p:[[-2.5,1.936],[-2.5,-1.936]],col:'--c3'}],()=>[{text:'D increases effective damping',at:[-3.4,-3.5]}]);
+tplot('cv-PD',{xmin:0,xmax:7,ymin:0,ymax:15,xstep:1,ystep:5,hl:[10]},[{r:RP[8],col:'--accent'},{r:RPD,col:'--c3'}]);
+
+/* ---------- s15 PI ---------- */
+const RPI=sim({Kp:8,Ki:12,T:15});
+poleMap('cv-plPI',{xmin:-1.6,xmax:0.3,ymin:-4,ymax:4,xstep:0.5,ystep:2},[{p:[[-1,3.317],[-1,-3.317]],col:'--accent'},{p:[[-0.455,3.287],[-0.455,-3.287],[-1.090,0]],col:'--c2'}],()=>[{text:'added real pole −1.09',at:[-1.55,-0.6],color:css('--c2')}]);
+tplot('cv-PI',{xmin:0,xmax:15,ymin:-5,ymax:15,xstep:5,ystep:5,hl:[0,10]},[{r:RP[8],col:'--accent'},{r:RPI,col:'--c2'}]);
+
+/* ---------- s16 four controllers ---------- */
+const RPID=sim({Kp:8,Ki:12,Kd:3,T:20});
+tplot('cv-all4',{xmin:0,xmax:10,ymin:-3.5,ymax:15,xstep:2,ystep:2.5,hl:[0]},[{r:RP[8],col:'--accent'},{r:RPD,col:'--c4'},{r:RPI,col:'--c2'},{r:RPID,col:'--c3'}]);
+
+/* ---------- s17 stability examples ---------- */
+const RS=[sim({c:2,T:8}),sim({c:0,T:8}),sim({c:-0.4,T:8})];
+tplot('cv-stab',{xmin:0,xmax:8,ymin:-110,ymax:200,xstep:2,ystep:100},[{r:RS[0],col:'--c3'},{r:RS[1],col:'--accent'},{r:RS[2],col:'--c2'}]);
+poleMap('cv-stab-p',{xmin:-1.5,xmax:0.6,ymin:-2.5,ymax:2.5,xstep:0.5,ystep:1},[{p:[[-1,1.732],[-1,-1.732]],col:'--c3'},{p:[[0,2],[0,-2]],col:'--accent'},{p:[[0.2,1.99],[0.2,-1.99]],col:'--c2'}],
+  ()=>[{shade:[0,0.6],color:css('--c2')},{text:'RHP',at:[0.15,2.25],color:css('--c2'),bold:true}]);
+
+/* ---------- s18 Ki sweep ---------- */
+const RK=[12,60,90].map(Ki=>sim({Kp:8,Kd:3,Ki,T:8}));
+tplot('cv-ki',{xmin:0,xmax:8,ymin:-60,ymax:60,xstep:2,ystep:30,hl:[0]},[{r:RK[0],col:'--c3'},{r:RK[1],col:'--c4'},{r:RK[2],col:'--c2'}]);
+poleMap('cv-ki-p',{xmin:-6.5,xmax:1,ymin:-4.5,ymax:4.5,xstep:1,ystep:2},[{p:[[-2,0],[-1.5,1.936],[-1.5,-1.936]],col:'--c3'},{p:[[-5,0],[0,3.464],[0,-3.464]],col:'--c4'},{p:[[-5.678,0],[0.339,3.967],[0.339,-3.967]],col:'--c2'}],
+  ()=>[{shade:[0,1],color:css('--c2')},{text:'RHP',at:[0.1,4.2],color:css('--c2'),bold:true}]);
+
+/* ---------- s19 pole placement map ---------- */
+poleMap('cv-place',{xmin:-5,xmax:0.5,ymin:-2.5,ymax:2.5,xstep:1,ystep:1},[{p:[[-2,0],[-1.5,1.936],[-1.5,-1.936]],col:'--muted',open:true},{p:[[-3,0.35],[-4,0.35]],col:'--c4',r:4.5},{p:[[-2,-0.35],[-3,-0.35],[-4,-0.35]],col:'--c3',r:4.5}],
+  ()=>[{text:'PD',at:[-4.9,0.75],color:css('--c4'),bold:true},{text:'PID',at:[-4.9,-0.8],color:css('--c3'),bold:true}]);
+
+/* ---------- s20 verification ---------- */
+const RD=sim({Kp:22,Ki:24,Kd:7,T:10});
+tplot('cv-ver',{xmin:0,xmax:7,ymin:-1,ymax:9,xstep:1,ystep:2,hl:[0.5,-0.5],extra:()=>[{path:[[2.230,-1],[2.230,9]],color:css('--accent'),dash:[2,3],width:1.2},{path:[[2.287,-1],[2.287,9]],color:css('--c3'),dash:[2,3],width:1.2},
+  {text:'peak 8.28 mm',at:[1.2,8.4],color:css('--accent'),bold:true},{text:'peak 3.75 mm at ln 2 s',at:[1.5,4.6],color:css('--c3'),bold:true},{text:'recovery 2.230 s / 2.287 s',at:[2.45,2],color:css('--muted')}]},[{r:RPID,col:'--accent'},{r:RD,col:'--c3'}]);
+tplot('cv-verx',{xmin:0,xmax:4.5,ymin:-0.5,ymax:9,xstep:0.5,ystep:2},[{r:RPID,col:'--accent'},{r:RD,col:'--c3'}]);
+tplot('cv-verF',{xmin:0,xmax:4.5,ymin:-0.13,ymax:0.01,xstep:0.5,ystep:0.05,hl:[-0.12],extra:()=>[{text:'−0.12 N (holds the load)',at:[2.6,-0.108]}]},[{r:RPID,col:'--accent'},{r:RD,col:'--c3'}],'F');
+
+/* ---------- s21 zeros ---------- */
+poleMap('cv-zeros',{xmin:-2.5,xmax:0.5,ymin:-2.5,ymax:2.5,xstep:0.5,ystep:1},[{p:[[-2,0],[-1.5,1.936],[-1.5,-1.936]],col:'--accent'},{p:[[-1.333,1.491],[-1.333,-1.491]],col:'--c4',open:true},{p:[[0,0]],col:'--c3',open:true}],
+  ()=>[{text:'zeros of C',at:[-1.25,1.2],color:css('--c4'),bold:true},{text:'poles of G_d',at:[-2.45,0.3],color:css('--accent'),bold:true},{text:'zero of G_d',at:[-0.75,0.35],color:css('--c3'),bold:true}]);
+
+/* ---------- s22 frequency response ---------- */
+function gdFun(Kp,Ki,Kd,m){m=m||1;return Ki?rat([1,0],[m,2+Kd,4+Kp,Ki]):rat([1],[m,2+Kd,4+Kp]);}
+(function(){
+  const G=[[8,0,0,'--accent'],[8,0,3,'--c4'],[8,12,0,'--c2'],[8,12,3,'--c3']];
+  const d=()=>{plot($('cv-gdbode'),{xmin:-2,xmax:2,ymin:-4,ymax:0,xticks:decTicks(-2,2),yticks:decTicks(-4,0),xlabel:'ω / rad/s',ylabel:'|G_d| / (m/N)',pl:44,
+    curves:G.map(g=>({f:lw=>Math.log10(Cx.abs(gdFun(g[0],g[1],g[2])([0,Math.pow(10,lw)]))),color:css(g[3])}))});
+    overlay($('cv-gdbode'),{xmin:-2,xmax:2,ymin:-4,ymax:0,pl:44},[{text:'P, PD: DC gain 1/12 m/N',at:[-1.95,-0.75]},{text:'PI, PID → 0 as ω → 0',at:[-1.95,-3.4]},{text:'≈ 1/(mω²)',at:[1.1,-3.1]}]);};
+  redraws.push(d);d();})();
+function bode(idm,idp,Lf,a,b,o){
+  const d=()=>{const lw=[],mag=[],ph=[];let prev=null,off=0;for(let i=0;i<=600;i++){const x=a+(b-a)*i/600,v=Lf([0,Math.pow(10,x)]);let p=Cx.arg(v)*180/Math.PI;
+      if(prev!==null){while(p+off-prev>180)off-=360;while(p+off-prev<-180)off+=360;}p+=off;prev=p;lw.push(x);mag.push(20*Math.log10(Cx.abs(v)));ph.push(p);}
+    const at=(arr,x)=>{const i=Math.max(0,Math.min(600,Math.round((x-a)/(b-a)*600)));return arr[i];};
+    const om={xmin:a,xmax:b,ymin:o.m[0],ymax:o.m[1],ystep:o.m[2],xticks:decTicks(Math.ceil(a),Math.floor(b)),xlabel:'ω / rad/s',ylabel:'|L| / dB',pl:40,curves:[{f:x=>at(mag,x),color:css('--accent')},{f:x=>0,color:css('--muted'),dash:[4,4],width:1.2}],pts:o.mpts?o.mpts():[]};
+    const op={xmin:a,xmax:b,ymin:o.p[0],ymax:o.p[1],ystep:o.p[2],xticks:decTicks(Math.ceil(a),Math.floor(b)),xlabel:'ω / rad/s',ylabel:'phase / °',pl:40,curves:[{f:x=>at(ph,x),color:css('--accent')},{f:x=>-180,color:css('--c2'),dash:[4,4],width:1.2}],pts:o.ppts?o.ppts():[]};
+    plot($(idm),om);plot($(idp),op);if(o.mx)overlay($(idm),om,o.mx());if(o.px)overlay($(idp),op,o.px());};
+  redraws.push(d);d();}
+const LP=rat([8],[1,2,4]);
+bode('cv-bodeP-m','cv-bodeP-p',LP,-1,2,{m:[-60,15,20],p:[-190,10,90],
+  mpts:()=>[{x:Math.log10(2),y:6.02,color:css('--c4'),label:'2 → 6.02 dB'}],ppts:()=>[{x:Math.log10(2),y:-90,color:css('--c4'),label:'−90° at 2 rad/s'}],
+  mx:()=>[{path:[[Math.log10(2),-60],[Math.log10(2),15]],color:css('--c4'),dash:[2,3],width:1}],px:()=>[{path:[[Math.log10(2),-190],[Math.log10(2),10]],color:css('--c4'),dash:[2,3],width:1}]});
+
+/* ---------- s23 Nyquist ---------- */
+function nyqPath(Lf,a,b,n,sign){const P=[];for(let i=0;i<=n;i++){const w=Math.pow(10,a+(b-a)*i/n),v=Lf([0,sign*w]);P.push(v);}return P;}
+(function(){
+  const pos=nyqPath(LP,-2,2.5,800,1),neg=nyqPath(LP,-2,2.5,800,-1).reverse();
+  const o={xmin:-1.6,xmax:2.6,ymin:-2.6,ymax:2.6,xstep:1,ystep:1,xlabel:'Re L',ylabel:'Im L',pl:30};
+  const d=()=>{plot($('cv-nyqP'),Object.assign({},o,{pts:[{x:0,y:-2,color:css('--c4'),label:'L(j2) = −2j'},{x:2,y:0,color:css('--muted'),r:3.5,label:'ω = 0'}]}));
+    overlay($('cv-nyqP'),o,[{path:pos,color:css('--accent'),arrows:[250,560]},{path:neg,color:css('--c3'),dash:[6,4],arrows:[240,550]},{cross:[-1,0],color:css('--c2')},{text:'−1',at:[-1.25,0.25],color:css('--c2'),bold:true}]);};
+  redraws.push(d);d();})();
+(function(){ // contour
+  const R=2,e=0.35,o={xmin:-2.6,xmax:2.6,ymin:-2.6,ymax:2.6,xstep:1,ystep:1,xlabel:'σ',ylabel:'jω',pl:30};
+  const up1=[[0,-R],[0,-e]],det=[];for(let i=0;i<=40;i++){const t=-Math.PI/2+Math.PI*i/40;det.push([e*Math.cos(t),e*Math.sin(t)]);}
+  const up2=[[0,e],[0,R]],arc=[];for(let i=0;i<=80;i++){const t=Math.PI/2-Math.PI*i/80;arc.push([R*Math.cos(t),R*Math.sin(t)]);}
+  const d=()=>{plot($('cv-ncont'),Object.assign({},o,{xticks:[],yticks:[],pts:[{x:-1,y:1.732,color:css('--muted'),r:3.5},{x:-1,y:-1.732,color:css('--muted'),r:3.5}]}));
+    overlay($('cv-ncont'),o,[{path:up1.concat(det).concat(up2).concat(arc),color:css('--accent'),arrows:[1,50,100]},{cross:[0,0],color:css('--c2'),r:4},
+      {text:'detour',at:[0.45,0.5],color:css('--c4')},{text:'clockwise',at:[0.6,-1.0],color:css('--accent')},{text:'poles −1 ± j√3',at:[-2.5,-2.3]}]);};
+  redraws.push(d);d();
+  const o2={xmin:-3.5,xmax:4.5,ymin:-4,ymax:4,xstep:1,ystep:1,xlabel:'Re L',ylabel:'Im L',pl:30};
+  const big=[];for(let i=0;i<=80;i++){const t=Math.PI/2-Math.PI*i/80;big.push([3.2*Math.cos(t),3.2*Math.sin(t)]);}
+  const d2=()=>{plot($('cv-ndetour'),Object.assign({},o2,{xticks:[],yticks:[]}));
+    overlay($('cv-ndetour'),o2,[{path:big,color:css('--c4'),arrows:[20,60]},{cross:[-1,0],color:css('--c2')},{text:'−1',at:[-1.3,0.35],color:css('--c2'),bold:true},
+      {text:'s = −jε ↦ +j∞',at:[-3.3,2.4]},{text:'s = +jε ↦ −j∞',at:[-3.3,-2.4]},{text:'huge clockwise arc',at:[1.1,0.4],color:css('--c4')}]);};
+  redraws.push(d2);d2();
+})();
+(function(){
+  const Lk=Ki=>rat([3,8,Ki],[1,2,4,0]);const cols={12:'--c3',60:'--c4',90:'--c2'};
+  const o={xmin:-2.6,xmax:0.4,ymin:-1.05,ymax:1.05,xstep:0.5,ystep:0.5,xlabel:'Re L',ylabel:'Im L',pl:34};
+  const d=()=>{plot($('cv-nyqKi'),o);const items=[];
+    [12,60,90].forEach(Ki=>{items.push({path:nyqPath(Lk(Ki),-1.5,2.5,1500,1),color:css(cols[Ki])});items.push({path:nyqPath(Lk(Ki),-1.5,2.5,1500,-1),color:css(cols[Ki]),dash:[5,4],width:1.6});});
+    items.push({cross:[-1,0],color:css('--ink')},{text:'−1',at:[-1.05,-0.16],color:css('--ink'),bold:true});overlay($('cv-nyqKi'),o,items);};
+  redraws.push(d);d();
+  poleMap('cv-nyqKi-p',{xmin:-6.5,xmax:1,ymin:-4.5,ymax:4.5,xstep:1,ystep:2},[{p:[[-2,0],[-1.5,1.936],[-1.5,-1.936]],col:'--c3'},{p:[[-5,0],[0,3.464],[0,-3.464]],col:'--c4'},{p:[[-5.678,0],[0.339,3.967],[0.339,-3.967]],col:'--c2'}],
+    ()=>[{shade:[0,1],color:css('--c2')},{text:'RHP',at:[0.1,4.2],color:css('--c2'),bold:true}]);
+})();
+(function(){
+  const L1=rat([2],[1,1,0]);const o={xmin:-3.5,xmax:1,ymin:-6,ymax:6,xstep:1,ystep:2,xlabel:'Re L',ylabel:'Im L',pl:30};
+  const d=()=>{plot($('cv-nyqT1'),o);overlay($('cv-nyqT1'),o,[{path:[[-2,-6],[-2,6]],color:css('--muted'),dash:[2,3],width:1.2},{path:nyqPath(L1,-1.5,2,600,1),color:css('--accent'),arrows:[300]},{path:nyqPath(L1,-1.5,2,600,-1).reverse(),color:css('--c3'),dash:[6,4],arrows:[300]},
+    {cross:[-1,0],color:css('--c2')},{text:'−1',at:[-1.1,0.3],color:css('--c2'),bold:true},{text:'Re = −K',at:[-3.4,-5.2]}]);};
+  redraws.push(d);d();})();
+
+/* ---------- s24 margins ---------- */
+const LB=rat([3,8,12],[1,2,4,0]),wg=Math.log10(Math.sqrt(12));
+bode('cv-marg-m','cv-marg-p',LB,-1,2,{m:[-45,35,20],p:[-190,10,90],
+  mpts:()=>[{x:wg,y:0,color:css('--c4'),label:'ω_gc = 3.464 rad/s'}],ppts:()=>[{x:wg,y:-98.2,color:css('--c4'),label:'−98.2°'}],
+  mx:()=>[{path:[[wg,-45],[wg,35]],color:css('--c4'),dash:[2,3],width:1}],
+  px:()=>[{path:[[wg,-190],[wg,10]],color:css('--c4'),dash:[2,3],width:1},{path:[[wg,-180],[wg,-102]],color:css('--c4'),width:1.8,arrows:[1]},{text:'PM = 81.8°',at:[wg+0.08,-145],color:css('--c4'),bold:true},{text:'−180° boundary',at:[-0.95,-168]}]});
+(function(){
+  const Lb=rat([2],[1,3,2,0]),gc=Math.log10(0.749),pc=Math.log10(Math.sqrt(2));
+  bode('cv-bB-m','cv-bB-p',Lb,-1,1,{m:[-40,30,20],p:[-270,-60,45],
+    mx:()=>[{path:[[gc,-40],[gc,30]],color:css('--c3'),dash:[2,3],width:1},{path:[[pc,-40],[pc,30]],color:css('--c2'),dash:[2,3],width:1},{path:[[pc,0],[pc,-9.54]],color:css('--c2'),width:1.8,arrows:[1]},{text:'GM = 9.54 dB',at:[pc+0.05,-14],color:css('--c2'),bold:true}],
+    px:()=>[{path:[[gc,-270],[gc,-60]],color:css('--c3'),dash:[2,3],width:1},{path:[[pc,-270],[pc,-60]],color:css('--c2'),dash:[2,3],width:1},{path:[[gc,-180],[gc,-149]],color:css('--c3'),width:1.8,arrows:[1]},{text:'PM = 32.6°',at:[gc-0.75,-120],color:css('--c3'),bold:true}]});
+})();
+
+/* ---------- s25 heavier mass ---------- */
+const RH=sim({m:2,Kp:48,Ki:48,Kd:16,T:10});
+tplot('cv-heavyx',{xmin:0,xmax:4,ymin:-0.8,ymax:5.5,xstep:0.5,ystep:1,hl:[0.5,-0.5,5]},[{r:RD,col:'--c3'},{r:RH,col:'--c2'}]);
+tplot('cv-heavyF',{xmin:0,xmax:4,ymin:-0.16,ymax:0.01,xstep:0.5,ystep:0.05,hl:[-0.15,-0.12]},[{r:RD,col:'--c3'},{r:RH,col:'--c2'}],'F');
+
+/* ---------- s31 exam taster: question figures redrawn (ids tst-) ---------- */
+function tstLoop(id,blocks,o){
+  o=o||{};const Y=45,x0=62,it=[];
+  it.push({t:'txt',x:16,y:Y-14,s:o.r||'R(s)',cls:'it',fs:13});it.push({t:'arr',p:[[4,Y],[x0-11,Y]]});
+  it.push({t:'sum',x:x0,y:Y,signs:{l:'+',b:'−'}});
+  let x=x0+11;
+  blocks.forEach(b=>{const w=b.w||76;it.push({t:'arr',p:[[x,Y],[x+32,Y]]});it.push({t:'box',x:x+32,y:Y-20,w,h:40,s:b.s,fs:b.fs});x+=32+w;});
+  const fx=x+30,ex=x+68;
+  it.push({t:'arr',p:[[x,Y],[ex,Y]]});it.push({t:'txt',x:ex-10,y:Y-14,s:o.y||'Y(s)',cls:'it',fs:13});it.push({t:'circ',x:fx,y:Y,r:2.5});
+  if(o.H){const hw=70,hx=(x0+fx)/2-hw/2,yb=Y+62;
+    it.push({t:'arr',k:'fb',p:[[fx,Y],[fx,yb],[hx+hw,yb]]});it.push({t:'box',x:hx,y:yb-18,w:hw,h:36,s:o.H});
+    it.push({t:'arr',k:'fb',p:[[hx,yb],[x0,yb],[x0,Y+11]]});}
+  else it.push({t:'arr',k:'fb',p:[[fx,Y],[fx,Y+52],[x0,Y+52],[x0,Y+11]]});
+  BD.draw(id,{w:ex+8,h:o.H?132:110,alt:o.alt},it);}
+tstLoop('tst-bd1',[{s:'Dc(s)'},{s:'G(s)'}],{r:'R',y:'Y',alt:'Fig. 1: R into a summing junction, Dc(s), G(s), output Y, unity negative feedback'});
+tstLoop('tst-bd2',[{s:'Dc(s)'},{s:'G(s)'}],{r:'R',y:'Y',H:'H(s)',alt:'Fig. 3: R into a summing junction, Dc(s), G(s), output Y, fed back through H(s) to the minus input'});
+tstLoop('tst-bd3',[{s:'Dc(s)'},{s:'G(s)'}],{r:'R',y:'Y',alt:'Fig. 4: R into a summing junction, Dc(s), G(s), output Y, unity negative feedback'});
+tstLoop('tst-bd4',[{s:'K₁/s',w:70},{s:'K₀/(4s+1)',w:104}],{r:'R',y:'Y',alt:'Fig. 6a: R into a summing junction, integral controller K1 over s, plant K0 over 4s plus 1, output Y, unity negative feedback'});
+BD.draw('tst-bd5',{w:430,h:120,alt:'Figure Q2: R into a summing junction, PID, second junction where D(s) is added, plant 8 over s squared, output Y, unity negative feedback'},[
+  {t:'txt',x:20,y:46,s:'R(s)',cls:'it',fs:13},{t:'arr',p:[[6,60],[49,60]]},{t:'sum',x:60,y:60,signs:{l:'+',b:'−'}},
+  {t:'arr',p:[[71,60],[100,60]]},{t:'box',x:100,y:40,w:70,h:40,s:'PID'},
+  {t:'arr',p:[[170,60],[209,60]]},{t:'sum',x:220,y:60,signs:{l:'+',t:'+'}},
+  {t:'txt',x:220,y:12,s:'D(s)',cls:'it',fs:13},{t:'arr',k:'load',p:[[220,22],[220,49]]},
+  {t:'arr',p:[[231,60],[260,60]]},{t:'box',x:260,y:40,w:66,h:40,s:'8/s²'},
+  {t:'arr',p:[[326,60],[410,60]]},{t:'txt',x:395,y:46,s:'Y(s)',cls:'it',fs:13},{t:'circ',x:360,y:60,r:2.5},
+  {t:'arr',k:'fb',p:[[360,60],[360,104],[60,104],[60,71]]}]);
+</script>
+
+<script>
+/* s15: collapse every .why line behind a "Why?" button (content stays in the page; without JS it shows open) */
+(function(){document.documentElement.classList.add('js');
+document.querySelectorAll('.why').forEach(function(w){w.classList.add('shut');
+ var b=document.createElement('button');b.type='button';b.className='whyb';b.textContent='Why?';b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=w.classList.toggle('shut');b.setAttribute('aria-expanded',o?'false':'true');b.textContent=o?'Why?':'Hide why';});
+ w.parentNode.insertBefore(b,w);});})();
+
+</script>
+</body></html>
