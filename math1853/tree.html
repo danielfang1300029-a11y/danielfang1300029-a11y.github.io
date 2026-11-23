@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH1853 Tech Tree</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* pack house style, tech-tree page */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4; --warm:#c2551b; --warm-soft:#fbeadf;
+  --ok:#1f7a4d; --ok-soft:#e0f2e8; --purple:#6b4fb3; --purple-soft:#eee9f8;
+  --h0:#e3e8ee; --h1:#f6d9c6; --h2:#eca57c; --h3:#c2551b;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --ok:#5fd39a; --ok-soft:#173628; --purple:#b8a3f0; --purple-soft:#2a2340;
+    --h0:#25313b; --h1:#4a2f1f; --h2:#9a5530; --h3:#f0935c;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.wrap{max-width:1000px;margin:0 auto;padding:28px max(14px, env(safe-area-inset-left,0px)) 140px max(14px, env(safe-area-inset-right,0px))}
+a{color:var(--accent)}
+h1,h2,h3{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2rem;line-height:1.15;margin:0}
+.course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.home{font-size:.9rem;text-decoration:none}
+.lede{color:var(--muted);font-size:1.02rem;max-width:65ch;margin:10px 0}
+header{display:grid;gap:6px;margin-bottom:18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:14px 0;font-size:.94rem}
+.box .tag{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.box ol{margin:4px 0;padding-left:1.2rem}.box li{margin:3px 0}
+details.box summary{cursor:pointer;font-weight:600}
+/* tabs */
+.tabs{display:grid;grid-template-columns:repeat(var(--tabs,4),1fr);gap:6px;position:sticky;top:0;z-index:5;background:var(--paper);padding:8px 0}
+.tab{font:inherit;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 10px;cursor:pointer;min-width:0}
+.tab b{display:block;font-family:var(--display);font-size:1rem}
+.tab span{display:block;font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab .bar{height:4px;border-radius:2px;background:var(--grid);margin-top:6px;overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--ok);width:0}
+.tab[aria-selected="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+/* next up + legend */
+.next{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.next button{font:inherit;font-size:.9rem;border:0;background:var(--accent);color:var(--paper);border-radius:6px;padding:6px 12px;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--muted);margin:6px 2px 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:22px;height:6px;border-radius:3px}
+.st{display:inline-block;width:14px;height:14px;border-radius:4px;border:1.5px solid var(--line)}
+/* tree */
+.vp{overflow:auto;max-width:100%}
+.vp.pan{height:calc(100vh - 120px);height:calc(100dvh - 120px);overflow:auto;touch-action:none;overscroll-behavior:contain;cursor:grab;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.zoombar{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:-4px 0 6px}
+.zoombar #zPct{font-family:var(--mono);font-size:.75rem;color:var(--muted);min-width:3.2em;text-align:center}
+.zoombar .zhint{font-size:.75rem;color:var(--muted);margin-right:auto}
+.zoombar button{font:inherit;font-size:.8rem;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;padding:3px 10px;cursor:pointer}
+.zoombar button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.tree{position:absolute;left:0;top:0;width:max-content;transform-origin:0 0;padding:4px 0 10px}
+.tree>svg.trunks{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:0}
+.crow{display:flex;justify-content:center;align-items:flex-start;gap:56px;margin-bottom:56px;position:relative;z-index:1}
+.chap{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 10px 4px;width:max-content;max-width:500px}
+.chap>.hd{display:flex;gap:8px;align-items:baseline;margin:0 2px 10px;flex-wrap:wrap;max-width:460px}
+.chap>.hd b{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500}
+.chap>.hd span{font-family:var(--display);font-weight:600;font-size:.95rem}
+.chap .body{position:relative}
+.chap .body>svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.tier{display:flex;flex-wrap:wrap;justify-content:center;gap:22px 8px;margin-bottom:22px;position:relative;z-index:1;max-width:470px;margin-inline:auto}
+.trunk{fill:none;stroke:var(--accent);stroke-opacity:.22;stroke-width:7;stroke-linecap:round}
+.xedge{fill:none;stroke:var(--accent);stroke-width:2.5}
+.xedge.kid{stroke:var(--warm);stroke-dasharray:5 4}
+.node{font:inherit;position:relative;width:148px;background:var(--paper)!important;min-height:92px;text-align:left;cursor:pointer;
+  background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:7px 8px 14px;display:flex;flex-direction:column;gap:2px;transition:opacity .15s,border-color .15s}
+
+.node .ch{font-family:var(--mono);font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between;gap:4px}
+.node .t{font-size:.8rem;font-weight:600;line-height:1.25}
+
+.node .heat{position:absolute;left:8px;right:8px;bottom:6px;height:4px;border-radius:2px;background:var(--h0)}
+.node .x{font-size:10px;color:var(--muted);margin-top:auto}
+.node .exc{font-family:var(--mono);font-size:9.5px;color:var(--purple);line-height:1.3}
+.node.excl{opacity:.6}
+.chap .exn{flex-basis:100%;font-size:.75rem;color:var(--purple)}
+.node .ext{font-family:var(--mono);font-size:9.5px;color:var(--warm);line-height:1.3}
+.node.locked{opacity:.5;border-style:dashed}
+.node.avail{border-color:var(--accent)}
+.node.learned{background:var(--accent-soft)!important;border-color:var(--accent)}
+.node.practised{background:var(--ok-soft)!important;border-color:var(--ok)}
+.node.optional{border-style:dotted}
+.node.sel{box-shadow:0 0 0 3px var(--accent)}
+.chap.flash{box-shadow:0 0 0 3px var(--accent);transition:box-shadow .6s}
+.tree.focus .node:not(.path):not(.sel):not(.kid){opacity:.25}
+.node.kid{box-shadow:0 0 0 2px var(--warm)}
+.badge{font-family:var(--mono);font-size:10px}
+.edge{fill:none;stroke:var(--axis,#8a96a3);stroke-opacity:.55;stroke-width:1.4}
+.edge.hot,.edge.kid{stroke-opacity:1}
+.edge.hot{stroke:var(--accent);stroke-width:2.5}
+.edge.kid{stroke:var(--warm);stroke-width:2.2;stroke-dasharray:5 4}
+.tree.focus .edge:not(.hot):not(.kid){opacity:.15}
+.tree.focus .chap:not(.lit){opacity:.45}
+.tree.focus .trunk{stroke-opacity:.08}
+/* sheet */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;pointer-events:none}
+.sheet .in{pointer-events:auto;width:100%;max-width:46rem;max-height:58vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-bottom:0;
+  border-radius:14px 14px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.18);padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .22s ease}
+.sheet.open .in{transform:none}
+.sheet.open.peek .in{transform:translateY(calc(100% - var(--peek, 118px)));overflow:hidden}
+.sheet .in.drag{transition:none}
+.grab{position:sticky;top:-14px;margin:-14px -16px 0;padding:10px 16px 4px;background:var(--card);z-index:2;touch-action:none;cursor:grab}
+.grab .bar{display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 8px}
+.sheet .top .btns{display:flex;gap:6px;flex:none}
+.sheet .tog{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1}
+.sheet:not(.open) .in{box-shadow:none;visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+@media (prefers-reduced-motion: reduce){.sheet .in{transition:none}}
+.sheet h2{font-size:1.2rem;margin:2px 0 4px}
+.sheet .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.close{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;flex:none}
+.sheet h3{font-size:.8rem;font-family:var(--mono);font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.sheet ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sheet li a,.sheet li button.link{display:flex;justify-content:space-between;gap:10px;font:inherit;font-size:.92rem;text-align:left;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--ink);text-decoration:none;cursor:pointer}
+.sheet li a:hover,.sheet li button.link:hover{border-color:var(--accent)}
+.sheet li .r{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;align-self:center}
+.sheet li .r.done{color:var(--ok)} .sheet li .r.todo{color:var(--warm)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.actions button{font:inherit;font-size:.92rem;padding:9px 10px;border-radius:8px;border:1.5px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+.actions button.on{background:var(--accent);color:var(--paper)}
+.actions button.ok.on{background:var(--ok);border-color:var(--ok)}
+.actions button.ok{border-color:var(--ok);color:var(--ok)}
+.muted{color:var(--muted)}
+.freq{height:6px;border-radius:3px;background:var(--h0);overflow:hidden;margin:8px 0 2px}.freq i{display:block;height:100%}
+.note{font-size:.85rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--purple-soft);color:var(--purple);vertical-align:1px}
+.pill.w{background:var(--warm-soft);color:var(--warm)}
+.foot{margin-top:30px;font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.foot button{font:inherit;font-size:.85rem;background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;color:var(--muted);cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="home" href="index.html" id="homeLink">← Start Here</a>
+  <span class="course">MATH1853 · Linear Algebra, Probability and Statistics · HKU</span>
+  <h1>Tech Tree</h1>
+  <p class="lede" id="lede">Tap a concept for its note sections and past-paper questions; tick it off to unlock the next ones.</p>
+</header>
+
+<details class="box">
+  <summary>How to use it</summary>
+  <ol>
+    <li><b>Tap a concept.</b> The arrows light up the concepts you need first (blue) and the ones it leads to (orange).</li>
+    <li><b>Learned</b> = you have read its note sections. <b>Practised</b> = you have done its exam-guide questions.</li>
+    <li>A concept unlocks once everything it needs is learned. Locked ones are dashed, but you can still open them.</li>
+    <li>Concepts are grouped by chapter. Lines show what to learn first inside a chapter; an orange <b>+ needs S1</b> tag means it also builds on another chapter (tap to see which concept).</li>
+    <li>The bar under each concept shows how often it comes up: the share of past papers with a question on it. A full bar means every paper.</li>
+    <li>Swipe the panel down (or tap ⌄) to shrink it to its title bar and keep browsing the tree; swipe up or tap ⌃ to open it again.</li>
+    <li>Drag the tree in any direction inside its box, and pinch with two fingers to zoom. <b>Fit</b> shows the whole tree. Scroll outside the box to move the page.</li>
+    <li>Your ticks are saved in this browser only.</li>
+  </ol>
+</details>
+
+<div class="tabs" role="tablist" id="tabs"></div>
+
+<div class="box next" id="next"></div>
+
+<div class="legend" id="legend"></div>
+
+<div class="zoombar"><span class="zhint">Pinch to zoom · drag to move</span><button type="button" id="zOut" aria-label="Zoom out">−</button><span id="zPct">100%</span><button type="button" id="zIn" aria-label="Zoom in">+</button><button type="button" id="zFit">Fit</button></div><div class="vp pan" id="vp"><div id="sizer" style="position:relative"><div class="tree" id="tree"></div></div></div>
+
+<p class="note" id="branchNote"></p>
+
+<div class="foot">
+  <span id="footNote"></span>
+  <button id="reset" type="button">Clear my ticks</button>
+</div>
+</div>
+
+<div class="sheet" id="sheet" aria-hidden="true"><div class="in" role="dialog" aria-modal="false" aria-labelledby="sTitle" id="sheetIn"></div></div>
+
+<script>
+const DATA = {"course": {"code": "MATH1853", "name": "Linear Algebra, Probability and Statistics", "key": "math1853-tree-v1"}, "notes": {"ALL": "Thick lines link chapters; tap any concept to see the exact concepts it needs. The two halves of the course hardly depend on each other. Bars count the 23 past papers (Dec 2012 to May 2026) with at least one question of that concept's most common question type.", "L": "Bars count the 23 past papers (Dec 2012 to May 2026), using each exam guide's question list. \"Earlier syllabus\" concepts are optional: they are outside the 2026 handouts.", "P": "Bars count the 23 past papers (Dec 2012 to May 2026), using each exam guide's question list. \"Earlier syllabus\" concepts are optional: they are outside the 2026 handouts.", "FOOT": "How often = papers with at least one question of that concept's most common question type."}, "noPapers": false, "excluded": {}, "excludedLong": "", "chapters": {"L1": "Systems of Linear Equations", "L2": "Vectors", "L3": "Matrices", "L4": "Determinants", "L5": "Eigenvalues and eigenvectors", "L6": "Applications of eigenvalues", "L7": "Orthogonality and Least Squares", "XL": "Earlier syllabus: linear algebra", "P1": "Complex variables", "P2": "Probability theory", "P3": "Common distributions", "P4": "Some elementary statistical inferences", "XP": "Earlier syllabus: probability"}, "branches": [{"k": "L", "name": "Linear algebra", "sub": "Parts IA and IB"}, {"k": "P", "name": "Complex and probability", "sub": "Part II"}], "nodes": [{"id": "l1-sys", "b": "L", "t": "Linear systems and their outcomes", "d": "What a solution is; none, one or infinitely many.", "ch": "L1", "pre": [], "secs": [{"t": "Equations, solutions and the balance picture", "href": "note-l1.html#s1"}, {"t": "Linear equations and linear systems", "href": "note-l1.html#s2"}, {"t": "Two equations, two unknowns: three possible outcomes", "href": "note-l1.html#s3"}], "mins": 16, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "l1-elim", "b": "L", "t": "Row reduction", "d": "Row operations, augmented matrices, echelon form and pivots.", "ch": "L1", "pre": ["l1-sys"], "secs": [{"t": "Three equations, three unknowns: elimination", "href": "note-l1.html#s4"}, {"t": "General systems: m equations in n unknowns", "href": "note-l1.html#s5"}, {"t": "Gaussian elimination and the elementary row operations", "href": "note-l1.html#s6"}, {"t": "Augmented matrices, echelon forms and pivots", "href": "note-l1.html#s7"}, {"t": "Example C: a 4 × 4 system with a unique solution", "href": "note-l1.html#s8"}], "mins": 28, "tests": [{"what": "Solve a system by row reduction", "href": "guide-l1.html#L1-1", "papers": 10, "of": 23, "id": "L1.1", "related": false}], "also": [], "freq": 10, "of": 23, "related": false, "optional": false}, {"id": "l1-exist", "b": "L", "t": "Free variables, existence and uniqueness", "d": "Read the solution set off the echelon form.", "ch": "L1", "pre": ["l1-elim"], "secs": [{"t": "Example D: a free variable and infinitely many solutions", "href": "note-l1.html#s9"}, {"t": "Existence and uniqueness of solutions", "href": "note-l1.html#s10"}], "mins": 11, "tests": [{"what": "A parameter decides: no, one or infinitely many solutions", "href": "guide-l1.html#L1-2", "papers": 5, "of": 23, "id": "L1.2", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "l1-model", "b": "L", "t": "Setting up a system", "d": "Turn a word problem into equations.", "ch": "L1", "pre": ["l1-elim"], "secs": [{"t": "Applications", "href": "note-l1.html#s11"}], "mins": 10, "tests": [{"what": "Set up a system from a story", "href": "guide-l1.html#L1-3", "papers": 4, "of": 23, "id": "L1.3", "related": false}], "also": [], "freq": 4, "of": 23, "related": false, "optional": false}, {"id": "l2-vec", "b": "L", "t": "Vectors and their operations", "d": "Vectors in ℝⁿ, adding and scaling.", "ch": "L2", "pre": [], "secs": [{"t": "Vectors in ℝ², ℝ³ and ℝⁿ", "href": "note-l2.html#s1"}, {"t": "Operations on vectors", "href": "note-l2.html#s2"}], "mins": 14, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "l2-span", "b": "L", "t": "Linear combinations and span", "d": "Is b a combination of these vectors? Solve a system to find out.", "ch": "L2", "pre": ["l2-vec", "l1-exist"], "secs": [{"t": "Linear combinations", "href": "note-l2.html#s3"}, {"t": "Example 1: is b a linear combination?", "href": "note-l2.html#s4"}, {"t": "Span", "href": "note-l2.html#s5"}, {"t": "Example 2: is b in the span?", "href": "note-l2.html#s6"}], "mins": 18, "tests": [{"what": "Is b in the span? Weights or a condition on a letter", "href": "guide-l2.html#L2-1", "papers": 7, "of": 23, "id": "L2.1", "related": false}], "also": [], "freq": 7, "of": 23, "related": false, "optional": false}, {"id": "l2-indep", "b": "L", "t": "Linear independence", "d": "Only the trivial combination gives zero.", "ch": "L2", "pre": ["l2-span"], "secs": [{"t": "Linear independence", "href": "note-l2.html#s7"}, {"t": "What independence and dependence mean", "href": "note-l2.html#s8"}], "mins": 12, "tests": [{"what": "Independence proofs and true/false", "href": "guide-l2.html#L2-3", "papers": 5, "of": 23, "id": "L2.3", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "l2-basis", "b": "L", "t": "Basis and dimension", "d": "Independent vectors that span; dimension of a span.", "ch": "L2", "pre": ["l2-indep"], "secs": [{"t": "Basis", "href": "note-l2.html#s9"}, {"t": "Application: diet construction", "href": "note-l2.html#s10"}], "mins": 14, "tests": [{"what": "Independent? Dimension of the span", "href": "guide-l2.html#L2-2", "papers": 6, "of": 23, "id": "L2.2", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "l3-mult", "b": "L", "t": "Matrix products and Ax = b", "d": "Multiplication rules, powers and the transpose.", "ch": "L3", "pre": ["l2-span"], "secs": [{"t": "What a matrix is", "href": "note-l3.html#s1"}, {"t": "The matrix equation Ax = b", "href": "note-l3.html#s2"}, {"t": "Matrix multiplication", "href": "note-l3.html#s3"}, {"t": "Rules and warnings for products", "href": "note-l3.html#s4"}, {"t": "Powers, sums and scalar multiples", "href": "note-l3.html#s5"}, {"t": "The transpose", "href": "note-l3.html#s6"}], "mins": 35, "tests": [{"what": "Multiply, transpose, solve AB = C, matrix of a map", "href": "guide-l3.html#L3-1", "papers": 7, "of": 23, "id": "L3.1", "related": false}], "also": [], "freq": 7, "of": 23, "related": false, "optional": false}, {"id": "l3-map", "b": "L", "t": "Matrices as transformations", "d": "Columns, independence and what a matrix does to vectors.", "ch": "L3", "pre": ["l3-mult", "l2-indep"], "secs": [{"t": "Linearly independent columns", "href": "note-l3.html#s7"}, {"t": "Matrices as transformations", "href": "note-l3.html#s8"}], "mins": 13, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "l3-inv", "b": "L", "t": "The inverse", "d": "When it exists, its rules, elementary matrices and [A | I].", "ch": "L3", "pre": ["l3-mult", "l1-elim"], "secs": [{"t": "The inverse of a matrix", "href": "note-l3.html#s9"}, {"t": "Properties of the inverse", "href": "note-l3.html#s10"}, {"t": "Elementary matrices", "href": "note-l3.html#s11"}, {"t": "Finding A⁻¹ with [A | I]", "href": "note-l3.html#s12"}], "mins": 32, "tests": [{"what": "Inverse with numbers, letters or blocks", "href": "guide-l3.html#L3-2", "papers": 7, "of": 23, "id": "L3.2", "related": false}, {"what": "Matrix algebra with letters; inverse from an identity", "href": "guide-l3.html#L3-3", "papers": 3, "of": 23, "id": "L3.3", "related": false}], "also": [], "freq": 7, "of": 23, "related": false, "optional": false}, {"id": "l3-rank", "b": "L", "t": "Rank and null space", "d": "Pivots count the rank; the null space is the solution set of Ax = 0.", "ch": "L3", "pre": ["l3-inv", "l2-basis"], "secs": [{"t": "Rank of a matrix", "href": "note-l3.html#s13"}, {"t": "Application: population movement", "href": "note-l3.html#s14"}], "mins": 14, "tests": [{"what": "Rank and null space", "href": "guide-l3.html#L3-4", "papers": 3, "of": 23, "id": "L3.4", "related": false}], "also": [], "freq": 3, "of": 23, "related": false, "optional": false}, {"id": "l4-eval", "b": "L", "t": "Computing determinants", "d": "2 × 2, 3 × 3 and cofactor expansion; triangular shortcuts.", "ch": "L4", "pre": ["l3-mult"], "secs": [{"t": "The 2 × 2 determinant", "href": "note-l4.html#s1"}, {"t": "The 3 × 3 determinant and submatrices", "href": "note-l4.html#s2"}, {"t": "Cofactor expansion of an n × n determinant", "href": "note-l4.html#s3"}, {"t": "Expand along the most zeros", "href": "note-l4.html#s4"}, {"t": "Triangular matrices", "href": "note-l4.html#s5"}], "mins": 21, "tests": [{"what": "Evaluate a determinant", "href": "guide-l4.html#L4-1", "papers": 10, "of": 23, "id": "L4.1", "related": false}], "also": [], "freq": 10, "of": 23, "related": false, "optional": false}, {"id": "l4-rules", "b": "L", "t": "Determinant rules and invertibility", "d": "Row operations, det(kA), det(AB); det A = 0 means singular.", "ch": "L4", "pre": ["l4-eval", "l3-inv"], "secs": [{"t": "Row replacement and row interchange", "href": "note-l4.html#s6"}, {"t": "Scaling a row, and det(kA)", "href": "note-l4.html#s7"}, {"t": "Products and transposes", "href": "note-l4.html#s8"}], "mins": 16, "tests": [{"what": "Rules: det(kA), det(AB), det(A⁻¹), row operations", "href": "guide-l4.html#L4-2", "papers": 10, "of": 23, "id": "L4.2", "related": false}, {"what": "Parameter that makes a matrix singular", "href": "guide-l4.html#L4-3", "papers": 7, "of": 23, "id": "L4.3", "related": false}], "also": [], "freq": 10, "of": 23, "related": false, "optional": false}, {"id": "l4-cramer", "b": "L", "t": "Cramer's rule and the cofactor inverse", "d": "Solve Ax = b and find A⁻¹ with determinants.", "ch": "L4", "pre": ["l4-rules"], "secs": [{"t": "Cramer's rule for Ax = b", "href": "note-l4.html#s9"}, {"t": "Cramer's rule for the inverse", "href": "note-l4.html#s10"}, {"t": "Example: a 3 × 3 inverse by cofactors", "href": "note-l4.html#s11"}], "mins": 14, "tests": [{"what": "3 × 3 inverse by Cramer's rule", "href": "guide-l4.html#L4-4", "papers": 2, "of": 23, "id": "L4.4", "related": false}], "also": [], "freq": 2, "of": 23, "related": false, "optional": false}, {"id": "l5-space", "b": "L", "t": "Vector spaces and linear maps", "d": "The general setting eigenvalues live in.", "ch": "L5", "pre": ["l2-basis", "l3-map"], "secs": [{"t": "Fields and vector spaces", "href": "note-l5.html#s1"}, {"t": "Linear maps", "href": "note-l5.html#s2"}], "mins": 10, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "l5-eig", "b": "L", "t": "Eigenvalues and eigenvectors", "d": "det(A − λI) = 0, then solve for each eigenvector.", "ch": "L5", "pre": ["l4-rules", "l1-exist", "l5-space"], "secs": [{"t": "Eigenvalues and eigenvectors", "href": "note-l5.html#s3"}, {"t": "The characteristic polynomial", "href": "note-l5.html#s4"}, {"t": "Three 3 × 3 examples", "href": "note-l5.html#s5"}], "mins": 20, "tests": [{"what": "Eigenvalues and eigenvectors; check one", "href": "guide-l5.html#L5-1", "papers": 11, "of": 23, "id": "L5.1", "related": false}], "also": [], "freq": 11, "of": 23, "related": false, "optional": false}, {"id": "l5-diag", "b": "L", "t": "Diagonalization and powers", "d": "A = PDP⁻¹, similar matrices and Aⁿ.", "ch": "L5", "pre": ["l5-eig", "l3-inv"], "secs": [{"t": "Distinct eigenvalues, independent eigenvectors", "href": "note-l5.html#s6"}, {"t": "Diagonalization", "href": "note-l5.html#s7"}, {"t": "Powers of a matrix", "href": "note-l5.html#s8"}, {"t": "Similar matrices", "href": "note-l5.html#s9"}], "mins": 20, "tests": [{"what": "Diagonalize; powers Aⁿ and limits", "href": "guide-l5.html#L5-2", "papers": 6, "of": 23, "id": "L5.2", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "l5-theory", "b": "L", "t": "Eigenvalue rules and Cayley–Hamilton", "d": "Trace, determinant and the facts proofs use.", "ch": "L5", "pre": ["l5-eig"], "secs": [{"t": "Eigenvalue rules the exam uses", "href": "note-l5.html#s10"}, {"t": "The Cayley–Hamilton theorem", "href": "note-l5.html#s13"}], "mins": 9, "tests": [{"what": "Eigen theory and short proofs", "href": "guide-l5.html#L5-3", "papers": 12, "of": 23, "id": "L5.3", "related": false}], "also": [], "freq": 12, "of": 23, "related": false, "optional": false}, {"id": "l5-sym", "b": "L", "t": "Symmetric matrices", "d": "Real eigenvalues, orthonormal eigenvectors, A = QDQᵀ.", "ch": "L5", "pre": ["l5-diag"], "secs": [{"t": "Real symmetric matrices: real eigenvalues", "href": "note-l5.html#s11"}, {"t": "Orthonormal eigenvectors and A = QDQᵀ", "href": "note-l5.html#s12"}], "mins": 15, "tests": [{"what": "Symmetric matrices: A = QΛQᵀ, rebuild A from eigenpairs", "href": "guide-l5.html#L5-4", "papers": 9, "of": 23, "id": "L5.4", "related": false}], "also": [], "freq": 9, "of": 23, "related": false, "optional": false}, {"id": "l6-quad", "b": "L", "t": "Quadratic forms: max and min", "d": "Largest and smallest value of xᵀAx on a sphere.", "ch": "L6", "pre": ["l5-sym"], "secs": [{"t": "Quadratic forms and symmetric matrices", "href": "note-l6.html#s1"}, {"t": "Largest and smallest value on a sphere", "href": "note-l6.html#s2"}, {"t": "Example: 3x² + 4xy + 5y² on a circle", "href": "note-l6.html#s3"}, {"t": "Using the result in exam questions", "href": "note-l6.html#s4"}], "mins": 20, "tests": [{"what": "Max/min of xᵀAx on a sphere; conics; proofs", "href": "guide-l6.html#L6-1", "papers": 17, "of": 23, "id": "L6.1", "related": false}], "also": [], "freq": 17, "of": 23, "related": false, "optional": false}, {"id": "l6-ode", "b": "L", "t": "Systems of linear ODEs", "d": "Solve x′ = Ax with eigenvalues; higher-order equations as systems.", "ch": "L6", "pre": ["l5-diag"], "secs": [{"t": "Systems of linear ODEs: the idea", "href": "note-l6.html#s5"}, {"t": "Example: a 2 × 2 system", "href": "note-l6.html#s6"}, {"t": "A third-order equation as a system", "href": "note-l6.html#s7"}, {"t": "Simple harmonic motion (optional)", "href": "note-l6.html#s8"}], "mins": 18, "tests": [{"what": "Solve x′ = Ax, with or without a start value", "href": "guide-l6.html#L6-2", "papers": 9, "of": 23, "id": "L6.2", "related": false}], "also": [], "freq": 9, "of": 23, "related": false, "optional": false}, {"id": "l7-dot", "b": "L", "t": "Scalar product, length and angle", "d": "Dot product, unit vectors, Cauchy–Schwarz.", "ch": "L7", "pre": ["l2-vec"], "secs": [{"t": "The scalar product", "href": "note-l7.html#s1"}, {"t": "Length and unit vectors", "href": "note-l7.html#s2"}, {"t": "Cauchy–Schwarz, angles, triangle inequality", "href": "note-l7.html#s3"}], "mins": 18, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "l7-orth", "b": "L", "t": "Orthogonal and orthonormal sets", "d": "Perpendicular bases and why they make life easy.", "ch": "L7", "pre": ["l7-dot", "l2-basis"], "secs": [{"t": "Orthogonality and orthonormal bases", "href": "note-l7.html#s4"}, {"t": "Pythagoras and the parallelogram law", "href": "note-l7.html#s5"}], "mins": 12, "tests": [{"what": "Proofs on orthonormal sets and orthogonal matrices", "href": "guide-l7.html#L7-4", "papers": 6, "of": 23, "id": "L7.4", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "l7-proj", "b": "L", "t": "Projection", "d": "The part of v along u, and the part left over.", "ch": "L7", "pre": ["l7-orth"], "secs": [{"t": "Projection of v along u", "href": "note-l7.html#s6"}], "mins": 6, "tests": [{"what": "Projection, perpendicular part, closest point", "href": "guide-l7.html#L7-1", "papers": 6, "of": 23, "id": "L7.1", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "l7-gs", "b": "L", "t": "Gram–Schmidt", "d": "Turn any basis into an orthonormal one.", "ch": "L7", "pre": ["l7-proj"], "secs": [{"t": "Gram–Schmidt orthogonalization", "href": "note-l7.html#s8"}], "mins": 8, "tests": [{"what": "Gram–Schmidt: orthogonal or orthonormal basis", "href": "guide-l7.html#L7-2", "papers": 7, "of": 23, "id": "L7.2", "related": false}], "also": [], "freq": 7, "of": 23, "related": false, "optional": false}, {"id": "l7-ls", "b": "L", "t": "Least squares", "d": "Best-fit line from the normal equations.", "ch": "L7", "pre": ["l7-proj", "l3-inv"], "secs": [{"t": "Least squares: the best-fit line", "href": "note-l7.html#s7"}], "mins": 9, "tests": [{"what": "Least squares: AᵀAx = Aᵀb", "href": "guide-l7.html#L7-3", "papers": 2, "of": 23, "id": "L7.3", "related": false}], "also": [], "freq": 2, "of": 23, "related": false, "optional": false}, {"id": "x-def", "b": "L", "t": "Definiteness of quadratic forms", "d": "Positive, negative or indefinite from the eigenvalues. Earlier syllabus.", "ch": "XL", "pre": ["l6-quad"], "secs": [], "mins": 0, "tests": [{"what": "Definiteness of a symmetric matrix", "href": "guide-beyond.html#B-L5-4", "papers": 8, "of": 23, "id": "BL5.4", "related": false}], "also": [], "freq": 8, "of": 23, "related": false, "optional": true}, {"id": "x-diff", "b": "L", "t": "Difference equations", "d": "xₖ₊₁ = Axₖ and its long-run behaviour. Earlier syllabus.", "ch": "XL", "pre": ["l5-diag"], "secs": [], "mins": 0, "tests": [{"what": "Difference equations xₖ₊₁ = Axₖ", "href": "guide-beyond.html#B-L6-3", "papers": 4, "of": 23, "id": "BL6.3", "related": false}], "also": [], "freq": 4, "of": 23, "related": false, "optional": true}, {"id": "x-cross", "b": "L", "t": "The cross product", "d": "Cross product, lengths and angles in ℝ³. Earlier syllabus.", "ch": "XL", "pre": ["l7-dot"], "secs": [], "mins": 0, "tests": [{"what": "Cross product, lengths and angles in ℝ³", "href": "guide-beyond.html#B-L7-1", "papers": 1, "of": 23, "id": "BL7.1", "related": false}], "also": [], "freq": 1, "of": 23, "related": false, "optional": true}, {"id": "p1-arith", "b": "P", "t": "Complex numbers and arithmetic", "d": "i, conjugates, division and the Argand diagram.", "ch": "P1", "pre": [], "secs": [{"t": "The imaginary unit and ℂ", "href": "note-p1.html#s1"}, {"t": "Arithmetic and the conjugate", "href": "note-p1.html#s2"}, {"t": "The Argand diagram and the modulus", "href": "note-p1.html#s3"}, {"t": "Division", "href": "note-p1.html#s5"}], "mins": 16, "tests": [{"what": "Quadratics in z; real x, y from one equation", "href": "guide-p1.html#P1-1", "papers": 9, "of": 23, "id": "P1.1", "related": false}], "also": [], "freq": 9, "of": 23, "related": false, "optional": false}, {"id": "p1-polar", "b": "P", "t": "Polar form, Euler and De Moivre", "d": "r e^{iθ}, products in polar form and powers.", "ch": "P1", "pre": ["p1-arith"], "secs": [{"t": "Polar form and the argument", "href": "note-p1.html#s4"}, {"t": "Taylor series and the exponential ez", "href": "note-p1.html#s7"}, {"t": "Euler's formula", "href": "note-p1.html#s8"}, {"t": "Products and quotients in polar form", "href": "note-p1.html#s9"}, {"t": "De Moivre's theorem and powers", "href": "note-p1.html#s10"}, {"t": "Hyperbolic functions, complex sine and cosine", "href": "note-p1.html#s11"}], "mins": 23, "tests": [{"what": "Polar form, De Moivre, multiple angles", "href": "guide-p1.html#P1-2", "papers": 15, "of": 23, "id": "P1.2", "related": false}], "also": [], "freq": 15, "of": 23, "related": false, "optional": false}, {"id": "p1-ineq", "b": "P", "t": "Triangle inequality and short proofs", "d": "Bounds on |z ± w| and identities to prove.", "ch": "P1", "pre": ["p1-arith"], "secs": [{"t": "The triangle inequality", "href": "note-p1.html#s6"}], "mins": 4, "tests": [{"what": "Short proofs: triangle inequality, cosh² − sinh²", "href": "guide-p1.html#P1-6", "papers": 3, "of": 23, "id": "P1.6", "related": false}], "also": [], "freq": 3, "of": 23, "related": false, "optional": false}, {"id": "p1-roots", "b": "P", "t": "n-th roots and roots of unity", "d": "All n roots of a complex number, evenly spaced on a circle.", "ch": "P1", "pre": ["p1-polar"], "secs": [{"t": "Roots of unity and n-th roots", "href": "note-p1.html#s15"}, {"t": "Primitive roots of unity", "href": "note-p1.html#s16"}], "mins": 13, "tests": [{"what": "n-th roots and roots of unity", "href": "guide-p1.html#P1-3", "papers": 14, "of": 23, "id": "P1.3", "related": false}], "also": [], "freq": 14, "of": 23, "related": false, "optional": false}, {"id": "p1-loci", "b": "P", "t": "Loci in the plane", "d": "Lines, circles and regions described by |z − a| and arg.", "ch": "P1", "pre": ["p1-polar"], "secs": [{"t": "Loci: sets of points in the plane", "href": "note-p1.html#s12"}], "mins": 6, "tests": [{"what": "Loci: lines, circles, points", "href": "guide-p1.html#P1-4", "papers": 10, "of": 23, "id": "P1.4", "related": false}], "also": [], "freq": 10, "of": 23, "related": false, "optional": false}, {"id": "p1-maps", "b": "P", "t": "Images of sets under maps", "d": "Where kz + ℓ, 1/z and zⁿ send a region.", "ch": "P1", "pre": ["p1-loci"], "secs": [{"t": "Images of sets: f(z) = kz + ℓ", "href": "note-p1.html#s13"}, {"t": "Images of sets: f(z) = 1/z and the polar approach", "href": "note-p1.html#s14"}], "mins": 16, "tests": [{"what": "Image of a region under 1/z, zⁿ, az + b", "href": "guide-p1.html#P1-5", "papers": 15, "of": 23, "id": "P1.5", "related": false}], "also": [], "freq": 15, "of": 23, "related": false, "optional": false}, {"id": "p2-axioms", "b": "P", "t": "Sample spaces, events and axioms", "d": "The rules every probability obeys.", "ch": "P2", "pre": [], "secs": [{"t": "A short history of probability", "href": "note-p2.html#s5"}, {"t": "Sample spaces, events and the axioms", "href": "note-p2.html#s6"}], "mins": 15, "tests": [{"what": "Axioms, sample spaces, P(A ∩ B)", "href": "guide-p2.html#P2-1", "papers": 4, "of": 23, "id": "P2.1", "related": false}], "also": [], "freq": 4, "of": 23, "related": false, "optional": false}, {"id": "p2-count", "b": "P", "t": "Counting and classical probability", "d": "Arrangements, combinations and equally likely outcomes.", "ch": "P2", "pre": ["p2-axioms"], "secs": [{"t": "Counting: the fundamental rule", "href": "note-p2.html#s1"}, {"t": "Sampling and combinations", "href": "note-p2.html#s2"}, {"t": "Groups and repeated choices", "href": "note-p2.html#s3"}, {"t": "Stirling's formula", "href": "note-p2.html#s4"}, {"t": "Classical probability and first rules", "href": "note-p2.html#s7"}], "mins": 34, "tests": [{"what": "Counting; classical probability", "href": "guide-p2.html#P2-2", "papers": 4, "of": 23, "id": "P2.2", "related": false}], "also": [], "freq": 4, "of": 23, "related": false, "optional": false}, {"id": "p2-cond", "b": "P", "t": "Conditional probability and Bayes", "d": "Total probability and turning a condition round.", "ch": "P2", "pre": ["p2-axioms"], "secs": [{"t": "Conditional probability", "href": "note-p2.html#s8"}, {"t": "Total probability and Bayes's theorem", "href": "note-p2.html#s9"}], "mins": 13, "tests": [{"what": "Conditional probability and Bayes", "href": "guide-p2.html#P2-3", "papers": 15, "of": 23, "id": "P2.3", "related": false}], "also": [], "freq": 15, "of": 23, "related": false, "optional": false}, {"id": "p2-indep", "b": "P", "t": "Independent events", "d": "When knowing one event tells you nothing about another.", "ch": "P2", "pre": ["p2-cond"], "secs": [{"t": "Independent events", "href": "note-p2.html#s10"}], "mins": 4, "tests": [{"what": "Independence; true or false", "href": "guide-p2.html#P2-4", "papers": 10, "of": 23, "id": "P2.4", "related": false}], "also": [], "freq": 10, "of": 23, "related": false, "optional": false}, {"id": "p2-disc", "b": "P", "t": "Discrete random variables", "d": "pmf, expectation and variance.", "ch": "P2", "pre": ["p2-axioms"], "secs": [{"t": "Random variables and their pmf", "href": "note-p2.html#s11"}, {"t": "Expectation and functions of random variables", "href": "note-p2.html#s12"}, {"t": "Variance", "href": "note-p2.html#s17"}], "mins": 24, "tests": [{"what": "Discrete: pmf and joint tables, E, Var", "href": "guide-p2.html#P2-5", "papers": 13, "of": 23, "id": "P2.5", "related": false}], "also": [], "freq": 13, "of": 23, "related": false, "optional": false}, {"id": "p2-cont", "b": "P", "t": "Continuous random variables", "d": "Densities, the cdf and expectation by integration.", "ch": "P2", "pre": ["p2-disc"], "secs": [{"t": "Random variables with densities", "href": "note-p2.html#s13"}, {"t": "Distribution function and expectation with densities", "href": "note-p2.html#s14"}], "mins": 15, "tests": [{"what": "Densities: constant, cdf, E(Xⁿ), Var", "href": "guide-p2.html#P2-6", "papers": 15, "of": 23, "id": "P2.6", "related": false}], "also": [], "freq": 15, "of": 23, "related": false, "optional": false}, {"id": "p2-trans", "b": "P", "t": "Transformed variables", "d": "Density of Y = g(X) through the cdf.", "ch": "P2", "pre": ["p2-cont"], "secs": [{"t": "The density of a transformed variable", "href": "note-p2.html#s15"}], "mins": 7, "tests": [{"what": "Density of Y = g(X) by the cdf", "href": "guide-p2.html#P2-7", "papers": 4, "of": 23, "id": "P2.7", "related": false}], "also": [], "freq": 4, "of": 23, "related": false, "optional": false}, {"id": "p2-clt", "b": "P", "t": "Random vectors and the CLT", "d": "Independent variables, the laws of large numbers and the central limit theorem.", "ch": "P2", "pre": ["p2-cont", "p2-indep"], "secs": [{"t": "Random vectors and independent random variables", "href": "note-p2.html#s16"}, {"t": "The central limit theorem and the laws of large numbers", "href": "note-p2.html#s18"}], "mins": 22, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "p3-binom", "b": "P", "t": "Bernoulli, binomial and geometric", "d": "Counting successes and waiting for the first one.", "ch": "P3", "pre": ["p2-disc", "p2-count"], "secs": [{"t": "The Bernoulli distribution", "href": "note-p3.html#s1"}, {"t": "The geometric distribution", "href": "note-p3.html#s2"}, {"t": "Geometric: mean, variance and memory", "href": "note-p3.html#s3"}, {"t": "The binomial distribution", "href": "note-p3.html#s4"}, {"t": "Binomial: mean, variance and computing", "href": "note-p3.html#s5"}, {"t": "The negative binomial distribution", "href": "note-p3.html#s6"}], "mins": 29, "tests": [{"what": "Binomial, geometric, negative binomial", "href": "guide-p3.html#P3-1", "papers": 15, "of": 23, "id": "P3.1", "related": false}], "also": [], "freq": 15, "of": 23, "related": false, "optional": false}, {"id": "p3-pois", "b": "P", "t": "Poisson distribution", "d": "Rare events, and the limit of the binomial.", "ch": "P3", "pre": ["p3-binom"], "secs": [{"t": "The Poisson distribution", "href": "note-p3.html#s9"}, {"t": "Poisson's limit law and applications", "href": "note-p3.html#s10"}], "mins": 15, "tests": [{"what": "Poisson: pmf, moments, approximation", "href": "guide-p3.html#P3-2", "papers": 4, "of": 23, "id": "P3.2", "related": false}], "also": [], "freq": 4, "of": 23, "related": false, "optional": false}, {"id": "p3-exp", "b": "P", "t": "Exponential distribution", "d": "Waiting times, no memory, minimum of exponentials.", "ch": "P3", "pre": ["p2-cont"], "secs": [{"t": "The exponential distribution", "href": "note-p3.html#s7"}, {"t": "No memory, and the minimum of exponentials", "href": "note-p3.html#s8"}], "mins": 16, "tests": [{"what": "Exponential: memory, moments, min and max", "href": "guide-p3.html#P3-3", "papers": 11, "of": 23, "id": "P3.3", "related": false}], "also": [], "freq": 11, "of": 23, "related": false, "optional": false}, {"id": "p3-norm", "b": "P", "t": "Normal distribution and the table", "d": "Standardise, then read the table.", "ch": "P3", "pre": ["p2-cont"], "secs": [{"t": "The normal distribution", "href": "note-p3.html#s11"}, {"t": "Standardising and the normal table", "href": "note-p3.html#s12"}], "mins": 16, "tests": [{"what": "Normal table; sums of normals", "href": "guide-p3.html#P3-4", "papers": 14, "of": 23, "id": "P3.4", "related": false}], "also": [], "freq": 14, "of": 23, "related": false, "optional": false}, {"id": "p3-approx", "b": "P", "t": "Normal approximation to the binomial", "d": "Large n with the 0.5 correction.", "ch": "P3", "pre": ["p3-norm", "p3-binom", "p2-clt"], "secs": [{"t": "Normal approximation to the binomial", "href": "note-p3.html#s13"}], "mins": 8, "tests": [{"what": "Normal approximation with the 0.5 correction", "href": "guide-p3.html#P3-5", "papers": 6, "of": 23, "id": "P3.5", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "p4-est", "b": "P", "t": "Samples and point estimators", "d": "Statistics, unbiasedness and why the sample variance divides by n − 1.", "ch": "P4", "pre": ["p2-disc"], "secs": [{"t": "Parameters and the parameter space", "href": "note-p4.html#s1"}, {"t": "Random samples and statistics", "href": "note-p4.html#s2"}, {"t": "Point estimators and unbiasedness", "href": "note-p4.html#s3"}, {"t": "The sample variance and why n − 1", "href": "note-p4.html#s4"}], "mins": 21, "tests": [{"what": "Point estimation; unbiased estimator of σ²", "href": "guide-p4.html#P4-3", "papers": 3, "of": 23, "id": "P4.3", "related": false}], "also": [], "freq": 3, "of": 23, "related": false, "optional": false}, {"id": "p4-ci", "b": "P", "t": "Confidence intervals for a mean", "d": "σ known or unknown, and choosing the sample size.", "ch": "P4", "pre": ["p4-est", "p3-norm", "p2-clt"], "secs": [{"t": "What a confidence interval is", "href": "note-p4.html#s5"}, {"t": "The CLT and the critical value z(α/2)", "href": "note-p4.html#s6"}, {"t": "CI for μ when σ is known", "href": "note-p4.html#s7"}, {"t": "CI for μ when σ is unknown", "href": "note-p4.html#s8"}, {"t": "Choosing the sample size", "href": "note-p4.html#s10"}], "mins": 40, "tests": [{"what": "CI for a mean; sample size", "href": "guide-p4.html#P4-1", "papers": 14, "of": 23, "id": "P4.1", "related": false}], "also": [], "freq": 14, "of": 23, "related": false, "optional": false}, {"id": "p4-prop", "b": "P", "t": "Confidence interval for a proportion", "d": "The same idea for a success rate.", "ch": "P4", "pre": ["p4-ci", "p3-binom"], "secs": [{"t": "CI for a proportion p", "href": "note-p4.html#s9"}], "mins": 7, "tests": [{"what": "CI for a proportion", "href": "guide-p4.html#P4-2", "papers": 6, "of": 23, "id": "P4.2", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "x-mgf", "b": "P", "t": "Moment generating functions", "d": "Means and variances from an MGF. Earlier syllabus.", "ch": "XP", "pre": ["p2-disc"], "secs": [], "mins": 0, "tests": [{"what": "Moment generating functions", "href": "guide-beyond.html#B-P3-6", "papers": 2, "of": 23, "id": "BP3.6", "related": false}], "also": [], "freq": 2, "of": 23, "related": false, "optional": true}], "base": ""};
+const KEY = DATA.course.key;
+const byId = Object.fromEntries(DATA.nodes.map(n => [n.id, n]));
+const kids = {}; DATA.nodes.forEach(n => n.pre.forEach(p => (kids[p] = kids[p] || []).push(n.id)));
+if (DATA.branches.length > 1) DATA.branches.unshift({k: "ALL", name: "Whole course", sub: ""});
+const brName = Object.fromEntries(DATA.branches.map(b => [b.k, b.name]));
+const inView = n => branch === "ALL" || n.b === branch;
+
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+let branch = DATA.branches[0].k, sel = null;
+try { const b = localStorage.getItem(KEY + "-tab"); if (b && brName[b]) branch = b; } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+const lvl = id => state[id] || 0;               // 0 none, 1 learned, 2 practised
+const unlocked = id => byId[id].pre.every(p => lvl(p) >= 1);
+const status = id => lvl(id) === 2 ? "practised" : lvl(id) === 1 ? "learned" : unlocked(id) ? "avail" : "locked";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const share = n => n.of ? n.freq / n.of : 0;
+function heat(n) {
+  if (n.optional) return "var(--purple)";
+  const f = share(n);
+  return f >= .5 ? "var(--h3)" : f >= .25 ? "var(--h2)" : f > 0 ? "var(--h1)" : "var(--h0)";
+}
+function heatWidth(n) {
+  if (DATA.noPapers) return 0; return n.freq ? Math.max(8, Math.round(100 * share(n))) : 100; }
+const freqText = n => n.freq ? `in ${n.freq} of ${n.of} ${n.related ? "related-course " : ""}papers` : "";
+
+const drawPre = {};
+function ancestorsIn(id, ch, acc = new Set()) { byId[id].pre.filter(p => byId[p].ch === ch).forEach(p => { if (!acc.has(p)) { acc.add(p); ancestorsIn(p, ch, acc); } }); return acc; }
+DATA.nodes.forEach(n => {
+  const same = n.pre.filter(p => byId[p].ch === n.ch);
+  drawPre[n.id] = same.filter(p => !same.some(q => q !== p && ancestorsIn(q, n.ch).has(p)));
+});
+function ancestors(id, acc = new Set()) { byId[id].pre.forEach(p => { if (!acc.has(p)) { acc.add(p); ancestors(p, acc); } }); return acc; }
+
+/* ---------- layout: one block per chapter; tiers by longest path inside the chapter ---------- */
+function layout(ids) {
+  const inC = new Set(ids), depth = {};
+  const d = id => depth[id] ?? (depth[id] = Math.max(0, ...byId[id].pre.filter(p => inC.has(p)).map(p => d(p) + 1)));
+  ids.forEach(d);
+  const tiers = [];
+  ids.forEach(id => (tiers[depth[id]] = tiers[depth[id]] || []).push(id));
+  const pos = {};
+  tiers.forEach(t => t.forEach((id, i) => pos[id] = (i + .5) / t.length));
+  const bary = id => { const ps = byId[id].pre.filter(p => inC.has(p)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[id]; };
+  for (let k = 1; k < tiers.length; k++) { tiers[k].sort((a, c) => bary(a) - bary(c)); tiers[k].forEach((id, i) => pos[id] = (i + .5) / tiers[k].length); }
+  return tiers;
+}
+
+/* ---------- render ---------- */
+function renderTabs() {
+  if (DATA.noPapers) document.getElementById("lede").textContent = "Tap a concept for its note sections; tick it off to unlock the next ones.";
+  document.getElementById("tabs").style.setProperty("--tabs", Math.min(4, DATA.branches.length));
+  document.getElementById("tabs").style.display = DATA.branches.length > 1 ? "" : "none";
+  document.getElementById("footNote").textContent = DATA.notes.FOOT || "";
+  document.getElementById("tabs").innerHTML = DATA.branches.map(b => {
+    const ns = DATA.nodes.filter(n => (b.k === "ALL" || n.b === b.k) && !n.optional && !n.excluded);
+    const tested = ns.filter(n => n.freq > 0), tot = tested.length, got = tested.filter(n => lvl(n.id) === 2).length;
+    const done = ns.filter(n => lvl(n.id) >= 1).length;
+    return `<button class="tab" role="tab" aria-selected="${b.k === branch}" data-b="${b.k}"><b>${b.name}</b><span>${done}/${ns.length} learned</span><div class="bar"><i style="width:${tot ? 100 * got / tot : 0}%"></i></div></button>`;
+  }).join("");
+  document.querySelectorAll(".tab").forEach(t => t.onclick = () => { branch = t.dataset.b; try { localStorage.setItem(KEY + "-tab", branch); } catch (e) {} closeSheet(); render(); });
+}
+
+function renderNext() {
+  const ns = DATA.nodes.filter(n => inView(n) && !n.optional && !n.excluded);
+  const cand = ns.filter(n => lvl(n.id) === 0 && unlocked(n.id));
+  const toPractise = ns.filter(n => lvl(n.id) === 1 && n.freq > 0);
+  const best = cand.sort((a, c) => (share(c) * 10 + (kids[c.id] || []).length) - (share(a) * 10 + (kids[a.id] || []).length))[0];
+  const prac = toPractise.sort((a, c) => share(c) - share(a))[0];
+  const el = document.getElementById("next");
+  if (!best && !prac) { el.innerHTML = `<span><b>${brName[branch]} complete.</b> Every concept here is learned and practised.</span>`; return; }
+  const pick = best || prac;
+  const verb = best ? "Learn next" : "Practise next";
+  const why = best ? (pick.freq ? `${freqText(pick)}${(kids[pick.id] || []).length ? ` · unlocks ${(kids[pick.id] || []).length}` : ""}` : `unlocks ${(kids[pick.id] || []).length} concept${(kids[pick.id] || []).length === 1 ? "" : "s"}`) : freqText(pick);
+  el.innerHTML = `<span><span class="muted" style="font-size:.8rem;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase">${verb}</span><br><b>${esc(pick.t)}</b> <span class="muted">· ${why}</span></span><button type="button" id="nextGo">Open</button>`;
+  document.getElementById("nextGo").onclick = () => { select(pick.id); };
+}
+
+function renderLegend() {
+  const c = branch === "C", all = branch === "ALL";
+  document.getElementById("legend").innerHTML =
+    `<span><i class="sw" style="background:var(--h3)"></i>half the papers or more</span>` +
+    `<span><i class="sw" style="background:var(--h2)"></i>a quarter to half</span>` +
+    `<span><i class="sw" style="background:var(--h1)"></i>under a quarter</span>` +
+    `<span><i class="sw" style="background:var(--h0)"></i>not tested alone</span>` +
+    `<span><i class="st" style="border-color:var(--accent)"></i>ready</span>` +
+    `<span><i class="st" style="background:var(--accent-soft);border-color:var(--accent)"></i>learned</span>` +
+    `<span><i class="st" style="background:var(--ok-soft);border-color:var(--ok)"></i>practised</span>`;
+  document.getElementById("branchNote").innerHTML = DATA.notes[branch] || DATA.notes.ALL || "";
+  document.getElementById("legend").style.display = DATA.noPapers ? "none" : "";
+}
+
+const chPre = {};
+DATA.nodes.forEach(n => { chPre[n.ch] = chPre[n.ch] || new Set(); n.pre.forEach(p => { if (byId[p].ch !== n.ch) chPre[n.ch].add(byId[p].ch); }); });
+function chAnc(ch, acc = new Set()) { chPre[ch].forEach(c => { if (!acc.has(c)) { acc.add(c); chAnc(c, acc); } }); return acc; }
+
+function renderTree() {
+  const chs = [];
+  DATA.nodes.filter(inView).forEach(n => { if (!chs.includes(n.ch)) chs.push(n.ch); });
+  const inV = new Set(chs), cd = {};
+  const d = ch => cd[ch] ?? (cd[ch] = Math.max(0, ...[...chPre[ch]].filter(c => inV.has(c)).map(c => d(c) + 1)));
+  chs.forEach(d);
+  const rows = [];
+  chs.forEach(ch => (rows[cd[ch]] = rows[cd[ch]] || []).push(ch));
+  // order each row by the average position of its parent chapters
+  const pos = {}; rows.forEach(r => r.forEach((c, i) => pos[c] = (i + .5) / r.length));
+  for (let k = 1; k < rows.length; k++) {
+    const by = c => { const ps = [...chPre[c]].filter(x => inV.has(x)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[c]; };
+    rows[k].sort((a, b) => by(a) - by(b)); rows[k].forEach((c, i) => pos[c] = (i + .5) / rows[k].length);
+  }
+  document.getElementById("tree").innerHTML = `<svg class="trunks" aria-hidden="true"></svg>` + rows.map(r => `<div class="crow">${r.map(ch => {
+    const ids = DATA.nodes.filter(n => n.ch === ch).map(n => n.id);
+    const ext = [...chPre[ch]].filter(c => !inV.has(c));
+    return `<div class="chap" data-ch="${ch}" id="c-${ch}"><div class="hd"><b>${ch}</b><span>${esc(DATA.chapters[ch] || "")}</span>${DATA.excluded[ch] ? `<small class="exn">${DATA.excluded[ch]}</small>` : ""}${ext.length ? `<small style="flex-basis:100%;font-size:.75rem;color:var(--warm)">Also builds on ${ext.join(", ")}</small>` : ""}</div>
+      <div class="body"><svg aria-hidden="true"></svg>${layout(ids).map(t => `<div class="tier">${t.map(card).join("")}</div>`).join("")}</div></div>`;
+  }).join("")}</div>`).join("");
+  document.querySelectorAll(".node").forEach(b => b.onclick = () => select(b.dataset.id === sel ? null : b.dataset.id));
+  applyZoom();
+}
+function card(id) {
+  const n = byId[id], s = status(id);
+  const ext = [...new Set(n.pre.filter(p => byId[p].ch !== n.ch).map(p => byId[p].ch))];
+  const icon = s === "practised" ? "✓✓" : s === "learned" ? "✓" : s === "locked" ? "🔒" : "";
+  return `<button type="button" class="node ${s}${n.optional ? " optional" : ""}${n.excluded ? " excl" : ""}" id="n-${id}" data-id="${id}" aria-label="${esc(n.t)}, ${s}${n.freq ? ", " + freqText(n) : ""}">
+    <span class="ch"><span>${n.ch}</span><span class="badge">${icon}</span></span>
+    <span class="t">${esc(n.t)}</span>
+    ${ext.length ? `<span class="ext">+ needs ${ext.join(", ")}</span>` : ""}
+    ${n.excluded ? `<span class="exc">${n.excluded}</span>` : ""}
+    ${DATA.noPapers ? "" : `<i class="heat" style="background:linear-gradient(90deg, ${heat(n)} ${heatWidth(n)}%, var(--h0) ${heatWidth(n)}%)"></i>`}
+  </button>`;
+}
+// layout coordinates (unaffected by the zoom transform)
+function off(el, root) { let x = 0, y = 0; while (el && el !== root) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; } return {x, y}; }
+function box(el, root) { const o = off(el, root); return {l: o.x, t: o.y, w: el.offsetWidth, h: el.offsetHeight}; }
+const curve = (x1, y1, x2, y2) => { const m = (y2 - y1) * .5; return `M${x1},${y1} C${x1},${y1 + m} ${x2},${y2 - m} ${x2},${y2}`; };
+
+function drawEdges() {
+  const tree = document.getElementById("tree");
+  const path = sel ? ancestors(sel) : new Set();
+  // inside each chapter
+  document.querySelectorAll(".chap").forEach(chap => {
+    const body = chap.querySelector(".body"), svg = body.querySelector("svg");
+    let out = "";
+    DATA.nodes.filter(n => n.ch === chap.dataset.ch).forEach(n => drawPre[n.id].forEach(p => {
+      const a = box(document.getElementById("n-" + p), body), c = box(document.getElementById("n-" + n.id), body);
+      const cls = sel && path.has(p) && (path.has(n.id) || n.id === sel) ? "hot" : sel && p === sel ? "kid" : "";
+      out += `<path class="edge ${cls}" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    }));
+    svg.setAttribute("width", body.offsetWidth); svg.setAttribute("height", body.offsetHeight);
+    svg.innerHTML = out;
+    svg.querySelectorAll(".edge.hot,.edge.kid").forEach(e => svg.appendChild(e));
+  });
+  // trunks between chapters (only direct links), plus exact cross-chapter links for the selection
+  const svg = tree.querySelector("svg.trunks");
+  svg.setAttribute("width", tree.offsetWidth); svg.setAttribute("height", tree.offsetHeight);
+  let out = "";
+  const shown = new Set([...document.querySelectorAll(".chap")].map(c => c.dataset.ch));
+  shown.forEach(ch => {
+    const ps = [...chPre[ch]].filter(c => shown.has(c));
+    ps.filter(p => !ps.some(q => q !== p && chAnc(q).has(p))).forEach(p => {
+      const a = box(document.getElementById("c-" + p), tree), c = box(document.getElementById("c-" + ch), tree);
+      out += `<path class="trunk" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    });
+  });
+  if (sel) {
+    const add = (p, n, cls) => {
+      const pe = document.getElementById("n-" + p), ne = document.getElementById("n-" + n);
+      if (!pe || !ne) return;
+      const a = box(pe, tree), c = box(ne, tree);
+      const up = c.t < a.t + a.h;   // child sits beside or above: leave from the side
+      out += `<path class="xedge ${cls}" d="${up ? `M${a.l + a.w / 2},${a.t + a.h} C${a.l + a.w / 2},${a.t + a.h + 60} ${c.l + c.w / 2},${c.t - 60} ${c.l + c.w / 2},${c.t}` : curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    };
+    [sel, ...path].forEach(id => byId[id].pre.forEach(p => { if (byId[p].ch !== byId[id].ch && path.has(p)) add(p, id, ""); }));
+    (kids[sel] || []).forEach(k => { if (byId[k].ch !== byId[sel].ch) add(sel, k, "kid"); });
+  }
+  svg.innerHTML = out;
+}
+
+/* The tree sits in one box. One finger pans it in any direction (phones lock ordinary touch scrolling
+   to one axis, so panning is done by hand); two fingers pinch to zoom; ctrl/⌘ + wheel or a trackpad
+   pinch zooms on a computer. Past the box's top or bottom edge, dragging scrolls the page. */
+let scale = 1, minScale = .2;
+const MAX_SCALE = 1.6;
+function treeSize() {
+  const t0 = document.getElementById("tree"); t0.style.minWidth = Math.max(0, document.getElementById("vp").clientWidth - 2) + "px"; const t = document.getElementById("tree"); return {w: t.offsetWidth, h: t.offsetHeight}; }
+function setScale(ns, cx, cy, save = true) {
+  const vp = document.getElementById("vp"), tree = document.getElementById("tree"), sizer = document.getElementById("sizer");
+  ns = Math.min(MAX_SCALE, Math.max(minScale, ns));
+  if (cx === undefined) { cx = vp.clientWidth / 2; cy = vp.clientHeight / 2; }
+  const px = (vp.scrollLeft + cx) / scale, py = (vp.scrollTop + cy) / scale;   // tree point under the fingers
+  scale = ns;
+  const {w, h} = treeSize();
+  tree.style.transform = `scale(${scale})`;
+  sizer.style.width = Math.ceil(w * scale) + "px"; sizer.style.height = Math.ceil(h * scale) + "px";
+  vp.scrollLeft = px * scale - cx; vp.scrollTop = py * scale - cy;
+  document.getElementById("zPct").textContent = Math.round(scale * 100) + "%";
+  if (save) { try { localStorage.setItem(KEY + "-scale", String(scale)); } catch (e) {} }
+}
+function fitScale() { const vp = document.getElementById("vp"), avail = vp.clientWidth - 8; return avail > 100 ? Math.min(1, avail / treeSize().w) : 1; }
+(function () {
+  const vp = document.getElementById("vp");
+  const pts = new Map();
+  let x0, y0, lastX, lastY, lastT, vx = 0, vy = 0, moved = false, raf = 0, pinch = null;
+  const pan = (dx, dy) => {
+    vp.scrollLeft -= dx;
+    const before = vp.scrollTop; vp.scrollTop -= dy;
+    const rest = -dy - (vp.scrollTop - before);            // what the box could not absorb
+    if (Math.abs(rest) > .5 && !pinch) window.scrollBy(0, rest);
+  };
+  const mid = () => { const [a, b] = [...pts.values()], r = vp.getBoundingClientRect(); return {x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top, d: Math.hypot(a.x - b.x, a.y - b.y)}; };
+  vp.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    cancelAnimationFrame(raf);
+    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pts.size === 1) { x0 = lastX = e.clientX; y0 = lastY = e.clientY; lastT = performance.now(); vx = vy = 0; moved = false; }
+    if (pts.size === 2) { moved = true; const m = mid(); pinch = {d: m.d, s: scale, x: m.x, y: m.y}; [...pts.keys()].forEach(k => { try { vp.setPointerCapture(k); } catch (err) {} }); }
+  });
+  vp.addEventListener("pointermove", e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pinch && pts.size >= 2) {
+      const m = mid();
+      vp.scrollLeft -= m.x - pinch.x; vp.scrollTop -= m.y - pinch.y;       // two-finger drag pans too
+      setScale(pinch.s * m.d / pinch.d, m.x, m.y, false);
+      pinch.x = m.x; pinch.y = m.y;
+      return;
+    }
+    if (pts.size !== 1 || pinch) return;
+    if (!moved && Math.hypot(e.clientX - x0, e.clientY - y0) < 6) return;
+    if (!moved) { moved = true; try { vp.setPointerCapture(e.pointerId); } catch (err) {} }
+    const now = performance.now(), dt = Math.max(1, now - lastT), dx = e.clientX - lastX, dy = e.clientY - lastY;
+    pan(dx, dy); vx = .8 * dx / dt + .2 * vx; vy = .8 * dy / dt + .2 * vy; lastX = e.clientX; lastY = e.clientY; lastT = now;
+  });
+  const up = e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.delete(e.pointerId);
+    if (pinch) { if (pts.size < 2) { setScale(scale); if (pts.size === 0) pinch = null; } return; }
+    if (pts.size || !moved) return;
+    let t = performance.now();
+    const step = now => { const dt = now - t; t = now; vx *= Math.pow(.95, dt / 16); vy *= Math.pow(.95, dt / 16);
+      if (Math.hypot(vx, vy) < .02) return; pan(vx * dt, vy * dt); raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  };
+  vp.addEventListener("pointerup", up); vp.addEventListener("pointercancel", up);
+  // a lifted second finger leaves one finger down: don't let it turn into a pan jump
+  vp.addEventListener("pointerup", () => { if (pts.size === 1) { const p = [...pts.values()][0]; lastX = p.x; lastY = p.y; } });
+  // a drag or pinch must not count as a tap on a concept
+  vp.addEventListener("click", e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+  // ctrl/⌘ + wheel, and trackpad pinch (sent as ctrl + wheel)
+  vp.addEventListener("wheel", e => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault(); const r = vp.getBoundingClientRect();
+    setScale(scale * Math.exp(-e.deltaY / 300), e.clientX - r.left, e.clientY - r.top);
+  }, {passive: false});
+  // Safari sends its own pinch gesture events; stop them zooming the whole page
+  ["gesturestart", "gesturechange"].forEach(t => vp.addEventListener(t, e => e.preventDefault()));
+})();
+let firstZoom = true;
+function applyZoom() {
+  minScale = Math.min(fitScale(), 1);
+  if (firstZoom && document.getElementById("vp").clientWidth > 100) {
+    firstZoom = false;
+    let s0 = null; try { s0 = parseFloat(localStorage.getItem(KEY + "-scale")); } catch (e) {}
+    // phones start at full size, bigger screens start fitted
+    scale = s0 && s0 > 0 ? s0 : (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) >= 700 ? minScale : 1);
+    const vp = document.getElementById("vp");
+    setScale(scale, 0, 0, false);
+    vp.scrollLeft = Math.max(0, (vp.scrollWidth - vp.clientWidth) / 2); vp.scrollTop = 0;
+  } else setScale(scale, undefined, undefined, false);
+  drawEdges();
+}
+
+function markFocus() {
+  const tree = document.getElementById("tree");
+  tree.classList.toggle("focus", !!sel);
+  const path = sel ? ancestors(sel) : new Set();
+  document.querySelectorAll(".node").forEach(b => {
+    b.classList.toggle("sel", b.dataset.id === sel);
+    b.classList.toggle("path", path.has(b.dataset.id));
+    b.classList.toggle("kid", !!sel && (kids[sel] || []).includes(b.dataset.id));
+  });
+  document.querySelectorAll(".chap").forEach(c => c.classList.toggle("lit", !!c.querySelector(".node.sel,.node.path,.node.kid")));
+  drawEdges();
+}
+
+function select(id) {
+  sel = id;
+  if (id && !inView(byId[id])) { branch = byId[id].b; render(); }
+  markFocus();
+  if (id) { openSheet(id); reveal(id); } else closeSheet(true);
+}
+
+function reveal(id) {
+  const el = document.getElementById("n-" + id); if (!el) return;
+  const vp = document.getElementById("vp");
+  {
+    const vr = vp.getBoundingClientRect(), r = el.getBoundingClientRect();
+    const sheetTop = peek ? window.innerHeight - 140 : window.innerHeight * .42;
+    if (vr.top < 0 || vr.top > 140) window.scrollBy({top: vr.top - 100});
+    const vr2 = vp.getBoundingClientRect(), r2 = el.getBoundingClientRect();
+    const visBottom = Math.min(vr2.bottom, sheetTop);
+    const tabsBottom = (document.getElementById("tabs").getBoundingClientRect().bottom || 0) + 8;
+    const top = Math.max(vr2.top, tabsBottom);
+    if (r2.top < top || r2.bottom > visBottom || r2.left < vr2.left || r2.right > vr2.right) {
+      // centre the concept in the part of the box that is not covered by the tabs or the panel
+      const want = top + Math.max(0, (visBottom - top - r2.height) / 2);
+      const t0 = vp.scrollTop;
+      vp.scrollBy({top: r2.top - want, left: r2.left - vr2.left - (vr2.width - r2.width) / 2});
+      const rest = (r2.top - want) - (vp.scrollTop - t0);     // the box could not scroll that far
+      if (Math.abs(rest) > 4) window.scrollBy({top: rest});
+    }
+    return;
+  }
+  const r = el.getBoundingClientRect(), sheetTop = peek ? window.innerHeight - 140 : window.innerHeight * .42, tabsH = 90;
+  if (r.top < tabsH || r.bottom > sheetTop) window.scrollBy({top: r.top - tabsH - 10, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+}
+function stLabel(id) { const s = status(id); return s === "practised" ? ["practised", "done"] : s === "learned" ? ["learned", "done"] : ["not yet", "todo"]; }
+
+function openSheet(id) {
+  const n = byId[id], s = status(id);
+  const pre = n.pre.map(p => { const [l, c] = stLabel(p); return `<li><button class="link" data-go="${p}"><span>${esc(byId[p].t)}${byId[p].b !== n.b ? ` <span class="pill w">${byId[p].ch}</span>` : ""}</span><span class="r ${c}">${l}</span></button></li>`; }).join("");
+  const nx = (kids[id] || []).map(k => `<li><button class="link" data-go="${k}"><span>${esc(byId[k].t)}${byId[k].b !== n.b ? ` <span class="pill w">${byId[k].ch}</span>` : ""}</span><span class="r">${byId[k].ch}</span></button></li>`).join("");
+  const secs = n.secs.map(x => `<li><a href="${x.href}"><span>${esc(x.t)}</span><span class="r">${n.ch} ›</span></a></li>`).join("");
+  const tline = t => t.papers ? `${t.papers} of ${t.of} papers` : t.related ? "practice only" : "older papers only";
+  const tests = n.tests.map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)}</span><span class="r">${tline(t)}</span></a></li>`).join("")
+    + (n.also || []).map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)} <span class="muted">(counted under the next concept)</span></span><span class="r">guide ›</span></a></li>`).join("");
+  const lockMsg = s === "locked" ? `<p class="note">🔒 Learn ${n.pre.filter(p => lvl(p) < 1).map(p => `<b>${esc(byId[p].t)}</b>`).join(" and ")} first.</p>` : "";
+  document.getElementById("sheetIn").innerHTML = `
+    <div class="grab" id="grab"><span class="bar"></span><div class="top"><div><span class="course">${n.ch} · ${brName[n.b]}${n.mins ? ` · ~${n.mins} min read` : ""}${n.optional ? ' · <span class="pill">optional</span>' : ""}</span>
+    <h2 id="sTitle">${esc(n.t)}</h2></div><div class="btns"><button class="tog" type="button" id="sTog" aria-label="Collapse or expand">${peek ? "⌃" : "⌄"}</button><button class="close" type="button" aria-label="Close" id="sClose">✕</button></div></div></div>
+    <p style="margin:4px 0">${esc(n.d)}</p>
+    ${n.freq ? `<div class="freq"><i style="width:${heatWidth(n)}%;background:${heat(n)}"></i></div><p class="note" style="margin:2px 0 6px">Comes up ${freqText(n)}.</p>` : ""}${n.excluded ? `<p class="note" style="color:var(--purple)">${esc(DATA.excludedLong)}</p>` : ""}${lockMsg}
+    <div class="actions"><button type="button" id="aL" class="${lvl(id) >= 1 ? "on" : ""}">${lvl(id) >= 1 ? "✓ Learned" : "Mark learned"}</button>
+    <button type="button" id="aP" class="ok ${lvl(id) === 2 ? "on" : ""}">${lvl(id) === 2 ? "✓✓ Practised" : "Mark practised"}</button></div>
+    ${secs ? `<h3>Learn it · note ${n.ch}</h3><ul>${secs}</ul>` : `<h3>Learn it</h3><p class="note">Not in the notes. Its exam guide teaches each topic alongside its questions.</p>`}
+    ${tests ? `<h3>Practise it · exam guide</h3><ul>${tests}</ul>` : (DATA.noPapers ? `<h3>Practise it</h3><p class="note">This course has no past papers. Use the practice questions at the end of the note.</p>` : `<h3>Practise it</h3><p class="note">No past-paper question tests this on its own. It is a building block for the concepts below.</p>`)}
+    ${pre ? `<h3>Needs first</h3><ul>${pre}</ul>` : `<h3>Needs first</h3><p class="note">Nothing. This is a starting point.</p>`}
+    ${nx ? `<h3>Leads to</h3><ul>${nx}</ul>` : ""}`;
+  document.getElementById("sClose").onclick = () => select(null);
+  document.getElementById("sTog").onclick = e => { e.stopPropagation(); setPeek(!peek); };
+  bindDrag();
+  document.getElementById("aL").onclick = () => { state[id] = lvl(id) >= 1 ? 0 : 1; if (!state[id]) delete state[id]; save(); refresh(); };
+  document.getElementById("aP").onclick = () => { state[id] = lvl(id) === 2 ? 1 : 2; save(); refresh(); };
+  document.querySelectorAll("#sheetIn [data-go]").forEach(b => b.onclick = () => { const g = b.dataset.go; select(g); });
+  const sh = document.getElementById("sheet"); sh.classList.add("open"); sh.classList.toggle("peek", peek); sh.setAttribute("aria-hidden", "false");
+  document.getElementById("sheetIn").scrollTop = 0;
+  sizePeek();
+}
+let peek = false;
+function sizePeek() { const g = document.getElementById("grab"); if (g) document.getElementById("sheet").style.setProperty("--peek", (g.offsetHeight + 8) + "px"); }
+function setPeek(v) {
+  peek = v; const sh = document.getElementById("sheet"), inn = document.getElementById("sheetIn");
+  inn.scrollTop = 0; sh.classList.toggle("peek", v);
+  const t = document.getElementById("sTog"); if (t) t.textContent = v ? "⌃" : "⌄";
+  if (sel) setTimeout(() => reveal(sel), 230);
+}
+function bindDrag() {
+  const g = document.getElementById("grab"), inn = document.getElementById("sheetIn");
+  let y0 = null, dy = 0, base = 0;
+  g.onpointerdown = e => {
+    if (e.target.closest("button")) return;
+    y0 = e.clientY; dy = 0; base = peek ? inn.offsetHeight - parseFloat(getComputedStyle(document.getElementById("sheet")).getPropertyValue("--peek") || 118) : 0;
+    inn.classList.add("drag"); g.setPointerCapture(e.pointerId);
+  };
+  g.onpointermove = e => { if (y0 === null) return; dy = e.clientY - y0; inn.style.transform = `translateY(${Math.max(0, base + dy)}px)`; };
+  const end = () => {
+    if (y0 === null) return; y0 = null; inn.classList.remove("drag"); inn.style.transform = "";
+    if (Math.abs(dy) < 6) setPeek(!peek);              // a tap on the handle toggles
+    else if (dy > 40) { if (peek && dy > 90) select(null); else setPeek(true); }
+    else if (dy < -40) setPeek(false);
+  };
+  g.onpointerup = end; g.onpointercancel = end;
+}
+function closeSheet(keep) {
+  const sh = document.getElementById("sheet"); sh.classList.remove("open"); sh.setAttribute("aria-hidden", "true");
+  if (!keep) { sel = null; }
+}
+function refresh() { renderTabs(); renderNext(); renderTree(); markFocus(); if (sel) openSheet(sel); }
+function render() { renderTabs(); renderNext(); renderLegend(); renderTree(); markFocus(); }
+
+document.getElementById("reset").onclick = () => { if (confirm("Clear every tick on this page?")) { state = {}; save(); sel = null; closeSheet(); render(); } };
+document.addEventListener("keydown", e => { if (e.key === "Escape" && sel) select(null); });
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(applyZoom, 80); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyZoom);
+document.getElementById("zFit").onclick = () => { const vp = document.getElementById("vp"); setScale(minScale); vp.scrollLeft = 0; };
+document.getElementById("zIn").onclick = () => setScale(scale * 1.25);
+document.getElementById("zOut").onclick = () => setScale(scale / 1.25);
+let lastW = 0;
+if ("ResizeObserver" in window) new ResizeObserver(() => requestAnimationFrame(() => { const w = document.getElementById("vp").clientWidth; if (w && Math.abs(w - lastW) > 20) { lastW = w; applyZoom(); } })).observe(document.getElementById("vp"));
+window.addEventListener("load", applyZoom); setTimeout(applyZoom, 400);
+if (DATA.base) document.getElementById("homeLink").href = DATA.base + "index.html";
+const h = location.hash.slice(1);
+render();
+if (h && byId[h]) select(h);
+else if (h && Object.keys(DATA.chapters).some(k => k.toLowerCase() === h.toLowerCase())) {
+  const chKey = Object.keys(DATA.chapters).find(k => k.toLowerCase() === h.toLowerCase());
+  const go = () => { const c = document.getElementById("c-" + chKey); if (!c) return;
+    if (scale < .8) setScale(1);
+    const vp = document.getElementById("vp"); window.scrollBy(0, vp.getBoundingClientRect().top - 100);
+    const vr = vp.getBoundingClientRect(), r = c.getBoundingClientRect();
+    vp.scrollBy({top: r.top - vr.top - 10, left: r.left - vr.left - Math.max(10, (vr.width - r.width) / 2)});
+    c.classList.add("flash"); setTimeout(() => c.classList.remove("flash"), 1800); };
+  setTimeout(go, 250);
+}
+</script>
+</body>
+</html>

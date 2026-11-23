@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH1350 Tech Tree</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* pack house style, tech-tree page */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4; --warm:#c2551b; --warm-soft:#fbeadf;
+  --ok:#1f7a4d; --ok-soft:#e0f2e8; --purple:#6b4fb3; --purple-soft:#eee9f8;
+  --h0:#e3e8ee; --h1:#f6d9c6; --h2:#eca57c; --h3:#c2551b;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --ok:#5fd39a; --ok-soft:#173628; --purple:#b8a3f0; --purple-soft:#2a2340;
+    --h0:#25313b; --h1:#4a2f1f; --h2:#9a5530; --h3:#f0935c;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.wrap{max-width:1000px;margin:0 auto;padding:28px max(14px, env(safe-area-inset-left,0px)) 140px max(14px, env(safe-area-inset-right,0px))}
+a{color:var(--accent)}
+h1,h2,h3{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2rem;line-height:1.15;margin:0}
+.course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.home{font-size:.9rem;text-decoration:none}
+.lede{color:var(--muted);font-size:1.02rem;max-width:65ch;margin:10px 0}
+header{display:grid;gap:6px;margin-bottom:18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:14px 0;font-size:.94rem}
+.box .tag{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.box ol{margin:4px 0;padding-left:1.2rem}.box li{margin:3px 0}
+details.box summary{cursor:pointer;font-weight:600}
+/* tabs */
+.tabs{display:grid;grid-template-columns:repeat(var(--tabs,4),1fr);gap:6px;position:sticky;top:0;z-index:5;background:var(--paper);padding:8px 0}
+.tab{font:inherit;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 10px;cursor:pointer;min-width:0}
+.tab b{display:block;font-family:var(--display);font-size:1rem}
+.tab span{display:block;font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab .bar{height:4px;border-radius:2px;background:var(--grid);margin-top:6px;overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--ok);width:0}
+.tab[aria-selected="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+/* next up + legend */
+.next{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.next button{font:inherit;font-size:.9rem;border:0;background:var(--accent);color:var(--paper);border-radius:6px;padding:6px 12px;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--muted);margin:6px 2px 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:22px;height:6px;border-radius:3px}
+.st{display:inline-block;width:14px;height:14px;border-radius:4px;border:1.5px solid var(--line)}
+/* tree */
+.vp{overflow:auto;max-width:100%}
+.vp.pan{height:calc(100vh - 120px);height:calc(100dvh - 120px);overflow:auto;touch-action:none;overscroll-behavior:contain;cursor:grab;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.zoombar{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:-4px 0 6px}
+.zoombar #zPct{font-family:var(--mono);font-size:.75rem;color:var(--muted);min-width:3.2em;text-align:center}
+.zoombar .zhint{font-size:.75rem;color:var(--muted);margin-right:auto}
+.zoombar button{font:inherit;font-size:.8rem;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;padding:3px 10px;cursor:pointer}
+.zoombar button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.tree{position:absolute;left:0;top:0;width:max-content;transform-origin:0 0;padding:4px 0 10px}
+.tree>svg.trunks{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:0}
+.crow{display:flex;justify-content:center;align-items:flex-start;gap:56px;margin-bottom:56px;position:relative;z-index:1}
+.chap{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 10px 4px;width:max-content;max-width:500px}
+.chap>.hd{display:flex;gap:8px;align-items:baseline;margin:0 2px 10px;flex-wrap:wrap;max-width:460px}
+.chap>.hd b{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500}
+.chap>.hd span{font-family:var(--display);font-weight:600;font-size:.95rem}
+.chap .body{position:relative}
+.chap .body>svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.tier{display:flex;flex-wrap:wrap;justify-content:center;gap:22px 8px;margin-bottom:22px;position:relative;z-index:1;max-width:470px;margin-inline:auto}
+.trunk{fill:none;stroke:var(--accent);stroke-opacity:.22;stroke-width:7;stroke-linecap:round}
+.xedge{fill:none;stroke:var(--accent);stroke-width:2.5}
+.xedge.kid{stroke:var(--warm);stroke-dasharray:5 4}
+.node{font:inherit;position:relative;width:148px;background:var(--paper)!important;min-height:92px;text-align:left;cursor:pointer;
+  background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:7px 8px 14px;display:flex;flex-direction:column;gap:2px;transition:opacity .15s,border-color .15s}
+
+.node .ch{font-family:var(--mono);font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between;gap:4px}
+.node .t{font-size:.8rem;font-weight:600;line-height:1.25}
+
+.node .heat{position:absolute;left:8px;right:8px;bottom:6px;height:4px;border-radius:2px;background:var(--h0)}
+.node .x{font-size:10px;color:var(--muted);margin-top:auto}
+.node .exc{font-family:var(--mono);font-size:9.5px;color:var(--purple);line-height:1.3}
+.node.excl{opacity:.6}
+.chap .exn{flex-basis:100%;font-size:.75rem;color:var(--purple)}
+.node .ext{font-family:var(--mono);font-size:9.5px;color:var(--warm);line-height:1.3}
+.node.locked{opacity:.5;border-style:dashed}
+.node.avail{border-color:var(--accent)}
+.node.learned{background:var(--accent-soft)!important;border-color:var(--accent)}
+.node.practised{background:var(--ok-soft)!important;border-color:var(--ok)}
+.node.optional{border-style:dotted}
+.node.sel{box-shadow:0 0 0 3px var(--accent)}
+.chap.flash{box-shadow:0 0 0 3px var(--accent);transition:box-shadow .6s}
+.tree.focus .node:not(.path):not(.sel):not(.kid){opacity:.25}
+.node.kid{box-shadow:0 0 0 2px var(--warm)}
+.badge{font-family:var(--mono);font-size:10px}
+.edge{fill:none;stroke:var(--axis,#8a96a3);stroke-opacity:.55;stroke-width:1.4}
+.edge.hot,.edge.kid{stroke-opacity:1}
+.edge.hot{stroke:var(--accent);stroke-width:2.5}
+.edge.kid{stroke:var(--warm);stroke-width:2.2;stroke-dasharray:5 4}
+.tree.focus .edge:not(.hot):not(.kid){opacity:.15}
+.tree.focus .chap:not(.lit){opacity:.45}
+.tree.focus .trunk{stroke-opacity:.08}
+/* sheet */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;pointer-events:none}
+.sheet .in{pointer-events:auto;width:100%;max-width:46rem;max-height:58vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-bottom:0;
+  border-radius:14px 14px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.18);padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .22s ease}
+.sheet.open .in{transform:none}
+.sheet.open.peek .in{transform:translateY(calc(100% - var(--peek, 118px)));overflow:hidden}
+.sheet .in.drag{transition:none}
+.grab{position:sticky;top:-14px;margin:-14px -16px 0;padding:10px 16px 4px;background:var(--card);z-index:2;touch-action:none;cursor:grab}
+.grab .bar{display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 8px}
+.sheet .top .btns{display:flex;gap:6px;flex:none}
+.sheet .tog{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1}
+.sheet:not(.open) .in{box-shadow:none;visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+@media (prefers-reduced-motion: reduce){.sheet .in{transition:none}}
+.sheet h2{font-size:1.2rem;margin:2px 0 4px}
+.sheet .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.close{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;flex:none}
+.sheet h3{font-size:.8rem;font-family:var(--mono);font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.sheet ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sheet li a,.sheet li button.link{display:flex;justify-content:space-between;gap:10px;font:inherit;font-size:.92rem;text-align:left;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--ink);text-decoration:none;cursor:pointer}
+.sheet li a:hover,.sheet li button.link:hover{border-color:var(--accent)}
+.sheet li .r{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;align-self:center}
+.sheet li .r.done{color:var(--ok)} .sheet li .r.todo{color:var(--warm)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.actions button{font:inherit;font-size:.92rem;padding:9px 10px;border-radius:8px;border:1.5px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+.actions button.on{background:var(--accent);color:var(--paper)}
+.actions button.ok.on{background:var(--ok);border-color:var(--ok)}
+.actions button.ok{border-color:var(--ok);color:var(--ok)}
+.muted{color:var(--muted)}
+.freq{height:6px;border-radius:3px;background:var(--h0);overflow:hidden;margin:8px 0 2px}.freq i{display:block;height:100%}
+.note{font-size:.85rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--purple-soft);color:var(--purple);vertical-align:1px}
+.pill.w{background:var(--warm-soft);color:var(--warm)}
+.foot{margin-top:30px;font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.foot button{font:inherit;font-size:.85rem;background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;color:var(--muted);cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="home" href="index.html" id="homeLink">← Start Here</a>
+  <span class="course">MECH1350 · Introduction to Mechanical Engineering · HKU</span>
+  <h1>Tech Tree</h1>
+  <p class="lede" id="lede">Tap a concept for its note sections and past-paper questions; tick it off to unlock the next ones.</p>
+</header>
+
+<details class="box">
+  <summary>How to use it</summary>
+  <ol>
+    <li><b>Tap a concept.</b> The arrows light up the concepts you need first (blue) and the ones it leads to (orange).</li>
+    <li><b>Learned</b> = you have read its note sections. <b>Practised</b> = you have done its exam-guide questions.</li>
+    <li>A concept unlocks once everything it needs is learned. Locked ones are dashed, but you can still open them.</li>
+    <li>Concepts are grouped by chapter. Lines show what to learn first inside a chapter; an orange <b>+ needs S1</b> tag means it also builds on another chapter (tap to see which concept).</li>
+    <li>The bar under each concept shows how often it comes up: the share of past papers with a question on it. A full bar means every paper.</li>
+    <li>Swipe the panel down (or tap ⌄) to shrink it to its title bar and keep browsing the tree; swipe up or tap ⌃ to open it again.</li>
+    <li>Drag the tree in any direction inside its box, and pinch with two fingers to zoom. <b>Fit</b> shows the whole tree. Scroll outside the box to move the page.</li>
+    <li>Your ticks are saved in this browser only.</li>
+  </ol>
+</details>
+
+<div class="tabs" role="tablist" id="tabs"></div>
+
+<div class="box next" id="next"></div>
+
+<div class="legend" id="legend"></div>
+
+<div class="zoombar"><span class="zhint">Pinch to zoom · drag to move</span><button type="button" id="zOut" aria-label="Zoom out">−</button><span id="zPct">100%</span><button type="button" id="zIn" aria-label="Zoom in">+</button><button type="button" id="zFit">Fit</button></div><div class="vp pan" id="vp"><div id="sizer" style="position:relative"><div class="tree" id="tree"></div></div></div>
+
+<p class="note" id="branchNote"></p>
+
+<div class="foot">
+  <span id="footNote"></span>
+  <button id="reset" type="button">Clear my ticks</button>
+</div>
+</div>
+
+<div class="sheet" id="sheet" aria-hidden="true"><div class="in" role="dialog" aria-modal="false" aria-labelledby="sTitle" id="sheetIn"></div></div>
+
+<script>
+const DATA = {"course": {"code": "MECH1350", "name": "Introduction to Mechanical Engineering", "key": "mech1350-tree-v1"}, "notes": {"ALL": "Thick lines link chapters; tap any concept to see the exact concepts it needs across the course. Bars count the 11 ENGG1350 papers (Dec 2018 to May 2025) that have at least one question of the concept's most common type. Older ENGG1205 hydrostatics questions are in the guides but not in the bars.", "A": "Bars count the 11 ENGG1350 papers (Dec 2018 to May 2025) that have at least one question of the concept's most common type. Older ENGG1205 hydrostatics questions are in the guides but not in the bars.", "B": "Bars count the 11 ENGG1350 papers (Dec 2018 to May 2025) that have at least one question of the concept's most common type. Older ENGG1205 hydrostatics questions are in the guides but not in the bars.", "C": "Bars count the 11 ENGG1350 papers (Dec 2018 to May 2025) that have at least one question of the concept's most common type. Older ENGG1205 hydrostatics questions are in the guides but not in the bars. F4 has no 2026 handout, but its topics appear in nine past papers.", "FOOT": "Optional concepts (dotted) are previous-syllabus or older-course topics: heat-engine cycles, floating stability and the sliding block."}, "noPapers": false, "excluded": {}, "excludedLong": "", "chapters": {"T1": "Introduction to thermal science", "T2": "Property, state and process", "T3": "Heat transfer: conduction, convection and radiation", "T4": "Laws of thermodynamics: ideal gases, the first law and the second law", "H1": "Properties of fluids", "H2": "Pressure and manometry", "H3": "Hydrostatic forces on plane and curved surfaces", "H4": "Buoyancy and flotation", "F1": "Introduction to fluid dynamics", "F2": "The continuity equation", "F3": "The Bernoulli equation", "F4": "Momentum, drag and losses"}, "branches": [{"k": "A", "name": "Thermal science", "sub": "Section A"}, {"k": "B", "name": "Hydrostatics", "sub": "Section B"}, {"k": "C", "name": "Fluid dynamics", "sub": "Section C"}], "nodes": [{"id": "t1-energy", "b": "A", "t": "Energy, work and power", "d": "Forms of energy, units, conservation and power.", "ch": "T1", "pre": [], "secs": [{"t": "Thermal science, thermodynamics and heat transfer", "href": "note-T1.html#s1"}, {"t": "Why energy matters: from fire to electricity", "href": "note-T1.html#s2"}, {"t": "Energy and work", "href": "note-T1.html#s4"}, {"t": "Other units of energy", "href": "note-T1.html#s5"}, {"t": "Conservation, conversion and transfer of energy", "href": "note-T1.html#s6"}, {"t": "Power", "href": "note-T1.html#s7"}, {"t": "Worked example: a wind turbine and its battery", "href": "note-T1.html#s9"}, {"t": "Total energy: internal, kinetic and potential", "href": "note-T1.html#s10"}], "mins": 40, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "t1-systems", "b": "A", "t": "Thermodynamic systems", "d": "Isolated, closed and open: what crosses the boundary.", "ch": "T1", "pre": ["t1-energy"], "secs": [{"t": "Thermodynamic systems", "href": "note-T1.html#s8"}], "mins": 7, "tests": [{"what": "Is it isolated, closed or open?", "href": "guide-T1.html#T1-1", "papers": 1, "of": 11, "id": "T1.1", "related": false}], "also": [], "freq": 1, "of": 11, "related": false, "optional": false}, {"id": "t1-props", "b": "A", "t": "Pressure, temperature and units", "d": "Gauge and absolute pressure, temperature scales, density and units.", "ch": "T1", "pre": [], "secs": [{"t": "Pressure", "href": "note-T1.html#s11"}, {"t": "Measuring temperature", "href": "note-T1.html#s12"}, {"t": "Temperature scales", "href": "note-T1.html#s13"}, {"t": "Mass, volume, density and specific volume", "href": "note-T1.html#s14"}, {"t": "Units and dimensions", "href": "note-T1.html#s15"}], "mins": 30, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "t2-state", "b": "A", "t": "Properties, state and processes", "d": "Intensive and extensive properties, the state principle, process paths.", "ch": "T2", "pre": ["t1-props", "t1-systems"], "secs": [{"t": "Properties: extensive and intensive", "href": "note-T2.html#s1"}, {"t": "State, the state principle and equilibrium", "href": "note-T2.html#s2"}, {"t": "Processes, paths and property diagrams", "href": "note-T2.html#s3"}], "mins": 19, "tests": [{"what": "Property and state vocabulary", "href": "guide-T2.html#T2-1", "papers": 4, "of": 11, "id": "T2.1", "related": false}], "also": [], "freq": 4, "of": 11, "related": false, "optional": false}, {"id": "t2-phase", "b": "A", "t": "Phase change and the saturation dome", "d": "Heating water at constant pressure; T-v and P-v diagrams.", "ch": "T2", "pre": ["t2-state"], "secs": [{"t": "Phases and pure substances", "href": "note-T2.html#s4"}, {"t": "Heating water at constant pressure", "href": "note-T2.html#s5"}, {"t": "The saturation dome on the T-v diagram", "href": "note-T2.html#s6"}, {"t": "The P-v diagram; vaporization versus condensation", "href": "note-T2.html#s7"}], "mins": 22, "tests": [{"what": "Sketch a process on T-v or P-v", "href": "guide-T2.html#T2-2", "papers": 8, "of": 11, "id": "T2.2", "related": false}], "also": [], "freq": 8, "of": 11, "related": false, "optional": false}, {"id": "t2-tables", "b": "A", "t": "Steam tables and quality", "d": "Choose the right table, read a state, use the quality.", "ch": "T2", "pre": ["t2-phase"], "secs": [{"t": "Saturated water tables A-4 and A-5", "href": "note-T2.html#s9"}, {"t": "Superheated vapour and compressed liquid: Tables A-6 and A-7", "href": "note-T2.html#s10"}, {"t": "Quality and the lever rule", "href": "note-T2.html#s11"}, {"t": "Choosing the right table", "href": "note-T2.html#s12"}], "mins": 24, "tests": [{"what": "Fix a state with the steam tables", "href": "guide-T2.html#T2-3", "papers": 8, "of": 11, "id": "T2.3", "related": false}], "also": [], "freq": 8, "of": 11, "related": false, "optional": false}, {"id": "t2-energy", "b": "A", "t": "Enthalpy and heat at constant pressure", "d": "h = u + Pv; volume change and heat for a steam process.", "ch": "T2", "pre": ["t2-tables"], "secs": [{"t": "Enthalpy and the work PV", "href": "note-T2.html#s8"}, {"t": "Examples 1–4", "href": "note-T2.html#s13"}], "mins": 10, "tests": [{"what": "Volume change and heat at constant pressure", "href": "guide-T2.html#T2-4", "papers": 8, "of": 11, "id": "T2.4", "related": false}], "also": [], "freq": 8, "of": 11, "related": false, "optional": false}, {"id": "t3-modes", "b": "A", "t": "Heat rate and the three modes", "d": "Conduction, convection, radiation; heat, rate and flux.", "ch": "T3", "pre": ["t1-energy"], "secs": [{"t": "Heat transfer and its three modes", "href": "note-T3.html#s1"}, {"t": "Heat, heat rate and heat flux", "href": "note-T3.html#s2"}], "mins": 9, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "t3-cond", "b": "A", "t": "Conduction", "d": "Fourier's law and thermal conductivity.", "ch": "T3", "pre": ["t3-modes"], "secs": [{"t": "Conduction and the temperature gradient", "href": "note-T3.html#s3"}, {"t": "Thermal conductivity and the conduction law", "href": "note-T3.html#s4"}], "mins": 12, "tests": [{"what": "Conduction and heat-transfer-mode ideas", "href": "guide-T3.html#T3-1", "papers": 3, "of": 11, "id": "T3.1", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "t3-circ", "b": "A", "t": "Thermal resistance circuits", "d": "Resistances in series and parallel, drawn as a circuit.", "ch": "T3", "pre": ["t3-cond"], "secs": [{"t": "Thermal resistance and the electrical analogy", "href": "note-T3.html#s5"}, {"t": "Conduction through a composite slab", "href": "note-T3.html#s6"}, {"t": "Series and parallel thermal resistances", "href": "note-T3.html#s7"}, {"t": "Drawing the thermal circuit", "href": "note-T3.html#s10"}], "mins": 16, "tests": [{"what": "Draw the thermal resistance circuit", "href": "guide-T3.html#T3-2", "papers": 7, "of": 11, "id": "T3.2", "related": false}], "also": [], "freq": 7, "of": 11, "related": false, "optional": false}, {"id": "t3-solve", "b": "A", "t": "Solving walls and insulation design", "d": "Heat rate, interface temperatures, insulation thickness.", "ch": "T3", "pre": ["t3-circ"], "secs": [{"t": "Examples 1–4: walls in series", "href": "note-T3.html#s8"}, {"t": "Insulation design: examples 5 and 6", "href": "note-T3.html#s9"}], "mins": 10, "tests": [{"what": "Solve the circuit: heat rate and temperatures", "href": "guide-T3.html#T3-3", "papers": 8, "of": 11, "id": "T3.3", "related": false}, {"what": "Find an insulation thickness or conductivity", "href": "guide-T3.html#T3-4", "papers": 3, "of": 11, "id": "T3.4", "related": false}], "also": [], "freq": 8, "of": 11, "related": false, "optional": false}, {"id": "t3-conv", "b": "A", "t": "Convection", "d": "Newton's law of cooling and convection resistance.", "ch": "T3", "pre": ["t3-circ"], "secs": [{"t": "Convection and Newton's law of cooling", "href": "note-T3.html#s11"}, {"t": "Convection resistance; convection plus conduction", "href": "note-T3.html#s12"}, {"t": "Typical values of the heat transfer coefficient", "href": "note-T3.html#s13"}], "mins": 14, "tests": [{"what": "Convection and radiation ideas", "href": "guide-T3.html#T3-5", "papers": 4, "of": 11, "id": "T3.5", "related": false}], "also": [], "freq": 4, "of": 11, "related": false, "optional": false}, {"id": "t3-rad", "b": "A", "t": "Radiation and combined surfaces", "d": "Black and grey bodies, radiant coefficient, convection plus radiation.", "ch": "T3", "pre": ["t3-conv"], "secs": [{"t": "Radiation and the black body", "href": "note-T3.html#s14"}, {"t": "Grey bodies and emissivity", "href": "note-T3.html#s15"}, {"t": "Radiation as a resistance; convection and radiation together", "href": "note-T3.html#s16"}, {"t": "Everything together: example 12", "href": "note-T3.html#s17"}], "mins": 16, "tests": [{"what": "Radiant coefficient and combined h", "href": "guide-T3.html#T3-6", "papers": 2, "of": 11, "id": "T3.6", "related": false}], "also": [], "freq": 2, "of": 11, "related": false, "optional": false}, {"id": "t4-gas", "b": "A", "t": "Ideal gases and specific heats", "d": "PV = mRT, the gas constant, cp, cv and k.", "ch": "T4", "pre": ["t1-props", "t2-state"], "secs": [{"t": "The equation of state and the ideal gas", "href": "note-T4.html#s1"}, {"t": "The ideal-gas table: R, c p, c v and k", "href": "note-T4.html#s2"}, {"t": "Is water vapour an ideal gas?", "href": "note-T4.html#s3"}, {"t": "Specific heats", "href": "note-T4.html#s4"}], "mins": 21, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "t4-first", "b": "A", "t": "Heat, work and the first law", "d": "Q − W = ΔU for closed systems and cycles.", "ch": "T4", "pre": ["t4-gas", "t2-energy"], "secs": [{"t": "Energy transfer: heat and work", "href": "note-T4.html#s5"}, {"t": "Energy balance example: the slap", "href": "note-T4.html#s6"}, {"t": "The first law of thermodynamics", "href": "note-T4.html#s7"}, {"t": "The first law for a cycle", "href": "note-T4.html#s8"}], "mins": 24, "tests": [{"what": "First-law energy balance", "href": "guide-T4.html#T4-2", "papers": 3, "of": 11, "id": "T4.2", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "t4-proc", "b": "A", "t": "Ideal-gas processes and rigid tanks", "d": "Process diagrams and the rigid-tank energy balance.", "ch": "T4", "pre": ["t4-first"], "secs": [{"t": "Ideal-gas processes and the three diagrams (type T4.3)", "href": "note-T4.html#s9"}, {"t": "Ideal gas plus first law: rigid tanks (type T4.1)", "href": "note-T4.html#s10"}], "mins": 12, "tests": [{"what": "Rigid tank: ideal gas with an energy balance", "href": "guide-T4.html#T4-1", "papers": 1, "of": 11, "id": "T4.1", "related": false}, {"what": "Ideal-gas cycle on three diagrams", "href": "guide-T4.html#T4-3", "papers": 1, "of": 11, "id": "T4.3", "related": false}], "also": [], "freq": 1, "of": 11, "related": false, "optional": false}, {"id": "t4-second", "b": "A", "t": "Second law and entropy", "d": "Reversibility, entropy generation, what is impossible.", "ch": "T4", "pre": ["t4-first"], "secs": [{"t": "Towards the second law", "href": "note-T4.html#s11"}, {"t": "Entropy", "href": "note-T4.html#s12"}], "mins": 14, "tests": [{"what": "Second law and reversibility", "href": "guide-T4.html#T4-4", "papers": 3, "of": 11, "id": "T4.4", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "t4-cycles", "b": "A", "t": "Heat engines and refrigerators", "d": "Carnot and Otto cycles, efficiency and COP. Previous syllabus.", "ch": "T4", "pre": ["t4-second"], "secs": [{"t": "Heat engines, the Carnot and Otto cycles, refrigerators and COP", "href": "note-T4.html#s13"}], "mins": 17, "tests": [{"what": "Carnot and Otto cycles (previous syllabus)", "href": "guide-prev.html#T4-5", "papers": 1, "of": 11, "id": "T4.5", "related": false}, {"what": "Refrigerator COP and power (previous syllabus)", "href": "guide-prev.html#T4-6", "papers": 1, "of": 11, "id": "T4.6", "related": false}], "also": [], "freq": 1, "of": 11, "related": false, "optional": true}, {"id": "h1-fluid", "b": "B", "t": "Fluids and density", "d": "What a fluid is; density, specific weight and relative density.", "ch": "H1", "pre": [], "secs": [{"t": "What a fluid is: fluid versus solid", "href": "note-H1.html#s1"}, {"t": "Continuum, the plan of fluid mechanics, temperature and pressure", "href": "note-H1.html#s2"}, {"t": "Density, specific weight and relative density", "href": "note-H1.html#s3"}, {"t": "Water is densest at 4 °C", "href": "note-H1.html#s4"}], "mins": 23, "tests": [{"what": "Density, specific weight, relative density", "href": "guide-H1.html#H1-3", "papers": 4, "of": 11, "id": "H1.3", "related": false}], "also": [], "freq": 4, "of": 11, "related": false, "optional": false}, {"id": "h1-visc", "b": "B", "t": "Viscosity", "d": "Newton's law of viscosity, thin oil films, non-Newtonian fluids.", "ch": "H1", "pre": ["h1-fluid"], "secs": [{"t": "Viscosity and Newton's law of viscosity", "href": "note-H1.html#s5"}, {"t": "Measuring viscosity: simple shear flow, and forces from thin oil films", "href": "note-H1.html#s6"}, {"t": "How temperature changes viscosity", "href": "note-H1.html#s7"}, {"t": "Non-Newtonian fluids", "href": "note-H1.html#s8"}, {"t": "Terminal speed of a falling sphere", "href": "note-H1.html#s9"}], "mins": 31, "tests": [{"what": "Fluid behaviour and viscosity ideas", "href": "guide-H1.html#H1-1", "papers": 3, "of": 11, "id": "H1.1", "related": false}, {"what": "Shear force from a thin oil film", "href": "guide-H1.html#H1-5", "papers": 2, "of": 11, "id": "H1.5", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "h1-surf", "b": "B", "t": "Surface tension and capillarity", "d": "Surface tension, contact angle and capillary rise.", "ch": "H1", "pre": ["h1-fluid"], "secs": [{"t": "Surface tension", "href": "note-H1.html#s10"}, {"t": "Contact angle, wetting and capillarity", "href": "note-H1.html#s11"}], "mins": 17, "tests": [{"what": "Surface tension, cavitation and compressibility ideas", "href": "guide-H1.html#H1-2", "papers": 2, "of": 11, "id": "H1.2", "related": false}, {"what": "Surface-tension force along a contact line", "href": "guide-H1.html#H1-6", "papers": 1, "of": 11, "id": "H1.6", "related": false}], "also": [], "freq": 2, "of": 11, "related": false, "optional": false}, {"id": "h1-comp", "b": "B", "t": "Vapour pressure and compressibility", "d": "Cavitation, bulk modulus and the gas law for fluids.", "ch": "H1", "pre": ["h1-fluid"], "secs": [{"t": "Vapour pressure and cavitation", "href": "note-H1.html#s12"}, {"t": "Compressibility, bulk modulus and the Mach number", "href": "note-H1.html#s13"}, {"t": "The perfect gas law", "href": "note-H1.html#s14"}, {"t": "The physical laws of fluid mechanics", "href": "note-H1.html#s15"}], "mins": 21, "tests": [{"what": "Bulk modulus: volume or density change", "href": "guide-H1.html#H1-4", "papers": 2, "of": 11, "id": "H1.4", "related": false}], "also": [], "freq": 2, "of": 11, "related": false, "optional": false}, {"id": "h2-press", "b": "B", "t": "Pressure and Pascal's law", "d": "Pressure as a scalar at a point; the hydraulic lift.", "ch": "H2", "pre": ["h1-fluid"], "secs": [{"t": "A fluid at rest", "href": "note-H2.html#s1"}, {"t": "Pressure is a normal compressive stress", "href": "note-H2.html#s2"}, {"t": "Pascal's law: pressure is a scalar", "href": "note-H2.html#s3"}, {"t": "Transmission of pressure: the hydraulic lift", "href": "note-H2.html#s4"}], "mins": 16, "tests": [{"what": "Pressure and manometer ideas", "href": "guide-H2.html#H2-1", "papers": 2, "of": 11, "id": "H2.1", "related": false}], "also": [], "freq": 2, "of": 11, "related": false, "optional": false}, {"id": "h2-hydro", "b": "B", "t": "The hydrostatic law", "d": "Pressure with depth, gauge vs absolute, layered liquids.", "ch": "H2", "pre": ["h2-press"], "secs": [{"t": "The hydrostatic law: pressure variation with depth", "href": "note-H2.html#s5"}, {"t": "Constant specific weight: absolute and gauge pressure", "href": "note-H2.html#s6"}, {"t": "Pressure in a liquid: \"same level, same fluid\"", "href": "note-H2.html#s7"}, {"t": "Pressure in a static gas", "href": "note-H2.html#s8"}, {"t": "Pressure distributions and pressure force", "href": "note-H2.html#s9"}, {"t": "Layered liquids", "href": "note-H2.html#s10"}], "mins": 25, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "h2-mano", "b": "B", "t": "Barometers and manometers", "d": "Piezometers, U-tubes and the manometer chain.", "ch": "H2", "pre": ["h2-hydro"], "secs": [{"t": "Measuring pressure; the mercury barometer", "href": "note-H2.html#s11"}, {"t": "Atmospheric pressure, weather and storm surge", "href": "note-H2.html#s12"}, {"t": "Piezometer and simple U-tube manometer", "href": "note-H2.html#s13"}, {"t": "Differential U-tube manometer", "href": "note-H2.html#s14"}, {"t": "Manometer chains: the exam method", "href": "note-H2.html#s15"}], "mins": 28, "tests": [{"what": "Walk a manometer chain", "href": "guide-H2.html#H2-2", "papers": 3, "of": 11, "id": "H2.2", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "h3-diag", "b": "B", "t": "Pressure distribution diagrams", "d": "Sketch pressure on a wall and turn it into a force.", "ch": "H3", "pre": ["h2-hydro"], "secs": [{"t": "Why forces on surfaces matter", "href": "note-H3.html#s1"}, {"t": "Pressure distribution diagrams", "href": "note-H3.html#s2"}, {"t": "From distributed load to resultant force", "href": "note-H3.html#s3"}], "mins": 14, "tests": [{"what": "Sketch the pressure distribution", "href": "guide-H3.html#H3-1", "papers": 3, "of": 11, "id": "H3.1", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "h3-plane", "b": "B", "t": "Force and centre of pressure", "d": "Resultant force on any plane surface and where it acts.", "ch": "H3", "pre": ["h3-diag"], "secs": [{"t": "The simplest case: a vertical rectangle piercing the surface", "href": "note-H3.html#s4"}, {"t": "Any plane surface: the size of the force", "href": "note-H3.html#s5"}, {"t": "Centroids", "href": "note-H3.html#s6"}, {"t": "Second moment of area", "href": "note-H3.html#s7"}, {"t": "Where the force acts: the centre of pressure", "href": "note-H3.html#s8"}, {"t": "Cases where you don't need the formulas", "href": "note-H3.html#s9"}], "mins": 28, "tests": [{"what": "Force and centre of pressure on a plane", "href": "guide-H3.html#H3-2", "papers": 3, "of": 11, "id": "H3.2", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "h3-layers", "b": "B", "t": "Gas above and layered liquids", "d": "Surface pressure and stacked liquids on a plane surface.", "ch": "H3", "pre": ["h3-plane"], "secs": [{"t": "Gas pressure above the liquid, and layered liquids", "href": "note-H3.html#s10"}], "mins": 6, "tests": [{"what": "Plane surface with gas or layered liquids", "href": "guide-H3.html#H3-3", "papers": 3, "of": 11, "id": "H3.3", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "h3-gate", "b": "B", "t": "Gates and moments", "d": "Take moments about the hinge to hold a gate shut.", "ch": "H3", "pre": ["h3-plane"], "secs": [{"t": "Gates in equilibrium: moments about the hinge", "href": "note-H3.html#s11"}], "mins": 6, "tests": [{"what": "Gate: moments about the hinge", "href": "guide-H3.html#H3-4", "papers": 6, "of": 11, "id": "H3.4", "related": false}], "also": [], "freq": 6, "of": 11, "related": false, "optional": false}, {"id": "h3-curved", "b": "B", "t": "Curved surfaces", "d": "Horizontal and vertical force components, water above or below.", "ch": "H3", "pre": ["h3-plane"], "secs": [{"t": "Curved surfaces: horizontal and vertical components", "href": "note-H3.html#s12"}, {"t": "Water underneath: force on the underside of a curved surface", "href": "note-H3.html#s13"}, {"t": "Circular arcs: try it, and what exam gates look like", "href": "note-H3.html#s14"}, {"t": "Two containers: the hydrostatic paradox", "href": "note-H3.html#s15"}], "mins": 25, "tests": [{"what": "Curved surface: horizontal and vertical forces", "href": "guide-H3.html#H3-5", "papers": 3, "of": 11, "id": "H3.5", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "h3-slope", "b": "B", "t": "Structure on a slope", "d": "Sliding check for a block with water behind and under it. Older course only.", "ch": "H3", "pre": ["h3-plane"], "secs": [{"t": ": a block on a slope, with water behind and under it (older course ENGG1205)", "href": "note-H3.html#s16"}], "mins": 4, "tests": [{"what": "Block on a slope: sliding check (older course only)", "href": "guide-H3.html#H3-6", "papers": 0, "of": 11, "id": "H3.6", "related": false}], "also": [], "freq": 0, "of": 11, "related": false, "optional": true}, {"id": "h4-arch", "b": "B", "t": "Archimedes' principle", "d": "Buoyant force, where it comes from, apparent weight.", "ch": "H4", "pre": ["h2-hydro"], "secs": [{"t": "Archimedes and the king's crown", "href": "note-H4.html#s1"}, {"t": "Archimedes' principle", "href": "note-H4.html#s2"}, {"t": "Where the buoyant force comes from", "href": "note-H4.html#s3"}, {"t": "Apparent weight and submerged density", "href": "note-H4.html#s4"}], "mins": 21, "tests": [{"what": "Archimedes and flotation ideas", "href": "guide-H4.html#H4-1", "papers": 1, "of": 11, "id": "H4.1", "related": false}, {"what": "Density from weight ratios (older course only)", "href": "guide-H4.html#H4-6", "papers": 0, "of": 11, "id": "H4.6", "related": false}], "also": [], "freq": 1, "of": 11, "related": false, "optional": false}, {"id": "h4-float", "b": "B", "t": "Floating and the law of flotation", "d": "Float or sink, and how deep a floating body sits.", "ch": "H4", "pre": ["h4-arch"], "secs": [{"t": "Float or sink?", "href": "note-H4.html#s5"}, {"t": "The law of flotation", "href": "note-H4.html#s6"}, {"t": "Concept questions", "href": "note-H4.html#s7"}], "mins": 15, "tests": [{"what": "Free floating body: law of flotation", "href": "guide-H4.html#H4-2", "papers": 3, "of": 11, "id": "H4.2", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "h4-teth", "b": "B", "t": "Tethered and hanging bodies", "d": "Force balance with a cable, and floating bodies with moments.", "ch": "H4", "pre": ["h4-float"], "secs": [{"t": "Tethered and hanging bodies: the force balance", "href": "note-H4.html#s8"}, {"t": "A floating body with moments: the anchored timber", "href": "note-H4.html#s9"}], "mins": 13, "tests": [{"what": "Tethered or hung body: force balance", "href": "guide-H4.html#H4-3", "papers": 5, "of": 11, "id": "H4.3", "related": false}, {"what": "Anchored floating timber with moments (older course only)", "href": "guide-H4.html#H4-7", "papers": 0, "of": 11, "id": "H4.7", "related": false}], "also": [], "freq": 5, "of": 11, "related": false, "optional": false}, {"id": "h4-stab", "b": "B", "t": "Stability and the metacentre", "d": "Floating and suspended stability. Previous syllabus.", "ch": "H4", "pre": ["h4-float", "h3-plane"], "secs": [{"t": "Stability of a floating body: the metacentre", "href": "note-H4.html#s10"}, {"t": "Stability of a suspended, submerged body", "href": "note-H4.html#s11"}], "mins": 14, "tests": [{"what": "Floating stability: the metacentre (previous syllabus)", "href": "guide-prev.html#H4-4", "papers": 3, "of": 11, "id": "H4.4", "related": false}, {"what": "Hanging-body stability (previous syllabus)", "href": "guide-prev.html#H4-5", "papers": 3, "of": 11, "id": "H4.5", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": true}, {"id": "f1-visc", "b": "C", "t": "Viscosity in moving fluids", "d": "What fluid mechanics studies; Newtonian and non-Newtonian flow.", "ch": "F1", "pre": ["h1-visc"], "secs": [{"t": "What fluid mechanics studies", "href": "note-F1.html#s1"}, {"t": "Viscosity: Newtonian and non-Newtonian fluids", "href": "note-F1.html#s2"}], "mins": 15, "tests": [{"what": "Viscosity units and conversions", "href": "guide-F1.html#F1-2", "papers": 1, "of": 11, "id": "F1.2", "related": false}], "also": [], "freq": 1, "of": 11, "related": false, "optional": false}, {"id": "f1-class", "b": "C", "t": "Classifying flows", "d": "Steady, uniform, viscous, compressible, 1D/2D/3D flow.", "ch": "F1", "pre": ["f1-visc", "h1-comp"], "secs": [{"t": "Classifying flows; steady and unsteady flow", "href": "note-F1.html#s3"}, {"t": "Uniform and non-uniform flow", "href": "note-F1.html#s4"}, {"t": "Viscous and inviscid flow", "href": "note-F1.html#s5"}, {"t": "Compressible and incompressible flow; the Mach number", "href": "note-F1.html#s6"}, {"t": "Why does a rocket nozzle first narrow and then expand?", "href": "note-F1.html#s7"}, {"t": "One-, two- and three-dimensional flow", "href": "note-F1.html#s10"}, {"t": "Flow visualisation", "href": "note-F1.html#s11"}], "mins": 34, "tests": [{"what": "Flow classification and terms", "href": "guide-F1.html#F1-1", "papers": 2, "of": 11, "id": "F1.1", "related": false}], "also": [], "freq": 2, "of": 11, "related": false, "optional": false}, {"id": "f1-re", "b": "C", "t": "Laminar, turbulent and Reynolds number", "d": "Reynolds's experiment; compute Re and classify a pipe flow.", "ch": "F1", "pre": ["f1-class"], "secs": [{"t": "Laminar and turbulent flow; Reynolds's experiment", "href": "note-F1.html#s8"}, {"t": "The Reynolds number", "href": "note-F1.html#s9"}], "mins": 14, "tests": [{"what": "Compute Re and classify the flow", "href": "guide-F1.html#F1-3", "papers": 3, "of": 11, "id": "F1.3", "related": false}, {"what": "Laminar vs turbulent: the dye experiment", "href": "guide-F1.html#F1-4", "papers": 2, "of": 11, "id": "F1.4", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "f2-cv", "b": "C", "t": "Systems and control volumes", "d": "Control volumes and the three basic laws.", "ch": "F2", "pre": ["f1-class"], "secs": [{"t": "Fluid mechanics: statics versus flow", "href": "note-F2.html#s1"}, {"t": "Systems, surroundings and boundaries", "href": "note-F2.html#s2"}, {"t": "Control volume and control surface", "href": "note-F2.html#s3"}, {"t": "Control volume versus differential analysis", "href": "note-F2.html#s4"}, {"t": "The three basic laws of fluid mechanics", "href": "note-F2.html#s5"}], "mins": 17, "tests": [{"what": "Control volumes, the three laws, streamlines", "href": "guide-F2.html#F2-2", "papers": 3, "of": 11, "id": "F2.2", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "f2-cont", "b": "C", "t": "Flow rates and continuity", "d": "Q = AV, mass flow, and continuity at pipes and branches.", "ch": "F2", "pre": ["f2-cv"], "secs": [{"t": "Flow rates and momentum flux", "href": "note-F2.html#s6"}, {"t": "The continuity equation", "href": "note-F2.html#s7"}, {"t": "Examples 1 and 2: a pipe that widens, and a branch", "href": "note-F2.html#s8"}, {"t": "Example 3: a pipe that branches", "href": "note-F2.html#s9"}, {"t": "Example 4: water flow through a garden-hose nozzle", "href": "note-F2.html#s10"}, {"t": "Continuity in exam questions", "href": "note-F2.html#s11"}], "mins": 25, "tests": [{"what": "Continuity: Q = AV, mass and weight flow", "href": "guide-F2.html#F2-1", "papers": 9, "of": 11, "id": "F2.1", "related": false}], "also": [], "freq": 9, "of": 11, "related": false, "optional": false}, {"id": "f3-bern", "b": "C", "t": "The Bernoulli equation", "d": "Pressure, speed and height along a streamline; heads.", "ch": "F3", "pre": ["f2-cont", "h2-hydro"], "secs": [{"t": "Fun observations: fast air, low pressure", "href": "note-F3.html#s1"}, {"t": "The Bernoulli equation and when it is valid", "href": "note-F3.html#s2"}, {"t": "Deriving Bernoulli from work and energy", "href": "note-F3.html#s3"}, {"t": "Heads: the equation per unit weight", "href": "note-F3.html#s4"}], "mins": 24, "tests": [{"what": "Bernoulli ideas: heads, stagnation, validity", "href": "guide-F3.html#F3-1", "papers": 4, "of": 11, "id": "F3.1", "related": false}], "also": [], "freq": 4, "of": 11, "related": false, "optional": false}, {"id": "f3-apps", "b": "C", "t": "Everyday Bernoulli", "d": "Explain lift-like effects with Bernoulli and continuity.", "ch": "F3", "pre": ["f3-bern"], "secs": [{"t": "Everyday applications", "href": "note-F3.html#s5"}], "mins": 8, "tests": [{"what": "Explain an everyday Bernoulli effect", "href": "guide-F3.html#F3-2", "papers": 2, "of": 11, "id": "F3.2", "related": false}], "also": [], "freq": 2, "of": 11, "related": false, "optional": false}, {"id": "f3-jets", "b": "C", "t": "Tanks and free jets", "d": "Torricelli's theorem, jet heights and spreading sheets.", "ch": "F3", "pre": ["f3-bern"], "secs": [{"t": "Torricelli's theorem: jets from tanks", "href": "note-F3.html#s6"}, {"t": "Tanks and jets: examples 7, 8 and 10", "href": "note-F3.html#s12"}, {"t": "Examples 12–13: jets that spread into thin sheets", "href": "note-F3.html#s14"}], "mins": 14, "tests": [{"what": "Tanks and free jets", "href": "guide-F3.html#F3-3", "papers": 8, "of": 11, "id": "F3.3", "related": false}], "also": [], "freq": 8, "of": 11, "related": false, "optional": false}, {"id": "f3-venturi", "b": "C", "t": "Venturi and flow meters", "d": "Find Q from gauges or a manometer across a contraction.", "ch": "F3", "pre": ["f3-bern", "h2-mano"], "secs": [{"t": "Flow meters: Venturi, nozzle and orifice", "href": "note-F3.html#s7"}, {"t": "Examples 1–2: Venturi with gauges and with a manometer", "href": "note-F3.html#s8"}, {"t": "Examples 5–6: manometers across an expansion and a riser", "href": "note-F3.html#s11"}, {"t": "Examples 9 and 11: wind tunnel and inverted manometer", "href": "note-F3.html#s13"}], "mins": 20, "tests": [{"what": "Venturi or contraction: Q from readings", "href": "guide-F3.html#F3-4", "papers": 3, "of": 11, "id": "F3.4", "related": false}, {"what": "Venturi meter: pros and cons", "href": "guide-F3.html#F3-5", "papers": 1, "of": 11, "id": "F3.5", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "f3-pitot", "b": "C", "t": "Stagnation and the Pitot tube", "d": "Stagnation pressure and measuring speed with a Pitot tube.", "ch": "F3", "pre": ["f3-bern", "h2-mano"], "secs": [{"t": "Stagnation point and the Pitot tube", "href": "note-F3.html#s9"}, {"t": "Examples 3–4: Pitot tube and piezometer in pipes", "href": "note-F3.html#s10"}], "mins": 13, "tests": [{"what": "Pitot tube and stagnation pressure", "href": "guide-F3.html#F3-6", "papers": 5, "of": 11, "id": "F3.6", "related": false}], "also": [], "freq": 5, "of": 11, "related": false, "optional": false}, {"id": "f4-mom", "b": "C", "t": "Momentum and jets on plates", "d": "The control-volume momentum equation; jets on plates and vanes.", "ch": "F4", "pre": ["f2-cont", "f3-jets"], "secs": [{"t": "Momentum and momentum flux", "href": "note-F4.html#s1"}, {"t": "The control-volume momentum equation", "href": "note-F4.html#s2"}, {"t": "Jets on flat plates", "href": "note-F4.html#s3"}, {"t": "Inclined plates and curved vanes", "href": "note-F4.html#s4"}, {"t": "Vertical jets: gravity changes the speed", "href": "note-F4.html#s5"}], "mins": 26, "tests": [{"what": "Jet on a plate or vane", "href": "guide-F4.html#F4-1", "papers": 4, "of": 11, "id": "F4.1", "related": false}], "also": [], "freq": 4, "of": 11, "related": false, "optional": false}, {"id": "f4-bends", "b": "C", "t": "Bends, nozzles and tanks on scales", "d": "Momentum with pressure forces on pipe fittings.", "ch": "F4", "pre": ["f4-mom"], "secs": [{"t": "Pipe bends, nozzles and reducers", "href": "note-F4.html#s6"}, {"t": "Tanks on scales", "href": "note-F4.html#s7"}], "mins": 13, "tests": [{"what": "Momentum on bends and tanks", "href": "guide-F4.html#F4-2", "papers": 3, "of": 11, "id": "F4.2", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "f4-drag", "b": "C", "t": "Drag and lift", "d": "Drag and lift coefficients, propulsion power, aerofoils.", "ch": "F4", "pre": ["f1-re"], "secs": [{"t": "Drag and lift", "href": "note-F4.html#s8"}, {"t": "Drag force and propulsion power", "href": "note-F4.html#s9"}, {"t": "Aerofoils: lift, stall and flaps", "href": "note-F4.html#s10"}], "mins": 17, "tests": [{"what": "Drag force and propulsion power", "href": "guide-F4.html#F4-3", "papers": 1, "of": 11, "id": "F4.3", "related": false}, {"what": "Drag, lift and aerofoil ideas", "href": "guide-F4.html#F4-4", "papers": 3, "of": 11, "id": "F4.4", "related": false}], "also": [], "freq": 3, "of": 11, "related": false, "optional": false}, {"id": "f4-loss", "b": "C", "t": "Head loss and open channels", "d": "Energy lost in real flows; specific energy and critical depth.", "ch": "F4", "pre": ["f3-bern"], "secs": [{"t": "Head loss: energy lost in real flows", "href": "note-F4.html#s11"}, {"t": "Open-channel flow: specific energy and critical depth", "href": "note-F4.html#s12"}], "mins": 11, "tests": [{"what": "Head loss", "href": "guide-F4.html#F4-5", "papers": 1, "of": 11, "id": "F4.5", "related": false}, {"what": "Open channel: specific energy and critical depth", "href": "guide-F4.html#F4-6", "papers": 1, "of": 11, "id": "F4.6", "related": false}], "also": [], "freq": 1, "of": 11, "related": false, "optional": false}], "base": ""};
+const KEY = DATA.course.key;
+const byId = Object.fromEntries(DATA.nodes.map(n => [n.id, n]));
+const kids = {}; DATA.nodes.forEach(n => n.pre.forEach(p => (kids[p] = kids[p] || []).push(n.id)));
+if (DATA.branches.length > 1) DATA.branches.unshift({k: "ALL", name: "Whole course", sub: ""});
+const brName = Object.fromEntries(DATA.branches.map(b => [b.k, b.name]));
+const inView = n => branch === "ALL" || n.b === branch;
+
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+let branch = DATA.branches[0].k, sel = null;
+try { const b = localStorage.getItem(KEY + "-tab"); if (b && brName[b]) branch = b; } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+const lvl = id => state[id] || 0;               // 0 none, 1 learned, 2 practised
+const unlocked = id => byId[id].pre.every(p => lvl(p) >= 1);
+const status = id => lvl(id) === 2 ? "practised" : lvl(id) === 1 ? "learned" : unlocked(id) ? "avail" : "locked";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const share = n => n.of ? n.freq / n.of : 0;
+function heat(n) {
+  if (n.optional) return "var(--purple)";
+  const f = share(n);
+  return f >= .5 ? "var(--h3)" : f >= .25 ? "var(--h2)" : f > 0 ? "var(--h1)" : "var(--h0)";
+}
+function heatWidth(n) {
+  if (DATA.noPapers) return 0; return n.freq ? Math.max(8, Math.round(100 * share(n))) : 100; }
+const freqText = n => n.freq ? `in ${n.freq} of ${n.of} ${n.related ? "related-course " : ""}papers` : "";
+
+const drawPre = {};
+function ancestorsIn(id, ch, acc = new Set()) { byId[id].pre.filter(p => byId[p].ch === ch).forEach(p => { if (!acc.has(p)) { acc.add(p); ancestorsIn(p, ch, acc); } }); return acc; }
+DATA.nodes.forEach(n => {
+  const same = n.pre.filter(p => byId[p].ch === n.ch);
+  drawPre[n.id] = same.filter(p => !same.some(q => q !== p && ancestorsIn(q, n.ch).has(p)));
+});
+function ancestors(id, acc = new Set()) { byId[id].pre.forEach(p => { if (!acc.has(p)) { acc.add(p); ancestors(p, acc); } }); return acc; }
+
+/* ---------- layout: one block per chapter; tiers by longest path inside the chapter ---------- */
+function layout(ids) {
+  const inC = new Set(ids), depth = {};
+  const d = id => depth[id] ?? (depth[id] = Math.max(0, ...byId[id].pre.filter(p => inC.has(p)).map(p => d(p) + 1)));
+  ids.forEach(d);
+  const tiers = [];
+  ids.forEach(id => (tiers[depth[id]] = tiers[depth[id]] || []).push(id));
+  const pos = {};
+  tiers.forEach(t => t.forEach((id, i) => pos[id] = (i + .5) / t.length));
+  const bary = id => { const ps = byId[id].pre.filter(p => inC.has(p)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[id]; };
+  for (let k = 1; k < tiers.length; k++) { tiers[k].sort((a, c) => bary(a) - bary(c)); tiers[k].forEach((id, i) => pos[id] = (i + .5) / tiers[k].length); }
+  return tiers;
+}
+
+/* ---------- render ---------- */
+function renderTabs() {
+  if (DATA.noPapers) document.getElementById("lede").textContent = "Tap a concept for its note sections; tick it off to unlock the next ones.";
+  document.getElementById("tabs").style.setProperty("--tabs", Math.min(4, DATA.branches.length));
+  document.getElementById("tabs").style.display = DATA.branches.length > 1 ? "" : "none";
+  document.getElementById("footNote").textContent = DATA.notes.FOOT || "";
+  document.getElementById("tabs").innerHTML = DATA.branches.map(b => {
+    const ns = DATA.nodes.filter(n => (b.k === "ALL" || n.b === b.k) && !n.optional && !n.excluded);
+    const tested = ns.filter(n => n.freq > 0), tot = tested.length, got = tested.filter(n => lvl(n.id) === 2).length;
+    const done = ns.filter(n => lvl(n.id) >= 1).length;
+    return `<button class="tab" role="tab" aria-selected="${b.k === branch}" data-b="${b.k}"><b>${b.name}</b><span>${done}/${ns.length} learned</span><div class="bar"><i style="width:${tot ? 100 * got / tot : 0}%"></i></div></button>`;
+  }).join("");
+  document.querySelectorAll(".tab").forEach(t => t.onclick = () => { branch = t.dataset.b; try { localStorage.setItem(KEY + "-tab", branch); } catch (e) {} closeSheet(); render(); });
+}
+
+function renderNext() {
+  const ns = DATA.nodes.filter(n => inView(n) && !n.optional && !n.excluded);
+  const cand = ns.filter(n => lvl(n.id) === 0 && unlocked(n.id));
+  const toPractise = ns.filter(n => lvl(n.id) === 1 && n.freq > 0);
+  const best = cand.sort((a, c) => (share(c) * 10 + (kids[c.id] || []).length) - (share(a) * 10 + (kids[a.id] || []).length))[0];
+  const prac = toPractise.sort((a, c) => share(c) - share(a))[0];
+  const el = document.getElementById("next");
+  if (!best && !prac) { el.innerHTML = `<span><b>${brName[branch]} complete.</b> Every concept here is learned and practised.</span>`; return; }
+  const pick = best || prac;
+  const verb = best ? "Learn next" : "Practise next";
+  const why = best ? (pick.freq ? `${freqText(pick)}${(kids[pick.id] || []).length ? ` · unlocks ${(kids[pick.id] || []).length}` : ""}` : `unlocks ${(kids[pick.id] || []).length} concept${(kids[pick.id] || []).length === 1 ? "" : "s"}`) : freqText(pick);
+  el.innerHTML = `<span><span class="muted" style="font-size:.8rem;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase">${verb}</span><br><b>${esc(pick.t)}</b> <span class="muted">· ${why}</span></span><button type="button" id="nextGo">Open</button>`;
+  document.getElementById("nextGo").onclick = () => { select(pick.id); };
+}
+
+function renderLegend() {
+  const c = branch === "C", all = branch === "ALL";
+  document.getElementById("legend").innerHTML =
+    `<span><i class="sw" style="background:var(--h3)"></i>half the papers or more</span>` +
+    `<span><i class="sw" style="background:var(--h2)"></i>a quarter to half</span>` +
+    `<span><i class="sw" style="background:var(--h1)"></i>under a quarter</span>` +
+    `<span><i class="sw" style="background:var(--h0)"></i>not tested alone</span>` +
+    `<span><i class="st" style="border-color:var(--accent)"></i>ready</span>` +
+    `<span><i class="st" style="background:var(--accent-soft);border-color:var(--accent)"></i>learned</span>` +
+    `<span><i class="st" style="background:var(--ok-soft);border-color:var(--ok)"></i>practised</span>`;
+  document.getElementById("branchNote").innerHTML = DATA.notes[branch] || DATA.notes.ALL || "";
+  document.getElementById("legend").style.display = DATA.noPapers ? "none" : "";
+}
+
+const chPre = {};
+DATA.nodes.forEach(n => { chPre[n.ch] = chPre[n.ch] || new Set(); n.pre.forEach(p => { if (byId[p].ch !== n.ch) chPre[n.ch].add(byId[p].ch); }); });
+function chAnc(ch, acc = new Set()) { chPre[ch].forEach(c => { if (!acc.has(c)) { acc.add(c); chAnc(c, acc); } }); return acc; }
+
+function renderTree() {
+  const chs = [];
+  DATA.nodes.filter(inView).forEach(n => { if (!chs.includes(n.ch)) chs.push(n.ch); });
+  const inV = new Set(chs), cd = {};
+  const d = ch => cd[ch] ?? (cd[ch] = Math.max(0, ...[...chPre[ch]].filter(c => inV.has(c)).map(c => d(c) + 1)));
+  chs.forEach(d);
+  const rows = [];
+  chs.forEach(ch => (rows[cd[ch]] = rows[cd[ch]] || []).push(ch));
+  // order each row by the average position of its parent chapters
+  const pos = {}; rows.forEach(r => r.forEach((c, i) => pos[c] = (i + .5) / r.length));
+  for (let k = 1; k < rows.length; k++) {
+    const by = c => { const ps = [...chPre[c]].filter(x => inV.has(x)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[c]; };
+    rows[k].sort((a, b) => by(a) - by(b)); rows[k].forEach((c, i) => pos[c] = (i + .5) / rows[k].length);
+  }
+  document.getElementById("tree").innerHTML = `<svg class="trunks" aria-hidden="true"></svg>` + rows.map(r => `<div class="crow">${r.map(ch => {
+    const ids = DATA.nodes.filter(n => n.ch === ch).map(n => n.id);
+    const ext = [...chPre[ch]].filter(c => !inV.has(c));
+    return `<div class="chap" data-ch="${ch}" id="c-${ch}"><div class="hd"><b>${ch}</b><span>${esc(DATA.chapters[ch] || "")}</span>${DATA.excluded[ch] ? `<small class="exn">${DATA.excluded[ch]}</small>` : ""}${ext.length ? `<small style="flex-basis:100%;font-size:.75rem;color:var(--warm)">Also builds on ${ext.join(", ")}</small>` : ""}</div>
+      <div class="body"><svg aria-hidden="true"></svg>${layout(ids).map(t => `<div class="tier">${t.map(card).join("")}</div>`).join("")}</div></div>`;
+  }).join("")}</div>`).join("");
+  document.querySelectorAll(".node").forEach(b => b.onclick = () => select(b.dataset.id === sel ? null : b.dataset.id));
+  applyZoom();
+}
+function card(id) {
+  const n = byId[id], s = status(id);
+  const ext = [...new Set(n.pre.filter(p => byId[p].ch !== n.ch).map(p => byId[p].ch))];
+  const icon = s === "practised" ? "✓✓" : s === "learned" ? "✓" : s === "locked" ? "🔒" : "";
+  return `<button type="button" class="node ${s}${n.optional ? " optional" : ""}${n.excluded ? " excl" : ""}" id="n-${id}" data-id="${id}" aria-label="${esc(n.t)}, ${s}${n.freq ? ", " + freqText(n) : ""}">
+    <span class="ch"><span>${n.ch}</span><span class="badge">${icon}</span></span>
+    <span class="t">${esc(n.t)}</span>
+    ${ext.length ? `<span class="ext">+ needs ${ext.join(", ")}</span>` : ""}
+    ${n.excluded ? `<span class="exc">${n.excluded}</span>` : ""}
+    ${DATA.noPapers ? "" : `<i class="heat" style="background:linear-gradient(90deg, ${heat(n)} ${heatWidth(n)}%, var(--h0) ${heatWidth(n)}%)"></i>`}
+  </button>`;
+}
+// layout coordinates (unaffected by the zoom transform)
+function off(el, root) { let x = 0, y = 0; while (el && el !== root) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; } return {x, y}; }
+function box(el, root) { const o = off(el, root); return {l: o.x, t: o.y, w: el.offsetWidth, h: el.offsetHeight}; }
+const curve = (x1, y1, x2, y2) => { const m = (y2 - y1) * .5; return `M${x1},${y1} C${x1},${y1 + m} ${x2},${y2 - m} ${x2},${y2}`; };
+
+function drawEdges() {
+  const tree = document.getElementById("tree");
+  const path = sel ? ancestors(sel) : new Set();
+  // inside each chapter
+  document.querySelectorAll(".chap").forEach(chap => {
+    const body = chap.querySelector(".body"), svg = body.querySelector("svg");
+    let out = "";
+    DATA.nodes.filter(n => n.ch === chap.dataset.ch).forEach(n => drawPre[n.id].forEach(p => {
+      const a = box(document.getElementById("n-" + p), body), c = box(document.getElementById("n-" + n.id), body);
+      const cls = sel && path.has(p) && (path.has(n.id) || n.id === sel) ? "hot" : sel && p === sel ? "kid" : "";
+      out += `<path class="edge ${cls}" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    }));
+    svg.setAttribute("width", body.offsetWidth); svg.setAttribute("height", body.offsetHeight);
+    svg.innerHTML = out;
+    svg.querySelectorAll(".edge.hot,.edge.kid").forEach(e => svg.appendChild(e));
+  });
+  // trunks between chapters (only direct links), plus exact cross-chapter links for the selection
+  const svg = tree.querySelector("svg.trunks");
+  svg.setAttribute("width", tree.offsetWidth); svg.setAttribute("height", tree.offsetHeight);
+  let out = "";
+  const shown = new Set([...document.querySelectorAll(".chap")].map(c => c.dataset.ch));
+  shown.forEach(ch => {
+    const ps = [...chPre[ch]].filter(c => shown.has(c));
+    ps.filter(p => !ps.some(q => q !== p && chAnc(q).has(p))).forEach(p => {
+      const a = box(document.getElementById("c-" + p), tree), c = box(document.getElementById("c-" + ch), tree);
+      out += `<path class="trunk" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    });
+  });
+  if (sel) {
+    const add = (p, n, cls) => {
+      const pe = document.getElementById("n-" + p), ne = document.getElementById("n-" + n);
+      if (!pe || !ne) return;
+      const a = box(pe, tree), c = box(ne, tree);
+      const up = c.t < a.t + a.h;   // child sits beside or above: leave from the side
+      out += `<path class="xedge ${cls}" d="${up ? `M${a.l + a.w / 2},${a.t + a.h} C${a.l + a.w / 2},${a.t + a.h + 60} ${c.l + c.w / 2},${c.t - 60} ${c.l + c.w / 2},${c.t}` : curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    };
+    [sel, ...path].forEach(id => byId[id].pre.forEach(p => { if (byId[p].ch !== byId[id].ch && path.has(p)) add(p, id, ""); }));
+    (kids[sel] || []).forEach(k => { if (byId[k].ch !== byId[sel].ch) add(sel, k, "kid"); });
+  }
+  svg.innerHTML = out;
+}
+
+/* The tree sits in one box. One finger pans it in any direction (phones lock ordinary touch scrolling
+   to one axis, so panning is done by hand); two fingers pinch to zoom; ctrl/⌘ + wheel or a trackpad
+   pinch zooms on a computer. Past the box's top or bottom edge, dragging scrolls the page. */
+let scale = 1, minScale = .2;
+const MAX_SCALE = 1.6;
+function treeSize() {
+  const t0 = document.getElementById("tree"); t0.style.minWidth = Math.max(0, document.getElementById("vp").clientWidth - 2) + "px"; const t = document.getElementById("tree"); return {w: t.offsetWidth, h: t.offsetHeight}; }
+function setScale(ns, cx, cy, save = true) {
+  const vp = document.getElementById("vp"), tree = document.getElementById("tree"), sizer = document.getElementById("sizer");
+  ns = Math.min(MAX_SCALE, Math.max(minScale, ns));
+  if (cx === undefined) { cx = vp.clientWidth / 2; cy = vp.clientHeight / 2; }
+  const px = (vp.scrollLeft + cx) / scale, py = (vp.scrollTop + cy) / scale;   // tree point under the fingers
+  scale = ns;
+  const {w, h} = treeSize();
+  tree.style.transform = `scale(${scale})`;
+  sizer.style.width = Math.ceil(w * scale) + "px"; sizer.style.height = Math.ceil(h * scale) + "px";
+  vp.scrollLeft = px * scale - cx; vp.scrollTop = py * scale - cy;
+  document.getElementById("zPct").textContent = Math.round(scale * 100) + "%";
+  if (save) { try { localStorage.setItem(KEY + "-scale", String(scale)); } catch (e) {} }
+}
+function fitScale() { const vp = document.getElementById("vp"), avail = vp.clientWidth - 8; return avail > 100 ? Math.min(1, avail / treeSize().w) : 1; }
+(function () {
+  const vp = document.getElementById("vp");
+  const pts = new Map();
+  let x0, y0, lastX, lastY, lastT, vx = 0, vy = 0, moved = false, raf = 0, pinch = null;
+  const pan = (dx, dy) => {
+    vp.scrollLeft -= dx;
+    const before = vp.scrollTop; vp.scrollTop -= dy;
+    const rest = -dy - (vp.scrollTop - before);            // what the box could not absorb
+    if (Math.abs(rest) > .5 && !pinch) window.scrollBy(0, rest);
+  };
+  const mid = () => { const [a, b] = [...pts.values()], r = vp.getBoundingClientRect(); return {x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top, d: Math.hypot(a.x - b.x, a.y - b.y)}; };
+  vp.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    cancelAnimationFrame(raf);
+    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pts.size === 1) { x0 = lastX = e.clientX; y0 = lastY = e.clientY; lastT = performance.now(); vx = vy = 0; moved = false; }
+    if (pts.size === 2) { moved = true; const m = mid(); pinch = {d: m.d, s: scale, x: m.x, y: m.y}; [...pts.keys()].forEach(k => { try { vp.setPointerCapture(k); } catch (err) {} }); }
+  });
+  vp.addEventListener("pointermove", e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pinch && pts.size >= 2) {
+      const m = mid();
+      vp.scrollLeft -= m.x - pinch.x; vp.scrollTop -= m.y - pinch.y;       // two-finger drag pans too
+      setScale(pinch.s * m.d / pinch.d, m.x, m.y, false);
+      pinch.x = m.x; pinch.y = m.y;
+      return;
+    }
+    if (pts.size !== 1 || pinch) return;
+    if (!moved && Math.hypot(e.clientX - x0, e.clientY - y0) < 6) return;
+    if (!moved) { moved = true; try { vp.setPointerCapture(e.pointerId); } catch (err) {} }
+    const now = performance.now(), dt = Math.max(1, now - lastT), dx = e.clientX - lastX, dy = e.clientY - lastY;
+    pan(dx, dy); vx = .8 * dx / dt + .2 * vx; vy = .8 * dy / dt + .2 * vy; lastX = e.clientX; lastY = e.clientY; lastT = now;
+  });
+  const up = e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.delete(e.pointerId);
+    if (pinch) { if (pts.size < 2) { setScale(scale); if (pts.size === 0) pinch = null; } return; }
+    if (pts.size || !moved) return;
+    let t = performance.now();
+    const step = now => { const dt = now - t; t = now; vx *= Math.pow(.95, dt / 16); vy *= Math.pow(.95, dt / 16);
+      if (Math.hypot(vx, vy) < .02) return; pan(vx * dt, vy * dt); raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  };
+  vp.addEventListener("pointerup", up); vp.addEventListener("pointercancel", up);
+  // a lifted second finger leaves one finger down: don't let it turn into a pan jump
+  vp.addEventListener("pointerup", () => { if (pts.size === 1) { const p = [...pts.values()][0]; lastX = p.x; lastY = p.y; } });
+  // a drag or pinch must not count as a tap on a concept
+  vp.addEventListener("click", e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+  // ctrl/⌘ + wheel, and trackpad pinch (sent as ctrl + wheel)
+  vp.addEventListener("wheel", e => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault(); const r = vp.getBoundingClientRect();
+    setScale(scale * Math.exp(-e.deltaY / 300), e.clientX - r.left, e.clientY - r.top);
+  }, {passive: false});
+  // Safari sends its own pinch gesture events; stop them zooming the whole page
+  ["gesturestart", "gesturechange"].forEach(t => vp.addEventListener(t, e => e.preventDefault()));
+})();
+let firstZoom = true;
+function applyZoom() {
+  minScale = Math.min(fitScale(), 1);
+  if (firstZoom && document.getElementById("vp").clientWidth > 100) {
+    firstZoom = false;
+    let s0 = null; try { s0 = parseFloat(localStorage.getItem(KEY + "-scale")); } catch (e) {}
+    // phones start at full size, bigger screens start fitted
+    scale = s0 && s0 > 0 ? s0 : (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) >= 700 ? minScale : 1);
+    const vp = document.getElementById("vp");
+    setScale(scale, 0, 0, false);
+    vp.scrollLeft = Math.max(0, (vp.scrollWidth - vp.clientWidth) / 2); vp.scrollTop = 0;
+  } else setScale(scale, undefined, undefined, false);
+  drawEdges();
+}
+
+function markFocus() {
+  const tree = document.getElementById("tree");
+  tree.classList.toggle("focus", !!sel);
+  const path = sel ? ancestors(sel) : new Set();
+  document.querySelectorAll(".node").forEach(b => {
+    b.classList.toggle("sel", b.dataset.id === sel);
+    b.classList.toggle("path", path.has(b.dataset.id));
+    b.classList.toggle("kid", !!sel && (kids[sel] || []).includes(b.dataset.id));
+  });
+  document.querySelectorAll(".chap").forEach(c => c.classList.toggle("lit", !!c.querySelector(".node.sel,.node.path,.node.kid")));
+  drawEdges();
+}
+
+function select(id) {
+  sel = id;
+  if (id && !inView(byId[id])) { branch = byId[id].b; render(); }
+  markFocus();
+  if (id) { openSheet(id); reveal(id); } else closeSheet(true);
+}
+
+function reveal(id) {
+  const el = document.getElementById("n-" + id); if (!el) return;
+  const vp = document.getElementById("vp");
+  {
+    const vr = vp.getBoundingClientRect(), r = el.getBoundingClientRect();
+    const sheetTop = peek ? window.innerHeight - 140 : window.innerHeight * .42;
+    if (vr.top < 0 || vr.top > 140) window.scrollBy({top: vr.top - 100});
+    const vr2 = vp.getBoundingClientRect(), r2 = el.getBoundingClientRect();
+    const visBottom = Math.min(vr2.bottom, sheetTop);
+    const tabsBottom = (document.getElementById("tabs").getBoundingClientRect().bottom || 0) + 8;
+    const top = Math.max(vr2.top, tabsBottom);
+    if (r2.top < top || r2.bottom > visBottom || r2.left < vr2.left || r2.right > vr2.right) {
+      // centre the concept in the part of the box that is not covered by the tabs or the panel
+      const want = top + Math.max(0, (visBottom - top - r2.height) / 2);
+      const t0 = vp.scrollTop;
+      vp.scrollBy({top: r2.top - want, left: r2.left - vr2.left - (vr2.width - r2.width) / 2});
+      const rest = (r2.top - want) - (vp.scrollTop - t0);     // the box could not scroll that far
+      if (Math.abs(rest) > 4) window.scrollBy({top: rest});
+    }
+    return;
+  }
+  const r = el.getBoundingClientRect(), sheetTop = peek ? window.innerHeight - 140 : window.innerHeight * .42, tabsH = 90;
+  if (r.top < tabsH || r.bottom > sheetTop) window.scrollBy({top: r.top - tabsH - 10, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+}
+function stLabel(id) { const s = status(id); return s === "practised" ? ["practised", "done"] : s === "learned" ? ["learned", "done"] : ["not yet", "todo"]; }
+
+function openSheet(id) {
+  const n = byId[id], s = status(id);
+  const pre = n.pre.map(p => { const [l, c] = stLabel(p); return `<li><button class="link" data-go="${p}"><span>${esc(byId[p].t)}${byId[p].b !== n.b ? ` <span class="pill w">${byId[p].ch}</span>` : ""}</span><span class="r ${c}">${l}</span></button></li>`; }).join("");
+  const nx = (kids[id] || []).map(k => `<li><button class="link" data-go="${k}"><span>${esc(byId[k].t)}${byId[k].b !== n.b ? ` <span class="pill w">${byId[k].ch}</span>` : ""}</span><span class="r">${byId[k].ch}</span></button></li>`).join("");
+  const secs = n.secs.map(x => `<li><a href="${x.href}"><span>${esc(x.t)}</span><span class="r">${n.ch} ›</span></a></li>`).join("");
+  const tline = t => t.papers ? `${t.papers} of ${t.of} papers` : t.related ? "practice only" : "older papers only";
+  const tests = n.tests.map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)}</span><span class="r">${tline(t)}</span></a></li>`).join("")
+    + (n.also || []).map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)} <span class="muted">(counted under the next concept)</span></span><span class="r">guide ›</span></a></li>`).join("");
+  const lockMsg = s === "locked" ? `<p class="note">🔒 Learn ${n.pre.filter(p => lvl(p) < 1).map(p => `<b>${esc(byId[p].t)}</b>`).join(" and ")} first.</p>` : "";
+  document.getElementById("sheetIn").innerHTML = `
+    <div class="grab" id="grab"><span class="bar"></span><div class="top"><div><span class="course">${n.ch} · ${brName[n.b]}${n.mins ? ` · ~${n.mins} min read` : ""}${n.optional ? ' · <span class="pill">optional</span>' : ""}</span>
+    <h2 id="sTitle">${esc(n.t)}</h2></div><div class="btns"><button class="tog" type="button" id="sTog" aria-label="Collapse or expand">${peek ? "⌃" : "⌄"}</button><button class="close" type="button" aria-label="Close" id="sClose">✕</button></div></div></div>
+    <p style="margin:4px 0">${esc(n.d)}</p>
+    ${n.freq ? `<div class="freq"><i style="width:${heatWidth(n)}%;background:${heat(n)}"></i></div><p class="note" style="margin:2px 0 6px">Comes up ${freqText(n)}.</p>` : ""}${n.excluded ? `<p class="note" style="color:var(--purple)">${esc(DATA.excludedLong)}</p>` : ""}${lockMsg}
+    <div class="actions"><button type="button" id="aL" class="${lvl(id) >= 1 ? "on" : ""}">${lvl(id) >= 1 ? "✓ Learned" : "Mark learned"}</button>
+    <button type="button" id="aP" class="ok ${lvl(id) === 2 ? "on" : ""}">${lvl(id) === 2 ? "✓✓ Practised" : "Mark practised"}</button></div>
+    ${secs ? `<h3>Learn it · note ${n.ch}</h3><ul>${secs}</ul>` : `<h3>Learn it</h3><p class="note">Not in the notes. Its exam guide teaches each topic alongside its questions.</p>`}
+    ${tests ? `<h3>Practise it · exam guide</h3><ul>${tests}</ul>` : (DATA.noPapers ? `<h3>Practise it</h3><p class="note">This course has no past papers. Use the practice questions at the end of the note.</p>` : `<h3>Practise it</h3><p class="note">No past-paper question tests this on its own. It is a building block for the concepts below.</p>`)}
+    ${pre ? `<h3>Needs first</h3><ul>${pre}</ul>` : `<h3>Needs first</h3><p class="note">Nothing. This is a starting point.</p>`}
+    ${nx ? `<h3>Leads to</h3><ul>${nx}</ul>` : ""}`;
+  document.getElementById("sClose").onclick = () => select(null);
+  document.getElementById("sTog").onclick = e => { e.stopPropagation(); setPeek(!peek); };
+  bindDrag();
+  document.getElementById("aL").onclick = () => { state[id] = lvl(id) >= 1 ? 0 : 1; if (!state[id]) delete state[id]; save(); refresh(); };
+  document.getElementById("aP").onclick = () => { state[id] = lvl(id) === 2 ? 1 : 2; save(); refresh(); };
+  document.querySelectorAll("#sheetIn [data-go]").forEach(b => b.onclick = () => { const g = b.dataset.go; select(g); });
+  const sh = document.getElementById("sheet"); sh.classList.add("open"); sh.classList.toggle("peek", peek); sh.setAttribute("aria-hidden", "false");
+  document.getElementById("sheetIn").scrollTop = 0;
+  sizePeek();
+}
+let peek = false;
+function sizePeek() { const g = document.getElementById("grab"); if (g) document.getElementById("sheet").style.setProperty("--peek", (g.offsetHeight + 8) + "px"); }
+function setPeek(v) {
+  peek = v; const sh = document.getElementById("sheet"), inn = document.getElementById("sheetIn");
+  inn.scrollTop = 0; sh.classList.toggle("peek", v);
+  const t = document.getElementById("sTog"); if (t) t.textContent = v ? "⌃" : "⌄";
+  if (sel) setTimeout(() => reveal(sel), 230);
+}
+function bindDrag() {
+  const g = document.getElementById("grab"), inn = document.getElementById("sheetIn");
+  let y0 = null, dy = 0, base = 0;
+  g.onpointerdown = e => {
+    if (e.target.closest("button")) return;
+    y0 = e.clientY; dy = 0; base = peek ? inn.offsetHeight - parseFloat(getComputedStyle(document.getElementById("sheet")).getPropertyValue("--peek") || 118) : 0;
+    inn.classList.add("drag"); g.setPointerCapture(e.pointerId);
+  };
+  g.onpointermove = e => { if (y0 === null) return; dy = e.clientY - y0; inn.style.transform = `translateY(${Math.max(0, base + dy)}px)`; };
+  const end = () => {
+    if (y0 === null) return; y0 = null; inn.classList.remove("drag"); inn.style.transform = "";
+    if (Math.abs(dy) < 6) setPeek(!peek);              // a tap on the handle toggles
+    else if (dy > 40) { if (peek && dy > 90) select(null); else setPeek(true); }
+    else if (dy < -40) setPeek(false);
+  };
+  g.onpointerup = end; g.onpointercancel = end;
+}
+function closeSheet(keep) {
+  const sh = document.getElementById("sheet"); sh.classList.remove("open"); sh.setAttribute("aria-hidden", "true");
+  if (!keep) { sel = null; }
+}
+function refresh() { renderTabs(); renderNext(); renderTree(); markFocus(); if (sel) openSheet(sel); }
+function render() { renderTabs(); renderNext(); renderLegend(); renderTree(); markFocus(); }
+
+document.getElementById("reset").onclick = () => { if (confirm("Clear every tick on this page?")) { state = {}; save(); sel = null; closeSheet(); render(); } };
+document.addEventListener("keydown", e => { if (e.key === "Escape" && sel) select(null); });
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(applyZoom, 80); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyZoom);
+document.getElementById("zFit").onclick = () => { const vp = document.getElementById("vp"); setScale(minScale); vp.scrollLeft = 0; };
+document.getElementById("zIn").onclick = () => setScale(scale * 1.25);
+document.getElementById("zOut").onclick = () => setScale(scale / 1.25);
+let lastW = 0;
+if ("ResizeObserver" in window) new ResizeObserver(() => requestAnimationFrame(() => { const w = document.getElementById("vp").clientWidth; if (w && Math.abs(w - lastW) > 20) { lastW = w; applyZoom(); } })).observe(document.getElementById("vp"));
+window.addEventListener("load", applyZoom); setTimeout(applyZoom, 400);
+if (DATA.base) document.getElementById("homeLink").href = DATA.base + "index.html";
+const h = location.hash.slice(1);
+render();
+if (h && byId[h]) select(h);
+else if (h && Object.keys(DATA.chapters).some(k => k.toLowerCase() === h.toLowerCase())) {
+  const chKey = Object.keys(DATA.chapters).find(k => k.toLowerCase() === h.toLowerCase());
+  const go = () => { const c = document.getElementById("c-" + chKey); if (!c) return;
+    if (scale < .8) setScale(1);
+    const vp = document.getElementById("vp"); window.scrollBy(0, vp.getBoundingClientRect().top - 100);
+    const vr = vp.getBoundingClientRect(), r = c.getBoundingClientRect();
+    vp.scrollBy({top: r.top - vr.top - 10, left: r.left - vr.left - Math.max(10, (vr.width - r.width) / 2)});
+    c.classList.add("flash"); setTimeout(() => c.classList.remove("flash"), 1800); };
+  setTimeout(go, 250);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH2407 Tech Tree</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* pack house style, tech-tree page */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4; --warm:#c2551b; --warm-soft:#fbeadf;
+  --ok:#1f7a4d; --ok-soft:#e0f2e8; --purple:#6b4fb3; --purple-soft:#eee9f8;
+  --h0:#e3e8ee; --h1:#f6d9c6; --h2:#eca57c; --h3:#c2551b;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --ok:#5fd39a; --ok-soft:#173628; --purple:#b8a3f0; --purple-soft:#2a2340;
+    --h0:#25313b; --h1:#4a2f1f; --h2:#9a5530; --h3:#f0935c;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.wrap{max-width:1000px;margin:0 auto;padding:28px max(14px, env(safe-area-inset-left,0px)) 140px max(14px, env(safe-area-inset-right,0px))}
+a{color:var(--accent)}
+h1,h2,h3{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2rem;line-height:1.15;margin:0}
+.course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.home{font-size:.9rem;text-decoration:none}
+.lede{color:var(--muted);font-size:1.02rem;max-width:65ch;margin:10px 0}
+header{display:grid;gap:6px;margin-bottom:18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:14px 0;font-size:.94rem}
+.box .tag{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.box ol{margin:4px 0;padding-left:1.2rem}.box li{margin:3px 0}
+details.box summary{cursor:pointer;font-weight:600}
+/* tabs */
+.tabs{display:grid;grid-template-columns:repeat(var(--tabs,4),1fr);gap:6px;position:sticky;top:0;z-index:5;background:var(--paper);padding:8px 0}
+.tab{font:inherit;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 10px;cursor:pointer;min-width:0}
+.tab b{display:block;font-family:var(--display);font-size:1rem}
+.tab span{display:block;font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab .bar{height:4px;border-radius:2px;background:var(--grid);margin-top:6px;overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--ok);width:0}
+.tab[aria-selected="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+/* next up + legend */
+.next{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.next button{font:inherit;font-size:.9rem;border:0;background:var(--accent);color:var(--paper);border-radius:6px;padding:6px 12px;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--muted);margin:6px 2px 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:22px;height:6px;border-radius:3px}
+.st{display:inline-block;width:14px;height:14px;border-radius:4px;border:1.5px solid var(--line)}
+/* tree */
+.vp{overflow:auto;max-width:100%}
+.vp.pan{height:calc(100vh - 120px);height:calc(100dvh - 120px);overflow:auto;touch-action:none;overscroll-behavior:contain;cursor:grab;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.zoombar{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:-4px 0 6px}
+.zoombar #zPct{font-family:var(--mono);font-size:.75rem;color:var(--muted);min-width:3.2em;text-align:center}
+.zoombar .zhint{font-size:.75rem;color:var(--muted);margin-right:auto}
+.zoombar button{font:inherit;font-size:.8rem;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;padding:3px 10px;cursor:pointer}
+.zoombar button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.tree{position:absolute;left:0;top:0;width:max-content;transform-origin:0 0;padding:4px 0 10px}
+.tree>svg.trunks{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:0}
+.crow{display:flex;justify-content:center;align-items:flex-start;gap:56px;margin-bottom:56px;position:relative;z-index:1}
+.chap{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 10px 4px;width:max-content;max-width:500px}
+.chap>.hd{display:flex;gap:8px;align-items:baseline;margin:0 2px 10px;flex-wrap:wrap;max-width:460px}
+.chap>.hd b{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500}
+.chap>.hd span{font-family:var(--display);font-weight:600;font-size:.95rem}
+.chap .body{position:relative}
+.chap .body>svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.tier{display:flex;flex-wrap:wrap;justify-content:center;gap:22px 8px;margin-bottom:22px;position:relative;z-index:1;max-width:470px;margin-inline:auto}
+.trunk{fill:none;stroke:var(--accent);stroke-opacity:.22;stroke-width:7;stroke-linecap:round}
+.xedge{fill:none;stroke:var(--accent);stroke-width:2.5}
+.xedge.kid{stroke:var(--warm);stroke-dasharray:5 4}
+.node{font:inherit;position:relative;width:148px;background:var(--paper)!important;min-height:92px;text-align:left;cursor:pointer;
+  background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:7px 8px 14px;display:flex;flex-direction:column;gap:2px;transition:opacity .15s,border-color .15s}
+
+.node .ch{font-family:var(--mono);font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between;gap:4px}
+.node .t{font-size:.8rem;font-weight:600;line-height:1.25}
+
+.node .heat{position:absolute;left:8px;right:8px;bottom:6px;height:4px;border-radius:2px;background:var(--h0)}
+.node .x{font-size:10px;color:var(--muted);margin-top:auto}
+.node .exc{font-family:var(--mono);font-size:9.5px;color:var(--purple);line-height:1.3}
+.node.excl{opacity:.6}
+.chap .exn{flex-basis:100%;font-size:.75rem;color:var(--purple)}
+.node .ext{font-family:var(--mono);font-size:9.5px;color:var(--warm);line-height:1.3}
+.node.locked{opacity:.5;border-style:dashed}
+.node.avail{border-color:var(--accent)}
+.node.learned{background:var(--accent-soft)!important;border-color:var(--accent)}
+.node.practised{background:var(--ok-soft)!important;border-color:var(--ok)}
+.node.optional{border-style:dotted}
+.node.sel{box-shadow:0 0 0 3px var(--accent)}
+.chap.flash{box-shadow:0 0 0 3px var(--accent);transition:box-shadow .6s}
+.tree.focus .node:not(.path):not(.sel):not(.kid){opacity:.25}
+.node.kid{box-shadow:0 0 0 2px var(--warm)}
+.badge{font-family:var(--mono);font-size:10px}
+.edge{fill:none;stroke:var(--axis,#8a96a3);stroke-opacity:.55;stroke-width:1.4}
+.edge.hot,.edge.kid{stroke-opacity:1}
+.edge.hot{stroke:var(--accent);stroke-width:2.5}
+.edge.kid{stroke:var(--warm);stroke-width:2.2;stroke-dasharray:5 4}
+.tree.focus .edge:not(.hot):not(.kid){opacity:.15}
+.tree.focus .chap:not(.lit){opacity:.45}
+.tree.focus .trunk{stroke-opacity:.08}
+/* sheet */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;pointer-events:none}
+.sheet .in{pointer-events:auto;width:100%;max-width:46rem;max-height:58vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-bottom:0;
+  border-radius:14px 14px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.18);padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .22s ease}
+.sheet.open .in{transform:none}
+.sheet.open.peek .in{transform:translateY(calc(100% - var(--peek, 118px)));overflow:hidden}
+.sheet .in.drag{transition:none}
+.grab{position:sticky;top:-14px;margin:-14px -16px 0;padding:10px 16px 4px;background:var(--card);z-index:2;touch-action:none;cursor:grab}
+.grab .bar{display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 8px}
+.sheet .top .btns{display:flex;gap:6px;flex:none}
+.sheet .tog{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1}
+.sheet:not(.open) .in{box-shadow:none;visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+@media (prefers-reduced-motion: reduce){.sheet .in{transition:none}}
+.sheet h2{font-size:1.2rem;margin:2px 0 4px}
+.sheet .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.close{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;flex:none}
+.sheet h3{font-size:.8rem;font-family:var(--mono);font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.sheet ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sheet li a,.sheet li button.link{display:flex;justify-content:space-between;gap:10px;font:inherit;font-size:.92rem;text-align:left;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--ink);text-decoration:none;cursor:pointer}
+.sheet li a:hover,.sheet li button.link:hover{border-color:var(--accent)}
+.sheet li .r{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;align-self:center}
+.sheet li .r.done{color:var(--ok)} .sheet li .r.todo{color:var(--warm)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.actions button{font:inherit;font-size:.92rem;padding:9px 10px;border-radius:8px;border:1.5px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+.actions button.on{background:var(--accent);color:var(--paper)}
+.actions button.ok.on{background:var(--ok);border-color:var(--ok)}
+.actions button.ok{border-color:var(--ok);color:var(--ok)}
+.muted{color:var(--muted)}
+.freq{height:6px;border-radius:3px;background:var(--h0);overflow:hidden;margin:8px 0 2px}.freq i{display:block;height:100%}
+.note{font-size:.85rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--purple-soft);color:var(--purple);vertical-align:1px}
+.pill.w{background:var(--warm-soft);color:var(--warm)}
+.foot{margin-top:30px;font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.foot button{font:inherit;font-size:.85rem;background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;color:var(--muted);cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="home" href="index.html" id="homeLink">← Start Here</a>
+  <span class="course">MECH2407 · Multivariable Calculus &amp; Partial Differential Equations · HKU</span>
+  <h1>Tech Tree</h1>
+  <p class="lede" id="lede">Tap a concept for its note sections and past-paper questions; tick it off to unlock the next ones.</p>
+</header>
+
+<details class="box">
+  <summary>How to use it</summary>
+  <ol>
+    <li><b>Tap a concept.</b> The arrows light up the concepts you need first (blue) and the ones it leads to (orange).</li>
+    <li><b>Learned</b> = you have read its note sections. <b>Practised</b> = you have done its exam-guide questions.</li>
+    <li>A concept unlocks once everything it needs is learned. Locked ones are dashed, but you can still open them.</li>
+    <li>Concepts are grouped by chapter. Lines show what to learn first inside a chapter; an orange <b>+ needs S1</b> tag means it also builds on another chapter (tap to see which concept).</li>
+    <li>The bar under each concept shows how often it comes up: the share of past papers with a question on it. A full bar means every paper.</li>
+    <li>Swipe the panel down (or tap ⌄) to shrink it to its title bar and keep browsing the tree; swipe up or tap ⌃ to open it again.</li>
+    <li>Drag the tree in any direction inside its box, and pinch with two fingers to zoom. <b>Fit</b> shows the whole tree. Scroll outside the box to move the page.</li>
+    <li>Your ticks are saved in this browser only.</li>
+  </ol>
+</details>
+
+<div class="tabs" role="tablist" id="tabs"></div>
+
+<div class="box next" id="next"></div>
+
+<div class="legend" id="legend"></div>
+
+<div class="zoombar"><span class="zhint">Pinch to zoom · drag to move</span><button type="button" id="zOut" aria-label="Zoom out">−</button><span id="zPct">100%</span><button type="button" id="zIn" aria-label="Zoom in">+</button><button type="button" id="zFit">Fit</button></div><div class="vp pan" id="vp"><div id="sizer" style="position:relative"><div class="tree" id="tree"></div></div></div>
+
+<p class="note" id="branchNote"></p>
+
+<div class="foot">
+  <span id="footNote"></span>
+  <button id="reset" type="button">Clear my ticks</button>
+</div>
+</div>
+
+<div class="sheet" id="sheet" aria-hidden="true"><div class="in" role="dialog" aria-modal="false" aria-labelledby="sTitle" id="sheetIn"></div></div>
+
+<script>
+const DATA = {"course": {"code": "MECH2407", "name": "Multivariable Calculus & Partial Differential Equations", "key": "mech2407-tree-v1"}, "notes": {"ALL": "Thick lines link chapters; tap any concept to see the exact concepts it needs across the course. Bars count the 21 past papers (December 2014–2025 and May 2015–2026) used in the exam guides.", "V": "Bars count the 21 past papers (December 2014–2025 and May 2015–2026) used in the exam guides.", "F": "Bars count the 21 past papers (December 2014–2025 and May 2015–2026) used in the exam guides. PDEs (C5) need Fourier series (C4) and partial derivatives (C1).", "FOOT": "How often = papers with at least one question of that concept's most common question type. Dotted cards are out of the 2026 syllabus (taught in purple sections, solved in the Previous-syllabus guide)."}, "noPapers": false, "excluded": {}, "excludedLong": "", "chapters": {"C1": "Functions of Several Variables", "C2": "Multiple Integrals", "C3a": "Vector Differential Calculus", "C3b": "Line Integrals", "C3c": "Conservative Fields, Surface Integrals, Gauss and Stokes", "C4": "Fourier Series", "C5": "Partial Differential Equations"}, "branches": [{"k": "V", "name": "Multivariable & vector calculus", "sub": "C1–C3c"}, {"k": "F", "name": "Fourier series & PDEs", "sub": "C4–C5"}], "nodes": [{"id": "c1-funcs", "b": "V", "t": "Functions of several variables", "d": "Functions of x, y (and z), their level curves and level surfaces.", "ch": "C1", "pre": [], "secs": [{"t": "Functions of several variables, level curves and level surfaces", "href": "note-c1.html#s1"}], "mins": 11, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c1-partial", "b": "V", "t": "Partial derivatives", "d": "Differentiate in one variable at a time; second partials, implicit differentiation.", "ch": "C1", "pre": ["c1-funcs"], "secs": [{"t": "Partial differentiation", "href": "note-c1.html#s2"}], "mins": 11, "tests": [{"what": "Second partials, implicit differentiation, linear approximation", "href": "guide-c1.html#C1-4", "papers": 5, "of": 21, "related": false, "id": "C1.4"}], "also": [], "freq": 5, "of": 21, "related": false, "optional": false}, {"id": "c1-chain", "b": "V", "t": "Chain rule and change of variables", "d": "Tree diagrams for the chain rule; rewriting expressions in new variables such as polar.", "ch": "C1", "pre": ["c1-partial"], "secs": [{"t": "The chain rule", "href": "note-c1.html#s3"}], "mins": 15, "tests": [{"what": "Chain rule \"show that\", polar Laplacian", "href": "guide-c1.html#C1-1", "papers": 11, "of": 21, "related": false, "id": "C1.1"}], "also": [], "freq": 11, "of": 21, "related": false, "optional": false}, {"id": "c1-taylor", "b": "V", "t": "Taylor's theorem in two variables", "d": "Quadratic approximation of f(x, y) near a point.", "ch": "C1", "pre": ["c1-partial"], "secs": [{"t": "Taylor's theorem in two variables", "href": "note-c1.html#s4"}], "mins": 9, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c1-stat", "b": "V", "t": "Stationary points", "d": "Find where both partials vanish, then classify with the second-derivative test.", "ch": "C1", "pre": ["c1-taylor"], "secs": [{"t": "Maxima, minima and saddle points", "href": "note-c1.html#s5"}], "mins": 15, "tests": [{"what": "Find and classify stationary points", "href": "guide-c1.html#C1-2", "papers": 21, "of": 21, "related": false, "id": "C1.2"}], "also": [], "freq": 21, "of": 21, "related": false, "optional": false}, {"id": "c1-grad", "b": "V", "t": "Gradient and directional derivative", "d": "∇f, the rate of change in any direction, and the direction of fastest increase.", "ch": "C1", "pre": ["c1-chain"], "secs": [{"t": "Directional derivative and gradient", "href": "note-c1.html#s6"}], "mins": 14, "tests": [{"what": "Gradient, directional derivative, tangent plane", "href": "guide-c1.html#C1-3", "papers": 18, "of": 21, "related": false, "id": "C1.3"}], "also": [], "freq": 18, "of": 21, "related": false, "optional": false}, {"id": "c1-tangent", "b": "V", "t": "Tangent planes and normal lines", "d": "Use ∇F as the normal to a level surface.", "ch": "C1", "pre": ["c1-grad"], "secs": [{"t": "Tangent planes and normal lines", "href": "note-c1.html#s7"}], "mins": 4, "tests": [], "also": [{"what": "Gradient, directional derivative, tangent plane", "href": "guide-c1.html#C1-3", "papers": 18, "of": 21, "related": false, "id": "C1.3"}], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c1-lagrange", "b": "V", "t": "Lagrange multipliers", "d": "Maximise subject to a constraint. Out of the 2026 syllabus.", "ch": "C1", "pre": ["c1-grad", "c1-stat"], "secs": [{"t": "Previous content (out of 2026 syllabus): Lagrange multipliers Out of 2026 syllabus Optional on first read", "href": "note-c1.html#s8"}], "mins": 5, "tests": [{"what": "Lagrange multipliers (previous syllabus)", "href": "guide-prev.html#C1-5", "papers": 2, "of": 21, "related": false, "id": "C1.5"}], "also": [], "freq": 2, "of": 21, "related": false, "optional": true}, {"id": "c2-double", "b": "V", "t": "Double integrals", "d": "Set up limits over a region and reverse the order of integration.", "ch": "C2", "pre": ["c1-funcs"], "secs": [{"t": "Double integrals", "href": "note-c2.html#s1"}], "mins": 22, "tests": [{"what": "Cartesian double integral: limits, reverse the order", "href": "guide-c2.html#C2-1", "papers": 3, "of": 21, "related": false, "id": "C2.1"}], "also": [], "freq": 3, "of": 21, "related": false, "optional": false}, {"id": "c2-cov", "b": "V", "t": "Change of variables and polar coordinates", "d": "The Jacobian, mapping a region to u, v, and polar double integrals.", "ch": "C2", "pre": ["c2-double", "c1-partial"], "secs": [{"t": "Change of variables in double integrals", "href": "note-c2.html#s2"}], "mins": 17, "tests": [{"what": "Change of variables u, v: Jacobian, map the region", "href": "guide-c2.html#C2-2", "papers": 14, "of": 21, "related": false, "id": "C2.2"}, {"what": "Polar coordinates in a double integral", "href": "guide-c2.html#C2-3", "papers": 3, "of": 21, "related": false, "id": "C2.3"}], "also": [], "freq": 14, "of": 21, "related": false, "optional": false}, {"id": "c2-triple", "b": "V", "t": "Triple integrals", "d": "Limits in three dimensions and changing the order.", "ch": "C2", "pre": ["c2-double"], "secs": [{"t": "Triple integrals", "href": "note-c2.html#s3"}], "mins": 13, "tests": [{"what": "Cartesian triple integral: limits, change the order", "href": "guide-c2.html#C2-4", "papers": 7, "of": 21, "related": false, "id": "C2.4"}], "also": [], "freq": 7, "of": 21, "related": false, "optional": false}, {"id": "c2-cylsph", "b": "V", "t": "Cylindrical and spherical coordinates", "d": "Triple integrals and volumes in the coordinates that fit the solid.", "ch": "C2", "pre": ["c2-triple", "c2-cov"], "secs": [{"t": "Change of variables in triple integrals: cylindrical and spherical coordinates", "href": "note-c2.html#s4"}], "mins": 18, "tests": [{"what": "Cylindrical or spherical triple integrals, volumes", "href": "guide-c2.html#C2-5", "papers": 5, "of": 21, "related": false, "id": "C2.5"}], "also": [], "freq": 5, "of": 21, "related": false, "optional": false}, {"id": "c3a-vecfun", "b": "V", "t": "Vector functions and space curves", "d": "Differentiate and integrate r(t); tangent vectors, polar unit vectors.", "ch": "C3a", "pre": [], "secs": [{"t": "Vector functions: differentiation and integration", "href": "note-c3a.html#s1"}], "mins": 22, "tests": [{"what": "Polar unit vectors, tangent to a space curve", "href": "guide-c3a.html#C3a-3", "papers": 1, "of": 21, "related": false, "id": "C3a.3"}], "also": [], "freq": 1, "of": 21, "related": false, "optional": false}, {"id": "c3a-fields", "b": "V", "t": "Vector fields", "d": "A vector at every point: sketching and reading a field.", "ch": "C3a", "pre": ["c1-funcs"], "secs": [{"t": "Vector fields", "href": "note-c3a.html#s2"}], "mins": 10, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c3a-del", "b": "V", "t": "The ∇ operator", "d": "Gradient as ∇ acting on a scalar field.", "ch": "C3a", "pre": ["c3a-fields", "c1-grad"], "secs": [{"t": "The gradient and the vector operator ∇", "href": "note-c3a.html#s3"}], "mins": 12, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c3a-div", "b": "V", "t": "Divergence", "d": "∇·F as net outflow: sources and sinks.", "ch": "C3a", "pre": ["c3a-del"], "secs": [{"t": "Divergence: flux, sources and sinks", "href": "note-c3a.html#s4"}], "mins": 16, "tests": [], "also": [{"what": "Compute div and curl of a field", "href": "guide-c3a.html#C3a-1", "papers": 5, "of": 21, "related": false, "id": "C3a.1"}], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c3a-curl", "b": "V", "t": "Curl", "d": "∇×F as circulation and rotation.", "ch": "C3a", "pre": ["c3a-del"], "secs": [{"t": "Curl: circulation and rotation", "href": "note-c3a.html#s5"}], "mins": 14, "tests": [{"what": "Compute div and curl of a field", "href": "guide-c3a.html#C3a-1", "papers": 5, "of": 21, "related": false, "id": "C3a.1"}], "also": [], "freq": 5, "of": 21, "related": false, "optional": false}, {"id": "c3a-ident", "b": "V", "t": "Vector identities", "d": "curl grad = 0, div curl = 0 and the product rules for ∇.", "ch": "C3a", "pre": ["c3a-div", "c3a-curl"], "secs": [{"t": "Two important identities, and rules for ∇", "href": "note-c3a.html#s6"}], "mins": 13, "tests": [{"what": "Prove a vector identity", "href": "guide-c3a.html#C3a-2", "papers": 6, "of": 21, "related": false, "id": "C3a.2"}], "also": [], "freq": 6, "of": 21, "related": false, "optional": false}, {"id": "c3b-curves", "b": "V", "t": "Parametrising curves", "d": "Simple and closed curves, and which way they run.", "ch": "C3b", "pre": ["c3a-vecfun"], "secs": [{"t": "Curves: parametrisation, simple and closed curves, orientation", "href": "note-c3b.html#s1"}], "mins": 11, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c3b-scalar", "b": "V", "t": "Scalar line integrals and arc length", "d": "∫ f ds along a curve.", "ch": "C3b", "pre": ["c3b-curves"], "secs": [{"t": "Scalar line integrals ∫C f ds and arc length", "href": "note-c3b.html#s2"}], "mins": 13, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c3b-work", "b": "V", "t": "Work integrals", "d": "∫ F·dr by parametrising the path.", "ch": "C3b", "pre": ["c3b-curves", "c3a-fields"], "secs": [{"t": "Work integrals ∫CF· dr", "href": "note-c3b.html#s3"}], "mins": 19, "tests": [{"what": "Work integral by parametrising the curve", "href": "guide-c3b.html#C3b-1", "papers": 5, "of": 21, "related": false, "id": "C3b.1"}], "also": [], "freq": 5, "of": 21, "related": false, "optional": false}, {"id": "c3b-ftli", "b": "V", "t": "Fundamental theorem of line integrals", "d": "For a gradient field, work depends only on the end points.", "ch": "C3b", "pre": ["c3b-work", "c1-grad"], "secs": [{"t": "The Fundamental Theorem of Line Integrals and path independence", "href": "note-c3b.html#s4"}], "mins": 14, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c3c-cons", "b": "V", "t": "Conservative fields and potentials", "d": "Use the curl test, find the constants and a scalar potential, then the work.", "ch": "C3c", "pre": ["c3b-ftli", "c3a-curl"], "secs": [{"t": "Conservative fields and scalar potentials", "href": "note-c3c.html#s1"}], "mins": 11, "tests": [{"what": "Curl test, constants, potential, work", "href": "guide-c3c.html#C3c-1", "papers": 18, "of": 21, "related": false, "id": "C3c.1"}], "also": [], "freq": 18, "of": 21, "related": false, "optional": false}, {"id": "c3c-simply", "b": "V", "t": "Simply connected regions", "d": "When the curl test is not enough: fields with a hole at the origin.", "ch": "C3c", "pre": ["c3c-cons"], "secs": [{"t": "The curl test and simply connected regions", "href": "note-c3c.html#s2"}], "mins": 13, "tests": [{"what": "Field with a hole at the origin", "href": "guide-c3c.html#C3c-2", "papers": 3, "of": 21, "related": false, "id": "C3c.2"}], "also": [], "freq": 3, "of": 21, "related": false, "optional": false}, {"id": "c3c-surf", "b": "V", "t": "Surface integrals", "d": "Parametrise a surface and integrate over it.", "ch": "C3c", "pre": ["c2-cov", "c1-grad"], "secs": [{"t": "Surface integrals", "href": "note-c3c.html#s3"}], "mins": 15, "tests": [{"what": "Surface or flux integral done directly", "href": "guide-c3c.html#C3c-3", "papers": 2, "of": 21, "related": false, "id": "C3c.3"}], "also": [], "freq": 2, "of": 21, "related": false, "optional": false}, {"id": "c3c-flux", "b": "V", "t": "Orientation and flux", "d": "Choose the normal and compute ∬ F·n dS.", "ch": "C3c", "pre": ["c3c-surf", "c3a-fields"], "secs": [{"t": "Orientation and flux integrals", "href": "note-c3c.html#s4"}], "mins": 18, "tests": [], "also": [{"what": "Surface or flux integral done directly", "href": "guide-c3c.html#C3c-3", "papers": 2, "of": 21, "related": false, "id": "C3c.3"}], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c3c-gauss", "b": "V", "t": "Gauss' divergence theorem", "d": "Flux out of a closed surface equals the volume integral of div F.", "ch": "C3c", "pre": ["c3c-flux", "c3a-div", "c2-cylsph"], "secs": [{"t": "Gauss' divergence theorem", "href": "note-c3c.html#s5"}], "mins": 14, "tests": [{"what": "Gauss' theorem: verify or use", "href": "guide-c3c.html#C3c-4", "papers": 11, "of": 21, "related": false, "id": "C3c.4"}], "also": [], "freq": 11, "of": 21, "related": false, "optional": false}, {"id": "c3c-stokes", "b": "V", "t": "Stokes' theorem", "d": "Circulation round a curve equals the flux of curl F through its surface.", "ch": "C3c", "pre": ["c3c-flux", "c3a-curl", "c3b-work"], "secs": [{"t": "Stokes' theorem", "href": "note-c3c.html#s6"}], "mins": 11, "tests": [{"what": "Stokes' theorem: verify or use", "href": "guide-c3c.html#C3c-5", "papers": 13, "of": 21, "related": false, "id": "C3c.5"}], "also": [], "freq": 13, "of": 21, "related": false, "optional": false}, {"id": "c3c-maxwell", "b": "V", "t": "Ampère's law and Maxwell's equations", "d": "Gauss and Stokes at work in electromagnetism.", "ch": "C3c", "pre": ["c3c-gauss", "c3c-stokes"], "secs": [{"t": "Application: Ampère's law and Maxwell's equations", "href": "note-c3c.html#s7"}], "mins": 7, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c3c-green", "b": "V", "t": "Green's theorem in the plane", "d": "Stokes' theorem flattened to a plane region. Out of the 2026 syllabus.", "ch": "C3c", "pre": ["c3b-work", "c2-double"], "secs": [{"t": "Previous content (out of 2026 syllabus): Green's theorem in the plane Out of 2026 syllabus Optional on first read", "href": "note-c3c.html#s8"}], "mins": 8, "tests": [{"what": "Green's theorem in the plane (previous syllabus)", "href": "guide-prev.html#C3c-6", "papers": 6, "of": 21, "related": false, "id": "C3c.6"}], "also": [], "freq": 6, "of": 21, "related": false, "optional": true}, {"id": "c4-periodic", "b": "F", "t": "Periodic functions", "d": "Period, and the sines and cosines that repeat with it.", "ch": "C4", "pre": [], "secs": [{"t": "Periodic functions", "href": "note-c4.html#s1"}], "mins": 10, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c4-series", "b": "F", "t": "Fourier series coefficients", "d": "Find a0, an and bn for a periodic function.", "ch": "C4", "pre": ["c4-periodic"], "secs": [{"t": "Fourier series representation", "href": "note-c4.html#s2"}], "mins": 19, "tests": [{"what": "Fourier series of a periodic function", "href": "guide-c4.html#C4-1", "papers": 14, "of": 21, "related": false, "id": "C4.1"}], "also": [], "freq": 14, "of": 21, "related": false, "optional": false}, {"id": "c4-conv", "b": "F", "t": "Convergence and series sums", "d": "What the series converges to at jumps; summing a number series from one point.", "ch": "C4", "pre": ["c4-series"], "secs": [{"t": "Convergence of Fourier series (incl. series sums)", "href": "note-c4.html#s3"}], "mins": 16, "tests": [{"what": "Sum a number series from one point", "href": "guide-c4.html#C4-2", "papers": 7, "of": 21, "related": false, "id": "C4.2"}], "also": [], "freq": 7, "of": 21, "related": false, "optional": false}, {"id": "c4-evenodd", "b": "F", "t": "Even and odd functions", "d": "Spot symmetry to get a pure cosine or pure sine series.", "ch": "C4", "pre": ["c4-series"], "secs": [{"t": "Even and odd functions", "href": "note-c4.html#s4"}], "mins": 12, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c4-half", "b": "F", "t": "Half-range series", "d": "Extend a function on [0, L] to get a sine or cosine series.", "ch": "C4", "pre": ["c4-evenodd"], "secs": [{"t": "Half-range series", "href": "note-c4.html#s5"}], "mins": 9, "tests": [{"what": "Half-range sine or cosine series", "href": "guide-c4.html#C4-3", "papers": 5, "of": 21, "related": false, "id": "C4.3"}], "also": [], "freq": 5, "of": 21, "related": false, "optional": false}, {"id": "c4-parseval", "b": "F", "t": "Parseval, change of interval, spectrum", "d": "Sum a series with Parseval; series on any interval; the frequency spectrum.", "ch": "C4", "pre": ["c4-series"], "secs": [{"t": "Fourier approximation: Parseval, change of interval, frequency spectrum", "href": "note-c4.html#s6"}], "mins": 18, "tests": [{"what": "Parseval's identity to sum a series", "href": "guide-c4.html#C4-4", "papers": 2, "of": 21, "related": false, "id": "C4.4"}], "also": [], "freq": 2, "of": 21, "related": false, "optional": false}, {"id": "c5-odes", "b": "F", "t": "ODE review", "d": "The second-order ODEs that separation of variables produces.", "ch": "C5", "pre": [], "secs": [{"t": "Review of ODEs (ordinary differential equations)", "href": "note-c5.html#s1"}], "mins": 5, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c5-origin", "b": "F", "t": "Heat and wave equations", "d": "Where u_t = c²u_xx and u_tt = c²u_xx come from.", "ch": "C5", "pre": ["c1-partial"], "secs": [{"t": "Where the heat and wave equations come from", "href": "note-c5.html#s2"}], "mins": 10, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c5-sep", "b": "F", "t": "Separation of variables", "d": "Split u = F(x)G(t) into two ODEs and apply the boundary conditions.", "ch": "C5", "pre": ["c5-odes", "c5-origin"], "secs": [{"t": "Separation of variables", "href": "note-c5.html#s3"}], "mins": 6, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "c5-heat0", "b": "F", "t": "Heat equation, ends held at zero", "d": "Sine-series solution with decaying time factors.", "ch": "C5", "pre": ["c5-sep", "c4-half"], "secs": [{"t": "Heat equation with both ends held at zero", "href": "note-c5.html#s4"}], "mins": 13, "tests": [{"what": "Heat equation, both ends held at 0", "href": "guide-c5.html#C5-1", "papers": 3, "of": 21, "related": false, "id": "C5.1"}], "also": [], "freq": 3, "of": 21, "related": false, "optional": false}, {"id": "c5-heatother", "b": "F", "t": "Heat equation, other end conditions", "d": "Insulated ends, a ring, or ends at non-zero temperatures.", "ch": "C5", "pre": ["c5-heat0", "c4-series"], "secs": [{"t": "Heat equation: other end conditions", "href": "note-c5.html#s5"}], "mins": 22, "tests": [{"what": "Heat equation, insulated ends or a ring", "href": "guide-c5.html#C5-2", "papers": 5, "of": 21, "related": false, "id": "C5.2"}, {"what": "Heat equation, ends at non-zero temperatures", "href": "guide-c5.html#C5-3", "papers": 1, "of": 21, "related": false, "id": "C5.3"}], "also": [], "freq": 5, "of": 21, "related": false, "optional": false}, {"id": "c5-wave", "b": "F", "t": "Wave equation, both ends fixed", "d": "Needs the start shape and the start velocity.", "ch": "C5", "pre": ["c5-sep", "c4-half"], "secs": [{"t": "Wave equation with both ends fixed", "href": "note-c5.html#s6"}], "mins": 12, "tests": [{"what": "Wave equation, both ends fixed", "href": "guide-c5.html#C5-4", "papers": 3, "of": 21, "related": false, "id": "C5.4"}], "also": [], "freq": 3, "of": 21, "related": false, "optional": false}, {"id": "c5-free", "b": "F", "t": "Free ends and the thin ring", "d": "Cosine and quarter-wave shapes for free ends; full series for a ring.", "ch": "C5", "pre": ["c5-wave", "c5-heatother"], "secs": [{"t": "Free ends and the thin ring", "href": "note-c5.html#s7"}], "mins": 16, "tests": [{"what": "Wave equation with free end(s)", "href": "guide-c5.html#C5-5", "papers": 6, "of": 21, "related": false, "id": "C5.5"}], "also": [], "freq": 6, "of": 21, "related": false, "optional": false}, {"id": "c5-direct", "b": "F", "t": "PDEs by direct integration", "d": "Integrate straight through, with functions as constants. Out of the 2026 syllabus.", "ch": "C5", "pre": ["c1-partial"], "secs": [{"t": "Previous content (out of 2026 syllabus): PDEs solved by direct integration Out of 2026 syllabus Optional on first read", "href": "note-c5.html#s8"}], "mins": 10, "tests": [{"what": "PDE solved by direct integration (previous syllabus)", "href": "guide-prev.html#C5-7", "papers": 6, "of": 21, "related": false, "id": "C5.7"}], "also": [], "freq": 6, "of": 21, "related": false, "optional": true}, {"id": "c5-decay", "b": "F", "t": "Heat equation with a decay term", "d": "Extra ±ku term in the heat equation. Out of the 2026 syllabus.", "ch": "C5", "pre": ["c5-heat0"], "secs": [{"t": "Previous content (out of 2026 syllabus): the heat equation with a decay term -ku Out of 2026 syllabus Optional on first read", "href": "note-c5.html#s9"}], "mins": 8, "tests": [{"what": "Heat equation with a ±ku term (previous syllabus)", "href": "guide-prev.html#C5-6", "papers": 3, "of": 21, "related": false, "id": "C5.6"}], "also": [], "freq": 3, "of": 21, "related": false, "optional": true}, {"id": "c5-laplace", "b": "F", "t": "Laplace's equation on a rectangle", "d": "Steady-state problems by separation. Out of the 2026 syllabus.", "ch": "C5", "pre": ["c5-sep", "c4-half"], "secs": [{"t": "Previous content (out of 2026 syllabus): Laplace's equation on a rectangle Out of 2026 syllabus Optional on first read", "href": "note-c5.html#s10"}], "mins": 8, "tests": [{"what": "Laplace's equation on a rectangle (previous syllabus)", "href": "guide-prev.html#C5-8", "papers": 3, "of": 21, "related": false, "id": "C5.8"}], "also": [], "freq": 3, "of": 21, "related": false, "optional": true}], "base": ""};
+const KEY = DATA.course.key;
+const byId = Object.fromEntries(DATA.nodes.map(n => [n.id, n]));
+const kids = {}; DATA.nodes.forEach(n => n.pre.forEach(p => (kids[p] = kids[p] || []).push(n.id)));
+if (DATA.branches.length > 1) DATA.branches.unshift({k: "ALL", name: "Whole course", sub: ""});
+const brName = Object.fromEntries(DATA.branches.map(b => [b.k, b.name]));
+const inView = n => branch === "ALL" || n.b === branch;
+
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+let branch = DATA.branches[0].k, sel = null;
+try { const b = localStorage.getItem(KEY + "-tab"); if (b && brName[b]) branch = b; } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+const lvl = id => state[id] || 0;               // 0 none, 1 learned, 2 practised
+const unlocked = id => byId[id].pre.every(p => lvl(p) >= 1);
+const status = id => lvl(id) === 2 ? "practised" : lvl(id) === 1 ? "learned" : unlocked(id) ? "avail" : "locked";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const share = n => n.of ? n.freq / n.of : 0;
+function heat(n) {
+  if (n.optional) return "var(--purple)";
+  const f = share(n);
+  return f >= .5 ? "var(--h3)" : f >= .25 ? "var(--h2)" : f > 0 ? "var(--h1)" : "var(--h0)";
+}
+function heatWidth(n) {
+  if (DATA.noPapers) return 0; return n.freq ? Math.max(8, Math.round(100 * share(n))) : 100; }
+const freqText = n => n.freq ? `in ${n.freq} of ${n.of} ${n.related ? "related-course " : ""}papers` : "";
+
+const drawPre = {};
+function ancestorsIn(id, ch, acc = new Set()) { byId[id].pre.filter(p => byId[p].ch === ch).forEach(p => { if (!acc.has(p)) { acc.add(p); ancestorsIn(p, ch, acc); } }); return acc; }
+DATA.nodes.forEach(n => {
+  const same = n.pre.filter(p => byId[p].ch === n.ch);
+  drawPre[n.id] = same.filter(p => !same.some(q => q !== p && ancestorsIn(q, n.ch).has(p)));
+});
+function ancestors(id, acc = new Set()) { byId[id].pre.forEach(p => { if (!acc.has(p)) { acc.add(p); ancestors(p, acc); } }); return acc; }
+
+/* ---------- layout: one block per chapter; tiers by longest path inside the chapter ---------- */
+function layout(ids) {
+  const inC = new Set(ids), depth = {};
+  const d = id => depth[id] ?? (depth[id] = Math.max(0, ...byId[id].pre.filter(p => inC.has(p)).map(p => d(p) + 1)));
+  ids.forEach(d);
+  const tiers = [];
+  ids.forEach(id => (tiers[depth[id]] = tiers[depth[id]] || []).push(id));
+  const pos = {};
+  tiers.forEach(t => t.forEach((id, i) => pos[id] = (i + .5) / t.length));
+  const bary = id => { const ps = byId[id].pre.filter(p => inC.has(p)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[id]; };
+  for (let k = 1; k < tiers.length; k++) { tiers[k].sort((a, c) => bary(a) - bary(c)); tiers[k].forEach((id, i) => pos[id] = (i + .5) / tiers[k].length); }
+  return tiers;
+}
+
+/* ---------- render ---------- */
+function renderTabs() {
+  if (DATA.noPapers) document.getElementById("lede").textContent = "Tap a concept for its note sections; tick it off to unlock the next ones.";
+  document.getElementById("tabs").style.setProperty("--tabs", Math.min(4, DATA.branches.length));
+  document.getElementById("tabs").style.display = DATA.branches.length > 1 ? "" : "none";
+  document.getElementById("footNote").textContent = DATA.notes.FOOT || "";
+  document.getElementById("tabs").innerHTML = DATA.branches.map(b => {
+    const ns = DATA.nodes.filter(n => (b.k === "ALL" || n.b === b.k) && !n.optional && !n.excluded);
+    const tested = ns.filter(n => n.freq > 0), tot = tested.length, got = tested.filter(n => lvl(n.id) === 2).length;
+    const done = ns.filter(n => lvl(n.id) >= 1).length;
+    return `<button class="tab" role="tab" aria-selected="${b.k === branch}" data-b="${b.k}"><b>${b.name}</b><span>${done}/${ns.length} learned</span><div class="bar"><i style="width:${tot ? 100 * got / tot : 0}%"></i></div></button>`;
+  }).join("");
+  document.querySelectorAll(".tab").forEach(t => t.onclick = () => { branch = t.dataset.b; try { localStorage.setItem(KEY + "-tab", branch); } catch (e) {} closeSheet(); render(); });
+}
+
+function renderNext() {
+  const ns = DATA.nodes.filter(n => inView(n) && !n.optional && !n.excluded);
+  const cand = ns.filter(n => lvl(n.id) === 0 && unlocked(n.id));
+  const toPractise = ns.filter(n => lvl(n.id) === 1 && n.freq > 0);
+  const best = cand.sort((a, c) => (share(c) * 10 + (kids[c.id] || []).length) - (share(a) * 10 + (kids[a.id] || []).length))[0];
+  const prac = toPractise.sort((a, c) => share(c) - share(a))[0];
+  const el = document.getElementById("next");
+  if (!best && !prac) { el.innerHTML = `<span><b>${brName[branch]} complete.</b> Every concept here is learned and practised.</span>`; return; }
+  const pick = best || prac;
+  const verb = best ? "Learn next" : "Practise next";
+  const why = best ? (pick.freq ? `${freqText(pick)}${(kids[pick.id] || []).length ? ` · unlocks ${(kids[pick.id] || []).length}` : ""}` : `unlocks ${(kids[pick.id] || []).length} concept${(kids[pick.id] || []).length === 1 ? "" : "s"}`) : freqText(pick);
+  el.innerHTML = `<span><span class="muted" style="font-size:.8rem;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase">${verb}</span><br><b>${esc(pick.t)}</b> <span class="muted">· ${why}</span></span><button type="button" id="nextGo">Open</button>`;
+  document.getElementById("nextGo").onclick = () => { select(pick.id); };
+}
+
+function renderLegend() {
+  const c = branch === "C", all = branch === "ALL";
+  document.getElementById("legend").innerHTML =
+    `<span><i class="sw" style="background:var(--h3)"></i>half the papers or more</span>` +
+    `<span><i class="sw" style="background:var(--h2)"></i>a quarter to half</span>` +
+    `<span><i class="sw" style="background:var(--h1)"></i>under a quarter</span>` +
+    `<span><i class="sw" style="background:var(--h0)"></i>not tested alone</span>` +
+    `<span><i class="st" style="border-color:var(--accent)"></i>ready</span>` +
+    `<span><i class="st" style="background:var(--accent-soft);border-color:var(--accent)"></i>learned</span>` +
+    `<span><i class="st" style="background:var(--ok-soft);border-color:var(--ok)"></i>practised</span>`;
+  document.getElementById("branchNote").innerHTML = DATA.notes[branch] || DATA.notes.ALL || "";
+  document.getElementById("legend").style.display = DATA.noPapers ? "none" : "";
+}
+
+const chPre = {};
+DATA.nodes.forEach(n => { chPre[n.ch] = chPre[n.ch] || new Set(); n.pre.forEach(p => { if (byId[p].ch !== n.ch) chPre[n.ch].add(byId[p].ch); }); });
+function chAnc(ch, acc = new Set()) { chPre[ch].forEach(c => { if (!acc.has(c)) { acc.add(c); chAnc(c, acc); } }); return acc; }
+
+function renderTree() {
+  const chs = [];
+  DATA.nodes.filter(inView).forEach(n => { if (!chs.includes(n.ch)) chs.push(n.ch); });
+  const inV = new Set(chs), cd = {};
+  const d = ch => cd[ch] ?? (cd[ch] = Math.max(0, ...[...chPre[ch]].filter(c => inV.has(c)).map(c => d(c) + 1)));
+  chs.forEach(d);
+  const rows = [];
+  chs.forEach(ch => (rows[cd[ch]] = rows[cd[ch]] || []).push(ch));
+  // order each row by the average position of its parent chapters
+  const pos = {}; rows.forEach(r => r.forEach((c, i) => pos[c] = (i + .5) / r.length));
+  for (let k = 1; k < rows.length; k++) {
+    const by = c => { const ps = [...chPre[c]].filter(x => inV.has(x)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[c]; };
+    rows[k].sort((a, b) => by(a) - by(b)); rows[k].forEach((c, i) => pos[c] = (i + .5) / rows[k].length);
+  }
+  document.getElementById("tree").innerHTML = `<svg class="trunks" aria-hidden="true"></svg>` + rows.map(r => `<div class="crow">${r.map(ch => {
+    const ids = DATA.nodes.filter(n => n.ch === ch).map(n => n.id);
+    const ext = [...chPre[ch]].filter(c => !inV.has(c));
+    return `<div class="chap" data-ch="${ch}" id="c-${ch}"><div class="hd"><b>${ch}</b><span>${esc(DATA.chapters[ch] || "")}</span>${DATA.excluded[ch] ? `<small class="exn">${DATA.excluded[ch]}</small>` : ""}${ext.length ? `<small style="flex-basis:100%;font-size:.75rem;color:var(--warm)">Also builds on ${ext.join(", ")}</small>` : ""}</div>
+      <div class="body"><svg aria-hidden="true"></svg>${layout(ids).map(t => `<div class="tier">${t.map(card).join("")}</div>`).join("")}</div></div>`;
+  }).join("")}</div>`).join("");
+  document.querySelectorAll(".node").forEach(b => b.onclick = () => select(b.dataset.id === sel ? null : b.dataset.id));
+  applyZoom();
+}
+function card(id) {
+  const n = byId[id], s = status(id);
+  const ext = [...new Set(n.pre.filter(p => byId[p].ch !== n.ch).map(p => byId[p].ch))];
+  const icon = s === "practised" ? "✓✓" : s === "learned" ? "✓" : s === "locked" ? "🔒" : "";
+  return `<button type="button" class="node ${s}${n.optional ? " optional" : ""}${n.excluded ? " excl" : ""}" id="n-${id}" data-id="${id}" aria-label="${esc(n.t)}, ${s}${n.freq ? ", " + freqText(n) : ""}">
+    <span class="ch"><span>${n.ch}</span><span class="badge">${icon}</span></span>
+    <span class="t">${esc(n.t)}</span>
+    ${ext.length ? `<span class="ext">+ needs ${ext.join(", ")}</span>` : ""}
+    ${n.excluded ? `<span class="exc">${n.excluded}</span>` : ""}
+    ${DATA.noPapers ? "" : `<i class="heat" style="background:linear-gradient(90deg, ${heat(n)} ${heatWidth(n)}%, var(--h0) ${heatWidth(n)}%)"></i>`}
+  </button>`;
+}
+// layout coordinates (unaffected by the zoom transform)
+function off(el, root) { let x = 0, y = 0; while (el && el !== root) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; } return {x, y}; }
+function box(el, root) { const o = off(el, root); return {l: o.x, t: o.y, w: el.offsetWidth, h: el.offsetHeight}; }
+const curve = (x1, y1, x2, y2) => { const m = (y2 - y1) * .5; return `M${x1},${y1} C${x1},${y1 + m} ${x2},${y2 - m} ${x2},${y2}`; };
+
+function drawEdges() {
+  const tree = document.getElementById("tree");
+  const path = sel ? ancestors(sel) : new Set();
+  // inside each chapter
+  document.querySelectorAll(".chap").forEach(chap => {
+    const body = chap.querySelector(".body"), svg = body.querySelector("svg");
+    let out = "";
+    DATA.nodes.filter(n => n.ch === chap.dataset.ch).forEach(n => drawPre[n.id].forEach(p => {
+      const a = box(document.getElementById("n-" + p), body), c = box(document.getElementById("n-" + n.id), body);
+      const cls = sel && path.has(p) && (path.has(n.id) || n.id === sel) ? "hot" : sel && p === sel ? "kid" : "";
+      out += `<path class="edge ${cls}" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    }));
+    svg.setAttribute("width", body.offsetWidth); svg.setAttribute("height", body.offsetHeight);
+    svg.innerHTML = out;
+    svg.querySelectorAll(".edge.hot,.edge.kid").forEach(e => svg.appendChild(e));
+  });
+  // trunks between chapters (only direct links), plus exact cross-chapter links for the selection
+  const svg = tree.querySelector("svg.trunks");
+  svg.setAttribute("width", tree.offsetWidth); svg.setAttribute("height", tree.offsetHeight);
+  let out = "";
+  const shown = new Set([...document.querySelectorAll(".chap")].map(c => c.dataset.ch));
+  shown.forEach(ch => {
+    const ps = [...chPre[ch]].filter(c => shown.has(c));
+    ps.filter(p => !ps.some(q => q !== p && chAnc(q).has(p))).forEach(p => {
+      const a = box(document.getElementById("c-" + p), tree), c = box(document.getElementById("c-" + ch), tree);
+      out += `<path class="trunk" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    });
+  });
+  if (sel) {
+    const add = (p, n, cls) => {
+      const pe = document.getElementById("n-" + p), ne = document.getElementById("n-" + n);
+      if (!pe || !ne) return;
+      const a = box(pe, tree), c = box(ne, tree);
+      const up = c.t < a.t + a.h;   // child sits beside or above: leave from the side
+      out += `<path class="xedge ${cls}" d="${up ? `M${a.l + a.w / 2},${a.t + a.h} C${a.l + a.w / 2},${a.t + a.h + 60} ${c.l + c.w / 2},${c.t - 60} ${c.l + c.w / 2},${c.t}` : curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    };
+    [sel, ...path].forEach(id => byId[id].pre.forEach(p => { if (byId[p].ch !== byId[id].ch && path.has(p)) add(p, id, ""); }));
+    (kids[sel] || []).forEach(k => { if (byId[k].ch !== byId[sel].ch) add(sel, k, "kid"); });
+  }
+  svg.innerHTML = out;
+}
+
+/* The tree sits in one box. One finger pans it in any direction (phones lock ordinary touch scrolling
+   to one axis, so panning is done by hand); two fingers pinch to zoom; ctrl/⌘ + wheel or a trackpad
+   pinch zooms on a computer. Past the box's top or bottom edge, dragging scrolls the page. */
+let scale = 1, minScale = .2;
+const MAX_SCALE = 1.6;
+function treeSize() {
+  const t0 = document.getElementById("tree"); t0.style.minWidth = Math.max(0, document.getElementById("vp").clientWidth - 2) + "px"; const t = document.getElementById("tree"); return {w: t.offsetWidth, h: t.offsetHeight}; }
+function setScale(ns, cx, cy, save = true) {
+  const vp = document.getElementById("vp"), tree = document.getElementById("tree"), sizer = document.getElementById("sizer");
+  ns = Math.min(MAX_SCALE, Math.max(minScale, ns));
+  if (cx === undefined) { cx = vp.clientWidth / 2; cy = vp.clientHeight / 2; }
+  const px = (vp.scrollLeft + cx) / scale, py = (vp.scrollTop + cy) / scale;   // tree point under the fingers
+  scale = ns;
+  const {w, h} = treeSize();
+  tree.style.transform = `scale(${scale})`;
+  sizer.style.width = Math.ceil(w * scale) + "px"; sizer.style.height = Math.ceil(h * scale) + "px";
+  vp.scrollLeft = px * scale - cx; vp.scrollTop = py * scale - cy;
+  document.getElementById("zPct").textContent = Math.round(scale * 100) + "%";
+  if (save) { try { localStorage.setItem(KEY + "-scale", String(scale)); } catch (e) {} }
+}
+function fitScale() { const vp = document.getElementById("vp"), avail = vp.clientWidth - 8; return avail > 100 ? Math.min(1, avail / treeSize().w) : 1; }
+(function () {
+  const vp = document.getElementById("vp");
+  const pts = new Map();
+  let x0, y0, lastX, lastY, lastT, vx = 0, vy = 0, moved = false, raf = 0, pinch = null;
+  const pan = (dx, dy) => {
+    vp.scrollLeft -= dx;
+    const before = vp.scrollTop; vp.scrollTop -= dy;
+    const rest = -dy - (vp.scrollTop - before);            // what the box could not absorb
+    if (Math.abs(rest) > .5 && !pinch) window.scrollBy(0, rest);
+  };
+  const mid = () => { const [a, b] = [...pts.values()], r = vp.getBoundingClientRect(); return {x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top, d: Math.hypot(a.x - b.x, a.y - b.y)}; };
+  vp.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    cancelAnimationFrame(raf);
+    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pts.size === 1) { x0 = lastX = e.clientX; y0 = lastY = e.clientY; lastT = performance.now(); vx = vy = 0; moved = false; }
+    if (pts.size === 2) { moved = true; const m = mid(); pinch = {d: m.d, s: scale, x: m.x, y: m.y}; [...pts.keys()].forEach(k => { try { vp.setPointerCapture(k); } catch (err) {} }); }
+  });
+  vp.addEventListener("pointermove", e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pinch && pts.size >= 2) {
+      const m = mid();
+      vp.scrollLeft -= m.x - pinch.x; vp.scrollTop -= m.y - pinch.y;       // two-finger drag pans too
+      setScale(pinch.s * m.d / pinch.d, m.x, m.y, false);
+      pinch.x = m.x; pinch.y = m.y;
+      return;
+    }
+    if (pts.size !== 1 || pinch) return;
+    if (!moved && Math.hypot(e.clientX - x0, e.clientY - y0) < 6) return;
+    if (!moved) { moved = true; try { vp.setPointerCapture(e.pointerId); } catch (err) {} }
+    const now = performance.now(), dt = Math.max(1, now - lastT), dx = e.clientX - lastX, dy = e.clientY - lastY;
+    pan(dx, dy); vx = .8 * dx / dt + .2 * vx; vy = .8 * dy / dt + .2 * vy; lastX = e.clientX; lastY = e.clientY; lastT = now;
+  });
+  const up = e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.delete(e.pointerId);
+    if (pinch) { if (pts.size < 2) { setScale(scale); if (pts.size === 0) pinch = null; } return; }
+    if (pts.size || !moved) return;
+    let t = performance.now();
+    const step = now => { const dt = now - t; t = now; vx *= Math.pow(.95, dt / 16); vy *= Math.pow(.95, dt / 16);
+      if (Math.hypot(vx, vy) < .02) return; pan(vx * dt, vy * dt); raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  };
+  vp.addEventListener("pointerup", up); vp.addEventListener("pointercancel", up);
+  // a lifted second finger leaves one finger down: don't let it turn into a pan jump
+  vp.addEventListener("pointerup", () => { if (pts.size === 1) { const p = [...pts.values()][0]; lastX = p.x; lastY = p.y; } });
+  // a drag or pinch must not count as a tap on a concept
+  vp.addEventListener("click", e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+  // ctrl/⌘ + wheel, and trackpad pinch (sent as ctrl + wheel)
+  vp.addEventListener("wheel", e => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault(); const r = vp.getBoundingClientRect();
+    setScale(scale * Math.exp(-e.deltaY / 300), e.clientX - r.left, e.clientY - r.top);
+  }, {passive: false});
+  // Safari sends its own pinch gesture events; stop them zooming the whole page
+  ["gesturestart", "gesturechange"].forEach(t => vp.addEventListener(t, e => e.preventDefault()));
+})();
+let firstZoom = true;
+function applyZoom() {
+  minScale = Math.min(fitScale(), 1);
+  if (firstZoom && document.getElementById("vp").clientWidth > 100) {
+    firstZoom = false;
+    let s0 = null; try { s0 = parseFloat(localStorage.getItem(KEY + "-scale")); } catch (e) {}
+    // phones start at full size, bigger screens start fitted
+    scale = s0 && s0 > 0 ? s0 : (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) >= 700 ? minScale : 1);
+    const vp = document.getElementById("vp");
+    setScale(scale, 0, 0, false);
+    vp.scrollLeft = Math.max(0, (vp.scrollWidth - vp.clientWidth) / 2); vp.scrollTop = 0;
+  } else setScale(scale, undefined, undefined, false);
+  drawEdges();
+}
+
+function markFocus() {
+  const tree = document.getElementById("tree");
+  tree.classList.toggle("focus", !!sel);
+  const path = sel ? ancestors(sel) : new Set();
+  document.querySelectorAll(".node").forEach(b => {
+    b.classList.toggle("sel", b.dataset.id === sel);
+    b.classList.toggle("path", path.has(b.dataset.id));
+    b.classList.toggle("kid", !!sel && (kids[sel] || []).includes(b.dataset.id));
+  });
+  document.querySelectorAll(".chap").forEach(c => c.classList.toggle("lit", !!c.querySelector(".node.sel,.node.path,.node.kid")));
+  drawEdges();
+}
+
+function select(id) {
+  sel = id;
+  if (id && !inView(byId[id])) { branch = byId[id].b; render(); }
+  markFocus();
+  if (id) { openSheet(id); reveal(id); } else closeSheet(true);
+}
+
+function reveal(id) {
+  const el = document.getElementById("n-" + id); if (!el) return;
+  const vp = document.getElementById("vp");
+  {
+    const vr = vp.getBoundingClientRect(), r = el.getBoundingClientRect();
+    const sheetTop = peek ? window.innerHeight - 140 : window.innerHeight * .42;
+    if (vr.top < 0 || vr.top > 140) window.scrollBy({top: vr.top - 100});
+    const vr2 = vp.getBoundingClientRect(), r2 = el.getBoundingClientRect();
+    const visBottom = Math.min(vr2.bottom, sheetTop);
+    const tabsBottom = (document.getElementById("tabs").getBoundingClientRect().bottom || 0) + 8;
+    const top = Math.max(vr2.top, tabsBottom);
+    if (r2.top < top || r2.bottom > visBottom || r2.left < vr2.left || r2.right > vr2.right) {
+      // centre the concept in the part of the box that is not covered by the tabs or the panel
+      const want = top + Math.max(0, (visBottom - top - r2.height) / 2);
+      const t0 = vp.scrollTop;
+      vp.scrollBy({top: r2.top - want, left: r2.left - vr2.left - (vr2.width - r2.width) / 2});
+      const rest = (r2.top - want) - (vp.scrollTop - t0);     // the box could not scroll that far
+      if (Math.abs(rest) > 4) window.scrollBy({top: rest});
+    }
+    return;
+  }
+  const r = el.getBoundingClientRect(), sheetTop = peek ? window.innerHeight - 140 : window.innerHeight * .42, tabsH = 90;
+  if (r.top < tabsH || r.bottom > sheetTop) window.scrollBy({top: r.top - tabsH - 10, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+}
+function stLabel(id) { const s = status(id); return s === "practised" ? ["practised", "done"] : s === "learned" ? ["learned", "done"] : ["not yet", "todo"]; }
+
+function openSheet(id) {
+  const n = byId[id], s = status(id);
+  const pre = n.pre.map(p => { const [l, c] = stLabel(p); return `<li><button class="link" data-go="${p}"><span>${esc(byId[p].t)}${byId[p].b !== n.b ? ` <span class="pill w">${byId[p].ch}</span>` : ""}</span><span class="r ${c}">${l}</span></button></li>`; }).join("");
+  const nx = (kids[id] || []).map(k => `<li><button class="link" data-go="${k}"><span>${esc(byId[k].t)}${byId[k].b !== n.b ? ` <span class="pill w">${byId[k].ch}</span>` : ""}</span><span class="r">${byId[k].ch}</span></button></li>`).join("");
+  const secs = n.secs.map(x => `<li><a href="${x.href}"><span>${esc(x.t)}</span><span class="r">${n.ch} ›</span></a></li>`).join("");
+  const tline = t => t.papers ? `${t.papers} of ${t.of} papers` : t.related ? "practice only" : "older papers only";
+  const tests = n.tests.map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)}</span><span class="r">${tline(t)}</span></a></li>`).join("")
+    + (n.also || []).map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)} <span class="muted">(counted under the next concept)</span></span><span class="r">guide ›</span></a></li>`).join("");
+  const lockMsg = s === "locked" ? `<p class="note">🔒 Learn ${n.pre.filter(p => lvl(p) < 1).map(p => `<b>${esc(byId[p].t)}</b>`).join(" and ")} first.</p>` : "";
+  document.getElementById("sheetIn").innerHTML = `
+    <div class="grab" id="grab"><span class="bar"></span><div class="top"><div><span class="course">${n.ch} · ${brName[n.b]}${n.mins ? ` · ~${n.mins} min read` : ""}${n.optional ? ' · <span class="pill">optional</span>' : ""}</span>
+    <h2 id="sTitle">${esc(n.t)}</h2></div><div class="btns"><button class="tog" type="button" id="sTog" aria-label="Collapse or expand">${peek ? "⌃" : "⌄"}</button><button class="close" type="button" aria-label="Close" id="sClose">✕</button></div></div></div>
+    <p style="margin:4px 0">${esc(n.d)}</p>
+    ${n.freq ? `<div class="freq"><i style="width:${heatWidth(n)}%;background:${heat(n)}"></i></div><p class="note" style="margin:2px 0 6px">Comes up ${freqText(n)}.</p>` : ""}${n.excluded ? `<p class="note" style="color:var(--purple)">${esc(DATA.excludedLong)}</p>` : ""}${lockMsg}
+    <div class="actions"><button type="button" id="aL" class="${lvl(id) >= 1 ? "on" : ""}">${lvl(id) >= 1 ? "✓ Learned" : "Mark learned"}</button>
+    <button type="button" id="aP" class="ok ${lvl(id) === 2 ? "on" : ""}">${lvl(id) === 2 ? "✓✓ Practised" : "Mark practised"}</button></div>
+    ${secs ? `<h3>Learn it · note ${n.ch}</h3><ul>${secs}</ul>` : `<h3>Learn it</h3><p class="note">Not in the notes. Its exam guide teaches each topic alongside its questions.</p>`}
+    ${tests ? `<h3>Practise it · exam guide</h3><ul>${tests}</ul>` : (DATA.noPapers ? `<h3>Practise it</h3><p class="note">This course has no past papers. Use the practice questions at the end of the note.</p>` : `<h3>Practise it</h3><p class="note">No past-paper question tests this on its own. It is a building block for the concepts below.</p>`)}
+    ${pre ? `<h3>Needs first</h3><ul>${pre}</ul>` : `<h3>Needs first</h3><p class="note">Nothing. This is a starting point.</p>`}
+    ${nx ? `<h3>Leads to</h3><ul>${nx}</ul>` : ""}`;
+  document.getElementById("sClose").onclick = () => select(null);
+  document.getElementById("sTog").onclick = e => { e.stopPropagation(); setPeek(!peek); };
+  bindDrag();
+  document.getElementById("aL").onclick = () => { state[id] = lvl(id) >= 1 ? 0 : 1; if (!state[id]) delete state[id]; save(); refresh(); };
+  document.getElementById("aP").onclick = () => { state[id] = lvl(id) === 2 ? 1 : 2; save(); refresh(); };
+  document.querySelectorAll("#sheetIn [data-go]").forEach(b => b.onclick = () => { const g = b.dataset.go; select(g); });
+  const sh = document.getElementById("sheet"); sh.classList.add("open"); sh.classList.toggle("peek", peek); sh.setAttribute("aria-hidden", "false");
+  document.getElementById("sheetIn").scrollTop = 0;
+  sizePeek();
+}
+let peek = false;
+function sizePeek() { const g = document.getElementById("grab"); if (g) document.getElementById("sheet").style.setProperty("--peek", (g.offsetHeight + 8) + "px"); }
+function setPeek(v) {
+  peek = v; const sh = document.getElementById("sheet"), inn = document.getElementById("sheetIn");
+  inn.scrollTop = 0; sh.classList.toggle("peek", v);
+  const t = document.getElementById("sTog"); if (t) t.textContent = v ? "⌃" : "⌄";
+  if (sel) setTimeout(() => reveal(sel), 230);
+}
+function bindDrag() {
+  const g = document.getElementById("grab"), inn = document.getElementById("sheetIn");
+  let y0 = null, dy = 0, base = 0;
+  g.onpointerdown = e => {
+    if (e.target.closest("button")) return;
+    y0 = e.clientY; dy = 0; base = peek ? inn.offsetHeight - parseFloat(getComputedStyle(document.getElementById("sheet")).getPropertyValue("--peek") || 118) : 0;
+    inn.classList.add("drag"); g.setPointerCapture(e.pointerId);
+  };
+  g.onpointermove = e => { if (y0 === null) return; dy = e.clientY - y0; inn.style.transform = `translateY(${Math.max(0, base + dy)}px)`; };
+  const end = () => {
+    if (y0 === null) return; y0 = null; inn.classList.remove("drag"); inn.style.transform = "";
+    if (Math.abs(dy) < 6) setPeek(!peek);              // a tap on the handle toggles
+    else if (dy > 40) { if (peek && dy > 90) select(null); else setPeek(true); }
+    else if (dy < -40) setPeek(false);
+  };
+  g.onpointerup = end; g.onpointercancel = end;
+}
+function closeSheet(keep) {
+  const sh = document.getElementById("sheet"); sh.classList.remove("open"); sh.setAttribute("aria-hidden", "true");
+  if (!keep) { sel = null; }
+}
+function refresh() { renderTabs(); renderNext(); renderTree(); markFocus(); if (sel) openSheet(sel); }
+function render() { renderTabs(); renderNext(); renderLegend(); renderTree(); markFocus(); }
+
+document.getElementById("reset").onclick = () => { if (confirm("Clear every tick on this page?")) { state = {}; save(); sel = null; closeSheet(); render(); } };
+document.addEventListener("keydown", e => { if (e.key === "Escape" && sel) select(null); });
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(applyZoom, 80); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyZoom);
+document.getElementById("zFit").onclick = () => { const vp = document.getElementById("vp"); setScale(minScale); vp.scrollLeft = 0; };
+document.getElementById("zIn").onclick = () => setScale(scale * 1.25);
+document.getElementById("zOut").onclick = () => setScale(scale / 1.25);
+let lastW = 0;
+if ("ResizeObserver" in window) new ResizeObserver(() => requestAnimationFrame(() => { const w = document.getElementById("vp").clientWidth; if (w && Math.abs(w - lastW) > 20) { lastW = w; applyZoom(); } })).observe(document.getElementById("vp"));
+window.addEventListener("load", applyZoom); setTimeout(applyZoom, 400);
+if (DATA.base) document.getElementById("homeLink").href = DATA.base + "index.html";
+const h = location.hash.slice(1);
+render();
+if (h && byId[h]) select(h);
+else if (h && Object.keys(DATA.chapters).some(k => k.toLowerCase() === h.toLowerCase())) {
+  const chKey = Object.keys(DATA.chapters).find(k => k.toLowerCase() === h.toLowerCase());
+  const go = () => { const c = document.getElementById("c-" + chKey); if (!c) return;
+    if (scale < .8) setScale(1);
+    const vp = document.getElementById("vp"); window.scrollBy(0, vp.getBoundingClientRect().top - 100);
+    const vr = vp.getBoundingClientRect(), r = c.getBoundingClientRect();
+    vp.scrollBy({top: r.top - vr.top - 10, left: r.left - vr.left - Math.max(10, (vr.width - r.width) / 2)});
+    c.classList.add("flash"); setTimeout(() => c.classList.remove("flash"), 1800); };
+  setTimeout(go, 250);
+}
+</script>
+</body>
+</html>

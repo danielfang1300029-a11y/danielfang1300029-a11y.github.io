@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATH1851 Tech Tree</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* pack house style, tech-tree page */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4; --warm:#c2551b; --warm-soft:#fbeadf;
+  --ok:#1f7a4d; --ok-soft:#e0f2e8; --purple:#6b4fb3; --purple-soft:#eee9f8;
+  --h0:#e3e8ee; --h1:#f6d9c6; --h2:#eca57c; --h3:#c2551b;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --ok:#5fd39a; --ok-soft:#173628; --purple:#b8a3f0; --purple-soft:#2a2340;
+    --h0:#25313b; --h1:#4a2f1f; --h2:#9a5530; --h3:#f0935c;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.wrap{max-width:1000px;margin:0 auto;padding:28px max(14px, env(safe-area-inset-left,0px)) 140px max(14px, env(safe-area-inset-right,0px))}
+a{color:var(--accent)}
+h1,h2,h3{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2rem;line-height:1.15;margin:0}
+.course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.home{font-size:.9rem;text-decoration:none}
+.lede{color:var(--muted);font-size:1.02rem;max-width:65ch;margin:10px 0}
+header{display:grid;gap:6px;margin-bottom:18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:14px 0;font-size:.94rem}
+.box .tag{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.box ol{margin:4px 0;padding-left:1.2rem}.box li{margin:3px 0}
+details.box summary{cursor:pointer;font-weight:600}
+/* tabs */
+.tabs{display:grid;grid-template-columns:repeat(var(--tabs,4),1fr);gap:6px;position:sticky;top:0;z-index:5;background:var(--paper);padding:8px 0}
+.tab{font:inherit;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 10px;cursor:pointer;min-width:0}
+.tab b{display:block;font-family:var(--display);font-size:1rem}
+.tab span{display:block;font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab .bar{height:4px;border-radius:2px;background:var(--grid);margin-top:6px;overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--ok);width:0}
+.tab[aria-selected="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+/* next up + legend */
+.next{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.next button{font:inherit;font-size:.9rem;border:0;background:var(--accent);color:var(--paper);border-radius:6px;padding:6px 12px;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--muted);margin:6px 2px 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:22px;height:6px;border-radius:3px}
+.st{display:inline-block;width:14px;height:14px;border-radius:4px;border:1.5px solid var(--line)}
+/* tree */
+.vp{overflow:auto;max-width:100%}
+.vp.pan{height:calc(100vh - 120px);height:calc(100dvh - 120px);overflow:auto;touch-action:none;overscroll-behavior:contain;cursor:grab;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.zoombar{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:-4px 0 6px}
+.zoombar #zPct{font-family:var(--mono);font-size:.75rem;color:var(--muted);min-width:3.2em;text-align:center}
+.zoombar .zhint{font-size:.75rem;color:var(--muted);margin-right:auto}
+.zoombar button{font:inherit;font-size:.8rem;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;padding:3px 10px;cursor:pointer}
+.zoombar button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.tree{position:absolute;left:0;top:0;width:max-content;transform-origin:0 0;padding:4px 0 10px}
+.tree>svg.trunks{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:0}
+.crow{display:flex;justify-content:center;align-items:flex-start;gap:56px;margin-bottom:56px;position:relative;z-index:1}
+.chap{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 10px 4px;width:max-content;max-width:500px}
+.chap>.hd{display:flex;gap:8px;align-items:baseline;margin:0 2px 10px;flex-wrap:wrap;max-width:460px}
+.chap>.hd b{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500}
+.chap>.hd span{font-family:var(--display);font-weight:600;font-size:.95rem}
+.chap .body{position:relative}
+.chap .body>svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.tier{display:flex;flex-wrap:wrap;justify-content:center;gap:22px 8px;margin-bottom:22px;position:relative;z-index:1;max-width:470px;margin-inline:auto}
+.trunk{fill:none;stroke:var(--accent);stroke-opacity:.22;stroke-width:7;stroke-linecap:round}
+.xedge{fill:none;stroke:var(--accent);stroke-width:2.5}
+.xedge.kid{stroke:var(--warm);stroke-dasharray:5 4}
+.node{font:inherit;position:relative;width:148px;background:var(--paper)!important;min-height:92px;text-align:left;cursor:pointer;
+  background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:7px 8px 14px;display:flex;flex-direction:column;gap:2px;transition:opacity .15s,border-color .15s}
+
+.node .ch{font-family:var(--mono);font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between;gap:4px}
+.node .t{font-size:.8rem;font-weight:600;line-height:1.25}
+
+.node .heat{position:absolute;left:8px;right:8px;bottom:6px;height:4px;border-radius:2px;background:var(--h0)}
+.node .x{font-size:10px;color:var(--muted);margin-top:auto}
+.node .exc{font-family:var(--mono);font-size:9.5px;color:var(--purple);line-height:1.3}
+.node.excl{opacity:.6}
+.chap .exn{flex-basis:100%;font-size:.75rem;color:var(--purple)}
+.node .ext{font-family:var(--mono);font-size:9.5px;color:var(--warm);line-height:1.3}
+.node.locked{opacity:.5;border-style:dashed}
+.node.avail{border-color:var(--accent)}
+.node.learned{background:var(--accent-soft)!important;border-color:var(--accent)}
+.node.practised{background:var(--ok-soft)!important;border-color:var(--ok)}
+.node.optional{border-style:dotted}
+.node.sel{box-shadow:0 0 0 3px var(--accent)}
+.chap.flash{box-shadow:0 0 0 3px var(--accent);transition:box-shadow .6s}
+.tree.focus .node:not(.path):not(.sel):not(.kid){opacity:.25}
+.node.kid{box-shadow:0 0 0 2px var(--warm)}
+.badge{font-family:var(--mono);font-size:10px}
+.edge{fill:none;stroke:var(--axis,#8a96a3);stroke-opacity:.55;stroke-width:1.4}
+.edge.hot,.edge.kid{stroke-opacity:1}
+.edge.hot{stroke:var(--accent);stroke-width:2.5}
+.edge.kid{stroke:var(--warm);stroke-width:2.2;stroke-dasharray:5 4}
+.tree.focus .edge:not(.hot):not(.kid){opacity:.15}
+.tree.focus .chap:not(.lit){opacity:.45}
+.tree.focus .trunk{stroke-opacity:.08}
+/* sheet */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;pointer-events:none}
+.sheet .in{pointer-events:auto;width:100%;max-width:46rem;max-height:58vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-bottom:0;
+  border-radius:14px 14px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.18);padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .22s ease}
+.sheet.open .in{transform:none}
+.sheet.open.peek .in{transform:translateY(calc(100% - var(--peek, 118px)));overflow:hidden}
+.sheet .in.drag{transition:none}
+.grab{position:sticky;top:-14px;margin:-14px -16px 0;padding:10px 16px 4px;background:var(--card);z-index:2;touch-action:none;cursor:grab}
+.grab .bar{display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 8px}
+.sheet .top .btns{display:flex;gap:6px;flex:none}
+.sheet .tog{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1}
+.sheet:not(.open) .in{box-shadow:none;visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+@media (prefers-reduced-motion: reduce){.sheet .in{transition:none}}
+.sheet h2{font-size:1.2rem;margin:2px 0 4px}
+.sheet .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.close{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;flex:none}
+.sheet h3{font-size:.8rem;font-family:var(--mono);font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.sheet ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sheet li a,.sheet li button.link{display:flex;justify-content:space-between;gap:10px;font:inherit;font-size:.92rem;text-align:left;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--ink);text-decoration:none;cursor:pointer}
+.sheet li a:hover,.sheet li button.link:hover{border-color:var(--accent)}
+.sheet li .r{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;align-self:center}
+.sheet li .r.done{color:var(--ok)} .sheet li .r.todo{color:var(--warm)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.actions button{font:inherit;font-size:.92rem;padding:9px 10px;border-radius:8px;border:1.5px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+.actions button.on{background:var(--accent);color:var(--paper)}
+.actions button.ok.on{background:var(--ok);border-color:var(--ok)}
+.actions button.ok{border-color:var(--ok);color:var(--ok)}
+.muted{color:var(--muted)}
+.freq{height:6px;border-radius:3px;background:var(--h0);overflow:hidden;margin:8px 0 2px}.freq i{display:block;height:100%}
+.note{font-size:.85rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--purple-soft);color:var(--purple);vertical-align:1px}
+.pill.w{background:var(--warm-soft);color:var(--warm)}
+.foot{margin-top:30px;font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.foot button{font:inherit;font-size:.85rem;background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;color:var(--muted);cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="home" href="index.html" id="homeLink">← Start Here</a>
+  <span class="course">MATH1851 · Calculus and ODEs · HKU</span>
+  <h1>Tech Tree</h1>
+  <p class="lede" id="lede">Tap a concept for its note sections and past-paper questions; tick it off to unlock the next ones.</p>
+</header>
+
+<details class="box">
+  <summary>How to use it</summary>
+  <ol>
+    <li><b>Tap a concept.</b> The arrows light up the concepts you need first (blue) and the ones it leads to (orange).</li>
+    <li><b>Learned</b> = you have read its note sections. <b>Practised</b> = you have done its exam-guide questions.</li>
+    <li>A concept unlocks once everything it needs is learned. Locked ones are dashed, but you can still open them.</li>
+    <li>Concepts are grouped by chapter. Lines show what to learn first inside a chapter; an orange <b>+ needs S1</b> tag means it also builds on another chapter (tap to see which concept).</li>
+    <li>The bar under each concept shows how often it comes up: the share of past papers with a question on it. A full bar means every paper.</li>
+    <li>Swipe the panel down (or tap ⌄) to shrink it to its title bar and keep browsing the tree; swipe up or tap ⌃ to open it again.</li>
+    <li>Drag the tree in any direction inside its box, and pinch with two fingers to zoom. <b>Fit</b> shows the whole tree. Scroll outside the box to move the page.</li>
+    <li>Your ticks are saved in this browser only.</li>
+  </ol>
+</details>
+
+<div class="tabs" role="tablist" id="tabs"></div>
+
+<div class="box next" id="next"></div>
+
+<div class="legend" id="legend"></div>
+
+<div class="zoombar"><span class="zhint">Pinch to zoom · drag to move</span><button type="button" id="zOut" aria-label="Zoom out">−</button><span id="zPct">100%</span><button type="button" id="zIn" aria-label="Zoom in">+</button><button type="button" id="zFit">Fit</button></div><div class="vp pan" id="vp"><div id="sizer" style="position:relative"><div class="tree" id="tree"></div></div></div>
+
+<p class="note" id="branchNote"></p>
+
+<div class="foot">
+  <span id="footNote"></span>
+  <button id="reset" type="button">Clear my ticks</button>
+</div>
+</div>
+
+<div class="sheet" id="sheet" aria-hidden="true"><div class="in" role="dialog" aria-modal="false" aria-labelledby="sTitle" id="sheetIn"></div></div>
+
+<script>
+const DATA = {"course": {"code": "MATH1851", "name": "Calculus and ODEs", "key": "math1851-tree-v1"}, "notes": {"ALL": "Thick lines link chapters; tap any concept to see the exact concepts it needs across the course. Bars show how many of the 23 past papers (2013 to 2026) ask that concept's most common question type.", "C": "Bars count the 23 past papers from 2013 to 2026, using the paper list under each question type in the exam guides.", "O": "Bars count the 23 past papers from 2013 to 2026, using the paper list under each question type in the exam guides. The ODE chapters lean on integration from Part I.", "FOOT": "How often = papers with at least one question of that concept's most common question type."}, "noPapers": false, "excluded": {}, "excludedLong": "", "chapters": {"L1": "Limits", "L2": "Sandwich Theorem", "L3": "Limits Involving Infinity", "L4": "Continuity", "L5": "The Derivative", "L6": "Differentiation Rules", "L7": "Derivatives of Inverse Functions", "L8": "Extreme Values and the Mean Value Theorem", "L9": "Curve Sketching", "L10": "L'Hôpital's Rule", "L11": "Antiderivatives and Area", "L12": "The Definite Integral and the Fundamental Theorem of Calculus", "L13": "Techniques of Integration I: Substitution and Integration by Parts", "L14": "Techniques of Integration II", "L15": "Parameterization: Parametric and Polar Curves", "L16": "Area and Volume", "L17": "Arc Length and Surface Area", "O1": "First-Order ODEs: Separable, Linear, Exact", "O2": "ODEs by Substitution", "O3": "Homogeneous Linear ODEs", "O4": "Non-Homogeneous Linear ODEs", "LT": "The Laplace Transform"}, "branches": [{"k": "C", "name": "Calculus", "sub": "Part I of the paper"}, {"k": "O", "name": "ODEs and Laplace", "sub": "Part II of the paper"}], "nodes": [{"id": "lim", "b": "C", "t": "What a limit is", "d": "Rates of change, and what it means for f(x) to approach L.", "ch": "L1", "pre": [], "secs": [{"t": "Rates of change: why we need limits", "href": "note-l1.html#s1"}, {"t": "What a limit is", "href": "note-l1.html#s2"}], "mins": 12, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "onesided", "b": "C", "t": "One-sided limits", "d": "Left and right limits, and when a limit exists.", "ch": "L1", "pre": ["lim"], "secs": [{"t": "One-sided limits, and when a limit exists", "href": "note-l1.html#s3"}], "mins": 8, "tests": [{"what": "Absolute values and one-sided limits", "href": "guide-l1.html#L13", "papers": 3, "of": 23, "id": "L1.3", "related": false}], "also": [], "freq": 3, "of": 23, "related": false, "optional": false}, {"id": "laws", "b": "C", "t": "Limit laws and substitution", "d": "Combine limits and plug in when it is safe.", "ch": "L1", "pre": ["lim"], "secs": [{"t": "Three ways to find a limit", "href": "note-l1.html#s4"}, {"t": "The Limit Laws", "href": "note-l1.html#s5"}, {"t": "Direct substitution", "href": "note-l1.html#s6"}], "mins": 11, "tests": [{"what": "Plug in first: not actually indeterminate", "href": "guide-l1.html#L11", "papers": 1, "of": 23, "id": "L1.1", "related": false}, {"what": "Limits of an unknown function from given facts", "href": "guide-l1.html#L14", "papers": 1, "of": 23, "id": "L1.4", "related": false}], "also": [], "freq": 1, "of": 23, "related": false, "optional": false}, {"id": "zero0", "b": "C", "t": "0/0 by algebra", "d": "Factorise, rationalise or combine fractions.", "ch": "L1", "pre": ["laws"], "secs": [{"t": "When substitution gives 0/0: factorisation and rationalisation", "href": "note-l1.html#s7"}], "mins": 4, "tests": [{"what": "0/0 with polynomials or roots", "href": "guide-l1.html#L12", "papers": 2, "of": 23, "id": "L1.2", "related": false}], "also": [], "freq": 2, "of": 23, "related": false, "optional": false}, {"id": "sandwich", "b": "C", "t": "Sandwich Theorem", "d": "Trap a function between two with the same limit.", "ch": "L2", "pre": ["laws"], "secs": [{"t": "The Sandwich Theorem", "href": "note-l2.html#s1"}, {"t": "Examples 1–3: squeezing a wiggle", "href": "note-l2.html#s2"}], "mins": 11, "tests": [{"what": "Squeeze a bounded wiggle", "href": "guide-l2.html#L21", "papers": 5, "of": 23, "id": "L2.1", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "sinx", "b": "C", "t": "sin θ / θ → 1", "d": "The key trig limit and how to make the boxes match.", "ch": "L2", "pre": ["sandwich"], "secs": [{"t": "The key limit θθ→1", "href": "note-l2.html#s3"}, {"t": "Corollary: the limit of a reciprocal", "href": "note-l2.html#s4"}, {"t": "Examples 4–6: make the boxes match", "href": "note-l2.html#s5"}], "mins": 15, "tests": [{"what": "sin of a box over the same box", "href": "guide-l2.html#L22", "papers": 4, "of": 23, "id": "L2.2", "related": false}], "also": [], "freq": 4, "of": 23, "related": false, "optional": false}, {"id": "inflim", "b": "C", "t": "Infinite limits", "d": "A nonzero number over something going to 0, and its sign.", "ch": "L3", "pre": ["onesided"], "secs": [{"t": "Infinite limits", "href": "note-l3.html#s1"}], "mins": 10, "tests": [{"what": "Infinite limits and their sign", "href": "guide-l3.html#L31", "papers": 1, "of": 23, "id": "L3.1", "related": false}], "also": [], "freq": 1, "of": 23, "related": false, "optional": false}, {"id": "atinf", "b": "C", "t": "Limits at ±∞", "d": "Divide by the dominant power; rationalise differences of roots.", "ch": "L3", "pre": ["laws", "sandwich"], "secs": [{"t": "Limits at infinity", "href": "note-l3.html#s2"}, {"t": "Limit laws and the Sandwich Theorem at ±∞", "href": "note-l3.html#s3"}, {"t": "Worked examples at ±∞", "href": "note-l3.html#s4"}], "mins": 18, "tests": [{"what": "Limits as x → ±∞", "href": "guide-l3.html#L32", "papers": 3, "of": 23, "id": "L3.2", "related": false}], "also": [], "freq": 3, "of": 23, "related": false, "optional": false}, {"id": "asym", "b": "C", "t": "Asymptotes", "d": "Vertical, horizontal and oblique asymptotes of a graph.", "ch": "L3", "pre": ["inflim", "atinf"], "secs": [{"t": "Asymptotes of graphs", "href": "note-l3.html#s5"}], "mins": 9, "tests": [{"what": "Find all the asymptotes", "href": "guide-l3.html#L33", "papers": 2, "of": 23, "id": "L3.3", "related": false}], "also": [], "freq": 2, "of": 23, "related": false, "optional": false}, {"id": "cont", "b": "C", "t": "Continuity", "d": "Continuity at a point, on an interval, and of combinations.", "ch": "L4", "pre": ["onesided", "laws"], "secs": [{"t": "Continuity at a point", "href": "note-l4.html#s1"}, {"t": "Continuity on an interval", "href": "note-l4.html#s2"}, {"t": "Properties of continuous functions", "href": "note-l4.html#s5"}, {"t": "Composites", "href": "note-l4.html#s6"}, {"t": "Limits of continuous functions", "href": "note-l4.html#s7"}], "mins": 23, "tests": [{"what": "Choose constants so a function is continuous", "href": "guide-l4.html#L41", "papers": 5, "of": 23, "id": "L4.1", "related": false}, {"what": "Limits and continuity from a graph", "href": "guide-l4.html#L42", "papers": 5, "of": 23, "id": "L4.2", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "discont", "b": "C", "t": "Discontinuities and extensions", "d": "Name the kind of break, or fill a removable one.", "ch": "L4", "pre": ["cont"], "secs": [{"t": "Types of discontinuity", "href": "note-l4.html#s3"}, {"t": "Continuous extension", "href": "note-l4.html#s4"}], "mins": 6, "tests": [{"what": "Classify or remove a discontinuity", "href": "guide-l4.html#L43", "papers": 2, "of": 23, "id": "L4.3", "related": false}], "also": [], "freq": 2, "of": 23, "related": false, "optional": false}, {"id": "ivt", "b": "C", "t": "Intermediate Value Theorem", "d": "Show an equation has a solution on an interval.", "ch": "L4", "pre": ["cont"], "secs": [{"t": "The Intermediate Value Theorem", "href": "note-l4.html#s8"}], "mins": 6, "tests": [{"what": "Show a solution exists (IVT)", "href": "guide-l4.html#L44", "papers": 6, "of": 23, "id": "L4.4", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "deriv", "b": "C", "t": "The derivative", "d": "Tangent lines as limits; the derivative at a point and as a function.", "ch": "L5", "pre": ["zero0"], "secs": [{"t": "What is a tangent line? From secants to tangents", "href": "note-l5.html#s1"}, {"t": "The tangent line, defined with a limit", "href": "note-l5.html#s2"}, {"t": "The derivative: at a point, and as a function", "href": "note-l5.html#s3"}], "mins": 20, "tests": [{"what": "Derivative from the definition", "href": "guide-l5.html#L51", "papers": 1, "of": 23, "id": "L5.1", "related": false}, {"what": "Which derivative does this limit represent?", "href": "guide-l5.html#L53", "papers": 1, "of": 23, "id": "L5.3", "related": false}], "also": [], "freq": 1, "of": 23, "related": false, "optional": false}, {"id": "fpgraph", "b": "C", "t": "Reading f′ from f", "d": "Sketch the derivative's graph from the function's.", "ch": "L5", "pre": ["deriv"], "secs": [{"t": "Reading the graph of f' from the graph of f", "href": "note-l5.html#s4"}], "mins": 5, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "diffable", "b": "C", "t": "Differentiability", "d": "Where a derivative fails to exist; differentiable implies continuous.", "ch": "L5", "pre": ["deriv", "cont"], "secs": [{"t": "Differentiability on an interval, and where it fails", "href": "note-l5.html#s5"}, {"t": "Differentiability implies continuity", "href": "note-l5.html#s6"}], "mins": 14, "tests": [{"what": "Is a piecewise function differentiable?", "href": "guide-l5.html#L52", "papers": 5, "of": 23, "id": "L5.2", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "rules", "b": "C", "t": "Basic, product and quotient rules", "d": "Differentiate sums, products and quotients.", "ch": "L6", "pre": ["deriv"], "secs": [{"t": "The basic differentiation rules", "href": "note-l6.html#s1"}, {"t": "The Product Rule and the Quotient Rule", "href": "note-l6.html#s2"}, {"t": "Using the rules", "href": "note-l6.html#s4"}], "mins": 15, "tests": [{"what": "Derivative values from given data", "href": "guide-l6.html#L63", "papers": 2, "of": 23, "id": "L6.3", "related": false}], "also": [], "freq": 2, "of": 23, "related": false, "optional": false}, {"id": "trigd", "b": "C", "t": "Trig derivatives", "d": "Derivatives of sin, cos, tan and friends.", "ch": "L6", "pre": ["rules", "sinx"], "secs": [{"t": "Derivatives of the trigonometric functions", "href": "note-l6.html#s3"}], "mins": 5, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "chain", "b": "C", "t": "Chain rule and higher derivatives", "d": "Differentiate composites; second and higher derivatives.", "ch": "L6", "pre": ["rules"], "secs": [{"t": "The Chain Rule", "href": "note-l6.html#s5"}, {"t": "Higher derivatives", "href": "note-l6.html#s7"}], "mins": 9, "tests": [{"what": "Product, quotient and chain rules", "href": "guide-l6.html#L61", "papers": 3, "of": 23, "id": "L6.1", "related": false}], "also": [], "freq": 3, "of": 23, "related": false, "optional": false}, {"id": "implicit", "b": "C", "t": "Implicit differentiation", "d": "Slopes of curves given by an equation; tangent lines.", "ch": "L6", "pre": ["chain"], "secs": [{"t": "Implicit differentiation", "href": "note-l6.html#s6"}], "mins": 7, "tests": [{"what": "Implicit differentiation and tangent lines", "href": "guide-l6.html#L62", "papers": 6, "of": 23, "id": "L6.2", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "inverse", "b": "C", "t": "Inverse functions", "d": "One-to-one functions, inverses and the slope of an inverse.", "ch": "L7", "pre": ["chain"], "secs": [{"t": "One-to-one functions and inverse functions", "href": "note-l7.html#s1"}, {"t": "The derivative of an inverse function", "href": "note-l7.html#s2"}], "mins": 12, "tests": [{"what": "Slope of an inverse function", "href": "guide-l7.html#L73", "papers": 2, "of": 23, "id": "L7.3", "related": false}, {"what": "Restrict the domain so an inverse exists", "href": "guide-l7.html#L74", "papers": 3, "of": 23, "id": "L7.4", "related": false}], "also": [], "freq": 3, "of": 23, "related": false, "optional": false}, {"id": "explog", "b": "C", "t": "exp and ln", "d": "Exponential and log functions and their derivatives.", "ch": "L7", "pre": ["inverse"], "secs": [{"t": "Logarithmic and exponential functions", "href": "note-l7.html#s3"}, {"t": "The General Power Rule", "href": "note-l7.html#s5"}, {"t": "Continuity of the function families", "href": "note-l7.html#s7"}], "mins": 14, "tests": [{"what": "Differentiate exp, log and inverse trig", "href": "guide-l7.html#L72", "papers": 10, "of": 23, "id": "L7.2", "related": false}, {"what": "Limits with exp and ln, no L'Hôpital", "href": "guide-l7.html#L75", "papers": 4, "of": 23, "id": "L7.5", "related": false}], "also": [], "freq": 10, "of": 23, "related": false, "optional": false}, {"id": "logdiff", "b": "C", "t": "Logarithmic differentiation", "d": "Take ln first for variable powers and messy products.", "ch": "L7", "pre": ["explog"], "secs": [{"t": "Differentiating powers, and logarithmic differentiation", "href": "note-l7.html#s4"}], "mins": 7, "tests": [{"what": "Logarithmic differentiation", "href": "guide-l7.html#L71", "papers": 6, "of": 23, "id": "L7.1", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "invtrig", "b": "C", "t": "Inverse trig functions", "d": "arcsin, arccos, arctan and their derivatives.", "ch": "L7", "pre": ["inverse", "trigd"], "secs": [{"t": "Inverse trigonometric functions", "href": "note-l7.html#s6"}], "mins": 9, "tests": [], "also": [{"what": "Differentiate exp, log and inverse trig", "href": "guide-l7.html#L72", "papers": 10, "of": 23, "id": "L7.2", "related": false}], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "extrema", "b": "C", "t": "Absolute and local extrema", "d": "Critical points and the closed interval method.", "ch": "L8", "pre": ["chain", "cont"], "secs": [{"t": "Absolute (global) extrema", "href": "note-l8.html#s1"}, {"t": "Local (relative) extrema", "href": "note-l8.html#s2"}, {"t": "When do extreme values exist? The Extreme Value Theorem", "href": "note-l8.html#s3"}, {"t": "Where to look: critical points", "href": "note-l8.html#s4"}, {"t": "The Closed Interval Method", "href": "note-l8.html#s5"}], "mins": 19, "tests": [{"what": "Absolute max and min on an interval", "href": "guide-l8.html#L81", "papers": 4, "of": 23, "id": "L8.1", "related": false}], "also": [], "freq": 4, "of": 23, "related": false, "optional": false}, {"id": "mvt", "b": "C", "t": "Rolle's Theorem and the MVT", "d": "What the theorems say and why they hold.", "ch": "L8", "pre": ["extrema", "diffable"], "secs": [{"t": "Rolle's Theorem", "href": "note-l8.html#s6"}, {"t": "The Mean Value Theorem", "href": "note-l8.html#s7"}], "mins": 11, "tests": [{"what": "State or prove Rolle's Theorem or the MVT", "href": "guide-l8.html#L82", "papers": 3, "of": 23, "id": "L8.2", "related": false}], "also": [], "freq": 3, "of": 23, "related": false, "optional": false}, {"id": "mvtuse", "b": "C", "t": "Using the MVT", "d": "Bounds, growth and exactly-one-root arguments.", "ch": "L8", "pre": ["mvt", "ivt"], "secs": [{"t": "Using the MVT: bounds, growth and uniqueness", "href": "note-l8.html#s8"}, {"t": "IVT vs MVT, and \"exactly one root\"", "href": "note-l8.html#s9"}], "mins": 9, "tests": [{"what": "Show an equation has exactly one root", "href": "guide-l8.html#L83", "papers": 2, "of": 23, "id": "L8.3", "related": false}, {"what": "Bound a function with the MVT", "href": "guide-l8.html#L84", "papers": 2, "of": 23, "id": "L8.4", "related": false}], "also": [], "freq": 2, "of": 23, "related": false, "optional": false}, {"id": "mono", "b": "C", "t": "Monotonicity and the first derivative test", "d": "Where f rises and falls, and its local extrema.", "ch": "L9", "pre": ["extrema", "mvt"], "secs": [{"t": "Monotonicity: increasing and decreasing", "href": "note-l9.html#s1"}, {"t": "Local extrema: the First Derivative Test", "href": "note-l9.html#s2"}], "mins": 16, "tests": [{"what": "Shape of f from its derivative", "href": "guide-l9.html#L92", "papers": 5, "of": 23, "id": "L9.2", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "optim", "b": "C", "t": "Optimisation", "d": "Set up and solve max/min word problems.", "ch": "L9", "pre": ["mono"], "secs": [{"t": "Optimisation problems", "href": "note-l9.html#s3"}], "mins": 6, "tests": [{"what": "Optimisation word problems", "href": "guide-l9.html#L94", "papers": 3, "of": 23, "id": "L9.4", "related": false}], "also": [], "freq": 3, "of": 23, "related": false, "optional": false}, {"id": "concav", "b": "C", "t": "Concavity and inflection", "d": "Second derivative test and inflection points.", "ch": "L9", "pre": ["mono"], "secs": [{"t": "Concavity", "href": "note-l9.html#s4"}, {"t": "Inflection points", "href": "note-l9.html#s5"}, {"t": "The Second Derivative Test", "href": "note-l9.html#s6"}, {"t": "Finding concavity and inflection points", "href": "note-l9.html#s7"}], "mins": 16, "tests": [{"what": "Read f, f′, f″ off a graph", "href": "guide-l9.html#L95", "papers": 1, "of": 23, "id": "L9.5", "related": false}], "also": [], "freq": 1, "of": 23, "related": false, "optional": false}, {"id": "sketch", "b": "C", "t": "Curve sketching", "d": "Put it all together to sketch a graph.", "ch": "L9", "pre": ["concav", "asym"], "secs": [{"t": "Guidelines for curve sketching", "href": "note-l9.html#s8"}, {"t": "Given the graph of f′, sketch f", "href": "note-l9.html#s9"}], "mins": 12, "tests": [{"what": "Full analysis of a formula, then sketch", "href": "guide-l9.html#L91", "papers": 11, "of": 23, "id": "L9.1", "related": false}, {"what": "Sketch from sign conditions", "href": "guide-l9.html#L93", "papers": 2, "of": 23, "id": "L9.3", "related": false}], "also": [], "freq": 11, "of": 23, "related": false, "optional": false}, {"id": "indet", "b": "C", "t": "Indeterminate forms", "d": "Which forms are indeterminate and which are not.", "ch": "L10", "pre": ["zero0", "inflim"], "secs": [{"t": "Indeterminate forms", "href": "note-l10.html#s1"}, {"t": "Classifying forms: indeterminate or determinate?", "href": "note-l10.html#s2"}], "mins": 7, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "lhop", "b": "C", "t": "L'Hôpital's Rule", "d": "Differentiate top and bottom for 0/0 and ∞/∞.", "ch": "L10", "pre": ["indet", "mvt", "chain"], "secs": [{"t": "L'Hôpital's Rule", "href": "note-l10.html#s3"}, {"t": "Indeterminate quotients", "href": "note-l10.html#s4"}, {"t": "Why the rule works", "href": "note-l10.html#s7"}], "mins": 18, "tests": [{"what": "0/0 or ∞/∞ by L'Hôpital", "href": "guide-l10.html#L101", "papers": 4, "of": 23, "id": "L10.1", "related": false}, {"what": "Limits with only f(0), f′(0) given", "href": "guide-l10.html#L105", "papers": 2, "of": 23, "id": "L10.5", "related": false}, {"what": "Continuity or differentiability needing L'Hôpital", "href": "guide-l10.html#L106", "papers": 5, "of": 23, "id": "L10.6", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "lhopother", "b": "C", "t": "Products, differences and powers", "d": "Rewrite 0·∞, ∞−∞ and variable powers first.", "ch": "L10", "pre": ["lhop", "explog"], "secs": [{"t": "Indeterminate products and differences", "href": "note-l10.html#s5"}, {"t": "Indeterminate powers: the logarithmic transformation", "href": "note-l10.html#s6"}], "mins": 8, "tests": [{"what": "∞ − ∞: combine first", "href": "guide-l10.html#L102", "papers": 5, "of": 23, "id": "L10.2", "related": false}, {"what": "0 · ∞: rewrite as a quotient", "href": "guide-l10.html#L103", "papers": 3, "of": 23, "id": "L10.3", "related": false}, {"what": "Variable powers: take ln first", "href": "guide-l10.html#L104", "papers": 10, "of": 23, "id": "L10.4", "related": false}], "also": [], "freq": 10, "of": 23, "related": false, "optional": false}, {"id": "antider", "b": "C", "t": "Antiderivatives", "d": "Reverse differentiation and the indefinite integral.", "ch": "L11", "pre": ["chain", "explog"], "secs": [{"t": "Antiderivatives", "href": "note-l11.html#s1"}, {"t": "Table of general antiderivatives", "href": "note-l11.html#s2"}, {"t": "The indefinite integral", "href": "note-l11.html#s3"}], "mins": 13, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "sigma", "b": "C", "t": "Area by rectangles", "d": "Sigma notation and area as the limit of a sum.", "ch": "L11", "pre": ["laws", "atinf"], "secs": [{"t": "Area: shapes with straight edges", "href": "note-l11.html#s4"}, {"t": "Approximating area with rectangles", "href": "note-l11.html#s5"}, {"t": "Sigma notation", "href": "note-l11.html#s6"}, {"t": "The exact area under y=x2 on [0,1]", "href": "note-l11.html#s7"}, {"t": "Area is the limit of a finite sum", "href": "note-l11.html#s8"}], "mins": 25, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "defint", "b": "C", "t": "The definite integral", "d": "Definition, net vs total area, integrability and properties.", "ch": "L12", "pre": ["sigma"], "secs": [{"t": "The definite integral", "href": "note-l12.html#s1"}, {"t": "Net area vs total area", "href": "note-l12.html#s2"}, {"t": "When is f integrable?", "href": "note-l12.html#s3"}, {"t": "Properties of definite integrals", "href": "note-l12.html#s4"}, {"t": "The Max–Min inequality", "href": "note-l12.html#s5"}], "mins": 22, "tests": [{"what": "Turn a long sum into an integral", "href": "guide-l12.html#L123", "papers": 10, "of": 23, "id": "L12.3", "related": false}], "also": [], "freq": 10, "of": 23, "related": false, "optional": false}, {"id": "avgval", "b": "C", "t": "Average value and the MVT for integrals", "d": "The mean value of a function on an interval.", "ch": "L12", "pre": ["defint", "ivt"], "secs": [{"t": "Average value and the Mean Value Theorem for integrals", "href": "note-l12.html#s6"}], "mins": 6, "tests": [{"what": "State the FTC; proofs and average values", "href": "guide-l12.html#L125", "papers": 5, "of": 23, "id": "L12.5", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "ftc", "b": "C", "t": "Fundamental Theorem of Calculus", "d": "Integrals and derivatives undo each other.", "ch": "L12", "pre": ["defint", "antider"], "secs": [{"t": "The Fundamental Theorem of Calculus", "href": "note-l12.html#s7"}], "mins": 8, "tests": [{"what": "Area function from a graph or table", "href": "guide-l12.html#L124", "papers": 1, "of": 23, "id": "L12.4", "related": false}], "also": [], "freq": 1, "of": 23, "related": false, "optional": false}, {"id": "ftcchain", "b": "C", "t": "FTC with the chain rule", "d": "Differentiate integrals with x in the limits; limits of integrals.", "ch": "L12", "pre": ["ftc", "chain", "lhop"], "secs": [{"t": "FTC Part I with the Chain Rule", "href": "note-l12.html#s8"}], "mins": 3, "tests": [{"what": "Differentiate an integral with x in the limits", "href": "guide-l12.html#L121", "papers": 9, "of": 23, "id": "L12.1", "related": false}, {"what": "Limits of ratios of integrals", "href": "guide-l12.html#L122", "papers": 5, "of": 23, "id": "L12.2", "related": false}], "also": [], "freq": 9, "of": 23, "related": false, "optional": false}, {"id": "subst", "b": "C", "t": "Substitution", "d": "Let u be the inside; change the limits.", "ch": "L13", "pre": ["ftc", "chain"], "secs": [{"t": "Definite vs indefinite, and why rules come in pairs", "href": "note-l13.html#s1"}, {"t": "The Substitution Rule", "href": "note-l13.html#s2"}, {"t": "Substitution: worked examples", "href": "note-l13.html#s3"}, {"t": "Steps, and how to choose u", "href": "note-l13.html#s4"}, {"t": "Substitution in definite integrals", "href": "note-l13.html#s5"}], "mins": 17, "tests": [{"what": "Substitution", "href": "guide-l13.html#L131", "papers": 14, "of": 23, "id": "L13.1", "related": false}], "also": [], "freq": 14, "of": 23, "related": false, "optional": false}, {"id": "symm", "b": "C", "t": "Symmetry tricks", "d": "Odd and even functions; the x → a − x trick.", "ch": "L13", "pre": ["subst"], "secs": [{"t": "Odd and even functions over symmetric intervals", "href": "note-l13.html#s6"}], "mins": 6, "tests": [{"what": "The x → a − x symmetry trick", "href": "guide-l13.html#L134", "papers": 2, "of": 23, "id": "L13.4", "related": false}], "also": [], "freq": 2, "of": 23, "related": false, "optional": false}, {"id": "ibp", "b": "C", "t": "Integration by parts", "d": "Choosing u and dv; reduction formulas.", "ch": "L13", "pre": ["ftc", "rules", "explog"], "secs": [{"t": "Integration by Parts (IBP)", "href": "note-l13.html#s7"}, {"t": "Integration by parts: worked examples", "href": "note-l13.html#s8"}, {"t": "Steps for IBP, and choosing u and dv", "href": "note-l13.html#s9"}, {"t": "Choice of techniques", "href": "note-l13.html#s10"}], "mins": 15, "tests": [{"what": "Integration by parts", "href": "guide-l13.html#L132", "papers": 6, "of": 23, "id": "L13.2", "related": false}, {"what": "By parts with an unknown function; reduction formulas", "href": "guide-l13.html#L133", "papers": 6, "of": 23, "id": "L13.3", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "trigint", "b": "C", "t": "Trig integrals", "d": "Identities and powers of sine and cosine.", "ch": "L14", "pre": ["subst", "trigd"], "secs": [{"t": "Basic trigonometric integrals", "href": "note-l14.html#s1"}, {"t": "Trigonometric identities", "href": "note-l14.html#s2"}, {"t": "Powers of sine and cosine", "href": "note-l14.html#s3"}], "mins": 17, "tests": [{"what": "Powers and products of trig functions", "href": "guide-l14.html#L142", "papers": 3, "of": 23, "id": "L14.2", "related": false}], "also": [], "freq": 3, "of": 23, "related": false, "optional": false}, {"id": "trigsub", "b": "C", "t": "Trig substitution", "d": "√(a² ± x²) and √(x² − a²).", "ch": "L14", "pre": ["trigint", "invtrig"], "secs": [{"t": "Trigonometric substitution", "href": "note-l14.html#s4"}], "mins": 11, "tests": [{"what": "Trig substitution", "href": "guide-l14.html#L143", "papers": 5, "of": 23, "id": "L14.3", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "pf", "b": "C", "t": "Partial fractions", "d": "Split a rational function and integrate each piece.", "ch": "L14", "pre": ["subst", "explog", "invtrig"], "secs": [{"t": "Partial fractions", "href": "note-l14.html#s5"}], "mins": 11, "tests": [{"what": "Partial fractions", "href": "guide-l14.html#L141", "papers": 16, "of": 23, "id": "L14.1", "related": false}], "also": [], "freq": 16, "of": 23, "related": false, "optional": false}, {"id": "param", "b": "C", "t": "Parametric curves", "d": "Eliminate the parameter; slopes and areas.", "ch": "L15", "pre": ["chain", "subst"], "secs": [{"t": "Parametric curves", "href": "note-l15.html#s1"}, {"t": "Eliminating the parameter; Lissajous curve and \"helix\"", "href": "note-l15.html#s2"}, {"t": "Tangents to parametric curves", "href": "note-l15.html#s3"}, {"t": "Area in parametric form", "href": "note-l15.html#s4"}], "mins": 26, "tests": [{"what": "Parametric curves: slope, speed, sketch", "href": "guide-l15.html#L151", "papers": 4, "of": 23, "id": "L15.1", "related": false}], "also": [], "freq": 4, "of": 23, "related": false, "optional": false}, {"id": "polar", "b": "C", "t": "Polar coordinates", "d": "Lines, circles and sketching polar curves.", "ch": "L15", "pre": ["trigd"], "secs": [{"t": "Polar coordinates", "href": "note-l15.html#s5"}, {"t": "Lines and circles in polar form", "href": "note-l15.html#s6"}, {"t": "Sketching polar curves", "href": "note-l15.html#s7"}], "mins": 20, "tests": [{"what": "Polar curves: sketch and identify", "href": "guide-l15.html#L152", "papers": 6, "of": 23, "id": "L15.2", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "polarcalc", "b": "C", "t": "Tangents and area in polar form", "d": "Slopes and areas of polar curves.", "ch": "L15", "pre": ["polar", "param"], "secs": [{"t": "Tangents to polar curves", "href": "note-l15.html#s8"}, {"t": "Area in polar form", "href": "note-l15.html#s9"}], "mins": 10, "tests": [{"what": "Polar curves: slope and tangents", "href": "guide-l15.html#L153", "papers": 3, "of": 23, "id": "L15.3", "related": false}], "also": [], "freq": 3, "of": 23, "related": false, "optional": false}, {"id": "between", "b": "C", "t": "Area between curves", "d": "Slice vertically or sideways.", "ch": "L16", "pre": ["subst"], "secs": [{"t": "Area between curves", "href": "note-l16.html#s1"}, {"t": "Slicing sideways: integrating with respect to y", "href": "note-l16.html#s2"}], "mins": 11, "tests": [{"what": "Area between curves", "href": "guide-l16.html#L161", "papers": 7, "of": 23, "id": "L16.1", "related": false}], "also": [], "freq": 7, "of": 23, "related": false, "optional": false}, {"id": "slicing", "b": "C", "t": "Volume by cross-sections", "d": "Integrate the area of each slice.", "ch": "L16", "pre": ["between"], "secs": [{"t": "Volume by cross-sections", "href": "note-l16.html#s3"}], "mins": 6, "tests": [{"what": "Volume by slicing; rates of filling", "href": "guide-l16.html#L165", "papers": 1, "of": 23, "id": "L16.5", "related": false}], "also": [], "freq": 1, "of": 23, "related": false, "optional": false}, {"id": "discs", "b": "C", "t": "Discs and washers", "d": "Solids of revolution about a horizontal axis.", "ch": "L16", "pre": ["slicing"], "secs": [{"t": "Solids of revolution: the disc and washer method", "href": "note-l16.html#s4"}, {"t": "Steps to compute the volume of a solid of revolution", "href": "note-l16.html#s6"}], "mins": 14, "tests": [{"what": "Volume by discs or washers", "href": "guide-l16.html#L162", "papers": 9, "of": 23, "id": "L16.2", "related": false}, {"what": "Set up the integral only", "href": "guide-l16.html#L164", "papers": 3, "of": 23, "id": "L16.4", "related": false}], "also": [], "freq": 9, "of": 23, "related": false, "optional": false}, {"id": "shells", "b": "C", "t": "Cylindrical shells", "d": "Solids of revolution about a vertical axis.", "ch": "L16", "pre": ["discs", "ibp"], "secs": [{"t": "The cylindrical shells method", "href": "note-l16.html#s5"}], "mins": 8, "tests": [{"what": "Volume by shells", "href": "guide-l16.html#L163", "papers": 8, "of": 23, "id": "L16.3", "related": false}], "also": [], "freq": 8, "of": 23, "related": false, "optional": false}, {"id": "arclen", "b": "C", "t": "Arc length", "d": "Cartesian, parametric and polar curves.", "ch": "L17", "pre": ["subst", "trigsub", "polarcalc"], "secs": [{"t": "Arc length: from a line to a general curve", "href": "note-l17.html#s1"}, {"t": "The arc length formula", "href": "note-l17.html#s2"}, {"t": "Arc length of parametric curves", "href": "note-l17.html#s3"}, {"t": "Arc length of polar curves", "href": "note-l17.html#s4"}], "mins": 21, "tests": [{"what": "Arc length and perimeter", "href": "guide-l17.html#L171", "papers": 9, "of": 23, "id": "L17.1", "related": false}], "also": [], "freq": 9, "of": 23, "related": false, "optional": false}, {"id": "surface", "b": "C", "t": "Surface area of revolution", "d": "Area of a surface swept out by a curve.", "ch": "L17", "pre": ["arclen", "discs"], "secs": [{"t": "Surface areas of common shapes", "href": "note-l17.html#s5"}, {"t": "Area of a surface of revolution", "href": "note-l17.html#s6"}], "mins": 11, "tests": [{"what": "Surface area of revolution", "href": "guide-l17.html#L172", "papers": 5, "of": 23, "id": "L17.2", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "ode", "b": "O", "t": "What an ODE is", "d": "Order, linear vs nonlinear, and which ones we can solve.", "ch": "O1", "pre": ["antider"], "secs": [{"t": "What a differential equation is", "href": "note-o1.html#s1"}, {"t": "Order of an ODE", "href": "note-o1.html#s2"}, {"t": "Linear versus nonlinear ODEs", "href": "note-o1.html#s3"}, {"t": "Which ODEs can we actually solve?", "href": "note-o1.html#s4"}], "mins": 14, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "sep", "b": "O", "t": "Separable equations", "d": "Split x and y, then integrate.", "ch": "O1", "pre": ["ode", "subst", "pf"], "secs": [{"t": "Separable equations", "href": "note-o1.html#s6"}], "mins": 6, "tests": [{"what": "Separable equations", "href": "guide-o1.html#O11", "papers": 4, "of": 23, "id": "O1.1", "related": false}], "also": [], "freq": 4, "of": 23, "related": false, "optional": false}, {"id": "lin1", "b": "O", "t": "Linear first order", "d": "The integrating factor method.", "ch": "O1", "pre": ["ode", "explog", "ibp"], "secs": [{"t": "First-order linear ODEs: the integrating factor", "href": "note-o1.html#s5"}], "mins": 6, "tests": [{"what": "Linear first order: integrating factor", "href": "guide-o1.html#O12", "papers": 20, "of": 23, "id": "O1.2", "related": false}], "also": [], "freq": 20, "of": 23, "related": false, "optional": false}, {"id": "exact", "b": "O", "t": "Exact equations", "d": "Partial derivatives, the exactness test and F(x, y) = C.", "ch": "O1", "pre": ["ode", "implicit"], "secs": [{"t": "Partial derivatives", "href": "note-o1.html#s7"}, {"t": "Exact equations", "href": "note-o1.html#s8"}, {"t": "Making an equation exact", "href": "note-o1.html#s9"}], "mins": 18, "tests": [{"what": "Exact equations", "href": "guide-o1.html#O13", "papers": 9, "of": 23, "id": "O1.3", "related": false}], "also": [], "freq": 9, "of": 23, "related": false, "optional": false}, {"id": "homog1", "b": "O", "t": "Homogeneous equations", "d": "Substitute y = vx to separate.", "ch": "O2", "pre": ["sep"], "secs": [{"t": "Separable equations: a reminder", "href": "note-o2.html#s3"}, {"t": "Homogeneous functions", "href": "note-o2.html#s4"}, {"t": "Homogeneous equations: the substitution y = vx", "href": "note-o2.html#s5"}], "mins": 12, "tests": [{"what": "Homogeneous equations: y = vx", "href": "guide-o2.html#O21", "papers": 5, "of": 23, "id": "O2.1", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "bern", "b": "O", "t": "Bernoulli equations", "d": "Substitute to make the equation linear.", "ch": "O2", "pre": ["lin1"], "secs": [{"t": "Bernoulli's equation", "href": "note-o2.html#s1"}], "mins": 7, "tests": [{"what": "Bernoulli equations", "href": "guide-o2.html#O22", "papers": 7, "of": 23, "id": "O2.2", "related": false}], "also": [], "freq": 7, "of": 23, "related": false, "optional": false}, {"id": "riccati", "b": "O", "t": "Riccati and shift substitutions", "d": "Equations with y², and shifting x and y.", "ch": "O2", "pre": ["bern", "homog1"], "secs": [{"t": "Riccati's equation", "href": "note-o2.html#s2"}, {"t": "Shift substitutions", "href": "note-o2.html#s6"}], "mins": 8, "tests": [{"what": "Riccati and shift substitutions", "href": "guide-o2.html#O23", "papers": 5, "of": 23, "id": "O2.3", "related": false}], "also": [], "freq": 5, "of": 23, "related": false, "optional": false}, {"id": "redorder", "b": "O", "t": "Reduction of order", "d": "Find a second solution from a given one.", "ch": "O2", "pre": ["lin1", "char"], "secs": [{"t": "Reduction of order", "href": "note-o2.html#s7"}], "mins": 8, "tests": [{"what": "Reduction of order", "href": "guide-o2.html#O25", "papers": 1, "of": 23, "id": "O2.5", "related": false}], "also": [], "freq": 1, "of": 23, "related": false, "optional": false}, {"id": "wronsk", "b": "O", "t": "Linear independence and the Wronskian", "d": "When two solutions make a general solution.", "ch": "O3", "pre": ["ode"], "secs": [{"t": "Linear independence and the Wronskian", "href": "note-o3.html#s2"}], "mins": 9, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "char", "b": "O", "t": "The characteristic equation", "d": "Constant coefficients with real roots; hyperbolic functions.", "ch": "O3", "pre": ["wronsk", "explog"], "secs": [{"t": "Hyperbolic functions", "href": "note-o3.html#s1"}, {"t": "Constant coefficients: the characteristic equation", "href": "note-o3.html#s3"}, {"t": "Distinct and repeated real roots", "href": "note-o3.html#s4"}], "mins": 13, "tests": [{"what": "Second order: characteristic equation", "href": "guide-o3.html#O31", "papers": 2, "of": 23, "id": "O3.1", "related": false}], "also": [], "freq": 2, "of": 23, "related": false, "optional": false}, {"id": "complex", "b": "O", "t": "Complex roots", "d": "Euler's formula and oscillating solutions.", "ch": "O3", "pre": ["char", "trigd"], "secs": [{"t": "Complex numbers and Euler's formula", "href": "note-o3.html#s5"}, {"t": "Case (3): complex roots", "href": "note-o3.html#s6"}], "mins": 8, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "higher", "b": "O", "t": "Higher order and applications", "d": "Higher-order equations and the mass–spring oscillator.", "ch": "O3", "pre": ["complex"], "secs": [{"t": "Higher-order equations", "href": "note-o3.html#s7"}, {"t": "Where ODEs appear", "href": "note-o3.html#s8"}, {"t": "The mass–spring oscillator", "href": "note-o3.html#s9"}], "mins": 20, "tests": [{"what": "Higher order with initial conditions", "href": "guide-o3.html#O32", "papers": 4, "of": 23, "id": "O3.2", "related": false}], "also": [], "freq": 4, "of": 23, "related": false, "optional": false}, {"id": "cauchy", "b": "O", "t": "Cauchy–Euler equations", "d": "Try y = xᵐ.", "ch": "O3", "pre": ["char"], "secs": [{"t": "Cauchy–Euler equations", "href": "note-o3.html#s10"}], "mins": 7, "tests": [{"what": "Cauchy–Euler equations", "href": "guide-o3.html#O33", "papers": 6, "of": 23, "id": "O3.3", "related": false}], "also": [], "freq": 6, "of": 23, "related": false, "optional": false}, {"id": "cfps", "b": "O", "t": "Complementary function + particular solution", "d": "The structure of a non-homogeneous solution.", "ch": "O4", "pre": ["complex"], "secs": [{"t": "Non-homogeneous equations: complementary function + particular solution", "href": "note-o4.html#s1"}], "mins": 8, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "undet", "b": "O", "t": "Undetermined coefficients", "d": "Guess the form of the particular solution; fit initial conditions.", "ch": "O4", "pre": ["cfps"], "secs": [{"t": "Undetermined coefficients", "href": "note-o4.html#s2"}, {"t": "Initial conditions", "href": "note-o4.html#s4"}], "mins": 11, "tests": [{"what": "Undetermined coefficients, no clash", "href": "guide-o4.html#O41", "papers": 20, "of": 23, "id": "O4.1", "related": false}, {"what": "Constants from initial conditions", "href": "guide-o4.html#O43", "papers": 6, "of": 23, "id": "O4.3", "related": false}], "also": [], "freq": 20, "of": 23, "related": false, "optional": false}, {"id": "clash", "b": "O", "t": "Resonance and clashes", "d": "Multiply the trial by x or x².", "ch": "O4", "pre": ["undet"], "secs": [{"t": "Resonance and clashes", "href": "note-o4.html#s3"}], "mins": 6, "tests": [{"what": "Undetermined coefficients with a clash", "href": "guide-o4.html#O42", "papers": 19, "of": 23, "id": "O4.2", "related": false}], "also": [], "freq": 19, "of": 23, "related": false, "optional": false}, {"id": "dop", "b": "O", "t": "D-operator method", "d": "Find particular solutions with operators.", "ch": "O4", "pre": ["undet"], "secs": [{"t": "The D-operator method", "href": "note-o4.html#s5"}], "mins": 4, "tests": [{"what": "D-operator method", "href": "guide-o4.html#O46", "papers": 1, "of": 23, "id": "O4.6", "related": false}], "also": [], "freq": 1, "of": 23, "related": false, "optional": false}, {"id": "vop", "b": "O", "t": "Variation of parameters", "d": "A method that works for any right side, including Cauchy–Euler.", "ch": "O4", "pre": ["cfps", "wronsk", "cauchy"], "secs": [{"t": "Variation of parameters", "href": "note-o4.html#s6"}, {"t": "Variation of parameters for Cauchy–Euler equations", "href": "note-o4.html#s7"}, {"t": "Which method? Insights on solving ODEs", "href": "note-o4.html#s8"}], "mins": 15, "tests": [{"what": "Variation of parameters", "href": "guide-o4.html#O44", "papers": 8, "of": 23, "id": "O4.4", "related": false}, {"what": "Cauchy–Euler with a right side", "href": "guide-o4.html#O45", "papers": 11, "of": 23, "id": "O4.5", "related": false}], "also": [], "freq": 11, "of": 23, "related": false, "optional": false}, {"id": "ltdef", "b": "O", "t": "Definition and basic transforms", "d": "Why transform, the definition and when it exists.", "ch": "LT", "pre": ["ibp", "atinf", "explog"], "secs": [{"t": "Why transform at all?", "href": "note-lt.html#s1"}, {"t": "The definition", "href": "note-lt.html#s2"}, {"t": "Transforms of elementary functions", "href": "note-lt.html#s3"}, {"t": "When does the transform exist?", "href": "note-lt.html#s9"}], "mins": 17, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "ltshift", "b": "O", "t": "Shifts, steps and multiplying by t", "d": "Linearity, both shift properties and the Heaviside function.", "ch": "LT", "pre": ["ltdef"], "secs": [{"t": "Linearity and the first shift property", "href": "note-lt.html#s4"}, {"t": "The Heaviside step function and the second shift property", "href": "note-lt.html#s5"}, {"t": "Multiplying by tn and dividing by t", "href": "note-lt.html#s8"}], "mins": 8, "tests": [{"what": "Forward transforms: shifts, multiplying by t", "href": "guide-lt.html#LT1", "papers": 12, "of": 23, "id": "LT.1", "related": false}], "also": [], "freq": 12, "of": 23, "related": false, "optional": false}, {"id": "ltinv", "b": "O", "t": "Inverse transforms", "d": "Partial fractions, delays and repeated factors.", "ch": "LT", "pre": ["ltshift", "pf"], "secs": [{"t": "Partial fractions for inverting transforms", "href": "note-lt.html#s10"}], "mins": 7, "tests": [{"what": "Inverse by partial fractions", "href": "guide-lt.html#LT2", "papers": 3, "of": 23, "id": "LT.2", "related": false}, {"what": "Inverse with a delay", "href": "guide-lt.html#LT3", "papers": 7, "of": 23, "id": "LT.3", "related": false}, {"what": "Inverse with repeated or squared factors", "href": "guide-lt.html#LT4", "papers": 5, "of": 23, "id": "LT.4", "related": false}], "also": [], "freq": 7, "of": 23, "related": false, "optional": false}, {"id": "conv", "b": "O", "t": "Convolution and integral equations", "d": "Compute f * g and solve integral equations.", "ch": "LT", "pre": ["ltinv"], "secs": [{"t": "Convolution", "href": "note-lt.html#s6"}, {"t": "Inverting by convolution; integral equations", "href": "note-lt.html#s11"}], "mins": 7, "tests": [{"what": "Convolution", "href": "guide-lt.html#LT5", "papers": 11, "of": 23, "id": "LT.5", "related": false}, {"what": "Integral equations and theory", "href": "guide-lt.html#LT8", "papers": 6, "of": 23, "id": "LT.8", "related": false}], "also": [], "freq": 11, "of": 23, "related": false, "optional": false}, {"id": "ltode", "b": "O", "t": "Solving ODEs by Laplace", "d": "Transform derivatives, solve, invert.", "ch": "LT", "pre": ["ltinv", "char"], "secs": [{"t": "Transforms of derivatives", "href": "note-lt.html#s7"}, {"t": "Applying the Laplace transform to solve an ODE", "href": "note-lt.html#s12"}, {"t": "Two IVPs solved by three methods", "href": "note-lt.html#s13"}], "mins": 8, "tests": [{"what": "Solve an ODE by Laplace", "href": "guide-lt.html#LT6", "papers": 22, "of": 23, "id": "LT.6", "related": false}], "also": [], "freq": 22, "of": 23, "related": false, "optional": false}], "base": ""};
+const KEY = DATA.course.key;
+const byId = Object.fromEntries(DATA.nodes.map(n => [n.id, n]));
+const kids = {}; DATA.nodes.forEach(n => n.pre.forEach(p => (kids[p] = kids[p] || []).push(n.id)));
+if (DATA.branches.length > 1) DATA.branches.unshift({k: "ALL", name: "Whole course", sub: ""});
+const brName = Object.fromEntries(DATA.branches.map(b => [b.k, b.name]));
+const inView = n => branch === "ALL" || n.b === branch;
+
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+let branch = DATA.branches[0].k, sel = null;
+try { const b = localStorage.getItem(KEY + "-tab"); if (b && brName[b]) branch = b; } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+const lvl = id => state[id] || 0;               // 0 none, 1 learned, 2 practised
+const unlocked = id => byId[id].pre.every(p => lvl(p) >= 1);
+const status = id => lvl(id) === 2 ? "practised" : lvl(id) === 1 ? "learned" : unlocked(id) ? "avail" : "locked";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const share = n => n.of ? n.freq / n.of : 0;
+function heat(n) {
+  if (n.optional) return "var(--purple)";
+  const f = share(n);
+  return f >= .5 ? "var(--h3)" : f >= .25 ? "var(--h2)" : f > 0 ? "var(--h1)" : "var(--h0)";
+}
+function heatWidth(n) {
+  if (DATA.noPapers) return 0; return n.freq ? Math.max(8, Math.round(100 * share(n))) : 100; }
+const freqText = n => n.freq ? `in ${n.freq} of ${n.of} ${n.related ? "related-course " : ""}papers` : "";
+
+const drawPre = {};
+function ancestorsIn(id, ch, acc = new Set()) { byId[id].pre.filter(p => byId[p].ch === ch).forEach(p => { if (!acc.has(p)) { acc.add(p); ancestorsIn(p, ch, acc); } }); return acc; }
+DATA.nodes.forEach(n => {
+  const same = n.pre.filter(p => byId[p].ch === n.ch);
+  drawPre[n.id] = same.filter(p => !same.some(q => q !== p && ancestorsIn(q, n.ch).has(p)));
+});
+function ancestors(id, acc = new Set()) { byId[id].pre.forEach(p => { if (!acc.has(p)) { acc.add(p); ancestors(p, acc); } }); return acc; }
+
+/* ---------- layout: one block per chapter; tiers by longest path inside the chapter ---------- */
+function layout(ids) {
+  const inC = new Set(ids), depth = {};
+  const d = id => depth[id] ?? (depth[id] = Math.max(0, ...byId[id].pre.filter(p => inC.has(p)).map(p => d(p) + 1)));
+  ids.forEach(d);
+  const tiers = [];
+  ids.forEach(id => (tiers[depth[id]] = tiers[depth[id]] || []).push(id));
+  const pos = {};
+  tiers.forEach(t => t.forEach((id, i) => pos[id] = (i + .5) / t.length));
+  const bary = id => { const ps = byId[id].pre.filter(p => inC.has(p)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[id]; };
+  for (let k = 1; k < tiers.length; k++) { tiers[k].sort((a, c) => bary(a) - bary(c)); tiers[k].forEach((id, i) => pos[id] = (i + .5) / tiers[k].length); }
+  return tiers;
+}
+
+/* ---------- render ---------- */
+function renderTabs() {
+  if (DATA.noPapers) document.getElementById("lede").textContent = "Tap a concept for its note sections; tick it off to unlock the next ones.";
+  document.getElementById("tabs").style.setProperty("--tabs", Math.min(4, DATA.branches.length));
+  document.getElementById("tabs").style.display = DATA.branches.length > 1 ? "" : "none";
+  document.getElementById("footNote").textContent = DATA.notes.FOOT || "";
+  document.getElementById("tabs").innerHTML = DATA.branches.map(b => {
+    const ns = DATA.nodes.filter(n => (b.k === "ALL" || n.b === b.k) && !n.optional && !n.excluded);
+    const tested = ns.filter(n => n.freq > 0), tot = tested.length, got = tested.filter(n => lvl(n.id) === 2).length;
+    const done = ns.filter(n => lvl(n.id) >= 1).length;
+    return `<button class="tab" role="tab" aria-selected="${b.k === branch}" data-b="${b.k}"><b>${b.name}</b><span>${done}/${ns.length} learned</span><div class="bar"><i style="width:${tot ? 100 * got / tot : 0}%"></i></div></button>`;
+  }).join("");
+  document.querySelectorAll(".tab").forEach(t => t.onclick = () => { branch = t.dataset.b; try { localStorage.setItem(KEY + "-tab", branch); } catch (e) {} closeSheet(); render(); });
+}
+
+function renderNext() {
+  const ns = DATA.nodes.filter(n => inView(n) && !n.optional && !n.excluded);
+  const cand = ns.filter(n => lvl(n.id) === 0 && unlocked(n.id));
+  const toPractise = ns.filter(n => lvl(n.id) === 1 && n.freq > 0);
+  const best = cand.sort((a, c) => (share(c) * 10 + (kids[c.id] || []).length) - (share(a) * 10 + (kids[a.id] || []).length))[0];
+  const prac = toPractise.sort((a, c) => share(c) - share(a))[0];
+  const el = document.getElementById("next");
+  if (!best && !prac) { el.innerHTML = `<span><b>${brName[branch]} complete.</b> Every concept here is learned and practised.</span>`; return; }
+  const pick = best || prac;
+  const verb = best ? "Learn next" : "Practise next";
+  const why = best ? (pick.freq ? `${freqText(pick)}${(kids[pick.id] || []).length ? ` · unlocks ${(kids[pick.id] || []).length}` : ""}` : `unlocks ${(kids[pick.id] || []).length} concept${(kids[pick.id] || []).length === 1 ? "" : "s"}`) : freqText(pick);
+  el.innerHTML = `<span><span class="muted" style="font-size:.8rem;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase">${verb}</span><br><b>${esc(pick.t)}</b> <span class="muted">· ${why}</span></span><button type="button" id="nextGo">Open</button>`;
+  document.getElementById("nextGo").onclick = () => { select(pick.id); };
+}
+
+function renderLegend() {
+  const c = branch === "C", all = branch === "ALL";
+  document.getElementById("legend").innerHTML =
+    `<span><i class="sw" style="background:var(--h3)"></i>half the papers or more</span>` +
+    `<span><i class="sw" style="background:var(--h2)"></i>a quarter to half</span>` +
+    `<span><i class="sw" style="background:var(--h1)"></i>under a quarter</span>` +
+    `<span><i class="sw" style="background:var(--h0)"></i>not tested alone</span>` +
+    `<span><i class="st" style="border-color:var(--accent)"></i>ready</span>` +
+    `<span><i class="st" style="background:var(--accent-soft);border-color:var(--accent)"></i>learned</span>` +
+    `<span><i class="st" style="background:var(--ok-soft);border-color:var(--ok)"></i>practised</span>`;
+  document.getElementById("branchNote").innerHTML = DATA.notes[branch] || DATA.notes.ALL || "";
+  document.getElementById("legend").style.display = DATA.noPapers ? "none" : "";
+}
+
+const chPre = {};
+DATA.nodes.forEach(n => { chPre[n.ch] = chPre[n.ch] || new Set(); n.pre.forEach(p => { if (byId[p].ch !== n.ch) chPre[n.ch].add(byId[p].ch); }); });
+function chAnc(ch, acc = new Set()) { chPre[ch].forEach(c => { if (!acc.has(c)) { acc.add(c); chAnc(c, acc); } }); return acc; }
+
+function renderTree() {
+  const chs = [];
+  DATA.nodes.filter(inView).forEach(n => { if (!chs.includes(n.ch)) chs.push(n.ch); });
+  const inV = new Set(chs), cd = {};
+  const d = ch => cd[ch] ?? (cd[ch] = Math.max(0, ...[...chPre[ch]].filter(c => inV.has(c)).map(c => d(c) + 1)));
+  chs.forEach(d);
+  const rows = [];
+  chs.forEach(ch => (rows[cd[ch]] = rows[cd[ch]] || []).push(ch));
+  // order each row by the average position of its parent chapters
+  const pos = {}; rows.forEach(r => r.forEach((c, i) => pos[c] = (i + .5) / r.length));
+  for (let k = 1; k < rows.length; k++) {
+    const by = c => { const ps = [...chPre[c]].filter(x => inV.has(x)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[c]; };
+    rows[k].sort((a, b) => by(a) - by(b)); rows[k].forEach((c, i) => pos[c] = (i + .5) / rows[k].length);
+  }
+  document.getElementById("tree").innerHTML = `<svg class="trunks" aria-hidden="true"></svg>` + rows.map(r => `<div class="crow">${r.map(ch => {
+    const ids = DATA.nodes.filter(n => n.ch === ch).map(n => n.id);
+    const ext = [...chPre[ch]].filter(c => !inV.has(c));
+    return `<div class="chap" data-ch="${ch}" id="c-${ch}"><div class="hd"><b>${ch}</b><span>${esc(DATA.chapters[ch] || "")}</span>${DATA.excluded[ch] ? `<small class="exn">${DATA.excluded[ch]}</small>` : ""}${ext.length ? `<small style="flex-basis:100%;font-size:.75rem;color:var(--warm)">Also builds on ${ext.join(", ")}</small>` : ""}</div>
+      <div class="body"><svg aria-hidden="true"></svg>${layout(ids).map(t => `<div class="tier">${t.map(card).join("")}</div>`).join("")}</div></div>`;
+  }).join("")}</div>`).join("");
+  document.querySelectorAll(".node").forEach(b => b.onclick = () => select(b.dataset.id === sel ? null : b.dataset.id));
+  applyZoom();
+}
+function card(id) {
+  const n = byId[id], s = status(id);
+  const ext = [...new Set(n.pre.filter(p => byId[p].ch !== n.ch).map(p => byId[p].ch))];
+  const icon = s === "practised" ? "✓✓" : s === "learned" ? "✓" : s === "locked" ? "🔒" : "";
+  return `<button type="button" class="node ${s}${n.optional ? " optional" : ""}${n.excluded ? " excl" : ""}" id="n-${id}" data-id="${id}" aria-label="${esc(n.t)}, ${s}${n.freq ? ", " + freqText(n) : ""}">
+    <span class="ch"><span>${n.ch}</span><span class="badge">${icon}</span></span>
+    <span class="t">${esc(n.t)}</span>
+    ${ext.length ? `<span class="ext">+ needs ${ext.join(", ")}</span>` : ""}
+    ${n.excluded ? `<span class="exc">${n.excluded}</span>` : ""}
+    ${DATA.noPapers ? "" : `<i class="heat" style="background:linear-gradient(90deg, ${heat(n)} ${heatWidth(n)}%, var(--h0) ${heatWidth(n)}%)"></i>`}
+  </button>`;
+}
+// layout coordinates (unaffected by the zoom transform)
+function off(el, root) { let x = 0, y = 0; while (el && el !== root) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; } return {x, y}; }
+function box(el, root) { const o = off(el, root); return {l: o.x, t: o.y, w: el.offsetWidth, h: el.offsetHeight}; }
+const curve = (x1, y1, x2, y2) => { const m = (y2 - y1) * .5; return `M${x1},${y1} C${x1},${y1 + m} ${x2},${y2 - m} ${x2},${y2}`; };
+
+function drawEdges() {
+  const tree = document.getElementById("tree");
+  const path = sel ? ancestors(sel) : new Set();
+  // inside each chapter
+  document.querySelectorAll(".chap").forEach(chap => {
+    const body = chap.querySelector(".body"), svg = body.querySelector("svg");
+    let out = "";
+    DATA.nodes.filter(n => n.ch === chap.dataset.ch).forEach(n => drawPre[n.id].forEach(p => {
+      const a = box(document.getElementById("n-" + p), body), c = box(document.getElementById("n-" + n.id), body);
+      const cls = sel && path.has(p) && (path.has(n.id) || n.id === sel) ? "hot" : sel && p === sel ? "kid" : "";
+      out += `<path class="edge ${cls}" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    }));
+    svg.setAttribute("width", body.offsetWidth); svg.setAttribute("height", body.offsetHeight);
+    svg.innerHTML = out;
+    svg.querySelectorAll(".edge.hot,.edge.kid").forEach(e => svg.appendChild(e));
+  });
+  // trunks between chapters (only direct links), plus exact cross-chapter links for the selection
+  const svg = tree.querySelector("svg.trunks");
+  svg.setAttribute("width", tree.offsetWidth); svg.setAttribute("height", tree.offsetHeight);
+  let out = "";
+  const shown = new Set([...document.querySelectorAll(".chap")].map(c => c.dataset.ch));
+  shown.forEach(ch => {
+    const ps = [...chPre[ch]].filter(c => shown.has(c));
+    ps.filter(p => !ps.some(q => q !== p && chAnc(q).has(p))).forEach(p => {
+      const a = box(document.getElementById("c-" + p), tree), c = box(document.getElementById("c-" + ch), tree);
+      out += `<path class="trunk" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    });
+  });
+  if (sel) {
+    const add = (p, n, cls) => {
+      const pe = document.getElementById("n-" + p), ne = document.getElementById("n-" + n);
+      if (!pe || !ne) return;
+      const a = box(pe, tree), c = box(ne, tree);
+      const up = c.t < a.t + a.h;   // child sits beside or above: leave from the side
+      out += `<path class="xedge ${cls}" d="${up ? `M${a.l + a.w / 2},${a.t + a.h} C${a.l + a.w / 2},${a.t + a.h + 60} ${c.l + c.w / 2},${c.t - 60} ${c.l + c.w / 2},${c.t}` : curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    };
+    [sel, ...path].forEach(id => byId[id].pre.forEach(p => { if (byId[p].ch !== byId[id].ch && path.has(p)) add(p, id, ""); }));
+    (kids[sel] || []).forEach(k => { if (byId[k].ch !== byId[sel].ch) add(sel, k, "kid"); });
+  }
+  svg.innerHTML = out;
+}
+
+/* The tree sits in one box. One finger pans it in any direction (phones lock ordinary touch scrolling
+   to one axis, so panning is done by hand); two fingers pinch to zoom; ctrl/⌘ + wheel or a trackpad
+   pinch zooms on a computer. Past the box's top or bottom edge, dragging scrolls the page. */
+let scale = 1, minScale = .2;
+const MAX_SCALE = 1.6;
+function treeSize() {
+  const t0 = document.getElementById("tree"); t0.style.minWidth = Math.max(0, document.getElementById("vp").clientWidth - 2) + "px"; const t = document.getElementById("tree"); return {w: t.offsetWidth, h: t.offsetHeight}; }
+function setScale(ns, cx, cy, save = true) {
+  const vp = document.getElementById("vp"), tree = document.getElementById("tree"), sizer = document.getElementById("sizer");
+  ns = Math.min(MAX_SCALE, Math.max(minScale, ns));
+  if (cx === undefined) { cx = vp.clientWidth / 2; cy = vp.clientHeight / 2; }
+  const px = (vp.scrollLeft + cx) / scale, py = (vp.scrollTop + cy) / scale;   // tree point under the fingers
+  scale = ns;
+  const {w, h} = treeSize();
+  tree.style.transform = `scale(${scale})`;
+  sizer.style.width = Math.ceil(w * scale) + "px"; sizer.style.height = Math.ceil(h * scale) + "px";
+  vp.scrollLeft = px * scale - cx; vp.scrollTop = py * scale - cy;
+  document.getElementById("zPct").textContent = Math.round(scale * 100) + "%";
+  if (save) { try { localStorage.setItem(KEY + "-scale", String(scale)); } catch (e) {} }
+}
+function fitScale() { const vp = document.getElementById("vp"), avail = vp.clientWidth - 8; return avail > 100 ? Math.min(1, avail / treeSize().w) : 1; }
+(function () {
+  const vp = document.getElementById("vp");
+  const pts = new Map();
+  let x0, y0, lastX, lastY, lastT, vx = 0, vy = 0, moved = false, raf = 0, pinch = null;
+  const pan = (dx, dy) => {
+    vp.scrollLeft -= dx;
+    const before = vp.scrollTop; vp.scrollTop -= dy;
+    const rest = -dy - (vp.scrollTop - before);            // what the box could not absorb
+    if (Math.abs(rest) > .5 && !pinch) window.scrollBy(0, rest);
+  };
+  const mid = () => { const [a, b] = [...pts.values()], r = vp.getBoundingClientRect(); return {x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top, d: Math.hypot(a.x - b.x, a.y - b.y)}; };
+  vp.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    cancelAnimationFrame(raf);
+    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pts.size === 1) { x0 = lastX = e.clientX; y0 = lastY = e.clientY; lastT = performance.now(); vx = vy = 0; moved = false; }
+    if (pts.size === 2) { moved = true; const m = mid(); pinch = {d: m.d, s: scale, x: m.x, y: m.y}; [...pts.keys()].forEach(k => { try { vp.setPointerCapture(k); } catch (err) {} }); }
+  });
+  vp.addEventListener("pointermove", e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pinch && pts.size >= 2) {
+      const m = mid();
+      vp.scrollLeft -= m.x - pinch.x; vp.scrollTop -= m.y - pinch.y;       // two-finger drag pans too
+      setScale(pinch.s * m.d / pinch.d, m.x, m.y, false);
+      pinch.x = m.x; pinch.y = m.y;
+      return;
+    }
+    if (pts.size !== 1 || pinch) return;
+    if (!moved && Math.hypot(e.clientX - x0, e.clientY - y0) < 6) return;
+    if (!moved) { moved = true; try { vp.setPointerCapture(e.pointerId); } catch (err) {} }
+    const now = performance.now(), dt = Math.max(1, now - lastT), dx = e.clientX - lastX, dy = e.clientY - lastY;
+    pan(dx, dy); vx = .8 * dx / dt + .2 * vx; vy = .8 * dy / dt + .2 * vy; lastX = e.clientX; lastY = e.clientY; lastT = now;
+  });
+  const up = e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.delete(e.pointerId);
+    if (pinch) { if (pts.size < 2) { setScale(scale); if (pts.size === 0) pinch = null; } return; }
+    if (pts.size || !moved) return;
+    let t = performance.now();
+    const step = now => { const dt = now - t; t = now; vx *= Math.pow(.95, dt / 16); vy *= Math.pow(.95, dt / 16);
+      if (Math.hypot(vx, vy) < .02) return; pan(vx * dt, vy * dt); raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  };
+  vp.addEventListener("pointerup", up); vp.addEventListener("pointercancel", up);
+  // a lifted second finger leaves one finger down: don't let it turn into a pan jump
+  vp.addEventListener("pointerup", () => { if (pts.size === 1) { const p = [...pts.values()][0]; lastX = p.x; lastY = p.y; } });
+  // a drag or pinch must not count as a tap on a concept
+  vp.addEventListener("click", e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+  // ctrl/⌘ + wheel, and trackpad pinch (sent as ctrl + wheel)
+  vp.addEventListener("wheel", e => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault(); const r = vp.getBoundingClientRect();
+    setScale(scale * Math.exp(-e.deltaY / 300), e.clientX - r.left, e.clientY - r.top);
+  }, {passive: false});
+  // Safari sends its own pinch gesture events; stop them zooming the whole page
+  ["gesturestart", "gesturechange"].forEach(t => vp.addEventListener(t, e => e.preventDefault()));
+})();
+let firstZoom = true;
+function applyZoom() {
+  minScale = Math.min(fitScale(), 1);
+  if (firstZoom && document.getElementById("vp").clientWidth > 100) {
+    firstZoom = false;
+    let s0 = null; try { s0 = parseFloat(localStorage.getItem(KEY + "-scale")); } catch (e) {}
+    // phones start at full size, bigger screens start fitted
+    scale = s0 && s0 > 0 ? s0 : (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) >= 700 ? minScale : 1);
+    const vp = document.getElementById("vp");
+    setScale(scale, 0, 0, false);
+    vp.scrollLeft = Math.max(0, (vp.scrollWidth - vp.clientWidth) / 2); vp.scrollTop = 0;
+  } else setScale(scale, undefined, undefined, false);
+  drawEdges();
+}
+
+function markFocus() {
+  const tree = document.getElementById("tree");
+  tree.classList.toggle("focus", !!sel);
+  const path = sel ? ancestors(sel) : new Set();
+  document.querySelectorAll(".node").forEach(b => {
+    b.classList.toggle("sel", b.dataset.id === sel);
+    b.classList.toggle("path", path.has(b.dataset.id));
+    b.classList.toggle("kid", !!sel && (kids[sel] || []).includes(b.dataset.id));
+  });
+  document.querySelectorAll(".chap").forEach(c => c.classList.toggle("lit", !!c.querySelector(".node.sel,.node.path,.node.kid")));
+  drawEdges();
+}
+
+function select(id) {
+  sel = id;
+  if (id && !inView(byId[id])) { branch = byId[id].b; render(); }
+  markFocus();
+  if (id) { openSheet(id); reveal(id); } else closeSheet(true);
+}
+
+function reveal(id) {
+  const el = document.getElementById("n-" + id); if (!el) return;
+  const vp = document.getElementById("vp");
+  {
+    const vr = vp.getBoundingClientRect(), r = el.getBoundingClientRect();
+    const sheetTop = peek ? window.innerHeight - 140 : window.innerHeight * .42;
+    if (vr.top < 0 || vr.top > 140) window.scrollBy({top: vr.top - 100});
+    const vr2 = vp.getBoundingClientRect(), r2 = el.getBoundingClientRect();
+    const visBottom = Math.min(vr2.bottom, sheetTop);
+    const tabsBottom = (document.getElementById("tabs").getBoundingClientRect().bottom || 0) + 8;
+    const top = Math.max(vr2.top, tabsBottom);
+    if (r2.top < top || r2.bottom > visBottom || r2.left < vr2.left || r2.right > vr2.right) {
+      // centre the concept in the part of the box that is not covered by the tabs or the panel
+      const want = top + Math.max(0, (visBottom - top - r2.height) / 2);
+      const t0 = vp.scrollTop;
+      vp.scrollBy({top: r2.top - want, left: r2.left - vr2.left - (vr2.width - r2.width) / 2});
+      const rest = (r2.top - want) - (vp.scrollTop - t0);     // the box could not scroll that far
+      if (Math.abs(rest) > 4) window.scrollBy({top: rest});
+    }
+    return;
+  }
+  const r = el.getBoundingClientRect(), sheetTop = peek ? window.innerHeight - 140 : window.innerHeight * .42, tabsH = 90;
+  if (r.top < tabsH || r.bottom > sheetTop) window.scrollBy({top: r.top - tabsH - 10, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+}
+function stLabel(id) { const s = status(id); return s === "practised" ? ["practised", "done"] : s === "learned" ? ["learned", "done"] : ["not yet", "todo"]; }
+
+function openSheet(id) {
+  const n = byId[id], s = status(id);
+  const pre = n.pre.map(p => { const [l, c] = stLabel(p); return `<li><button class="link" data-go="${p}"><span>${esc(byId[p].t)}${byId[p].b !== n.b ? ` <span class="pill w">${byId[p].ch}</span>` : ""}</span><span class="r ${c}">${l}</span></button></li>`; }).join("");
+  const nx = (kids[id] || []).map(k => `<li><button class="link" data-go="${k}"><span>${esc(byId[k].t)}${byId[k].b !== n.b ? ` <span class="pill w">${byId[k].ch}</span>` : ""}</span><span class="r">${byId[k].ch}</span></button></li>`).join("");
+  const secs = n.secs.map(x => `<li><a href="${x.href}"><span>${esc(x.t)}</span><span class="r">${n.ch} ›</span></a></li>`).join("");
+  const tline = t => t.papers ? `${t.papers} of ${t.of} papers` : t.related ? "practice only" : "older papers only";
+  const tests = n.tests.map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)}</span><span class="r">${tline(t)}</span></a></li>`).join("")
+    + (n.also || []).map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)} <span class="muted">(counted under the next concept)</span></span><span class="r">guide ›</span></a></li>`).join("");
+  const lockMsg = s === "locked" ? `<p class="note">🔒 Learn ${n.pre.filter(p => lvl(p) < 1).map(p => `<b>${esc(byId[p].t)}</b>`).join(" and ")} first.</p>` : "";
+  document.getElementById("sheetIn").innerHTML = `
+    <div class="grab" id="grab"><span class="bar"></span><div class="top"><div><span class="course">${n.ch} · ${brName[n.b]}${n.mins ? ` · ~${n.mins} min read` : ""}${n.optional ? ' · <span class="pill">optional</span>' : ""}</span>
+    <h2 id="sTitle">${esc(n.t)}</h2></div><div class="btns"><button class="tog" type="button" id="sTog" aria-label="Collapse or expand">${peek ? "⌃" : "⌄"}</button><button class="close" type="button" aria-label="Close" id="sClose">✕</button></div></div></div>
+    <p style="margin:4px 0">${esc(n.d)}</p>
+    ${n.freq ? `<div class="freq"><i style="width:${heatWidth(n)}%;background:${heat(n)}"></i></div><p class="note" style="margin:2px 0 6px">Comes up ${freqText(n)}.</p>` : ""}${n.excluded ? `<p class="note" style="color:var(--purple)">${esc(DATA.excludedLong)}</p>` : ""}${lockMsg}
+    <div class="actions"><button type="button" id="aL" class="${lvl(id) >= 1 ? "on" : ""}">${lvl(id) >= 1 ? "✓ Learned" : "Mark learned"}</button>
+    <button type="button" id="aP" class="ok ${lvl(id) === 2 ? "on" : ""}">${lvl(id) === 2 ? "✓✓ Practised" : "Mark practised"}</button></div>
+    ${secs ? `<h3>Learn it · note ${n.ch}</h3><ul>${secs}</ul>` : `<h3>Learn it</h3><p class="note">Not in the notes. Its exam guide teaches each topic alongside its questions.</p>`}
+    ${tests ? `<h3>Practise it · exam guide</h3><ul>${tests}</ul>` : (DATA.noPapers ? `<h3>Practise it</h3><p class="note">This course has no past papers. Use the practice questions at the end of the note.</p>` : `<h3>Practise it</h3><p class="note">No past-paper question tests this on its own. It is a building block for the concepts below.</p>`)}
+    ${pre ? `<h3>Needs first</h3><ul>${pre}</ul>` : `<h3>Needs first</h3><p class="note">Nothing. This is a starting point.</p>`}
+    ${nx ? `<h3>Leads to</h3><ul>${nx}</ul>` : ""}`;
+  document.getElementById("sClose").onclick = () => select(null);
+  document.getElementById("sTog").onclick = e => { e.stopPropagation(); setPeek(!peek); };
+  bindDrag();
+  document.getElementById("aL").onclick = () => { state[id] = lvl(id) >= 1 ? 0 : 1; if (!state[id]) delete state[id]; save(); refresh(); };
+  document.getElementById("aP").onclick = () => { state[id] = lvl(id) === 2 ? 1 : 2; save(); refresh(); };
+  document.querySelectorAll("#sheetIn [data-go]").forEach(b => b.onclick = () => { const g = b.dataset.go; select(g); });
+  const sh = document.getElementById("sheet"); sh.classList.add("open"); sh.classList.toggle("peek", peek); sh.setAttribute("aria-hidden", "false");
+  document.getElementById("sheetIn").scrollTop = 0;
+  sizePeek();
+}
+let peek = false;
+function sizePeek() { const g = document.getElementById("grab"); if (g) document.getElementById("sheet").style.setProperty("--peek", (g.offsetHeight + 8) + "px"); }
+function setPeek(v) {
+  peek = v; const sh = document.getElementById("sheet"), inn = document.getElementById("sheetIn");
+  inn.scrollTop = 0; sh.classList.toggle("peek", v);
+  const t = document.getElementById("sTog"); if (t) t.textContent = v ? "⌃" : "⌄";
+  if (sel) setTimeout(() => reveal(sel), 230);
+}
+function bindDrag() {
+  const g = document.getElementById("grab"), inn = document.getElementById("sheetIn");
+  let y0 = null, dy = 0, base = 0;
+  g.onpointerdown = e => {
+    if (e.target.closest("button")) return;
+    y0 = e.clientY; dy = 0; base = peek ? inn.offsetHeight - parseFloat(getComputedStyle(document.getElementById("sheet")).getPropertyValue("--peek") || 118) : 0;
+    inn.classList.add("drag"); g.setPointerCapture(e.pointerId);
+  };
+  g.onpointermove = e => { if (y0 === null) return; dy = e.clientY - y0; inn.style.transform = `translateY(${Math.max(0, base + dy)}px)`; };
+  const end = () => {
+    if (y0 === null) return; y0 = null; inn.classList.remove("drag"); inn.style.transform = "";
+    if (Math.abs(dy) < 6) setPeek(!peek);              // a tap on the handle toggles
+    else if (dy > 40) { if (peek && dy > 90) select(null); else setPeek(true); }
+    else if (dy < -40) setPeek(false);
+  };
+  g.onpointerup = end; g.onpointercancel = end;
+}
+function closeSheet(keep) {
+  const sh = document.getElementById("sheet"); sh.classList.remove("open"); sh.setAttribute("aria-hidden", "true");
+  if (!keep) { sel = null; }
+}
+function refresh() { renderTabs(); renderNext(); renderTree(); markFocus(); if (sel) openSheet(sel); }
+function render() { renderTabs(); renderNext(); renderLegend(); renderTree(); markFocus(); }
+
+document.getElementById("reset").onclick = () => { if (confirm("Clear every tick on this page?")) { state = {}; save(); sel = null; closeSheet(); render(); } };
+document.addEventListener("keydown", e => { if (e.key === "Escape" && sel) select(null); });
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(applyZoom, 80); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyZoom);
+document.getElementById("zFit").onclick = () => { const vp = document.getElementById("vp"); setScale(minScale); vp.scrollLeft = 0; };
+document.getElementById("zIn").onclick = () => setScale(scale * 1.25);
+document.getElementById("zOut").onclick = () => setScale(scale / 1.25);
+let lastW = 0;
+if ("ResizeObserver" in window) new ResizeObserver(() => requestAnimationFrame(() => { const w = document.getElementById("vp").clientWidth; if (w && Math.abs(w - lastW) > 20) { lastW = w; applyZoom(); } })).observe(document.getElementById("vp"));
+window.addEventListener("load", applyZoom); setTimeout(applyZoom, 400);
+if (DATA.base) document.getElementById("homeLink").href = DATA.base + "index.html";
+const h = location.hash.slice(1);
+render();
+if (h && byId[h]) select(h);
+else if (h && Object.keys(DATA.chapters).some(k => k.toLowerCase() === h.toLowerCase())) {
+  const chKey = Object.keys(DATA.chapters).find(k => k.toLowerCase() === h.toLowerCase());
+  const go = () => { const c = document.getElementById("c-" + chKey); if (!c) return;
+    if (scale < .8) setScale(1);
+    const vp = document.getElementById("vp"); window.scrollBy(0, vp.getBoundingClientRect().top - 100);
+    const vr = vp.getBoundingClientRect(), r = c.getBoundingClientRect();
+    vp.scrollBy({top: r.top - vr.top - 10, left: r.left - vr.left - Math.max(10, (vr.width - r.width) / 2)});
+    c.classList.add("flash"); setTimeout(() => c.classList.remove("flash"), 1800); };
+  setTimeout(go, 250);
+}
+</script>
+</body>
+</html>

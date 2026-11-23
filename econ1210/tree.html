@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ECON1210 Tech Tree</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* pack house style, tech-tree page */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4; --warm:#c2551b; --warm-soft:#fbeadf;
+  --ok:#1f7a4d; --ok-soft:#e0f2e8; --purple:#6b4fb3; --purple-soft:#eee9f8;
+  --h0:#e3e8ee; --h1:#f6d9c6; --h2:#eca57c; --h3:#c2551b;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --ok:#5fd39a; --ok-soft:#173628; --purple:#b8a3f0; --purple-soft:#2a2340;
+    --h0:#25313b; --h1:#4a2f1f; --h2:#9a5530; --h3:#f0935c;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.wrap{max-width:1000px;margin:0 auto;padding:28px max(14px, env(safe-area-inset-left,0px)) 140px max(14px, env(safe-area-inset-right,0px))}
+a{color:var(--accent)}
+h1,h2,h3{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2rem;line-height:1.15;margin:0}
+.course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.home{font-size:.9rem;text-decoration:none}
+.lede{color:var(--muted);font-size:1.02rem;max-width:65ch;margin:10px 0}
+header{display:grid;gap:6px;margin-bottom:18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:14px 0;font-size:.94rem}
+.box .tag{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.box ol{margin:4px 0;padding-left:1.2rem}.box li{margin:3px 0}
+details.box summary{cursor:pointer;font-weight:600}
+/* tabs */
+.tabs{display:grid;grid-template-columns:repeat(var(--tabs,4),1fr);gap:6px;position:sticky;top:0;z-index:5;background:var(--paper);padding:8px 0}
+.tab{font:inherit;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 10px;cursor:pointer;min-width:0}
+.tab b{display:block;font-family:var(--display);font-size:1rem}
+.tab span{display:block;font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab .bar{height:4px;border-radius:2px;background:var(--grid);margin-top:6px;overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--ok);width:0}
+.tab[aria-selected="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+/* next up + legend */
+.next{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.next button{font:inherit;font-size:.9rem;border:0;background:var(--accent);color:var(--paper);border-radius:6px;padding:6px 12px;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--muted);margin:6px 2px 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:22px;height:6px;border-radius:3px}
+.st{display:inline-block;width:14px;height:14px;border-radius:4px;border:1.5px solid var(--line)}
+/* tree */
+.vp{overflow:auto;max-width:100%}
+.vp.pan{height:calc(100vh - 120px);height:calc(100dvh - 120px);overflow:auto;touch-action:none;overscroll-behavior:contain;cursor:grab;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.zoombar{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:-4px 0 6px}
+.zoombar #zPct{font-family:var(--mono);font-size:.75rem;color:var(--muted);min-width:3.2em;text-align:center}
+.zoombar .zhint{font-size:.75rem;color:var(--muted);margin-right:auto}
+.zoombar button{font:inherit;font-size:.8rem;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;padding:3px 10px;cursor:pointer}
+.zoombar button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.tree{position:absolute;left:0;top:0;width:max-content;transform-origin:0 0;padding:4px 0 10px}
+.tree>svg.trunks{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:0}
+.crow{display:flex;justify-content:center;align-items:flex-start;gap:56px;margin-bottom:56px;position:relative;z-index:1}
+.chap{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 10px 4px;width:max-content;max-width:500px}
+.chap>.hd{display:flex;gap:8px;align-items:baseline;margin:0 2px 10px;flex-wrap:wrap;max-width:460px}
+.chap>.hd b{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500}
+.chap>.hd span{font-family:var(--display);font-weight:600;font-size:.95rem}
+.chap .body{position:relative}
+.chap .body>svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.tier{display:flex;flex-wrap:wrap;justify-content:center;gap:22px 8px;margin-bottom:22px;position:relative;z-index:1;max-width:470px;margin-inline:auto}
+.trunk{fill:none;stroke:var(--accent);stroke-opacity:.22;stroke-width:7;stroke-linecap:round}
+.xedge{fill:none;stroke:var(--accent);stroke-width:2.5}
+.xedge.kid{stroke:var(--warm);stroke-dasharray:5 4}
+.node{font:inherit;position:relative;width:148px;background:var(--paper)!important;min-height:92px;text-align:left;cursor:pointer;
+  background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:7px 8px 14px;display:flex;flex-direction:column;gap:2px;transition:opacity .15s,border-color .15s}
+
+.node .ch{font-family:var(--mono);font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between;gap:4px}
+.node .t{font-size:.8rem;font-weight:600;line-height:1.25}
+
+.node .heat{position:absolute;left:8px;right:8px;bottom:6px;height:4px;border-radius:2px;background:var(--h0)}
+.node .x{font-size:10px;color:var(--muted);margin-top:auto}
+.node .exc{font-family:var(--mono);font-size:9.5px;color:var(--purple);line-height:1.3}
+.node.excl{opacity:.6}
+.chap .exn{flex-basis:100%;font-size:.75rem;color:var(--purple)}
+.node .ext{font-family:var(--mono);font-size:9.5px;color:var(--warm);line-height:1.3}
+.node.locked{opacity:.5;border-style:dashed}
+.node.avail{border-color:var(--accent)}
+.node.learned{background:var(--accent-soft)!important;border-color:var(--accent)}
+.node.practised{background:var(--ok-soft)!important;border-color:var(--ok)}
+.node.optional{border-style:dotted}
+.node.sel{box-shadow:0 0 0 3px var(--accent)}
+.chap.flash{box-shadow:0 0 0 3px var(--accent);transition:box-shadow .6s}
+.tree.focus .node:not(.path):not(.sel):not(.kid){opacity:.25}
+.node.kid{box-shadow:0 0 0 2px var(--warm)}
+.badge{font-family:var(--mono);font-size:10px}
+.edge{fill:none;stroke:var(--axis,#8a96a3);stroke-opacity:.55;stroke-width:1.4}
+.edge.hot,.edge.kid{stroke-opacity:1}
+.edge.hot{stroke:var(--accent);stroke-width:2.5}
+.edge.kid{stroke:var(--warm);stroke-width:2.2;stroke-dasharray:5 4}
+.tree.focus .edge:not(.hot):not(.kid){opacity:.15}
+.tree.focus .chap:not(.lit){opacity:.45}
+.tree.focus .trunk{stroke-opacity:.08}
+/* sheet */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;pointer-events:none}
+.sheet .in{pointer-events:auto;width:100%;max-width:46rem;max-height:58vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-bottom:0;
+  border-radius:14px 14px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.18);padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .22s ease}
+.sheet.open .in{transform:none}
+.sheet.open.peek .in{transform:translateY(calc(100% - var(--peek, 118px)));overflow:hidden}
+.sheet .in.drag{transition:none}
+.grab{position:sticky;top:-14px;margin:-14px -16px 0;padding:10px 16px 4px;background:var(--card);z-index:2;touch-action:none;cursor:grab}
+.grab .bar{display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 8px}
+.sheet .top .btns{display:flex;gap:6px;flex:none}
+.sheet .tog{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1}
+.sheet:not(.open) .in{box-shadow:none;visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+@media (prefers-reduced-motion: reduce){.sheet .in{transition:none}}
+.sheet h2{font-size:1.2rem;margin:2px 0 4px}
+.sheet .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.close{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;flex:none}
+.sheet h3{font-size:.8rem;font-family:var(--mono);font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.sheet ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sheet li a,.sheet li button.link{display:flex;justify-content:space-between;gap:10px;font:inherit;font-size:.92rem;text-align:left;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--ink);text-decoration:none;cursor:pointer}
+.sheet li a:hover,.sheet li button.link:hover{border-color:var(--accent)}
+.sheet li .r{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;align-self:center}
+.sheet li .r.done{color:var(--ok)} .sheet li .r.todo{color:var(--warm)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.actions button{font:inherit;font-size:.92rem;padding:9px 10px;border-radius:8px;border:1.5px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+.actions button.on{background:var(--accent);color:var(--paper)}
+.actions button.ok.on{background:var(--ok);border-color:var(--ok)}
+.actions button.ok{border-color:var(--ok);color:var(--ok)}
+.muted{color:var(--muted)}
+.freq{height:6px;border-radius:3px;background:var(--h0);overflow:hidden;margin:8px 0 2px}.freq i{display:block;height:100%}
+.note{font-size:.85rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--purple-soft);color:var(--purple);vertical-align:1px}
+.pill.w{background:var(--warm-soft);color:var(--warm)}
+.foot{margin-top:30px;font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.foot button{font:inherit;font-size:.85rem;background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;color:var(--muted);cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="home" href="index.html" id="homeLink">← Start Here</a>
+  <span class="course">ECON1210 · Introductory Microeconomics · HKU</span>
+  <h1>Tech Tree</h1>
+  <p class="lede" id="lede">Tap a concept for its note sections and past-paper questions; tick it off to unlock the next ones.</p>
+</header>
+
+<details class="box">
+  <summary>How to use it</summary>
+  <ol>
+    <li><b>Tap a concept.</b> The arrows light up the concepts you need first (blue) and the ones it leads to (orange).</li>
+    <li><b>Learned</b> = you have read its note sections. <b>Practised</b> = you have done its exam-guide questions.</li>
+    <li>A concept unlocks once everything it needs is learned. Locked ones are dashed, but you can still open them.</li>
+    <li>Concepts are grouped by chapter. Lines show what to learn first inside a chapter; an orange <b>+ needs S1</b> tag means it also builds on another chapter (tap to see which concept).</li>
+    <li>The bar under each concept shows how often it comes up: the share of past papers with a question on it. A full bar means every paper.</li>
+    <li>Swipe the panel down (or tap ⌄) to shrink it to its title bar and keep browsing the tree; swipe up or tap ⌃ to open it again.</li>
+    <li>Drag the tree in any direction inside its box, and pinch with two fingers to zoom. <b>Fit</b> shows the whole tree. Scroll outside the box to move the page.</li>
+    <li>Your ticks are saved in this browser only.</li>
+  </ol>
+</details>
+
+<div class="tabs" role="tablist" id="tabs"></div>
+
+<div class="box next" id="next"></div>
+
+<div class="legend" id="legend"></div>
+
+<div class="zoombar"><span class="zhint">Pinch to zoom · drag to move</span><button type="button" id="zOut" aria-label="Zoom out">−</button><span id="zPct">100%</span><button type="button" id="zIn" aria-label="Zoom in">+</button><button type="button" id="zFit">Fit</button></div><div class="vp pan" id="vp"><div id="sizer" style="position:relative"><div class="tree" id="tree"></div></div></div>
+
+<p class="note" id="branchNote"></p>
+
+<div class="foot">
+  <span id="footNote"></span>
+  <button id="reset" type="button">Clear my ticks</button>
+</div>
+</div>
+
+<div class="sheet" id="sheet" aria-hidden="true"><div class="in" role="dialog" aria-modal="false" aria-labelledby="sTitle" id="sheetIn"></div></div>
+
+<script>
+const DATA = {"course": {"code": "ECON1210", "name": "Introductory Microeconomics", "key": "econ1210-tree-v1"}, "notes": {"ALL": "Thick lines link chapters; tap any concept to see the exact concepts it needs across the course. Bars count past papers from 2020 Spring to 2025 Spring Supplementary: all 27 for Ch.1–6, and the 14 finals for Ch.7–12, which midterms don't cover.", "M": "Bars count all 27 past papers (midterms and finals), 2020 Spring to 2025 Spring Supplementary.", "F": "Ch.7–12 are only set on finals, so bars count the 14 final papers, 2020 Spring to 2025 Spring Supplementary.", "FOOT": "How often = papers with at least one question of that concept's most common question type."}, "noPapers": false, "excluded": {}, "excludedLong": "", "chapters": {"C1": "Cost–benefit analysis", "C2": "Comparative advantage and the power of trade", "C3": "Supply, demand and market equilibrium", "C4": "Comparative statics: when demand and supply shift", "C5": "Elasticity and its applications", "C6": "Taxes and subsidies", "C7": "Price ceilings and floors", "C8": "Externalities", "C9": "Public goods and the tragedy of the commons", "C10": "Competitive supply", "C11": "Monopoly", "C12": "Price discrimination"}, "branches": [{"k": "M", "name": "Ch.1–6", "sub": "Midterm and final"}, {"k": "F", "name": "Ch.7–12", "sub": "Final only"}], "nodes": [{"id": "cba", "b": "M", "t": "The cost–benefit principle", "d": "Do something only if its benefit is at least its cost; what a good model is.", "ch": "C1", "pre": [], "secs": [{"t": "The cost–benefit principle and economic surplus", "href": "note-C1.html#s1"}, {"t": "Rationality and economic models", "href": "note-C1.html#s2"}, {"t": "Inference, prediction, policy: the \"Sleep No More\" example", "href": "note-C1.html#s3"}, {"t": "Incentives: prisoner ships and piece rates", "href": "note-C1.html#s6"}], "mins": 0, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "oc", "b": "M", "t": "Opportunity cost and sunk cost", "d": "Count the best alternative given up; ignore costs you can't get back.", "ch": "C1", "pre": ["cba"], "secs": [{"t": "Opportunity cost and sunk cost", "href": "note-C1.html#s8"}, {"t": "Uncle Paul's sneakers: two ways to count", "href": "note-C1.html#s9"}], "mins": 0, "tests": [{"what": "Opportunity-cost ledger", "href": "guide-C1.html#C1-1", "papers": 18, "of": 27, "id": "C1.1", "related": false}, {"what": "Sunk vs avoidable costs", "href": "guide-C1.html#C1-2", "papers": 12, "of": 27, "id": "C1.2", "related": false}], "also": [], "freq": 18, "of": 27, "related": false, "optional": false}, {"id": "margin", "b": "M", "t": "Thinking at the margin", "d": "Do one more unit while marginal benefit ≥ marginal cost.", "ch": "C1", "pre": ["cba"], "secs": [{"t": "How many? The optimal quantity, one unit at a time", "href": "note-C1.html#s4"}, {"t": "The continuous case: MB = MC", "href": "note-C1.html#s5"}], "mins": 0, "tests": [{"what": "Marginal rule for one activity", "href": "guide-C1.html#C1-3", "papers": 13, "of": 27, "id": "C1.3", "related": false}, {"what": "Marginal rule read backwards", "href": "guide-C1.html#C1-4", "papers": 6, "of": 27, "id": "C1.4", "related": false}], "also": [], "freq": 13, "of": 27, "related": false, "optional": false}, {"id": "alloc", "b": "M", "t": "Allocating a fixed resource", "d": "Split a fixed total so the marginal returns are equal.", "ch": "C1", "pre": ["margin"], "secs": [{"t": "Allocating a fixed resource", "href": "note-C1.html#s7"}], "mins": 0, "tests": [{"what": "Splitting a fixed total with formulas", "href": "guide-C1.html#C1-5", "papers": 15, "of": 27, "id": "C1.5", "related": false}, {"what": "Splitting from a table", "href": "guide-C1.html#C1-6", "papers": 17, "of": 27, "id": "C1.6", "related": false}], "also": [], "freq": 17, "of": 27, "related": false, "optional": false}, {"id": "compadv", "b": "M", "t": "Absolute vs comparative advantage", "d": "Who has the lower opportunity cost, and why that decides who specialises.", "ch": "C2", "pre": ["oc"], "secs": [{"t": "Why exchange at all? Absolute advantage", "href": "note-C2.html#s1"}, {"t": "Comparative advantage = lower opportunity cost", "href": "note-C2.html#s2"}, {"t": "The principle of comparative advantage", "href": "note-C2.html#s4"}], "mins": 0, "tests": [{"what": "Who has the advantage", "href": "guide-C2.html#C2-1", "papers": 11, "of": 27, "id": "C2.1", "related": false}], "also": [], "freq": 11, "of": 27, "related": false, "optional": false}, {"id": "tot", "b": "M", "t": "Terms of trade", "d": "The range of prices both traders will accept.", "ch": "C2", "pre": ["compadv"], "secs": [{"t": "Terms of trade", "href": "note-C2.html#s3"}], "mins": 0, "tests": [{"what": "Terms-of-trade window and bargaining", "href": "guide-C2.html#C2-2", "papers": 18, "of": 27, "id": "C2.2", "related": false}], "also": [], "freq": 18, "of": 27, "related": false, "optional": false}, {"id": "ppc", "b": "M", "t": "Production possibilities curves", "d": "One person's PPC, the bowed joint PPC and the low-hanging-fruit principle.", "ch": "C2", "pre": ["compadv"], "secs": [{"t": "The production possibilities curve for one person", "href": "note-C2.html#s5"}, {"t": "Two, three and many people: the low-hanging-fruit principle", "href": "note-C2.html#s6"}, {"t": "Economic growth: the PPC shifts outwards", "href": "note-C2.html#s7"}], "mins": 0, "tests": [{"what": "Low-hanging fruit on a joint PPC", "href": "guide-C2.html#C2-3", "papers": 19, "of": 27, "id": "C2.3", "related": false}], "also": [], "freq": 19, "of": 27, "related": false, "optional": false}, {"id": "spec", "b": "M", "t": "Gains from specialisation", "d": "Producing fixed bundles alone versus together.", "ch": "C2", "pre": ["ppc"], "secs": [{"t": "Gains from specialisation", "href": "note-C2.html#s8"}, {"t": "What limits or encourages specialisation", "href": "note-C2.html#s10"}], "mins": 0, "tests": [{"what": "Fixed-ratio bundles: alone vs together", "href": "guide-C2.html#C2-4", "papers": 14, "of": 27, "id": "C2.4", "related": false}], "also": [], "freq": 14, "of": 27, "related": false, "optional": false}, {"id": "world", "b": "M", "t": "Trade at world prices", "d": "What to produce and what you can consume once you can trade.", "ch": "C2", "pre": ["ppc", "tot"], "secs": [{"t": "Consumption possibilities and world prices", "href": "note-C2.html#s9"}], "mins": 0, "tests": [{"what": "What to produce at world prices", "href": "guide-C2.html#C2-5", "papers": 13, "of": 27, "id": "C2.5", "related": false}, {"what": "Consumption at world prices", "href": "guide-C2.html#C2-6", "papers": 17, "of": 27, "id": "C2.6", "related": false}], "also": [], "freq": 17, "of": 27, "related": false, "optional": false}, {"id": "demand", "b": "M", "t": "Demand and consumer surplus", "d": "Why demand slopes down; consumer surplus as an area.", "ch": "C3", "pre": ["margin"], "secs": [{"t": "Markets: gains from exchange and who gets them", "href": "note-C3.html#s1"}, {"t": "The demand curve", "href": "note-C3.html#s2"}, {"t": "Consumer surplus", "href": "note-C3.html#s3"}], "mins": 0, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "supply", "b": "M", "t": "Supply and producer surplus", "d": "Supply as opportunity cost; producer surplus.", "ch": "C3", "pre": ["oc"], "secs": [{"t": "The supply curve", "href": "note-C3.html#s5"}, {"t": "Producer surplus", "href": "note-C3.html#s6"}], "mins": 0, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "mktsum", "b": "M", "t": "Market curves", "d": "Add quantities, not prices: kinked market demand and supply.", "ch": "C3", "pre": ["demand", "supply"], "secs": [{"t": "Market demand: add quantities, not prices", "href": "note-C3.html#s4"}, {"t": "Market supply", "href": "note-C3.html#s7"}, {"t": "Market curves from tables of whole units", "href": "note-C3.html#s8"}], "mins": 0, "tests": [{"what": "Horizontal summation of continuous curves", "href": "guide-C3.html#C3-2", "papers": 15, "of": 27, "id": "C3.2", "related": false}, {"what": "Discrete market curves from tables", "href": "guide-C3.html#C3-3", "papers": 9, "of": 27, "id": "C3.3", "related": false}], "also": [], "freq": 15, "of": 27, "related": false, "optional": false}, {"id": "eq", "b": "M", "t": "Market equilibrium", "d": "Where the curves cross; excess supply and demand.", "ch": "C3", "pre": ["mktsum"], "secs": [{"t": "Market equilibrium", "href": "note-C3.html#s9"}, {"t": "Out of equilibrium: excess supply, excess demand, the trading locus", "href": "note-C3.html#s10"}], "mins": 0, "tests": [{"what": "One demand, one supply: read, solve, surplus", "href": "guide-C3.html#C3-1", "papers": 5, "of": 27, "id": "C3.1", "related": false}, {"what": "Equilibrium with summed (kinked) curves", "href": "guide-C3.html#C3-4", "papers": 14, "of": 27, "id": "C3.4", "related": false}, {"what": "Equilibrium and disequilibrium logic", "href": "guide-C3.html#C3-6", "papers": 4, "of": 27, "id": "C3.6", "related": false}], "also": [], "freq": 14, "of": 27, "related": false, "optional": false}, {"id": "eff", "b": "M", "t": "Efficiency at equilibrium", "d": "Total surplus is largest at equilibrium; welfare loss from any other quantity.", "ch": "C3", "pre": ["eq"], "secs": [{"t": "Efficiency: gains from trade are maximised at equilibrium", "href": "note-C3.html#s11"}], "mins": 0, "tests": [{"what": "Welfare loss from a forced quantity", "href": "guide-C3.html#C3-5", "papers": 10, "of": 27, "id": "C3.5", "related": false}], "also": [], "freq": 10, "of": 27, "related": false, "optional": false}, {"id": "shifters", "b": "M", "t": "Shifts vs movements", "d": "What shifts demand and supply, and what only moves along them.", "ch": "C4", "pre": ["eq"], "secs": [{"t": "Changes in demand", "href": "note-C4.html#s2"}, {"t": "Demand shifters", "href": "note-C4.html#s3"}, {"t": "Shift or movement? Reading a demand relation", "href": "note-C4.html#s4"}, {"t": "Changes in supply", "href": "note-C4.html#s5"}, {"t": "Supply shifters", "href": "note-C4.html#s6"}], "mins": 0, "tests": [{"what": "Read a demand relation", "href": "guide-C4.html#C4-1", "papers": 7, "of": 27, "id": "C4.1", "related": false}, {"what": "Classify an event: shift or movement", "href": "guide-C4.html#C4-2", "papers": 14, "of": 27, "id": "C4.2", "related": false}], "also": [], "freq": 14, "of": 27, "related": false, "optional": false}, {"id": "predict", "b": "M", "t": "Prediction, inference and policy", "d": "Use shifts to predict, to read data backwards, and to judge policies.", "ch": "C4", "pre": ["shifters"], "secs": [{"t": "Why the equilibrium is the benchmark", "href": "note-C4.html#s1"}, {"t": "Applications I: prediction", "href": "note-C4.html#s7"}, {"t": "Applications II: inference — reading the shift from the data", "href": "note-C4.html#s8"}, {"t": "Applications III: policy and food aid", "href": "note-C4.html#s9"}, {"t": "Applications V: rent control and taxi fares", "href": "note-C4.html#s11"}], "mins": 0, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "twoshift", "b": "M", "t": "Two shifts at once", "d": "When both curves move, one of price or quantity is ambiguous.", "ch": "C4", "pre": ["shifters"], "secs": [{"t": "Applications IV: two shifts at once", "href": "note-C4.html#s10"}], "mins": 0, "tests": [{"what": "Two shifts at once", "href": "guide-C4.html#C4-3", "papers": 17, "of": 27, "id": "C4.3", "related": false}], "also": [], "freq": 17, "of": 27, "related": false, "optional": false}, {"id": "chain", "b": "M", "t": "Linked markets", "d": "A shift in one market moves the next one.", "ch": "C4", "pre": ["shifters"], "secs": [{"t": "Chain reactions across linked markets", "href": "note-C4.html#s12"}], "mins": 0, "tests": [{"what": "Chain reactions across linked markets", "href": "guide-C4.html#C4-4", "papers": 15, "of": 27, "id": "C4.4", "related": false}], "also": [], "freq": 15, "of": 27, "related": false, "optional": false}, {"id": "neweq", "b": "M", "t": "Computing the new equilibrium", "d": "Solve for price and quantity after a given shift.", "ch": "C4", "pre": ["shifters", "mktsum"], "secs": [{"t": "Computing the new equilibrium", "href": "note-C4.html#s13"}], "mins": 0, "tests": [{"what": "New equilibrium after a fixed shift", "href": "guide-C4.html#C4-5", "papers": 17, "of": 27, "id": "C4.5", "related": false}], "also": [], "freq": 17, "of": 27, "related": false, "optional": false}, {"id": "winners", "b": "M", "t": "Who gains, who loses", "d": "Track each group's surplus after a change.", "ch": "C4", "pre": ["predict", "eff"], "secs": [{"t": "Who gains, who loses", "href": "note-C4.html#s14"}], "mins": 0, "tests": [{"what": "Who gains, who loses", "href": "guide-C4.html#C4-6", "papers": 15, "of": 27, "id": "C4.6", "related": false}], "also": [], "freq": 15, "of": 27, "related": false, "optional": false}, {"id": "elas", "b": "M", "t": "Price elasticity of demand", "d": "What it measures, what makes it big or small, and the midpoint formula.", "ch": "C5", "pre": ["demand"], "secs": [{"t": "What elasticity measures", "href": "note-C5.html#s1"}, {"t": "What makes demand elastic or inelastic", "href": "note-C5.html#s2"}, {"t": "Computing the price elasticity of demand", "href": "note-C5.html#s3"}], "mins": 0, "tests": [{"what": "Computing an elasticity", "href": "guide-C5.html#C5-1", "papers": 15, "of": 27, "id": "C5.1", "related": false}, {"what": "Determinants of elasticity (ranking pairs)", "href": "guide-C5.html#C5-7", "papers": 8, "of": 27, "id": "C5.7", "related": false}], "also": [], "freq": 15, "of": 27, "related": false, "optional": false}, {"id": "linel", "b": "M", "t": "Elasticity along a straight line", "d": "Elasticity changes along a linear demand curve.", "ch": "C5", "pre": ["elas"], "secs": [{"t": "Point elasticity and the straight-line demand curve", "href": "note-C5.html#s4"}], "mins": 0, "tests": [{"what": "Elasticity along linear curves (statements)", "href": "guide-C5.html#C5-6", "papers": 12, "of": 27, "id": "C5.6", "related": false}], "also": [], "freq": 12, "of": 27, "related": false, "optional": false}, {"id": "revenue", "b": "M", "t": "Elasticity and revenue", "d": "When a price cut raises or lowers spending.", "ch": "C5", "pre": ["elas"], "secs": [{"t": "Elasticity, expenditure and revenue", "href": "note-C5.html#s5"}, {"t": "Why are the air fares so different?", "href": "note-C5.html#s11"}], "mins": 0, "tests": [{"what": "Revenue and the revenue-maximising price", "href": "guide-C5.html#C5-2", "papers": 10, "of": 27, "id": "C5.2", "related": false}], "also": [], "freq": 10, "of": 27, "related": false, "optional": false}, {"id": "constel", "b": "M", "t": "Constant-elasticity curves", "d": "Log-linear demand and its special cases.", "ch": "C5", "pre": ["elas"], "secs": [{"t": "Curves with constant elasticity", "href": "note-C5.html#s6"}], "mins": 0, "tests": [{"what": "Constant elasticity, log-linear demand, special consumers", "href": "guide-C5.html#C5-3", "papers": 13, "of": 27, "id": "C5.3", "related": false}], "also": [], "freq": 13, "of": 27, "related": false, "optional": false}, {"id": "otherel", "b": "M", "t": "Cross-price, income and supply elasticity", "d": "The other elasticities and how to compute them.", "ch": "C5", "pre": ["elas"], "secs": [{"t": "Other elasticities of demand: cross-price and income", "href": "note-C5.html#s7"}, {"t": "Price elasticity of supply", "href": "note-C5.html#s8"}], "mins": 0, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "predel", "b": "M", "t": "Predicting with elasticities", "d": "Turn a shift into %ΔP and %ΔQ; short run vs long run.", "ch": "C5", "pre": ["elas", "shifters"], "secs": [{"t": "Applications: slave redemption, gun buybacks, short and long run", "href": "note-C5.html#s9"}, {"t": "Quick predictions with elasticities", "href": "note-C5.html#s10"}], "mins": 0, "tests": [{"what": "Predicting %ΔP and %ΔQ from a shift", "href": "guide-C5.html#C5-4", "papers": 14, "of": 27, "id": "C5.4", "related": false}, {"what": "Reading shifts: elasticity, revenue, surplus", "href": "guide-C5.html#C5-5", "papers": 10, "of": 27, "id": "C5.5", "related": false}], "also": [], "freq": 14, "of": 27, "related": false, "optional": false}, {"id": "wedge", "b": "M", "t": "The tax wedge", "d": "A tax drives a wedge between what buyers pay and sellers get.", "ch": "C6", "pre": ["eq", "shifters"], "secs": [{"t": "Types of taxes", "href": "note-C6.html#s1"}, {"t": "Who pays the tax?", "href": "note-C6.html#s2"}, {"t": "The tax “wedge”", "href": "note-C6.html#s3"}], "mins": 0, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "wedgenum", "b": "M", "t": "Wedge with numbers", "d": "Find the new prices, quantity and revenue from a table or equations.", "ch": "C6", "pre": ["wedge"], "secs": [{"t": "Using the wedge with numbers: tables and equations", "href": "note-C6.html#s4"}], "mins": 0, "tests": [{"what": "Wedge on a schedule", "href": "guide-C6.html#C6-1", "papers": 17, "of": 27, "id": "C6.1", "related": false}, {"what": "Wedge with linear equations", "href": "guide-C6.html#C6-2", "papers": 13, "of": 27, "id": "C6.2", "related": false}], "also": [], "freq": 17, "of": 27, "related": false, "optional": false}, {"id": "incid", "b": "M", "t": "Who bears the burden", "d": "The less elastic side pays more of the tax.", "ch": "C6", "pre": ["wedge", "elas"], "secs": [{"t": "Who bears the burden? It depends on elasticity", "href": "note-C6.html#s5"}], "mins": 0, "tests": [{"what": "Incidence and elasticity reasoning", "href": "guide-C6.html#C6-7", "papers": 18, "of": 27, "id": "C6.7", "related": false}], "also": [], "freq": 18, "of": 27, "related": false, "optional": false}, {"id": "dwl", "b": "M", "t": "Revenue and deadweight loss", "d": "What a tax raises and the surplus it destroys.", "ch": "C6", "pre": ["wedge", "eff"], "secs": [{"t": "The effects of a tax: revenue and deadweight loss", "href": "note-C6.html#s6"}], "mins": 0, "tests": [{"what": "Welfare accounting identity", "href": "guide-C6.html#C6-5", "papers": 6, "of": 27, "id": "C6.5", "related": false}], "also": [], "freq": 6, "of": 27, "related": false, "optional": false}, {"id": "subsidy", "b": "M", "t": "Subsidies", "d": "A tax in reverse; wage subsidies vs the minimum wage.", "ch": "C6", "pre": ["wedge"], "secs": [{"t": "Subsidies: a tax in reverse", "href": "note-C6.html#s7"}, {"t": "The effects of a subsidy", "href": "note-C6.html#s8"}, {"t": "Wage subsidies versus the minimum wage", "href": "note-C6.html#s9"}], "mins": 0, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "design", "b": "M", "t": "Designing a tax or subsidy", "d": "Hit a target quantity, cap the loss, or maximise revenue.", "ch": "C6", "pre": ["wedgenum", "dwl"], "secs": [{"t": "Designing a tax or subsidy to hit a target", "href": "note-C6.html#s10"}, {"t": "Forcing a quantity: kinked market curves C6.6", "href": "note-C6.html#s11"}], "mins": 0, "tests": [{"what": "Design the wedge to hit a target", "href": "guide-C6.html#C6-3", "papers": 15, "of": 27, "id": "C6.3", "related": false}, {"what": "Revenue maximisation (midpoint rule)", "href": "guide-C6.html#C6-4", "papers": 9, "of": 27, "id": "C6.4", "related": false}, {"what": "Forced quantity with a kinked market curve", "href": "guide-C6.html#C6-6", "papers": 3, "of": 27, "id": "C6.6", "related": false}], "also": [], "freq": 15, "of": 27, "related": false, "optional": false}, {"id": "ceiling", "b": "F", "t": "Price ceilings", "d": "When a ceiling binds, and the shortage it causes.", "ch": "C7", "pre": ["eq"], "secs": [{"t": "Price ceilings: when do they bite?", "href": "note-C7.html#s1"}, {"t": "Five effects, starting with shortages", "href": "note-C7.html#s2"}], "mins": 0, "tests": [{"what": "Is the control binding? Shortage / surplus", "href": "guide-C7.html#C7-1", "papers": 14, "of": 14, "id": "C7.1", "related": false}], "also": [], "freq": 14, "of": 14, "related": false, "optional": false}, {"id": "ceilwelf", "b": "F", "t": "Welfare under price controls", "d": "Misallocation, deadweight loss and falling quality.", "ch": "C7", "pre": ["ceiling", "eff"], "secs": [{"t": "Misallocation of resources", "href": "note-C7.html#s3"}, {"t": "Welfare loss and deadweight loss", "href": "note-C7.html#s4"}, {"t": "Reduction in product quality", "href": "note-C7.html#s7"}, {"t": "Why do price controls ever get passed?", "href": "note-C7.html#s8"}], "mins": 0, "tests": [{"what": "Surplus and DWL under a binding control", "href": "guide-C7.html#C7-2", "papers": 12, "of": 14, "id": "C7.2", "related": false}, {"what": "Seller quality response (dilution)", "href": "guide-C7.html#C7-5", "papers": 2, "of": 14, "id": "C7.5", "related": false}], "also": [], "freq": 12, "of": 14, "related": false, "optional": false}, {"id": "bribe", "b": "F", "t": "Bribery and queues", "d": "Who gets the good when price can't ration it.", "ch": "C7", "pre": ["ceiling"], "secs": [{"t": "Allocation by bribery", "href": "note-C7.html#s5"}, {"t": "Allocation by waiting in line", "href": "note-C7.html#s6"}], "mins": 0, "tests": [{"what": "Bribery vs waiting in line", "href": "guide-C7.html#C7-3", "papers": 10, "of": 14, "id": "C7.3", "related": false}], "also": [], "freq": 10, "of": 14, "related": false, "optional": false}, {"id": "floor", "b": "F", "t": "Price floors", "d": "Surpluses, welfare loss and wasteful quality under a floor.", "ch": "C7", "pre": ["ceiling"], "secs": [{"t": "Price floors and surpluses", "href": "note-C7.html#s9"}, {"t": "Welfare loss under a floor", "href": "note-C7.html#s10"}, {"t": "Wasteful quality and misallocation under floors", "href": "note-C7.html#s11"}], "mins": 0, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "policy7", "b": "F", "t": "Comparing price policies", "d": "Minimum wage vs wage subsidy; buybacks, floors and taxes.", "ch": "C7", "pre": ["floor", "design", "subsidy"], "secs": [{"t": "Minimum wage vs wage subsidy", "href": "note-C7.html#s12"}, {"t": "s: price support, buybacks, input ceilings", "href": "note-C7.html#s13"}], "mins": 0, "tests": [{"what": "Ceiling on an input and policy choice", "href": "guide-C7.html#C7-4", "papers": 3, "of": 14, "id": "C7.4", "related": false}, {"what": "Driving quantity to zero: buyback vs floor vs tax", "href": "guide-C7.html#C7-6", "papers": 4, "of": 14, "id": "C7.6", "related": false}, {"what": "Subsidy as the alternative", "href": "guide-C7.html#C7-7", "papers": 4, "of": 14, "id": "C7.7", "related": false}], "also": [], "freq": 4, "of": 14, "related": false, "optional": false}, {"id": "ext", "b": "F", "t": "Externalities", "d": "External costs and benefits; private vs social curves.", "ch": "C8", "pre": ["eff"], "secs": [{"t": "Recap: subsidies, surplus and the efficient market", "href": "note-C8.html#s1"}, {"t": "What is an externality?", "href": "note-C8.html#s2"}, {"t": "Violin practice: too little or too much", "href": "note-C8.html#s3"}, {"t": "Private, external and social: the vocabulary", "href": "note-C8.html#s4"}], "mins": 0, "tests": [{"what": "Concept statements", "href": "guide-C8.html#C8-6", "papers": 6, "of": 14, "id": "C8.6", "related": false}], "also": [], "freq": 6, "of": 14, "related": false, "optional": false}, {"id": "pigou", "b": "F", "t": "Pigouvian taxes and subsidies", "d": "Price the externality so the market reaches the social optimum.", "ch": "C8", "pre": ["ext", "design"], "secs": [{"t": "External costs: overproduction and the Pigouvian tax", "href": "note-C8.html#s5"}, {"t": "External benefits: underproduction and the Pigouvian subsidy", "href": "note-C8.html#s6"}, {"t": "Doing the numbers: the exam toolkit", "href": "note-C8.html#s7"}], "mins": 0, "tests": [{"what": "Social optimum and welfare", "href": "guide-C8.html#C8-1", "papers": 13, "of": 14, "id": "C8.1", "related": false}, {"what": "Pigouvian tax or subsidy", "href": "guide-C8.html#C8-2", "papers": 12, "of": 14, "id": "C8.2", "related": false}], "also": [], "freq": 13, "of": 14, "related": false, "optional": false}, {"id": "coase", "b": "F", "t": "Property rights and Coase", "d": "Bargaining reaches efficiency whoever holds the right.", "ch": "C8", "pre": ["ext"], "secs": [{"t": "Property rights: Smith's smokestack", "href": "note-C8.html#s8"}, {"t": "The Coase theorem and the unobstructed view", "href": "note-C8.html#s9"}, {"t": "Continuous bargaining: MB and MEC curves", "href": "note-C8.html#s10"}], "mins": 0, "tests": [{"what": "Coase with discrete choices", "href": "guide-C8.html#C8-3", "papers": 8, "of": 14, "id": "C8.3", "related": false}, {"what": "Continuous bargaining (MB vs MEC)", "href": "guide-C8.html#C8-4", "papers": 3, "of": 14, "id": "C8.4", "related": false}], "also": [], "freq": 8, "of": 14, "related": false, "optional": false}, {"id": "pollute", "b": "F", "t": "Pollution taxes vs permits", "d": "Cutting pollution at least cost.", "ch": "C8", "pre": ["pigou"], "secs": [{"t": "Taxing pollution: firms X and Y", "href": "note-C8.html#s11"}, {"t": "Pollution permits, and permits vs taxes", "href": "note-C8.html#s12"}], "mins": 0, "tests": [{"what": "Least-cost pollution control", "href": "guide-C8.html#C8-5", "papers": 13, "of": 14, "id": "C8.5", "related": false}], "also": [], "freq": 13, "of": 14, "related": false, "optional": false}, {"id": "goods", "b": "F", "t": "Rivalry and excludability", "d": "The four types of goods, including club goods.", "ch": "C9", "pre": ["cba"], "secs": [{"t": "Excludability and rivalry", "href": "note-C9.html#s1"}, {"t": "Four types of goods; club goods", "href": "note-C9.html#s2"}], "mins": 0, "tests": [{"what": "Classify goods by rivalry and excludability", "href": "guide-C9.html#C9-1", "papers": 3, "of": 14, "id": "C9.1", "related": false}], "also": [], "freq": 3, "of": 14, "related": false, "optional": false}, {"id": "pubgood", "b": "F", "t": "Public goods", "d": "Free riders; add marginal benefits vertically for the efficient amount.", "ch": "C9", "pre": ["goods", "ext"], "secs": [{"t": "Public goods and the free-rider problem", "href": "note-C9.html#s3"}, {"t": "The efficient quantity: add marginal benefits vertically", "href": "note-C9.html#s4"}, {"t": "Challenges facing government provision", "href": "note-C9.html#s5"}, {"t": "The VCG mechanism and donations", "href": "note-C9.html#s6"}], "mins": 0, "tests": [{"what": "Public good: add two MB curves vertically", "href": "guide-C9.html#C9-2", "papers": 8, "of": 14, "id": "C9.2", "related": false}, {"what": "Public good: many payers with a constant WTP", "href": "guide-C9.html#C9-3", "papers": 5, "of": 14, "id": "C9.3", "related": false}], "also": [], "freq": 8, "of": 14, "related": false, "optional": false}, {"id": "commons", "b": "F", "t": "Tragedy of the commons", "d": "Free entry overuses a shared resource.", "ch": "C9", "pre": ["goods", "ext"], "secs": [{"t": "Common resources and the tragedy of the commons", "href": "note-C9.html#s7"}, {"t": "Raising cattle: individual choice vs the social optimum", "href": "note-C9.html#s8"}, {"t": "More tragedies of the commons", "href": "note-C9.html#s9"}], "mins": 0, "tests": [{"what": "Commons / congestion: free entry vs social optimum", "href": "guide-C9.html#C9-4", "papers": 13, "of": 14, "id": "C9.4", "related": false}, {"what": "Externality carry-over: abatement and negotiation costs", "href": "guide-C9.html#C9-6", "papers": 5, "of": 14, "id": "C9.6", "related": false}], "also": [], "freq": 13, "of": 14, "related": false, "optional": false}, {"id": "commfix", "b": "F", "t": "Fixing the commons", "d": "Property rights, permits and corrective taxes.", "ch": "C9", "pre": ["commons", "pigou"], "secs": [{"t": "Solution 1: property rights", "href": "note-C9.html#s10"}, {"t": "Solution 2: permits and licences", "href": "note-C9.html#s11"}, {"t": "Solution 3: taxation", "href": "note-C9.html#s12"}], "mins": 0, "tests": [{"what": "Corrective fee / toll / tax / subsidy and value of the policy", "href": "guide-C9.html#C9-5", "papers": 13, "of": 14, "id": "C9.5", "related": false}], "also": [], "freq": 13, "of": 14, "related": false, "optional": false}, {"id": "costs", "b": "F", "t": "Production and costs", "d": "Diminishing returns, marginal product and cost curves.", "ch": "C10", "pre": ["margin"], "secs": [{"t": "The supply side and competitive firms", "href": "note-C10.html#s1"}, {"t": "Factors of production; short run and long run", "href": "note-C10.html#s2"}, {"t": "Fortune cookies: diminishing returns and costs", "href": "note-C10.html#s3"}], "mins": 0, "tests": [{"what": "One firm's cost curves", "href": "guide-C10.html#C10-2", "papers": 6, "of": 14, "id": "C10.2", "related": false}], "also": [], "freq": 6, "of": 14, "related": false, "optional": false}, {"id": "pmc", "b": "F", "t": "Supply: P = MC and shut-down", "d": "Produce where price equals marginal cost; stop below AVC.", "ch": "C10", "pre": ["costs", "supply"], "secs": [{"t": "How much to produce, and whom to hire", "href": "note-C10.html#s4"}, {"t": "The rule P = MC", "href": "note-C10.html#s5"}, {"t": "The short-run shut-down condition", "href": "note-C10.html#s6"}, {"t": "MC, AVC and the short-run supply curve", "href": "note-C10.html#s7"}], "mins": 0, "tests": [{"what": "Hiring from a production table", "href": "guide-C10.html#C10-1", "papers": 5, "of": 14, "id": "C10.1", "related": false}], "also": [], "freq": 5, "of": 14, "related": false, "optional": false}, {"id": "longrun", "b": "F", "t": "Entry, exit and zero profit", "d": "Why long-run economic profit is zero.", "ch": "C10", "pre": ["pmc"], "secs": [{"t": "The long run: profit, entry and exit", "href": "note-C10.html#s8"}, {"t": "Zero profit, economic profit and producer surplus", "href": "note-C10.html#s9"}], "mins": 0, "tests": [{"what": "SR vs LR comparison blanks", "href": "guide-C10.html#C10-6", "papers": 4, "of": 14, "id": "C10.6", "related": false}], "also": [], "freq": 4, "of": 14, "related": false, "optional": false}, {"id": "industry", "b": "F", "t": "Industry long-run supply", "d": "Constant-, increasing- and decreasing-cost industries.", "ch": "C10", "pre": ["longrun", "shifters"], "secs": [{"t": "Industry long-run supply curves", "href": "note-C10.html#s10"}, {"t": "Constant-cost industries", "href": "note-C10.html#s11"}, {"t": "Increasing- and decreasing-cost industries", "href": "note-C10.html#s12"}, {"t": "Exam toolkit: cost formulas and industries of identical firms", "href": "note-C10.html#s13"}], "mins": 0, "tests": [{"what": "Industry of identical firms, SR & LR", "href": "guide-C10.html#C10-3", "papers": 8, "of": 14, "id": "C10.3", "related": false}, {"what": "Constant-cost industry after a demand shift", "href": "guide-C10.html#C10-4", "papers": 5, "of": 14, "id": "C10.4", "related": false}, {"what": "Increasing-cost industry", "href": "guide-C10.html#C10-5", "papers": 4, "of": 14, "id": "C10.5", "related": false}], "also": [], "freq": 8, "of": 14, "related": false, "optional": false}, {"id": "mpower", "b": "F", "t": "Market power", "d": "Where monopolies come from; natural monopoly; no supply curve.", "ch": "C11", "pre": ["pmc"], "secs": [{"t": "Market power and why monopolies exist", "href": "note-C11.html#s1"}, {"t": "Natural monopoly and economies of scale", "href": "note-C11.html#s7"}, {"t": "Other forms of regulation, other sources of market power", "href": "note-C11.html#s10"}, {"t": "A final important remark: a monopoly has no supply curve", "href": "note-C11.html#s11"}], "mins": 0, "tests": [{"what": "Concept statements (T/F, how many true)", "href": "guide-C11.html#C11-7", "papers": 5, "of": 14, "id": "C11.7", "related": false}], "also": [], "freq": 5, "of": 14, "related": false, "optional": false}, {"id": "mr", "b": "F", "t": "Marginal revenue", "d": "MR from a table and the straight-line shortcut.", "ch": "C11", "pre": ["mpower", "revenue"], "secs": [{"t": "Marginal revenue", "href": "note-C11.html#s2"}], "mins": 0, "tests": [], "also": [], "freq": 0, "of": 0, "related": false, "optional": false}, {"id": "mopt", "b": "F", "t": "Monopoly profit maximisation", "d": "Set MR = MC, read the price off demand; the markup.", "ch": "C11", "pre": ["mr", "costs"], "secs": [{"t": "Profit maximisation in two steps", "href": "note-C11.html#s3"}, {"t": "Elasticity and the monopoly markup", "href": "note-C11.html#s4"}, {"t": "A worked example, solved in full", "href": "note-C11.html#s9"}], "mins": 0, "tests": [{"what": "Monopoly optimum: MR = MC, price off demand", "href": "guide-C11.html#C11-1", "papers": 14, "of": 14, "id": "C11.1", "related": false}, {"what": "Fixed costs and lump-sum fees", "href": "guide-C11.html#C11-2", "papers": 6, "of": 14, "id": "C11.2", "related": false}, {"what": "Integer-quantity monopoly", "href": "guide-C11.html#C11-4", "papers": 2, "of": 14, "id": "C11.4", "related": false}], "also": [], "freq": 14, "of": 14, "related": false, "optional": false}, {"id": "mdwl", "b": "F", "t": "The cost of monopoly", "d": "Deadweight loss, and the case for patents.", "ch": "C11", "pre": ["mopt", "eff"], "secs": [{"t": "The cost of monopoly: deadweight loss", "href": "note-C11.html#s5"}, {"t": "Corruption, and the case for monopoly: R&D and patents", "href": "note-C11.html#s6"}], "mins": 0, "tests": [{"what": "Deadweight loss vs the efficient quantity", "href": "guide-C11.html#C11-3", "papers": 6, "of": 14, "id": "C11.3", "related": false}], "also": [], "freq": 6, "of": 14, "related": false, "optional": false}, {"id": "mreg", "b": "F", "t": "Regulating a monopoly", "d": "A price ceiling can raise a monopoly's output.", "ch": "C11", "pre": ["mopt", "ceiling"], "secs": [{"t": "A price control on a monopoly can increase output", "href": "note-C11.html#s8"}], "mins": 0, "tests": [{"what": "Price ceiling on a monopoly", "href": "guide-C11.html#C11-5", "papers": 13, "of": 14, "id": "C11.5", "related": false}, {"what": "Per-unit subsidies to a monopoly", "href": "guide-C11.html#C11-6", "papers": 6, "of": 14, "id": "C11.6", "related": false}], "also": [], "freq": 13, "of": 14, "related": false, "optional": false}, {"id": "uniform", "b": "F", "t": "Why one price wastes surplus", "d": "The single-price benchmark and its lost trades.", "ch": "C12", "pre": ["mopt"], "secs": [{"t": "Why a single price wastes surplus", "href": "note-C12.html#s1"}, {"t": "Ram's bowls: the single-price benchmark", "href": "note-C12.html#s2"}], "mins": 0, "tests": [{"what": "Concept checks (PD + recap statements)", "href": "guide-C12.html#C12-6", "papers": 3, "of": 14, "id": "C12.6", "related": false}], "also": [], "freq": 3, "of": 14, "related": false, "optional": false}, {"id": "pd12", "b": "F", "t": "First- and second-degree discrimination", "d": "Charging each buyer their value; hurdles and coupons.", "ch": "C12", "pre": ["uniform"], "secs": [{"t": "First-degree (perfect) price discrimination", "href": "note-C12.html#s3"}, {"t": "Second-degree discrimination: hurdles and self-selection", "href": "note-C12.html#s4"}], "mins": 0, "tests": [{"what": "Reservation-price tables", "href": "guide-C12.html#C12-1", "papers": 6, "of": 14, "id": "C12.1", "related": false}], "also": [], "freq": 6, "of": 14, "related": false, "optional": false}, {"id": "pd3", "b": "F", "t": "Third-degree discrimination", "d": "Separate prices in separate markets; arbitrage.", "ch": "C12", "pre": ["uniform"], "secs": [{"t": "Third-degree discrimination: segmented markets", "href": "note-C12.html#s5"}, {"t": "Comparison with a uniform price", "href": "note-C12.html#s6"}], "mins": 0, "tests": [{"what": "Third-degree PD with two linear demands", "href": "guide-C12.html#C12-2", "papers": 6, "of": 14, "id": "C12.2", "related": false}, {"what": "Segmented markets and arbitrage", "href": "guide-C12.html#C12-3", "papers": 3, "of": 14, "id": "C12.3", "related": false}], "also": [], "freq": 6, "of": 14, "related": false, "optional": false}, {"id": "bundle", "b": "F", "t": "Tying and bundling", "d": "Selling goods together; rationing coupons.", "ch": "C12", "pre": ["uniform"], "secs": [{"t": "Tying", "href": "note-C12.html#s7"}, {"t": "Bundling", "href": "note-C12.html#s8"}, {"t": "Rationing coupons and \"hunger marketing\"", "href": "note-C12.html#s9"}], "mins": 0, "tests": [{"what": "Bundling vs separate sale", "href": "guide-C12.html#C12-4", "papers": 12, "of": 14, "id": "C12.4", "related": false}, {"what": "Rationing coupons (beyond the handouts)", "href": "guide-C12.html#C12-5", "papers": 2, "of": 14, "id": "C12.5", "related": false}], "also": [], "freq": 12, "of": 14, "related": false, "optional": false}], "base": ""};
+const KEY = DATA.course.key;
+const byId = Object.fromEntries(DATA.nodes.map(n => [n.id, n]));
+const kids = {}; DATA.nodes.forEach(n => n.pre.forEach(p => (kids[p] = kids[p] || []).push(n.id)));
+if (DATA.branches.length > 1) DATA.branches.unshift({k: "ALL", name: "Whole course", sub: ""});
+const brName = Object.fromEntries(DATA.branches.map(b => [b.k, b.name]));
+const inView = n => branch === "ALL" || n.b === branch;
+
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+let branch = DATA.branches[0].k, sel = null;
+try { const b = localStorage.getItem(KEY + "-tab"); if (b && brName[b]) branch = b; } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+const lvl = id => state[id] || 0;               // 0 none, 1 learned, 2 practised
+const unlocked = id => byId[id].pre.every(p => lvl(p) >= 1);
+const status = id => lvl(id) === 2 ? "practised" : lvl(id) === 1 ? "learned" : unlocked(id) ? "avail" : "locked";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const share = n => n.of ? n.freq / n.of : 0;
+function heat(n) {
+  if (n.optional) return "var(--purple)";
+  const f = share(n);
+  return f >= .5 ? "var(--h3)" : f >= .25 ? "var(--h2)" : f > 0 ? "var(--h1)" : "var(--h0)";
+}
+function heatWidth(n) {
+  if (DATA.noPapers) return 0; return n.freq ? Math.max(8, Math.round(100 * share(n))) : 100; }
+const freqText = n => n.freq ? `in ${n.freq} of ${n.of} ${n.related ? "related-course " : ""}papers` : "";
+
+const drawPre = {};
+function ancestorsIn(id, ch, acc = new Set()) { byId[id].pre.filter(p => byId[p].ch === ch).forEach(p => { if (!acc.has(p)) { acc.add(p); ancestorsIn(p, ch, acc); } }); return acc; }
+DATA.nodes.forEach(n => {
+  const same = n.pre.filter(p => byId[p].ch === n.ch);
+  drawPre[n.id] = same.filter(p => !same.some(q => q !== p && ancestorsIn(q, n.ch).has(p)));
+});
+function ancestors(id, acc = new Set()) { byId[id].pre.forEach(p => { if (!acc.has(p)) { acc.add(p); ancestors(p, acc); } }); return acc; }
+
+/* ---------- layout: one block per chapter; tiers by longest path inside the chapter ---------- */
+function layout(ids) {
+  const inC = new Set(ids), depth = {};
+  const d = id => depth[id] ?? (depth[id] = Math.max(0, ...byId[id].pre.filter(p => inC.has(p)).map(p => d(p) + 1)));
+  ids.forEach(d);
+  const tiers = [];
+  ids.forEach(id => (tiers[depth[id]] = tiers[depth[id]] || []).push(id));
+  const pos = {};
+  tiers.forEach(t => t.forEach((id, i) => pos[id] = (i + .5) / t.length));
+  const bary = id => { const ps = byId[id].pre.filter(p => inC.has(p)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[id]; };
+  for (let k = 1; k < tiers.length; k++) { tiers[k].sort((a, c) => bary(a) - bary(c)); tiers[k].forEach((id, i) => pos[id] = (i + .5) / tiers[k].length); }
+  return tiers;
+}
+
+/* ---------- render ---------- */
+function renderTabs() {
+  if (DATA.noPapers) document.getElementById("lede").textContent = "Tap a concept for its note sections; tick it off to unlock the next ones.";
+  document.getElementById("tabs").style.setProperty("--tabs", Math.min(4, DATA.branches.length));
+  document.getElementById("tabs").style.display = DATA.branches.length > 1 ? "" : "none";
+  document.getElementById("footNote").textContent = DATA.notes.FOOT || "";
+  document.getElementById("tabs").innerHTML = DATA.branches.map(b => {
+    const ns = DATA.nodes.filter(n => (b.k === "ALL" || n.b === b.k) && !n.optional && !n.excluded);
+    const tested = ns.filter(n => n.freq > 0), tot = tested.length, got = tested.filter(n => lvl(n.id) === 2).length;
+    const done = ns.filter(n => lvl(n.id) >= 1).length;
+    return `<button class="tab" role="tab" aria-selected="${b.k === branch}" data-b="${b.k}"><b>${b.name}</b><span>${done}/${ns.length} learned</span><div class="bar"><i style="width:${tot ? 100 * got / tot : 0}%"></i></div></button>`;
+  }).join("");
+  document.querySelectorAll(".tab").forEach(t => t.onclick = () => { branch = t.dataset.b; try { localStorage.setItem(KEY + "-tab", branch); } catch (e) {} closeSheet(); render(); });
+}
+
+function renderNext() {
+  const ns = DATA.nodes.filter(n => inView(n) && !n.optional && !n.excluded);
+  const cand = ns.filter(n => lvl(n.id) === 0 && unlocked(n.id));
+  const toPractise = ns.filter(n => lvl(n.id) === 1 && n.freq > 0);
+  const best = cand.sort((a, c) => (share(c) * 10 + (kids[c.id] || []).length) - (share(a) * 10 + (kids[a.id] || []).length))[0];
+  const prac = toPractise.sort((a, c) => share(c) - share(a))[0];
+  const el = document.getElementById("next");
+  if (!best && !prac) { el.innerHTML = `<span><b>${brName[branch]} complete.</b> Every concept here is learned and practised.</span>`; return; }
+  const pick = best || prac;
+  const verb = best ? "Learn next" : "Practise next";
+  const why = best ? (pick.freq ? `${freqText(pick)}${(kids[pick.id] || []).length ? ` · unlocks ${(kids[pick.id] || []).length}` : ""}` : `unlocks ${(kids[pick.id] || []).length} concept${(kids[pick.id] || []).length === 1 ? "" : "s"}`) : freqText(pick);
+  el.innerHTML = `<span><span class="muted" style="font-size:.8rem;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase">${verb}</span><br><b>${esc(pick.t)}</b> <span class="muted">· ${why}</span></span><button type="button" id="nextGo">Open</button>`;
+  document.getElementById("nextGo").onclick = () => { select(pick.id); };
+}
+
+function renderLegend() {
+  const c = branch === "C", all = branch === "ALL";
+  document.getElementById("legend").innerHTML =
+    `<span><i class="sw" style="background:var(--h3)"></i>half the papers or more</span>` +
+    `<span><i class="sw" style="background:var(--h2)"></i>a quarter to half</span>` +
+    `<span><i class="sw" style="background:var(--h1)"></i>under a quarter</span>` +
+    `<span><i class="sw" style="background:var(--h0)"></i>not tested alone</span>` +
+    `<span><i class="st" style="border-color:var(--accent)"></i>ready</span>` +
+    `<span><i class="st" style="background:var(--accent-soft);border-color:var(--accent)"></i>learned</span>` +
+    `<span><i class="st" style="background:var(--ok-soft);border-color:var(--ok)"></i>practised</span>`;
+  document.getElementById("branchNote").innerHTML = DATA.notes[branch] || DATA.notes.ALL || "";
+  document.getElementById("legend").style.display = DATA.noPapers ? "none" : "";
+}
+
+const chPre = {};
+DATA.nodes.forEach(n => { chPre[n.ch] = chPre[n.ch] || new Set(); n.pre.forEach(p => { if (byId[p].ch !== n.ch) chPre[n.ch].add(byId[p].ch); }); });
+function chAnc(ch, acc = new Set()) { chPre[ch].forEach(c => { if (!acc.has(c)) { acc.add(c); chAnc(c, acc); } }); return acc; }
+
+function renderTree() {
+  const chs = [];
+  DATA.nodes.filter(inView).forEach(n => { if (!chs.includes(n.ch)) chs.push(n.ch); });
+  const inV = new Set(chs), cd = {};
+  const d = ch => cd[ch] ?? (cd[ch] = Math.max(0, ...[...chPre[ch]].filter(c => inV.has(c)).map(c => d(c) + 1)));
+  chs.forEach(d);
+  const rows = [];
+  chs.forEach(ch => (rows[cd[ch]] = rows[cd[ch]] || []).push(ch));
+  // order each row by the average position of its parent chapters
+  const pos = {}; rows.forEach(r => r.forEach((c, i) => pos[c] = (i + .5) / r.length));
+  for (let k = 1; k < rows.length; k++) {
+    const by = c => { const ps = [...chPre[c]].filter(x => inV.has(x)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[c]; };
+    rows[k].sort((a, b) => by(a) - by(b)); rows[k].forEach((c, i) => pos[c] = (i + .5) / rows[k].length);
+  }
+  document.getElementById("tree").innerHTML = `<svg class="trunks" aria-hidden="true"></svg>` + rows.map(r => `<div class="crow">${r.map(ch => {
+    const ids = DATA.nodes.filter(n => n.ch === ch).map(n => n.id);
+    const ext = [...chPre[ch]].filter(c => !inV.has(c));
+    return `<div class="chap" data-ch="${ch}" id="c-${ch}"><div class="hd"><b>${ch}</b><span>${esc(DATA.chapters[ch] || "")}</span>${DATA.excluded[ch] ? `<small class="exn">${DATA.excluded[ch]}</small>` : ""}${ext.length ? `<small style="flex-basis:100%;font-size:.75rem;color:var(--warm)">Also builds on ${ext.join(", ")}</small>` : ""}</div>
+      <div class="body"><svg aria-hidden="true"></svg>${layout(ids).map(t => `<div class="tier">${t.map(card).join("")}</div>`).join("")}</div></div>`;
+  }).join("")}</div>`).join("");
+  document.querySelectorAll(".node").forEach(b => b.onclick = () => select(b.dataset.id === sel ? null : b.dataset.id));
+  applyZoom();
+}
+function card(id) {
+  const n = byId[id], s = status(id);
+  const ext = [...new Set(n.pre.filter(p => byId[p].ch !== n.ch).map(p => byId[p].ch))];
+  const icon = s === "practised" ? "✓✓" : s === "learned" ? "✓" : s === "locked" ? "🔒" : "";
+  return `<button type="button" class="node ${s}${n.optional ? " optional" : ""}${n.excluded ? " excl" : ""}" id="n-${id}" data-id="${id}" aria-label="${esc(n.t)}, ${s}${n.freq ? ", " + freqText(n) : ""}">
+    <span class="ch"><span>${n.ch}</span><span class="badge">${icon}</span></span>
+    <span class="t">${esc(n.t)}</span>
+    ${ext.length ? `<span class="ext">+ needs ${ext.join(", ")}</span>` : ""}
+    ${n.excluded ? `<span class="exc">${n.excluded}</span>` : ""}
+    ${DATA.noPapers ? "" : `<i class="heat" style="background:linear-gradient(90deg, ${heat(n)} ${heatWidth(n)}%, var(--h0) ${heatWidth(n)}%)"></i>`}
+  </button>`;
+}
+// layout coordinates (unaffected by the zoom transform)
+function off(el, root) { let x = 0, y = 0; while (el && el !== root) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; } return {x, y}; }
+function box(el, root) { const o = off(el, root); return {l: o.x, t: o.y, w: el.offsetWidth, h: el.offsetHeight}; }
+const curve = (x1, y1, x2, y2) => { const m = (y2 - y1) * .5; return `M${x1},${y1} C${x1},${y1 + m} ${x2},${y2 - m} ${x2},${y2}`; };
+
+function drawEdges() {
+  const tree = document.getElementById("tree");
+  const path = sel ? ancestors(sel) : new Set();
+  // inside each chapter
+  document.querySelectorAll(".chap").forEach(chap => {
+    const body = chap.querySelector(".body"), svg = body.querySelector("svg");
+    let out = "";
+    DATA.nodes.filter(n => n.ch === chap.dataset.ch).forEach(n => drawPre[n.id].forEach(p => {
+      const a = box(document.getElementById("n-" + p), body), c = box(document.getElementById("n-" + n.id), body);
+      const cls = sel && path.has(p) && (path.has(n.id) || n.id === sel) ? "hot" : sel && p === sel ? "kid" : "";
+      out += `<path class="edge ${cls}" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    }));
+    svg.setAttribute("width", body.offsetWidth); svg.setAttribute("height", body.offsetHeight);
+    svg.innerHTML = out;
+    svg.querySelectorAll(".edge.hot,.edge.kid").forEach(e => svg.appendChild(e));
+  });
+  // trunks between chapters (only direct links), plus exact cross-chapter links for the selection
+  const svg = tree.querySelector("svg.trunks");
+  svg.setAttribute("width", tree.offsetWidth); svg.setAttribute("height", tree.offsetHeight);
+  let out = "";
+  const shown = new Set([...document.querySelectorAll(".chap")].map(c => c.dataset.ch));
+  shown.forEach(ch => {
+    const ps = [...chPre[ch]].filter(c => shown.has(c));
+    ps.filter(p => !ps.some(q => q !== p && chAnc(q).has(p))).forEach(p => {
+      const a = box(document.getElementById("c-" + p), tree), c = box(document.getElementById("c-" + ch), tree);
+      out += `<path class="trunk" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    });
+  });
+  if (sel) {
+    const add = (p, n, cls) => {
+      const pe = document.getElementById("n-" + p), ne = document.getElementById("n-" + n);
+      if (!pe || !ne) return;
+      const a = box(pe, tree), c = box(ne, tree);
+      const up = c.t < a.t + a.h;   // child sits beside or above: leave from the side
+      out += `<path class="xedge ${cls}" d="${up ? `M${a.l + a.w / 2},${a.t + a.h} C${a.l + a.w / 2},${a.t + a.h + 60} ${c.l + c.w / 2},${c.t - 60} ${c.l + c.w / 2},${c.t}` : curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    };
+    [sel, ...path].forEach(id => byId[id].pre.forEach(p => { if (byId[p].ch !== byId[id].ch && path.has(p)) add(p, id, ""); }));
+    (kids[sel] || []).forEach(k => { if (byId[k].ch !== byId[sel].ch) add(sel, k, "kid"); });
+  }
+  svg.innerHTML = out;
+}
+
+/* The tree sits in one box. One finger pans it in any direction (phones lock ordinary touch scrolling
+   to one axis, so panning is done by hand); two fingers pinch to zoom; ctrl/⌘ + wheel or a trackpad
+   pinch zooms on a computer. Past the box's top or bottom edge, dragging scrolls the page. */
+let scale = 1, minScale = .2;
+const MAX_SCALE = 1.6;
+function treeSize() {
+  const t0 = document.getElementById("tree"); t0.style.minWidth = Math.max(0, document.getElementById("vp").clientWidth - 2) + "px"; const t = document.getElementById("tree"); return {w: t.offsetWidth, h: t.offsetHeight}; }
+function setScale(ns, cx, cy, save = true) {
+  const vp = document.getElementById("vp"), tree = document.getElementById("tree"), sizer = document.getElementById("sizer");
+  ns = Math.min(MAX_SCALE, Math.max(minScale, ns));
+  if (cx === undefined) { cx = vp.clientWidth / 2; cy = vp.clientHeight / 2; }
+  const px = (vp.scrollLeft + cx) / scale, py = (vp.scrollTop + cy) / scale;   // tree point under the fingers
+  scale = ns;
+  const {w, h} = treeSize();
+  tree.style.transform = `scale(${scale})`;
+  sizer.style.width = Math.ceil(w * scale) + "px"; sizer.style.height = Math.ceil(h * scale) + "px";
+  vp.scrollLeft = px * scale - cx; vp.scrollTop = py * scale - cy;
+  document.getElementById("zPct").textContent = Math.round(scale * 100) + "%";
+  if (save) { try { localStorage.setItem(KEY + "-scale", String(scale)); } catch (e) {} }
+}
+function fitScale() { const vp = document.getElementById("vp"), avail = vp.clientWidth - 8; return avail > 100 ? Math.min(1, avail / treeSize().w) : 1; }
+(function () {
+  const vp = document.getElementById("vp");
+  const pts = new Map();
+  let x0, y0, lastX, lastY, lastT, vx = 0, vy = 0, moved = false, raf = 0, pinch = null;
+  const pan = (dx, dy) => {
+    vp.scrollLeft -= dx;
+    const before = vp.scrollTop; vp.scrollTop -= dy;
+    const rest = -dy - (vp.scrollTop - before);            // what the box could not absorb
+    if (Math.abs(rest) > .5 && !pinch) window.scrollBy(0, rest);
+  };
+  const mid = () => { const [a, b] = [...pts.values()], r = vp.getBoundingClientRect(); return {x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top, d: Math.hypot(a.x - b.x, a.y - b.y)}; };
+  vp.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    cancelAnimationFrame(raf);
+    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pts.size === 1) { x0 = lastX = e.clientX; y0 = lastY = e.clientY; lastT = performance.now(); vx = vy = 0; moved = false; }
+    if (pts.size === 2) { moved = true; const m = mid(); pinch = {d: m.d, s: scale, x: m.x, y: m.y}; [...pts.keys()].forEach(k => { try { vp.setPointerCapture(k); } catch (err) {} }); }
+  });
+  vp.addEventListener("pointermove", e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pinch && pts.size >= 2) {
+      const m = mid();
+      vp.scrollLeft -= m.x - pinch.x; vp.scrollTop -= m.y - pinch.y;       // two-finger drag pans too
+      setScale(pinch.s * m.d / pinch.d, m.x, m.y, false);
+      pinch.x = m.x; pinch.y = m.y;
+      return;
+    }
+    if (pts.size !== 1 || pinch) return;
+    if (!moved && Math.hypot(e.clientX - x0, e.clientY - y0) < 6) return;
+    if (!moved) { moved = true; try { vp.setPointerCapture(e.pointerId); } catch (err) {} }
+    const now = performance.now(), dt = Math.max(1, now - lastT), dx = e.clientX - lastX, dy = e.clientY - lastY;
+    pan(dx, dy); vx = .8 * dx / dt + .2 * vx; vy = .8 * dy / dt + .2 * vy; lastX = e.clientX; lastY = e.clientY; lastT = now;
+  });
+  const up = e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.delete(e.pointerId);
+    if (pinch) { if (pts.size < 2) { setScale(scale); if (pts.size === 0) pinch = null; } return; }
+    if (pts.size || !moved) return;
+    let t = performance.now();
+    const step = now => { const dt = now - t; t = now; vx *= Math.pow(.95, dt / 16); vy *= Math.pow(.95, dt / 16);
+      if (Math.hypot(vx, vy) < .02) return; pan(vx * dt, vy * dt); raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  };
+  vp.addEventListener("pointerup", up); vp.addEventListener("pointercancel", up);
+  // a lifted second finger leaves one finger down: don't let it turn into a pan jump
+  vp.addEventListener("pointerup", () => { if (pts.size === 1) { const p = [...pts.values()][0]; lastX = p.x; lastY = p.y; } });
+  // a drag or pinch must not count as a tap on a concept
+  vp.addEventListener("click", e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+  // ctrl/⌘ + wheel, and trackpad pinch (sent as ctrl + wheel)
+  vp.addEventListener("wheel", e => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault(); const r = vp.getBoundingClientRect();
+    setScale(scale * Math.exp(-e.deltaY / 300), e.clientX - r.left, e.clientY - r.top);
+  }, {passive: false});
+  // Safari sends its own pinch gesture events; stop them zooming the whole page
+  ["gesturestart", "gesturechange"].forEach(t => vp.addEventListener(t, e => e.preventDefault()));
+})();
+let firstZoom = true;
+function applyZoom() {
+  minScale = Math.min(fitScale(), 1);
+  if (firstZoom && document.getElementById("vp").clientWidth > 100) {
+    firstZoom = false;
+    let s0 = null; try { s0 = parseFloat(localStorage.getItem(KEY + "-scale")); } catch (e) {}
+    // phones start at full size, bigger screens start fitted
+    scale = s0 && s0 > 0 ? s0 : (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) >= 700 ? minScale : 1);
+    const vp = document.getElementById("vp");
+    setScale(scale, 0, 0, false);
+    vp.scrollLeft = Math.max(0, (vp.scrollWidth - vp.clientWidth) / 2); vp.scrollTop = 0;
+  } else setScale(scale, undefined, undefined, false);
+  drawEdges();
+}
+
+function markFocus() {
+  const tree = document.getElementById("tree");
+  tree.classList.toggle("focus", !!sel);
+  const path = sel ? ancestors(sel) : new Set();
+  document.querySelectorAll(".node").forEach(b => {
+    b.classList.toggle("sel", b.dataset.id === sel);
+    b.classList.toggle("path", path.has(b.dataset.id));
+    b.classList.toggle("kid", !!sel && (kids[sel] || []).includes(b.dataset.id));
+  });
+  document.querySelectorAll(".chap").forEach(c => c.classList.toggle("lit", !!c.querySelector(".node.sel,.node.path,.node.kid")));
+  drawEdges();
+}
+
+function select(id) {
+  sel = id;
+  if (id && !inView(byId[id])) { branch = byId[id].b; render(); }
+  markFocus();
+  if (id) { openSheet(id); reveal(id); } else closeSheet(true);
+}
+
+function reveal(id) {
+  const el = document.getElementById("n-" + id); if (!el) return;
+  const vp = document.getElementById("vp");
+  {
+    const vr = vp.getBoundingClientRect(), r = el.getBoundingClientRect();
+    const sheetTop = peek ? window.innerHeight - 140 : window.innerHeight * .42;
+    if (vr.top < 0 || vr.top > 140) window.scrollBy({top: vr.top - 100});
+    const vr2 = vp.getBoundingClientRect(), r2 = el.getBoundingClientRect();
+    const visBottom = Math.min(vr2.bottom, sheetTop);
+    const tabsBottom = (document.getElementById("tabs").getBoundingClientRect().bottom || 0) + 8;
+    const top = Math.max(vr2.top, tabsBottom);
+    if (r2.top < top || r2.bottom > visBottom || r2.left < vr2.left || r2.right > vr2.right) {
+      // centre the concept in the part of the box that is not covered by the tabs or the panel
+      const want = top + Math.max(0, (visBottom - top - r2.height) / 2);
+      const t0 = vp.scrollTop;
+      vp.scrollBy({top: r2.top - want, left: r2.left - vr2.left - (vr2.width - r2.width) / 2});
+      const rest = (r2.top - want) - (vp.scrollTop - t0);     // the box could not scroll that far
+      if (Math.abs(rest) > 4) window.scrollBy({top: rest});
+    }
+    return;
+  }
+  const r = el.getBoundingClientRect(), sheetTop = peek ? window.innerHeight - 140 : window.innerHeight * .42, tabsH = 90;
+  if (r.top < tabsH || r.bottom > sheetTop) window.scrollBy({top: r.top - tabsH - 10, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+}
+function stLabel(id) { const s = status(id); return s === "practised" ? ["practised", "done"] : s === "learned" ? ["learned", "done"] : ["not yet", "todo"]; }
+
+function openSheet(id) {
+  const n = byId[id], s = status(id);
+  const pre = n.pre.map(p => { const [l, c] = stLabel(p); return `<li><button class="link" data-go="${p}"><span>${esc(byId[p].t)}${byId[p].b !== n.b ? ` <span class="pill w">${byId[p].ch}</span>` : ""}</span><span class="r ${c}">${l}</span></button></li>`; }).join("");
+  const nx = (kids[id] || []).map(k => `<li><button class="link" data-go="${k}"><span>${esc(byId[k].t)}${byId[k].b !== n.b ? ` <span class="pill w">${byId[k].ch}</span>` : ""}</span><span class="r">${byId[k].ch}</span></button></li>`).join("");
+  const secs = n.secs.map(x => `<li><a href="${x.href}"><span>${esc(x.t)}</span><span class="r">${n.ch} ›</span></a></li>`).join("");
+  const tline = t => t.papers ? `${t.papers} of ${t.of} papers` : t.related ? "practice only" : "older papers only";
+  const tests = n.tests.map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)}</span><span class="r">${tline(t)}</span></a></li>`).join("")
+    + (n.also || []).map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)} <span class="muted">(counted under the next concept)</span></span><span class="r">guide ›</span></a></li>`).join("");
+  const lockMsg = s === "locked" ? `<p class="note">🔒 Learn ${n.pre.filter(p => lvl(p) < 1).map(p => `<b>${esc(byId[p].t)}</b>`).join(" and ")} first.</p>` : "";
+  document.getElementById("sheetIn").innerHTML = `
+    <div class="grab" id="grab"><span class="bar"></span><div class="top"><div><span class="course">${n.ch} · ${brName[n.b]}${n.mins ? ` · ~${n.mins} min read` : ""}${n.optional ? ' · <span class="pill">optional</span>' : ""}</span>
+    <h2 id="sTitle">${esc(n.t)}</h2></div><div class="btns"><button class="tog" type="button" id="sTog" aria-label="Collapse or expand">${peek ? "⌃" : "⌄"}</button><button class="close" type="button" aria-label="Close" id="sClose">✕</button></div></div></div>
+    <p style="margin:4px 0">${esc(n.d)}</p>
+    ${n.freq ? `<div class="freq"><i style="width:${heatWidth(n)}%;background:${heat(n)}"></i></div><p class="note" style="margin:2px 0 6px">Comes up ${freqText(n)}.</p>` : ""}${n.excluded ? `<p class="note" style="color:var(--purple)">${esc(DATA.excludedLong)}</p>` : ""}${lockMsg}
+    <div class="actions"><button type="button" id="aL" class="${lvl(id) >= 1 ? "on" : ""}">${lvl(id) >= 1 ? "✓ Learned" : "Mark learned"}</button>
+    <button type="button" id="aP" class="ok ${lvl(id) === 2 ? "on" : ""}">${lvl(id) === 2 ? "✓✓ Practised" : "Mark practised"}</button></div>
+    ${secs ? `<h3>Learn it · note ${n.ch}</h3><ul>${secs}</ul>` : `<h3>Learn it</h3><p class="note">Not in the notes. Its exam guide teaches each topic alongside its questions.</p>`}
+    ${tests ? `<h3>Practise it · exam guide</h3><ul>${tests}</ul>` : (DATA.noPapers ? `<h3>Practise it</h3><p class="note">This course has no past papers. Use the practice questions at the end of the note.</p>` : `<h3>Practise it</h3><p class="note">No past-paper question tests this on its own. It is a building block for the concepts below.</p>`)}
+    ${pre ? `<h3>Needs first</h3><ul>${pre}</ul>` : `<h3>Needs first</h3><p class="note">Nothing. This is a starting point.</p>`}
+    ${nx ? `<h3>Leads to</h3><ul>${nx}</ul>` : ""}`;
+  document.getElementById("sClose").onclick = () => select(null);
+  document.getElementById("sTog").onclick = e => { e.stopPropagation(); setPeek(!peek); };
+  bindDrag();
+  document.getElementById("aL").onclick = () => { state[id] = lvl(id) >= 1 ? 0 : 1; if (!state[id]) delete state[id]; save(); refresh(); };
+  document.getElementById("aP").onclick = () => { state[id] = lvl(id) === 2 ? 1 : 2; save(); refresh(); };
+  document.querySelectorAll("#sheetIn [data-go]").forEach(b => b.onclick = () => { const g = b.dataset.go; select(g); });
+  const sh = document.getElementById("sheet"); sh.classList.add("open"); sh.classList.toggle("peek", peek); sh.setAttribute("aria-hidden", "false");
+  document.getElementById("sheetIn").scrollTop = 0;
+  sizePeek();
+}
+let peek = false;
+function sizePeek() { const g = document.getElementById("grab"); if (g) document.getElementById("sheet").style.setProperty("--peek", (g.offsetHeight + 8) + "px"); }
+function setPeek(v) {
+  peek = v; const sh = document.getElementById("sheet"), inn = document.getElementById("sheetIn");
+  inn.scrollTop = 0; sh.classList.toggle("peek", v);
+  const t = document.getElementById("sTog"); if (t) t.textContent = v ? "⌃" : "⌄";
+  if (sel) setTimeout(() => reveal(sel), 230);
+}
+function bindDrag() {
+  const g = document.getElementById("grab"), inn = document.getElementById("sheetIn");
+  let y0 = null, dy = 0, base = 0;
+  g.onpointerdown = e => {
+    if (e.target.closest("button")) return;
+    y0 = e.clientY; dy = 0; base = peek ? inn.offsetHeight - parseFloat(getComputedStyle(document.getElementById("sheet")).getPropertyValue("--peek") || 118) : 0;
+    inn.classList.add("drag"); g.setPointerCapture(e.pointerId);
+  };
+  g.onpointermove = e => { if (y0 === null) return; dy = e.clientY - y0; inn.style.transform = `translateY(${Math.max(0, base + dy)}px)`; };
+  const end = () => {
+    if (y0 === null) return; y0 = null; inn.classList.remove("drag"); inn.style.transform = "";
+    if (Math.abs(dy) < 6) setPeek(!peek);              // a tap on the handle toggles
+    else if (dy > 40) { if (peek && dy > 90) select(null); else setPeek(true); }
+    else if (dy < -40) setPeek(false);
+  };
+  g.onpointerup = end; g.onpointercancel = end;
+}
+function closeSheet(keep) {
+  const sh = document.getElementById("sheet"); sh.classList.remove("open"); sh.setAttribute("aria-hidden", "true");
+  if (!keep) { sel = null; }
+}
+function refresh() { renderTabs(); renderNext(); renderTree(); markFocus(); if (sel) openSheet(sel); }
+function render() { renderTabs(); renderNext(); renderLegend(); renderTree(); markFocus(); }
+
+document.getElementById("reset").onclick = () => { if (confirm("Clear every tick on this page?")) { state = {}; save(); sel = null; closeSheet(); render(); } };
+document.addEventListener("keydown", e => { if (e.key === "Escape" && sel) select(null); });
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(applyZoom, 80); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyZoom);
+document.getElementById("zFit").onclick = () => { const vp = document.getElementById("vp"); setScale(minScale); vp.scrollLeft = 0; };
+document.getElementById("zIn").onclick = () => setScale(scale * 1.25);
+document.getElementById("zOut").onclick = () => setScale(scale / 1.25);
+let lastW = 0;
+if ("ResizeObserver" in window) new ResizeObserver(() => requestAnimationFrame(() => { const w = document.getElementById("vp").clientWidth; if (w && Math.abs(w - lastW) > 20) { lastW = w; applyZoom(); } })).observe(document.getElementById("vp"));
+window.addEventListener("load", applyZoom); setTimeout(applyZoom, 400);
+if (DATA.base) document.getElementById("homeLink").href = DATA.base + "index.html";
+const h = location.hash.slice(1);
+render();
+if (h && byId[h]) select(h);
+else if (h && Object.keys(DATA.chapters).some(k => k.toLowerCase() === h.toLowerCase())) {
+  const chKey = Object.keys(DATA.chapters).find(k => k.toLowerCase() === h.toLowerCase());
+  const go = () => { const c = document.getElementById("c-" + chKey); if (!c) return;
+    if (scale < .8) setScale(1);
+    const vp = document.getElementById("vp"); window.scrollBy(0, vp.getBoundingClientRect().top - 100);
+    const vr = vp.getBoundingClientRect(), r = c.getBoundingClientRect();
+    vp.scrollBy({top: r.top - vr.top - 10, left: r.left - vr.left - Math.max(10, (vr.width - r.width) / 2)});
+    c.classList.add("flash"); setTimeout(() => c.classList.remove("flash"), 1800); };
+  setTimeout(go, 250);
+}
+</script>
+</body>
+</html>
