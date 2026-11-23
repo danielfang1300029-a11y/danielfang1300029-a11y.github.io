@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH2413 Tech Tree</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* MECH2413 house style, tech-tree page */
+:root{
+  --paper:#f6f8fa; --card:#ffffff; --ink:#17212b; --muted:#5b6875; --line:#d5dce3; --grid:#e3e8ee;
+  --accent:#0b6e8a; --accent-soft:#e1f0f4; --warm:#c2551b; --warm-soft:#fbeadf;
+  --ok:#1f7a4d; --ok-soft:#e0f2e8; --purple:#6b4fb3; --purple-soft:#eee9f8;
+  --h0:#e3e8ee; --h1:#f6d9c6; --h2:#eca57c; --h3:#c2551b;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#10171d; --card:#18222b; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3944; --grid:#25313b;
+    --accent:#5cc1dc; --accent-soft:#15333d; --warm:#f0935c; --warm-soft:#3a2518;
+    --ok:#5fd39a; --ok-soft:#173628; --purple:#b8a3f0; --purple-soft:#2a2340;
+    --h0:#25313b; --h1:#4a2f1f; --h2:#9a5530; --h3:#f0935c;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.wrap{max-width:1000px;margin:0 auto;padding:28px max(14px, env(safe-area-inset-left,0px)) 140px max(14px, env(safe-area-inset-right,0px))}
+a{color:var(--accent)}
+h1,h2,h3{font-family:var(--display);font-weight:600;text-wrap:balance}
+h1{font-size:2rem;line-height:1.15;margin:0}
+.course{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.home{font-size:.9rem;text-decoration:none}
+.lede{color:var(--muted);font-size:1.02rem;max-width:65ch;margin:10px 0}
+header{display:grid;gap:6px;margin-bottom:18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:14px 0;font-size:.94rem}
+.box .tag{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.box ol{margin:4px 0;padding-left:1.2rem}.box li{margin:3px 0}
+details.box summary{cursor:pointer;font-weight:600}
+/* tabs */
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;position:sticky;top:0;z-index:5;background:var(--paper);padding:8px 0}
+.tab{font:inherit;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 10px;cursor:pointer;min-width:0}
+.tab b{display:block;font-family:var(--display);font-size:1rem}
+.tab span{display:block;font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab .bar{height:4px;border-radius:2px;background:var(--grid);margin-top:6px;overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--ok);width:0}
+.tab[aria-selected="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+/* next up + legend */
+.next{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.next button{font:inherit;font-size:.9rem;border:0;background:var(--accent);color:var(--paper);border-radius:6px;padding:6px 12px;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--muted);margin:6px 2px 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:22px;height:6px;border-radius:3px}
+.st{display:inline-block;width:14px;height:14px;border-radius:4px;border:1.5px solid var(--line)}
+/* tree */
+.vp{overflow:auto;scrollbar-gutter:stable;-webkit-overflow-scrolling:touch;padding:4px 2px;max-width:100%}
+.zoombar{display:flex;justify-content:flex-end;gap:6px;margin:-4px 0 6px}
+.zoombar button{font:inherit;font-size:.8rem;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;padding:3px 10px;cursor:pointer}
+.zoombar button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.tree{position:relative;width:max-content;min-width:100%;transform-origin:0 0;padding:4px 0 10px}
+.tree>svg.trunks{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:0}
+.crow{display:flex;justify-content:center;align-items:flex-start;gap:56px;margin-bottom:56px;position:relative;z-index:1}
+.chap{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 10px 4px;width:max-content;max-width:500px}
+.chap>.hd{display:flex;gap:8px;align-items:baseline;margin:0 2px 10px;flex-wrap:wrap;max-width:460px}
+.chap>.hd b{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500}
+.chap>.hd span{font-family:var(--display);font-weight:600;font-size:.95rem}
+.chap .body{position:relative}
+.chap .body>svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.tier{display:flex;flex-wrap:wrap;justify-content:center;gap:22px 8px;margin-bottom:22px;position:relative;z-index:1;max-width:470px;margin-inline:auto}
+.trunk{fill:none;stroke:var(--accent);stroke-opacity:.22;stroke-width:7;stroke-linecap:round}
+.xedge{fill:none;stroke:var(--accent);stroke-width:2.5}
+.xedge.kid{stroke:var(--warm);stroke-dasharray:5 4}
+.node{font:inherit;position:relative;width:148px;background:var(--paper)!important;min-height:92px;text-align:left;cursor:pointer;
+  background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:7px 8px 14px;display:flex;flex-direction:column;gap:2px;transition:opacity .15s,border-color .15s}
+
+.node .ch{font-family:var(--mono);font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between;gap:4px}
+.node .t{font-size:.8rem;font-weight:600;line-height:1.25}
+
+.node .heat{position:absolute;left:8px;right:8px;bottom:6px;height:4px;border-radius:2px;background:var(--h0)}
+.node .x{font-size:10px;color:var(--muted);margin-top:auto}
+.node .ext{font-family:var(--mono);font-size:9.5px;color:var(--warm);line-height:1.3}
+.node.locked{opacity:.5;border-style:dashed}
+.node.avail{border-color:var(--accent)}
+.node.learned{background:var(--accent-soft)!important;border-color:var(--accent)}
+.node.practised{background:var(--ok-soft)!important;border-color:var(--ok)}
+.node.optional{border-style:dotted}
+.node.sel{box-shadow:0 0 0 3px var(--accent)}
+.chap.flash{box-shadow:0 0 0 3px var(--accent);transition:box-shadow .6s}
+.tree.focus .node:not(.path):not(.sel):not(.kid){opacity:.25}
+.node.kid{box-shadow:0 0 0 2px var(--warm)}
+.badge{font-family:var(--mono);font-size:10px}
+.edge{fill:none;stroke:var(--axis,#8a96a3);stroke-opacity:.55;stroke-width:1.4}
+.edge.hot,.edge.kid{stroke-opacity:1}
+.edge.hot{stroke:var(--accent);stroke-width:2.5}
+.edge.kid{stroke:var(--warm);stroke-width:2.2;stroke-dasharray:5 4}
+.tree.focus .edge:not(.hot):not(.kid){opacity:.15}
+.tree.focus .chap:not(.lit){opacity:.45}
+.tree.focus .trunk{stroke-opacity:.08}
+/* sheet */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;pointer-events:none}
+.sheet .in{pointer-events:auto;width:100%;max-width:46rem;max-height:58vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-bottom:0;
+  border-radius:14px 14px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.18);padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .22s ease}
+.sheet.open .in{transform:none}
+.sheet.open.peek .in{transform:translateY(calc(100% - var(--peek, 118px)));overflow:hidden}
+.sheet .in.drag{transition:none}
+.grab{position:sticky;top:-14px;margin:-14px -16px 0;padding:10px 16px 4px;background:var(--card);z-index:2;touch-action:none;cursor:grab}
+.grab .bar{display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 8px}
+.sheet .top .btns{display:flex;gap:6px;flex:none}
+.sheet .tog{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1}
+.sheet:not(.open) .in{box-shadow:none;visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+@media (prefers-reduced-motion: reduce){.sheet .in{transition:none}}
+.sheet h2{font-size:1.2rem;margin:2px 0 4px}
+.sheet .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.close{font:inherit;border:0;background:var(--grid);color:var(--ink);border-radius:99px;width:32px;height:32px;cursor:pointer;flex:none}
+.sheet h3{font-size:.8rem;font-family:var(--mono);font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.sheet ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sheet li a,.sheet li button.link{display:flex;justify-content:space-between;gap:10px;font:inherit;font-size:.92rem;text-align:left;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--ink);text-decoration:none;cursor:pointer}
+.sheet li a:hover,.sheet li button.link:hover{border-color:var(--accent)}
+.sheet li .r{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;align-self:center}
+.sheet li .r.done{color:var(--ok)} .sheet li .r.todo{color:var(--warm)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.actions button{font:inherit;font-size:.92rem;padding:9px 10px;border-radius:8px;border:1.5px solid var(--accent);background:var(--card);color:var(--accent);cursor:pointer}
+.actions button.on{background:var(--accent);color:var(--paper)}
+.actions button.ok.on{background:var(--ok);border-color:var(--ok)}
+.actions button.ok{border-color:var(--ok);color:var(--ok)}
+.muted{color:var(--muted)}
+.freq{height:6px;border-radius:3px;background:var(--h0);overflow:hidden;margin:8px 0 2px}.freq i{display:block;height:100%}
+.note{font-size:.85rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--purple-soft);color:var(--purple);vertical-align:1px}
+.pill.w{background:var(--warm-soft);color:var(--warm)}
+.foot{margin-top:30px;font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.foot button{font:inherit;font-size:.85rem;background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;color:var(--muted);cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="home" href="index.html" id="homeLink">← Start Here</a>
+  <span class="course">MECH2413 · Engineering Mechanics · HKU</span>
+  <h1>Tech Tree</h1>
+  <p class="lede">Tap a concept for its note sections and past-paper questions; tick it off to unlock the next ones.</p>
+</header>
+
+<details class="box">
+  <summary>How to use it</summary>
+  <ol>
+    <li><b>Tap a concept.</b> The arrows light up the concepts you need first (blue) and the ones it leads to (orange).</li>
+    <li><b>Learned</b> = you have read its note sections. <b>Practised</b> = you have done its exam-guide questions.</li>
+    <li>A concept unlocks once everything it needs is learned. Locked ones are dashed, but you can still open them.</li>
+    <li>Concepts are grouped by chapter. Lines show what to learn first inside a chapter; an orange <b>+ needs S1</b> tag means it also builds on another chapter (tap to see which concept).</li>
+    <li>The bar under each concept shows how often it comes up: the share of past papers with a question on it. A full bar means every paper.</li>
+    <li>Swipe the panel down (or tap ⌄) to shrink it to its title bar and keep browsing the tree; swipe up or tap ⌃ to open it again.</li>
+    <li>Your ticks are saved in this browser only.</li>
+  </ol>
+</details>
+
+<div class="tabs" role="tablist" id="tabs"></div>
+
+<div class="box next" id="next"></div>
+
+<div class="legend" id="legend"></div>
+
+<div class="zoombar"><button type="button" id="zFit">Fit</button><button type="button" id="zFull">Actual size</button></div><div class="vp" id="vp"><div class="tree" id="tree"></div></div>
+
+<p class="note" id="branchNote"></p>
+
+<div class="foot">
+  <span>How often = papers with at least one question of that concept's most common question type.</span>
+  <button id="reset" type="button">Clear my ticks</button>
+</div>
+</div>
+
+<div class="sheet" id="sheet" aria-hidden="true"><div class="in" role="dialog" aria-modal="false" aria-labelledby="sTitle" id="sheetIn"></div></div>
+
+<script>
+const DATA = {"chapters": {"CX": "Beyond the slides", "S3": "Stress, Strain and Mohr's Circle", "S4": "Bending of Beams: Normal Stress in a Beam Section", "S6": "Torsion of Circular Shafts", "S7": "Thin-Walled Pressure Vessels", "S1": "Basic Concepts of Statics", "D2": "Dynamics of Rigid Bodies", "D1": "Dynamics of Particles", "S5": "Deflection of Beams", "C1": "Introduction to PID Control", "S2": "Force and Moment Resultants in Beams", "D3": "Dynamics of Rockets", "C2": "How Do We Design a Controller?"}, "branches": [{"k": "S", "name": "Statics", "sub": "Section A"}, {"k": "D", "name": "Dynamics", "sub": "Section B"}, {"k": "C", "name": "Control", "sub": "New for 2026/27"}], "nodes": [{"id": "force", "b": "S", "t": "Forces and rigid bodies", "d": "What a force is, the kinds of force, and action–reaction.", "ch": "S1", "pre": [], "secs": [{"t": "Force, rigid body and the kinds of force", "href": "note-s1.html#s1"}, {"t": "The law of action and reaction", "href": "note-s1.html#s3"}], "mins": 9, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "moment", "b": "S", "t": "Resolving forces, moments and couples", "d": "Add and split forces; the moment r × F and the couple.", "ch": "S1", "pre": ["force"], "secs": [{"t": "Adding and splitting forces", "href": "note-s1.html#s4"}, {"t": "Moment and couple", "href": "note-s1.html#s5"}], "mins": 12, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "fbd", "b": "S", "t": "Free-body diagrams and cuts", "d": "Isolate a body, draw every force on it, and cut to expose internal forces.", "ch": "S1", "pre": ["force"], "secs": [{"t": "Free-body diagrams and the method of sections", "href": "note-s1.html#s2"}], "mins": 4, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "eq", "b": "S", "t": "Planar equilibrium", "d": "Three equations, three unknowns, and the seven-step routine for any statics problem.", "ch": "S1", "pre": ["moment", "fbd"], "secs": [{"t": "Equilibrium of a rigid body in a plane", "href": "note-s1.html#s6"}], "mins": 9, "tests": [{"sittings": 3, "marks": 12, "related": false, "papers": 3, "of": 11, "id": "S1.3", "what": "Reactions from equilibrium", "href": "guide-s1.html#S1-3", "low": false}], "also": [], "marks": 12, "freq": 3, "of": 11, "optional": false}, {"id": "dist", "b": "S", "t": "Distributed loads", "d": "Replace a uniform or triangular load by one resultant at its centre of force.", "ch": "S1", "pre": ["moment"], "secs": [{"t": "Centre of force and distributed loads", "href": "note-s1.html#s7"}], "mins": 5, "tests": [{"sittings": 3, "marks": 15, "related": false, "papers": 3, "of": 11, "id": "S1.5", "what": "Resultant of a triangular load", "href": "guide-s1.html#S1-5", "low": false}], "also": [], "marks": 15, "freq": 3, "of": 11, "optional": false}, {"id": "cog", "b": "S", "t": "Centroids and centre of gravity", "d": "Centroid of C, U, L and T sections by splitting into rectangles.", "ch": "S1", "pre": ["dist"], "secs": [{"t": "Centre of gravity, centre of mass and centroid", "href": "note-s1.html#s8"}], "mins": 8, "tests": [{"sittings": 3, "marks": 14, "related": false, "papers": 3, "of": 11, "id": "S1.4", "what": "Centroid of a C, U or L section", "href": "guide-s1.html#S1-4", "low": false}], "also": [], "marks": 14, "freq": 3, "of": 11, "optional": false}, {"id": "sup", "b": "S", "t": "Supports and reactions", "d": "Which reactions a roller, pin or fixed support gives.", "ch": "S1", "pre": ["fbd"], "secs": [{"t": "Bars, beams, arches, frames, disks, plates and shells", "href": "note-s1.html#s9"}, {"t": "Supports and support reactions", "href": "note-s1.html#s10"}], "mins": 8, "tests": [{"sittings": 4, "marks": 11, "related": false, "papers": 4, "of": 11, "id": "S1.1", "what": "Reactions a support gives", "href": "guide-s1.html#S1-1", "low": false}], "also": [], "marks": 11, "freq": 4, "of": 11, "optional": false}, {"id": "det", "b": "S", "t": "Determinacy and multi-part structures", "d": "Count unknowns against equations: determinate, indeterminate or a mechanism.", "ch": "S1", "pre": ["sup", "eq"], "secs": [{"t": "Statically determinate, indeterminate, or movable?", "href": "note-s1.html#s11"}, {"t": "Multi-part structures", "href": "note-s1.html#s12"}], "mins": 9, "tests": [{"sittings": 4, "marks": 21, "related": false, "papers": 4, "of": 11, "id": "S1.2", "what": "FBDs, degree of indeterminacy", "href": "guide-s1.html#S1-2", "low": false}], "also": [], "marks": 21, "freq": 4, "of": 11, "optional": false}, {"id": "nvm", "b": "S", "t": "N, V and M with a sign convention", "d": "The three stress resultants at a cut and which way is positive.", "ch": "S2", "pre": ["eq"], "secs": [{"t": "Stress resultants: N, V and M", "href": "note-s2.html#s1"}], "mins": 5, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "sfd", "b": "S", "t": "SFD and BMD by cutting", "d": "One cut per region for point loads and couples, then draw the diagrams.", "ch": "S2", "pre": ["nvm", "sup"], "secs": [{"t": "One inclined force on a simply supported beam", "href": "note-s2.html#s2"}, {"t": "General procedure and Example 1: several vertical forces", "href": "note-s2.html#s3"}, {"t": "Concentrated forces and couples in general", "href": "note-s2.html#s4"}, {"t": "Example 2: an applied couple, inclined roller", "href": "note-s2.html#s5"}], "mins": 15, "tests": [{"sittings": 6, "marks": 48, "related": false, "papers": 6, "of": 11, "id": "S2.1", "what": "Cutting: point loads, couples", "href": "guide-s2.html#S2-1", "low": false}], "also": [], "marks": 48, "freq": 6, "of": 11, "optional": false}, {"id": "sfdq", "b": "S", "t": "SFD and BMD with distributed loads", "d": "Uniform and triangular loads on the diagrams; values at a point.", "ch": "S2", "pre": ["sfd", "dist"], "secs": [{"t": "Distributed loads: the geometry method", "href": "note-s2.html#s8"}, {"t": "What each load does to the diagrams", "href": "note-s2.html#s12"}], "mins": 8, "tests": [{"sittings": 5, "marks": 65, "related": false, "papers": 5, "of": 11, "id": "S2.2", "what": "Uniform / triangular loads; value at a point", "href": "guide-s2.html#S2-2", "low": false}], "also": [], "marks": 65, "freq": 5, "of": 11, "optional": false}, {"id": "mac", "b": "S", "t": "Macaulay brackets", "d": "Write V and M for the whole beam in one line.", "ch": "S2", "pre": ["sfd"], "secs": [{"t": "Macaulay brackets", "href": "note-s2.html#s7"}], "mins": 7, "tests": [{"sittings": 4, "marks": 27, "related": false, "papers": 4, "of": 11, "id": "S2.4", "what": "Macaulay: one-line M, remove brackets", "href": "guide-s2.html#S2-4", "low": false}], "also": [], "marks": 27, "freq": 4, "of": 11, "optional": false}, {"id": "integ", "b": "S", "t": "Integral method and matching", "d": "dV/dx = −q, dM/dx = V, with boundary and matching conditions.", "ch": "S2", "pre": ["sfdq"], "secs": [{"t": "The integral method: q, V and M are linked", "href": "note-s2.html#s9"}, {"t": "Integral method: worked examples", "href": "note-s2.html#s10"}, {"t": "Matching conditions: loads given piece by piece", "href": "note-s2.html#s11"}, {"t": "Matching example: point force and triangular load", "href": "note-s2.html#s13"}, {"t": "Dual loading", "href": "note-s2.html#s14"}], "mins": 17, "tests": [{"sittings": 3, "marks": 26, "related": false, "papers": 3, "of": 11, "id": "S2.3", "what": "Integral method: boundary, matching", "href": "guide-s2.html#S2-3", "low": false}], "also": [], "marks": 26, "freq": 3, "of": 11, "optional": false}, {"id": "stress", "b": "S", "t": "Normal stress, strain and E", "d": "σ = N/A, strain, the stress–strain curve and Young's modulus.", "ch": "S3", "pre": ["fbd"], "secs": [{"t": "Normal stress", "href": "note-s3.html#s1"}, {"t": "Allowable stress and a tapered bar", "href": "note-s3.html#s3"}, {"t": "Strain", "href": "note-s3.html#s4"}, {"t": "The stress–strain diagram and Young's modulus", "href": "note-s3.html#s5"}], "mins": 9, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "therm", "b": "S", "t": "Thermal strain and compatibility", "d": "Bars that expand together: the steel-in-copper problem.", "ch": "S3", "pre": ["stress"], "secs": [{"t": "Thermal strain and the change in length", "href": "note-s3.html#s6"}, {"t": "Example: a steel cylinder inside a copper tube", "href": "note-s3.html#s7"}], "mins": 6, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "hooke", "b": "S", "t": "Shear, Poisson and 2D Hooke's law", "d": "G, ν, multi-axial Hooke's law; stresses from strain gauges.", "ch": "S3", "pre": ["stress"], "secs": [{"t": "Four elastic constants; the Poisson effect", "href": "note-s3.html#s8"}, {"t": "Multi-axial stress and strain", "href": "note-s3.html#s9"}, {"t": "Shear stress, shear strain, shear modulus", "href": "note-s3.html#s10"}, {"t": "Hooke's law for multi-axial loading", "href": "note-s3.html#s11"}, {"t": "Bulk modulus and the limits on ν", "href": "note-s3.html#s12"}, {"t": "Example: a circle scribed on a plate", "href": "note-s3.html#s13"}], "mins": 14, "tests": [{"sittings": 1, "marks": 5, "related": false, "papers": 1, "of": 11, "id": "S3.5", "what": "Strain gauges", "href": "guide-s3.html#S3-5", "low": false}], "also": [], "marks": 5, "freq": 1, "of": 11, "optional": false}, {"id": "trans", "b": "S", "t": "Stress transformation", "d": "Stress on a rotated element or an inclined cut (grain, weld).", "ch": "S3", "pre": ["hooke"], "secs": [{"t": "Stress on an inclined cut", "href": "note-s3.html#s2"}, {"t": "Stress at a point depends on the axes", "href": "note-s3.html#s14"}, {"t": "The stress transformation equations", "href": "note-s3.html#s15"}], "mins": 11, "tests": [{"sittings": 1, "marks": 14, "related": false, "papers": 1, "of": 11, "id": "S3.3", "what": "Meaning; σy'; rotation", "href": "guide-s3.html#S3-3", "low": false}, {"sittings": 1, "marks": 10, "related": false, "papers": 1, "of": 11, "id": "S3.4", "what": "Grain plane", "href": "guide-s3.html#S3-4", "low": false}], "also": [], "marks": 24, "freq": 1, "of": 11, "optional": false}, {"id": "princ", "b": "S", "t": "Principal stresses and maximum shear", "d": "Find σ1, σ2, their directions and τmax.", "ch": "S3", "pre": ["trans"], "secs": [{"t": "Principal stresses and principal directions", "href": "note-s3.html#s16"}, {"t": "Maximum shear stress and mean stress", "href": "note-s3.html#s17"}], "mins": 5, "tests": [{"sittings": 3, "marks": 17, "related": false, "papers": 3, "of": 11, "id": "S3.1", "what": "Principal σ and angles", "href": "guide-s3.html#S3-1", "low": false}], "also": [], "marks": 17, "freq": 3, "of": 11, "optional": false}, {"id": "mohr", "b": "S", "t": "Mohr's circle", "d": "Draw the circle and read any rotated element off it.", "ch": "S3", "pre": ["princ"], "secs": [{"t": "Mohr's circle", "href": "note-s3.html#s18"}, {"t": "Mohr's circle example", "href": "note-s3.html#s19"}], "mins": 9, "tests": [{"sittings": 4, "marks": 37, "related": false, "papers": 4, "of": 11, "id": "S3.2", "what": "Mohr: rotated element, principal", "href": "guide-s3.html#S3-2", "low": false}, {"sittings": 0, "marks": 11, "related": false, "papers": 0, "of": 11, "id": "S3.6", "what": "Unloaded edge", "href": "guide-s3.html#S3-6", "low": false}], "also": [], "marks": 48, "freq": 4, "of": 11, "optional": false}, {"id": "area", "b": "S", "t": "Second moments of area", "d": "I and Iyz of a section; composite areas and parallel axes.", "ch": "S4", "pre": ["cog"], "secs": [{"t": "Area properties: first moment of area", "href": "note-s4.html#s7"}, {"t": "Second moments of area", "href": "note-s4.html#s8"}, {"t": "Radii of gyration", "href": "note-s4.html#s9"}, {"t": "Composite areas", "href": "note-s4.html#s10"}, {"t": "Example 1: the rectangle", "href": "note-s4.html#s11"}, {"t": "Example 2: the circle", "href": "note-s4.html#s12"}, {"t": "Parallel axes and built-up sections", "href": "note-s4.html#s13"}], "mins": 21, "tests": [{"sittings": 5, "marks": 20, "related": false, "papers": 5, "of": 11, "id": "S4.1", "what": "I or Iyz of a section", "href": "guide-s4.html#S4-1", "low": false}], "also": [], "marks": 20, "freq": 5, "of": 11, "optional": false}, {"id": "bend", "b": "S", "t": "Bending stress", "d": "Neutral surface, σ varies linearly with z, and the flexure formula.", "ch": "S4", "pre": ["nvm", "stress", "area"], "secs": [{"t": "Bending and bending theory", "href": "note-s4.html#s1"}, {"t": "Assumptions 1–3: a straight beam with a plane of symmetry", "href": "note-s4.html#s2"}, {"t": "The neutral surface, and plane sections stay plane", "href": "note-s4.html#s3"}, {"t": "Pure bending", "href": "note-s4.html#s4"}, {"t": "Normal stress in a beam section: σ=cz", "href": "note-s4.html#s5"}, {"t": "The bending (flexural) formula", "href": "note-s4.html#s6"}], "mins": 23, "tests": [{"sittings": 2, "marks": 8, "related": false, "papers": 2, "of": 11, "id": "S4.2", "what": "Neutral surface; M=∫ zσ dA", "href": "guide-s4.html#S4-2", "low": false}], "also": [], "marks": 8, "freq": 2, "of": 11, "optional": false}, {"id": "curv", "b": "S", "t": "Moment–curvature and boundary conditions", "d": "EIw″ = M and what each support fixes.", "ch": "S5", "pre": ["bend", "sfd"], "secs": [{"t": "Ordinary bending: equilibrium and stress resultants", "href": "note-s5.html#s1"}, {"t": "Strain, stress and the neutral axis", "href": "note-s5.html#s2"}, {"t": "Two kinematic assumptions", "href": "note-s5.html#s3"}, {"t": "The moment–curvature law EIw''=M", "href": "note-s5.html#s4"}, {"t": "Boundary conditions", "href": "note-s5.html#s5"}], "mins": 17, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "deflint", "b": "S", "t": "Deflection by integration", "d": "Integrate twice for cantilevers and simply supported beams.", "ch": "S5", "pre": ["curv", "sfdq"], "secs": [{"t": "Single region: cantilevers", "href": "note-s5.html#s6"}, {"t": "Multiple regions: a point load on a simply supported beam", "href": "note-s5.html#s7"}], "mins": 10, "tests": [{"sittings": 3, "marks": 31, "related": false, "papers": 3, "of": 11, "id": "S5.1", "what": "Cantilever w(x), tip value", "href": "guide-s5.html#S5-1", "low": false}, {"sittings": 1, "marks": 10, "related": false, "papers": 1, "of": 11, "id": "S5.2", "what": "Simply supported, UDL", "href": "guide-s5.html#S5-2", "low": false}], "also": [], "marks": 41, "freq": 3, "of": 11, "optional": false}, {"id": "deflmac", "b": "S", "t": "Macaulay for deflection", "d": "One-line deflection with brackets; value at a point.", "ch": "S5", "pre": ["deflint", "mac"], "secs": [{"t": "Macaulay brackets for deflection", "href": "note-s5.html#s8"}], "mins": 4, "tests": [{"sittings": 1, "marks": 5, "related": false, "papers": 1, "of": 11, "id": "S5.4", "what": "Macaulay deflection at a point", "href": "guide-s5.html#S5-4", "low": false}], "also": [], "marks": 5, "freq": 1, "of": 11, "optional": false}, {"id": "indet", "b": "S", "t": "Superposition and indeterminate beams", "d": "Propped cantilevers and springs: keep the redundant, then use compatibility.", "ch": "S5", "pre": ["deflint", "det"], "secs": [{"t": "The method of superposition", "href": "note-s5.html#s9"}, {"t": "Statically indeterminate beams", "href": "note-s5.html#s10"}], "mins": 11, "tests": [{"sittings": 2, "marks": 15, "related": false, "papers": 2, "of": 11, "id": "S5.3", "what": "Propped cantilever, spring", "href": "guide-s5.html#S5-3", "low": false}], "also": [], "marks": 15, "freq": 2, "of": 11, "optional": false}, {"id": "tor", "b": "S", "t": "Torsion formula", "d": "τ = Tr/J, the polar moment J, and pure shear in a shaft.", "ch": "S6", "pre": ["hooke", "area"], "secs": [{"t": "Torque and shafts", "href": "note-s6.html#s1"}, {"t": "How a round shaft twists", "href": "note-s6.html#s2"}, {"t": "Shear stress: the torsion formula", "href": "note-s6.html#s3"}, {"t": "Polar moment of inertia", "href": "note-s6.html#s4"}, {"t": "Pure shear, inclined planes and failure", "href": "note-s6.html#s5"}], "mins": 17, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "twist", "b": "S", "t": "Angle of twist and stepped shafts", "d": "φ = TL/GJ, torque diagrams, power transmission.", "ch": "S6", "pre": ["tor"], "secs": [{"t": "Angle of twist", "href": "note-s6.html#s6"}, {"t": "Torque diagrams and stepped shafts (fixed at one end)", "href": "note-s6.html#s7"}, {"t": "Power transmission and shaft design", "href": "note-s6.html#s8"}], "mins": 10, "tests": [{"sittings": 2, "marks": 40, "related": false, "papers": 2, "of": 11, "id": "S6.1", "what": "Stepped shaft clamped at one end", "href": "guide-s6.html#S6-1", "low": false}], "also": [], "marks": 40, "freq": 2, "of": 11, "optional": false}, {"id": "torind", "b": "S", "t": "Shafts fixed at both ends", "d": "Indeterminate shafts: equilibrium plus total twist = 0.", "ch": "S6", "pre": ["twist", "det"], "secs": [{"t": "Shafts fixed at both ends (statically indeterminate)", "href": "note-s6.html#s9"}], "mins": 5, "tests": [{"sittings": 3, "marks": 42, "related": false, "papers": 3, "of": 11, "id": "S6.2", "what": "Shaft fixed at both ends", "href": "guide-s6.html#S6-2", "low": false}], "also": [], "marks": 42, "freq": 3, "of": 11, "optional": false}, {"id": "gear", "b": "S", "t": "Geared and compound shafts", "d": "Carry twist through a gear mesh; tube-plus-bar shafts joined by a pin.", "ch": "S6", "pre": ["twist"], "secs": [{"t": "Geared shafts", "href": "note-s6.html#s10"}, {"t": "Compound shafts", "href": "note-s6.html#s11"}], "mins": 9, "tests": [{"sittings": 3, "marks": 23, "related": false, "papers": 3, "of": 11, "id": "S6.3", "what": "Geared shafts: twist through the mesh", "href": "guide-s6.html#S6-3", "low": false}, {"sittings": 1, "marks": 15, "related": false, "papers": 1, "of": 11, "id": "S6.4", "what": "Compound shaft joined by a pin", "href": "guide-s6.html#S6-4", "low": false}], "also": [], "marks": 38, "freq": 3, "of": 11, "optional": false}, {"id": "pv", "b": "S", "t": "Hoop and longitudinal stress", "d": "pr/t and pr/2t from a cut; cylinders, spheres and end caps.", "ch": "S7", "pre": ["stress", "fbd"], "secs": [{"t": "What a thin-walled pressure vessel is", "href": "note-s7.html#s1"}, {"t": "Cylinder: hoop and longitudinal stress", "href": "note-s7.html#s2"}, {"t": "Which radius? How does it burst?", "href": "note-s7.html#s3"}, {"t": "Spheres and end caps", "href": "note-s7.html#s4"}], "mins": 17, "tests": [{"sittings": 3, "marks": 25, "related": false, "papers": 3, "of": 11, "id": "S7.2", "what": "Derive pr/t, pr/2t; max shear", "href": "guide-s7.html#S7-2", "low": false}, {"sittings": 1, "marks": 4, "related": false, "papers": 1, "of": 11, "id": "S7.5", "what": "Sphere or end cap vs cylinder", "href": "guide-s7.html#S7-5", "low": false}], "also": [], "marks": 29, "freq": 3, "of": 11, "optional": false}, {"id": "pvstrain", "b": "S", "t": "Vessel strains and change in size", "d": "Hoop and axial strain, then the change in diameter and length.", "ch": "S7", "pre": ["pv", "hooke"], "secs": [{"t": "Strains and the change in size", "href": "note-s7.html#s6"}], "mins": 5, "tests": [{"sittings": 5, "marks": 43, "related": false, "papers": 5, "of": 11, "id": "S7.1", "what": "Σh, σl, strains, Δd", "href": "guide-s7.html#S7-1", "low": false}], "also": [], "marks": 43, "freq": 5, "of": 11, "optional": false}, {"id": "pvmohr", "b": "S", "t": "Vessel shear and weld planes", "d": "In-plane vs absolute τmax; stress on a helical weld with Mohr's circle.", "ch": "S7", "pre": ["pv", "mohr"], "secs": [{"t": "Maximum shear stress: in-plane and absolute", "href": "note-s7.html#s5"}, {"t": "Stress on a weld or any inclined plane", "href": "note-s7.html#s7"}], "mins": 9, "tests": [{"sittings": 4, "marks": 33, "related": false, "papers": 4, "of": 11, "id": "S7.3", "what": "Mohr's circle: weld, max shear", "href": "guide-s7.html#S7-3", "low": false}], "also": [], "marks": 33, "freq": 4, "of": 11, "optional": false}, {"id": "pvjoint", "b": "S", "t": "Bolts, rivets and shrink-fit cylinders", "d": "Loads on end-cap bolts and seams; two cylinders forced together.", "ch": "S7", "pre": ["pvstrain", "therm"], "secs": [{"t": "Where the cap meets the cylinder", "href": "note-s7.html#s8"}, {"t": "Bolts, rivets and joints", "href": "note-s7.html#s9"}, {"t": "Composite and shrink-fit cylinders", "href": "note-s7.html#s10"}], "mins": 14, "tests": [{"sittings": 3, "marks": 23, "related": false, "papers": 3, "of": 11, "id": "S7.4", "what": "Bolts / rivets; pretension", "href": "guide-s7.html#S7-4", "low": false}, {"sittings": 1, "marks": 10, "related": false, "papers": 1, "of": 11, "id": "S7.6", "what": "Composite (shrink-fit) cylinder", "href": "guide-s7.html#S7-6", "low": false}], "also": [], "marks": 33, "freq": 3, "of": 11, "optional": false}, {"id": "kin", "b": "D", "t": "Kinematics in a line", "d": "Displacement, velocity, acceleration; constant-acceleration formulas.", "ch": "D1", "pre": [], "secs": [{"t": "Treating a body as a particle", "href": "note-d1.html#s1"}, {"t": "Displacement, velocity and acceleration", "href": "note-d1.html#s2"}, {"t": "Constant acceleration", "href": "note-d1.html#s3"}], "mins": 7, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "kinint", "b": "D", "t": "Integrating a(t), a(v), a(s)", "d": "Separate and integrate; v dv = a ds when a depends on position.", "ch": "D1", "pre": ["kin"], "secs": [{"t": "Varying acceleration: integrate", "href": "note-d1.html#s4"}, {"t": "When acceleration depends on velocity or position: v dv=a ds", "href": "note-d1.html#s5"}], "mins": 9, "tests": [{"sittings": 5, "marks": 26, "related": false, "papers": 5, "of": 11, "id": "D1.1", "what": "Integrate a given a(v) or v(s)", "href": "guide-d1.html#D1-1", "low": false}], "also": [], "marks": 26, "freq": 5, "of": 11, "optional": false}, {"id": "newton", "b": "D", "t": "Newton's second law", "d": "Frames of reference, the problem-solving recipe, the parachute example.", "ch": "D1", "pre": ["kin", "fbd"], "secs": [{"t": "Newton's three laws (chapter opening)", "href": "note-d1.html#s0"}, {"t": "Newton's second law and frames of reference", "href": "note-d1.html#s6"}, {"t": "The problem-solving recipe and a string in an accelerating car", "href": "note-d1.html#s7"}, {"t": "Example: the parachute opens", "href": "note-d1.html#s8"}], "mins": 10, "tests": [{"sittings": 1, "marks": 3, "related": false, "papers": 1, "of": 11, "id": "D1.4", "what": "State Newton's three laws", "href": "guide-d1.html#D1-4", "low": false}], "also": [], "marks": 3, "freq": 1, "of": 11, "optional": false}, {"id": "curve", "b": "D", "t": "Curvilinear motion", "d": "n–t and polar coordinates; banking, leaning and radius of curvature.", "ch": "D1", "pre": ["newton"], "secs": [{"t": "Curvilinear motion: normal–tangential and polar coordinates", "href": "note-d1.html#s9"}, {"t": "Curves in practice: space station, off-ramp, maglev, banking", "href": "note-d1.html#s10"}], "mins": 15, "tests": [{"sittings": 7, "marks": 56, "related": false, "papers": 7, "of": 11, "id": "D1.2", "what": "Banking, leaning, ρ of y(x)", "href": "guide-d1.html#D1-2", "low": false}], "also": [], "marks": 56, "freq": 7, "of": 11, "optional": false}, {"id": "drag", "b": "D", "t": "Drag and terminal velocity", "d": "Laminar and turbulent drag in ΣF = ma, with friction and inclines.", "ch": "D1", "pre": ["newton", "kinint"], "secs": [{"t": "Fluid drag and terminal velocity", "href": "note-d1.html#s11"}, {"t": "Laminar drag", "href": "note-d1.html#s12"}, {"t": "Turbulent drag", "href": "note-d1.html#s13"}, {"t": "Drag exercises", "href": "note-d1.html#s14"}], "mins": 15, "tests": [{"sittings": 7, "marks": 62, "related": false, "papers": 7, "of": 11, "id": "D1.3", "what": "ΣF=ma with friction, drag; terminal speed", "href": "guide-d1.html#D1-3", "low": false}], "also": [], "marks": 62, "freq": 7, "of": 11, "optional": false}, {"id": "rot", "b": "D", "t": "Rigid bodies and fixed-axis rotation", "d": "Types of planar motion; ω, α and the motion of a point on a rotating body.", "ch": "D2", "pre": ["kin"], "secs": [{"t": "Rigid bodies and the types of planar motion", "href": "note-d2.html#s1"}, {"t": "Rotation about a fixed axis", "href": "note-d2.html#s3"}], "mins": 8, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "relv", "b": "D", "t": "Relative velocity and the instant centre", "d": "v_B = v_A + ω × r_B/A; rolling without slipping.", "ch": "D2", "pre": ["rot", "moment"], "secs": [{"t": "Relative velocity in a rigid body", "href": "note-d2.html#s4"}, {"t": "Instantaneous centre of zero velocity; rolling", "href": "note-d2.html#s5"}], "mins": 8, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "mech", "b": "D", "t": "Linkages and the slider-crank", "d": "Velocities of rods, connected links and the slider-crank.", "ch": "D2", "pre": ["relv"], "secs": [{"t": "Rotation of a rod in the 2D plane", "href": "note-d2.html#s6"}, {"t": "Two connected links", "href": "note-d2.html#s7"}, {"t": "The slider-crank mechanism", "href": "note-d2.html#s8"}, {"t": "Other mechanisms", "href": "note-d2.html#s9"}], "mins": 14, "tests": [{"sittings": 7, "marks": 59, "related": false, "papers": 7, "of": 11, "id": "D2.1", "what": "Velocities in a slider-crank, linkage, rolling ball", "href": "guide-d2.html#D2-1", "low": false}], "also": [], "marks": 59, "freq": 7, "of": 11, "optional": false}, {"id": "inertia", "b": "D", "t": "Moment of inertia", "d": "Standard results, I = ∫r² dm by integration, parallel axis theorem.", "ch": "D2", "pre": ["rot", "cog"], "secs": [{"t": "Moment of inertia", "href": "note-d2.html#s11"}, {"t": "Finding I by integration", "href": "note-d2.html#s12"}, {"t": "Parallel axis theorem", "href": "note-d2.html#s13"}], "mins": 12, "tests": [], "also": [{"sittings": 6, "marks": 41, "related": false, "papers": 6, "of": 11, "id": "D2.2", "what": "I by integration; flywheel energy", "href": "guide-d2.html#D2-2", "low": false}], "marks": 0, "freq": 0, "of": 11, "optional": false}, {"id": "fly", "b": "D", "t": "Flywheels and rotational KE", "d": "½Iω², energy a flywheel stores and gives back.", "ch": "D2", "pre": ["inertia"], "secs": [{"t": "Flywheels and rotational kinetic energy", "href": "note-d2.html#s14"}], "mins": 4, "tests": [{"sittings": 6, "marks": 41, "related": false, "papers": 6, "of": 11, "id": "D2.2", "what": "I by integration; flywheel energy", "href": "guide-d2.html#D2-2", "low": false}], "also": [], "marks": 41, "freq": 6, "of": 11, "optional": false}, {"id": "rbk", "b": "D", "t": "Rigid-body kinetics", "d": "ΣF = ma_G and ΣM_G = I_Gα for rolling disks and pulleys.", "ch": "D2", "pre": ["inertia", "newton"], "secs": [{"t": "Translation: Newton's laws for a system of particles", "href": "note-d2.html#s2"}, {"t": "Rotational kinetics: torque and M=Iα", "href": "note-d2.html#s10"}], "mins": 8, "tests": [{"sittings": 3, "marks": 43, "related": false, "papers": 3, "of": 11, "id": "D2.3", "what": "F=ma, M=Iα: rolling disk, pulley", "href": "guide-d2.html#D2-3", "low": false}], "also": [], "marks": 43, "freq": 3, "of": 11, "optional": false}, {"id": "open", "b": "D", "t": "Open systems and the rocket equation", "d": "Newton's law when mass leaves; derive Δv = v_ex ln(M0/M1).", "ch": "D3", "pre": ["newton", "kinint"], "secs": [{"t": "Newton's second law for an open system", "href": "note-d3.html#s1"}, {"t": "The Tsiolkovsky rocket equation at a glance", "href": "note-d3.html#s2"}, {"t": "Deriving the rocket equation: one small puff of exhaust", "href": "note-d3.html#s3"}, {"t": "Thrust, and integrating the equation", "href": "note-d3.html#s4"}], "mins": 15, "tests": [{"sittings": 6, "marks": 35, "related": false, "papers": 6, "of": 11, "id": "D3.1", "what": "Derive Δv=vex ln (M0/M1)", "href": "guide-d3.html#D3-1", "low": false}, {"sittings": 1, "marks": 20, "related": false, "papers": 1, "of": 11, "id": "D3.3", "what": "Variable-mass ODE: burn rate, acceleration", "href": "guide-d3.html#D3-3", "low": false}], "also": [], "marks": 55, "freq": 6, "of": 11, "optional": false}, {"id": "rocket", "b": "D", "t": "Rocket numbers", "d": "Thrust, burn time, burnout speed; liquid fuels; the Saturn V example.", "ch": "D3", "pre": ["open"], "secs": [{"t": "True or false?", "href": "note-d3.html#s5"}, {"t": "Worked example: the Saturn V", "href": "note-d3.html#s6"}, {"t": "Liquid fuels: maximising the exhaust speed", "href": "note-d3.html#s8"}], "mins": 7, "tests": [{"sittings": 8, "marks": 54, "related": false, "papers": 8, "of": 11, "id": "D3.2", "what": "Fuel, thrust, burnout time and speed, staging", "href": "guide-d3.html#D3-2", "low": false}, {"sittings": 2, "marks": 8, "related": false, "papers": 2, "of": 11, "id": "D3.5", "what": "Launch: gravity, drag, shell drop", "href": "guide-d3.html#D3-5", "low": false}], "also": [], "marks": 62, "freq": 8, "of": 11, "optional": false}, {"id": "stage", "b": "D", "t": "Staging and varying mass", "d": "Why rockets use stages, and other varying-mass problems.", "ch": "D3", "pre": ["rocket"], "secs": [{"t": "Varying mass beyond rockets", "href": "note-d3.html#s7"}, {"t": "Multi-stage rockets", "href": "note-d3.html#s9"}], "mins": 9, "tests": [{"sittings": 4, "marks": 17, "related": false, "papers": 4, "of": 11, "id": "D3.4", "what": "Why multi-stage, why ≤ 3 stages", "href": "guide-d3.html#D3-4", "low": true}], "also": [], "marks": 17, "freq": 4, "of": 11, "optional": false}, {"id": "loop", "b": "C", "t": "Control loops", "d": "Target, input, output; open vs closed loop and negative feedback.", "ch": "C1", "pre": [], "secs": [{"t": "Control in everyday life and engineering", "href": "note-c1.html#s1"}, {"t": "The control task: target, input and output", "href": "note-c1.html#s2"}, {"t": "Four roles in a control system; disturbances", "href": "note-c1.html#s3"}, {"t": "Open-loop control: following a preset plan", "href": "note-c1.html#s4"}, {"t": "Feedback and the closed loop", "href": "note-c1.html#s5"}, {"t": "Negative feedback: acting to reduce error", "href": "note-c1.html#s6"}, {"t": "Open loop versus closed loop", "href": "note-c1.html#s7"}], "mins": 17, "tests": [{"parts": 0, "marks": 0, "related": true, "papers": 0, "of": 10, "id": "C1.1", "what": "Name the loop's parts; draw it; open or closed?", "href": "guide-c1.html#C1-1", "low": false}], "also": [], "marks": 0, "freq": 0, "of": 10, "optional": false}, {"id": "curvread", "b": "C", "t": "Reading a response curve", "d": "Rise time, overshoot, settling time and final error from a plot.", "ch": "C1", "pre": ["loop"], "secs": [{"t": "Reading a response curve", "href": "note-c1.html#s8"}], "mins": 3, "tests": [{"parts": 0, "marks": 0, "related": true, "papers": 0, "of": 10, "id": "C1.5", "what": "Read rise time, overshoot, settling, final error", "href": "guide-c1.html#C1-5", "low": false}], "also": [], "marks": 0, "freq": 0, "of": 10, "optional": false}, {"id": "pid", "b": "C", "t": "The PID control law", "d": "What P, I and D each do, and what changes when a gain goes up.", "ch": "C1", "pre": ["loop", "curvread"], "secs": [{"t": "Case study: holding the water level at 40 cm", "href": "note-c1.html#s9"}, {"t": "One cycle of feedback control; designing the controller", "href": "note-c1.html#s10"}, {"t": "The PID control law", "href": "note-c1.html#s11"}, {"t": "P: act on the current error", "href": "note-c1.html#s12"}, {"t": "I: accumulate a persistent error", "href": "note-c1.html#s13"}, {"t": "D: respond to how fast the error changes", "href": "note-c1.html#s14"}, {"t": "PID: combining offset removal and damping", "href": "note-c1.html#s15"}, {"t": "What happens when a gain increases?", "href": "note-c1.html#s16"}, {"t": "Worked example: calculate the pump command", "href": "note-c1.html#s17"}, {"t": "Two simple tests of the same controller", "href": "note-c1.html#s18"}], "mins": 29, "tests": [{"parts": 0, "marks": 0, "related": true, "papers": 0, "of": 10, "id": "C1.2", "what": "Compute u = Kp·e + I + Kd·de/dt", "href": "guide-c1.html#C1-2", "low": false}, {"parts": 0, "marks": 0, "related": true, "papers": 0, "of": 10, "id": "C1.3", "what": "P-only steady level and offset; what I must store", "href": "guide-c1.html#C1-3", "low": false}, {"parts": 1, "marks": 4, "related": true, "papers": 1, "of": 10, "id": "C1.4", "what": "Effect of raising a gain; speed vs overshoot; disturbance test", "href": "guide-c1.html#C1-4", "low": false}, {"parts": 2, "marks": 7, "related": true, "papers": 1, "of": 10, "id": "C1.6", "what": "Short \"explain why\" answers; pros and cons of P, I, D, PI, PD", "href": "guide-c1.html#C1-6", "low": false}], "also": [], "marks": 11, "freq": 1, "of": 10, "optional": false}, {"id": "lti", "b": "C", "t": "LTI models", "d": "State, order, the motion equation and exponential motion with complex numbers.", "ch": "C2", "pre": ["pid", "newton"], "secs": [{"t": "The task and the apparatus", "href": "note-c2.html#s1"}, {"t": "State, order and the linear time-invariant model", "href": "note-c2.html#s2"}, {"t": "Initial state and the equilibrium force balance", "href": "note-c2.html#s3"}, {"t": "Complex numbers and exponential motion", "href": "note-c2.html#s4"}], "mins": 15, "tests": [], "also": [], "marks": 0, "freq": 0, "of": 10, "optional": false}, {"id": "lap", "b": "C", "t": "Laplace and transfer functions", "d": "Transform pairs, derivative rules, G(s) from a model.", "ch": "C2", "pre": ["lti"], "secs": [{"t": "The Laplace transform, transform pairs and linearity", "href": "note-c2.html#s5"}, {"t": "Derivative rules and the transfer function", "href": "note-c2.html#s6"}], "mins": 10, "tests": [{"parts": 5, "marks": 34, "related": true, "papers": 5, "of": 10, "id": "C2.1", "what": "Model a physical system, get its transfer function", "href": "guide-c2a.html#C2-1", "low": false}], "also": [], "marks": 34, "freq": 5, "of": 10, "optional": false}, {"id": "poles", "b": "C", "t": "Inverse transform and poles", "d": "Partial fractions back to time; poles as natural modes.", "ch": "C2", "pre": ["lap"], "secs": [{"t": "The inverse transform: the uncontrolled 30 mm offset", "href": "note-c2.html#s7"}, {"t": "Poles and natural modes", "href": "note-c2.html#s8"}], "mins": 9, "tests": [{"parts": 7, "marks": 35, "related": true, "papers": 4, "of": 10, "id": "C2.3", "what": "Time response by inverse Laplace; response to a sine", "href": "guide-c2a.html#C2-3", "low": false}], "also": [], "marks": 35, "freq": 4, "of": 10, "optional": false}, {"id": "second", "b": "C", "t": "ωn, ζ and response specs", "d": "The four damping cases; peak, recovery band and actuator force.", "ch": "C2", "pre": ["poles", "curvread"], "secs": [{"t": "Natural frequency, damping ratio and the four damping cases", "href": "note-c2.html#s9"}, {"t": "Measuring success: peak, recovery band and actuator force", "href": "note-c2.html#s10"}], "mins": 9, "tests": [{"parts": 18, "marks": 82, "related": true, "papers": 8, "of": 10, "id": "C2.4", "what": "Ωn, ζ, overshoot, rise and settling time; spec regions", "href": "guide-c2a.html#C2-4", "low": false}], "also": [], "marks": 82, "freq": 8, "of": 10, "optional": false}, {"id": "ss", "b": "C", "t": "Final value and steady-state error", "d": "Zeros, DC gain and the final-value theorem.", "ch": "C2", "pre": ["poles"], "secs": [{"t": "Zeros, DC gain, the final-value theorem and steady-state error", "href": "note-c2.html#s11"}], "mins": 6, "tests": [{"parts": 31, "marks": 133, "related": true, "papers": 9, "of": 10, "id": "C2.5", "what": "Steady-state error, final value, system type, disturbance rejection", "href": "guide-c2a.html#C2-5", "low": false}], "also": [], "marks": 133, "freq": 9, "of": 10, "optional": false}, {"id": "fb", "b": "C", "t": "The feedback loop", "d": "L = CG, sensitivity, and the disturbance map.", "ch": "C2", "pre": ["lap", "pid"], "secs": [{"t": "The feedback loop: L=CG, sensitivity and the disturbance map", "href": "note-c2.html#s12"}], "mins": 6, "tests": [{"parts": 19, "marks": 95, "related": true, "papers": 10, "of": 10, "id": "C2.2", "what": "Block diagram → closed-loop, disturbance or error transfer function", "href": "guide-c2a.html#C2-2", "low": false}], "also": [], "marks": 95, "freq": 10, "of": 10, "optional": false}, {"id": "pidtf", "b": "C", "t": "P, D, PI, PID and the root locus", "d": "Each controller as added stiffness or damping; the characteristic polynomial.", "ch": "C2", "pre": ["fb", "second", "ss"], "secs": [{"t": "P control: added stiffness and the root locus", "href": "note-c2.html#s13"}, {"t": "D control: added damping", "href": "note-c2.html#s14"}, {"t": "PI control stores the steady force", "href": "note-c2.html#s15"}, {"t": "PID, its characteristic polynomial, and four controllers compared", "href": "note-c2.html#s16"}], "mins": 17, "tests": [{"parts": 33, "marks": 178, "related": true, "papers": 10, "of": 10, "id": "C2.8", "what": "Root locus: sketch it, read stability, gain and damping", "href": "guide-c2b.html#C2-8", "low": false}], "also": [], "marks": 178, "freq": 10, "of": 10, "optional": false}, {"id": "routh", "b": "C", "t": "Stability and Routh–Hurwitz", "d": "Asymptotic and BIBO stability; stable gain range and the marginal case.", "ch": "C2", "pre": ["pidtf"], "secs": [{"t": "Asymptotic and BIBO stability", "href": "note-c2.html#s17"}, {"t": "The Routh–Hurwitz test and the marginal case", "href": "note-c2.html#s18"}], "mins": 10, "tests": [{"parts": 19, "marks": 88, "related": true, "papers": 9, "of": 10, "id": "C2.6", "what": "Routh–Hurwitz: stable range of a gain, marginal gain and frequency, special cases", "href": "guide-c2b.html#C2-6", "low": false}], "also": [], "marks": 88, "freq": 9, "of": 10, "optional": false}, {"id": "place", "b": "C", "t": "Pole placement and checking a design", "d": "Match coefficients for PD/PID gains, then verify peak, recovery and force.", "ch": "C2", "pre": ["routh"], "secs": [{"t": "Pole placement: PD and PID by matching coefficients", "href": "note-c2.html#s19"}, {"t": "Verifying the design: inverse transform, recovery and force", "href": "note-c2.html#s20"}, {"t": "Controller zeros versus disturbance-map zeros", "href": "note-c2.html#s21"}, {"t": "The same goal with a heavier mass", "href": "note-c2.html#s25"}], "mins": 20, "tests": [{"parts": 8, "marks": 47, "related": true, "papers": 5, "of": 10, "id": "C2.7", "what": "Pole placement: choose P, PD, PI or PID gains for specs", "href": "guide-c2b.html#C2-7", "low": false}], "also": [], "marks": 47, "freq": 5, "of": 10, "optional": false}, {"id": "freq", "b": "C", "t": "Bode, Nyquist and margins", "d": "Frequency response, the Nyquist criterion, gain and phase margins.", "ch": "C2", "pre": ["routh"], "secs": [{"t": "Frequency response and Bode plots", "href": "note-c2.html#s22"}, {"t": "The Nyquist plot and the Nyquist criterion", "href": "note-c2.html#s23"}, {"t": "Gain and phase margins", "href": "note-c2.html#s24"}], "mins": 19, "tests": [{"parts": 5, "marks": 27, "related": true, "papers": 3, "of": 10, "id": "C2.9", "what": "Nyquist: pick the right plot, use the criterion, find the gain range", "href": "guide-c2b.html#C2-9", "low": false}, {"parts": 8, "marks": 40, "related": true, "papers": 4, "of": 10, "id": "C2.10", "what": "Bode: gain and phase margins, gain for a target margin", "href": "guide-c2b.html#C2-10", "low": false}], "also": [], "marks": 67, "freq": 4, "of": 10, "optional": false}, {"id": "beyond", "b": "C", "t": "Beyond the slides", "d": "Lead/lag, circuits, Ziegler–Nichols and more. Not taught in MECH2413.", "ch": "CX", "pre": ["freq"], "secs": [], "mins": 0, "tests": [{"parts": 3, "marks": 22, "related": true, "papers": 3, "of": 10, "id": "Cx.1", "what": "Classify a system: causal, linear, time-invariant, static", "href": "guide-cx.html#Cx-1", "low": false, "beyond": true}, {"parts": 7, "marks": 35, "related": true, "papers": 2, "of": 10, "id": "Cx.2", "what": "Electric-circuit and state-space models, and their responses", "href": "guide-cx.html#Cx-2", "low": false, "beyond": true}, {"parts": 2, "marks": 11, "related": true, "papers": 2, "of": 10, "id": "Cx.3", "what": "Analogue-computer simulation diagrams", "href": "guide-cx.html#Cx-3", "low": false, "beyond": true}, {"parts": 4, "marks": 20, "related": true, "papers": 3, "of": 10, "id": "Cx.4", "what": "Lead and lag compensation", "href": "guide-cx.html#Cx-4", "low": false, "beyond": true}, {"parts": 2, "marks": 8, "related": true, "papers": 1, "of": 10, "id": "Cx.5", "what": "Ziegler–Nichols tuning rules", "href": "guide-cx.html#Cx-5", "low": false, "beyond": true}, {"parts": 4, "marks": 14, "related": true, "papers": 3, "of": 10, "id": "Cx.6", "what": "Feedforward vs feedback and other written parts", "href": "guide-cx.html#Cx-6", "low": false, "beyond": true}], "also": [], "marks": 110, "freq": 3, "of": 10, "optional": true}], "base": ""};
+const KEY = "mech2413-tree-v1";
+const byId = Object.fromEntries(DATA.nodes.map(n => [n.id, n]));
+const kids = {}; DATA.nodes.forEach(n => n.pre.forEach(p => (kids[p] = kids[p] || []).push(n.id)));
+DATA.branches.unshift({k: "ALL", name: "Whole course", sub: ""});
+const brName = Object.fromEntries(DATA.branches.map(b => [b.k, b.name]));
+const inView = n => branch === "ALL" || n.b === branch;
+
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+let branch = "ALL", sel = null, fit = true;
+try { const b = localStorage.getItem(KEY + "-tab"); if (b && brName[b]) branch = b; } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+const lvl = id => state[id] || 0;               // 0 none, 1 learned, 2 practised
+const unlocked = id => byId[id].pre.every(p => lvl(p) >= 1);
+const status = id => lvl(id) === 2 ? "practised" : lvl(id) === 1 ? "learned" : unlocked(id) ? "avail" : "locked";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const share = n => n.of ? n.freq / n.of : 0;
+function heat(n) {
+  if (n.optional) return "var(--purple)";
+  const f = share(n);
+  return f >= .5 ? "var(--h3)" : f >= .25 ? "var(--h2)" : f > 0 ? "var(--h1)" : "var(--h0)";
+}
+function heatWidth(n) { return n.freq ? Math.max(8, Math.round(100 * share(n))) : 100; }
+const freqText = n => n.freq ? `in ${n.freq} of ${n.of} ${n.b === "C" ? "related-course " : ""}papers` : "";
+
+const drawPre = {};
+function ancestorsIn(id, ch, acc = new Set()) { byId[id].pre.filter(p => byId[p].ch === ch).forEach(p => { if (!acc.has(p)) { acc.add(p); ancestorsIn(p, ch, acc); } }); return acc; }
+DATA.nodes.forEach(n => {
+  const same = n.pre.filter(p => byId[p].ch === n.ch);
+  drawPre[n.id] = same.filter(p => !same.some(q => q !== p && ancestorsIn(q, n.ch).has(p)));
+});
+function ancestors(id, acc = new Set()) { byId[id].pre.forEach(p => { if (!acc.has(p)) { acc.add(p); ancestors(p, acc); } }); return acc; }
+
+/* ---------- layout: one block per chapter; tiers by longest path inside the chapter ---------- */
+function layout(ids) {
+  const inC = new Set(ids), depth = {};
+  const d = id => depth[id] ?? (depth[id] = Math.max(0, ...byId[id].pre.filter(p => inC.has(p)).map(p => d(p) + 1)));
+  ids.forEach(d);
+  const tiers = [];
+  ids.forEach(id => (tiers[depth[id]] = tiers[depth[id]] || []).push(id));
+  const pos = {};
+  tiers.forEach(t => t.forEach((id, i) => pos[id] = (i + .5) / t.length));
+  const bary = id => { const ps = byId[id].pre.filter(p => inC.has(p)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[id]; };
+  for (let k = 1; k < tiers.length; k++) { tiers[k].sort((a, c) => bary(a) - bary(c)); tiers[k].forEach((id, i) => pos[id] = (i + .5) / tiers[k].length); }
+  return tiers;
+}
+
+/* ---------- render ---------- */
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = DATA.branches.map(b => {
+    const ns = DATA.nodes.filter(n => (b.k === "ALL" || n.b === b.k) && !n.optional);
+    const tested = ns.filter(n => n.freq > 0), tot = tested.length, got = tested.filter(n => lvl(n.id) === 2).length;
+    const done = ns.filter(n => lvl(n.id) >= 1).length;
+    return `<button class="tab" role="tab" aria-selected="${b.k === branch}" data-b="${b.k}"><b>${b.name}</b><span>${done}/${ns.length} learned</span><div class="bar"><i style="width:${tot ? 100 * got / tot : 0}%"></i></div></button>`;
+  }).join("");
+  document.querySelectorAll(".tab").forEach(t => t.onclick = () => { branch = t.dataset.b; try { localStorage.setItem(KEY + "-tab", branch); } catch (e) {} closeSheet(); render(); });
+}
+
+function renderNext() {
+  const ns = DATA.nodes.filter(n => inView(n) && !n.optional);
+  const cand = ns.filter(n => lvl(n.id) === 0 && unlocked(n.id));
+  const toPractise = ns.filter(n => lvl(n.id) === 1 && n.freq > 0);
+  const best = cand.sort((a, c) => (share(c) * 10 + (kids[c.id] || []).length) - (share(a) * 10 + (kids[a.id] || []).length))[0];
+  const prac = toPractise.sort((a, c) => share(c) - share(a))[0];
+  const el = document.getElementById("next");
+  if (!best && !prac) { el.innerHTML = `<span><b>${brName[branch]} complete.</b> Every concept here is learned and practised.</span>`; return; }
+  const pick = best || prac;
+  const verb = best ? "Learn next" : "Practise next";
+  const why = best ? (pick.freq ? `${freqText(pick)}${(kids[pick.id] || []).length ? ` · unlocks ${(kids[pick.id] || []).length}` : ""}` : `unlocks ${(kids[pick.id] || []).length} concept${(kids[pick.id] || []).length === 1 ? "" : "s"}`) : freqText(pick);
+  el.innerHTML = `<span><span class="muted" style="font-size:.8rem;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase">${verb}</span><br><b>${esc(pick.t)}</b> <span class="muted">· ${why}</span></span><button type="button" id="nextGo">Open</button>`;
+  document.getElementById("nextGo").onclick = () => { select(pick.id); };
+}
+
+function renderLegend() {
+  const c = branch === "C", all = branch === "ALL";
+  document.getElementById("legend").innerHTML =
+    `<span><i class="sw" style="background:var(--h3)"></i>half the papers or more</span>` +
+    `<span><i class="sw" style="background:var(--h2)"></i>a quarter to half</span>` +
+    `<span><i class="sw" style="background:var(--h1)"></i>under a quarter</span>` +
+    `<span><i class="sw" style="background:var(--h0)"></i>not tested alone</span>` +
+    `<span><i class="st" style="border-color:var(--accent)"></i>ready</span>` +
+    `<span><i class="st" style="background:var(--accent-soft);border-color:var(--accent)"></i>learned</span>` +
+    `<span><i class="st" style="background:var(--ok-soft);border-color:var(--ok)"></i>practised</span>`;
+  document.getElementById("branchNote").innerHTML = all ? `Thick lines link chapters; tap any concept to see the exact concepts it needs across the course. Bars show how often each concept appears in its own past papers (MECH2413 for statics and dynamics, the related courses for control).` : c
+    ? `Control is new for 2026/27, so no MECH2413 paper has tested it yet. Its bars count the 10 related-course papers used in guides C1, C2a and C2b (MECH2004 and ELEC2245), so compare control concepts with each other, not with statics or dynamics. "Beyond the slides" is optional: those topics are not taught in MECH2413.`
+    : `Bars count the 11 MECH2413 papers from Dec 2014 to Dec 2024, using each exam guide's question-type table.`;
+}
+
+const chPre = {};
+DATA.nodes.forEach(n => { chPre[n.ch] = chPre[n.ch] || new Set(); n.pre.forEach(p => { if (byId[p].ch !== n.ch) chPre[n.ch].add(byId[p].ch); }); });
+function chAnc(ch, acc = new Set()) { chPre[ch].forEach(c => { if (!acc.has(c)) { acc.add(c); chAnc(c, acc); } }); return acc; }
+
+function renderTree() {
+  const chs = [];
+  DATA.nodes.filter(inView).forEach(n => { if (!chs.includes(n.ch)) chs.push(n.ch); });
+  const inV = new Set(chs), cd = {};
+  const d = ch => cd[ch] ?? (cd[ch] = Math.max(0, ...[...chPre[ch]].filter(c => inV.has(c)).map(c => d(c) + 1)));
+  chs.forEach(d);
+  const rows = [];
+  chs.forEach(ch => (rows[cd[ch]] = rows[cd[ch]] || []).push(ch));
+  // order each row by the average position of its parent chapters
+  const pos = {}; rows.forEach(r => r.forEach((c, i) => pos[c] = (i + .5) / r.length));
+  for (let k = 1; k < rows.length; k++) {
+    const by = c => { const ps = [...chPre[c]].filter(x => inV.has(x)); return ps.length ? ps.reduce((s, p) => s + pos[p], 0) / ps.length : pos[c]; };
+    rows[k].sort((a, b) => by(a) - by(b)); rows[k].forEach((c, i) => pos[c] = (i + .5) / rows[k].length);
+  }
+  document.getElementById("tree").innerHTML = `<svg class="trunks" aria-hidden="true"></svg>` + rows.map(r => `<div class="crow">${r.map(ch => {
+    const ids = DATA.nodes.filter(n => n.ch === ch).map(n => n.id);
+    const ext = [...chPre[ch]].filter(c => !inV.has(c));
+    return `<div class="chap" data-ch="${ch}" id="c-${ch}"><div class="hd"><b>${ch}</b><span>${esc(DATA.chapters[ch] || "")}</span>${ext.length ? `<small style="flex-basis:100%;font-size:.75rem;color:var(--warm)">Also builds on ${ext.join(", ")}</small>` : ""}</div>
+      <div class="body"><svg aria-hidden="true"></svg>${layout(ids).map(t => `<div class="tier">${t.map(card).join("")}</div>`).join("")}</div></div>`;
+  }).join("")}</div>`).join("");
+  document.querySelectorAll(".node").forEach(b => b.onclick = () => select(b.dataset.id === sel ? null : b.dataset.id));
+  applyZoom();
+}
+function card(id) {
+  const n = byId[id], s = status(id);
+  const ext = [...new Set(n.pre.filter(p => byId[p].ch !== n.ch).map(p => byId[p].ch))];
+  const icon = s === "practised" ? "✓✓" : s === "learned" ? "✓" : s === "locked" ? "🔒" : "";
+  return `<button type="button" class="node ${s}${n.optional ? " optional" : ""}" id="n-${id}" data-id="${id}" aria-label="${esc(n.t)}, ${s}${n.freq ? ", " + freqText(n) : ""}">
+    <span class="ch"><span>${n.ch}</span><span class="badge">${icon}</span></span>
+    <span class="t">${esc(n.t)}</span>
+    ${ext.length ? `<span class="ext">+ needs ${ext.join(", ")}</span>` : ""}
+    <i class="heat" style="background:linear-gradient(90deg, ${heat(n)} ${heatWidth(n)}%, var(--h0) ${heatWidth(n)}%)"></i>
+  </button>`;
+}
+// layout coordinates (unaffected by the zoom transform)
+function off(el, root) { let x = 0, y = 0; while (el && el !== root) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; } return {x, y}; }
+function box(el, root) { const o = off(el, root); return {l: o.x, t: o.y, w: el.offsetWidth, h: el.offsetHeight}; }
+const curve = (x1, y1, x2, y2) => { const m = (y2 - y1) * .5; return `M${x1},${y1} C${x1},${y1 + m} ${x2},${y2 - m} ${x2},${y2}`; };
+
+function drawEdges() {
+  const tree = document.getElementById("tree");
+  const path = sel ? ancestors(sel) : new Set();
+  // inside each chapter
+  document.querySelectorAll(".chap").forEach(chap => {
+    const body = chap.querySelector(".body"), svg = body.querySelector("svg");
+    let out = "";
+    DATA.nodes.filter(n => n.ch === chap.dataset.ch).forEach(n => drawPre[n.id].forEach(p => {
+      const a = box(document.getElementById("n-" + p), body), c = box(document.getElementById("n-" + n.id), body);
+      const cls = sel && path.has(p) && (path.has(n.id) || n.id === sel) ? "hot" : sel && p === sel ? "kid" : "";
+      out += `<path class="edge ${cls}" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    }));
+    svg.setAttribute("width", body.offsetWidth); svg.setAttribute("height", body.offsetHeight);
+    svg.innerHTML = out;
+    svg.querySelectorAll(".edge.hot,.edge.kid").forEach(e => svg.appendChild(e));
+  });
+  // trunks between chapters (only direct links), plus exact cross-chapter links for the selection
+  const svg = tree.querySelector("svg.trunks");
+  svg.setAttribute("width", tree.offsetWidth); svg.setAttribute("height", tree.offsetHeight);
+  let out = "";
+  const shown = new Set([...document.querySelectorAll(".chap")].map(c => c.dataset.ch));
+  shown.forEach(ch => {
+    const ps = [...chPre[ch]].filter(c => shown.has(c));
+    ps.filter(p => !ps.some(q => q !== p && chAnc(q).has(p))).forEach(p => {
+      const a = box(document.getElementById("c-" + p), tree), c = box(document.getElementById("c-" + ch), tree);
+      out += `<path class="trunk" d="${curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    });
+  });
+  if (sel) {
+    const add = (p, n, cls) => {
+      const pe = document.getElementById("n-" + p), ne = document.getElementById("n-" + n);
+      if (!pe || !ne) return;
+      const a = box(pe, tree), c = box(ne, tree);
+      const up = c.t < a.t + a.h;   // child sits beside or above: leave from the side
+      out += `<path class="xedge ${cls}" d="${up ? `M${a.l + a.w / 2},${a.t + a.h} C${a.l + a.w / 2},${a.t + a.h + 60} ${c.l + c.w / 2},${c.t - 60} ${c.l + c.w / 2},${c.t}` : curve(a.l + a.w / 2, a.t + a.h, c.l + c.w / 2, c.t)}"/>`;
+    };
+    [sel, ...path].forEach(id => byId[id].pre.forEach(p => { if (byId[p].ch !== byId[id].ch && path.has(p)) add(p, id, ""); }));
+    (kids[sel] || []).forEach(k => { if (byId[k].ch !== byId[sel].ch) add(sel, k, "kid"); });
+  }
+  svg.innerHTML = out;
+}
+
+let lastMode = null;
+function applyZoom() {
+  const vp = document.getElementById("vp"), tree = document.getElementById("tree");
+  tree.style.transform = ""; vp.style.height = "";
+  const W = tree.scrollWidth, avail = vp.clientWidth - 8;
+  // the preview can report zero width before it is shown: draw at full size and wait for a real width
+  const sc = fit && avail > 100 && W > avail ? Math.max(.2, avail / W) : 1;
+  tree.style.transform = sc < 1 ? `scale(${sc})` : "";
+  vp.style.height = sc < 1 ? (tree.offsetHeight * sc + 12) + "px" : "";
+  vp.style.overflowX = sc < 1 ? "hidden" : "auto";
+  if (fit) vp.scrollLeft = 0; else if (lastMode !== false) vp.scrollLeft = (tree.scrollWidth - vp.clientWidth) / 2;
+  lastMode = fit;
+  document.getElementById("zFit").setAttribute("aria-pressed", fit);
+  document.getElementById("zFull").setAttribute("aria-pressed", !fit);
+  drawEdges();
+}
+
+function markFocus() {
+  const tree = document.getElementById("tree");
+  tree.classList.toggle("focus", !!sel);
+  const path = sel ? ancestors(sel) : new Set();
+  document.querySelectorAll(".node").forEach(b => {
+    b.classList.toggle("sel", b.dataset.id === sel);
+    b.classList.toggle("path", path.has(b.dataset.id));
+    b.classList.toggle("kid", !!sel && (kids[sel] || []).includes(b.dataset.id));
+  });
+  document.querySelectorAll(".chap").forEach(c => c.classList.toggle("lit", !!c.querySelector(".node.sel,.node.path,.node.kid")));
+  drawEdges();
+}
+
+function select(id) {
+  sel = id;
+  if (id && !inView(byId[id])) { branch = byId[id].b; render(); }
+  markFocus();
+  if (id) { openSheet(id); reveal(id); } else closeSheet(true);
+}
+
+function reveal(id) {
+  const el = document.getElementById("n-" + id); if (!el) return;
+  const r = el.getBoundingClientRect(), sheetTop = peek ? window.innerHeight - 140 : window.innerHeight * .42, tabsH = 90;
+  if (r.top < tabsH || r.bottom > sheetTop) window.scrollBy({top: r.top - tabsH - 10, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+}
+function stLabel(id) { const s = status(id); return s === "practised" ? ["practised", "done"] : s === "learned" ? ["learned", "done"] : ["not yet", "todo"]; }
+
+function openSheet(id) {
+  const n = byId[id], s = status(id);
+  const pre = n.pre.map(p => { const [l, c] = stLabel(p); return `<li><button class="link" data-go="${p}"><span>${esc(byId[p].t)}${byId[p].b !== n.b ? ` <span class="pill w">${byId[p].ch}</span>` : ""}</span><span class="r ${c}">${l}</span></button></li>`; }).join("");
+  const nx = (kids[id] || []).map(k => `<li><button class="link" data-go="${k}"><span>${esc(byId[k].t)}${byId[k].b !== n.b ? ` <span class="pill w">${byId[k].ch}</span>` : ""}</span><span class="r">${byId[k].ch}</span></button></li>`).join("");
+  const secs = n.secs.map(x => `<li><a href="${x.href}"><span>${esc(x.t)}</span><span class="r">${n.ch} ›</span></a></li>`).join("");
+  const tline = t => t.papers ? `${t.papers} of ${t.of} papers` : t.related ? "practice only" : "older papers only";
+  const tests = n.tests.map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)}</span><span class="r">${tline(t)}</span></a></li>`).join("")
+    + (n.also || []).map(t => `<li><a href="${t.href}"><span><b>${t.id}</b> ${esc(t.what)} <span class="muted">(counted under the next concept)</span></span><span class="r">guide ›</span></a></li>`).join("");
+  const lockMsg = s === "locked" ? `<p class="note">🔒 Learn ${n.pre.filter(p => lvl(p) < 1).map(p => `<b>${esc(byId[p].t)}</b>`).join(" and ")} first.</p>` : "";
+  document.getElementById("sheetIn").innerHTML = `
+    <div class="grab" id="grab"><span class="bar"></span><div class="top"><div><span class="course">${n.ch} · ${brName[n.b]}${n.mins ? ` · ~${n.mins} min read` : ""}${n.optional ? ' · <span class="pill">optional</span>' : ""}</span>
+    <h2 id="sTitle">${esc(n.t)}</h2></div><div class="btns"><button class="tog" type="button" id="sTog" aria-label="Collapse or expand">${peek ? "⌃" : "⌄"}</button><button class="close" type="button" aria-label="Close" id="sClose">✕</button></div></div></div>
+    <p style="margin:4px 0">${esc(n.d)}</p>
+    ${n.freq ? `<div class="freq"><i style="width:${heatWidth(n)}%;background:${heat(n)}"></i></div><p class="note" style="margin:2px 0 6px">Comes up ${freqText(n)}${n.b === "C" ? "" : " (2014–24)"}.</p>` : ""}${lockMsg}
+    <div class="actions"><button type="button" id="aL" class="${lvl(id) >= 1 ? "on" : ""}">${lvl(id) >= 1 ? "✓ Learned" : "Mark learned"}</button>
+    <button type="button" id="aP" class="ok ${lvl(id) === 2 ? "on" : ""}">${lvl(id) === 2 ? "✓✓ Practised" : "Mark practised"}</button></div>
+    ${secs ? `<h3>Learn it · note ${n.ch}</h3><ul>${secs}</ul>` : `<h3>Learn it</h3><p class="note">Not in the MECH2413 notes. Guide Cx teaches each topic alongside its questions.</p>`}
+    ${tests ? `<h3>Practise it · exam guide</h3><ul>${tests}</ul>` : `<h3>Practise it</h3><p class="note">No past-paper question tests this on its own. It is a building block for the concepts below.</p>`}
+    ${pre ? `<h3>Needs first</h3><ul>${pre}</ul>` : `<h3>Needs first</h3><p class="note">Nothing. This is a starting point.</p>`}
+    ${nx ? `<h3>Leads to</h3><ul>${nx}</ul>` : ""}`;
+  document.getElementById("sClose").onclick = () => select(null);
+  document.getElementById("sTog").onclick = e => { e.stopPropagation(); setPeek(!peek); };
+  bindDrag();
+  document.getElementById("aL").onclick = () => { state[id] = lvl(id) >= 1 ? 0 : 1; if (!state[id]) delete state[id]; save(); refresh(); };
+  document.getElementById("aP").onclick = () => { state[id] = lvl(id) === 2 ? 1 : 2; save(); refresh(); };
+  document.querySelectorAll("#sheetIn [data-go]").forEach(b => b.onclick = () => { const g = b.dataset.go; select(g); });
+  const sh = document.getElementById("sheet"); sh.classList.add("open"); sh.classList.toggle("peek", peek); sh.setAttribute("aria-hidden", "false");
+  document.getElementById("sheetIn").scrollTop = 0;
+  sizePeek();
+}
+let peek = false;
+function sizePeek() { const g = document.getElementById("grab"); if (g) document.getElementById("sheet").style.setProperty("--peek", (g.offsetHeight + 8) + "px"); }
+function setPeek(v) {
+  peek = v; const sh = document.getElementById("sheet"), inn = document.getElementById("sheetIn");
+  inn.scrollTop = 0; sh.classList.toggle("peek", v);
+  const t = document.getElementById("sTog"); if (t) t.textContent = v ? "⌃" : "⌄";
+  if (sel) setTimeout(() => reveal(sel), 230);
+}
+function bindDrag() {
+  const g = document.getElementById("grab"), inn = document.getElementById("sheetIn");
+  let y0 = null, dy = 0, base = 0;
+  g.onpointerdown = e => {
+    if (e.target.closest("button")) return;
+    y0 = e.clientY; dy = 0; base = peek ? inn.offsetHeight - parseFloat(getComputedStyle(document.getElementById("sheet")).getPropertyValue("--peek") || 118) : 0;
+    inn.classList.add("drag"); g.setPointerCapture(e.pointerId);
+  };
+  g.onpointermove = e => { if (y0 === null) return; dy = e.clientY - y0; inn.style.transform = `translateY(${Math.max(0, base + dy)}px)`; };
+  const end = () => {
+    if (y0 === null) return; y0 = null; inn.classList.remove("drag"); inn.style.transform = "";
+    if (Math.abs(dy) < 6) setPeek(!peek);              // a tap on the handle toggles
+    else if (dy > 40) { if (peek && dy > 90) select(null); else setPeek(true); }
+    else if (dy < -40) setPeek(false);
+  };
+  g.onpointerup = end; g.onpointercancel = end;
+}
+function closeSheet(keep) {
+  const sh = document.getElementById("sheet"); sh.classList.remove("open"); sh.setAttribute("aria-hidden", "true");
+  if (!keep) { sel = null; }
+}
+function refresh() { renderTabs(); renderNext(); renderTree(); markFocus(); if (sel) openSheet(sel); }
+function render() { renderTabs(); renderNext(); renderLegend(); renderTree(); markFocus(); }
+
+document.getElementById("reset").onclick = () => { if (confirm("Clear every tick on this page?")) { state = {}; save(); sel = null; closeSheet(); render(); } };
+document.addEventListener("keydown", e => { if (e.key === "Escape" && sel) select(null); });
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(applyZoom, 80); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyZoom);
+document.getElementById("zFit").onclick = () => { fit = true; try { localStorage.setItem(KEY + "-fit", "1"); } catch (e) {} applyZoom(); };
+document.getElementById("zFull").onclick = () => { fit = false; try { localStorage.setItem(KEY + "-fit", "0"); } catch (e) {} applyZoom(); };
+fit = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) >= 700;   // phones start at actual size
+try { const f = localStorage.getItem(KEY + "-fit"); if (f !== null) fit = f === "1"; } catch (e) {}
+let lastW = 0;
+if ("ResizeObserver" in window) new ResizeObserver(() => requestAnimationFrame(() => { const w = document.getElementById("vp").clientWidth; if (w && Math.abs(w - lastW) > 20) { lastW = w; applyZoom(); } })).observe(document.getElementById("vp"));
+window.addEventListener("load", applyZoom); setTimeout(applyZoom, 400);
+if (DATA.base) document.getElementById("homeLink").href = DATA.base + "index.html";
+const h = location.hash.slice(1);
+render();
+if (h && byId[h]) select(h);
+else if (h && DATA.chapters[h.toUpperCase()]) {
+  const go = () => { const c = document.getElementById("c-" + h.toUpperCase()); if (!c) return;
+    if (fit) { fit = false; applyZoom(); }
+    c.scrollIntoView({block: "start", inline: "center"}); window.scrollBy(0, -100);
+    c.classList.add("flash"); setTimeout(() => c.classList.remove("flash"), 1800); };
+  setTimeout(go, 250);
+}
+</script>
+</body>
+</html>
