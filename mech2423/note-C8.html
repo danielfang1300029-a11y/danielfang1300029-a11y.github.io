@@ -221,6 +221,37 @@ ol.pins li>b:first-child{display:inline-block;width:22px;height:22px;border-radi
   section{break-inside:auto}
   .must,.spot,.figure,.q{break-inside:avoid}
 }
+/* Readability layer (23 Nov 2026): new-words box, tap-to-define terms, short chunks, recap at section end */
+.words{background:var(--accent-soft);border-radius:8px;padding:10px 14px;margin:12px 0 18px}
+.words>.tag{display:block;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.words dl{margin:0;display:grid;grid-template-columns:minmax(6.5rem,auto) minmax(0,1fr);gap:6px 12px;font-size:.93rem}
+.words dt{font-weight:600}
+.words dd{margin:0;color:var(--ink)}
+@media (max-width:480px){.words dl{grid-template-columns:1fr;gap:0}.words dd{margin-bottom:8px}}
+.chunk{margin:22px 0 8px;font-size:1.02rem;font-family:var(--display);font-weight:600;display:flex;gap:8px;align-items:baseline}
+.chunk .k{flex:none;font-family:var(--mono);font-size:.78rem;color:var(--accent);background:var(--accent-soft);border-radius:4px;padding:1px 6px}
+.must.recap{border-width:1.5px}
+.must.recap>.tag::before{content:"✓"}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.pair{grid-template-columns:1fr}}
+.pair>div{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:.93rem}
+.pair>div>b:first-child{display:block;margin-bottom:4px}
+svg.own{width:100%;height:auto;display:block}
+svg.own text{font-family:var(--body);fill:var(--ink)}
+svg.own .ln{stroke:var(--ink);fill:none;stroke-width:1.6}
+svg.own .ac{stroke:var(--accent);fill:none;stroke-width:1.4}
+svg.own .wm{stroke:var(--warm);fill:none;stroke-width:1.4}
+svg.own .dim{fill:var(--muted)}
+svg.own .soft{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2}
+svg.own .pl{fill:var(--fill4);stroke:var(--warm);stroke-width:1.2}
+.stepper .ctl{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.stepper button{font:600 .85rem var(--body);border:1px solid var(--accent);background:var(--card);color:var(--accent);border-radius:6px;padding:5px 12px;cursor:pointer}
+.stepper .say{font-size:.92rem;margin-top:6px;min-height:3em}
+.box.deduce{border-left:4px solid var(--c3)}
+.box.deduce>.tag{color:var(--c3)}
+.stepper [data-s]{transition:opacity .25s}
+
+
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};
@@ -262,7 +293,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <ul class="list">
 <li>Not in the known parts (projection 10, find the mistakes 20, title block). Any marks here are <b>short answers</b>.</li>
 <li><b>Classify</b> a process into one of the four families: subtractive, formative, additive, joining (§1).</li>
-<li>Know the <b>machining comparison table</b>: what moves, what tool, what shapes, what Ra (§2).</li>
+<li>Know the <b>machining comparison table</b>: what moves, what tool, what shapes, what Ra (§2). <b>Ra</b> is a number for how rough a surface is: smaller means smoother.</li>
 <li><b>Read a drawing for manufacturing</b>: features, material, tolerances, surface finish. Ra 0.4 means grinding (§3).</li>
 <li><b>Pick a process for a part</b> and give a reason (§7).</li>
 </ul></div>
@@ -270,21 +301,65 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <section id="s1">
 <h2><span class="n">1</span>From drawing to process: the four families</h2>
-<p>The chapter opens and closes with the same drawing, an <b>adapter ring</b> in cast iron (section A–A plus an end view; Ø100.00 +0.05/−0.01 bore, Ø125 and Ø155 diameters, "6 Ø10 holes on 140 PCD", lengths 12.5, 30 and 50 ±0.05, geometric tolerance frames such as parallelism 0.02 to datum A, and a surface-texture mark). Before choosing a process, read five things off the drawing:</p>
+<div class="chunk"><span class="k">1a</span>Read the drawing before you pick a process</div>
+<p>A drawing doesn't say "make me on a lathe". You work that out from what's on it. Take a real example: an <b>adapter ring</b> (a thick ring that connects two parts of different sizes) made of cast iron.</p>
+<p>Its drawing has <b>section A–A</b> (the ring shown cut in half so you can see inside) plus an end view. The key items on it:</p>
+<ul class="list">
+<li>A <b>bore</b> (the accurate inner hole) of Ø100.00 +0.05/−0.01. It may be up to 0.05 mm bigger or 0.01 mm smaller than 100.</li>
+<li>Outer diameters Ø125 and Ø155.</li>
+<li>"6 Ø10 holes on 140 PCD": six Ø10 holes spaced round a <b>pitch circle diameter</b> (PCD: the circle through the hole centres) of 140.</li>
+<li>Lengths 12.5, 30 and 50 ±0.05.</li>
+<li><b>Geometric tolerance frames</b> (boxes that limit shape, e.g. how parallel two faces are) such as parallelism 0.02 to <b>datum</b> A (the reference surface you measure from). Plus a <b>surface-texture mark</b> (a tick-shaped symbol giving the Ra).</li>
+</ul>
+<p>Before choosing a process, read five things off the drawing:</p>
 <ol class="steps">
-<li><b>Features</b>: what has to be made (bores, steps, holes, flanges)?</li>
+<li><b>Features</b>: what has to be made (bores, steps, holes, <b>flanges</b>: flat rims that stick out)?</li>
 <li><b>Material</b>: here cast iron, which already says "cast first".</li>
-<li><b>Dimensions and tolerances</b>: tight ones (±0.05, +0.05/−0.01) need machining.</li>
+<li><b>Dimensions and tolerances</b>: tight ones (±0.05, +0.05/−0.01) need machining. Casting alone can't hold sizes that close.</li>
 <li><b>Surface quality</b>: the Ra value on the surface-texture symbol picks the finishing process (§3).</li>
-<li><b>How to make it</b>: so, cast the ring near shape, then turn the bore and faces and drill the six holes.</li>
+<li><b>How to make it</b>: so, cast the ring near shape, then <b>turn</b> (cut it on a lathe while it spins) the bore and faces, and drill the six holes.</li>
 </ol>
 
-<div class="box must"><span class="tag">Must know ★ the four families</span>
+<div class="chunk"><span class="k">1b</span>The four families</div>
+<p>There are hundreds of process names, but every one falls into one of four families.</p>
+<ul class="list">
+<li><b>Subtractive</b>: start with a solid block or bar and cut material away. Turning, <b>milling</b> (a spinning cutter shaves the work) and <b>drilling</b> (a spinning drill makes a hole). Section 2.</li>
+<li><b>Formative</b>: push the material into shape without adding or removing any. <b>Casting</b> (pour liquid into a mould), <b>forging</b> (hammer or squeeze hot solid metal), <b>injection moulding</b>, <b>bending</b>. Sections 4 and 5.</li>
+<li><b>Additive</b>: build the part up layer by layer, i.e. 3D printing. Section 6.</li>
+<li><b>Joining</b>: combine separate parts into one assembly. Welding, fastening (bolts, screws), bonding (glue). Section 6.</li>
+</ul>
+<div class="figure"><div class="ttl">The four families at a glance</div>
+<svg class="own" viewBox="0 0 360 112" role="img" aria-label="Four small pictures: a block with a corner cut away and chips flying off; a ball pressed into a flat slab; layers stacked with a new layer on top; two blocks joined at a dot">
+<g style="font-size:11px;font-weight:600" text-anchor="middle"><text x="45" y="16">Subtractive</text><text x="135" y="16">Formative</text><text x="225" y="16">Additive</text><text x="315" y="16">Joining</text></g>
+<path d="M12 32H62V52H46V74H12Z" class="soft"/>
+<rect x="46" y="52" width="16" height="22" style="fill:none;stroke:var(--muted);stroke-width:1;stroke-dasharray:3 2"/>
+<rect x="68" y="58" width="6" height="5" class="pl"/><rect x="76" y="70" width="5" height="5" class="pl"/>
+<circle cx="110" cy="54" r="13" class="soft"/>
+<line x1="126" y1="54" x2="140" y2="54" class="ln"/><path d="M140 54l-6 -3v6z" style="fill:var(--ink)"/>
+<rect x="144" y="46" width="34" height="16" class="soft"/>
+<rect x="200" y="64" width="50" height="9" class="soft"/><rect x="200" y="54" width="50" height="9" class="soft"/><rect x="200" y="44" width="50" height="9" class="soft"/><rect x="200" y="34" width="34" height="9" class="pl"/>
+<rect x="282" y="44" width="33" height="22" class="soft"/><rect x="315" y="44" width="33" height="22" class="soft"/><circle cx="315" cy="55" r="5" class="pl"/>
+<g class="dim" style="font-size:10px" text-anchor="middle"><text x="45" y="96">take away</text><text x="135" y="96">push around</text><text x="225" y="96">build up</text><text x="315" y="96">put together</text></g>
+</svg>
+<p class="cap">Own diagram. Left to right: material cut off as chips (orange); the same amount of material squashed into a new shape; a new layer (orange) added on top; two parts held together at a joint (orange).</p>
+</div>
+<div class="box deduce"><span class="tag">Don't memorise this: work it out</span>
+<p>For any process, even one you've never heard of, ask: <b>what happens to the amount of material?</b></p>
+<ul class="list">
+<li>Less at the end, chips come off → <b>subtractive</b>.</li>
+<li>Same amount, new shape → <b>formative</b>.</li>
+<li>The part grows from nothing → <b>additive</b>.</li>
+<li>Several parts become one → <b>joining</b>.</li>
+</ul>
+<p>Worth knowing cold: two or three examples per family, as in the table below.</p>
+</div>
+
+<div class="must recap"><span class="tag">Remember from this section</span>
 <div class="scroll"><table>
 <tr><th>Family</th><th>What it does</th><th>Examples</th></tr>
-<tr><td><b>Subtractive</b></td><td>Removes material from a solid block or bar</td><td>Turning, milling, drilling (also boring, grinding)</td></tr>
+<tr><td><b>Subtractive</b></td><td>Removes material from a solid block or bar</td><td>Turning, milling, drilling (also boring, grinding: Section 2)</td></tr>
 <tr><td><b>Formative</b></td><td>Shapes material into the geometry without adding or removing any (redistributes it)</td><td>Casting, forging, injection moulding, bending</td></tr>
-<tr><td><b>Additive</b></td><td>Builds the part layer by layer</td><td>FDM, SLA, SLM</td></tr>
+<tr><td><b>Additive</b></td><td>Builds the part layer by layer</td><td><b>FDM</b> (melted plastic squeezed from a nozzle), <b>SLA</b> (liquid resin hardened by light), <b>SLM</b> (metal powder melted by a laser)</td></tr>
 <tr><td><b>Joining</b></td><td>Combines separate components into one assembly</td><td>Welding, fastening, bonding</td></tr>
 </table></div>
 <p class="muted">How to remember: take away · push around · build up · put together.</p>
@@ -293,48 +368,161 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 
 <section id="s2">
 <h2><span class="n">2</span>Machining (subtractive)</h2>
-<div class="box must"><span class="tag">Must know ★ machining comparison</span>
+<div class="chunk"><span class="k">2a</span>What spins, and what cuts</div>
+<p><b>Machining</b> means cutting chips off a <b>workpiece</b> (the part being made) with a hard tool. The machining processes differ in just two things: <b>which one spins</b> (the work or the tool), and <b>what the cutting tool looks like</b>.</p>
+<div class="figure"><div class="ttl">Turning spins the work; milling and drilling spin the tool</div>
+<svg class="own" viewBox="0 0 360 128" role="img" aria-label="Turning: a bar spins and a pointed tool below it moves along it. Milling: a round cutter spins above a block on a moving table. Drilling: a drill spins and moves down into a block.">
+<g style="font-size:11px;font-weight:600" text-anchor="middle"><text x="60" y="13">Turning</text><text x="180" y="13">Milling</text><text x="300" y="13">Drilling</text></g>
+<rect x="14" y="42" width="92" height="24" class="soft"/>
+<path d="M40 38Q60 30 80 38" class="ac"/><path d="M80 38l-7 -1l3 -5z" style="fill:var(--accent)"/>
+<text x="60" y="26" text-anchor="middle" style="font-size:9px;fill:var(--accent)">work spins</text>
+<path d="M70 66L62 88H78Z" class="pl"/>
+<line x1="78" y1="100" x2="46" y2="100" class="ln"/><path d="M46 100l6 -3v6z" style="fill:var(--ink)"/>
+<text x="62" y="116" text-anchor="middle" class="dim" style="font-size:9px">tool feeds along</text>
+<circle cx="180" cy="50" r="15" class="pl"/>
+<path d="M168 30Q180 22 192 30" class="ac"/><path d="M192 30l-7 -1l3 -5z" style="fill:var(--accent)"/>
+<text x="180" y="24" text-anchor="end" dx="-14" style="font-size:9px;fill:var(--accent)">tool spins</text>
+<rect x="135" y="66" width="90" height="22" class="soft"/>
+<line x1="150" y1="100" x2="210" y2="100" class="ln"/><path d="M210 100l-6 -3v6z" style="fill:var(--ink)"/>
+<text x="180" y="116" text-anchor="middle" class="dim" style="font-size:9px">table feeds the work</text>
+<rect x="255" y="72" width="90" height="22" class="soft"/>
+<rect x="294" y="30" width="12" height="42" class="pl"/>
+<rect x="294" y="72" width="12" height="12" style="fill:none;stroke:var(--muted);stroke-dasharray:2 2"/>
+<path d="M288 26Q300 18 312 26" class="ac"/><path d="M312 26l-7 -1l3 -5z" style="fill:var(--accent)"/>
+<text x="300" y="20" text-anchor="end" dx="-14" style="font-size:9px;fill:var(--accent)">tool spins</text>
+<line x1="326" y1="36" x2="326" y2="62" class="ln"/><path d="M326 62l-3 -6h6z" style="fill:var(--ink)"/>
+<text x="300" y="116" text-anchor="middle" class="dim" style="font-size:9px">drill feeds down</text>
+</svg>
+<p class="cap">Own diagram. Blue arrows: what spins. Black arrows: the <b>feed</b> (the slow movement that makes the cut advance). Only turning spins the work, which is why only turning makes round parts.</p>
+</div>
+<p>Three kinds of cutting tool:</p>
+<ul class="list">
+<li><b>Single-point tool</b>: one sharp tip, like a chisel. Used in turning and boring.</li>
+<li><b>Multi-point cutter</b>: many teeth round a spinning body (milling cutter, drill).</li>
+<li><b>Abrasive wheel</b>: a wheel of hard grit. Each grain takes a tiny scratch, so the finish is very smooth. Used in grinding.</li>
+</ul>
+
+<div class="chunk"><span class="k">2b</span>Turning</div>
+<p>Done on a <b>lathe</b>: a machine that grips a bar and spins it. The tool feeds along the bar and cuts diameter D₁ down to D₂ over length L.</p>
+<p>Key operations: <b>turning</b> (reduce the outside diameter), <b>boring</b> (enlarge a hole), <b>facing</b> (cut the flat end), <b>grooving</b> (cut a narrow ring-shaped slot), <b>cut-off or parting</b> (cut the finished part free), <b>thread cutting</b>.</p>
+<p>All these operations follow the same rule: the work spins, and the tool's path decides the shape. Feed the tool <i>along</i> the bar and you get a cylinder. Feed it <i>across</i> the end and you get a flat face. Feed it at an angle and you get a cone.</p>
+<div class="figure"><div class="ttl">Lathe operations</div>
+<div class="slideimg"><a href="img/C8/turning-ops.jpg" target="_blank"><img src="img/C8/turning-ops.jpg" alt="Ten small sketches of a spinning cylinder with a tool: facing, taper turning, contour turning, forming, chamfering, parting off, threading, boring, drilling, knurling" loading="lazy"></a></div>
+<p class="cap">In every sketch the curved arrow on the left is the workpiece spinning, and "Feed" shows which way the tool moves. Compare the arrows:</p>
+<ul class="list cap">
+<li><b>Facing</b> feeds <i>across</i> the end; <b>taper turning</b> feeds at an angle to make a cone; <b>contour turning</b> follows a curved path.</li>
+<li><b>Forming</b>: a tool ground to the final shape is pushed straight in. <b>Chamfering</b>: cuts a small 45° bevel on the edge.</li>
+<li><b>Parting off</b> feeds straight in until the part drops off. <b>Threading</b>: a pointed tool cuts a spiral groove.</li>
+<li><b>Boring</b> and <b>drilling</b> work <i>inside</i> (the hatched cut-away shows the hole). <b>Knurling</b>: a patterned roller presses a criss-cross grip into the surface.</li>
+</ul>
+</div>
+
+<div class="chunk"><span class="k">2c</span>Milling</div>
+<p>A <b>rotating multi-point cutter</b> removes material from a workpiece clamped on a moving table. The work is held in a <b>vise</b> (a clamp).</p>
+<p>Machine parts, for recognition only: head, cutter, vise, worktable, saddle, knee, column, base. The <b>saddle</b> and <b>knee</b> are the slides under the table that move it across and up and down.</p>
+<p>Types: face, end, slot, side (peripheral), plain, profile, pocket, thread, helical, straddle and gang milling. The deduce box below shows how to read these names.</p>
+
+<div class="chunk"><span class="k">2d</span>Drilling and boring</div>
+<p><b>Drilling</b> makes a <b>circular hole</b> on a <b>drill press</b>. The parts: a motor; a belt and stepped pulleys to change speed; a feed handle to push the drill down; a <b>spindle</b> (the spinning shaft); a <b>chuck</b> (the jaws that grip the drill); and a work table.</p>
+<p>The hole family:</p>
+<ul class="list">
+<li><b>Drilling</b>: makes the hole. <b>Boring</b>: enlarges it.</li>
+<li><b>Reaming</b>: an accurate, smooth finish to size.</li>
+<li><b>Tapping</b>: cuts an internal thread.</li>
+<li><b>Spot facing</b>, <b>countersinking</b>, <b>counterboring</b>: make a flat seat, a cone-shaped recess or a stepped recess at the hole's top, for a bolt head.</li>
+</ul>
+<p>How these holes are noted on drawings is covered in Chapter 5.</p>
+<p><b>Boring</b> <b>enlarges and accurately finishes an existing hole</b> with a single-point tool. On a lathe, the tool goes inside the spinning part. Why bother? A drill wanders a little and leaves a rough wall. Boring follows a controlled path, so the hole ends up the right size, round and in the right place.</p>
+
+<div class="chunk"><span class="k">2e</span>Grinding</div>
+<p><b>Precision finishing</b> of flat and cylindrical surfaces with an abrasive wheel. It removes very little material, so it comes last, after turning or milling.</p>
+<p>A surface grinder has a wheel head, wheel, guard, a worktable that feeds the work back and forth, a saddle, a column and a bed. It comes in horizontal- and vertical-spindle versions.</p>
+
+<div class="chunk"><span class="k">2f</span>Ra: how rough a surface is</div>
+<p>Even a "smooth" machined face has tiny peaks and valleys. <b>Ra</b> (average roughness) is the average height of those peaks and valleys, measured from the surface's mean line, in micrometres (µm).</p>
+<p>Smaller Ra = smoother. Each step in the standard series (0.4, 0.8, 1.6, 3.2, 6.3, 12.5) doubles the roughness.</p>
+
+<div class="box deduce"><span class="tag">Don't memorise this: work it out</span>
+<ul class="list">
+<li><b>What spins?</b> Only turning spins the work. That's why turning gives round, symmetric parts. Everything else spins the tool.</li>
+<li><b>What tool?</b> Turning uses one point. Milling and drilling use many teeth. Grinding uses grit.</li>
+<li><b>Ra order</b>: the more controlled the cut, the smoother. Rough to smooth: drilling (3.2–12.5) → milling (0.8–6.3) → turning (0.8–3.2) → grinding (0.05–0.8). Know cold: <b>grinding is the only one that reaches 0.4</b>.</li>
+<li><b>Lathe and milling names say what they do.</b> Facing makes a face. Grooving, threading and chamfering make a groove, thread or chamfer. Slot, pocket, profile and thread milling make a slot, pocket, outline or thread. Face milling cuts with the cutter's end face. Side (peripheral) milling cuts with its rim. Straddle milling uses two cutters either side of the work, and gang milling uses several cutters on one shaft. Don't learn the list; read the word.</li>
+</ul>
+</div>
+
+<div class="must recap"><span class="tag">Remember from this section</span>
 <div class="scroll"><table>
 <tr><th>Process</th><th>Primary motion</th><th>Cutting tool</th><th>Geometry it makes</th><th class="num">Typical Ra (µm)</th></tr>
 <tr><td><b>Turning</b></td><td><b>Workpiece</b> rotates</td><td>Single-point tool</td><td>Cylindrical, rotationally symmetric</td><td class="num">0.8–3.2</td></tr>
 <tr><td><b>Milling</b></td><td>Tool rotates</td><td>Multi-point cutter</td><td>Flats, pockets, complex 3D shapes</td><td class="num">0.8–6.3</td></tr>
-<tr><td><b>Drilling</b></td><td>Tool rotates</td><td>Multi-point drill</td><td>Simple round through or blind holes</td><td class="num">3.2–12.5</td></tr>
+<tr><td><b>Drilling</b></td><td>Tool rotates</td><td>Multi-point drill</td><td>Simple round through or <b>blind</b> (not all the way through) holes</td><td class="num">3.2–12.5</td></tr>
 <tr class="hl"><td><b>Grinding</b></td><td>Grinding wheel rotates</td><td>Abrasive wheel</td><td>Flat and cylindrical precision surfaces</td><td class="num">0.05–0.8</td></tr>
 </table></div>
-<p><b>Ra</b> (average roughness) is the average height of the surface's peaks and valleys measured from its mean line, in micrometres (µm). Smaller Ra = smoother. Each step in the standard series (0.4, 0.8, 1.6, 3.2, 6.3, 12.5) doubles the roughness.</p>
-</div>
-
-<div class="box quick"><span class="tag">One line each</span>
-<div class="scroll"><table>
-<tr><th>Process</th><th>What to know</th></tr>
-<tr><td>Turning</td><td>On a <b>lathe</b>: the bar spins, the tool feeds along it and cuts diameter D₁ down to D₂ over length L. Key operations: <b>turning, boring, facing, grooving, cut-off (parting), thread cutting</b>. The figure also shows taper and contour turning, forming, chamfering, drilling and knurling.</td></tr>
-<tr><td>Milling</td><td>A <b>rotating multi-point cutter</b> removes material from a workpiece clamped on a moving table (head, cutter, vise, worktable, saddle, knee, column, base). Types: face, end, slot, side (peripheral), plain, profile, pocket, thread, helical, straddle and gang milling.</td></tr>
-<tr><td>Drilling</td><td>Makes a <b>circular hole</b> on a drill press (motor, belt and stepped pulleys for speed, feed handle, spindle, chuck, work table). Hole family: drilling, boring, <b>reaming</b> (accurate, smooth finish to size), tapping (internal thread), spot facing, countersinking, counterboring. How these holes are noted on drawings is covered in Chapter 5.</td></tr>
-<tr><td>Boring</td><td><b>Enlarges and accurately finishes an existing hole</b> with a single-point tool (on a lathe the tool goes inside the spinning part).</td></tr>
-<tr><td>Grinding</td><td><b>Precision finishing</b> of flat and cylindrical surfaces with an abrasive wheel. Surface grinder: wheel head, wheel, guard, worktable feeding the work back and forth, saddle, column, bed. Horizontal- and vertical-spindle versions.</td></tr>
-</table></div></div>
-
-<div class="figure"><div class="ttl">Lathe operations</div>
-<div class="slideimg"><a href="img/C8/turning-ops.jpg" target="_blank"><img src="img/C8/turning-ops.jpg" alt="Eleven small sketches of a spinning cylinder with a tool: facing, taper turning, contour turning, forming, chamfering, parting off, threading, boring, drilling, knurling" loading="lazy"></a></div>
-<p class="cap">In every sketch the curved arrow is the workpiece spinning and "Feed" is the direction the tool moves. Facing feeds <i>across</i> the end; turning feeds <i>along</i> the length; parting off feeds straight in until the part drops off; boring and drilling work <i>inside</i>.</p>
+<p><b>Ra</b>: average peak-and-valley height in µm. Smaller = smoother. Each step in the series doubles it.</p>
+<p><b>Boring</b> finishes an existing hole accurately. <b>Reaming</b> gives a hole an accurate size and smooth finish.</p>
 </div>
 </section>
 
 <section id="s3">
 <h2><span class="n">3</span>Drawing challenges: which process meets the drawing?</h2>
-<p>Each challenge gives a drawing and asks: how would you make it? The answer comes from the shape (round → lathe, flat/pocket → mill, hole → drill) and the finish and tolerance (fine Ra → grind or ream).</p>
+<div class="chunk"><span class="k">3a</span>Three example drawings</div>
+<p>For each drawing, ask: how would you make it? The answer comes from two things:</p>
+<ol class="steps">
+<li><b>Shape</b>: round → lathe; flat or pocket → mill; hole → drill.</li>
+<li><b>Finish and tolerance</b>: fine Ra → grind or ream.</li>
+</ol>
 <div class="box quick">
-<div class="scroll"><table>
-<tr><th>Part</th><th>What the drawing asks</th><th>Process sequence</th></tr>
-<tr><td>Stepped shaft</td><td>Ø100 flange, Ø80, taper, Ø60, concave R18, Ø40, convex R10 end; lengths 110, 100, 60, 40</td><td>All on a lathe: ① shoulder, ② straight turning, ③ taper turning, ④ concave radius R18, ⑤ convex radius R10, ⑥ facing</td></tr>
-<tr><td>Turning project, aluminium</td><td>5.00″ long; Ø0.369–0.374″ (limits), Ø0.500″, knurled Ø0.75″, 15° taper, Ø0.25″ blind hole 0.075″ deep; ±0.010 (X.XX) and ±0.005 (X.XXX)</td><td>① centre drilling (60° centre hole), ②③ straight turning, ④ knurling, ⑤ taper turning 15°, ⑥ drilling, ⑦⑧ facing both ends</td></tr>
-<tr><td>Stepped block, milling project</td><td>1.50 × 1.500 block, 0.125 steps, R0.250 corners (4), Ø0.375 hole marked "Ream"; ±0.005 and +0.010/−0.000</td><td>Mill the block square and the steps (end mill; the corner radius comes from the cutter), drill then <b>ream</b> the Ø0.375 hole</td></tr>
-</table></div></div>
+<div class="cases">
+<div><b>Stepped shaft</b>
+<p>Drawing: Ø100 flange, Ø80, taper, Ø60, concave R18, Ø40, convex R10 end; lengths 110, 100, 60, 40.</p>
+<p>All round, so all on a lathe:</p>
+<ol class="steps" style="list-style:none;padding-left:0"><li>① <strong>shoulder</strong> (the step between two diameters)</li><li>② straight turning</li><li>③ taper turning</li><li>④ concave (dished-in) radius R18</li><li>⑤ convex (bulging) radius R10</li><li>⑥ facing</li></ol></div>
+<div><b>Turning project, aluminium</b>
+<p>Drawing: 5.00″ long; Ø0.369–0.374″ (<strong>limits</strong>: the smallest and largest allowed size), Ø0.500″, knurled Ø0.75″, 15° taper, Ø0.25″ blind hole 0.075″ deep; ±0.010 (X.XX) and ±0.005 (X.XXX). That last part means a size written to two decimals may be off by 0.010, one written to three decimals by 0.005.</p>
+<ol class="steps" style="list-style:none;padding-left:0"><li>① <strong>centre drilling</strong> (a small 60° centre hole, so the lathe's centre can support the end)</li><li>②③ straight turning</li><li>④ knurling</li><li>⑤ taper turning 15°</li><li>⑥ drilling</li><li>⑦⑧ facing both ends</li></ol></div>
+<div><b>Stepped block, milling project</b>
+<p>Drawing: 1.50 × 1.500 block, 0.125 steps, R0.250 corners (4), Ø0.375 hole marked "Ream"; ±0.005 and +0.010/−0.000.</p>
+<ol class="steps"><li>Mill the block square and the steps with an <strong>end mill</strong> (a cutter that cuts with its end and sides). The corner radius comes from the cutter's own radius.</li><li>Drill, then <strong>ream</strong> the Ø0.375 hole.</li></ol></div>
+</div></div>
 
-<h3>Surfaces A, B, C: matching Ra to a process</h3>
+<div class="chunk"><span class="k">3b</span>Surfaces A, B, C: matching Ra to a process</div>
+<p>Here's the idea. Each surface on a drawing has its own Ra and shape limits. You pick the cheapest process whose Ra range reaches the number on the drawing. If the first process can't get there, add a finishing step after it.</p>
+<p>The example is a crank-like shaft:</p>
+<ul class="list">
+<li>Two <b>journals</b> A (the round parts that turn inside bearings) on the main axis.</li>
+<li>Two <b>web</b> faces B (the flat sides of the two plates).</li>
+<li>An offset pin C between the webs, on its own axis, like a crankshaft.</li>
+</ul>
 <div class="figure"><div class="ttl">The crank-like shaft and the Ra chart beside it</div>
 <div class="slideimg"><a href="img/C8/shaft-ra.jpg" target="_blank"><img src="img/C8/shaft-ra.jpg" alt="A shaft with two webs and an offset pin, surfaces labelled A, B, C, D; beside it a bar chart of Ra ranges for turning, boring, reaming, broaching, hobbing, grinding, honing, lapping, polishing, burnishing, super finishing" loading="lazy"></a></div>
-<p class="cap">Two journals A on the main axis, two web faces B, an offset pin C between the webs (on its own axis, like a crankshaft). Chart ranges (µm): turning &amp; milling 0.32–25, boring 0.4–6.3, reaming / broaching / hobbing 0.4–3.2, surface and cylindrical grinding 0.063–5, honing 0.025–0.4, lapping 0.012–0.16, polishing 0.04–0.16, burnishing 0.04–0.8, super finishing 0.016–0.32.</p>
+<p class="cap">Left: the A arrows point at the two journals on the main centre line. The B arrows point at the web faces. C points at the pin, which has its own, lower centre line. (D isn't used here.) Right: each hatched bar is the Ra range a process can reach. Bars further left are smoother. Notice that only the grinding-and-finer bars reach left of 0.4.</p>
+</div>
+<p>The ranges in that chart (µm), with what each process is:</p>
+<ul class="list">
+<li>Turning &amp; milling 0.32–25. <b>Boring</b> 0.4–6.3.</li>
+<li><b>Reaming</b> / <b>broaching</b> (pulling a long toothed tool through or along the part) / <b>hobbing</b> (cutting gear teeth with a spinning toothed cutter): 0.4–3.2.</li>
+<li>Surface and cylindrical grinding 0.063–5.</li>
+<li><b>Honing</b> (rubbing a hole with abrasive stones) 0.025–0.4. <b>Lapping</b> (rubbing with a fine abrasive paste) 0.012–0.16.</li>
+<li><b>Polishing</b> 0.04–0.16. <b>Burnishing</b> (pressing the peaks flat with a hard smooth roller) 0.04–0.8. <b>Super finishing</b> 0.016–0.32.</li>
+</ul>
+<div class="figure"><div class="ttl">The Ra ladder: which process can reach which finish</div>
+<svg class="own" viewBox="0 0 370 176" role="img" aria-label="Horizontal bars on a log scale from 0.01 to 25 micrometres: drilling 3.2 to 12.5, milling 0.8 to 6.3, turning 0.8 to 3.2, grinding 0.05 to 0.8, honing 0.025 to 0.4, lapping 0.012 to 0.16; a dashed line at 0.4">
+<line x1="206.2" y1="20" x2="206.2" y2="142" class="wm" style="stroke-dasharray:4 3"/>
+<text x="206.2" y="14" text-anchor="middle" style="font-size:10px;fill:var(--warm)">Ra 0.4</text>
+<g style="font-size:10px" text-anchor="end"><text x="64" y="36">Drilling</text><text x="64" y="56">Milling</text><text x="64" y="76">Turning</text><text x="64" y="96">Grinding</text><text x="64" y="116">Honing</text><text x="64" y="136">Lapping</text></g>
+<rect x="282.9" y="27" width="50.3" height="12" class="soft"/>
+<rect x="231.8" y="47" width="76.1" height="12" class="soft"/>
+<rect x="231.8" y="67" width="51.1" height="12" class="soft"/>
+<rect x="129.4" y="87" width="102.4" height="12" class="pl"/>
+<rect x="103.8" y="107" width="102.4" height="12" class="pl"/>
+<rect x="76.7" y="127" width="95.7" height="12" class="pl"/>
+<line x1="70" y1="146" x2="360" y2="146" class="ln" style="stroke-width:1"/>
+<g class="dim" style="font-size:9px" text-anchor="middle"><text x="70" y="158">0.01</text><text x="155" y="158">0.1</text><text x="240" y="158">1</text><text x="325" y="158">10</text></g>
+<g class="ln" style="stroke-width:1"><line x1="70" y1="146" x2="70" y2="150"/><line x1="155" y1="146" x2="155" y2="150"/><line x1="240" y1="146" x2="240" y2="150"/><line x1="325" y1="146" x2="325" y2="150"/></g>
+<text x="72" y="172" class="dim" style="font-size:9px">← smoother</text><text x="358" y="172" text-anchor="end" class="dim" style="font-size:9px">rougher →</text>
+</svg>
+<p class="cap">Own diagram. Drilling, milling, turning and grinding use the typical ranges from the Section 2 table; honing and lapping come from the chart above. Log scale, so each doubling step is the same distance. Blue bars (basic cutting) all stop right of the 0.4 line; only the orange finishing processes cross it.</p>
 </div>
 <div class="scroll"><table>
 <tr><th>Surface</th><th>Requirement</th><th>Meaning</th><th>Process</th></tr>
@@ -342,35 +530,165 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <tr><td><b>B</b> (web faces)</td><td>Ra 1.6, flatness 0.5</td><td><b>Flatness</b>: the face lies between two parallel planes 0.5 apart</td><td><b>Facing</b> on the lathe (or milling): 1.6 sits inside turning's 0.8–3.2</td></tr>
 <tr><td><b>C</b> (offset pin)</td><td>Ra 0.4, round within 0.04</td><td>As A, on the pin's own axis</td><td>Turn on the offset axis, then <b>grind</b></td></tr>
 </table></div>
+<p>Why grind A in one setup? Every time you unclamp a part and clamp it again, it lands slightly off-centre. Grinding both journals without unclamping means they can't drift apart.</p>
+<div class="box deduce"><span class="tag">Don't memorise the chart: work it out</span>
+<p>Learn the <b>order</b>, not the numbers. Rough to smooth: drill → turn or mill → bore or ream → grind → hone, lap, polish or superfinish. Gentler, slower processes give smoother surfaces.</p>
+<p>The one threshold worth knowing cold is <b>0.4: at or below it, you need grinding or finer</b>.</p>
+</div>
 <div class="box warn"><span class="tag">Rule of thumb</span><p>Ra 0.8 or rougher: turning or milling can do it. <b>Ra 0.4 or finer: grinding</b> (or honing/lapping for even finer). Drilled holes are rough (3.2–12.5); if a hole needs size and finish, <b>ream</b> or bore it.</p></div>
 </section>
 
 <section id="s4">
 <h2><span class="n">4</span>Formative: forging, casting, moulding</h2>
-<div class="box must"><span class="tag">Must know</span>
+<div class="chunk"><span class="k">4a</span>The idea: move material, don't cut it</div>
+<p>Formative processes <b>redistribute</b> material: nothing is added or cut away. The aim is a <b>net shape</b> (the final shape straight away) or a <b>near-net shape</b> (only light machining left).</p>
+<p>Why bother? Cutting a big part from a solid block wastes most of the metal and takes hours. Casting or forging it close to shape, then machining only the accurate faces, is far cheaper.</p>
+
+<div class="chunk"><span class="k">4b</span>Forging</div>
+<p><b>Forging</b> shapes <b>solid</b> metal by <b>plastic deformation</b> (permanent bending and squashing) <b>under compressive loading</b>: squeezing or hammering.</p>
+<p>Advantages:</p>
+<ul class="list">
+<li>High strength and fatigue resistance (<b>fatigue</b>: cracking after many repeated loads).</li>
+<li><b>Grain flow follows the load paths</b>. Metal has a grain like wood. Forging bends the grain round the part's shape, instead of cutting through it, so the part is stronger where it's loaded.</li>
+<li>Near-net shape possible, and consistent in repeat production.</li>
+</ul>
+<p>Products: connecting rods, crankshafts, fasteners, aircraft fittings (also wheels, shafts).</p>
+
+<div class="chunk"><span class="k">4c</span>Casting</div>
+<p><b>Casting</b> pours <b>liquid</b> material into a <b>mould cavity</b> (a hollow the shape of the part) and lets it solidify. The types differ mainly in what the mould is made of.</p>
+<p><b>Sand casting</b> is suitable for steel or aluminium. The mould is sand packed round a <b>pattern</b> (a model of the part), in two boxes: the <b>drag</b> (lower box) and the <b>cope</b> (upper box).</p>
+<div class="figure"><div class="ttl">A sand mould, cut in half</div>
+<svg class="own" viewBox="0 0 360 164" role="img" aria-label="Section through a sand mould: cope box on top, drag box below; a pouring cup and sprue down the left feed a runner into the cavity; a riser rises from the cavity; a vent goes up from the cavity">
+<rect x="40" y="24" width="220" height="62" class="soft"/><rect x="40" y="86" width="220" height="62" class="soft"/>
+<line x1="34" y1="86" x2="266" y2="86" class="ln" style="stroke-width:1"/>
+<rect x="110" y="70" width="80" height="30" class="pl"/>
+<rect x="72" y="24" width="12" height="70" class="pl"/><rect x="72" y="88" width="40" height="8" class="pl"/>
+<path d="M62 10H94L86 24H70Z" class="pl"/>
+<rect x="176" y="24" width="14" height="48" class="pl"/>
+<line x1="150" y1="70" x2="150" y2="24" class="ln" style="stroke-width:1.2"/>
+<text x="134" y="81" text-anchor="middle" style="font-size:10px">cavity</text>
+<g style="font-size:10px"><text x="98" y="16">pour here</text><text x="88" y="56">sprue</text><text x="154" y="42">vent</text><text x="194" y="44">riser</text><text x="88" y="112">runner</text></g>
+<g style="font-size:10px"><text x="268" y="52">cope</text><text x="268" y="64" class="dim">(upper box)</text><text x="268" y="114">drag</text><text x="268" y="126" class="dim">(lower box)</text></g>
+</svg>
+<p class="cap">Own diagram. Orange = where molten metal goes. It's poured into the cup, runs down the sprue and along the runner into the cavity. The riser is a spare reservoir; the vent lets air and gas out. The line across the middle is where the two boxes split so the pattern can come out.</p>
+</div>
+<p>The steps:</p>
+<ol class="steps">
+<li>Put half the pattern in the drag, ram sand round it and strike it off level.</li>
+<li>Flip it, add the cope with a <b>sprue pin</b> (a peg that will leave the pouring channel).</li>
+<li>Ram sand into the cope.</li>
+<li>Separate the boxes; remove the pattern and the pin.</li>
+<li>Cut <b>vents</b> (small holes that let gas escape).</li>
+<li>Pour molten metal through the <b>sprue</b> (the vertical pouring channel). The <b>riser</b> (a spare pool of liquid metal) feeds the part as it shrinks while cooling, so the part doesn't end up with holes.</li>
+</ol>
+<p><b>Investment casting</b> gives fine detail and finish:</p>
+<ol class="steps">
+<li>Make wax patterns and attach them to a wax <b>pattern tree</b> (sprue, runners).</li>
+<li>Dip the tree in ceramic slurry and stucco to build a <b>shell</b>.</li>
+<li>Melt the wax out (dewax).</li>
+<li>Pour metal into the hollow ceramic shell.</li>
+<li>Break the shell off.</li>
+</ol>
+<p><b>Die casting, hot chamber</b>: molten metal is forced into a reusable steel <b>die</b> (a metal mould). The injection unit sits in the furnace, in the molten metal. That's why it's for <b>low-melting alloys such as zinc</b>. Its parts: clamping unit, die assembly, injection unit.</p>
+<div class="box deduce"><span class="tag">Don't memorise this: work it out</span>
+<p>Tell the casting types apart by <b>the mould</b>:</p>
+<ul class="list">
+<li>Sand: broken up after every casting. Cheap, rough, any metal.</li>
+<li>Investment: a ceramic shell round a wax model. Fine detail.</li>
+<li>Die: permanent steel. Fast, for many parts in low-melting metal.</li>
+</ul>
+<p>The casting design rules below all come from two facts: <b>the pattern must come out of the sand</b>, and <b>the metal must flow and cool evenly</b>.</p>
+</div>
+
+<div class="chunk"><span class="k">4d</span>Designing a part to be cast</div>
+<p><b>Draft (taper) allowance</b>: a slight taper on all vertical surfaces of the pattern. It lets the pattern lift out of the sand <b>without tearing the mould sides</b>, and without heavy rapping (knocking it loose). No draft = damaged mould. Think of a cake tin: sloped sides let the cake slide out.</p>
+<p>Corners and radii, good:</p>
+<ul class="list">
+<li><b>Generous radii, uniform wall thickness, smooth flow</b>.</li>
+</ul>
+<p>Corners and radii, bad:</p>
+<ul class="list">
+<li>Sharp radii: cause <b>stress concentration</b> (stress piles up at a sharp corner, so cracks start there).</li>
+<li>Inside/outside radius mismatch and uneven walls: cause uneven flow.</li>
+<li>Sharp outside corner with an inside radius: thick metal at the corner cools last, causing <b>shrinkage stress, voids</b> (holes inside) <b>and sinks</b> (dents on the surface).</li>
+</ul>
+<p>Cast part drawings: a <b>pillow-block bearing housing</b> (a block that holds a shaft bearing and bolts to a base) and a valve body. Both are cast to near shape (with <b>fillets</b>, the rounded inside corners, and draft), then the bores, faces and holes are machined.</p>
+
+<div class="chunk"><span class="k">4e</span>Injection moulding</div>
+<p><b>Injection moulding</b> is the most common and most economical process for <b>high-volume</b> production of plastics. The mould is expensive, but each part takes seconds.</p>
+<ol class="steps">
+<li>Plastic pellets drop from the <b>hopper</b> (a funnel) into a heated <b>barrel</b>, where heaters melt them.</li>
+<li>A <b>reciprocating screw</b> (one that turns to mix and slides forward to push) injects the melt through the nozzle into a clamped mould.</li>
+</ol>
+<p>Products: phone casings, plugs, pens.</p>
+
+<div class="must recap"><span class="tag">Remember from this section</span>
 <ul class="list">
 <li>Formative makes a <b>net or near-net shape</b> by <b>redistributing</b> material, not adding or removing it. Net shape = final shape straight away; near-net = only light machining left.</li>
 <li><b>Forging</b> shapes <b>solid</b> metal by <b>plastic deformation under compressive loading</b> (squeezing or hammering).</li>
 <li><b>Casting</b> pours <b>liquid</b> material into a mould cavity of the desired shape and lets it solidify.</li>
 <li><b>Injection moulding</b>: most common and most economical for <b>high-volume</b> production (plastics).</li>
 </ul></div>
-<div class="box quick">
-<div class="scroll"><table>
-<tr><th>Item</th><th>Key points</th></tr>
-<tr><td>Forging</td><td>Advantages: high strength and fatigue resistance · grain flow follows the load paths · near-net shape possible · consistent in repeat production. Products: connecting rods, crankshafts, fasteners, aircraft fittings (also wheels, shafts)</td></tr>
-<tr><td>Sand casting</td><td>Suitable for steel or aluminium. Steps: half pattern in the <b>drag</b> (lower box), ram sand and strike it off → flip, add the <b>cope</b> (upper box) with a sprue pin → ram sand → separate, remove pattern and pin → cut vents → pour molten metal through the sprue, <b>riser</b> feeds shrinkage</td></tr>
-<tr><td>Investment casting</td><td>Wax patterns on a wax <b>pattern tree</b> (sprue, runners) → dip in ceramic slurry and stucco to build a <b>shell</b> → melt the wax out (dewax) → pour metal into the hollow ceramic shell → break the shell off. Fine detail and finish</td></tr>
-<tr><td>Die casting, hot chamber</td><td>Molten metal forced into a steel die; the injection unit sits in the furnace. For <b>low-melting alloys such as zinc</b>. Parts: clamping unit, die assembly, injection unit</td></tr>
-<tr><td>Draft (taper) allowance</td><td>A slight taper on all vertical surfaces of the pattern so it lifts out of the sand <b>without tearing the mould sides</b> and without heavy rapping. No draft = damaged mould</td></tr>
-<tr><td>Corners and radii</td><td>Good: <b>generous radii, uniform wall thickness, smooth flow</b>. Bad: sharp radii (stress concentration), inside/outside radius mismatch and uneven walls (uneven flow), sharp outside corner with inside radius (<b>shrinkage stress, voids, sinks</b>)</td></tr>
-<tr><td>Cast part drawings</td><td>A pillow-block bearing housing and a valve body: cast to near shape (fillets, draft), then machine the bores, faces and holes</td></tr>
-<tr><td>Injection moulding</td><td>Plastic pellets from the hopper melted by heaters in a barrel, a reciprocating screw injects them through the nozzle into a clamped mould. Products: phone casings, plugs, pens</td></tr>
-</table></div></div>
 </section>
 
 <section id="s5">
 <h2><span class="n">5</span>Sheet metal</h2>
-<div class="box must"><span class="tag">Must know</span>
+<div class="chunk"><span class="k">5a</span>What it is</div>
+<p>Sheet-metal parts are lightweight and thin-walled, <b>cut and formed from sheet stock</b>, like folding a paper model. It suits small batches and mass production.</p>
+<p>The flow:</p>
+<div class="flow"><span>Finished drawing</span><i>→</i><span>Develop flat pattern</span><i>→</i><span>Cut blank and holes</span><i>→</i><span>Form</span><i>→</i><span>Inspect</span></div>
+<p>The <b>flat pattern</b> is the part unfolded flat. The <b>blank</b> is the flat piece cut to that shape before bending.</p>
+<p>Three processes:</p>
+<ul class="list">
+<li><b>Cutting</b>: shearing sheets, perimeters, holes.</li>
+<li><b>Bending</b>: straining the sheet around a straight axis.</li>
+<li><b>Drawing</b>: stretching it into a convex or concave shape, e.g. a can. (Nothing to do with a technical drawing.)</li>
+</ul>
+<p>Advantages: <b>high strength, good dimensional accuracy, good surface finish</b>, and economical mass production for large quantities.</p>
+
+<div class="chunk"><span class="k">5b</span>Bending and the neutral plane</div>
+<p>Bend a sheet and the two faces change length. The <b>inside</b> face is squashed shorter (compressed). The <b>outside</b> face is pulled longer (stretched).</p>
+<p>Somewhere between them is a layer that does neither: the <b>neutral plane</b>. It's the same length bent or flat. So to find how long the flat blank must be, measure along the neutral plane. Use the inside or outside face instead and the bent part comes out the wrong size.</p>
+<div class="figure"><div class="ttl">What happens inside a bend</div>
+<svg class="own" viewBox="0 0 360 140" role="img" aria-label="An L-shaped bent sheet: the inner surface is compressed, the outer surface stretched, and a dashed neutral line runs between them closer to the inside">
+<path d="M56 10H76V60A24 24 0 0 0 100 84H240V104H100A44 44 0 0 1 56 60Z" class="soft"/>
+<path d="M68 10V60A32 32 0 0 0 100 92H240" style="fill:none;stroke:var(--accent);stroke-width:1.6;stroke-dasharray:5 3"/>
+<path d="M76 10V60A24 24 0 0 0 100 84H240" class="ln" style="stroke:var(--c3);stroke-width:2"/>
+<path d="M56 10V60A44 44 0 0 0 100 104H240" class="ln" style="stroke:var(--c2);stroke-width:2"/>
+<line x1="100" y1="60" x2="83" y2="77" class="wm"/><circle cx="100" cy="60" r="2" style="fill:var(--warm)"/>
+<text x="96" y="76" style="font-size:10px;fill:var(--warm)">R</text>
+<text x="108" y="62" style="font-size:10px;fill:var(--c3)">inside: compressed</text>
+<text x="14" y="128" style="font-size:10px;fill:var(--c2)">outside: stretched</text>
+<text x="246" y="88" style="font-size:10px;fill:var(--accent)">neutral plane:</text>
+<text x="246" y="100" style="font-size:10px;fill:var(--accent)">length unchanged</text>
+<text x="66" y="7" text-anchor="middle" style="font-size:9px" class="dim">t</text>
+</svg>
+<p class="cap">Own diagram. Green inside face: shortened. Red outside face: lengthened. Blue dashed neutral plane: same length as before bending. It sits a fraction K of the thickness t in from the inside face (here K = 0.4), not exactly in the middle.</p>
+</div>
+<p>Where exactly is the neutral plane? A distance y = K·t from the inside surface. <b>K</b> (the <b>K-factor</b>) is that fraction of the thickness. Here K = 0.4.</p>
+<p>The <b>bend allowance</b> BA is the length of neutral plane inside the bend: an arc of radius \(R + Kt\).</p>
+\[ BA = \theta\,(R + K t) \]
+<p class="word"><b>In words:</b> bend angle in radians times the radius of the neutral plane (inside radius plus K times thickness).</p>
+<p>Now the worked example. Below is an L-shaped bracket and its flat pattern.</p>
+<div class="figure"><div class="ttl">Sheet-metal bracket and its flat pattern</div>
+<div class="slideimg"><a href="img/C8/flat-pattern.jpg" target="_blank"><img src="img/C8/flat-pattern.jpg" alt="L-shaped bracket 40 by 30, thickness 2, inside radius 2, Ø6.6 holes; flat pattern 66.4 by 25 with holes at 15 and 12 from the ends; table: K-factor 0.4, bend allowance 4.398" loading="lazy"></a></div>
+<p class="cap">Top left: the bent bracket, outside sizes 40 and 30. The small table gives T = 2, inside radius R = 2, K-factor 0.4 and the bend allowance 4.398.</p>
+<p class="cap">Top right: the same neutral-plane picture as above (y = K·t from the inside). Bottom right: the flat pattern, 66.4 × 25 mm, with holes at 15 and 12 from the ends. The dotted lines across its middle mark where the bend goes. Check the 66.4 yourself below.</p>
+</div>
+<details><summary>Show the calculation: 4.398 and 66.4</summary><div>
+<p>\(BA = \tfrac{\pi}{2}(2 + 0.4\times 2) = \tfrac{\pi}{2}\times 2.8 = 4.398\) mm.</p>
+<p>Straight legs (outside sizes minus R + t = 4): \(30-4 = 26\) and \(40-4 = 36\). Flat length \(= 26 + 36 + 4.398 = 66.398 \approx 66.4\) mm, as on the drawing.</p>
+</div></details>
+
+<div class="chunk"><span class="k">5c</span>Cutting and bending methods</div>
+<div class="box quick">
+<ul class="list">
+<li><b>Cutting</b>: like machining, with large <b>shear</b> (sliding force) at the tool. The stages: the <b>punch</b> (the upper cutting tool) touches → plastic deformation → penetration (leaves a smooth cut band) → fracture starts at the opposite cutting edges.</li>
+<li><b>V-bending</b>: low production. Done on a <b>press brake</b> (a long press that pushes the sheet into a V-shaped die), using simple, inexpensive V-dies.</li>
+<li><b>Edge bending</b>: high production. Needs a <b>pressure pad</b> to hold the sheet flat while the edge is bent, so the dies are more complicated and costly.</li>
+</ul></div>
+
+<div class="must recap"><span class="tag">Remember from this section</span>
 <ul class="list">
 <li>Lightweight, thin-walled parts, <b>cut and formed from sheet stock</b> (like a paper model). Good for small batches and mass production.</li>
 <li>Flow: <b>finished drawing → develop flat pattern → cut blank and holes → form → inspect</b>.</li>
@@ -378,62 +696,81 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg
 <li>Bending: metal <b>inside</b> the neutral plane is <b>compressed</b>, metal <b>outside</b> is <b>stretched</b>. The neutral plane keeps its length, so the flat length is measured along it.</li>
 <li>Advantages: <b>high strength, good dimensional accuracy, good surface finish</b>, economical mass production for large quantities.</li>
 </ul></div>
-<div class="figure"><div class="ttl">Sheet-metal bracket and its flat pattern</div>
-<div class="slideimg"><a href="img/C8/flat-pattern.jpg" target="_blank"><img src="img/C8/flat-pattern.jpg" alt="L-shaped bracket 40 by 30, thickness 2, inside radius 2, Ø6.6 holes; flat pattern 66.4 by 25 with holes at 15 and 12 from the ends; table: K-factor 0.4, bend allowance 4.398" loading="lazy"></a></div>
-<p class="cap">T = 2, inside radius R = 2, K-factor 0.4. The neutral plane sits a distance y = K·t from the inside surface. Flat pattern 66.4 × 25 mm.</p>
-</div>
-<p>Bend allowance (the length of neutral plane in the bend):</p>
-\[ BA = \theta\,(R + K t) \]
-<p class="word"><b>In words:</b> bend angle in radians times the radius of the neutral plane (inside radius plus K times thickness).</p>
-<details><summary>Show the calculation: 4.398 and 66.4</summary><div>
-<p>\(BA = \tfrac{\pi}{2}(2 + 0.4\times 2) = \tfrac{\pi}{2}\times 2.8 = 4.398\) mm.</p>
-<p>Straight legs (outside sizes minus R + t = 4): \(30-4 = 26\) and \(40-4 = 36\). Flat length \(= 26 + 36 + 4.398 = 66.398 \approx 66.4\) mm, as on the drawing.</p>
-</div></details>
-<div class="box quick">
-<div class="scroll"><table>
-<tr><th>Item</th><th>Key points</th></tr>
-<tr><td>Cutting</td><td>Like machining, with large shear at the tool. Punch touches → plastic deformation → penetration (smooth cut band) → fracture starts at the opposite cutting edges</td></tr>
-<tr><td>V-bending</td><td>Low production, on a press brake, simple inexpensive V-dies</td></tr>
-<tr><td>Edge bending</td><td>High production, needs a pressure pad, dies more complicated and costly</td></tr>
-</table></div></div>
 </section>
 
 <section id="s6">
 <h2><span class="n">6</span>Additive and joining</h2>
-<div class="box quick">
-<div class="scroll"><table>
-<tr><th>Item</th><th>Key points</th></tr>
-<tr><td>Uses</td><td>Medical, automotive, sports, wearables, aerospace (GE LEAP fuel nozzle), furniture, food, fashion; tooling, shoe cleats, custom airway stents</td></tr>
-<tr><td>Process chain</td><td>3D CAD model → convert to STL/OBJ → check and prepare → build (SLA, SLS, FDM) → post-process (UV curing, ultrasonic cleaning, chemical)</td></tr>
-<tr><td>vs subtractive</td><td>Subtractive: block → part + lots of waste. Additive: powder → part + little waste</td></tr>
-</table></div>
-<p><b>The 7 AM methods (ASTM F42)</b>, from low to high energy:</p>
+<div class="chunk"><span class="k">6a</span>Additive manufacturing (AM): what and where</div>
+<p><b>Additive manufacturing</b> (AM, 3D printing) builds a part layer by layer from a computer model.</p>
+<p>Uses: medical, automotive, sports, wearables, aerospace (GE LEAP fuel nozzle), furniture, food, fashion; tooling, shoe cleats, custom airway stents.</p>
+<p>The process chain:</p>
+<ol class="steps">
+<li>3D CAD model.</li>
+<li>Convert to STL/OBJ (file formats that describe the surface as lots of small triangles).</li>
+<li>Check and prepare.</li>
+<li>Build (SLA, SLS, FDM).</li>
+<li>Post-process: UV curing (hardening resin with ultraviolet light), ultrasonic cleaning, chemical.</li>
+</ol>
+<p>Versus subtractive: subtractive goes block → part + lots of waste. Additive goes powder → part + little waste.</p>
+
+<div class="chunk"><span class="k">6b</span>The 7 AM methods</div>
+<p><b>The 7 AM methods (ASTM F42</b>, the US standards committee for AM<b>)</b>, from low to high energy:</p>
 <div class="scroll"><table>
 <tr><th>Method</th><th>How</th><th>Example</th></tr>
-<tr><td>Vat photopolymerisation</td><td>Liquid resin cured by light</td><td>SLA</td></tr>
-<tr><td>Material jetting</td><td>Droplets of build material jetted</td><td>Objet</td></tr>
-<tr><td>Binder jetting</td><td>Liquid binder jetted onto powder</td><td>3DP</td></tr>
-<tr><td>Material extrusion</td><td>Material pushed through a nozzle, solidifies</td><td>FFF / FDM</td></tr>
-<tr><td>Sheet lamination</td><td>Sheets bonded together</td><td>LOM</td></tr>
-<tr><td>Powder bed fusion</td><td>Laser or electron beam fuses regions of a powder bed</td><td>SLS / SLM</td></tr>
-<tr><td>Directed energy deposition</td><td>Focused heat melts material as it is deposited</td><td>LENS</td></tr>
+<tr><td>Vat photopolymerisation</td><td>Liquid resin cured by light</td><td>SLA (stereolithography)</td></tr>
+<tr><td>Material jetting</td><td>Droplets of build material jetted</td><td>Objet (a printer brand)</td></tr>
+<tr><td>Binder jetting</td><td>Liquid binder (glue) jetted onto powder</td><td>3DP</td></tr>
+<tr><td>Material extrusion</td><td>Material pushed through a nozzle, solidifies</td><td>FFF / FDM (fused filament fabrication / fused deposition modelling)</td></tr>
+<tr><td>Sheet lamination</td><td>Sheets bonded together</td><td>LOM (laminated object manufacturing)</td></tr>
+<tr><td>Powder bed fusion</td><td>Laser or electron beam fuses regions of a powder bed</td><td>SLS / SLM (selective laser sintering / melting)</td></tr>
+<tr><td>Directed energy deposition</td><td>Focused heat melts material as it is deposited</td><td>LENS (laser engineered net shaping)</td></tr>
 </table></div>
-<p><b>Joining</b> combines two or more components into one assembly, permanently or temporarily: threaded fasteners (bolt and nut, screw: removable), rivets, brazing, welding (fusion zone plus a heat-affected zone around it).</p>
+<div class="box deduce"><span class="tag">Don't memorise this: work it out</span>
+<p>Every name is <b>"starting material + how it's made solid"</b>. Read it literally:</p>
+<ul class="list">
+<li><b>Vat</b> (a tank of liquid) + <b>photopolymerisation</b> (hardening by light).</li>
+<li><b>Powder bed</b> + <b>fusion</b> (melting). <b>Binder</b> + <b>jetting</b> (glue sprayed onto powder).</li>
+<li>Material <b>extrusion</b> (squeezed out like toothpaste). Sheet <b>lamination</b> (stacked sheets). Directed <b>energy</b> deposition (melted as it lands).</li>
+</ul>
+<p>Know cold: <b>FDM = extrusion, SLA = vat, SLS/SLM = powder bed</b>.</p>
 </div>
+
+<div class="chunk"><span class="k">6c</span>When does AM create value?</div>
+<p>The key fact: AM's cost per part hardly changes. It costs about the same to print one part as each of a thousand, and a complicated shape costs about the same as a simple one.</p>
+<p>Traditional methods are the opposite. A mould or a machine setup costs a lot up front, so the cost per part falls as you make more. And complicated shapes need more operations, so their cost climbs.</p>
 <div class="figure"><div class="ttl">When does AM create value?</div>
 <div class="slideimg"><a href="img/C8/am-value.jpg" target="_blank"><img src="img/C8/am-value.jpg" alt="Two unit-cost graphs: against production volume, traditional cost falls below the flat AM line at high volume; against product complexity, traditional cost rises above the AM line at high complexity" loading="lazy"></a></div>
-<p class="cap">AM's unit cost is roughly flat. Traditional cost falls with volume (tooling spread over many parts) and rises with complexity. So: <b>low volume or high complexity → additive</b>; <b>high volume, simple shape → traditional</b>.</p>
+<p class="cap">The blue dashed line is AM: flat in both graphs, i.e. its unit cost is roughly constant. The red curve is traditional manufacture.</p>
+<p class="cap">Left graph: it falls with volume (tooling spread over many parts) and crosses below AM at the dashed vertical line. Right graph: it rises with complexity and crosses above AM. The arrows under each graph show which side to choose.</p>
+<p class="cap">So: <b>low volume or high complexity → additive</b>; <b>high volume, simple shape → traditional</b>.</p>
 </div>
+
+<div class="chunk"><span class="k">6d</span>Joining</div>
+<p><b>Joining</b> combines two or more components into one assembly, permanently or temporarily:</p>
+<ul class="list">
+<li>Threaded fasteners (bolt and nut, screw): removable.</li>
+<li><b>Rivets</b>: a pin whose end is squashed over to lock it. Permanent.</li>
+<li><b>Brazing</b>: a lower-melting filler metal glues the parts; the parts themselves don't melt.</li>
+<li><b>Welding</b>: the parts melt and fuse. You get a <b>fusion zone</b> (metal that melted) plus a <b>heat-affected zone</b> around it (didn't melt, but got hot enough to change its properties).</li>
+</ul>
 </section>
 
 <section id="s7">
 <h2><span class="n">7</span>Which process for this part?</h2>
+<p>To pick a process, go through four questions in order:</p>
+<ol class="steps">
+<li><b>Shape</b>: round, flat, hollow or sheet?</li>
+<li><b>Material</b>: metal or plastic? Does it start liquid or solid?</li>
+<li><b>Quantity</b>: a few, or thousands?</li>
+<li><b>Tolerance and Ra</b>: if tight or fine, add a finishing step.</li>
+</ol>
+<p>Here are four typical parts worked through:</p>
 <div class="scroll"><table>
 <tr><th>Part</th><th>Process</th><th>Why</th></tr>
 <tr><td>Stepped shaft</td><td><b>Turning</b> (grind any Ra 0.4 journals)</td><td>Every surface is rotationally symmetric about one axis</td></tr>
 <tr><td>Motor housing</td><td><b>Casting + machining</b></td><td>Complex hollow shape with cooling fins: cast near-net, then machine the bores, mating faces and bolt holes</td></tr>
 <tr><td>Sheet-metal bracket</td><td><b>Cut + bend</b></td><td>Constant thickness, folded flat sheet with holes: flat pattern, cut blank and holes, bend</td></tr>
-<tr><td>Plastic enclosure</td><td><b>Injection moulding</b></td><td>Thin-walled plastic box with ribs and bosses, made in high volume</td></tr>
+<tr><td>Plastic enclosure</td><td><b>Injection moulding</b></td><td>Thin-walled plastic box with <b>ribs</b> (thin stiffening walls) and <b>bosses</b> (raised posts for screws), made in high volume</td></tr>
 </table></div>
 <p>Answer pattern: <b>shape</b> (round / flat / hollow / sheet), <b>material</b> (metal or plastic, liquid or solid), <b>quantity</b>, <b>tolerance and Ra</b> (add a finishing step).</p>
 </section>
@@ -623,6 +960,23 @@ function go(){
   });
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
+})();
+</script>
+<script>
+/* Steppers: <div class="stepper"> with svg [data-s="n"] groups and <ol class="says"><li>…</li></ol> */
+(function(){
+document.querySelectorAll('.stepper').forEach(function(st){
+  var says=[].slice.call(st.querySelectorAll('ol.says>li')),n=says.length,i=0;
+  var out=st.querySelector('.say'),cnt=st.querySelector('.cnt');
+  st.querySelector('ol.says').style.display='none';
+  function show(){
+    st.querySelectorAll('[data-s]').forEach(function(g){g.style.opacity=(+g.getAttribute('data-s')<=i)?1:0;});
+    out.innerHTML=says[i].innerHTML; cnt.textContent='Step '+(i+1)+' of '+n;
+  }
+  st.querySelector('.prev').onclick=function(){if(i>0){i--;show();}};
+  st.querySelector('.next').onclick=function(){if(i<n-1){i++;show();}};
+  show();
+});
 })();
 </script>
 </body>
